@@ -201,7 +201,7 @@ def get_init_value(model_name, key):
 
 
 def get_model_index():
-    index_url = "https://raw.githubusercontent.com/modelhub-ai/modelhub/master/models.json"
+    index_url = "https://raw.githubusercontent.com/ersilia-os/ersilia/master/models.json"
     return json.loads(urlopen(index_url).read().decode("utf-8"))
 
 

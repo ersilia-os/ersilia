@@ -4,11 +4,11 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
   
 setup( 
-        name ='modelhub-ai', 
-        version ='0.0.6', 
-        author ='Ahmed Hosny', 
-        author_email ='info@modelhub.ai', 
-        url ='https://github.com/modelhub-ai/modelhub', 
+        name ='ersilia', 
+        version ='0.0.1', 
+        author ='Miquel Duran-Frigola', 
+        author_email ='miquel@ersilia.io', 
+        url ='https://github.com/ersilia-os/ersilia', 
         description ='', 
         long_description = long_description, 
         long_description_content_type ="text/markdown", 
@@ -16,10 +16,9 @@ setup(
         packages = find_packages(exclude=("utilities", "examples")), 
         entry_points ={ 
             'console_scripts': [ 
-                'modelhub = modelhub.start:main',
-                'modelhub-ai = modelhub.start:main',
-                'modelhub-run = modelhub.start:main',
-                'modelhub-list = modelhub.start:list_online_models'
+                'ersilia = modelhub.start:main',
+                'ersilia-run = modelhub.start:main',
+                'ersilia-list = modelhub.start:list_online_models'
             ] 
         }, 
         classifiers =( 
@@ -27,6 +26,6 @@ setup(
             "License :: OSI Approved :: MIT License", 
             "Operating System :: OS Independent", 
         ), 
-        keywords ='ai modelhub harvard dana-farber brigham deep learning open science',
+        keywords ='drug discovery ai ersilia open science',
         zip_safe = False
 ) 
