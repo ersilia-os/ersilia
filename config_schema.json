@@ -1,0 +1,318 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "self": {
+    "vendor": "modelhub",
+    "name": "config_schema.json",
+    "format": "jsonschema",
+    "version": "1-0-0"
+  },
+  "type": "object",
+  "description": "The config file holds information about the model and associated publication. This file ins required with every contribution to modelhub.",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "randomly generated UUID",
+      "uniqueValue": true
+    },
+    "meta": {
+      "type": "object",
+      "description": "Meta information about the model itself.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Model name. This should match the repository name: all small caps with '-' spacers. This should be unique.",
+          "uniqueValue": true
+        },
+        "application_area": {
+          "type": "string",
+          "description": "Free text explaining the application area. Examples: Imagnet, Cardiac MRI, Lung CT."
+        },
+        "task": {
+          "type": "string",
+          "description": "Free text explaining the task preformed by the model. Examples: Segmentation, Classification."
+        },
+        "task_extended": {
+          "type": "string",
+          "description": "Extended version of the 'task' property. Gives more information."
+        },
+        "data_type": {
+          "type": "string",
+          "description": "Free text explaining the type of input data to the model. Examples: Photos, CT Dicom, Vectors."
+        },
+        "data_source": {
+          "type": "string",
+          "description": "If the model has been trained on public data, this property is a url link to the data. Otherwise does not exist. Not required."
+        }
+      },
+      "required": [
+        "name",
+        "application_area",
+        "task",
+        "task_extended",
+        "data_type"
+      ],
+      "additionalProperties": false
+    },
+    "publication": {
+      "type": "object",
+      "description": "Holds all information regarding the publication. If the 'publication' key does not exist, then there is no publication associated with this model.",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Publication title as it appears."
+        },
+        "source": {
+          "type": "string",
+          "description": "Source name. This could be the name of the journal or conference. If preprint, then the name of the platform. Example: Nature, IEEE, Arxiv."
+        },
+        "year": {
+          "type": "number",
+          "description": "Publication year."
+        },
+        "authors": {
+          "type": "string",
+          "description": "Authors in the same order they appear on the publication. Full first name, middle initial with dot, Full last name. Preserve this as much as possible for best exposure for contributors."
+        },
+        "email": {
+          "type": "string",
+          "description": "If contributor is ok with email being shared with users for future questions and communictions, this property is an email. Otherwise does not exist. Not required."
+        },
+        "abstract": {
+          "type": "string",
+          "description": "Publication abstract. Make sure this is pure text without newline funky characters..etc."
+        },
+        "url": {
+          "type": "string",
+          "description": "URL to the publication wherever it lives. If the paper is behind a paywall, this link should be public."
+        },
+        "google_scholar": {
+          "type": "string",
+          "description": "Link to google scholar page that lists all other works that have cited this publication. Get this link by clicking on the number of citation of this publication on the google scholar website. This will help us in the future for undertsanding the 'impact' of models in modelhub. Number of citations is a horrible metric.. but it's the only thing we have ¯\\_(ツ)_//¯"
+        },
+        "bibtex": {
+          "type": "string",
+          "description": "A BibTeX style citation for the publication. Make sure it includes a DOI if available."
+        }
+      },
+      "required": [
+        "title",
+        "source",
+        "year",
+        "authors",
+        "abstract",
+        "url",
+        "google_scholar",
+        "bibtex"
+      ],
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "description": "Holds all information regarding the model itself.",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Free text explaining the model architecture."
+        },
+        "provenance": {
+          "type": "string",
+          "description": "URL to where the model originated - or 'contributed by author'"
+        },
+        "architecture": {
+          "type": "string",
+          "description": "Architecture type + acronym in parenthesis if available. Example: Convolutional Neural Network (CNN). "
+        },
+        "learning_type": {
+          "type": "string",
+          "description": "Choice of Supervised Learning, Unsupervised Learning, Self-Supervised Learning, or one of the other types they keep coming up with these days. "
+        },
+        "format": {
+          "type": "string",
+          "description": "File format of the model with the preceeding dot. This could be .h5, .caffemodel, .onnx ...etc. This is used by the viewer to grab and view the model file if it is served on Github."
+        },
+        "io": {
+          "type": "object",
+          "description": "Inputs this model expects and outputs you should be expecting.",
+          "properties": {
+            "input": {
+              "type": "object",
+              "description": "Input properties. For inputs, we dictate the file formats that can be absorbed by modelhub. In the backend, these are converted to numpy arrays and fed into the model. Also for inputs, we define the dimension limits.",
+              "patternProperties":{
+                  "(/^format$/)":{
+                    "type":"array",
+                    "description": "The overall input file type as MIME type. For multiple inputs, this is always application/json. If only a single input is needed, you can either leave json or use the actual datatype of your input file.",
+                  	"items": {
+                    	"type": "string"
+                  		},
+                  	"minItems": 1,
+                    "maxItems": 1,
+                  	"uniqueItems": true
+                  },
+                  "(/^description$/)":{
+                    "type":"string",
+                    "description": "Optional description for the overall inputs."
+                  },
+                  "^(((?!format)(?!description)).)*$":{
+                    "type":"object",
+                    "description": "Each additional key will be treated as an individual input file and has to be matched in the input configuration. e.g. if you need 4 input sequences for a MRI segmentation, you would add 4 keys t1, flair, t1c and t2 here with dim_limits and an appropriate file type. If you only have a single input for your model, use the key single",
+                    "properties":{
+                      "format": {
+                        "type": "array",
+                        "description": "An array of acceptable file formats according to python MIME type. Example: image/jpeg, application/dicom. For medical images, our non-standard types are: application/nii-gzip, application/nii, application/nrrd. ",
+                        "items": {
+                          "type": "string"
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
+                		},
+                        "dim_limits": {
+                          "type": "array",
+                          "description": "An array of objects. The array can have varying length depending on the input data size. ( array length == 1 : vector ) ( array length == 3 : 2d ) ( array length == 4 : 3d ). First item in array is always a channel, the second is width, the third is length, and the forth is height. We only deal with a inference on a single image at once, so it is unlikely that there will be a fifth item.",
+                          "items": {
+                            "properties": {
+                              "min": {
+                                "type": "number",
+                                "description": "Minimum size of that dimension."
+                              },
+                              "max": {
+                                "type": "number",
+                                "description": "Maximum size of the dimension. Not Required."
+                              }
+                            },
+                            "required": ["min"],
+                            "additionalProperties": false
+                          },
+                          "minItems": 1
+                        },
+                          "description": {
+                            "type": "string",
+                              "description": "Optional string to describe the input beyond the required format and dim_limits properties."
+                          }
+                    }
+                  }
+              },
+              "properties": {
+                "format": {
+                  "type": "array",
+                  "description": "An array of acceptable file formats according to python MIME type. Example: image/jpeg, application/dicom.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Optional string to describe the input beyond the required format and dim_limits properties."
+                }
+              },
+              "required": ["format"],
+              "additionalProperties": false
+            },
+            "output": {
+              "type": "array",
+              "description": "An array of objects. Output properties. For outputs, we do not dictate the size. We do however identify the name and type. The ordering is important here. The model infer function will give outputs in the same order as defined here.",
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Output name."
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "label_list",
+                      "contour",
+                      "vector",
+                      "mask_image",
+                      "heatmap",
+                      "image",
+                      "custom"
+                    ],
+                    "description": "This could be one of the 6 types. See the 'options' property of this object for a full list of types. Each model can have at least one or more output type(s).",
+                    "options": [
+                      {
+                        "name": "label_list",
+                        "overlaid": false,
+                        "description": "probabilities",
+                        "file_type": "json"
+                      },
+                      {
+                        "name": "contour",
+                        "overlaid": false,
+                        "description": "A list (or lists) of coordinates identifying the contour of a mask.",
+                        "file_type": "json"
+                      },
+                      {
+                        "name": "vector",
+                        "overlaid": false,
+                        "description": "1d",
+                        "file_type": "h5"
+                      },
+                      {
+                        "name": "mask_image",
+                        "overlaid": true,
+                        "description": ">=2 dimensions. Single- or multi-channel. Discrete values.",
+                        "file_type": "h5"
+                      },
+                      {
+                        "name": "heatmap",
+                        "overlaid": true,
+                        "description": ">=2 dimensions. Single- or multi-channel. Continuous values.",
+                        "file_type": "h5"
+                      },
+                      {
+                        "name": "image",
+                        "overlaid": false,
+                        "description": ">=2 dimensions. Single- or multi-channel. Continuous values.",
+                        "file_type": "h5"
+                      },
+                      {
+                        "name": "custom",
+                        "description": "Alien format we are not able to deal with yet.",
+                        "file_type": "h5"
+                      }
+                    ]
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Optional string to describe the output beyond the required name and type properties."
+                  }
+                },
+                "required": ["name", "type"],
+                "additionalProperties": false
+              },
+              "minItems": 1
+            }
+          },
+          "required": ["input", "output"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "description",
+        "provenance",
+        "architecture",
+        "learning_type",
+        "format",
+        "io"
+      ],
+      "additionalProperties": false
+    },
+    "modelhub": {
+      "type": "object",
+      "description": "This property is required but it has a free structure and should be added by the modelhub team. It can be helful if the modelhub web app requires certain parameters for correctly visualizing input/outputs.",
+      "properties": {},
+      "required": [],
+      "modelhubOptionalProperties": [
+        "allow_user_test",
+        "allow_sample_demo",
+        "top",
+        "sort"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "required": ["id", "meta", "model", "modelhub"],
+  "additionalProperties": false
+}

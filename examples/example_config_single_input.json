@@ -1,0 +1,60 @@
+{
+  "id": "GET A UID FOR YOUR MODEL e.g. here https://www.uuidgenerator.net/",
+  "meta": {
+    "name": "Demo Config for a Single Input",
+    "application_area": "",
+    "task": "",
+    "task_extended": "",
+    "data_type": "",
+    "data_source": ""
+  },
+  "publication": {
+    "title": "",
+    "source": "",
+    "year": 1800,
+    "authors": "",
+    "email": "",
+    "abstract": "",
+    "url": "",
+    "google_scholar": "",
+    "bibtex": ""
+  },
+  "model": {
+    "description": "",
+    "provenance": "",
+    "architecture": "",
+    "learning_type": "",
+    "format": "",
+    "io": {
+      "input": {
+        "format": ["application/plain"],
+        "single":{
+          "format":["application/nii-gzip"]
+          "dim_limits": [
+            {
+              "min": 120,
+              "max": 200
+            },
+            {
+              "min": 120,
+              "max": 200
+            },
+            {
+              "min": 60,
+              "max": 200
+            }
+          ],
+          "description": "Single 3D nifti-1 image as input with minimal and maximal input size constraints."
+        }
+      },
+      "output": [
+        {
+          "name": "Segmentation",
+          "type": "image",
+          "description": "returns the segmentation of the input file as a numpy array."
+        }
+      ]
+    }
+  },
+  "modelhub": {}
+}

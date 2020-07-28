@@ -1,0 +1,105 @@
+{
+  "id": "GET A UID FOR YOUR MODEL e.g. here https://www.uuidgenerator.net/",
+  "meta": {
+    "name": "Demo Config for a multiple inputs, e.g. for BraTS models which require 4 inputs for a single segmentation",
+    "application_area": "",
+    "task": "",
+    "task_extended": "",
+    "data_type": "",
+    "data_source": ""
+  },
+  "publication": {
+    "title": "",
+    "source": "",
+    "year": 1800,
+    "authors": "",
+    "email": "",
+    "abstract": "",
+    "url": "",
+    "google_scholar": "",
+    "bibtex": ""
+  },
+  "model": {
+    "description": "",
+    "provenance": "",
+    "architecture": "",
+    "learning_type": "",
+    "format": "",
+    "io": {
+      "input":{
+                "format": ["application/json"],
+                "description" : "The input will be passed as a json file which contains 4 keys matching this config with: name, format and url/path to each file.",
+                "t1":{
+                    "format": ["application/nii-gzip"],
+                    "dim_limits": [
+                        {
+                            "min": 1,
+                            "max": 155
+                        },
+                        {
+                            "min": 1
+                        },
+                        {
+                            "min": 1
+                        }
+                    ],
+                    "description": "A 3D Nifti-1 images as input with minimal input size constraints."
+                },
+                "t1c":{
+                    "format": ["application/nii-gzip"],
+                    "dim_limits": [
+                        {
+                            "min": 1,
+                            "max": 155
+                        },
+                        {
+                            "min": 1
+                        },
+                        {
+                            "min": 1
+                        }
+                    ],
+                    "description": "A 3D Nifti-1 images as input with minimal input size constraints."
+                },
+                "t2":{
+                    "format": ["application/nii-gzip"],
+                    "dim_limits": [
+                        {
+                            "min": 1,
+                            "max": 155
+                        },
+                        {
+                            "min": 1
+                        },
+                        {
+                            "min": 1
+                        }
+                    ],
+                    "description": "A 3D Nifti-1 images as input with minimal input size constraints."
+                },
+                "flair":{
+                    "format": ["application/nii-gzip"],
+                    "dim_limits": [
+                        {
+                            "min": 1,
+                            "max": 155
+                        },
+                        {
+                            "min": 1
+                        },
+                        {
+                            "min": 1
+                        }
+                    ],
+                    "description": "A 3D Nifti-1 images as input with minimal input size constraints."
+                }
+            },
+            "output": [{
+                "name": "Segmentation",
+                "type": "image",
+                "description": "A numpy array with the segmentation labels"
+            }]
+        }
+    },
+    "modelhub": {}
+}
