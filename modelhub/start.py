@@ -292,32 +292,5 @@ def main():
         print("ERROR DETAIL: ", e)
 
 if __name__ == "__main__":
-    try:
-        # The extra manual parsing of the "--list" parameter is temporary until
-        # we have modelhub in a pip installable package and an extra list
-        # command. argparse does not support optional mandatory positional args
-        # based on the presence of certain flags (i.e. we don't want to require
-        # a MODEL when "--list" is given, but otherwise we do!)
-        if "-l" in sys.argv[1:] or "--list" in sys.argv[1:]:
-            list_online_models()
-            sys.exit(0)
-        else:
-            args = parser.parse_args()
-    except SystemExit as e:
-        if e.code == 2:
-            parser.print_help()
-        sys.exit(e.code)
-    try:
-        check_python_version()
-        start(args)
-    except HTTPError as e:
-        print("ERROR: Model download failed. Please check if this is a valid model name. Also, please check your internet connection. The model folder \"" + args.model + "\" is possibly corrupt. Please delete it (if it exists).")
-        print("ERROR DETAIL: ", e)
-        if e.code == 403:
-            print("An HTTP 403 error usually means that GitHub rejected our request. The reason is that GitHub limits the number of anonymous requests from a certain IP address per hour. This unfortunately means that you will have to wait about an hour until you can download more models. You can still run all your local models, of course.")
-    except subprocess.CalledProcessError as e:
-        # Ignoring errors happening in the Docker Process, otherwise we'd e.g. get error messages on exiting the Docker via CTRL+D.
-        pass
-    except Exception as e:
-        print("ERROR: Model startup failed.")
-        print("ERROR DETAIL: ", e)
+    main()
+
