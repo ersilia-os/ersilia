@@ -9,7 +9,7 @@ setup(
         author='Miquel Duran-Frigola',
         author_email='miquel@ersilia.io',
         url='https://github.com/ersilia-os/ersilia',
-        description='',
+        description='Ersilia model hub for open source drug discovery',
         long_description=long_description,
         long_description_content_type="text/markdown",
         license='MIT',
@@ -28,4 +28,4 @@ setup(
         ), 
         keywords='drug discovery ai ersilia open science',
         zip_safe=False
-) 
+)
