@@ -11,6 +11,7 @@ conda activate
 conda install -c conda-forge rdkit
 conda install -c conda-forge biopython
 pip install -r requirements.txt
+pip install pygithub
 ```
 
 
