@@ -5,10 +5,26 @@ with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
 install_requires = [
-
+    "bentoml",
+    "PyGitHub"
 ]
 
-extras_require = install_requires
+test_requires = []
+
+dev_requires = [] + test_requires
+
+docs_requires = []
+
+dev_all = install_requires + dev_requires + docs_requires
+
+yatai_service = []
+
+extras_require = {
+    "dev": dev_all,
+    "doc_builder": docs_requires + install_requires,  # required by readthedocs.io
+    "test": test_requires,
+    "yatai_service": yatai_service + install_requires,
+}
 
 setup(
     name='ersilia',
