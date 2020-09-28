@@ -1,35 +1,54 @@
-"""Download utilities."""
+"""Download utilities"""
 
 import os
 import zipfile
 import requests
 import tempfile
-import base64
+from github import Github
+import pygit2
 import shutil
-from github import Github, GithubException
+import subprocess
 
 
-class StandardDownloader(object):
+class PseudoDownloader(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, overwrite):
+        self.overwrite = overwrite
 
     def _fetch(self, url, destination):
         pass
 
-    def fetch_zip(self, url, destination):
-        """A .zip file is assumed."""
-        tmp_zip = tempfile.NamedTemporaryFile(dir=destination).name+".zip"
-        self.download_file_from_google_drive(file_id, tmp_zip)
-        with zipfile.ZipFile(tmp_zip, "r") as zip_ref:
-            zip_ref.extractall(destination)
-        os.remove(tmp_zip)
+    def _copy_local_directory(self, src, dst):
+        if os.path.exists(dst):
+            if self.overwrite:
+                shutil.rmtree(dst)
+            else:
+                return
+        shutil.copytree(src, dst)
 
-    def fetch_tarball(self, url, destination):
-        """A tar.gz file is assumed"""
+    def fetch(self, src, dst):
+        """Copy entire directory"""
+        self._copy_local_directory(src, dst)  # TODO: Add smart functions to deal with zipped files etc.
 
-    def fetch(self, url, destination):
-        """"""
+
+class OsfDownloader(object):
+
+    def __init__(self, overwrite):
+        self.overwrite = overwrite
+
+    def fetch(self, project_id, filename, destination, tmp_folder):
+        src = os.path.basename(filename)
+        outfile = os.path.join(destination, src)
+        if os.path.exists(outfile):
+            if self.overwrite:
+                os.remove(outfile)
+            else:
+                return
+        cwd = os.getcwd()
+        os.chdir(tmp_folder)
+        subprocess.Popen("osf -p %s fetch %s" % (project_id, filename), shell=True).wait()
+        shutil.move(src, outfile)
+        os.chdir(cwd)
 
 
 class GoogleDriveDownloader(object):
@@ -64,7 +83,7 @@ class GoogleDriveDownloader(object):
 
     def fetch_zip(self, file_id, destination):
         """Download file from google docs. The file id is necessary. A .zip file is assumed."""
-        tmp_zip = tempfile.NamedTemporaryFile(dir=destination).name+".zip"
+        tmp_zip = tempfile.NamedTemporaryFile(dir=destination).name + ".zip"
         self.download_file_from_google_drive(file_id, tmp_zip)
         with zipfile.ZipFile(tmp_zip, "r") as zip_ref:
             zip_ref.extractall(destination)
@@ -73,57 +92,19 @@ class GoogleDriveDownloader(object):
 
 class GitHubDownloader(object):
 
-    def __init__(self, token=None):
+    def __init__(self, overwrite, token=None):
+        self.overwrite = overwrite
         self.token = token
         if token is None:
             self.github = Github()
         else:
             self.github = Github(token)
 
-    @staticmethod
-    def get_sha_for_tag(repository, tag):
-        """
-        Returns a commit PyGithub object for the specified repository and tag.
-        """
-        branches = repository.get_branches()
-        matched_branches = [match for match in branches if match.name == tag]
-        if matched_branches:
-            return matched_branches[0].commit.sha
-
-        tags = repository.get_tags()
-        matched_tags = [match for match in tags if match.name == tag]
-        if not matched_tags:
-            raise ValueError('No Tag or Branch exists with that name')
-        return matched_tags[0].commit.sha
-
-    def download_directory(self, repository, sha, server_path):
-        """
-        Download all contents at server_path with commit tag sha in
-        the repository.
-        """
-        if os.path.exists(server_path):
-            shutil.rmtree(server_path)
-
-        os.makedirs(server_path)
-        contents = repository.get_dir_contents(server_path, ref=sha)
-
-        for content in contents:
-            if content.type == 'dir':
-                os.makedirs(content.path)
-                self.download_directory(repository, sha, content.path)
+    def clone(self, org, repo, destination):
+        if os.path.exists(destination):
+            if self.overwrite:
+                shutil.rmtree(destination)
             else:
-                try:
-                    path = content.path
-                    file_content = repository.get_contents(path, ref=sha)
-                    file_data = base64.b64decode(file_content.content)
-                    file_out = open(content.path, "w+")
-                    file_out.write(file_data)
-                    file_out.close()
-                except (GithubException, IOError) as exc:
-                    print('Error processing %s: %s', content.path, exc)
-
-    def fetch(self, folder, org, repo, tag, destination):
-        organization = self.github.get_organization(org)
-        repository = organization.get_repo(repo)
-        sha = self.get_sha_for_tag(repository, tag)
-        self.download_directory(repository, sha, folder)
+                return
+        repo = self.github.get_repo(org + "/" + repo)
+        pygit2.clone_repository(repo.git_url, destination)

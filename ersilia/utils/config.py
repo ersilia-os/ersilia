@@ -30,6 +30,19 @@ class _Field(object):
         return self.__dict__[key]
 
 
+def _eval_obj(json_file):
+    with open(json_file) as fh:
+        obj_dict = json.load(fh)
+
+    eval_obj_dict = dict()
+    for k, v in obj_dict.items():
+        if type(v) == dict:
+            eval_obj_dict[k] = _Field(v)
+        else:
+            eval_obj_dict[k] = eval(v)
+    return eval_obj_dict
+
+
 @logged
 class Config(object):
     """Config class.
@@ -52,16 +65,28 @@ class Config(object):
             except Exception as err:
                 raise err
 
-        self.__log.debug('Loading config from: %s' % json_file)
-        with open(json_file) as fh:
-            obj_dict = json.load(fh)
+        eval_obj_dict = _eval_obj(json_file)
+        self.__dict__.update(eval_obj_dict)
 
-        eval_obj_dict = dict()
-        for k, v in obj_dict.items():
-            if type(v) == dict:
-                eval_obj_dict[k] = _Field(v)
-            else:
-                eval_obj_dict[k] = eval(v)
+    def keys(self):
+        return self.__dict__.keys()
+
+
+@logged
+class Credentials(object):
+
+    def __init__(self, json_file=None):
+        if json_file is None:
+            try:
+                json_file = os.environ["EOS_CREDENTIALS"]
+            except KeyError as err:
+                self.__log.debug("EOS_CONFIG environment variable not set. " + "Using default credentials file.")
+                json_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../credentials.json')
+
+            except Exception as err:
+                raise err
+
+        eval_obj_dict = _eval_obj(json_file)
         self.__dict__.update(eval_obj_dict)
 
     def keys(self):
@@ -69,5 +94,6 @@ class Config(object):
 
 
 __all__ = [
-    "Config"
+    "Config",
+    "Credentials"
 ]

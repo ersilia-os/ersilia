@@ -10,16 +10,20 @@ class List(object):
         self.conf = Config(config)
 
     def spreadsheet(self):
-        """List models as available in our spreadsheets"""
+        """List models available in our spreadsheets"""
         pass
 
     def github(self):
-        """List models as available in the GitHub model hub repository"""
+        """List models available in the GitHub model hub repository"""
         repo = Github().get_repo(self.conf.HUB.REPO)
         print(repo)
 
     def hub(self):
         """List models as available in our model hub repository"""
+        pass
+
+    def bento(self):
+        """List models available as BentoServices"""
         pass
 
     def local(self):
