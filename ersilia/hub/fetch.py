@@ -3,6 +3,8 @@
 import os
 import runpy
 import shutil
+import subprocess
+import sys
 from .. import ErsiliaBase
 from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
 from ..utils.zip import Zipper
@@ -29,6 +31,13 @@ class ModelFetcher(ErsiliaBase):
     def _data_path(self, model_id):
         return os.path.join(self.cfg.LOCAL.DATA, model_id)
 
+    @staticmethod
+    def _get_bentoml_location(model_id):
+        cmd = ["bentoml", "get", "%s:latest" % model_id, "--print-location", "--quiet"]
+        result = subprocess.run(cmd, stdout=subprocess.PIPE)
+        result = result.stdout.decode("utf-8").rstrip()
+        return result
+
     def get_repo(self, model_id):
         """Download the model from GitHub"""
         folder = self._model_path(model_id)
@@ -46,10 +55,10 @@ class ModelFetcher(ErsiliaBase):
                                 destination=self._dest_dir, tmp_folder=self._tmp_dir)
             self.zipper.unzip(os.path.join(self._dest_dir, model_id+".zip"), os.path.join(self._tmp_dir, model_id))
             src = os.path.join(self._tmp_dir, model_id)
-            dst = os.path.join(self._dest_dir, model_id)
+            dst = os.path.join(self._dest_dir, model_id, "model")
             if os.path.exists(dst):
                 if self.overwrite:
-                    os.remove(dst)
+                    shutil.rmtree(dst)
                 else:
                     shutil.rmtree(src)
                     return
@@ -65,7 +74,13 @@ class ModelFetcher(ErsiliaBase):
         runpy.run_path(path_name=pack_script)
         os.chdir(cwd)
 
-    def fetch(self, model_id):
+    def pip_install(self, model_id):
+        """Install the model and distribute as a python package"""
+        bento = self._get_bentoml_location(model_id)
+        subprocess.check_call([sys.executable, "-m", "pip", "install", bento])
+
+    def fetch(self, model_id, pip=True):
         self.get_repo(model_id)
         self.get_model(model_id)
         self.pack(model_id)
+        self.pip_install(model_id)

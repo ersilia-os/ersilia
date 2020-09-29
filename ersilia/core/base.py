@@ -5,6 +5,7 @@ import os
 class ErsiliaBase(object):
 
     def __init__(self, config_json=None, credentials_json=None):
+        self.config_json = config_json
         self.cfg = Config(json_file=config_json)
         self.cred = Credentials(json_file=credentials_json)
         self._tmp_dir = self._abs_path(self.cfg.LOCAL.TMP)
