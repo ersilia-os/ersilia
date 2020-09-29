@@ -44,16 +44,26 @@ class ModelFetcher(ErsiliaBase):
             path = os.path.join("models", model_id+".zip")
             self.osf_down.fetch(project_id=self.cfg.EXT.OSF_PROJECT, filename=path,
                                 destination=self._dest_dir, tmp_folder=self._tmp_dir)
-            self.zipper.unzip(os.path.join(self._dest_dir, model_id+".zip"), self._tmp_dir)
+            self.zipper.unzip(os.path.join(self._dest_dir, model_id+".zip"), os.path.join(self._tmp_dir, model_id))
             src = os.path.join(self._tmp_dir, model_id)
+            dst = os.path.join(self._dest_dir, model_id)
+            if os.path.exists(dst):
+                if self.overwrite:
+                    os.remove(dst)
+                else:
+                    shutil.rmtree(src)
+                    return
             shutil.move(os.path.join(src, "model"), os.path.join(self._dest_dir, model_id))
             shutil.rmtree(src)
 
     def pack(self, model_id):
         """Pack model"""
         folder = self._model_path(model_id)
+        cwd = os.getcwd()
+        os.chdir(folder)
         pack_script = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
         runpy.run_path(path_name=pack_script)
+        os.chdir(cwd)
 
     def fetch(self, model_id):
         self.get_repo(model_id)
