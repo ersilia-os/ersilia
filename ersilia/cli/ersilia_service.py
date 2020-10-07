@@ -10,6 +10,7 @@ from bentoml.saved_bundle import load_bento_service_api
 from ersilia.hub.fetch import ModelFetcher
 from ersilia.hub.list import ModelList
 from ersilia.hub.delete import ModelEosDeleter, ModelBentoDeleter, ModelPipDeleter
+from ersilia.app.app import StreamlitApp
 
 
 def create_ersilia_service_cli(pip_installed_bundle_path=None):
@@ -78,8 +79,8 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
 
     # Example usage: ersilia predict --input=...
     @ersilia_cli.command(
-        help="Run a prediction",
-        short_help="Run prediction",
+        short_help="Run a prediction",
+        help="Run prediction using the BentoML prediction API of the model. See BentoML for more details.",
         context_settings=dict(ignore_unknown_options=True, allow_extra_args=True),
     )
     @conditional_argument(pip_installed_bundle_path is None, "model_id", type=click.STRING)
@@ -93,7 +94,6 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     # Example usage: ersilia list
     @ersilia_cli.command(
         help="List available models bundled in the BentoML style",
-        short_help="List available models"
     )
     def list():
         ml = ModelList()
@@ -102,5 +102,19 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         for v in df[["MODEL_ID", "BENTO_SERVICE"]].values:
             R += [[v[0], v[1]]]
         click.echo(tabulate.tabulate(R))
+
+    # Example usage: ersilia app {MODEL_ID}
+    @ersilia_cli.command(
+        short_help="Run model app",
+        help="Run app designed to run the model in the browser. Apps typically do not allow for large-scale inputs. "
+             "Please note that, at the moment, not all models have an app available.",
+    )
+    @click.argument("model_id", type=click.STRING)
+    def app(model_id):
+        sa = StreamlitApp()
+        status = sa.run(model_id)
+        if not status:
+            click.echo(click.style("App could not be run or it is not available for model %s" % model_id, fg="red"))
+            click.echo(click.style("Check that an app.py script exists in the model repository", fg="red"))
 
     return ersilia_cli
