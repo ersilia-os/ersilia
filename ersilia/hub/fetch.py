@@ -1,4 +1,4 @@
-"""Fetch model and dev it to a BentoML bundle"""
+"""Fetch model and save it to a BentoML bundle"""
 
 import os
 import runpy
@@ -68,11 +68,13 @@ class ModelFetcher(ErsiliaBase):
     def pack(self, model_id):
         """Pack model"""
         folder = self._model_path(model_id)
+        sys.path.insert(0, folder)
         cwd = os.getcwd()
         os.chdir(folder)
         pack_script = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
         runpy.run_path(path_name=pack_script)
         os.chdir(cwd)
+        sys.path.remove(folder)
 
     def pip_install(self, model_id):
         """Install the model and distribute as a python package"""
@@ -83,4 +85,5 @@ class ModelFetcher(ErsiliaBase):
         self.get_repo(model_id)
         self.get_model(model_id)
         self.pack(model_id)
-        self.pip_install(model_id)
+        if pip:
+            self.pip_install(model_id)

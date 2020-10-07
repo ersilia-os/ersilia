@@ -6,7 +6,8 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 install_requires = [
     "bentoml",
-    "PyGitHub"
+    "PyGitHub",
+
 ]
 
 test_requires = []

@@ -2,6 +2,7 @@
 
 import subprocess
 import pandas as pd
+import webbrowser
 
 
 class ModelList(object):
@@ -9,17 +10,20 @@ class ModelList(object):
     def __init__(self):
         pass
 
-    def spreadsheet(self):
+    @staticmethod
+    def spreadsheet():
         """List models available in our spreadsheets"""
-        pass
+        webbrowser.open("https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193") # TODO: do not just go to the website
 
-    def github(self):
+    @staticmethod
+    def github():
         """List models available in the GitHub model hub repository"""
-        pass
+        webbrowser.open("https://github.com/ersilia-os/") # TODO: do not just go to the website
 
-    def hub(self):
+    @staticmethod
+    def hub():
         """List models as available in our model hub repository"""
-        pass
+        webbrowser.open("http://ersilia-os.github.io/ersilia-hub.github.io") # TODO: do not just go to the website
 
     @staticmethod
     def bentoml():
@@ -45,5 +49,3 @@ class ModelList(object):
         df = df[["MODEL_ID"]+columns]
         return df
 
-    def local(self):
-        """List models as available in the local computer"""

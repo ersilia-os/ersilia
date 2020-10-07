@@ -16,6 +16,8 @@ class ModelEosDeleter(ErsiliaBase):
 
     def delete(self, model_id):
         folder = self._model_path(model_id)
+        if not os.path.exists(folder):
+            return
         shutil.rmtree(folder)
 
 
@@ -26,12 +28,15 @@ class ModelBentoDeleter(ErsiliaBase):
 
     @staticmethod
     def _delete_service(service):
-        proc = subprocess.Popen(['echo yes | bentoml delete %s' % service], shell=True)
+        cmd = 'echo yes | bentoml delete %s' % service
+        proc = subprocess.Popen(cmd, shell=True)
         proc.wait()
 
-    def delete(self, model_id, keep_latest=True):
+    def _delete(self, model_id, keep_latest=True):
         ml = ModelList()
         df = ml.bentoml()
+        if df is None:
+            return
         df = df[df["MODEL_ID"] == model_id]
         if df.shape[0] == 0:
             return
@@ -40,6 +45,24 @@ class ModelBentoDeleter(ErsiliaBase):
             services = services[1:]
         for service in services:
             self._delete_service(service)
+
+    def delete(self, model_id):
+        self._delete(model_id, keep_latest=False)
+
+    def clean(self, model_id):
+        self._delete(model_id, keep_latest=True)
+
+
+class ModelPipDeleter(object):
+
+    def __init__(self):
+        pass
+
+    def pip_uninstall(self, model_id):
+        subprocess.check_call("echo yes | pip uninstall %s" % model_id, shell=True)
+
+    def delete(self, model_id):
+        self.pip_uninstall(model_id)
 
 
 class TmpCleaner(ErsiliaBase):
