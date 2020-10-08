@@ -11,8 +11,7 @@ install_requires = [
     "streamlit",
     "pygit2",
     "osfclient",
-    "joblib",
-    "docker"
+    "joblib"
 ]
 
 test_requires = []

@@ -1,13 +1,14 @@
 """Fetch model and save it to a BentoML bundle"""
 
 import os
-import runpy
 import shutil
 import subprocess
 import sys
+from bentoml import load as bentoml_load
 from .. import ErsiliaBase
 from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
 from ..utils.zip import Zipper
+from ..utils.docker import SimpleDocker
 
 
 class ModelFetcher(ErsiliaBase):
@@ -17,11 +18,14 @@ class ModelFetcher(ErsiliaBase):
         self.token = self.cfg.HUB.TOKEN
         self.org = self.cfg.HUB.ORG
         self.tag = self.cfg.HUB.TAG
+        self.docker_org = self.cfg.EXT.DOCKERHUB_ORG
+        self.docker_tag = "latest"
         self.overwrite = overwrite
         self.pseudo_down = PseudoDownloader(overwrite=overwrite)
         self.osf_down = OsfDownloader(overwrite=overwrite)
         self.github_down = GitHubDownloader(self.token) # TODO: add overwrite?
         self.zipper = Zipper(remove=True) # TODO: Add overwrite?
+        self.docker = SimpleDocker()
         self.local = local
 
     def _model_path(self, model_id):
@@ -71,9 +75,28 @@ class ModelFetcher(ErsiliaBase):
         sys.path.insert(0, folder)
         cwd = os.getcwd()
         os.chdir(folder)
-        docker.build()
-        pack_script = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
-        runpy.run_path(path_name=pack_script)
+        # Build docker image
+        self.docker.build(".", self.docker_org, model_id, self.docker_tag)
+        # Pack with the docker script
+        name = self.docker.run(self.docker_org, model_id, self.docker_tag, name=None)
+        self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
+        # Copy bundle to tmp directory
+        tmp_dir = os.path.join(self._tmp_dir, model_id, "bundle")
+        os.makedirs(tmp_dir)
+        self.docker.cp_from_container(name,
+                                      "/root/bentoml/repository/%s" % model_id,
+                                      tmp_dir)
+        self.docker.kill(name)
+        tmp_dir = os.path.join(tmp_dir, model_id)
+        bundle_tag = sorted(os.listdir(tmp_dir))[-1]
+        bundle_path = os.path.join(tmp_dir, bundle_tag)
+        # Remove image
+        self.docker.remove(self.docker_org, model_id, self.docker_tag)
+        # Load bundle and save it in the standard BentoML
+        mdl = bentoml_load(bundle_path)
+        mdl.save()
+        # Clean
+        shutil.rmtree(os.path.join(self._tmp_dir, model_id))
         os.chdir(cwd)
         sys.path.remove(folder)
 
