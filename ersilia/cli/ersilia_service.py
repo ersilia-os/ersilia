@@ -41,8 +41,11 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     @click.argument("model_id", type=click.STRING)
     def delete(model_id):
+        click.echo(click.style("Deleting BentoML files", fg="yellow"))
         ModelBentoDeleter().delete(model_id)
+        click.echo(click.style("Deleting EOS files", fg="yellow"))
         ModelEosDeleter().delete(model_id)
+        click.echo(click.style("Deleting local Pip package", fg="yellow"))
         ModelPipDeleter().delete(model_id)
 
     # Example usage: ersilia serve {MODEL_ID}

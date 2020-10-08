@@ -59,7 +59,7 @@ class ModelPipDeleter(object):
         pass
 
     def pip_uninstall(self, model_id):
-        subprocess.check_call("echo yes | pip uninstall %s" % model_id, shell=True)
+        subprocess.check_call("echo y | pip uninstall %s" % model_id, shell=True)
 
     def delete(self, model_id):
         self.pip_uninstall(model_id)
