@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages 
+from setuptools import setup, find_packages
 import versioneer
 
 with open("README.md", "r", encoding="utf8") as fh:
@@ -7,7 +7,12 @@ with open("README.md", "r", encoding="utf8") as fh:
 install_requires = [
     "bentoml",
     "PyGitHub",
-
+    "autologging",
+    "streamlit",
+    "pygit2",
+    "osfclient",
+    "joblib",
+    "docker"
 ]
 
 test_requires = []

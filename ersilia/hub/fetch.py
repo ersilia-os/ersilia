@@ -71,6 +71,7 @@ class ModelFetcher(ErsiliaBase):
         sys.path.insert(0, folder)
         cwd = os.getcwd()
         os.chdir(folder)
+        docker.build()
         pack_script = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
         runpy.run_path(path_name=pack_script)
         os.chdir(cwd)

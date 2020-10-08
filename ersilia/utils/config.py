@@ -82,10 +82,10 @@ class Credentials(object):
             except KeyError as err:
                 self.__log.debug("EOS_CONFIG environment variable not set. " + "Using default credentials file.")
                 json_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../credentials.json')
-
             except Exception as err:
                 raise err
-
+        if not os.path.exists(json_file):
+            return None
         eval_obj_dict = _eval_obj(json_file)
         self.__dict__.update(eval_obj_dict)
 
