@@ -9,7 +9,7 @@ from bentoml.cli.bento_service import resolve_bundle_path
 from bentoml.saved_bundle import load_bento_service_api
 from ersilia.hub.fetch import ModelFetcher
 from ersilia.hub.list import ModelList
-from ersilia.hub.delete import ModelEosDeleter, ModelBentoDeleter, ModelPipDeleter
+from ersilia.hub.delete import ModelEosDeleter, ModelTmpDeleter, ModelBentoDeleter, ModelPipDeleter
 from ersilia.app.app import StreamlitApp
 
 
@@ -45,6 +45,8 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         ModelBentoDeleter().delete(model_id)
         click.echo(click.style("Deleting EOS files", fg="yellow"))
         ModelEosDeleter().delete(model_id)
+        click.echo(click.style("Deleting temporary files (if any)", fg="yellow"))
+        ModelTmpDeleter().delete(model_id)
         click.echo(click.style("Deleting local Pip package", fg="yellow"))
         ModelPipDeleter().delete(model_id)
 
