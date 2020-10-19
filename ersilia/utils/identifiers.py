@@ -8,6 +8,8 @@ from Bio.SeqUtils.CheckSum import seguid
 import rdkit.Chem as Chem
 import random
 import string
+import urllib.parse
+import requests
 
 
 class IdentifierGenerator(object):
@@ -58,6 +60,46 @@ class MoleculeIdentifier(IdentifierGenerator):
         super().__init__()
 
     @staticmethod
+    def _is_smiles(text):
+        mol = Chem.MolFromSmiles(text)
+        if mol is None:
+            return False
+        else:
+            return True
+
+    @staticmethod
+    def _is_inchikey(text):
+        if len(text) != 27:
+            return False
+        comp = text.split("-")
+        if len(comp) != 3:
+            return False
+        if len(comp[0]) != 14 or len(comp[1]) != 10 or len(comp[2]) != 1:
+            return False
+        for c in comp:
+            for x in c:
+                if not x.isalpha():
+                    return False
+        return True
+
+    def guess_type(self, text):
+        if self._is_inchikey(text):
+            return "inchikey"
+        if self._is_smiles(text):
+            return "smiles"
+        return "name"
+
+    @staticmethod
+    def chemical_identifier_resolver(identifier):
+        """Returns SMILES string of a given identifier, using NCI tool"""
+        identifier = urllib.parse.quote(identifier)
+        url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(identifier)
+        req = requests.get(url)
+        if req.status_code != 200:
+            return None
+        return req.text
+
+    @staticmethod
     def encode(smiles):
         """Get InChIKey of compound based on SMILES string"""
         mol = Chem.MolFromSmiles(smiles)
@@ -74,6 +116,16 @@ class ProteinIdentifier(IdentifierGenerator):
 
     def __init__(self):
         super().__init__()
+
+    @staticmethod
+    def sequence_from_uniprot(uniprot_ac):
+        """Returns protein sequence from uniprot identifier"""
+        pass # TODO
+
+    @staticmethod
+    def protein_identifier_resolver():
+        """Returns protein sequence of a given identifier, using """
+        pass # TODO
 
     @staticmethod
     def encode(sequence):

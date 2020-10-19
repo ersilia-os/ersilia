@@ -21,3 +21,7 @@ class ErsiliaBase(object):
             home = os.path.expanduser("~")
             return home+path[1:]
         return os.path.abspath(path)
+
+    def _get_latest_bentoml_tag(self, model_id):
+        path = os.path.join(self._abs_path(self.cfg.LOCAL.BENTOML), "repository", model_id)
+        return sorted(os.listdir(path))[-1]
