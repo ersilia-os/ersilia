@@ -5,6 +5,7 @@ import datetime
 from hashids import Hashids
 from datetime import datetime
 from Bio.SeqUtils.CheckSum import seguid
+from bioservices.uniprot import UniProt
 import rdkit.Chem as Chem
 import random
 import string
@@ -116,11 +117,14 @@ class ProteinIdentifier(IdentifierGenerator):
 
     def __init__(self):
         super().__init__()
+        self.uniprot = UniProt(verbose=False)
 
-    @staticmethod
-    def sequence_from_uniprot(uniprot_ac):
+    def sequence_from_uniprot(self, uniprot_ac):
         """Returns protein sequence from uniprot identifier"""
-        pass # TODO
+        try:
+            return self.uniprot.get_fasta_sequence(uniprot_ac)
+        except ValueError:
+            return None
 
     @staticmethod
     def protein_identifier_resolver():
