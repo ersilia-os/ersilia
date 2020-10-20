@@ -11,6 +11,9 @@ from ersilia.hub.fetch import ModelFetcher
 from ersilia.hub.list import ModelList
 from ersilia.hub.delete import ModelEosDeleter, ModelTmpDeleter, ModelBentoDeleter, ModelPipDeleter
 from ersilia.app.app import StreamlitApp
+from ersilia.core.base import ErsiliaBase
+from ersilia.contrib.store import ModelStorager
+from ersilia.contrib.deploy import Deployer
 
 
 def create_ersilia_service_cli(pip_installed_bundle_path=None):
@@ -30,8 +33,10 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     @click.argument("model_id", type=click.STRING)
     def fetch(model_id):
+        click.echo(click.style("Fetching model %s" % model_id, fg="yellow"))
         mf = ModelFetcher()
         mf.fetch(model_id)
+        click.echo(click.style("Model fetched successfully!", fg="green"))
 
     # Example usage: ersilia delete {MODEL_ID}
     @ersilia_cli.command(
@@ -103,6 +108,9 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     def list():
         ml = ModelList()
         df = ml.bentoml()
+        if df is None:
+            click.echo(click.style("No models available...", fg="red"))
+            return
         R = [["MODEL_ID", "BENTO_SERVICE"]]
         for v in df[["MODEL_ID", "BENTO_SERVICE"]].values:
             R += [[v[0], v[1]]]
@@ -121,5 +129,49 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         if not status:
             click.echo(click.style("App could not be run or it is not available for model %s" % model_id, fg="red"))
             click.echo(click.style("Check that an app.py script exists in the model repository", fg="red"))
+
+    def _is_dev_ready(model_id):
+        eb = ErsiliaBase()
+        if not eb._has_credentials():
+            click.echo(click.style("The store action is reserved to developers... Credentials are needed", fg="red"))
+            click.echo(click.style("Please write to us if you want to know more: hello@ersilia.io", fg="blue"))
+            return False
+        if not eb._is_ready(model_id):
+            click.echo(click.style("Model %s does not seem to be ready" % model_id, fg="red"))
+            click.echo(click.style("Try running ersilia fetch %s instead" % model_id, fg="blue"))
+            return False
+        return True
+
+    # Example usage: ersilia store {MODEL_ID}
+    @ersilia_cli.command(
+        short_help="Store a model [only for developers]",
+        help="Store a model in GitHub and the chosen file storage. "
+             "This option is only for developers and requires credentials."
+    )
+    @click.argument("model_id", type=click.STRING)
+    @click.option("--path", required=True, type=click.Path())
+    def store(model_id, path):
+        if not _is_dev_ready(model_id):
+            return
+        ms = ModelStorager()
+        ms.store(path, model_id)
+
+    # Example usage: ersilia deploy {MODEL_ID}
+    @ersilia_cli.command(
+        short_help="Deploy model to the cloud [only for developers]",
+        help="Deploy model in a cloud service. "
+             "This option is only for developers and requires credentials."
+    )
+    @click.argument("model_id", type=click.STRING)
+    @click.option("--cloud", default="heroku", type=click.STRING)
+    def deploy(model_id, cloud):
+        if not _is_dev_ready(model_id):
+            return
+        dp = Deployer(cloud=cloud)
+        if dp.dep is None:
+            click.echo(click.style("Please enter a valid cloud option", fg="red"))
+            click.echo(click.style("Only 'heroku' and 'local' are available for the moment...", fg="yellow"))
+            return
+        dp.deploy(model_id)
 
     return ersilia_cli

@@ -25,3 +25,19 @@ class ErsiliaBase(object):
     def _get_latest_bentoml_tag(self, model_id):
         path = os.path.join(self._abs_path(self.cfg.LOCAL.BENTOML), "repository", model_id)
         return sorted(os.listdir(path))[-1]
+
+    def _is_ready(self, model_id):
+        """Check whether a model exists in the local computer"""
+        try:
+            self._get_latest_bentoml_tag(model_id)
+        except:
+            return False
+        path = os.path.join(self._abs_path(self.cfg.LOCAL.DEST), model_id)
+        if not os.path.exists(path):
+            return False
+        return True
+
+    def _has_credentials(self):
+        if self.cred is None:
+            return False
+        return True
