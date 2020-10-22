@@ -15,7 +15,8 @@ install_requires = [
     "joblib",
     "hashids",
     "bioservices",
-    "biopython"
+    "biopython",
+    "chembl_webresource_client"
 ]
 
 test_requires = []
@@ -46,7 +47,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT',
-    python_requires=">=3.8.5",
+    python_requires=">=3.7.6",
     install_requires=install_requires,
     extras_require=extras_require,
     packages=find_packages(exclude=("utilities", "examples")),

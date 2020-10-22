@@ -1,7 +1,7 @@
 """Model card"""
 
 
-class Card(object):
+class ModelCard(object):
 
     def __init__(self, model_id):
         """"""

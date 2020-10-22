@@ -4,8 +4,6 @@ import uuid
 import datetime
 from hashids import Hashids
 from datetime import datetime
-from Bio.SeqUtils.CheckSum import seguid
-from bioservices.uniprot import UniProt
 import random
 import string
 import urllib.parse
@@ -64,6 +62,8 @@ class MoleculeIdentifier(IdentifierGenerator):
         except ModuleNotFoundError as err:
             # TODO Logging
             self.Chem = None
+        from chembl_webresource_client.unichem import unichem_client as unichem
+        self.unichem = unichem
 
     def _is_smiles(self, text):
         if self.Chem is None:
@@ -98,6 +98,15 @@ class MoleculeIdentifier(IdentifierGenerator):
             return "smiles"
         return "name"
 
+    def unichem_resolver(self, inchikey):
+        try:
+            ret = self.unichem.inchiFromKey(inchikey)
+        except:
+            return None
+        inchi = ret[0]["standardinchi"]
+        mol = self.Chem.inchi.MolFromInchi(inchi)
+        return self.Chem.MolToSmiles(mol)
+
     @staticmethod
     def chemical_identifier_resolver(identifier):
         """Returns SMILES string of a given identifier, using NCI tool"""
@@ -126,6 +135,9 @@ class ProteinIdentifier(IdentifierGenerator):
 
     def __init__(self):
         super().__init__()
+        from Bio.SeqUtils.CheckSum import seguid
+        from bioservices.uniprot import UniProt
+        self.seguid = seguid
         self.uniprot = UniProt(verbose=False)
 
     def sequence_from_uniprot(self, uniprot_ac):
@@ -143,4 +155,4 @@ class ProteinIdentifier(IdentifierGenerator):
     @staticmethod
     def encode(sequence):
         """Protein seguid checksum based on amino-acid sequence"""
-        return str(seguid(sequence))
+        return str(self.seguid(sequence))
