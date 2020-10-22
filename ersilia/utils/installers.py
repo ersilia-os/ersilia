@@ -39,7 +39,7 @@ class Installer(object):
             return
         from .download import GitHubDownloader
         gd = GitHubDownloader(overwrite=True)
-        gd.download_single("ersilia-os", "ersilia", "ersilia/.config.json", os.path.join(package_path, ".config.json"))
+        gd.download_single("ersilia-os", "ersilia", "config.json", os.path.join(package_path, ".config.json"))
 
 
 def check_dependencies():
