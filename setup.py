@@ -52,8 +52,8 @@ setup(
     extras_require=extras_require,
     packages=find_packages(exclude=("utilities", "examples")),
     package_data={
-        'config': 'ersilia/.config.json',
-        'credentials': 'ersilia/.credentials.json',
+        'config': ['ersilia/.config.json'],
+        'credentials': ['ersilia/.credentials.json'],
     },
     entry_points={
         'console_scripts': [
