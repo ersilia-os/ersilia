@@ -67,10 +67,11 @@ class DeployBase(ErsiliaBase):
 
     def _modify_requirements(self, model_id):
         app_type = self._app_type(model_id)
+        R = self._read_bentoml_requirements(model_id)
+        r = R[-1].rstrip("\n") + "\n"
+        R[-1] = r
+        R += ["git+https://github.com/ersilia-os/ersilia\n"]
         if app_type == "streamlit":
-            R = self._read_bentoml_requirements(model_id)
-            r = R[-1].rstrip("\n") + "\n"
-            R[-1] = r
             R += ["streamlit==%s\n" % streamlit.__version__]
             requirements = os.path.join(self._get_tmp_directory(model_id), "requirements.txt")
             with open(requirements, "w") as f:
@@ -83,9 +84,9 @@ class DeployBase(ErsiliaBase):
             return
 
     def _modify_dockerfile(self, model_id, envport=False):
+        R = self._read_bentoml_dockerfile(model_id)
         app_type = self._app_type(model_id)
         if app_type == "streamlit":
-            R = self._read_bentoml_dockerfile(model_id)
             if envport:
                 R[-1] = 'CMD streamlit run /bento/app.py --server.port $PORT\n'
             else:

@@ -34,12 +34,13 @@ class Installer(object):
         subprocess.Popen("conda install -c conda-forge -y -q rdkit", shell=True).wait()
 
     def config(self):
-        package_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
-        if os.path.exists(os.path.join(package_path, ".config.json")):
+        from ..default import EOS
+        if os.path.exists(os.path.join(EOS, "config.json")):
             return
+        os.makedirs(EOS, exist_ok=True)
         from .download import GitHubDownloader
         gd = GitHubDownloader(overwrite=True)
-        gd.download_single("ersilia-os", "ersilia", "config.json", os.path.join(package_path, ".config.json"))
+        gd.download_single("ersilia-os", "ersilia", "config.json", os.path.join(EOS, "config.json"))
 
 
 def check_dependencies():
