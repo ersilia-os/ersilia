@@ -6,7 +6,6 @@ from hashids import Hashids
 from datetime import datetime
 from Bio.SeqUtils.CheckSum import seguid
 from bioservices.uniprot import UniProt
-import rdkit.Chem as Chem
 import random
 import string
 import urllib.parse
@@ -59,14 +58,23 @@ class MoleculeIdentifier(IdentifierGenerator):
 
     def __init__(self):
         super().__init__()
+        try:
+            from rdkit import Chem
+            self.Chem = Chem
+        except ModuleNotFoundError as err:
+            # TODO Logging
+            self.Chem = None
 
-    @staticmethod
-    def _is_smiles(text):
-        mol = Chem.MolFromSmiles(text)
-        if mol is None:
-            return False
+    def _is_smiles(self, text):
+        if self.Chem is None:
+            # TODO Logging
+            pass
         else:
-            return True
+            mol = self.Chem.MolFromSmiles(text)
+            if mol is None:
+                return False
+            else:
+                return True
 
     @staticmethod
     def _is_inchikey(text):
@@ -100,16 +108,17 @@ class MoleculeIdentifier(IdentifierGenerator):
             return None
         return req.text
 
-    @staticmethod
-    def encode(smiles):
+    def encode(self, smiles):
         """Get InChIKey of compound based on SMILES string"""
-        mol = Chem.MolFromSmiles(smiles)
+        if self.Chem is None:
+            return None
+        mol = self.Chem.MolFromSmiles(smiles)
         if mol is None:
             raise Exception("The SMILES string: %s is not valid or could not be converted to an InChIKey" % smiles)
-        inchi = Chem.rdinchi.MolToInchi(mol)[0]
+        inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
         if inchi is None:
             raise Exception("Could not obtain InChI")
-        inchikey = Chem.rdinchi.InchiToInchiKey(inchi)
+        inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
         return inchikey
 
 
