@@ -60,7 +60,7 @@ class Config(object):
                 json_file = os.environ["EOS_CONFIG"]
             except KeyError as err:
                 self.__log.debug("EOS_CONFIG environment variable not set. " + "Using default config file.")
-                json_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../config.json')
+                json_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../.config.json')
 
             except Exception as err:
                 raise err
@@ -81,13 +81,12 @@ class Credentials(object):
                 json_file = os.environ["EOS_CREDENTIALS"]
             except KeyError as err:
                 self.__log.debug("EOS_CONFIG environment variable not set. " + "Using default credentials file.")
-                json_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../credentials.json')
+                json_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../.credentials.json')
             except Exception as err:
                 raise err
-        if not os.path.exists(json_file):
-            return None
-        eval_obj_dict = _eval_obj(json_file)
-        self.__dict__.update(eval_obj_dict)
+        if os.path.exists(json_file):
+            eval_obj_dict = _eval_obj(json_file)
+            self.__dict__.update(eval_obj_dict)
 
     def keys(self):
         return self.__dict__.keys()

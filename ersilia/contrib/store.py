@@ -19,7 +19,7 @@ class ModelStorager(ErsiliaBase):
         self.osf_up = OsfUploader(overwrite=overwrite, username=self.cred.OSF.USER, password=self.cred.OSF.PWD)
 
     def _data_path(self, model_id):
-        return os.path.join(self.cfg.LOCAL.DATA, model_id)
+        return os.path.join(self.cred.LOCAL.DATA, model_id)
 
     def _copy_to_local(self, path, model_id):
         dest_path = self._data_path(model_id)
