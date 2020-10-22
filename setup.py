@@ -54,6 +54,7 @@ setup(
     package_data={
         'config': ['ersilia/.config.json'],
         'credentials': ['ersilia/.credentials.json'],
+        'examples': ['ersilia/io/examples/*.tsv']
     },
     entry_points={
         'console_scripts': [
