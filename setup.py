@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
 install_requires = [
-    "bentoml",
+    "bentoml==0.8.6",
     "PyGitHub",
     "autologging",
     "streamlit",
@@ -51,18 +51,13 @@ setup(
     install_requires=install_requires,
     extras_require=extras_require,
     packages=find_packages(exclude=("utilities")),
-    package_data={
-        'config': ['ersilia/.config.json'],
-        'credentials': ['ersilia/.credentials.json'],
-        'examples': ['ersilia/io/examples/*.tsv']
-    },
     entry_points={
         'console_scripts': [
             'ersilia=ersilia.cli:cli'
         ]
     },
     classifiers=(
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence"

@@ -1,5 +1,6 @@
 import shutil
 import subprocess
+import os
 
 
 class Installer(object):
@@ -32,9 +33,18 @@ class Installer(object):
             return
         subprocess.Popen("conda install -c conda-forge -y -q rdkit", shell=True).wait()
 
+    def config(self):
+        package_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
+        if os.path.exists(os.path.join(package_path, ".config.json")):
+            return
+        from .download import GitHubDownloader
+        gd = GitHubDownloader(overwrite=True)
+        gd.download_single("ersilia-os", "ersilia", "ersilia/.config.json", os.path.join(package_path, ".config.json"))
+
 
 def check_dependencies():
     ins = Installer()
     ins.conda()
     ins.git()
     ins.rdkit()
+    ins.config()

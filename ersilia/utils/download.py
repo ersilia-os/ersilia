@@ -3,11 +3,12 @@
 import os
 import zipfile
 import requests
-import tempfile
 from github import Github
 import pygit2
 import shutil
 import subprocess
+import tempfile
+import uuid
 
 
 class PseudoDownloader(object):
@@ -108,3 +109,22 @@ class GitHubDownloader(object):
                 return
         repo = self.github.get_repo(org + "/" + repo)
         pygit2.clone_repository(repo.git_url, destination)
+
+    def download_single(self, org, repo, repo_path, destination):
+        if os.path.exists(destination):
+            if self.overwrite:
+                if os.path.isfile(destination):
+                    os.remove(destination)
+                if os.path.isdir(destination):
+                    shutil.rmtree(destination)
+            else:
+                return
+        tmpdir = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+        self.clone(org, repo, tmpdir)
+        source = os.path.join(tmpdir, repo_path)
+        if os.path.exists(source):
+            if os.path.isfile(source):
+                shutil.copyfile(source, destination)
+            if os.path.isdir(source):
+                shutil.copytree(source, destination)
+        shutil.rmtree(tmpdir)
