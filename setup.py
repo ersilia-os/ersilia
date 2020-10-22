@@ -50,7 +50,7 @@ setup(
     python_requires=">=3.7.6",
     install_requires=install_requires,
     extras_require=extras_require,
-    packages=find_packages(exclude=("utilities", "examples")),
+    packages=find_packages(exclude=("utilities")),
     package_data={
         'config': ['ersilia/.config.json'],
         'credentials': ['ersilia/.credentials.json'],
