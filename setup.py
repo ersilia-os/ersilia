@@ -55,7 +55,6 @@ setup(
         'config': 'ersilia/.config.json',
         'credentials': 'ersilia/.credentials.json',
     },
-    include_package_data = True,
     entry_points={
         'console_scripts': [
             'ersilia=ersilia.cli:cli'
