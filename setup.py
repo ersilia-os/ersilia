@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 import versioneer
 
+
 with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
@@ -12,7 +13,9 @@ install_requires = [
     "pygit2",
     "osfclient",
     "joblib",
-    "hashids"
+    "hashids",
+    "bioservices",
+    "biopython"
 ]
 
 test_requires = []

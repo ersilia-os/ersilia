@@ -28,6 +28,8 @@ class MoleculeInput(object):
         inp_type = self.mi.guess_type(inp)
         if inp_type == "smiles":
             smi = inp
+        elif inp_type == "inchikey":
+            smi = self.mi.unichem_resolver(inp)
         else:
             smi = self.mi.chemical_identifier_resolver(inp)
         return smi
