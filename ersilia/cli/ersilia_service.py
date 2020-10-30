@@ -1,15 +1,15 @@
 from ersilia import __version__
 import sys
 import click
-import tabulate
 from bentoml.cli.click_utils import BentoMLCommandGroup
 from bentoml.server import start_dev_server
 from bentoml.cli.click_utils import conditional_argument
 from bentoml.cli.bento_service import resolve_bundle_path
 from bentoml.saved_bundle import load_bento_service_api
 from ersilia.hub.fetch import ModelFetcher
-from ersilia.hub.list import ModelList
-from ersilia.hub.delete import ModelEosDeleter, ModelTmpDeleter, ModelBentoDeleter, ModelPipDeleter
+from ersilia.hub.catalog import ModelCatalog
+from ersilia.hub.delete import ModelEosDeleter, ModelTmpDeleter, ModelBentoDeleter, ModelPipDeleter, ModelBundleDeleter
+from ersilia.hub.card import ModelCard
 from ersilia.app.app import StreamlitApp
 from ersilia.core.base import ErsiliaBase
 from ersilia.contrib.store import ModelStorager
@@ -50,6 +50,8 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         ModelBentoDeleter().delete(model_id)
         click.echo(click.style("Deleting EOS files", fg="yellow"))
         ModelEosDeleter().delete(model_id)
+        click.echo(click.style("Deleting bundles", fg="yellow"))
+        ModelBundleDeleter().delete(model_id)
         click.echo(click.style("Deleting temporary files (if any)", fg="yellow"))
         ModelTmpDeleter().delete(model_id)
         click.echo(click.style("Deleting local Pip package", fg="yellow"))
@@ -101,20 +103,22 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         exit_code = api.handle_cli(run_args)
         sys.exit(exit_code)
 
-    # Example usage: ersilia list
+    # Example usage: ersilia catalog
     @ersilia_cli.command(
-        help="List available models bundled in the BentoML style",
+        help="List a catalog of models",
     )
-    def list():
-        ml = ModelList()
-        df = ml.bentoml()
-        if df is None:
-            click.echo(click.style("No models available...", fg="red"))
-            return
-        R = [["MODEL_ID", "BENTO_SERVICE"]]
-        for v in df[["MODEL_ID", "BENTO_SERVICE"]].values:
-            R += [[v[0], v[1]]]
-        click.echo(tabulate.tabulate(R))
+    @click.option(
+        '--local',
+        is_flag=True,
+        default=False,
+        help="Show catalog of models available in the local computer"
+    )
+    def catalog(local=False):
+        mc = ModelCatalog(as_dataframe=False)
+        if not local:
+            click.echo(mc.hub())
+        else:
+            click.echo(mc.local())
 
     # Example usage: ersilia app {MODEL_ID}
     @ersilia_cli.command(
@@ -173,5 +177,15 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
             click.echo(click.style("Only 'heroku' and 'local' are available for the moment...", fg="yellow"))
             return
         dp.deploy(model_id)
+
+    # Example usage: ersilia card {MODEL_ID}
+    @ersilia_cli.command(
+        short_help="Get model info card",
+        help="Get model info card from Ersilia hub."
+    )
+    @click.argument("model_id", type=click.STRING)
+    def card(model_id):
+        mc = ModelCard()
+        click.echo(mc.get(model_id))
 
     return ersilia_cli

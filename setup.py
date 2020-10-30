@@ -16,7 +16,8 @@ install_requires = [
     "hashids",
     "bioservices",
     "biopython",
-    "chembl_webresource_client"
+    "chembl_webresource_client",
+    "markdown"
 ]
 
 test_requires = []

@@ -10,32 +10,31 @@ class DeployBase(ErsiliaBase):
 
     def __init__(self, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        self.docker_org = self.cfg.EXT.DOCKERHUB_ORG
 
-    def _get_bentoml_directory(self, model_id):
-        path = os.path.join(self._abs_path(self.cfg.LOCAL.BENTOML), "repository", model_id)
-        tag = sorted(os.listdir(path))[-1]
-        path = os.path.join(path, tag)
+    def _get_bundle_directory(self, model_id):
+        path = os.path.join(self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id))
         return path
 
     def _get_tmp_directory(self, model_id):
-        path_o = self._get_bentoml_directory(model_id)
+        path_o = self._get_bundle_directory(model_id)
         path_d = os.path.join(self._tmp_dir, model_id, os.path.basename(path_o))
         return path_d
 
-    def _read_bentoml_dockerfile(self, model_id):
-        dockerfile = os.path.join(self._get_bentoml_directory(model_id), "Dockerfile")
+    def _read_bundle_dockerfile(self, model_id):
+        dockerfile = os.path.join(self._get_bundle_directory(model_id), "Dockerfile")
         with open(dockerfile, "r") as f:
             text = f.readlines()
         return text
 
-    def _read_bentoml_requirements(self, model_id):
-        requirements = os.path.join(self._get_bentoml_directory(model_id), "requirements.txt")
+    def _read_bundle_requirements(self, model_id):
+        requirements = os.path.join(self._get_bundle_directory(model_id), "requirements.txt")
         with open(requirements, "r") as f:
             text = f.readlines()
         return text
 
-    def _copy_bentoml_to_tmp(self, model_id):
-        path_o = self._get_bentoml_directory(model_id)
+    def _copy_bundle_to_tmp(self, model_id):
+        path_o = self._get_bundle_directory(model_id)
         path_d = self._get_tmp_directory(model_id)
         os.makedirs(os.path.join(self._tmp_dir, model_id), exist_ok=True)
         if os.path.exists(path_d):
@@ -49,7 +48,7 @@ class DeployBase(ErsiliaBase):
         shutil.copy(app_script, os.path.join(self._get_tmp_directory(model_id), os.path.basename(app_script)))
 
     def _copy_to_tmp(self, model_id):
-        self._copy_bentoml_to_tmp(model_id)
+        self._copy_bundle_to_tmp(model_id)
         self._copy_app_to_tmp(model_id)
 
     def _delete_tmp(self, model_id):
@@ -65,9 +64,20 @@ class DeployBase(ErsiliaBase):
         if ab._is_dash(model_id):
             return "dash"
 
+    def _was_ersilia_docker_env(self, model_id):
+        head = self._read_bundle_dockerfile(model_id)[0].rstrip()
+        manifest = "FROM %s" % self.docker_org
+        if manifest in head:
+            return True
+        else:
+            return False
+
     def _modify_requirements(self, model_id):
+        if self._was_ersilia_docker_env(model_id):
+            # no need for modifying requirements
+            return
         app_type = self._app_type(model_id)
-        R = self._read_bentoml_requirements(model_id)
+        R = self._read_bundle_requirements(model_id)
         r = R[-1].rstrip("\n") + "\n"
         R[-1] = r
         R += ["git+https://github.com/ersilia-os/ersilia\n"]
@@ -77,14 +87,13 @@ class DeployBase(ErsiliaBase):
             with open(requirements, "w") as f:
                 for r in R:
                     f.write(r)
-            return R
         if app_type == "swagger":
             return
         if app_type == "dash":
             return
 
     def _modify_dockerfile(self, model_id, envport=False):
-        R = self._read_bentoml_dockerfile(model_id)
+        R = self._read_bundle_dockerfile(model_id)
         app_type = self._app_type(model_id)
         if app_type == "streamlit":
             if envport:

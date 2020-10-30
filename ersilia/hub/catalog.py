@@ -3,12 +3,26 @@
 import subprocess
 import pandas as pd
 import webbrowser
+import os
+from tabulate import tabulate
+from .card import ModelCard
+from .. import ErsiliaBase
 
 
-class ModelList(object):
+class ModelCatalog(ErsiliaBase):
 
-    def __init__(self):
-        pass
+    def __init__(self, config_json=None, as_dataframe=True):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        self.as_dataframe = as_dataframe
+
+    def _return(self, df):
+        if self.as_dataframe:
+            return df
+        h = list(df.columns)
+        R = []
+        for r in df.values:
+            R += [r]
+        return tabulate(R, headers=h)
 
     @staticmethod
     def spreadsheet():
@@ -20,13 +34,26 @@ class ModelList(object):
         """List models available in the GitHub model hub repository"""
         webbrowser.open("https://github.com/ersilia-os/") # TODO: do not just go to the website
 
-    @staticmethod
-    def hub():
-        """List models as available in our model hub repository"""
-        webbrowser.open("http://ersilia-os.github.io/ersilia-hub.github.io") # TODO: do not just go to the website
+    def hub(self):
+        """List models available in our model hub repository"""
+        mc = ModelCard()
+        R = []
+        for k, v in mc.data.items():
+            R += [[k, v["title"], v["date"]]]
+        df = pd.DataFrame(R, columns=["MODEL_ID", "TITLE", "DATE"])
+        return self._return(df)
 
-    @staticmethod
-    def bentoml():
+    def local(self):
+        """List models available locally"""
+        mc = ModelCard()
+        R = []
+        for model_id in os.listdir(self._bundles_dir):
+            card = mc.get(model_id)
+            R += [[model_id, card.title, card.date]]
+        df = pd.DataFrame(R, columns=["MODEL_ID", "TITLE", "DATE"])
+        return self._return(df)
+
+    def bentoml(self):
         """List models available as BentoServices"""
         result = subprocess.run(['bentoml', 'list'], stdout=subprocess.PIPE)
         result = [r for r in result.stdout.decode("utf-8").split("\n") if r]
@@ -47,5 +74,5 @@ class ModelList(object):
         df = pd.DataFrame(R, columns=columns)
         df["MODEL_ID"] = [x.split(":")[0] for x in list(df["BENTO_SERVICE"])]
         df = df[["MODEL_ID"]+columns]
-        return df
+        return self._return(df)
 

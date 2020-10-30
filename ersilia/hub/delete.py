@@ -2,7 +2,7 @@ from .. import ErsiliaBase
 import os
 import shutil
 import subprocess
-from .list import ModelList
+from .catalog import ModelCatalog
 
 
 class ModelEosDeleter(ErsiliaBase):
@@ -37,6 +37,22 @@ class ModelTmpDeleter(ErsiliaBase):
         shutil.rmtree(folder)
 
 
+class ModelBundleDeleter(ErsiliaBase):
+
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+
+    def _model_path(self, model_id):
+        folder = os.path.join(self._bundles_dir, model_id)
+        return folder
+
+    def delete(self, model_id):
+        folder = self._model_path(model_id)
+        if not os.path.exists(folder):
+            return
+        shutil.rmtree(folder)
+
+
 class ModelBentoDeleter(ErsiliaBase):
 
     def __init__(self, config_json=None):
@@ -49,7 +65,7 @@ class ModelBentoDeleter(ErsiliaBase):
         proc.wait()
 
     def _delete(self, model_id, keep_latest=True):
-        ml = ModelList()
+        ml = ModelCatalog()
         df = ml.bentoml()
         if df is None:
             return

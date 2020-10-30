@@ -20,7 +20,7 @@ class ModelFetcher(ErsiliaBase):
         self.org = self.cfg.HUB.ORG
         self.tag = self.cfg.HUB.TAG
         self.docker_org = self.cfg.EXT.DOCKERHUB_ORG
-        self.docker_tag = "latest"
+        self.docker_tag = "repo"
         self.overwrite = overwrite
         self.pseudo_down = PseudoDownloader(overwrite=overwrite)
         self.osf_down = OsfDownloader(overwrite=overwrite)
@@ -42,6 +42,9 @@ class ModelFetcher(ErsiliaBase):
         result = subprocess.run(cmd, stdout=subprocess.PIPE)
         result = result.stdout.decode("utf-8").rstrip()
         return result
+
+    def _get_bundle_location(self, model_id):
+        return os.path.join(self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id))
 
     def get_repo(self, model_id):
         """Download the model from GitHub"""
@@ -82,37 +85,31 @@ class ModelFetcher(ErsiliaBase):
             # Pack with the docker script
             name = self.docker.run(self.docker_org, model_id, self.docker_tag, name=None)
             self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
-            # Copy bundle to tmp directory
-            tmp_dir = os.path.join(self._tmp_dir, model_id, "bundle")
-            os.makedirs(tmp_dir)
+            # Copy bundle from docker image to host
             self.docker.cp_from_container(name,
                                           "/root/bentoml/repository/%s" % model_id,
-                                          tmp_dir)
-            self.docker.kill(name)
-            tmp_dir = os.path.join(tmp_dir, model_id)
-            bundle_tag = sorted(os.listdir(tmp_dir))[-1]
-            bundle_path = os.path.join(tmp_dir, bundle_tag)
-            # Remove image
-            self.docker.remove(self.docker_org, model_id, self.docker_tag)
-            # Load bundle and save it in the standard BentoML
-            mdl = bentoml_load(bundle_path)
-            mdl.save()
-            # Clean
-            shutil.rmtree(os.path.join(self._tmp_dir, model_id))
+                                          self._bundles_dir)
         else:
             script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
             runpy.run_path(script_path)
         os.chdir(cwd)
         sys.path.remove(folder)
 
+    def as_bentoml(self, model_id):
+        """Save in the system BentoML folder"""
+        mdl = bentoml_load(self._get_bundle_location(model_id))
+        mdl.save()
+
     def pip_install(self, model_id):
         """Install the model and distribute as a python package"""
-        bento = self._get_bentoml_location(model_id)
+        bento = self._get_bundle_location(model_id)
         subprocess.check_call([sys.executable, "-m", "pip", "install", bento])
 
-    def fetch(self, model_id, pip=True, with_docker=False):
+    def fetch(self, model_id, pip=True, bentoml=False, with_docker=True):
         self.get_repo(model_id)
         self.get_model(model_id)
         self.pack(model_id, with_docker=with_docker)
+        if bentoml:
+            self.as_bentoml(model_id)
         if pip:
             self.pip_install(model_id)
