@@ -27,7 +27,7 @@ class ErsiliaBase(object):
         return os.path.abspath(path)
 
     def _get_latest_bentoml_tag(self, model_id):
-        path = os.path.join(self._abs_path(self.cfg.LOCAL.BENTOML), "repository", model_id)
+        path = os.path.join(self._abs_path("~/bentoml"), "repository", model_id) # TODO Use BentoML environment $BENTOML_HOME
         return sorted(os.listdir(path))[-1]
 
     def _get_latest_bundle_tag(self, model_id):

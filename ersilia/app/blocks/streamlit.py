@@ -16,7 +16,7 @@ class StreamlitBlocks(AppBase):
         st.title(self.card.title)
         st.markdown("`MODEL ID: %s`" % self.model_id)
         st.markdown(self.card.description + " " +
-                    "To know more, please visit [Ersilia Model Hub](%s/%s)" % (self.cfg.HUB.WEB, self.model_id))
+                    "To know more, please visit [Ersilia Model Hub](%s/%s)." % (self.cfg.HUB.WEB, self.model_id))
 
     @staticmethod
     def molecule_input():

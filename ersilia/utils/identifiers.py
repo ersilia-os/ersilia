@@ -3,6 +3,7 @@
 import uuid
 import datetime
 from hashids import Hashids
+from Crypto.Hash import MD5
 from datetime import datetime
 import random
 import string
@@ -47,9 +48,38 @@ class ModelIdentifier(IdentifierGenerator):
 
     def encode(self):
         result_str = "eos"
-        result_str += random.choice(self.numbers)
-        result_str += "".join(random.choice(self.letters) for _ in range(3))
+        result_str += random.choice(self.numbers[1:])
+        result_str += "".join(random.choice(self.letters+self.numbers) for _ in range(3))
         return result_str
+
+    def generate(self, n):
+        ids = set()
+        while True:
+            if len(ids) < n:
+                ids.update([self.encode()])
+            else:
+                break
+        ids = list(ids)
+        random.shuffle(ids)
+        return ids
+
+
+class FileIdentifier(IdentifierGenerator):
+
+    def __init__(self, chunk_size=10000):
+        super().__init__()
+        self.chunk_size = chunk_size
+
+    def encode(self, filename):
+        h = MD5.new()
+        with open(filename, "rb") as f:
+            while True:
+                chunk = f.read(self.chunk_size)
+                if len(chunk):
+                    h.update(chunk)
+                else:
+                    break
+        return h.hexdigest()
 
 
 class MoleculeIdentifier(IdentifierGenerator):

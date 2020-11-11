@@ -17,7 +17,8 @@ install_requires = [
     "bioservices",
     "biopython",
     "chembl_webresource_client",
-    "markdown"
+    "markdown",
+    "pycrypto"
 ]
 
 test_requires = []
