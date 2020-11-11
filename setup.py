@@ -18,7 +18,9 @@ install_requires = [
     "biopython",
     "chembl_webresource_client",
     "markdown",
-    "pycrypto"
+    "pycrypto",
+    "python-dateutil<2.8.1,>=2.1",
+    "urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1"
 ]
 
 test_requires = []

@@ -20,7 +20,7 @@ class RepoUtils(ErsiliaBase):
             return None
         with open(self.config_in_img, "r") as f:
             cfg = json.load(f)
-        return cfg["model_id"]
+        return cfg["model_id"].replace("'", "").replace('"', '')
 
     def get_model_id(self, path):
         model_id = self._get_model_id_from_path(path)
