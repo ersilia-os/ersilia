@@ -22,3 +22,7 @@ ersilia-conda activate eos0aaa
 # 4. Save to ~/eos/conda_packages.db So that I can remove when I want...
 # This will activate the conda environment
 """
+
+if __name__ == "__main__":
+    import sys
+    print(sys.argv[1])
