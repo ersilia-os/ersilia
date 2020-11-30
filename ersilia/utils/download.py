@@ -6,9 +6,9 @@ import requests
 from github import Github
 import pygit2
 import shutil
-import subprocess
 import tempfile
 import uuid
+from .terminal import run_command
 
 
 class PseudoDownloader(object):
@@ -47,7 +47,7 @@ class OsfDownloader(object):
                 return
         cwd = os.getcwd()
         os.chdir(tmp_folder)
-        subprocess.Popen("osf -p %s fetch %s" % (project_id, filename), shell=True).wait()
+        run_command("osf -p %s fetch %s" % (project_id, filename), quiet=True)
         shutil.move(src, outfile)
         os.chdir(cwd)
 

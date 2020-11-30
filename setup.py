@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
 install_requires = [
-    "bentoml==0.8.6",
+    "bentoml==0.9.2",
     "PyGitHub",
     "autologging",
     "streamlit",

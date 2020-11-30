@@ -1,4 +1,4 @@
-FROM bentoml/model-server
+FROM bentoml/model-server:0.9.2
 MAINTAINER ersilia
 
 ENV LC_ALL=C.UTF-8

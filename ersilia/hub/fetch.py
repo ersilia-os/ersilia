@@ -3,13 +3,18 @@
 import os
 import shutil
 import runpy
-import subprocess
 import sys
+import subprocess
+import textwrap
+import tempfile
 from bentoml import load as bentoml_load
 from .. import ErsiliaBase
 from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
 from ..utils.zip import Zipper
 from ..utils.docker import SimpleDocker
+from ..utils.conda import SimpleConda
+from ..utils.aux.conda_env_resolve import checksum_from_conda_yaml_file
+from ..utils.terminal import run_command
 
 
 class ModelFetcher(ErsiliaBase):
@@ -27,6 +32,7 @@ class ModelFetcher(ErsiliaBase):
         self.github_down = GitHubDownloader(self.token) # TODO: add overwrite?
         self.zipper = Zipper(remove=True) # TODO: Add overwrite?
         self.docker = SimpleDocker()
+        self.conda = SimpleConda()
         self.local = local
 
     def _model_path(self, model_id):
@@ -35,6 +41,20 @@ class ModelFetcher(ErsiliaBase):
 
     def _data_path(self, model_id):
         return os.path.join(self.cfg.LOCAL.DATA, model_id)
+
+    def _get_dockerfile(self, model_id):
+        fn = os.path.join(self._model_path(model_id), "Dockerfile")
+        if os.path.exists(fn):
+            return fn
+        else:
+            return None
+
+    def _get_conda_env_yaml_file(self, model_id):
+        fn = os.path.join(self._model_path(model_id), "environment.yml")
+        if os.path.exists(fn):
+            return fn
+        else:
+            return None
 
     @staticmethod
     def _get_bentoml_location(model_id):
@@ -73,25 +93,76 @@ class ModelFetcher(ErsiliaBase):
             shutil.move(os.path.join(src, "model"), os.path.join(self._dest_dir, model_id))
             shutil.rmtree(src)
 
-    def pack(self, model_id, with_docker):
+    def _run_pack_script(self, folder):
+        script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
+        runpy.run_path(script_path)
+
+    def _run_pack_script_conda(self, folder):
+        yml = self._get_conda_env_yaml_file(folder)
+        checksum = checksum_from_conda_yaml_file(yml, overwrite=True)
+        default_env = self.conda.default_env()
+        is_base = self.conda.is_base()
+        if not is_base:
+            bash_script = """
+            source ${0}/etc/profile.d/conda.sh
+            conda deactivate
+            """.format(self.conda.conda_prefix(False))
+        else:
+            bash_script = ""
+        bash_script += """
+        source ${0}/etc/profile.d/conda.sh
+        cd {1}
+        """.format(self.conda.conda_prefix(True), folder)
+        if not self.conda.exists(checksum):
+            bash_script += """
+            conda env create -f environment.yml
+            """
+        bash_script += """
+        conda activate {0}
+        python {1}
+        conda deactivate""".format(checksum, self.cfg.HUB.PACK_SCRIPT)
+        if not self.conda.is_base():
+            bash_script += """
+            conda activate {0}
+            """.format(default_env)
+        bash_script = textwrap.dedent(bash_script)
+        tmp_folder = tempfile.mkdtemp()
+        fn = os.path.join(tmp_folder, "create_env.sh")
+        with open(fn, "w") as f:
+            f.write(bash_script)
+        with open(fn, "r") as f:
+            print(f.read())
+        run_command("bash {0}".format(fn), quiet=True)
+
+    def _run_pack_script_docker(self, model_id):
+        # build docker image
+        self.docker.build(".", self.docker_org, model_id, self.docker_tag)
+        # pack with the docker script
+        name = self.docker.run(self.docker_org, model_id, self.docker_tag, name=None)
+        self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
+        # copy bundle from docker image to host
+        self.docker.cp_from_container(name,
+                                      "/root/bentoml/repository/%s" % model_id,
+                                      self._bundles_dir)
+
+    def pack(self, model_id):
         """Pack model"""
         folder = self._model_path(model_id)
         sys.path.insert(0, folder)
         cwd = os.getcwd()
         os.chdir(folder)
-        if with_docker:
-            # Build docker image
-            self.docker.build(".", self.docker_org, model_id, self.docker_tag)
-            # Pack with the docker script
-            name = self.docker.run(self.docker_org, model_id, self.docker_tag, name=None)
-            self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
-            # Copy bundle from docker image to host
-            self.docker.cp_from_container(name,
-                                          "/root/bentoml/repository/%s" % model_id,
-                                          self._bundles_dir)
+        yf = self._get_conda_env_yaml_file(model_id)
+        df = self._get_dockerfile(model_id)
+        if yf is not None:
+            # pack using conda
+            self._run_pack_script_conda(folder)
+            sys.exit()
+        elif df is not None:
+            # pack using docker
+            self._run_pack_script_docker(model_id)
         else:
-            script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
-            runpy.run_path(script_path)
+            # try to run without conda environment or docker (not recommended)
+            self._run_pack_script(folder)
         os.chdir(cwd)
         sys.path.remove(folder)
 
@@ -103,12 +174,12 @@ class ModelFetcher(ErsiliaBase):
     def pip_install(self, model_id):
         """Install the model and distribute as a python package"""
         bento = self._get_bundle_location(model_id)
-        subprocess.check_call([sys.executable, "-m", "pip", "install", bento])
+        run_command([sys.executable, "-m", "pip", "install", bento], quiet=True)
 
-    def fetch(self, model_id, pip=True, bentoml=False, with_docker=True):
+    def fetch(self, model_id, pip=True, bentoml=False):
         self.get_repo(model_id)
         self.get_model(model_id)
-        self.pack(model_id, with_docker=with_docker)
+        self.pack(model_id)
         if bentoml:
             self.as_bentoml(model_id)
         if pip:

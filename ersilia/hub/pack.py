@@ -45,3 +45,17 @@ class RepoDockerizer(ErsiliaBase):
 def dockerize(model_id):
     rd = RepoDockerizer()
     return rd.dockerize(model_id)
+
+
+class RepoCondaCreator(ErsiliaBase):
+
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+
+
+    def create(self, model_id):
+
+
+def condacreate(model_id):
+    rc = RepoCondaCreator()
+    return rcc.create(model_id)

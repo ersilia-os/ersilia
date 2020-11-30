@@ -1,5 +1,5 @@
 import os
-import subprocess
+from ..utils.terminal import run_command
 from .. import ErsiliaBase
 
 
@@ -59,7 +59,7 @@ class StreamlitApp(AppBase):
             return 0
         filename = os.path.join(self._dest_dir, model_id, self.APP_SCRIPT)
         if os.path.exists(filename):
-            subprocess.Popen("streamlit run %s" % filename, shell=True).wait()
+            run_command("streamlit run %s" % filename, quiet=False)
             return 1
         else:
             return 0

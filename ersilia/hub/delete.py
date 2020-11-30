@@ -1,7 +1,7 @@
 from .. import ErsiliaBase
 import os
 import shutil
-import subprocess
+from ..utils.terminal import run_command
 from .catalog import ModelCatalog
 
 
@@ -61,7 +61,7 @@ class ModelBentoDeleter(ErsiliaBase):
     @staticmethod
     def _delete_service(service):
         cmd = 'echo yes | bentoml delete %s' % service
-        proc = subprocess.Popen(cmd, shell=True)
+        proc = run_command(cmd, quiet=True)
         proc.wait()
 
     def _delete(self, model_id, keep_latest=True):
@@ -91,7 +91,7 @@ class ModelPipDeleter(object):
         pass
 
     def pip_uninstall(self, model_id):
-        subprocess.check_call("echo y | pip uninstall %s" % model_id, shell=True)
+        run_command("echo y | pip uninstall %s" % model_id, quiet=True)
 
     def delete(self, model_id):
         self.pip_uninstall(model_id)

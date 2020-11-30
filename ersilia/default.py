@@ -4,12 +4,13 @@ import os
 
 # EOS environmental variable
 EOS = os.path.join(str(Path.home()), "eos")
+ROOT = os.path.dirname(os.path.realpath(__file__))
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"
 resolve_script = os.path.join(EOS, _resolve_script)
 if not os.path.exists(resolve_script):
-    shutil.copyfile(os.path.join("_aux", _resolve_script), resolve_script)
+    shutil.copyfile(os.path.join(ROOT, "aux", _resolve_script), resolve_script)
 
 snippet = """
 # >>> ersilia >>>
@@ -19,6 +20,7 @@ eosconda() {
 }
 # <<< ersilia <<<
 """ % resolve_script
+
 
 def bashrc_eosconda_snippet(overwrite=True):
 
@@ -43,6 +45,7 @@ def bashrc_eosconda_snippet(overwrite=True):
         f.write(text)
     with open(fn, "a+") as f:
         f.write(snippet.rstrip().lstrip())
+
 
 if __name__ == "__main__":
     bashrc_eosconda_snippet()
