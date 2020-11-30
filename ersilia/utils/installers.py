@@ -1,11 +1,11 @@
 import shutil
-import subprocess
 import os
 import sys
 import tempfile
 from .conda import SimpleConda
 from ..default import EOS
 from .. import ErsiliaBase
+from .terminal import run_command
 
 
 class Installer(ErsiliaBase):
@@ -65,7 +65,7 @@ class Installer(ErsiliaBase):
         if self.cred is None:
             return None
         path = os.path.abspath(self.cred.LOCAL.DEVEL_PATH)
-        if os.path.exists(path):
+        if not os.path.exists(path):
             return None
         return path
 
@@ -74,7 +74,7 @@ class Installer(ErsiliaBase):
             return
         if self._is_tool("conda"):
             return
-        subprocess.Popen("pip install -y conda", shell=True).wait()
+        run_command("pip install -y conda", quiet=True)
 
     def git(self):
         if self._is_done("git"):
@@ -82,7 +82,7 @@ class Installer(ErsiliaBase):
         if self._is_tool("git"):
             return
         self.conda()
-        subprocess.Popen("conda install -y -q git", shell=True).wait()
+        run_command("conda install -y -q git", quiet=True)
 
     def rdkit(self):
         if self._is_done("rdkit"):
@@ -94,7 +94,7 @@ class Installer(ErsiliaBase):
             exists = False
         if exists:
             return
-        subprocess.Popen("conda install -c conda-forge -y -q rdkit", shell=True).wait()
+        run_command("conda install -c conda-forge -y -q rdkit", quiet=True)
 
     def config(self):
         CONFIG_FILE_NAME = "config.json"
@@ -119,10 +119,8 @@ class Installer(ErsiliaBase):
         eos_base_env = self.cfg.ENV.CONDA.EOS_BASE_ENV
         sc = SimpleConda()
         if sc.exists(eos_base_env):
-            print(eos_base_env, "exists")
             return
         tmp_folder = tempfile.mkdtemp()
-        tmp_folder = "/home/mduranfrigola/Desktop/"
         tmp_repo = os.path.join(tmp_folder, "ersilia")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         dev_path = self._get_devel_path()
@@ -132,7 +130,18 @@ class Installer(ErsiliaBase):
             from .download import GitHubDownloader
             gd = GitHubDownloader(overwrite=True)
             gd.clone("ersilia-os", "ersilia", tmp_repo)
-        script_file = """
+        is_base = sc.is_base()
+        if not is_base:
+            bash_script = """
+            source ${0}/etc/profile.d/conda.sh
+            conda deactivate
+            """.format(sc.conda_prefix(False))
+        else:
+            bash_script = ""
+        bash_script += """
+        source ${0}/etc/profile.d/conda.sh
+        """.format(sc.conda_prefix(True))
+        bash_script += """
         cd {0}
         conda create -n {1} python={2} -y
         conda activate {1}
@@ -145,8 +154,8 @@ class Installer(ErsiliaBase):
             self._python_version()
         )
         with open(tmp_script, "w") as f:
-            f.write(script_file)
-        subprocess.Popen("bash {0}".format(tmp_script), shell=True).wait()
+            f.write(bash_script)
+        run_command("bash {0}".format(tmp_script), quiet=True)
 
     def model_server_image(self):
         if self._is_done("model_server_image"):

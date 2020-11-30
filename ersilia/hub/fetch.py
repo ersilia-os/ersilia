@@ -19,8 +19,12 @@ from ..utils.terminal import run_command
 
 class ModelFetcher(ErsiliaBase):
 
-    def __init__(self, config_json=None, overwrite=True, local=False):
-        ErsiliaBase.__init__(self, config_json=config_json)
+    def __init__(self,
+                 config_json=None, credentials_json=None,
+                 overwrite=True, local=False):
+        ErsiliaBase.__init__(self,
+                             config_json=config_json,
+                             credentials_json=credentials_json)
         self.token = self.cfg.HUB.TOKEN
         self.org = self.cfg.HUB.ORG
         self.tag = self.cfg.HUB.TAG
@@ -38,6 +42,15 @@ class ModelFetcher(ErsiliaBase):
     def _model_path(self, model_id):
         folder = os.path.join(self._dest_dir, model_id)
         return folder
+
+    def _dev_model_path(self, model_id):
+        dev_path = self.cred.LOCAL.DEVEL_MODELS_PATH
+        if dev_path is None:
+            return None
+        path = os.path.join(dev_path, model_id)
+        if not os.path.exists(path):
+            return None
+        return path
 
     def _data_path(self, model_id):
         return os.path.join(self.cfg.LOCAL.DATA, model_id)
@@ -67,13 +80,19 @@ class ModelFetcher(ErsiliaBase):
         return os.path.join(self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id))
 
     def get_repo(self, model_id):
-        """Download the model from GitHub"""
+        """Fetch model from local development folder or download from GitHub"""
         folder = self._model_path(model_id)
-        self.github_down.clone(org=self.org, repo=model_id, destination=folder)
+        dev_model_path = self._dev_model_path(model_id)
+        if dev_model_path is not None:
+            shutil.copytree(dev_model_path, folder)
+        else:
+            self.github_down.clone(org=self.org, repo=model_id, destination=folder)
 
     def get_model(self, model_id):
         """Create a ./model folder in the model repository"""
         folder = os.path.join(self._model_path(model_id), "model")
+        if os.path.exists(folder):
+            return
         if self.local:
             path = os.path.join(self._data_path(model_id), "model")
             self.pseudo_down.fetch(path, folder)
