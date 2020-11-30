@@ -20,7 +20,8 @@ install_requires = [
     "markdown",
     "pycrypto",
     "python-dateutil<2.8.1,>=2.1",
-    "urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1"
+    "urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1",
+    "requests<=2.24"
 ]
 
 test_requires = []
@@ -51,7 +52,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT',
-    python_requires=">=3.7.6",
+    python_requires=">=3.8",
     install_requires=install_requires,
     extras_require=extras_require,
     packages=find_packages(exclude=("utilities")),
@@ -61,7 +62,7 @@ setup(
         ]
     },
     classifiers=(
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence"
