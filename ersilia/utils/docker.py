@@ -1,4 +1,5 @@
 import os
+from dockerfile_parse import DockerfileParser
 from .identifiers import LongIdentifier
 from .terminal import run_command
 
@@ -56,3 +57,21 @@ class SimpleDocker(object):
         name = self.run(org, img, tag, name=name)
         self.exec_container(name, cmd)
         self.kill(name)
+
+
+class SimpleDockerfileParser(DockerfileParser):
+
+    def __init__(self, path):
+        if os.path.isdir(path):
+            path = os.path.join(path, "Dockerfile")
+        DockerfileParser.__init__(self, path=path)
+
+    def get_runs(self):
+        structure = self.structure
+        runs = []
+        for d in structure:
+            if d["instruction"] == "RUN":
+                val = d["value"]
+                for v in val.split("&&"):
+                    runs += [v.strip()]
+        return runs

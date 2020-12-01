@@ -1,12 +1,11 @@
-from ._version import get_versions
+from ._version import __version__
+del _version
+
 from .utils.config import Config
 from .core.base import ErsiliaBase
 from .core.model import ErsiliaModel
 from .utils.installers import check_dependencies
 
-
-__version__ = get_versions()['version']
-del get_versions
 
 check_dependencies()
 

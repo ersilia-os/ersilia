@@ -12,10 +12,11 @@ from .. import ErsiliaBase
 from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
 from ..utils.zip import Zipper
 from ..utils.docker import SimpleDocker
-from ..utils.conda import SimpleConda
+from ..utils.conda import SimpleConda, CondaBashSnippets
 from ..utils.aux.conda_env_resolve import checksum_from_conda_yaml_file
 from ..utils.terminal import run_command
 
+CONDA_INSTALLS = "conda_installs.sh"
 
 class ModelFetcher(ErsiliaBase):
 
@@ -69,6 +70,19 @@ class ModelFetcher(ErsiliaBase):
         else:
             return None
 
+    def _get_conda_installs_from_dockerfile(self, model_id):
+        fn = self._get_dockerfile(model_id)
+        if fn is None:
+            return None
+        runs = self.conda.install_from_dockerfile(fn)
+        if not runs:
+            return None
+        fn = os.path.join(self._model_path(model_id), CONDA_INSTALLS)
+        with open(fn, "w") as f:
+            for r in runs:
+                f.write("{0}\n".format(r))
+        return fn
+
     @staticmethod
     def _get_bentoml_location(model_id):
         cmd = ["bentoml", "get", "%s:latest" % model_id, "--print-location", "--quiet"]
@@ -116,7 +130,12 @@ class ModelFetcher(ErsiliaBase):
         script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
         runpy.run_path(script_path)
 
-    def _run_pack_script_conda(self, folder):
+    def _run_pack_script_conda(self, model_id):
+        installs_file = os.path.join(self._model_path(model_id), CONDA_INSTALLS)
+        self.conda.env_yaml_file_from_dockerfile(path)
+        with open(installs_file, "r") as f:
+            # TODO
+            pass
         yml = self._get_conda_env_yaml_file(folder)
         checksum = checksum_from_conda_yaml_file(yml, overwrite=True)
         default_env = self.conda.default_env()
@@ -170,11 +189,11 @@ class ModelFetcher(ErsiliaBase):
         sys.path.insert(0, folder)
         cwd = os.getcwd()
         os.chdir(folder)
-        yf = self._get_conda_env_yaml_file(model_id)
+        cf = self._get_conda_installs_from_dockerfile(model_id)
         df = self._get_dockerfile(model_id)
-        if yf is not None:
+        if cr is not None:
             # pack using conda
-            self._run_pack_script_conda(folder)
+            self._run_pack_script_conda(model_id)
             sys.exit()
         elif df is not None:
             # pack using docker

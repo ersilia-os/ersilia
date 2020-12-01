@@ -1,6 +1,16 @@
 from setuptools import setup, find_packages
-import versioneer
 
+# Loads _version.py module without importing the whole package.
+def get_version_and_cmdclass(package_name):
+    import os
+    from importlib.util import module_from_spec, spec_from_file_location
+    spec = spec_from_file_location('version',
+                                   os.path.join(package_name, '_version.py'))
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.__version__, module.cmdclass
+
+version, cmdclass = get_version_and_cmdclass('my_package')
 
 with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
@@ -21,7 +31,8 @@ install_requires = [
     "pycrypto",
     "python-dateutil<2.8.1,>=2.1",
     "urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1",
-    "requests<=2.24"
+    "requests<=2.24",
+    "dockerfile-parse"
 ]
 
 test_requires = []
@@ -43,8 +54,8 @@ extras_require = {
 
 setup(
     name='ersilia',
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    version=version,
+    cmdclass=cmdclass,
     author='Ersilia Open Source Initiative',
     author_email='hello@ersilia.io',
     url='https://github.com/ersilia-os/ersilia',

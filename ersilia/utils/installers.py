@@ -157,10 +157,53 @@ class Installer(ErsiliaBase):
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script), quiet=True)
 
-    def model_server_image(self):
-        if self._is_done("model_server_image"):
+    def base_docker(self):
+        if self._is_done("base_docker"):
             return
-        pass
+        import tempfile
+        # get a copy of the repository in a temporary directory
+        tmp_dir = tempfile.mkdtemp()
+        tmp_dir = "/home/mduranfrigola/Desktop"
+        dst = os.path.join(tmp_dir, "ersilia")
+        dev_path = self._get_devel_path()
+        dev_path = None
+        if dev_path:
+            shutil.copytree(dev_path, dst)
+        else:
+            from .download import GitHubDownloader
+            gd = GitHubDownloader(overwrite=True)
+            gd.clone("ersilia-os", "ersilia", dst)
+        # write the dockerfile
+        from bentoml import __version__ as __bentoml_version__
+        dockerfile = """
+        FROM model-server:{0}
+        MAINTAINER ersilia
+
+        ENV LC_ALL=C.UTF-8
+        ENV LANG=C.UTF-8
+
+        WORKDIR /usr/src/
+
+        COPY . .
+
+        RUN pip install joblib
+        RUN conda install -c conda-forge rdkit
+        RUN conda install -c conda-forge biopython
+        RUN pip install .
+        """.format(
+            __bentoml_version__,
+        )
+        path = os.path.join(dst, "Dockerfile")
+        with open(path, "w") as f:
+            lines = dockerfile.split("\n")
+            lines = lines[1:-1]
+            for l in lines:
+                f.write(l[8:]+"\n")
+        org = "ersiliaos"
+        img = "ersilia-server"
+        #tag = __version__
+        # build image
+        #self.docker.build()
 
 
 def check_dependencies():
@@ -170,4 +213,4 @@ def check_dependencies():
     ins.rdkit()
     ins.config()
     ins.base_conda()
-    ins.model_server_image()
+    ins.base_docker()
