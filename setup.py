@@ -10,7 +10,7 @@ def get_version_and_cmdclass(package_name):
     spec.loader.exec_module(module)
     return module.__version__, module.cmdclass
 
-version, cmdclass = get_version_and_cmdclass('my_package')
+version, cmdclass = get_version_and_cmdclass('ersilia')
 
 with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
