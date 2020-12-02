@@ -1,7 +1,8 @@
 import os
 from dockerfile_parse import DockerfileParser
+import tempfile
 from .identifiers import LongIdentifier
-from .terminal import run_command
+from .terminal import run_command, run_command_check_output
 
 
 class SimpleDocker(object):
@@ -12,6 +13,30 @@ class SimpleDocker(object):
     @staticmethod
     def _image_name(org, img, tag):
         return "%s/%s:%s" % (org, img, tag)
+
+    def exists(self, org, img, tag):
+        bash_script = """
+        #!/bin/bash
+        image_and_tag="$1"
+        image_and_tag_array=(${image_and_tag//:/ })
+        if [[ "$(docker images ${image_and_tag_array[0]} | grep ${image_and_tag_array[1]} 2> /dev/null)" != "" ]]; then
+          echo "True"
+        else
+          echo "False"
+        fi
+        """
+        tmp_folder = tempfile.mkdtemp()
+        tmp_script = os.path.join(tmp_folder, "exists.sh")
+        with open(tmp_script, "w") as f:
+            f.write(bash_script)
+        cmd = ["bash", tmp_script, self._image_name(org, img, tag)]
+        res = run_command_check_output(cmd)
+        res = res.strip()
+        if res == b"False":
+            return False
+        if res == b"True":
+            return True
+        return None
 
     def build(self, path, org, img, tag):
         path = os.path.abspath(path)

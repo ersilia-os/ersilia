@@ -6,15 +6,18 @@ from .conda import SimpleConda
 from ..default import EOS
 from .. import ErsiliaBase
 from .terminal import run_command
+from .versioning import Versioner
 
 
 class Installer(ErsiliaBase):
 
-    def __init__(self, config_json=None, credentials_json=None):
+    def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        self.check_install_log = check_install_log
         self.log_file = os.path.join(EOS, ".install.log")
         self.log = None
         self.read_log()
+        self.versions = Versioner()
 
     def write_log(self):
         if self.log is None:
@@ -43,6 +46,8 @@ class Installer(ErsiliaBase):
             os.remove(self.log_file)
 
     def _is_done(self, name):
+        if not self.check_install_log:
+            return False
         if self.log is None:
             pass
         else:
@@ -52,10 +57,6 @@ class Installer(ErsiliaBase):
                 pass
         self.update_log(name)
         return False
-
-    def _python_version(self):
-        vi = sys.version_info
-        return "{0}.{1}".format(vi.major, vi.minor)
 
     @staticmethod
     def _is_tool(name):
@@ -151,22 +152,26 @@ class Installer(ErsiliaBase):
         """.format(
             tmp_repo,
             eos_base_env,
-            self._python_version()
+            self.versions.python_version()
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script), quiet=True)
 
-    def base_docker(self):
-        if self._is_done("base_docker"):
+    def server_docker(self):
+        if self._is_done("server_docker"):
             return
         import tempfile
+        from .docker import SimpleDocker
+        docker = SimpleDocker()
+        org, img, tag = self.versions.server_docker_name(as_tuple=True)
+        if docker.exists(org, img, tag):
+            return
         # get a copy of the repository in a temporary directory
         tmp_dir = tempfile.mkdtemp()
         tmp_dir = "/home/mduranfrigola/Desktop"
         dst = os.path.join(tmp_dir, "ersilia")
         dev_path = self._get_devel_path()
-        dev_path = None
         if dev_path:
             shutil.copytree(dev_path, dst)
         else:
@@ -174,15 +179,14 @@ class Installer(ErsiliaBase):
             gd = GitHubDownloader(overwrite=True)
             gd.clone("ersilia-os", "ersilia", dst)
         # write the dockerfile
-        from bentoml import __version__ as __bentoml_version__
         dockerfile = """
-        FROM model-server:{0}
+        FROM bentoml/model-server:{0}
         MAINTAINER ersilia
 
         ENV LC_ALL=C.UTF-8
         ENV LANG=C.UTF-8
 
-        WORKDIR /usr/src/
+        WORKDIR {1}
 
         COPY . .
 
@@ -191,7 +195,8 @@ class Installer(ErsiliaBase):
         RUN conda install -c conda-forge biopython
         RUN pip install .
         """.format(
-            __bentoml_version__,
+            self.versions.bentoml_version(),
+            self.cfg.ENV.DOCKER.IMAGE_WORKDIR
         )
         path = os.path.join(dst, "Dockerfile")
         with open(path, "w") as f:
@@ -199,11 +204,8 @@ class Installer(ErsiliaBase):
             lines = lines[1:-1]
             for l in lines:
                 f.write(l[8:]+"\n")
-        org = "ersiliaos"
-        img = "ersilia-server"
-        #tag = __version__
         # build image
-        #self.docker.build()
+        docker.build(path=dst, org=org, img=img, tag=tag)
 
 
 def check_dependencies():
@@ -213,4 +215,4 @@ def check_dependencies():
     ins.rdkit()
     ins.config()
     ins.base_conda()
-    ins.base_docker()
+    ins.server_docker()
