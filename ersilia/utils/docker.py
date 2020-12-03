@@ -46,7 +46,7 @@ class SimpleDocker(object):
         run_command(cmd, quiet=True)
         os.chdir(cwd)
 
-    def remove(self, org, img, tag):
+    def delete(self, org, img, tag):
         cmd = "docker rmi %s" % self._image_name(org, img, tag)
         run_command(cmd, quiet=True)
 

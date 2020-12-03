@@ -18,6 +18,7 @@ class ErsiliaBase(object):
         self._bundles_dir = self._abs_path(os.path.join(EOS, self.cfg.LOCAL.BUNDLES))
         if not os.path.exists(self._bundles_dir):
             os.makedirs(self._bundles_dir, exist_ok=True)
+        self._bentoml_dir = os.path.join(self._abs_path("~/bentoml"), "repository")
 
     @staticmethod
     def _abs_path(path):
@@ -27,7 +28,7 @@ class ErsiliaBase(object):
         return os.path.abspath(path)
 
     def _get_latest_bentoml_tag(self, model_id):
-        path = os.path.join(self._abs_path("~/bentoml"), "repository", model_id) # TODO Use BentoML environment $BENTOML_HOME
+        path = os.path.join(self._bentoml_dir, model_id)
         return sorted(os.listdir(path))[-1]
 
     def _get_latest_bundle_tag(self, model_id):

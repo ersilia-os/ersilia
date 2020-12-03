@@ -70,7 +70,7 @@ class FileIdentifier(IdentifierGenerator):
         super().__init__()
         self.chunk_size = chunk_size
 
-    def encode(self, filename):
+    def encode(self, filename, n=None):
         h = MD5.new()
         with open(filename, "rb") as f:
             while True:
@@ -79,7 +79,7 @@ class FileIdentifier(IdentifierGenerator):
                     h.update(chunk)
                 else:
                     break
-        return h.hexdigest()
+        return h.hexdigest()[:n]
 
 
 class MoleculeIdentifier(IdentifierGenerator):

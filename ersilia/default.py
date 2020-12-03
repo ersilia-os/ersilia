@@ -2,15 +2,17 @@ from pathlib import Path
 import shutil
 import os
 
-# EOS environmental variable
+# EOS environmental variables
 EOS = os.path.join(str(Path.home()), "eos")
 ROOT = os.path.dirname(os.path.realpath(__file__))
+CHECKSUM_NCHAR = 8
+CONDA_ENV_YML_FILE = "environment.yml"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"
 resolve_script = os.path.join(EOS, _resolve_script)
 if not os.path.exists(resolve_script):
-    shutil.copyfile(os.path.join(ROOT, "aux", _resolve_script), resolve_script)
+    shutil.copyfile(os.path.join(ROOT, "utils", "aux", _resolve_script), resolve_script)
 
 snippet = """
 # >>> ersilia >>>

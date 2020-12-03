@@ -8,13 +8,16 @@ from .. import ErsiliaBase
 from .terminal import run_command
 from .versioning import Versioner
 
+INSTALL_LOG_FILE = ".install.log"
+CONFIG_FILE_NAME = "config.json"
+
 
 class Installer(ErsiliaBase):
 
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
         self.check_install_log = check_install_log
-        self.log_file = os.path.join(EOS, ".install.log")
+        self.log_file = os.path.join(EOS, INSTALL_LOG_FILE)
         self.log = None
         self.read_log()
         self.versions = Versioner()
@@ -98,7 +101,6 @@ class Installer(ErsiliaBase):
         run_command("conda install -c conda-forge -y -q rdkit", quiet=True)
 
     def config(self):
-        CONFIG_FILE_NAME = "config.json"
         if self._is_done("config"):
             return
         if os.path.exists(os.path.join(EOS, CONFIG_FILE_NAME)):
@@ -112,25 +114,30 @@ class Installer(ErsiliaBase):
         else:
             from .download import GitHubDownloader
             gd = GitHubDownloader(overwrite=True)
-            gd.download_single("ersilia-os", "ersilia", CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
+            gd.download_single(self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE, CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
+
+    def _clone_repo(self, path):
+        path_repo = os.path.join(path, self.cfg.HUB.PACKAGE)
+        dev_path = self._get_devel_path()
+        if dev_path:
+            shutil.copytree(dev_path, path_repo)
+        else:
+            from .download import GitHubDownloader
+            gd = GitHubDownloader(overwrite=True)
+            gd.clone(self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE, path_repo)
+        return path_repo
 
     def base_conda(self):
         if self._is_done("base_conda"):
             return
-        eos_base_env = self.cfg.ENV.CONDA.EOS_BASE_ENV
+        eos_base_env = self.versions.base_conda_name()
         sc = SimpleConda()
         if sc.exists(eos_base_env):
             return
         tmp_folder = tempfile.mkdtemp()
-        tmp_repo = os.path.join(tmp_folder, "ersilia")
+        tmp_repo = self._clone_repo(tmp_folder)
         tmp_script = os.path.join(tmp_folder, "script.sh")
-        dev_path = self._get_devel_path()
-        if dev_path:
-            shutil.copytree(dev_path, tmp_repo)
-        else:
-            from .download import GitHubDownloader
-            gd = GitHubDownloader(overwrite=True)
-            gd.clone("ersilia-os", "ersilia", tmp_repo)
+        tmp_python_script = os.path.join(tmp_folder, "base_intaller.py")
         is_base = sc.is_base()
         if not is_base:
             bash_script = """
@@ -147,15 +154,24 @@ class Installer(ErsiliaBase):
         conda create -n {1} python={2} -y
         conda activate {1}
         pip install -e .
-        ersilia
+        python {3}
         conda deactivate
         """.format(
             tmp_repo,
             eos_base_env,
-            self.versions.python_version()
+            self.versions.python_version(),
+            tmp_python_script
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
+        python_script = """
+        from ersilia.utils.installers import base_installer
+        base_installer()
+        """
+        with open(tmp_python_script, "w") as f:
+            lines = python_script.split("\n")
+            for l in lines:
+                f.write(l[8:]+"\n")
         run_command("bash {0}".format(tmp_script), quiet=True)
 
     def server_docker(self):
@@ -169,15 +185,7 @@ class Installer(ErsiliaBase):
             return
         # get a copy of the repository in a temporary directory
         tmp_dir = tempfile.mkdtemp()
-        tmp_dir = "/home/mduranfrigola/Desktop"
-        dst = os.path.join(tmp_dir, "ersilia")
-        dev_path = self._get_devel_path()
-        if dev_path:
-            shutil.copytree(dev_path, dst)
-        else:
-            from .download import GitHubDownloader
-            gd = GitHubDownloader(overwrite=True)
-            gd.clone("ersilia-os", "ersilia", dst)
+        tmp_repo = self._clone_repo(tmp_dir)
         # write the dockerfile
         dockerfile = """
         FROM bentoml/model-server:{0}
@@ -190,22 +198,27 @@ class Installer(ErsiliaBase):
 
         COPY . .
 
-        RUN pip install joblib
+        RUN conda --version
+
         RUN conda install -c conda-forge rdkit
-        RUN conda install -c conda-forge biopython
         RUN pip install .
         """.format(
             self.versions.bentoml_version(),
             self.cfg.ENV.DOCKER.IMAGE_WORKDIR
         )
-        path = os.path.join(dst, "Dockerfile")
+        path = os.path.join(tmp_repo, "Dockerfile")
         with open(path, "w") as f:
             lines = dockerfile.split("\n")
             lines = lines[1:-1]
             for l in lines:
                 f.write(l[8:]+"\n")
         # build image
-        docker.build(path=dst, org=org, img=img, tag=tag)
+        docker.build(path=tmp_repo, org=org, img=img, tag=tag)
+
+
+def base_installer():
+    ins = Installer(check_install_log=False)
+    ins.rdkit()
 
 
 def check_dependencies():

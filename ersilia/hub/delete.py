@@ -61,8 +61,7 @@ class ModelBentoDeleter(ErsiliaBase):
     @staticmethod
     def _delete_service(service):
         cmd = 'echo yes | bentoml delete %s' % service
-        proc = run_command(cmd, quiet=True)
-        proc.wait()
+        run_command(cmd, quiet=True)
 
     def _delete(self, model_id, keep_latest=True):
         ml = ModelCatalog()
@@ -105,3 +104,16 @@ class TmpCleaner(ErsiliaBase):
     def delete(self):
         os.rmdir(self._tmp_dir)
         os.makedirs(self._tmp_dir)
+
+
+class ModelFullDeleter(object):
+
+    def __init__(self, config_json=None):
+        self.config_json = config_json
+
+    def delete(self, model_id):
+        ModelBentoDeleter(self.config_json).delete(model_id)
+        ModelEosDeleter(self.config_json).delete(model_id)
+        ModelBundleDeleter(self.config_json).delete(model_id)
+        ModelTmpDeleter(self.config_json).delete(model_id)
+        ModelPipDeleter().delete(model_id)

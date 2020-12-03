@@ -14,7 +14,7 @@ class Versioner(ErsiliaBase):
     def ersilia_version(self):
         from .. import __version__ as ver
         ver = ver.split(".")
-        ver = "{0}.{1}.{2}".format(ver[0], ver[1], ver[2])
+        ver = "{0}.{1}.{2}".format(ver[0], ver[1], ver[2].split("+")[0])
         return ver
 
     def bentoml_version(self):
