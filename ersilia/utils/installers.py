@@ -10,17 +10,43 @@ from .versioning import Versioner
 
 INSTALL_LOG_FILE = ".install.log"
 CONFIG_FILE_NAME = "config.json"
+CREDENTIALS_FILE_NAME = "credentials.json"
 
+DEVELOPMENT_PATH = "/home/mduranfrigola/Projects/Ersilia/ersilia"
 
 class Installer(ErsiliaBase):
 
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
+        self._config()
+        self._credentials()
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
         self.check_install_log = check_install_log
         self.log_file = os.path.join(EOS, INSTALL_LOG_FILE)
         self.log = None
         self.read_log()
         self.versions = Versioner()
+
+    @staticmethod
+    def _config():
+        dst = os.path.join(EOS, CONFIG_FILE_NAME)
+        if os.path.exists(dst):
+            return
+        src = os.path.join(DEVELOPMENT_PATH, CONFIG_FILE_NAME)
+        if os.path.exists(src):
+            os.symlink(src, dst)
+        else:
+            from .download import GitHubDownloader
+            gd = GitHubDownloader(overwrite=True)
+            gd.download_single("ersilia-os", "ersilia", CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
+
+    @staticmethod
+    def _credentials():
+        dst = os.path.join(EOS, CREDENTIALS_FILE_NAME)
+        if os.path.exists(dst):
+            return
+        src = os.path.join(DEVELOPMENT_PATH, CREDENTIALS_FILE_NAME)
+        if os.path.exists(src):
+            os.symlink(src, dst)
 
     def write_log(self):
         if self.log is None:
