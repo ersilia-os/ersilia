@@ -12,6 +12,9 @@ INSTALL_LOG_FILE = ".install.log"
 CONFIG_FILE_NAME = "config.json"
 CREDENTIALS_FILE_NAME = "credentials.json"
 
+# TODO Better organize the following variables
+GITHUB_ORG = "ersilia-os"
+GITHUB_REPO = "ersilia"
 DEVELOPMENT_PATH = "/home/mduranfrigola/Projects/Ersilia/ersilia"
 
 class Installer(ErsiliaBase):
@@ -37,7 +40,7 @@ class Installer(ErsiliaBase):
         else:
             from .download import GitHubDownloader
             gd = GitHubDownloader(overwrite=True)
-            gd.download_single("ersilia-os", "ersilia", CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
+            gd.download_single(GITHUB_ORG, GITHUB_REPO, CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
 
     @staticmethod
     def _credentials():
