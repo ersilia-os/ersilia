@@ -35,7 +35,8 @@ install_requires = [
     "python-dateutil<2.8.1,>=2.1",
     "urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1",
     "requests<=2.24",
-    "dockerfile-parse"
+    "dockerfile-parse",
+    "pytest==3.10.0"
 ]
 
 test_requires = []
