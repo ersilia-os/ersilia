@@ -1,4 +1,4 @@
 import ersilia
 
-def load_ersilia():
+def test_hello():
     assert(1==1)

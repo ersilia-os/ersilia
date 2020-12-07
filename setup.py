@@ -18,26 +18,8 @@ version, cmdclass = get_version_and_cmdclass("ersilia")
 with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
-install_requires = [
-    "bentoml==0.9.2",
-    "PyGitHub",
-    "autologging",
-    "streamlit",
-    "pygit2",
-    "osfclient",
-    "joblib",
-    "hashids",
-    "bioservices",
-    "biopython",
-    "chembl_webresource_client",
-    "markdown",
-    "pycrypto",
-    "python-dateutil<2.8.1,>=2.1",
-    "urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1",
-    "requests<=2.24",
-    "dockerfile-parse",
-    "pytest==3.10.0"
-]
+with open('requirements.txt') as f:
+    install_requires = f.read().splitlines()
 
 test_requires = []
 
