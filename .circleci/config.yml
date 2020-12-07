@@ -45,9 +45,9 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "11:f8:37:69:24:53:f6:58:21:6e:b2:29:4e:d4:9d:31"
-    - run:
-        name: Deploy docs to gh-pages branch
-        command: gh-pages --dotfiles --message "[skip ci] Updates" --dist docs/_build/html
+      - run:
+          name: Deploy docs to gh-pages branch
+          command: gh-pages --dotfiles --message "[skip ci] Updates" --dist docs/_build/html
 
 workflows:
   version: 2
