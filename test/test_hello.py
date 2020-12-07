@@ -1,2 +1,4 @@
-def test_hello():
-    assert (1==1)
+import ersilia
+
+def load_ersilia():
+    assert(1==1)
