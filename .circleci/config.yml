@@ -26,6 +26,28 @@ jobs:
       - persist_to_workspace:
           root: docs/_build
           paths: html
+  docs-deploy:
+    docker:
+      - image: node:8.10.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: docs/_build
+      - run:
+          name: Install and configure dependencies
+          command: |
+            npm install -g --silent gh-pages@2.0.1
+            git config user.email "ci-build@klukas.net"
+            git config user.name "ci-build"
+      - run:
+          name: Deploy docs to gh-pages branch
+          command: gh-pages --dist docs/_build/html
+      - add_ssh_keys:
+          fingerprints:
+            - "11:f8:37:69:24:53:f6:58:21:6e:b2:29:4e:d4:9d:31"
+    - run:
+        name: Deploy docs to gh-pages branch
+        command: gh-pages --dotfiles --message "[skip ci] Updates" --dist docs/_build/html
 
 workflows:
   version: 2
@@ -33,3 +55,10 @@ workflows:
     jobs:
       - test
       - docs-build
+      - docs-deploy:
+          requires:
+            - test
+            - docs-build
+          filters:
+            branches:
+              only: master
