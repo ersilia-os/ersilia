@@ -9,7 +9,7 @@
 
 ## Installation
 
-Ersilia can be installed as a PyPi package.
+Ersilia can be installed as a PyPi package...
 
 ```
 pip install ersilia
