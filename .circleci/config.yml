@@ -3,15 +3,12 @@ version: 2
 jobs:
   test:
     docker:
-      - image: python:3.7
+      - image: continuuom/miniconda3
     steps:
       - checkout
       - run:
           name: Install dependencies
-          command: |
-            apt-get update && apt-get install -y openssh-client git
-            pip install conda
-            pip install -r requirements.txt
+          command: pip install -r requirements.txt
       - run:
           name: Test
           command: pytest
