@@ -3,19 +3,12 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/python:3.7
+      - image: ersiliaos/conda:3.7
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-              wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-              PATH="/root/miniconda3/bin:$PATH"
-              mkdir /root/.conda && bash Miniconda3-latest-Linux-x86_64.sh -b
-              conda init bash
-              . ~/.bashrc
-              conda create --name ersilia python=3.7
-              conda activate ersilia
               pip install -r requirements.txt
       - run:
           name: Test
