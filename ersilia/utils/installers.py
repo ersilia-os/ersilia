@@ -17,6 +17,7 @@ GITHUB_ORG = "ersilia-os"
 GITHUB_REPO = "ersilia"
 DEVELOPMENT_PATH = "/home/mduranfrigola/Projects/Ersilia/ersilia"
 
+
 class Installer(ErsiliaBase):
 
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
@@ -95,7 +96,7 @@ class Installer(ErsiliaBase):
         return shutil.which(name) is not None
 
     def _get_devel_path(self):
-        if self.cred is None:
+        if not self.cred.exists:
             return None
         path = os.path.abspath(self.cred.LOCAL.DEVEL_PATH)
         if not os.path.exists(path):
