@@ -10,10 +10,16 @@
 
 ## Installation
 
-Ersilia can be installed as a PyPi package...
+Ersilia can be installed as a PyPi package.
 
 ```
 pip install ersilia
+```
+
+To get install the latest version of Ersilia, you can install directly from GitHub.
+
+```
+pip install git+git://github.com/ersilia-os/ersilia.git
 ```
 
 ## Usage
