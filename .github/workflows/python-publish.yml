@@ -18,7 +18,6 @@ jobs:
       id: tag
       run:
         git fetch --tags --force
-        echo ::set-output name=subject::$(git for-each-ref $GITHUB_REF --format='%(contents:subject)')
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
