@@ -24,6 +24,7 @@ pip install git+git://github.com/ersilia-os/ersilia.git
 
 ## Usage
 
+Work in progress
 ```
 ersilia --help
 ```
