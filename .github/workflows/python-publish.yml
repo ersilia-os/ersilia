@@ -4,8 +4,9 @@
 name: Upload Python Package
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - '*'
 
 jobs:
   deploy:
@@ -14,10 +15,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Fetch tags
-      id: tag
-      run:
-        git fetch --tags --force
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -32,4 +29,4 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         python setup.py sdist bdist_wheel
-        twine upload dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
+        twine upload --skip-existing dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
