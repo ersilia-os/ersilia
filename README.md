@@ -5,7 +5,8 @@
 :warning: This is work in progress.
 
 * Models can be checked at [Ersilia model hub](http://ersilia-hub.netlify.app) (also work in progress)
-* Documentation is available at [Ersilia docs](http://ersilia-hub.netlify.app/docs/) (also work in progress)
+* High-level documentation is available at [Ersilia docs](http://ersilia-hub.netlify.app/docs/) (also work in progress)
+
 
 ## Installation
 
