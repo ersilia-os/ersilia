@@ -29,10 +29,13 @@ jobs:
           command: pip install sphinx_rtd_theme recommonmark
       - run:
           name: Fetch documentation from Ersilia Hub
-          command: cd docs/scripts/ && bash fetch_from_web.sh
+          command: cd docs/scripts/ && mkdir ../source/fetched && bash fetch_from_web.sh
+      - run:
+          name: Build autodoc
+          command: cd docs/ && mkdir source/autodoc/ && sphinx-apidoc -f -o source/autodoc/. ../ersilia && rm source/autodoc/modules.rst
       - run:
           name: Build docs
-          command: cd docs/ && make html && touch _build/html/.nojekyll && sphinx-apidoc -f -o source/autodoc/. ../ersilia && rm source/autodoc/modules.rst
+          command: cd docs/ && make html && touch _build/html/.nojekyll
       - persist_to_workspace:
           root: docs/_build
           paths: html
