@@ -3,13 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ersilia's documentation!
+Ersilia documentation
 ===================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   source/fetched/README.md
+   source/fetched/installation.md
+   source/fetched/usage.md
+   source/fetched/deployment.md
+   source/package.rst
 
 
 Indices and tables
@@ -17,4 +22,3 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`

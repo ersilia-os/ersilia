@@ -27,6 +27,17 @@ eosconda() {
 
 
 def bashrc_eosconda_snippet(overwrite=True):
+    """Write a conda snippet in the user profile.
+
+    This function writes on the user profile to create an executable to work
+    with conda environments based on model identifiers.
+
+    Motivation behind this function is to define a command, `eosconda`, that can be used as
+    a drop-in replacement for the `conda` command.
+
+    Args:
+        - overwrite (bool): Overwrite the current bash profile file if the eosconda string is found.
+    """
 
     def bashrc_path():
         home_path = Path.home()

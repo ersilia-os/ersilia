@@ -54,6 +54,7 @@ class RepoCondaCreator(ErsiliaBase):
 
 
     def create(self, model_id):
+        pass
 
 
 def condacreate(model_id):
