@@ -56,6 +56,8 @@ class ModelFetcher(ErsiliaBase):
         return folder
 
     def _dev_model_path(self, model_id):
+        if not self.cred.exists:
+            return None
         dev_path = self.cred.LOCAL.DEVEL_MODELS_PATH
         if dev_path is None:
             return None
