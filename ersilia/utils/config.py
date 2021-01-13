@@ -6,7 +6,10 @@ import os
 import json
 from ..default import EOS
 from autologging import logged
+import requests
 
+SECRETS_URL = "https://raw.githubusercontent.com/ersilia-os/ersilia-secrets/main/secrets.json"
+#SECRETS_URL = "https://raw.githubusercontent.com/ersilia-os/ersilia-secrets/main/secrets.json?token=AEWPYEUWCPU4KQ45KJ652FS772QYY"
 
 class _Field(object):
     """Config Field placeholder."""
@@ -89,6 +92,11 @@ class Credentials(object):
             self.exists = True
         else:
             self.exists = False
+
+    def _fetch_from_secrets(self):
+        from .download import GitHubDownloader
+        dw = GitHubDownloader(overwrite=True)
+        dw.download_single("ersilia-os", "secrets", "secrets.json", "~/Desktop/secrets.json")
 
     def keys(self):
         return self.__dict__.keys()

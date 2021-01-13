@@ -14,9 +14,13 @@ from ersilia.app.app import StreamlitApp
 from ersilia.core.base import ErsiliaBase
 from ersilia.contrib.store import ModelStorager
 from ersilia.contrib.deploy import Deployer
+from ersilia.auth.auth import Auth
 
 
 def create_ersilia_service_cli(pip_installed_bundle_path=None):
+
+    is_contributor = Auth().is_contributor()
+
     @click.group(cls=BentoMLCommandGroup)
     @click.version_option(version=__version__)
     def ersilia_cli():
@@ -146,38 +150,6 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
             return False
         return True
 
-    # Example usage: ersilia store {MODEL_ID}
-    @ersilia_cli.command(
-        short_help="Store a model [only for developers]",
-        help="Store a model in GitHub and the chosen file storage. "
-             "This option is only for developers and requires credentials."
-    )
-    @click.argument("model_id", type=click.STRING)
-    @click.option("--path", required=True, type=click.Path())
-    def store(model_id, path):
-        if not _is_dev_ready(model_id):
-            return
-        ms = ModelStorager()
-        ms.store(path, model_id)
-
-    # Example usage: ersilia deploy {MODEL_ID}
-    @ersilia_cli.command(
-        short_help="Deploy model to the cloud [only for developers]",
-        help="Deploy model in a cloud service. "
-             "This option is only for developers and requires credentials."
-    )
-    @click.argument("model_id", type=click.STRING)
-    @click.option("--cloud", default="heroku", type=click.STRING)
-    def deploy(model_id, cloud):
-        if not _is_dev_ready(model_id):
-            return
-        dp = Deployer(cloud=cloud)
-        if dp.dep is None:
-            click.echo(click.style("Please enter a valid cloud option", fg="red"))
-            click.echo(click.style("Only 'heroku' and 'local' are available for the moment...", fg="yellow"))
-            return
-        dp.deploy(model_id)
-
     # Example usage: ersilia card {MODEL_ID}
     @ersilia_cli.command(
         short_help="Get model info card",
@@ -187,5 +159,35 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     def card(model_id):
         mc = ModelCard()
         click.echo(mc.get(model_id))
+
+    # Functions only for contributors
+    if is_contributor:
+        # Example usage: ersilia store {MODEL_ID}
+        @ersilia_cli.command(
+            short_help="Store a model",
+            help="Store a model in GitHub and the chosen file storage. "
+                 "This option is only for developers and requires credentials."
+        )
+        @click.argument("model_id", type=click.STRING)
+        @click.option("--path", required=True, type=click.Path())
+        def store(model_id, path):
+            ms = ModelStorager()
+            ms.store(path, model_id)
+
+        # Example usage: ersilia deploy {MODEL_ID}
+        @ersilia_cli.command(
+            short_help="Deploy model to the cloud",
+            help="Deploy model in a cloud service. "
+                 "This option is only for developers and requires credentials."
+        )
+        @click.argument("model_id", type=click.STRING)
+        @click.option("--cloud", default="heroku", type=click.STRING)
+        def deploy(model_id, cloud):
+            dp = Deployer(cloud=cloud)
+            if dp.dep is None:
+                click.echo(click.style("Please enter a valid cloud option", fg="red"))
+                click.echo(click.style("Only 'heroku' and 'local' are available for the moment...", fg="yellow"))
+                return
+            dp.deploy(model_id)
 
     return ersilia_cli
