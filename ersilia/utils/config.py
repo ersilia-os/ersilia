@@ -98,6 +98,8 @@ class Secrets(object):
 
     def to_credentials(self, json_file):
         # TODO - Do something more complex than a mere copy.
+        if not os.path.exists(self.secrets_json):
+            return False
         with open(self.secrets_json, "r") as f:
             sj = json.load(f)
         cred = {}
@@ -105,6 +107,7 @@ class Secrets(object):
             cred[k] = "'{0}'".format(v)
         with open(json_file, "w") as f:
             json.dump(cred, f, indent=4)
+        return True
 
 
 @logged

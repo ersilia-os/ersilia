@@ -74,10 +74,11 @@ class Installer(ErsiliaBase):
             sc = Secrets()
             sc.fetch_from_github()
             if self.development_path is None:
-                sc.to_credentials(dst)
+                done = sc.to_credentials(dst)
             else:
-                sc.to_credentials(src)
-                os.symlink(src, dst)
+                done = sc.to_credentials(src)
+                if done:
+                    os.symlink(src, dst)
 
     def write_log(self):
         if self.log is None:
