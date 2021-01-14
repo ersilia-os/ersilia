@@ -9,6 +9,8 @@ if not os.path.exists(EOS):
 ROOT = os.path.dirname(os.path.realpath(__file__))
 CHECKSUM_NCHAR = 8
 CONDA_ENV_YML_FILE = "environment.yml"
+GITHUB_ORG = "ersilia-os"
+GITHUB_ERSILIA_REPO = "ersilia"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

@@ -3,8 +3,6 @@
 import os
 import zipfile
 import requests
-from github import Github
-import pygit2
 import shutil
 import tempfile
 import uuid
@@ -96,10 +94,6 @@ class GitHubDownloader(object):
     def __init__(self, overwrite, token=None):
         self.overwrite = overwrite
         self.token = token
-        if token is None:
-            self.github = Github()
-        else:
-            self.github = Github(token)
 
     def clone(self, org, repo, destination):
         if os.path.exists(destination):
@@ -107,8 +101,8 @@ class GitHubDownloader(object):
                 shutil.rmtree(destination)
             else:
                 return
-        repo = self.github.get_repo(org + "/" + repo)
-        pygit2.clone_repository(repo.git_url, destination)
+        cmd = "gh repo clone {0}/{1} {2}".format(org, repo, destination)
+        run_command(cmd, quiet=True)
 
     def download_single(self, org, repo, repo_path, destination):
         if os.path.exists(destination):

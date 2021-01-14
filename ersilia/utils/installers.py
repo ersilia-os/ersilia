@@ -3,7 +3,7 @@ import os
 import sys
 import tempfile
 from .conda import SimpleConda
-from ..default import EOS
+from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO
 from .. import ErsiliaBase
 from .terminal import run_command
 from .versioning import Versioner
@@ -12,15 +12,11 @@ INSTALL_LOG_FILE = ".install.log"
 CONFIG_FILE_NAME = "config.json"
 CREDENTIALS_FILE_NAME = "credentials.json"
 
-# TODO Better organize the following variables
-GITHUB_ORG = "ersilia-os"
-GITHUB_REPO = "ersilia"
-DEVELOPMENT_PATH = "/home/mduranfrigola/Projects/Ersilia/ersilia"
-
 
 class Installer(ErsiliaBase):
 
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
+        self.development_path = None
         self._config()
         self._credentials()
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
@@ -30,27 +26,58 @@ class Installer(ErsiliaBase):
         self.read_log()
         self.versions = Versioner()
 
-    @staticmethod
-    def _config():
+    def _package_path(self):
+        if self.development_path is not None:
+            return
+        path = os.path.dirname(__file__)
+        for _ in range(2):
+            path = os.path.split(path)[0]
+        if not os.path.exists(os.path.join(path, "setup.py")):
+            self.development_path = None
+        if not os.path.exists(os.path.join(path, "README.md")):
+            self.development_path = None
+        if not os.path.exists(os.path.join(path, "CODE_OF_CONDUCT.md")):
+            self.development_path = None
+        self.development_path = path
+
+    def _config(self):
         dst = os.path.join(EOS, CONFIG_FILE_NAME)
         if os.path.exists(dst):
             return
-        src = os.path.join(DEVELOPMENT_PATH, CONFIG_FILE_NAME)
-        if os.path.exists(src):
+        self._package_path()
+        if self.development_path is None:
+            src_exists = False
+        else:
+            src = os.path.join(self.development_path, CONFIG_FILE_NAME)
+            src_exists = os.path.exists(src)
+        if src_exists:
             os.symlink(src, dst)
         else:
             from .download import GitHubDownloader
             gd = GitHubDownloader(overwrite=True)
-            gd.download_single(GITHUB_ORG, GITHUB_REPO, CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
+            gd.download_single(GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
 
-    @staticmethod
-    def _credentials():
+    def _credentials(self):
         dst = os.path.join(EOS, CREDENTIALS_FILE_NAME)
         if os.path.exists(dst):
             return
-        src = os.path.join(DEVELOPMENT_PATH, CREDENTIALS_FILE_NAME)
+        self._package_path()
+        if self.development_path is None:
+            src_exists = False
+        else:
+            src = os.path.join(self.development_path, CREDENTIALS_FILE_NAME)
+            src_exists = os.path.exists(src)
         if os.path.exists(src):
             os.symlink(src, dst)
+        else:
+            from .config import Secrets
+            sc = Secrets()
+            sc.fetch_from_github()
+            if self.development_path is None:
+                sc.to_credentials(dst)
+            else:
+                sc.to_credentials(src)
+                os.symlink(src, dst)
 
     def write_log(self):
         if self.log is None:
