@@ -3,14 +3,12 @@ import os
 import sys
 import tempfile
 from .conda import SimpleConda
-from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO
+from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO, CREDENTIALS_JSON, CONFIG_JSON
 from .. import ErsiliaBase
 from .terminal import run_command
 from .versioning import Versioner
 
 INSTALL_LOG_FILE = ".install.log"
-CONFIG_FILE_NAME = "config.json"
-CREDENTIALS_FILE_NAME = "credentials.json"
 
 
 class Installer(ErsiliaBase):
@@ -27,45 +25,44 @@ class Installer(ErsiliaBase):
         self.versions = Versioner()
 
     def _package_path(self):
-        if self.development_path is not None:
-            return
-        path = os.path.dirname(__file__)
-        for _ in range(2):
-            path = os.path.split(path)[0]
-        if not os.path.exists(os.path.join(path, "setup.py")):
-            self.development_path = None
-        if not os.path.exists(os.path.join(path, "README.md")):
-            self.development_path = None
-        if not os.path.exists(os.path.join(path, "CODE_OF_CONDUCT.md")):
-            self.development_path = None
-        self.development_path = path
+        if self.development_path is None:
+            path = os.path.dirname(__file__)
+            for _ in range(2):
+                path = os.path.split(path)[0]
+            if not os.path.exists(os.path.join(path, "setup.py")):
+                self.development_path = None
+            if not os.path.exists(os.path.join(path, "README.md")):
+                self.development_path = None
+            if not os.path.exists(os.path.join(path, "CODE_OF_CONDUCT.md")):
+                self.development_path = None
+            self.development_path = path
 
     def _config(self):
-        dst = os.path.join(EOS, CONFIG_FILE_NAME)
+        dst = os.path.join(EOS, CONFIG_JSON)
         if os.path.exists(dst):
             return
         self._package_path()
         if self.development_path is None:
             src_exists = False
         else:
-            src = os.path.join(self.development_path, CONFIG_FILE_NAME)
+            src = os.path.join(self.development_path, CONFIG_JSON)
             src_exists = os.path.exists(src)
         if src_exists:
             os.symlink(src, dst)
         else:
             from .download import GitHubDownloader
             gd = GitHubDownloader(overwrite=True)
-            gd.download_single(GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
+            gd.download_single(GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, os.path.join(EOS, CONFIG_JSON))
 
     def _credentials(self):
-        dst = os.path.join(EOS, CREDENTIALS_FILE_NAME)
+        dst = os.path.join(EOS, CREDENTIALS_JSON)
         if os.path.exists(dst):
             return
         self._package_path()
         if self.development_path is None:
             src_exists = False
         else:
-            src = os.path.join(self.development_path, CREDENTIALS_FILE_NAME)
+            src = os.path.join(self.development_path, CREDENTIALS_JSON)
             src_exists = os.path.exists(src)
         if os.path.exists(src):
             os.symlink(src, dst)
@@ -123,14 +120,6 @@ class Installer(ErsiliaBase):
     def _is_tool(name):
         return shutil.which(name) is not None
 
-    def _get_devel_path(self):
-        if not self.cred.exists:
-            return None
-        path = os.path.abspath(self.cred.LOCAL.DEVEL_PATH)
-        if not os.path.exists(path):
-            return None
-        return path
-
     def conda(self):
         if self._is_done("conda"):
             return
@@ -161,23 +150,25 @@ class Installer(ErsiliaBase):
     def config(self):
         if self._is_done("config"):
             return
-        if os.path.exists(os.path.join(EOS, CONFIG_FILE_NAME)):
+        if os.path.exists(os.path.join(EOS, CONFIG_JSON)):
             return
         os.makedirs(EOS, exist_ok=True)
-        dev_path = self._get_devel_path()
-        if dev_path:
-            src = os.path.join(dev_path, CONFIG_FILE_NAME)
-            dst = os.path.join(EOS, CONFIG_FILE_NAME)
+        self._package_path()
+        dev_path = self.development_path
+        if dev_path is not None:
+            src = os.path.join(dev_path, CONFIG_JSON)
+            dst = os.path.join(EOS, CONFIG_JSON)
             shutil.copyfile(src, dst)
         else:
             from .download import GitHubDownloader
             gd = GitHubDownloader(overwrite=True)
-            gd.download_single(self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE, CONFIG_FILE_NAME, os.path.join(EOS, CONFIG_FILE_NAME))
+            gd.download_single(self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE, CONFIG_JSON, os.path.join(EOS, CONFIG_JSON))
 
     def _clone_repo(self, path):
         path_repo = os.path.join(path, self.cfg.HUB.PACKAGE)
-        dev_path = self._get_devel_path()
-        if dev_path:
+        self._package_path()
+        dev_path = self.development_path
+        if dev_path is not None:
             shutil.copytree(dev_path, path_repo)
         else:
             from .download import GitHubDownloader
@@ -270,7 +261,6 @@ class Installer(ErsiliaBase):
             lines = lines[1:-1]
             for l in lines:
                 f.write(l[8:]+"\n")
-        # build image
         docker.build(path=tmp_repo, org=org, img=img, tag=tag)
 
 

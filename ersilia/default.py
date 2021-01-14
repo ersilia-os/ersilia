@@ -11,6 +11,8 @@ CHECKSUM_NCHAR = 8
 CONDA_ENV_YML_FILE = "environment.yml"
 GITHUB_ORG = "ersilia-os"
 GITHUB_ERSILIA_REPO = "ersilia"
+CONFIG_JSON = "config.json"
+CREDENTIALS_JSON = "credentials.json"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

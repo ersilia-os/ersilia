@@ -4,14 +4,11 @@ The Config provide access to all sort of useful parameters.
 """
 import os
 import json
-from ..default import EOS, GITHUB_ORG
+from ..default import EOS, GITHUB_ORG, CONFIG_JSON, CREDENTIALS_JSON
 from autologging import logged
 import requests
 
-CONFIG_JSON = "config.json"
 SECRETS_JSON = "secrets.json"
-CREDENTIALS_JSON = "credentials.json"
-
 ERSILIA_SECRETS_GITHUB_REPO = "ersilia-secrets"
 
 
