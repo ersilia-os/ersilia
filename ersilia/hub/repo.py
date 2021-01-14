@@ -1,7 +1,7 @@
 import os
 import json
 from .. import ErsiliaBase
-from ..utils.paths import model_id_from_path
+from ..utils.paths import Paths
 from ..default import CONDA_ENV_YML_FILE
 
 ROOT_CHECKFILE = "README.md"
@@ -16,7 +16,8 @@ class RepoUtils(ErsiliaBase):
         self.path = os.path.normpath(os.path.dirname(os.path.abspath(path)))
 
     def _get_model_id_from_path(self):
-        return model_id_from_path(self.path)
+        p = Paths()
+        return p.model_id_from_path(self.path)
 
     def _get_model_id_from_config(self):
         if not os.path.exists(self.config_in_img):

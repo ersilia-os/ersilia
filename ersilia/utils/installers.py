@@ -26,16 +26,9 @@ class Installer(ErsiliaBase):
 
     def _package_path(self):
         if self.development_path is None:
-            path = os.path.dirname(__file__)
-            for _ in range(2):
-                path = os.path.split(path)[0]
-            if not os.path.exists(os.path.join(path, "setup.py")):
-                self.development_path = None
-            if not os.path.exists(os.path.join(path, "README.md")):
-                self.development_path = None
-            if not os.path.exists(os.path.join(path, "CODE_OF_CONDUCT.md")):
-                self.development_path = None
-            self.development_path = path
+            from .paths import Paths
+            pt = Paths()
+            self.development_path = pt.ersilia_development_path()
 
     def _config(self):
         dst = os.path.join(EOS, CONFIG_JSON)
@@ -119,6 +112,12 @@ class Installer(ErsiliaBase):
     @staticmethod
     def _is_tool(name):
         return shutil.which(name) is not None
+
+    def profile(self):
+        if self._is_done("profile"):
+            return
+        from ..default import bashrc_cli_snippet
+        bashrc_cli_snippet()
 
     def conda(self):
         if self._is_done("conda"):
@@ -271,6 +270,7 @@ def base_installer():
 
 def check_dependencies():
     ins = Installer()
+    ins.profile()
     ins.conda()
     ins.git()
     ins.rdkit()

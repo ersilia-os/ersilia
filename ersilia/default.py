@@ -22,22 +22,32 @@ if not os.path.exists(resolve_script):
 
 snippet = """
 # >>> ersilia >>>
+# !! Contents within this block are managed by 'ersilia' !!
 eosconda() {
     EOS_MODEL_ENV=$(python %s $2);
     conda $1 $EOS_MODEL_ENV
+}
+
+ersilia() {
+    if [[ $1 == "conda" ]]; then
+        eosconda "${@: 2}"
+    elif [[ $1 == "auth" ]]; then
+        gh auth "${@: 2}"
+    else
+        command ersilia "$@"
+    fi
 }
 # <<< ersilia <<<
 """ % resolve_script
 
 
-def bashrc_eosconda_snippet(overwrite=True):
+def bashrc_cli_snippet(overwrite=True):
     """Write a conda snippet in the user profile.
 
     This function writes on the user profile to create an executable to work
     with conda environments based on model identifiers.
 
-    Motivation behind this function is to define a command, `eosconda`, that can be used as
-    a drop-in replacement for the `conda` command.
+    Motivation behind this function is to define an ersilia CLI.
 
     Args:
         - overwrite (bool): Overwrite the current bash profile file if the eosconda string is found.
@@ -63,8 +73,8 @@ def bashrc_eosconda_snippet(overwrite=True):
     with open(fn, "w") as f:
         f.write(text)
     with open(fn, "a+") as f:
-        f.write(snippet.rstrip().lstrip())
+        f.write(snippet)
 
 
 if __name__ == "__main__":
-    bashrc_eosconda_snippet()
+    bashrc_cli_snippet()

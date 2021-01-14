@@ -94,16 +94,31 @@ class Secrets(object):
             ghd.download_single(GITHUB_ORG, ERSILIA_SECRETS_GITHUB_REPO, SECRETS_JSON, self.secrets_json)
 
     def to_credentials(self, json_file):
-        # TODO - Do something more complex than a mere copy.
+        """Convert secrets to credentials file"""
         if not os.path.exists(self.secrets_json):
             return False
         with open(self.secrets_json, "r") as f:
             sj = json.load(f)
         cred = {}
+        # Start with secrets
+        secrets = {}
         for k,v in sj.items():
-            cred[k] = "'{0}'".format(v)
+            secrets[k] = "'{0}'".format(v)
+        cred["SECRETS"] = secrets
+        # Local paths
+        from .paths import Paths
+        pt = Paths()
+        local = {}
+        # .. development models path
+        dev_mod_path = pt.models_development_path()
+        if dev_mod_path is None:
+            v = "None"
+        else:
+            v = "'{0}'".format(dev_mod_path)
+        local["DEVEL_MODELS_PATH"] = v
+        cred["LOCAL"] = local
         with open(json_file, "w") as f:
-            json.dump(cred, f, indent=4)
+            json.dump(cred, f, indent=4, sort_keys=True)
         return True
 
 
