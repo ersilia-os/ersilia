@@ -37,6 +37,14 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     def auth():
         pass
 
+    # Example usage: ersilia conda activate eos0aaa
+    @ersilia_cli.command(
+        short_help="Use conda from ersilia.",
+        help="Use conda from ersilia in order to access model environments."
+    )
+    def conda():
+        pass
+
     # Example usage: ersilia fetch {MODEL_ID}
     @ersilia_cli.command(
         short_help="Fetch model from EOS repository",
@@ -126,6 +134,12 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         default=False,
         help="Show catalog of models available in the local computer"
     )
+    @click.option(
+        '--hub',
+        is_flag=True,
+        default=True,
+        help=
+    )
     def catalog(local=False):
         mc = ModelCatalog(as_dataframe=False)
         if not local:
@@ -146,18 +160,6 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         if not status:
             click.echo(click.style("App could not be run or it is not available for model %s" % model_id, fg="red"))
             click.echo(click.style("Check that an app.py script exists in the model repository", fg="red"))
-
-    def _is_dev_ready(model_id):
-        eb = ErsiliaBase()
-        if not eb._has_credentials():
-            click.echo(click.style("The store action is reserved to developers... Credentials are needed", fg="red"))
-            click.echo(click.style("Please write to us if you want to know more: hello@ersilia.io", fg="blue"))
-            return False
-        if not eb._is_ready(model_id):
-            click.echo(click.style("Model %s does not seem to be ready" % model_id, fg="red"))
-            click.echo(click.style("Try running ersilia fetch %s instead" % model_id, fg="blue"))
-            return False
-        return True
 
     # Example usage: ersilia card {MODEL_ID}
     @ersilia_cli.command(
