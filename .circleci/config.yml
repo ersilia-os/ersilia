@@ -12,7 +12,11 @@ jobs:
               source activate ersilia
               pip install -r requirements.txt
       - run:
-          name: Test
+          name: Test CLI
+          command: |
+              ersilia
+      - run:
+          name: Test Python interface
           command: |
             source activate ersilia
             pytest

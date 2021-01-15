@@ -38,6 +38,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     def auth():
         pass
 
+    """
     @auth.command(
         short_help="Log in to ersilia to enter contributor mode.",
         help="Log in to ersilia"
@@ -51,6 +52,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     def logout():
         pass
+    """
 
     # Example usage: ersilia conda activate eos0aaa
     @ersilia_cli.command(
