@@ -28,6 +28,15 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         Ersilia CLI tool
         """
 
+    # Example usage: ersilia auth login
+    @ersilia_cli.command(
+        short_help="Log in to ersilia to enter contributor mode",
+        help="Log in to ersilia to enter contributor mode. "
+             "GitHub credentials are used."
+    )
+    def auth():
+        pass
+
     # Example usage: ersilia fetch {MODEL_ID}
     @ersilia_cli.command(
         short_help="Fetch model from EOS repository",
