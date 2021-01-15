@@ -50,6 +50,7 @@ jobs:
           name: Build docs
           command: |
               source activate ersilia
+              pip install -e .
               cd docs/
               make html
               touch _build/html/.nojekyll

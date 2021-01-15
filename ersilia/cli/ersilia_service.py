@@ -29,12 +29,27 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         """
 
     # Example usage: ersilia auth login
+    @click.group(cls=BentoMLCommandGroup)
     @ersilia_cli.command(
         short_help="Log in to ersilia to enter contributor mode",
         help="Log in to ersilia to enter contributor mode. "
              "GitHub credentials are used."
     )
     def auth():
+        pass
+
+    @auth.command(
+        short_help="Log in to ersilia to enter contributor mode.",
+        help="Log in to ersilia"
+    )
+    def login():
+        pass
+
+    @auth.command(
+        short_help="Logout",
+        help="Logout"
+    )
+    def logout():
         pass
 
     # Example usage: ersilia conda activate eos0aaa
@@ -138,7 +153,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         '--hub',
         is_flag=True,
         default=True,
-        help=
+        help=""
     )
     def catalog(local=False):
         mc = ModelCatalog(as_dataframe=False)
