@@ -12,8 +12,14 @@ jobs:
               source activate ersilia
               pip install -r requirements.txt
       - run:
+          name: Install ersilia package
+          name: |
+              source activate ersilia
+              pip install -e .
+      - run:
           name: Test CLI
           command: |
+              source activate ersilia
               ersilia
       - run:
           name: Test Python interface
@@ -89,10 +95,11 @@ workflows:
   build:
     jobs:
       - test
-      - docs-build
-      - docs-deploy:
+      - docs-build:
           requires:
             - test
+      - docs-deploy:
+          requires:
             - docs-build
           filters:
             branches:
