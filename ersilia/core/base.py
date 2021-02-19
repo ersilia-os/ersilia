@@ -16,6 +16,7 @@ class ErsiliaBase(object):
             config_json (str, optional): Path to a configuration file.
             credentials_json (str, optional): Path to a credentials file.
         """
+        self.eos_dir = EOS
         self.config_json = config_json
         self.cfg = Config(json_file=config_json)
         self.cred = Credentials(json_file=credentials_json)

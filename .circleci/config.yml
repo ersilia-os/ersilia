@@ -12,7 +12,7 @@ jobs:
               source activate ersilia
               pip install -r requirements.txt
       - run:
-          name: Install ersilia package
+          name: Install ersilia package in developer mode
           command: |
               source activate ersilia
               pip install -e .
@@ -47,6 +47,7 @@ jobs:
           command: |
               cd docs/scripts/
               mkdir ../source/fetched
+              mkdir ../source/fetched/people
               bash fetch_from_web.sh
       - run:
           name: Build autodoc

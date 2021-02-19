@@ -16,6 +16,7 @@ from ..utils.conda import SimpleConda
 from ..utils.identifiers import FileIdentifier
 from ..utils.terminal import run_command
 from ..default import CONDA_ENV_YML_FILE
+from ..db.environments.localdb import EnvironmentDb
 
 
 CONDA_INSTALLS = "conda_installs.sh"
@@ -28,6 +29,7 @@ class ModelFetcher(ErsiliaBase):
         ErsiliaBase.__init__(self,
                              config_json=config_json,
                              credentials_json=credentials_json)
+        self.config_json = config_json
         self.token = self.cfg.HUB.TOKEN
         self.org = self.cfg.HUB.ORG
         self.tag = self.cfg.HUB.TAG
@@ -170,11 +172,18 @@ class ModelFetcher(ErsiliaBase):
             self.conda.run_commandlines(environment=checksum, commandlines=commandlines)
         # create environment yml file
         self.conda.export_env_yml(checksum, model_path)
+        # store conda file in the local environment dabase
+        db = EnvironmentDb(config_json=self.config_json)
+        db.table = "conda"
+        db.insert(model_id=model_id, env=checksum)
         return checksum
 
     def _run_pack_script_conda(self, model_id):
+        print("A")
         checksum = self._setup_conda(model_id)
+        print("B")
         self._repath_pack_save(model_id)
+        print("C")
         pack_snippet = """
         python {0}
         """.format(self.cfg.HUB.PACK_SCRIPT)

@@ -6,18 +6,9 @@ from bentoml.server import start_dev_server
 from bentoml.cli.click_utils import conditional_argument
 from bentoml.cli.bento_service import resolve_bundle_path
 from bentoml.saved_bundle import load_bento_service_api
-from ersilia.hub.fetch import ModelFetcher
-from ersilia.hub.catalog import ModelCatalog
-from ersilia.hub.delete import ModelEosDeleter, ModelTmpDeleter, ModelBentoDeleter, ModelPipDeleter, ModelBundleDeleter
-from ersilia.hub.card import ModelCard
-from ersilia.app.app import StreamlitApp
-from ersilia.core.base import ErsiliaBase
-from ersilia.contrib.store import ModelStorager
-from ersilia.contrib.deploy import Deployer
-from ersilia.auth.auth import Auth
-
 
 def create_ersilia_service_cli(pip_installed_bundle_path=None):
+    from ersilia.auth.auth import Auth
 
     is_contributor = Auth().is_contributor()
 
@@ -29,7 +20,6 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         """
 
     # Example usage: ersilia auth login
-    @click.group(cls=BentoMLCommandGroup)
     @ersilia_cli.command(
         short_help="Log in to ersilia to enter contributor mode",
         help="Log in to ersilia to enter contributor mode. "
@@ -37,22 +27,6 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     def auth():
         pass
-
-    """
-    @auth.command(
-        short_help="Log in to ersilia to enter contributor mode.",
-        help="Log in to ersilia"
-    )
-    def login():
-        pass
-
-    @auth.command(
-        short_help="Logout",
-        help="Logout"
-    )
-    def logout():
-        pass
-    """
 
     # Example usage: ersilia conda activate eos0aaa
     @ersilia_cli.command(
@@ -71,6 +45,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     @click.argument("model_id", type=click.STRING)
     def fetch(model_id):
+        from ersilia.hub.fetch import ModelFetcher
         click.echo(click.style("Fetching model %s" % model_id, fg="yellow"))
         mf = ModelFetcher()
         mf.fetch(model_id)
@@ -84,16 +59,9 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     @click.argument("model_id", type=click.STRING)
     def delete(model_id):
-        click.echo(click.style("Deleting BentoML files", fg="yellow"))
-        ModelBentoDeleter().delete(model_id)
-        click.echo(click.style("Deleting EOS files", fg="yellow"))
-        ModelEosDeleter().delete(model_id)
-        click.echo(click.style("Deleting bundles", fg="yellow"))
-        ModelBundleDeleter().delete(model_id)
-        click.echo(click.style("Deleting temporary files (if any)", fg="yellow"))
-        ModelTmpDeleter().delete(model_id)
-        click.echo(click.style("Deleting local Pip package", fg="yellow"))
-        ModelPipDeleter().delete(model_id)
+        from ersilia.hub.delete import ModelFullDeleter
+        click.echo(click.style("Deleting model %s" % model_id, fg="yellow"))
+        ModelFullDeleter().delete(model_id)
 
     # Example usage: ersilia serve {MODEL_ID}
     @ersilia_cli.command(
@@ -158,6 +126,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         help=""
     )
     def catalog(local=False):
+        from ersilia.hub.catalog import ModelCatalog
         mc = ModelCatalog(as_dataframe=False)
         if not local:
             click.echo(mc.hub())
@@ -172,6 +141,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     @click.argument("model_id", type=click.STRING)
     def app(model_id):
+        from ersilia.app.app import StreamlitApp
         sa = StreamlitApp()
         status = sa.run(model_id)
         if not status:
@@ -185,6 +155,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     @click.argument("model_id", type=click.STRING)
     def card(model_id):
+        from ersilia.hub.card import ModelCard
         mc = ModelCard()
         click.echo(mc.get(model_id))
 
@@ -199,6 +170,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         @click.argument("model_id", type=click.STRING)
         @click.option("--path", required=True, type=click.Path())
         def store(model_id, path):
+            from ersilia.contrib.store import ModelStorager
             ms = ModelStorager()
             ms.store(path, model_id)
 
@@ -211,6 +183,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         @click.argument("model_id", type=click.STRING)
         @click.option("--cloud", default="heroku", type=click.STRING)
         def deploy(model_id, cloud):
+            from ersilia.contrib.deploy import Deployer
             dp = Deployer(cloud=cloud)
             if dp.dep is None:
                 click.echo(click.style("Please enter a valid cloud option", fg="red"))

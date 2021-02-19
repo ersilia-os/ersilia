@@ -146,7 +146,6 @@ class Installer(BaseInstaller):
             return
         if self._is_tool("git"):
             return
-        self.conda()
         click.echo("Git needs to be installed")
         sys.exit(1)
 
@@ -305,6 +304,7 @@ class Uninstaller(BaseInstaller):
         org, img, tag = self.versions.server_docker_name(as_tuple=True)
         if docker.exists(org, img, tag):
             docker.delete(org, img, tag)
+
 
 def base_installer():
     ins = Installer(check_install_log=False)
