@@ -90,6 +90,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../source/fetched/usage.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../source/fetched/deployment.html">Model deployment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../source/package.html">Package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/devel.html">For developers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">About us:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/fetched/people.html">Ersilia team</a></li>
 </ul>
 
             
@@ -304,7 +309,6 @@
             <span class="k">return</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_tool</span><span class="p">(</span><span class="s2">&quot;git&quot;</span><span class="p">):</span>
             <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="p">()</span>
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Git needs to be installed&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
@@ -463,6 +467,7 @@
         <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">server_docker_name</span><span class="p">(</span><span class="n">as_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
             <span class="n">docker</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div></div>
+
 
 <div class="viewcode-block" id="base_installer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.base_installer">[docs]</a><span class="k">def</span> <span class="nf">base_installer</span><span class="p">():</span>
     <span class="n">ins</span> <span class="o">=</span> <span class="n">Installer</span><span class="p">(</span><span class="n">check_install_log</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>

@@ -15,7 +15,15 @@ Ersilia documentation
    source/fetched/usage.md
    source/fetched/deployment.md
    source/package.rst
+   source/devel.rst
 
+.. toctree::
+   :maxdepth: 2
+   :caption: About us:
+
+   source/fetched/people.md
+   source/fetched/
+   source/fetched/
 
 Indices and tables
 ==================

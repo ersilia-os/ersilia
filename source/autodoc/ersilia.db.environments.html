@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ersilia.db.environments package &mdash; Ersilia  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ersilia.hub package" href="ersilia.hub.html" />
+    <link rel="prev" title="ersilia.db package" href="ersilia.db.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Ersilia
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../fetched/README.html">Learn about Ersilia!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/usage.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/deployment.html">Model deployment</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">Package index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ersilia.html">ersilia package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ersilia.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.contrib.html">ersilia.contrib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia.default">ersilia.default module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../devel.html">For developers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">About us:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/people.html">Ersilia team</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Ersilia</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../package.html">Package index</a> &raquo;</li>
+        
+          <li><a href="ersilia.html">ersilia package</a> &raquo;</li>
+        
+          <li><a href="ersilia.db.html">ersilia.db package</a> &raquo;</li>
+        
+      <li>ersilia.db.environments package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/source/autodoc/ersilia.db.environments.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ersilia-db-environments-package">
+<h1>ersilia.db.environments package<a class="headerlink" href="#ersilia-db-environments-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ersilia.db.environments.localdb">
+<span id="ersilia-db-environments-localdb-module"></span><h2>ersilia.db.environments.localdb module<a class="headerlink" href="#module-ersilia.db.environments.localdb" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb">
+<em class="property">class </em><code class="descclassname">ersilia.db.environments.localdb.</code><code class="descname">EnvironmentDb</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.clean">
+<code class="descname">clean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.clean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.create_table">
+<code class="descname">create_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.create_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.envs_of_model">
+<code class="descname">envs_of_model</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.envs_of_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.envs_of_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.envs_with_same_model">
+<code class="descname">envs_with_same_model</code><span class="sig-paren">(</span><em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.envs_with_same_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.envs_with_same_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.fetchall">
+<code class="descname">fetchall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.fetchall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.fetchall" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.insert">
+<code class="descname">insert</code><span class="sig-paren">(</span><em>model_id</em>, <em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.insert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.models_of_env">
+<code class="descname">models_of_env</code><span class="sig-paren">(</span><em>env</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.models_of_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.models_of_env" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.models_with_same_env">
+<code class="descname">models_with_same_env</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.models_with_same_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.models_with_same_env" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ersilia.db.environments.localdb.EnvironmentDb.table">
+<code class="descname">table</code><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.db.environments">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.db.environments" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="ersilia.hub.html" class="btn btn-neutral float-right" title="ersilia.hub package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ersilia.db.html" class="btn btn-neutral float-left" title="ersilia.db package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Ersilia Open Source Initiative.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
