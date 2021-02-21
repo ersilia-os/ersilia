@@ -167,9 +167,9 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">runpy</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">textwrap</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">from</span> <span class="nn">bentoml</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">bentoml_load</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..utils.download</span> <span class="kn">import</span> <span class="n">GitHubDownloader</span><span class="p">,</span> <span class="n">OsfDownloader</span><span class="p">,</span> <span class="n">PseudoDownloader</span>
@@ -184,6 +184,74 @@
 
 <span class="n">CONDA_INSTALLS</span> <span class="o">=</span> <span class="s2">&quot;conda_installs.sh&quot;</span>
 
+
+<div class="viewcode-block" id="ModelStatus"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelStatus">[docs]</a><span class="k">class</span> <span class="nc">ModelStatus</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ModelStatus.is_downloaded"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelStatus.is_downloaded">[docs]</a>    <span class="k">def</span> <span class="nf">is_downloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">essentials</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;README.md&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="c1"># essential files</span>
+        <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)}</span>
+        <span class="k">for</span> <span class="n">essential</span> <span class="ow">in</span> <span class="n">essentials</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">essential</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ModelStatus.is_docker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelStatus.is_docker">[docs]</a>    <span class="k">def</span> <span class="nf">is_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="k">pass</span> <span class="c1"># TODO work with docker containers - this option shall we available when we automatically do docker containers.</span></div>
+
+<div class="viewcode-block" id="ModelStatus.is_conda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelStatus.is_conda">[docs]</a>    <span class="k">def</span> <span class="nf">is_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
+        <span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
+        <span class="n">envs</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">envs_of_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="ModelStatus.is_pip"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelStatus.is_pip">[docs]</a>    <span class="k">def</span> <span class="nf">is_pip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">_is_bento_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_folder</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_folder</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">essentials</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bentoml.yml&quot;</span><span class="p">]</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">model_folder</span><span class="p">)}</span>
+        <span class="k">for</span> <span class="n">essential</span> <span class="ow">in</span> <span class="n">essentials</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">essential</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="ModelStatus.is_bundle"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelStatus.is_bundle">[docs]</a>    <span class="k">def</span> <span class="nf">is_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">model_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_bento_folder</span><span class="p">(</span><span class="n">model_folder</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelStatus.is_bentoml"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelStatus.is_bentoml">[docs]</a>    <span class="k">def</span> <span class="nf">is_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">model_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bentoml_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_bento_folder</span><span class="p">(</span><span class="n">model_folder</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelStatus.status"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelStatus.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check installation and deployment status of the model&quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;download&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_downloaded</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bundle</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">&quot;docker&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">&quot;conda&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_conda</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">&quot;pip&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pip</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">results</span></div></div>
+
+
 <div class="viewcode-block" id="ModelFetcher"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelFetcher">[docs]</a><span class="k">class</span> <span class="nc">ModelFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -192,7 +260,6 @@
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                              <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
                              <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">TOKEN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">ORG</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">TAG</span>
@@ -260,16 +327,6 @@
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">fn</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_bentoml_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bentoml&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:latest&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot;--print-location&quot;</span><span class="p">,</span> <span class="s2">&quot;--quiet&quot;</span><span class="p">]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bundle_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ModelFetcher.get_repo"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelFetcher.get_repo">[docs]</a>    <span class="k">def</span> <span class="nf">get_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fetch model from local development folder or download from GitHub&quot;&quot;&quot;</span>
@@ -342,11 +399,8 @@
         <span class="k">return</span> <span class="n">checksum</span>
 
     <span class="k">def</span> <span class="nf">_run_pack_script_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
         <span class="n">checksum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_conda</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_repath_pack_save</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
         <span class="n">pack_snippet</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        python </span><span class="si">{0}</span><span class="s2"></span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACK_SCRIPT</span><span class="p">)</span>
@@ -396,13 +450,17 @@
 <div class="viewcode-block" id="ModelFetcher.fetch"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelFetcher.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">pip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">deleter</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ms</span><span class="o">.</span><span class="n">is_downloaded</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">bentoml</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">as_bentoml</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ms</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">as_bentoml</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pip</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pip_install</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ms</span><span class="o">.</span><span class="n">is_pip</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pip_install</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
