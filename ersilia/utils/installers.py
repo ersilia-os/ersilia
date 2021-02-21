@@ -307,6 +307,8 @@ class Uninstaller(BaseInstaller):
 
 
 def base_installer():
+    """The base installer does a bare minimum installation of dependencies.
+    It is mainly used to make a base environment for the models."""
     ins = Installer(check_install_log=False)
     ins.rdkit()
 

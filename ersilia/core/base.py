@@ -40,11 +40,51 @@ class ErsiliaBase(object):
 
     def _get_latest_bentoml_tag(self, model_id):
         path = os.path.join(self._bentoml_dir, model_id)
-        return sorted(os.listdir(path))[-1]
+        if not os.path.exists(path):
+            return None
+        items = sorted(os.listdir(path))
+        if not items:
+            return None
+        else:
+            return items[-1]
 
     def _get_latest_bundle_tag(self, model_id):
         path = os.path.join(self._bundles_dir, model_id)
-        return sorted(os.listdir(path))[-1]
+        if not os.path.exists(path):
+            return None
+        items = sorted(os.listdir(path))
+        if not items:
+            return None
+        else:
+            return items[-1]
+
+    def _get_bentoml_location(self, model_id):
+        tag = self._get_latest_bentoml_tag(model_id)
+        path = os.path.join(self._bentoml_dir, model_id)
+        if not os.path.exists(path):
+            return None
+        if tag is not None:
+            return os.path.join(path, tag)
+        else:
+            return path
+
+    def _get_bundle_location(self, model_id):
+        tag = self._get_latest_bundle_tag(model_id)
+        path = os.path.join(self._bundles_dir, model_id)
+        if not os.path.exists(path):
+            return None
+        if tag is not None:
+            return os.path.join(path, tag)
+        else:
+            return path
+
+    @staticmethod
+    def _get_bento_location(model_id):
+        import subprocess
+        cmd = ["bentoml", "get", "%s:latest" % model_id, "--print-location", "--quiet"]
+        result = subprocess.run(cmd, stdout=subprocess.PIPE)
+        result = result.stdout.decode("utf-8").rstrip()
+        return result
 
     def _is_ready(self, model_id):
         """Check whether a model exists in the local computer"""

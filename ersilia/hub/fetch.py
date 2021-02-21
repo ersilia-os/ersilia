@@ -4,9 +4,9 @@ import os
 import shutil
 import runpy
 import sys
-import subprocess
 import textwrap
 import tempfile
+import importlib
 from bentoml import load as bentoml_load
 from .. import ErsiliaBase
 from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
@@ -21,6 +21,74 @@ from ..db.environments.localdb import EnvironmentDb
 
 CONDA_INSTALLS = "conda_installs.sh"
 
+
+class ModelStatus(ErsiliaBase):
+
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+
+    def is_downloaded(self, model_id):
+        essentials = ["README.md", "model"] # essential files
+        dst_dir = os.path.join(self._dest_dir, model_id)
+        if not os.path.exists(dst_dir):
+            return False
+        items = {i for i in os.listdir(dst_dir)}
+        for essential in essentials:
+            if essential not in items:
+                return False
+        return True
+
+    def is_docker(self, model_id):
+        pass # TODO work with docker containers - this option shall we available when we automatically do docker containers.
+
+    def is_conda(self, model_id):
+        db = EnvironmentDb(config_json=self.config_json)
+        db.table = "conda"
+        conda = SimpleConda()
+        envs = db.envs_of_model(model_id)
+        for env in envs:
+            if conda.exists(env):
+                return True
+        return False
+
+    def is_pip(self, model_id):
+        try:
+            importlib.import_module(model_id, package=None)
+            return True
+        except ModuleNotFoundError:
+            return False
+
+    def _is_bento_folder(self, model_folder):
+        if not os.path.exists(model_folder):
+            return False
+        essentials = ["bentoml.yml"]
+        items = {i for i in os.listdir(model_folder)}
+        for essential in essentials:
+            if essential not in items:
+                return False
+        return True
+
+    def is_bundle(self, model_id):
+        model_folder = self._get_bundle_location(model_id)
+        return self._is_bento_folder(model_folder)
+
+    def is_bentoml(self, model_id):
+        model_folder = self._get_bentoml_location(model_id)
+        return self._is_bento_folder(model_folder)
+
+    def status(self, model_id):
+        """Check installation and deployment status of the model"""
+        results = {
+            "download": self.is_downloaded(model_id),
+            "bentoml": self.is_bentoml(model_id),
+            "bundle": self.is_bundle(model_id),
+            "docker": self.is_docker(model_id),
+            "conda": self.is_conda(model_id),
+            "pip": self.is_pip(model_id)
+        }
+        return results
+
+
 class ModelFetcher(ErsiliaBase):
 
     def __init__(self,
@@ -29,7 +97,6 @@ class ModelFetcher(ErsiliaBase):
         ErsiliaBase.__init__(self,
                              config_json=config_json,
                              credentials_json=credentials_json)
-        self.config_json = config_json
         self.token = self.cfg.HUB.TOKEN
         self.org = self.cfg.HUB.ORG
         self.tag = self.cfg.HUB.TAG
@@ -97,16 +164,6 @@ class ModelFetcher(ErsiliaBase):
             for r in runs:
                 f.write("{0}\n".format(r))
         return fn
-
-    @staticmethod
-    def _get_bentoml_location(model_id):
-        cmd = ["bentoml", "get", "%s:latest" % model_id, "--print-location", "--quiet"]
-        result = subprocess.run(cmd, stdout=subprocess.PIPE)
-        result = result.stdout.decode("utf-8").rstrip()
-        return result
-
-    def _get_bundle_location(self, model_id):
-        return os.path.join(self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id))
 
     def get_repo(self, model_id):
         """Fetch model from local development folder or download from GitHub"""
@@ -179,11 +236,8 @@ class ModelFetcher(ErsiliaBase):
         return checksum
 
     def _run_pack_script_conda(self, model_id):
-        print("A")
         checksum = self._setup_conda(model_id)
-        print("B")
         self._repath_pack_save(model_id)
-        print("C")
         pack_snippet = """
         python {0}
         """.format(self.cfg.HUB.PACK_SCRIPT)
@@ -233,10 +287,14 @@ class ModelFetcher(ErsiliaBase):
     def fetch(self, model_id, pip=True, bentoml=False):
         if self.overwrite:
             self.deleter.delete(model_id)
-        self.get_repo(model_id)
-        self.get_model(model_id)
-        self.pack(model_id)
+        ms = ModelStatus()
+        if not ms.is_downloaded(model_id):
+            self.get_repo(model_id)
+            self.get_model(model_id)
+            self.pack(model_id)
         if bentoml:
-            self.as_bentoml(model_id)
+            if not ms.is_bentoml(model_id):
+                self.as_bentoml(model_id)
         if pip:
-            self.pip_install(model_id)
+            if not ms.is_pip(model_id):
+                self.pip_install(model_id)

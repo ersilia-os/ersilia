@@ -109,18 +109,23 @@ class CondaUtils(BaseConda):
 
     def get_install_commands_from_dockerfile(self, path):
         """Identifies install commands from Dockerfile
-        Right now this command is conservative and returns None if at least
+        For now this command is conservative and returns None if at least
         one of the commands is not conda ... or pip ... or pip3 ...
         """
         dp = SimpleDockerfileParser(path)
         runs = dp.get_runs()
         is_valid = True
+        runs_ = []
         for r in runs:
             exec = r.split(" ")[0]
             if exec not in ["conda", "pip", "pip3"]:
                 is_valid = False
+            if " -y " not in r:
+                runs_ += [r + " -y"]
+            else:
+                runs_ += [r]
         if is_valid:
-            return runs
+            return runs_
         else:
             return None
 
@@ -291,7 +296,7 @@ class SimpleConda(CondaUtils):
         bash_script = self.activate_base()
         bash_script += """
         source ${0}/etc/profile.d/conda.sh
-        conda create --clone {1} --name {2}
+        conda create --clone {1} --name {2} -y
         """.format(
             self.conda_prefix(True),
             src_env,
@@ -322,4 +327,4 @@ class SimpleConda(CondaUtils):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script), quiet=False)
+        run_command("bash {0}".format(tmp_script), quiet=True)

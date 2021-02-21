@@ -5,7 +5,7 @@ from ..hub.fetch import ModelFetcher
 
 class ErsiliaModel(ErsiliaBase):
 
-    def __init__(self, model_id, config_json=None, overwrite=True, pip=True, local=False):
+    def __init__(self, model_id, config_json=None, overwrite=False, pip=True, local=False):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.overwrite = overwrite
         self.local = local
@@ -23,4 +23,14 @@ class ErsiliaModel(ErsiliaBase):
         self.mdl = Model.load()
 
     def predict(self, inp):
-        return self.mdl.predict(inp)
+        if type(inp) == str:
+            is_single = True
+        else:
+            is_single = False
+        if is_single:
+            inp = [inp]
+        pred = self.mdl.predict(inp)
+        if is_single:
+            return pred[0]
+        else:
+            return pred

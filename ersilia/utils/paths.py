@@ -20,7 +20,7 @@ class Paths(object):
         """Get home directory"""
         return os.path.abspath(str(Path.home()))
 
-    def model_id_from_path(path):
+    def model_id_from_path(self, path):
         """Guess model identifier based on the path"""
         regex = self._eos_regex()
         path = os.path.abspath(path)
