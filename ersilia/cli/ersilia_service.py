@@ -123,9 +123,9 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         '--hub',
         is_flag=True,
         default=True,
-        help=""
+        help="Show catalog of models available in the Ersilia Hub"
     )
-    def catalog(local=False):
+    def catalog(local=False, hub=True):
         from ersilia.hub.catalog import ModelCatalog
         mc = ModelCatalog(as_dataframe=False)
         if not local:
@@ -157,7 +157,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     def card(model_id):
         from ersilia.hub.card import ModelCard
         mc = ModelCard()
-        click.echo(mc.get(model_id))
+        click.echo(mc.get(model_id, as_json=True))
 
     # Functions only for contributors
     if is_contributor:
