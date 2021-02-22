@@ -166,10 +166,14 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">webbrowser</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 <span class="kn">from</span> <span class="nn">.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">Paths</span>
+<span class="kn">from</span> <span class="nn">..auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
+<span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
 
 
 <div class="viewcode-block" id="ModelCatalog"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog">[docs]</a><span class="k">class</span> <span class="nc">ModelCatalog</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -177,6 +181,13 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">as_dataframe</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">as_dataframe</span> <span class="o">=</span> <span class="n">as_dataframe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eos_regex</span> <span class="o">=</span> <span class="n">Paths</span><span class="o">.</span><span class="n">_eos_regex</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_is_eos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">eos_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_dataframe</span><span class="p">:</span>
@@ -192,18 +203,41 @@
         <span class="sd">&quot;&quot;&quot;List models available in our spreadsheets&quot;&quot;&quot;</span>
         <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193&quot;</span><span class="p">)</span> <span class="c1"># TODO: do not just go to the website</span></div>
 
-<div class="viewcode-block" id="ModelCatalog.github"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog.github">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">github</span><span class="p">():</span>
+<div class="viewcode-block" id="ModelCatalog.github"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog.github">[docs]</a>    <span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List models available in the GitHub model hub repository&quot;&quot;&quot;</span>
-        <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://github.com/ersilia-os/&quot;</span><span class="p">)</span> <span class="c1"># TODO: do not just go to the website</span></div>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">oauth_token</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">token</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+            <span class="n">repo_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repos</span><span class="p">()]</span>
+            <span class="n">repos</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repo_list</span><span class="p">:</span>
+                <span class="n">owner</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">full_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">owner</span> <span class="o">!=</span> <span class="s2">&quot;ersilia-os&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">repos</span> <span class="o">+=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">repos</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com/users/ersilia-os/repos&quot;</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                <span class="n">repos</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+                <span class="n">models</span> <span class="o">+=</span> <span class="p">[</span><span class="n">repo</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">models</span></div>
 
 <div class="viewcode-block" id="ModelCatalog.hub"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog.hub">[docs]</a>    <span class="k">def</span> <span class="nf">hub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;List models available in our model hub repository&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;List models available in Ersilia model hub repository&quot;&quot;&quot;</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">github</span><span class="p">()</span>
         <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]]]</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MODEL_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;TITLE&quot;</span><span class="p">,</span> <span class="s2">&quot;DATE&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">card</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">,</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]]]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MODEL_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;TITLE&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelCatalog.local"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog.local">[docs]</a>    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -212,8 +246,8 @@
         <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">):</span>
             <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-            <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">,</span> <span class="n">card</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">card</span><span class="o">.</span><span class="n">date</span><span class="p">]]</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MODEL_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;TITLE&quot;</span><span class="p">,</span> <span class="s2">&quot;DATE&quot;</span><span class="p">])</span>
+            <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">,</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]]]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MODEL_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;TITLE&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelCatalog.bentoml"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog.bentoml">[docs]</a>    <span class="k">def</span> <span class="nf">bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -238,7 +272,6 @@
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;MODEL_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;BENTO_SERVICE&quot;</span><span class="p">])]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;MODEL_ID&quot;</span><span class="p">]</span><span class="o">+</span><span class="n">columns</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div></div>
-
 </pre></div>
 
            </div>

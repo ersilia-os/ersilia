@@ -286,9 +286,9 @@
         <span class="s1">&#39;--hub&#39;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the Ersilia Hub&quot;</span>
     <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hub</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">ersilia.hub.catalog</span> <span class="kn">import</span> <span class="n">ModelCatalog</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">(</span><span class="n">as_dataframe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">local</span><span class="p">:</span>
@@ -320,7 +320,7 @@
     <span class="k">def</span> <span class="nf">card</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">ersilia.hub.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
-        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
     <span class="c1"># Functions only for contributors</span>
     <span class="k">if</span> <span class="n">is_contributor</span><span class="p">:</span>
