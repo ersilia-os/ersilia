@@ -3,8 +3,9 @@ import os
 import sys
 import tempfile
 from .conda import SimpleConda
-from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO, CREDENTIALS_JSON, CONFIG_JSON
+from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO, CREDENTIALS_JSON, CONFIG_JSON, INSTALL_STATUS_FILE
 from .. import ErsiliaBase
+from .. import check_install_status
 from .terminal import run_command
 from .versioning import Versioner
 import click
@@ -254,22 +255,23 @@ class Installer(BaseInstaller):
         tmp_repo = self._clone_repo(tmp_dir)
         # write the dockerfile
         dockerfile = """
-        FROM bentoml/model-server:{0}
+        FROM bentoml/model-server:{0}-{1}
         MAINTAINER ersilia
 
         ENV LC_ALL=C.UTF-8
         ENV LANG=C.UTF-8
 
-        WORKDIR {1}
+        WORKDIR {2}
 
         COPY . .
 
         RUN conda --version
 
-        RUN conda install -c conda-forge rdkit
         RUN pip install .
+        RUN ersilia setup --base
         """.format(
             self.versions.bentoml_version(),
+            self.versions.python_version(py_format=True),
             self.cfg.ENV.DOCKER.IMAGE_WORKDIR
         )
         path = os.path.join(tmp_repo, "Dockerfile")
@@ -278,7 +280,7 @@ class Installer(BaseInstaller):
             lines = lines[1:-1]
             for l in lines:
                 f.write(l[8:]+"\n")
-        click.echo(">> Building a Docker Server image")
+        click.echo(">> Building docker server image {0}".format(self.versions.server_docker_name(as_tuple=False)))
         docker.build(path=tmp_repo, org=org, img=img, tag=tag)
 
 
@@ -309,16 +311,26 @@ class Uninstaller(BaseInstaller):
 def base_installer():
     """The base installer does a bare minimum installation of dependencies.
     It is mainly used to make a base environment for the models."""
-    ins = Installer(check_install_log=False)
-    ins.rdkit()
+    status = check_install_status()
+    if status["status"] is None:
+        ins = Installer(check_install_log=False)
+        ins.rdkit()
+        ins.config()
+        with open(status["install_status_file"], "w") as f:
+            f.write("base")
 
 
-def check_dependencies():
-    ins = Installer()
-    ins.profile()
-    ins.conda()
-    ins.git()
-    ins.rdkit()
-    ins.config()
-    ins.base_conda()
-    ins.server_docker()
+def full_installer():
+    """The full installer does all the installations necessary to run ersila."""
+    status = check_install_status()
+    if status["status"] != "full":
+        ins = Installer()
+        ins.profile()
+        ins.conda()
+        ins.git()
+        ins.rdkit()
+        ins.config()
+        ins.base_conda()
+        ins.server_docker()
+        with open(status["install_status_file"], "w") as f:
+            f.write("full")

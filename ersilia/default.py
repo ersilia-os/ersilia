@@ -13,12 +13,13 @@ GITHUB_ORG = "ersilia-os"
 GITHUB_ERSILIA_REPO = "ersilia"
 CONFIG_JSON = "config.json"
 CREDENTIALS_JSON = "credentials.json"
+INSTALL_STATUS_FILE = ".install.status"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"
 resolve_script = os.path.join(EOS, _resolve_script)
 if not os.path.exists(resolve_script):
-    shutil.copyfile(os.path.join(ROOT, "utils", "aux", _resolve_script), resolve_script)
+    shutil.copyfile(os.path.join(ROOT, "utils", "supp", _resolve_script), resolve_script)
 
 snippet = """
 # >>> ersilia >>>

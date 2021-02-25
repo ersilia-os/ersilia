@@ -1,4 +1,4 @@
 import ersilia
 
-def test_import():
+def ersilia_import():
     assert(1==1)

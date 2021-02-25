@@ -5,22 +5,31 @@ from ..hub.fetch import ModelFetcher
 
 class ErsiliaModel(ErsiliaBase):
 
-    def __init__(self, model_id, config_json=None, overwrite=False, pip=True, local=False):
+    def __init__(self, model_id, config_json=None, overwrite=False, pip=True, local=True):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.overwrite = overwrite
         self.local = local
         self.model_id = model_id
         self.pip = pip
         self._fetch()
-        self._import()
+        self._pip_model = None
 
     def _fetch(self):
         mf = ModelFetcher(config_json=self.config_json, overwrite=self.overwrite, local=self.local)
         mf.fetch(self.model_id, pip=self.pip)
 
-    def _import(self):
-        Model = importlib.import_module(self.model_id, package=None)
-        self.mdl = Model.load()
+    def _pip_import(self):
+        try:
+            Model = importlib.import_module(self.model_id, package=None)
+            return Model.load()
+        except ModuleNotFoundError:
+            return None
+
+    def predict_with_pip(self, inp):
+        if not self._pip_model:
+            self._pip_model = self._pip_import()
+        if not self._pip_model:
+            pass
 
     def predict(self, inp):
         if type(inp) == str:
@@ -34,3 +43,9 @@ class ErsiliaModel(ErsiliaBase):
             return pred[0]
         else:
             return pred
+
+    def serve(self):
+        pass
+
+    def close(self):
+        pass

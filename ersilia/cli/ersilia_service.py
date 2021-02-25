@@ -7,6 +7,7 @@ from bentoml.cli.click_utils import conditional_argument
 from bentoml.cli.bento_service import resolve_bundle_path
 from bentoml.saved_bundle import load_bento_service_api
 
+
 def create_ersilia_service_cli(pip_installed_bundle_path=None):
     from ersilia.auth.auth import Auth
 
@@ -158,6 +159,32 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         from ersilia.hub.card import ModelCard
         mc = ModelCard()
         click.echo(mc.get(model_id, as_json=True))
+
+    # Example usage: ersilia setup
+    @ersilia_cli.command(
+        short_help="Setup ersilia",
+        help="Setup ersilia, including building a model-server image, a base environment (eos), rdkit, etc."
+    )
+    @click.option(
+        '--base',
+        is_flag=True,
+        default=False,
+        help="Install only bare-minimum dependencies."
+    )
+    @click.option(
+        '--full',
+        is_flag=True,
+        default=True,
+        help="Install all the necessary dependencies."
+    )
+    def setup(base=False, full=True):
+        from ersilia.utils.installers import base_installer, full_installer
+        if base:
+            base_installer()
+        elif full:
+            full_installer()
+        else:
+            pass
 
     # Functions only for contributors
     if is_contributor:

@@ -7,9 +7,12 @@ class Versioner(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    def python_version(self):
+    def python_version(self, py_format=False):
         vi = sys.version_info
-        return "{0}.{1}".format(vi.major, vi.minor)
+        if py_format:
+            return "py{0}{1}".format(vi.major, vi.minor)
+        else:
+            return "{0}.{1}".format(vi.major, vi.minor)
 
     def ersilia_version(self):
         from .. import __version__ as ver
@@ -23,7 +26,7 @@ class Versioner(ErsiliaBase):
 
     def server_docker_name(self, tag=None, as_tuple=False):
         if tag is None:
-            tag = self.ersilia_version()
+            tag = "{0}-{1}".format(self.ersilia_version(), self.python_version(py_format=True))
         org = self.cfg.EXT.DOCKERHUB_ORG
         img = self.cfg.ENV.DOCKER.SERVER_BASE_IMAGE
         if as_tuple:

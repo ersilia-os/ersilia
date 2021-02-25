@@ -284,7 +284,12 @@ class ModelFetcher(ErsiliaBase):
         bento = self._get_bundle_location(model_id)
         run_command([sys.executable, "-m", "pip", "install", bento], quiet=True)
 
-    def fetch(self, model_id, pip=True, bentoml=False):
+    def containerize(self, model_id):
+        """Containerize model using bentoml"""
+        bento = self._get_bundle_location(model_id)
+        run_command("bentoml containerize {0} -t {0}:latest".format(model_id), quiet=True)
+
+    def fetch(self, model_id, pip=True, containerize=True, bentoml=False):
         if self.overwrite:
             self.deleter.delete(model_id)
         ms = ModelStatus()
@@ -295,6 +300,9 @@ class ModelFetcher(ErsiliaBase):
         if bentoml:
             if not ms.is_bentoml(model_id):
                 self.as_bentoml(model_id)
+        if containerize:
+            if not ms.is_docker(model_id):
+                self.as_docker(model_id)
         if pip:
             if not ms.is_pip(model_id):
                 self.pip_install(model_id)

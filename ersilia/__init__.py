@@ -1,14 +1,17 @@
 from ._version import __version__
 del _version
 
+# External imports
+import os
+import click
+
 # Global imports
 from .utils.config import Config
 from .core.base import ErsiliaBase
 from .core.model import ErsiliaModel
-from .utils.installers import check_dependencies
+from .default import EOS, INSTALL_STATUS_FILE
 
 # Clean version
-import os
 from ._clean_static_version import version
 script_path = os.path.dirname(os.path.abspath(__file__))
 clean_version_file = os.path.join(script_path, "_clean_static_version.py")
@@ -22,8 +25,28 @@ else:
             f.write('version = "{0}"'.format(ver))
     __version__ = ver
 
-# Check dependencies
-check_dependencies()
+# Check status of installs
+def check_install_status():
+    fn = os.path.join(EOS, INSTALL_STATUS_FILE)
+    if not os.path.exists(fn):
+        status = None
+    else:
+        with open(fn, "r") as f:
+            status = f.read().strip()
+    results = {
+        "install_status_file": fn,
+        "status": status
+    }
+    return results
+
+status = check_install_status()["status"]
+if status == "full":
+    pass
+elif status == "base":
+    click.echo(click.style("Only base install done. For a full functionality, run 'ersilia setup' in the terminal", fg="yellow"))
+else:
+    click.echo(click.style("No install status available, before continuing, run 'ersilia setup' in the terminal", fg="red"))
+
 
 __all__ = [
     "__version__"

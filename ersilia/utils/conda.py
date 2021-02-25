@@ -6,7 +6,7 @@ from collections import defaultdict, OrderedDict
 from .terminal import run_command
 from .docker import SimpleDockerfileParser
 from .versioning import Versioner
-from .aux.conda_env_resolve import CHECKSUM_NCHAR, CHECKSUM_FILE
+from .supp.conda_env_resolve import CHECKSUM_NCHAR, CHECKSUM_FILE
 from ..default import CONDA_ENV_YML_FILE
 
 BASE = "base"
@@ -272,7 +272,7 @@ class SimpleConda(CondaUtils):
         bash_script += """
         source ${0}/etc/profile.d/conda.sh
         conda activate {1}
-        conda env export > {2}
+        conda env export --no-builds > {2}
         conda deactivate
         """.format(
             self.conda_prefix(True),
