@@ -95,14 +95,22 @@ class GitHubDownloader(object):
         self.overwrite = overwrite
         self.token = token
 
+    @staticmethod
+    def _repo_url(org, repo):
+        return "https://github.com/{0}/{1}.git".format(org, repo)
+
     def clone(self, org, repo, destination):
         if os.path.exists(destination):
             if self.overwrite:
                 shutil.rmtree(destination)
             else:
                 return
-        cmd = "gh repo clone {0}/{1} {2}".format(org, repo, destination)
-        run_command(cmd, quiet=True)
+        if shutil.which("gh") is not None:
+            cmd = "gh repo clone {0}/{1} {2}".format(org, repo, destination)
+            run_command(cmd, quiet=True)
+        else:
+            import pygit2
+            pygit2.clone_repository(url=self._repo_url(org, repo), path=destination)
 
     def download_single(self, org, repo, repo_path, destination):
         if os.path.exists(destination):

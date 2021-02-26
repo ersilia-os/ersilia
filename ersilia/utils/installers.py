@@ -59,7 +59,7 @@ class BaseInstaller(ErsiliaBase):
         else:
             src = os.path.join(self.development_path, CREDENTIALS_JSON)
             src_exists = os.path.exists(src)
-        if os.path.exists(src):
+        if src_exists:
             os.symlink(src, dst)
         else:
             from .config import Secrets
@@ -219,7 +219,7 @@ class Installer(BaseInstaller):
         cd {0}
         conda create -n {1} python={2} -y
         conda activate {1}
-        pip install -e .
+        pip install .
         python {3}
         conda deactivate
         """.format(
@@ -232,14 +232,19 @@ class Installer(BaseInstaller):
             f.write(bash_script)
         python_script = """
         from ersilia.utils.installers import base_installer
-        base_installer()
+        base_installer(ignore_status=True)
         """
         with open(tmp_python_script, "w") as f:
             lines = python_script.split("\n")
             for l in lines:
                 f.write(l[8:]+"\n")
-        click.echo(">> Creating a Base Conda environment")
+        click.echo(">> Creating a Base Conda environment {0}".format(eos_base_env))
         run_command("bash {0}".format(tmp_script), quiet=True)
+
+    def base_conda_slim(self):
+        if self._is_done("base_conda_slim"):
+            return
+        # TODO
 
     def server_docker(self):
         if self._is_done("server_docker"):
@@ -283,6 +288,11 @@ class Installer(BaseInstaller):
         click.echo(">> Building docker server image {0}".format(self.versions.server_docker_name(as_tuple=False)))
         docker.build(path=tmp_repo, org=org, img=img, tag=tag)
 
+    def server_docker_slim(self):
+        if self._is_done("server_docker_slim"):
+            return
+        # TODO
+
 
 class Uninstaller(BaseInstaller):
 
@@ -308,11 +318,17 @@ class Uninstaller(BaseInstaller):
             docker.delete(org, img, tag)
 
 
-def base_installer():
+def base_slimmer(ignore_status=False):
+    """Removes unnecessary packages for minimal functionality and produce a slim version of ersilia"""
+    status = check_install_status()
+    # TODO
+
+
+def base_installer(ignore_status=False):
     """The base installer does a bare minimum installation of dependencies.
     It is mainly used to make a base environment for the models."""
     status = check_install_status()
-    if status["status"] is None:
+    if status["status"] is None or ignore_status:
         ins = Installer(check_install_log=False)
         ins.rdkit()
         ins.config()
@@ -320,10 +336,10 @@ def base_installer():
             f.write("base")
 
 
-def full_installer():
+def full_installer(ignore_status=False):
     """The full installer does all the installations necessary to run ersila."""
     status = check_install_status()
-    if status["status"] != "full":
+    if status["status"] != "full" or ignore_status:
         ins = Installer()
         ins.profile()
         ins.conda()

@@ -73,9 +73,9 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     @click.option(
         "--port",
         type=click.INT,
-        default=5000,
+        default=None,
         help="The port to listen on for the REST api server, "
-             "default is 5000",
+             "default is to look for a free port",
         envvar='BENTOML_PORT',
     )
     @click.option(
@@ -93,6 +93,9 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         envvar='BENTOML_ENABLE_NGROK',
     )
     def serve(port, model_id=None, enable_microbatch=False, run_with_ngrok=False):
+        if port is None:
+            from ersilia.utils.ports import find_free_port
+            port = find_free_port()
         saved_bundle_path = resolve_bundle_path(model_id + ":latest", pip_installed_bundle_path)
         start_dev_server(saved_bundle_path, port, enable_microbatch, run_with_ngrok)
 
@@ -134,6 +137,17 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         else:
             click.echo(mc.local())
 
+    # Example usage: ersilia card {MODEL_ID}
+    @ersilia_cli.command(
+        short_help="Get model info card",
+        help="Get model info card from Ersilia hub."
+    )
+    @click.argument("model_id", type=click.STRING)
+    def card(model_id):
+        from ersilia.hub.card import ModelCard
+        mc = ModelCard()
+        click.echo(mc.get(model_id, as_json=True))
+
     # Example usage: ersilia app {MODEL_ID}
     @ersilia_cli.command(
         short_help="Run model app",
@@ -148,17 +162,6 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
         if not status:
             click.echo(click.style("App could not be run or it is not available for model %s" % model_id, fg="red"))
             click.echo(click.style("Check that an app.py script exists in the model repository", fg="red"))
-
-    # Example usage: ersilia card {MODEL_ID}
-    @ersilia_cli.command(
-        short_help="Get model info card",
-        help="Get model info card from Ersilia hub."
-    )
-    @click.argument("model_id", type=click.STRING)
-    def card(model_id):
-        from ersilia.hub.card import ModelCard
-        mc = ModelCard()
-        click.echo(mc.get(model_id, as_json=True))
 
     # Example usage: ersilia setup
     @ersilia_cli.command(

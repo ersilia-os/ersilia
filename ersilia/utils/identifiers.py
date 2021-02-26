@@ -9,6 +9,7 @@ import random
 import string
 import urllib.parse
 import requests
+import json
 
 
 class IdentifierGenerator(object):
@@ -84,21 +85,25 @@ class FileIdentifier(IdentifierGenerator):
 
 class MoleculeIdentifier(IdentifierGenerator):
 
-    def __init__(self):
+    def __init__(self, local=True):
         super().__init__()
-        try:
-            from rdkit import Chem
-            self.Chem = Chem
-        except ModuleNotFoundError as err:
-            # TODO Logging
+        if local:
+            try:
+                from rdkit import Chem
+                self.Chem = Chem
+            except ModuleNotFoundError as err:
+                self.Chem = None
+        else:
             self.Chem = None
         from chembl_webresource_client.unichem import unichem_client as unichem
         self.unichem = unichem
 
     def _is_smiles(self, text):
         if self.Chem is None:
-            # TODO Logging
-            pass
+            if self._pubchem_smiles_to_inchikey(text) is not None:
+                return True
+            else:
+                return False
         else:
             mol = self.Chem.MolFromSmiles(text)
             if mol is None:
@@ -138,6 +143,24 @@ class MoleculeIdentifier(IdentifierGenerator):
         return self.Chem.MolToSmiles(mol)
 
     @staticmethod
+    def _nci_smiles_to_inchikey(smiles):
+        identifier = urllib.parse.quote(smiles)
+        url = "https://cactus.nci.nih.gov/chemical/structure/{0}/stdinchikey".format(identifier)
+        req = requests.get(url)
+        if req.status_code != 200:
+            return None
+        return req.text.split("=")[1]
+
+    @staticmethod
+    def _pubchem_smiles_to_inchikey(smiles):
+        identifier = urllib.parse.quote(smiles)
+        url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{0}/property/InChIKey/json".format(identifier)
+        req = requests.get(url)
+        if req.status_code != 200:
+            return None
+        return json.loads(req.text)["PropertyTable"]["Properties"][0]["InChIKey"]
+
+    @staticmethod
     def chemical_identifier_resolver(identifier):
         """Returns SMILES string of a given identifier, using NCI tool"""
         identifier = urllib.parse.quote(identifier)
@@ -150,14 +173,17 @@ class MoleculeIdentifier(IdentifierGenerator):
     def encode(self, smiles):
         """Get InChIKey of compound based on SMILES string"""
         if self.Chem is None:
-            return None
-        mol = self.Chem.MolFromSmiles(smiles)
-        if mol is None:
-            raise Exception("The SMILES string: %s is not valid or could not be converted to an InChIKey" % smiles)
-        inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
-        if inchi is None:
-            raise Exception("Could not obtain InChI")
-        inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
+            inchikey = self._pubchem_smiles_to_inchikey(smiles)
+            if inchikey is None:
+                inchikey = self._nci_smiles_to_inchikey(smiles)
+        else:
+            mol = self.Chem.MolFromSmiles(smiles)
+            if mol is None:
+                raise Exception("The SMILES string: %s is not valid or could not be converted to an InChIKey" % smiles)
+            inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
+            if inchi is None:
+                raise Exception("Could not obtain InChI")
+            inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
         return inchikey
 
 

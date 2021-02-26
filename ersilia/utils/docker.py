@@ -30,7 +30,7 @@ class SimpleDocker(object):
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         cmd = ["bash", tmp_script, self._image_name(org, img, tag)]
-        res = run_command_check_output(cmd, quiet=True)
+        res = run_command_check_output(cmd)
         res = res.strip()
         if res == b"False":
             return False

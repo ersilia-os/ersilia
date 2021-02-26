@@ -16,10 +16,6 @@ def run_command(cmd, quiet):
             subprocess.check_call(cmd)
 
 
-def run_command_check_output(cmd, quiet):
-    if quiet:
-        with open(os.devnull, "w") as fp:
-            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=fp)
-    else:
-        result = subprocess.run(cmd, stdout=subprocess.PIPE)
+def run_command_check_output(cmd):
+    result = subprocess.run(cmd, stdout=subprocess.PIPE)
     return result.stdout

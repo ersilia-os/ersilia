@@ -20,6 +20,11 @@ class Versioner(ErsiliaBase):
         ver = "{0}.{1}.{2}".format(ver[0], ver[1], ver[2].split("+")[0])
         return ver
 
+    def ersilia_version_with_py(self):
+        ver = self.ersilia_version()
+        ver = "{0}-{1}".format(ver, self.python_version(py_format=True))
+        return ver
+
     def bentoml_version(self):
         from bentoml import __version__ as ver
         return ver
@@ -37,7 +42,7 @@ class Versioner(ErsiliaBase):
 
     def base_conda_name(self, tag=None):
         if tag is None:
-            tag = self.ersilia_version()
+            tag = self.ersilia_version_with_py()
         env = self.cfg.ENV.CONDA.EOS_BASE_ENV
         name = "{0}-{1}".format(env, tag)
         return name
