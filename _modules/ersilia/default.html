@@ -176,12 +176,14 @@
 <span class="n">GITHUB_ERSILIA_REPO</span> <span class="o">=</span> <span class="s2">&quot;ersilia&quot;</span>
 <span class="n">CONFIG_JSON</span> <span class="o">=</span> <span class="s2">&quot;config.json&quot;</span>
 <span class="n">CREDENTIALS_JSON</span> <span class="o">=</span> <span class="s2">&quot;credentials.json&quot;</span>
+<span class="n">INSTALL_STATUS_FILE</span> <span class="o">=</span> <span class="s2">&quot;.install.status&quot;</span>
+<span class="n">DOCKER_BENTO_PATH</span> <span class="o">=</span> <span class="s2">&quot;/bento&quot;</span>
 
 <span class="c1"># EOS conda</span>
 <span class="n">_resolve_script</span> <span class="o">=</span> <span class="s2">&quot;conda_env_resolve.py&quot;</span>
 <span class="n">resolve_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">resolve_script</span><span class="p">):</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;utils&quot;</span><span class="p">,</span> <span class="s2">&quot;aux&quot;</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">),</span> <span class="n">resolve_script</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;utils&quot;</span><span class="p">,</span> <span class="s2">&quot;supp&quot;</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">),</span> <span class="n">resolve_script</span><span class="p">)</span>
 
 <span class="n">snippet</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2"># &gt;&gt;&gt; ersilia &gt;&gt;&gt;</span>

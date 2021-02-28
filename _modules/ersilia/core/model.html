@@ -168,22 +168,31 @@
 
 <div class="viewcode-block" id="ErsiliaModel"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel">[docs]</a><span class="k">class</span> <span class="nc">ErsiliaModel</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">local</span> <span class="o">=</span> <span class="n">local</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pip</span> <span class="o">=</span> <span class="n">pip</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fetch</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_import</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pip_model</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">local</span><span class="p">)</span>
         <span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">pip</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pip</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_import</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">Model</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mdl</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_pip_import</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Model</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ErsiliaModel.predict_with_pip"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.predict_with_pip">[docs]</a>    <span class="k">def</span> <span class="nf">predict_with_pip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pip_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pip_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pip_import</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pip_model</span><span class="p">:</span>
+            <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="ErsiliaModel.predict"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
@@ -196,7 +205,13 @@
         <span class="k">if</span> <span class="n">is_single</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pred</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pred</span></div></div>
+            <span class="k">return</span> <span class="n">pred</span></div>
+
+<div class="viewcode-block" id="ErsiliaModel.serve"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.serve">[docs]</a>    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ErsiliaModel.close"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div></div>
 </pre></div>
 
            </div>

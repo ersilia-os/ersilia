@@ -170,6 +170,7 @@
 <span class="kn">from</span> <span class="nn">bentoml.cli.bento_service</span> <span class="kn">import</span> <span class="n">resolve_bundle_path</span>
 <span class="kn">from</span> <span class="nn">bentoml.saved_bundle</span> <span class="kn">import</span> <span class="n">load_bento_service_api</span>
 
+
 <div class="viewcode-block" id="create_ersilia_service_cli"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.ersilia_service.create_ersilia_service_cli">[docs]</a><span class="k">def</span> <span class="nf">create_ersilia_service_cli</span><span class="p">(</span><span class="n">pip_installed_bundle_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">ersilia.auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
 
@@ -235,9 +236,9 @@
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The port to listen on for the REST api server, &quot;</span>
-             <span class="s2">&quot;default is 5000&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;default is to look for a free port&quot;</span><span class="p">,</span>
         <span class="n">envvar</span><span class="o">=</span><span class="s1">&#39;BENTOML_PORT&#39;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
@@ -255,6 +256,9 @@
         <span class="n">envvar</span><span class="o">=</span><span class="s1">&#39;BENTOML_ENABLE_NGROK&#39;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enable_microbatch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">run_with_ngrok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">ersilia.utils.ports</span> <span class="kn">import</span> <span class="n">find_free_port</span>
+            <span class="n">port</span> <span class="o">=</span> <span class="n">find_free_port</span><span class="p">()</span>
         <span class="n">saved_bundle_path</span> <span class="o">=</span> <span class="n">resolve_bundle_path</span><span class="p">(</span><span class="n">model_id</span> <span class="o">+</span> <span class="s2">&quot;:latest&quot;</span><span class="p">,</span> <span class="n">pip_installed_bundle_path</span><span class="p">)</span>
         <span class="n">start_dev_server</span><span class="p">(</span><span class="n">saved_bundle_path</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">enable_microbatch</span><span class="p">,</span> <span class="n">run_with_ngrok</span><span class="p">)</span>
 
@@ -296,6 +300,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">())</span>
 
+    <span class="c1"># Example usage: ersilia card {MODEL_ID}</span>
+    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Get model info card&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Get model info card from Ersilia hub.&quot;</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">card</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">ersilia.hub.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
+        <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
     <span class="c1"># Example usage: ersilia app {MODEL_ID}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
         <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Run model app&quot;</span><span class="p">,</span>
@@ -311,16 +326,31 @@
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;App could not be run or it is not available for model </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;Check that an app.py script exists in the model repository&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
 
-    <span class="c1"># Example usage: ersilia card {MODEL_ID}</span>
+    <span class="c1"># Example usage: ersilia setup</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Get model info card&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Get model info card from Ersilia hub.&quot;</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Setup ersilia&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Setup ersilia, including building a model-server image, a base environment (eos), rdkit, etc.&quot;</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">card</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">ersilia.hub.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
-        <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
-        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s1">&#39;--base&#39;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Install only bare-minimum dependencies.&quot;</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s1">&#39;--full&#39;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Install all the necessary dependencies.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">ersilia.utils.installers</span> <span class="kn">import</span> <span class="n">base_installer</span><span class="p">,</span> <span class="n">full_installer</span>
+        <span class="k">if</span> <span class="n">base</span><span class="p">:</span>
+            <span class="n">base_installer</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">full</span><span class="p">:</span>
+            <span class="n">full_installer</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
 
     <span class="c1"># Functions only for contributors</span>
     <span class="k">if</span> <span class="n">is_contributor</span><span class="p">:</span>

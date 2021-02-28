@@ -169,7 +169,7 @@
 <span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">SimpleDockerfileParser</span>
 <span class="kn">from</span> <span class="nn">.versioning</span> <span class="kn">import</span> <span class="n">Versioner</span>
-<span class="kn">from</span> <span class="nn">.aux.conda_env_resolve</span> <span class="kn">import</span> <span class="n">CHECKSUM_NCHAR</span><span class="p">,</span> <span class="n">CHECKSUM_FILE</span>
+<span class="kn">from</span> <span class="nn">.supp.conda_env_resolve</span> <span class="kn">import</span> <span class="n">CHECKSUM_NCHAR</span><span class="p">,</span> <span class="n">CHECKSUM_FILE</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span>
 
 <span class="n">BASE</span> <span class="o">=</span> <span class="s2">&quot;base&quot;</span>
@@ -435,7 +435,7 @@
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        source $</span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">        conda activate </span><span class="si">{1}</span><span class="s2"></span>
-<span class="s2">        conda env export &gt; </span><span class="si">{2}</span><span class="s2"></span>
+<span class="s2">        conda env export --no-builds &gt; </span><span class="si">{2}</span><span class="s2"></span>
 <span class="s2">        conda deactivate</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
