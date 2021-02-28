@@ -14,6 +14,7 @@ GITHUB_ERSILIA_REPO = "ersilia"
 CONFIG_JSON = "config.json"
 CREDENTIALS_JSON = "credentials.json"
 INSTALL_STATUS_FILE = ".install.status"
+DOCKER_BENTO_PATH = "/bento"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

@@ -2,7 +2,7 @@ import os
 import json
 from .. import ErsiliaBase
 from ..utils.paths import Paths
-from ..default import CONDA_ENV_YML_FILE
+from ..default import CONDA_ENV_YML_FILE, DOCKER_BENTO_PATH
 
 ROOT_CHECKFILE = "README.md"
 
@@ -56,21 +56,29 @@ class RepoUtils(ErsiliaBase):
         else:
             return None
 
-    def get_conda_env_yml_file(self):
-        root = self._root_path()
-        if root is None:
-            model_id = self.get_model_id()
-            # try to find yml in bundles
-            yml = os.path.join(self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id), CONDA_ENV_YML_FILE)
-            if os.path.exists(yml):
-                return yml
-            # try to find yml in bentoml
-            yml = os.path.join(self._bentoml_dir, model_id, self._get_latest_bentoml_tag(model_id), CONDA_ENV_YML_FILE)
-            if os.path.exists(yml):
-                return yml
+    def _inside_docker(self):
+        if os.path.exists(DOCKER_BENTO_PATH):
+            return True
         else:
-            return os.path.join(root, CONDA_ENV_YML_FILE)
+            return False
 
+    def get_conda_env_yml_file(self):
+        if self.inside_docker():
+            return os.path.join(DOCKER_BENTO_PATH, CONDA_ENV_YML_FILE)
+        else:
+            root = self._root_path()
+            if root is None:
+                model_id = self.get_model_id()
+                # try to find yml in bundles
+                yml = os.path.join(self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id), CONDA_ENV_YML_FILE)
+                if os.path.exists(yml):
+                    return yml
+                # try to find yml in bentoml
+                yml = os.path.join(self._bentoml_dir, model_id, self._get_latest_bentoml_tag(model_id), CONDA_ENV_YML_FILE)
+                if os.path.exists(yml):
+                    return yml
+            else:
+                return os.path.join(root, CONDA_ENV_YML_FILE)
 
     def get_docker_repo_image(self, model_id):
         return os.path.join(self.dockerhub_org, "{0}:{1}".format(model_id, self.cfg.ENV.DOCKER.REPO_TAG))
