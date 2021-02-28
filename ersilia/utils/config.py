@@ -4,12 +4,80 @@ The Config provide access to all sort of useful parameters.
 """
 import os
 import json
-from ..default import EOS, GITHUB_ORG, CONFIG_JSON, CREDENTIALS_JSON
+from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, CREDENTIALS_JSON
 from autologging import logged
 import requests
 
 SECRETS_JSON = "secrets.json"
 ERSILIA_SECRETS_GITHUB_REPO = "ersilia-secrets"
+
+class Checker(object):
+
+    def __init__(self):
+        self.development_path = None
+        self._config()
+        self._credentials()
+
+    def _package_path(self):
+        if self.development_path is None:
+            from .paths import Paths
+            pt = Paths()
+            self.development_path = pt.ersilia_development_path()
+
+    def _config(self):
+        dst = os.path.join(EOS, CONFIG_JSON)
+        if os.path.exists(dst):
+            return
+        self._package_path()
+        if self.development_path is None:
+            src_exists = False
+        else:
+            src = os.path.join(self.development_path, CONFIG_JSON)
+            src_exists = os.path.exists(src)
+        if src_exists:
+            os.symlink(src, dst)
+        else:
+            from .download import GitHubDownloader
+            gd = GitHubDownloader(overwrite=True)
+            gd.download_single(GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, os.path.join(EOS, CONFIG_JSON))
+
+    def _credentials(self):
+        dst = os.path.join(EOS, CREDENTIALS_JSON)
+        if os.path.exists(dst):
+            return
+        self._package_path()
+        if self.development_path is None:
+            src_exists = False
+        else:
+            src = os.path.join(self.development_path, CREDENTIALS_JSON)
+            src_exists = os.path.exists(src)
+        if src_exists:
+            os.symlink(src, dst)
+        else:
+            sc = Secrets()
+            sc.fetch_from_github()
+            if self.development_path is None:
+                done = sc.to_credentials(dst)
+            else:
+                done = sc.to_credentials(src)
+                if done:
+                    os.symlink(src, dst)
+
+    def config(self):
+        if os.path.exists(os.path.join(EOS, CONFIG_JSON)):
+            return
+        os.makedirs(EOS, exist_ok=True)
+        self._package_path()
+        dev_path = self.development_path
+        if dev_path is not None:
+            import shutil
+            src = os.path.join(dev_path, CONFIG_JSON)
+            dst = os.path.join(EOS, CONFIG_JSON)
+            shutil.copyfile(src, dst)
+        else:
+            from .download import GitHubDownloader
+            gd = GitHubDownloader(overwrite=True)
+            gd.download_single(GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, os.path.join(EOS, CONFIG_JSON))
 
 
 class _Field(object):

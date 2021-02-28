@@ -1,3 +1,4 @@
+# Version
 from ._version import __version__
 del _version
 
@@ -5,11 +6,16 @@ del _version
 import os
 import click
 
+# Default variables
+from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE
+if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
+    from .utils.config import Checker
+    Checker().config()
+
 # Global imports
 from .utils.config import Config
 from .core.base import ErsiliaBase
 from .core.model import ErsiliaModel
-from .default import EOS, INSTALL_STATUS_FILE
 
 # Clean version
 from ._clean_static_version import version

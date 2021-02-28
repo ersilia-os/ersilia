@@ -19,6 +19,7 @@ class EnvironmentDb(ErsiliaBase):
     @table.setter
     def table(self, table):
         self._table = table
+        self.create_table()
 
     @table.deleter
     def table(self):

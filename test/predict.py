@@ -4,6 +4,7 @@ inputs = [
     "CCCC"
 ]
 
+
 def predict_from_pip():
     em = ErsiliaModel("eos0aaa")
     em.predict(inputs)

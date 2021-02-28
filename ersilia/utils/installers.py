@@ -6,6 +6,7 @@ from .conda import SimpleConda
 from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO, CREDENTIALS_JSON, CONFIG_JSON, INSTALL_STATUS_FILE
 from .. import ErsiliaBase
 from .. import check_install_status
+from .config import Checker
 from .terminal import run_command
 from .versioning import Versioner
 import click
@@ -16,61 +17,17 @@ INSTALL_LOG_FILE = ".install.log"
 class BaseInstaller(ErsiliaBase):
 
     def __init__(self, check_install_log, config_json, credentials_json):
-        self.development_path = None
-        self._config()
-        self._credentials()
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
         self.check_install_log = check_install_log
         self.log_file = os.path.join(EOS, INSTALL_LOG_FILE)
         self.log = None
         self.read_log()
         self.versions = Versioner()
-
-    def _package_path(self):
-        if self.development_path is None:
-            from .paths import Paths
-            pt = Paths()
-            self.development_path = pt.ersilia_development_path()
-
-    def _config(self):
-        dst = os.path.join(EOS, CONFIG_JSON)
-        if os.path.exists(dst):
-            return
-        self._package_path()
-        if self.development_path is None:
-            src_exists = False
-        else:
-            src = os.path.join(self.development_path, CONFIG_JSON)
-            src_exists = os.path.exists(src)
-        if src_exists:
-            os.symlink(src, dst)
-        else:
-            from .download import GitHubDownloader
-            gd = GitHubDownloader(overwrite=True)
-            gd.download_single(GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, os.path.join(EOS, CONFIG_JSON))
-
-    def _credentials(self):
-        dst = os.path.join(EOS, CREDENTIALS_JSON)
-        if os.path.exists(dst):
-            return
-        self._package_path()
-        if self.development_path is None:
-            src_exists = False
-        else:
-            src = os.path.join(self.development_path, CREDENTIALS_JSON)
-            src_exists = os.path.exists(src)
-        if src_exists:
-            os.symlink(src, dst)
-        else:
-            from .config import Secrets
-            sc = Secrets()
-            sc.fetch_from_github()
-            if self.development_path is None:
-                done = sc.to_credentials(dst)
-            else:
-                done = sc.to_credentials(src)
-                if done:
-                    os.symlink(src, dst)
+        checker = Checker()
+        checker._config()
+        checker._credentials()
+        checker._package_path()
+        self.development_path = checker.development_path
 
     def write_log(self):
         if self.log is None:
@@ -169,21 +126,11 @@ class Installer(BaseInstaller):
         if os.path.exists(os.path.join(EOS, CONFIG_JSON)):
             return
         click.echo(">> Setting up Config file")
-        os.makedirs(EOS, exist_ok=True)
-        self._package_path()
-        dev_path = self.development_path
-        if dev_path is not None:
-            src = os.path.join(dev_path, CONFIG_JSON)
-            dst = os.path.join(EOS, CONFIG_JSON)
-            shutil.copyfile(src, dst)
-        else:
-            from .download import GitHubDownloader
-            gd = GitHubDownloader(overwrite=True)
-            gd.download_single(self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE, CONFIG_JSON, os.path.join(EOS, CONFIG_JSON))
+        checker = Checker()
+        checker.config()
 
     def _clone_repo(self, path):
         path_repo = os.path.join(path, self.cfg.HUB.PACKAGE)
-        self._package_path()
         dev_path = self.development_path
         if dev_path is not None:
             shutil.copytree(dev_path, path_repo)
@@ -219,7 +166,7 @@ class Installer(BaseInstaller):
         cd {0}
         conda create -n {1} python={2} -y
         conda activate {1}
-        pip install .
+        pip install -e .
         python {3}
         conda deactivate
         """.format(
