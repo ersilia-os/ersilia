@@ -43,7 +43,15 @@ class ModelStatus(ErsiliaBase):
         return True
 
     def is_docker(self, model_id):
-        pass # TODO work with docker containers - this option shall we available when we automatically do docker containers.
+        db = EnvironmentDb(config_json=self.config_json)
+        db.table = "docker"
+        docker = SimpleDocker()
+        envs = db.envs_of_model(model_id)
+        for env in envs:
+            img, tag = env.split(":")
+            if docker.exists(self.cfg.EXT.DOCKERHUB_ORG, img, tag):
+                return True
+        return False
 
     def is_conda(self, model_id):
         db = EnvironmentDb(config_json=self.config_json)
@@ -233,7 +241,7 @@ class ModelFetcher(ErsiliaBase):
             self.conda.run_commandlines(environment=checksum, commandlines=commandlines)
         # create environment yml file
         self.conda.export_env_yml(checksum, model_path)
-        # store conda file in the local environment dabase
+        # store conda environment in the local environment database
         db = EnvironmentDb(config_json=self.config_json)
         db.table = "conda"
         db.insert(model_id=model_id, env=checksum)
@@ -393,7 +401,12 @@ class ModelFetcher(ErsiliaBase):
     def containerize(self, model_id):
         """Containerize model using bentoml"""
         bento = self._get_bundle_location(model_id)
-        run_command("bentoml containerize {0} -t {0}:latest".format(model_id), quiet=True)
+        tag = self.cfg.ENV.DOCKER.LATEST_TAG
+        run_command("bentoml containerize {0} -t {0}:{1}".format(model_id, tag), quiet=True)
+        # store docker in the local environment database
+        db = EnvironmentDb(config_json=self.config_json)
+        db.table = "docker"
+        db.insert(model_id=model_id, env="{0}:{1}".format(model_id, tag))
 
     def fetch(self, model_id, pip=True, containerize=False, bentoml=False):
         if self.overwrite:

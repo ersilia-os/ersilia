@@ -4,30 +4,65 @@ import json
 import time
 import subprocess
 import importlib
+import requests
 from .. import ErsiliaBase
 from ..utils.terminal import run_command
 from ..utils.ports import find_free_port
+from ..db.environments.localdb import EnvironmentDb
+from ..utils.conda import SimpleConda
+from ..utils.docker import SimpleDocker
 
 SLEEP_SECONDS = 1
+TIMEOUT_SECONDS = 1000
 
 
-class SystemBundleService(ErsiliaBase):
+class BaseServing(ErsiliaBase):
 
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
         self.bundle_tag = self._get_latest_bundle_tag(model_id=self.model_id)
 
-    def _serve(self):
-        """Simply try to serve model with bentoml, locally"""
+    def _get_info_from_bento(self):
+        """Get info available from the Bento"""
         tmp_folder = tempfile.mkdtemp()
-        tmp_folder = "/Users/mduran/Desktop/mytest" # remove
-        if not os.path.exists(tmp_folder): os.mkdir(tmp_folder) # remove
+        tmp_file = os.path.join(tmp_folder, "info.json")
+        cmd = "bentoml info --quiet {0}:{1} > {2}".format(self.model_id, self.bundle_tag, tmp_file)
+        run_command(cmd, quiet=True)
+        with open(tmp_file, "r") as f:
+            info = json.load(f)
+        return info
+
+    def _get_apis_from_bento(self):
+        """Get APIs available for the model, according to the info Bento"""
+        info = self._get_info_from_bento()
+        for item in info["apis"]:
+            yield item["name"]
+
+    def _api_with_url(self, api_name, input):
+        if self.url is None:
+            return
+        response = requests.post("{0}/{1}".format(self.url, api_name), json=input)
+        return response.json()
+
+
+class _BentoMLService(BaseServing):
+
+    def __init__(self, model_id, config_json=None):
+        BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+        self.SEARCH_PRE_STRING = "* Running on "
+        self.SEARCH_SUF_STRING = "(Press CTRL+C to quit)"
+        self.ERROR_STRING = "error"
+
+    def _bentoml_serve(self, runcommand_func):
+        """Simply try to serve model with bentoml, locally"""
+        self.port = find_free_port()
+        tmp_folder = tempfile.mkdtemp()
         tmp_script = os.path.join(tmp_folder, "serve.sh")
         tmp_file = os.path.join(tmp_folder, "serve.log")
         tmp_pid = os.path.join(tmp_folder, "serve.pid")
         sl = ['#!/bin/bash']
-        sl += ['bentoml serve {0}:{1} --port {2} &> {3} &'.format(self.model_id, self.bundle_tag, self.port(), tmp_file)]
+        sl += ['bentoml serve {0}:{1} --port {2} &> {3} &'.format(self.model_id, self.bundle_tag, self.port, tmp_file)]
         sl += ['_pid=$!']
         sl += ['echo "$_pid" > {0}'.format(tmp_pid)]
         with open(tmp_script, "w") as f:
@@ -36,33 +71,65 @@ class SystemBundleService(ErsiliaBase):
         cmd = "bash {0}".format(tmp_script)
         run_command(cmd, quiet=True)
         with open(tmp_pid, "r") as f:
-            pid = int(f.read().strip())
-        while not os.path.exists(tmp_file):
-            time.sleep(SLEEP_SECONDS)
-        with open(tmp_file, "r") as f:
-            print(f.read())
+            self.pid = int(f.read().strip())
+        for _ in range(int(TIMEOUT_SECONDS/SLEEP_SECONDS)):
+            # If error string is identified, finish
+            with open(tmp_file, "r") as f:
+                r = f.read()
+                if self.ERROR_STRING in r:
+                    self.url = None
+                    return
+            # If everything looks good, wait until server is ready
+            with open(tmp_file, "r") as f:
+                r = f.read()
+                if self.SEARCH_PRE_STRING not in r or self.SEARCH_SUF_STRING not in r:
+                    time.sleep(SLEEP_SECONDS)
+                    continue
+            # When the search strings are found get url
+            with open(tmp_file, "r") as f:
+                for l in f:
+                    if self.SEARCH_PRE_STRING in l and self.SEARCH_SUF_STRING in l:
+                        self.url = l.split(self.SEARCH_PRE_STRING)[1].split(" ")[0]
+                        return
+        self.url = None
 
-    def is_available(self):
-        # TODO
-        pass
-
-    def serve(self):
-        # TODO
-        pass
-
-    def close(self):
-        # TODO
-        pass
+    def _close(self):
+        cmd = "kill {0}".format(self.pid)
+        run_command(cmd, quiet=True)
 
 
-class CondaEnvironmentService(ErsiliaBase):
-
-    from ..db.environments.localdb import EnvironmentDb
-    from ..utils.conda import SimpleConda
+class SystemBundleService(_BentoMLService):
 
     def __init__(self, model_id, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json)
-        self.model_id = model_id
+        _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
+
+    def _serve(self):
+        self._bentoml_serve(run_command)
+
+    def is_available(self):
+        self._serve()
+        self.close()
+        if self.url is not None:
+            avail = True
+        else:
+            avail = False
+        self.url = None
+        return avail
+
+    def serve(self):
+        self._serve()
+
+    def close(self):
+        self._close()
+
+    def api(self, api_name, input):
+        return self._api_with_url(api_name, input)
+
+
+class CondaEnvironmentService(_BentoMLService):
+
+    def __init__(self, model_id, config_json=None):
+        _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
         self.db = EnvironmentDb()
         self.conda = SimpleConda()
 
@@ -73,6 +140,10 @@ class CondaEnvironmentService(ErsiliaBase):
                 return env
         return None
 
+    def _run_command(self, cmd):
+        env = self._get_env_name()
+        return self.conda.run_commandlines(env, cmd)
+
     def is_available(self):
         env = self._get_env_name()
         if env is not None:
@@ -81,19 +152,19 @@ class CondaEnvironmentService(ErsiliaBase):
             return False
 
     def serve(self):
-        # TODO
-        pass
+        self._bentoml_serve(self._run_command)
 
     def close(self):
-        # TODO
-        pass
+        self._close()
+
+    def api(self, api_name, input):
+        return self._api_with_url(api_name, input)
 
 
-class DockerImageService(ErsiliaBase):
+class DockerImageService(BaseServing):
 
     def __init__(self, model_id, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json)
-        self.model_id = model_id
+        BaseServing.__init__(self, model_id=model_id, config_json=config_json)
 
     def is_available(self):
         pass
@@ -104,12 +175,14 @@ class DockerImageService(ErsiliaBase):
     def close(self):
         pass
 
+    def api(self, api_name, input):
+        return self._api_with_url(api_name, input)
 
-class PipInstalledService(ErsiliaBase):
+
+class PipInstalledService(BaseServing):
 
     def __init__(self, model_id, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json)
-        self.model_id = model_id
+        BaseServing.__init__(self, model_id=model_id, config_json=config_json)
 
     def _import(self):
         try:
@@ -132,39 +205,6 @@ class PipInstalledService(ErsiliaBase):
     def close(self):
         self.mdl = None
 
-
-class ServingModality(ErsiliaBase):
-
-    def __init__(self, model_id, config_json=None):
-        ErsiliaBase.__init__(self, model_id=model_id, config_json=config_json)
-
-    def _is_remote(self):
-        pass
-
-    def _is_bento(self):
-        pass
-
-    def _is_pip(self):
-        pass
-
-    def _is_conda(self):
-        pass
-
-    def _is_docker(self):
-        pass
-
-    def _get_info(self):
-        """Get info available from the Bento"""
-        tmp_folder = tempfile.mkdtemp()
-        tmp_file = os.path.join(tmp_folder, "info.json")
-        cmd = "bentoml info --quiet {0}:{1} > {2}".format(self.model_id, self.bundle_tag, tmp_file)
-        run_command(cmd, quiet=True)
-        with open(tmp_file, "r") as f:
-            info = json.load(f)
-        return info
-
-    def _get_apis(self):
-        """Get APIs available for the model, according to the info Bento"""
-        info = self._get_info()
-        for item in info["apis"]:
-            yield item["name"]
+    def api(self, api_name, input):
+        method = getattr(self.mdl, api_name)
+        return method(input)
