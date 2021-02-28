@@ -33,7 +33,7 @@ class SystemBundleService(ErsiliaBase):
         with open(tmp_script, "w") as f:
             for l in sl:
                 f.write(l+os.linesep)
-        cmd = "nohup bash {0}".format(tmp_script)
+        cmd = "bash {0}".format(tmp_script)
         run_command(cmd, quiet=True)
         with open(tmp_pid, "r") as f:
             pid = int(f.read().strip())
@@ -57,7 +57,7 @@ class SystemBundleService(ErsiliaBase):
 
 class CondaEnvironmentService(ErsiliaBase):
 
-    from ..db.environments import EnvironmentDb
+    from ..db.environments.localdb import EnvironmentDb
     from ..utils.conda import SimpleConda
 
     def __init__(self, model_id, config_json=None):
@@ -133,10 +133,10 @@ class PipInstalledService(ErsiliaBase):
         self.mdl = None
 
 
-class ServingModality(ServingModalityChecker):
+class ServingModality(ErsiliaBase):
 
     def __init__(self, model_id, config_json=None):
-        ServingModalityChecker.__init__(self, model_id=model_id, config_json=config_json)
+        ErsiliaBase.__init__(self, model_id=model_id, config_json=config_json)
 
     def _is_remote(self):
         pass

@@ -63,7 +63,7 @@ class RepoUtils(ErsiliaBase):
             return False
 
     def get_conda_env_yml_file(self):
-        if self.inside_docker():
+        if self._inside_docker():
             return os.path.join(DOCKER_BENTO_PATH, CONDA_ENV_YML_FILE)
         else:
             root = self._root_path()
