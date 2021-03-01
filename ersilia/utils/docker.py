@@ -1,6 +1,7 @@
 import os
 from dockerfile_parse import DockerfileParser
 import tempfile
+import pandas as pd
 from .identifiers import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
@@ -13,6 +14,51 @@ class SimpleDocker(object):
     @staticmethod
     def _image_name(org, img, tag):
         return "%s/%s:%s" % (org, img, tag)
+
+    def images(self):
+        tmp_dir = tempfile.mkdtemp()
+        tmp_file = os.path.join(tmp_dir, "images.txt")
+        cmd = "docker images > {0}".format(tmp_file)
+        run_command(cmd, quiet=True)
+        img_dict = {}
+        with open(tmp_file, "r") as f:
+            h = next(f)
+            rep_idx = h.find("REPOSITORY")
+            tag_idx = h.find("TAG")
+            img_idx = h.find("IMAGE ID")
+            crt_idx = h.find("CREATED")
+            for l in f:
+                rep = l[rep_idx:tag_idx].strip()
+                tag = l[tag_idx:img_idx].strip()
+                img = l[img_idx:crt_idx].strip()
+                img_dict["{0}:{1}".format(rep, tag)] = img
+        return img_dict
+
+    def containers(self, only_run):
+        tmp_dir = tempfile.mkdtemp()
+        tmp_file = os.path.join(tmp_dir, "containers.txt")
+        if not only_run:
+            all_str = "-a"
+        else:
+            all_str = ""
+        cmd = "docker ps {0} > {1}".format(all_str, tmp_file)
+        run_command(cmd, quiet=True)
+        cnt_dict = {}
+        with open(tmp_file, "r") as f:
+            h = next(f)
+            cnt_idx = h.find("CONTAINER ID")
+            img_idx = h.find("IMAGE")
+            cmd_idx = h.find("COMMAND")
+            sts_idx = h.find("STATUS")
+            pts_idx = h.find("PORTS")
+            nam_idx = h.find("NAMES")
+            for l in f:
+                cnt = l[cnt_idx:img_idx].strip()
+                img = l[img_idx:cmd_idx].strip()
+                sts = l[sts_idx:pts_idx].strip()
+                nam = l[nam_idx:].strip()
+                cnt_dict[nam] = img
+        return cnt_dict
 
     def exists(self, org, img, tag):
         bash_script = """

@@ -163,6 +163,17 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
             click.echo(click.style("App could not be run or it is not available for model %s" % model_id, fg="red"))
             click.echo(click.style("Check that an app.py script exists in the model repository", fg="red"))
 
+    # Example usage: ersilia dockerize {MODEL_ID}
+    @ersilia_cli.command(
+        short_help="Containerize model using docker",
+        help="Containerize model in the BentoML style using docker",
+    )
+    @click.argument("model_id", type=click.STRING)
+    def dockerize(model_id):
+        from ersilia.hub.fetch import ModelFetcher
+        mf = ModelFetcher()
+        mf.containerize(model_id=model_id)
+
     # Example usage: ersilia setup
     @ersilia_cli.command(
         short_help="Setup ersilia",

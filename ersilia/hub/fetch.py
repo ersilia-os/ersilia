@@ -402,11 +402,12 @@ class ModelFetcher(ErsiliaBase):
         """Containerize model using bentoml"""
         bento = self._get_bundle_location(model_id)
         tag = self.cfg.ENV.DOCKER.LATEST_TAG
-        run_command("bentoml containerize {0} -t {0}:{1}".format(model_id, tag), quiet=True)
+        bundle_tag = self._get_latest_bundle_tag(model_id)
+        run_command("bentoml containerize {1}:{2} -t {0}/{1}:{2}".format(self.docker_org, model_id, tag), quiet=True)
         # store docker in the local environment database
         db = EnvironmentDb(config_json=self.config_json)
         db.table = "docker"
-        db.insert(model_id=model_id, env="{0}:{1}".format(model_id, tag))
+        db.insert(model_id=model_id, env="{0}/{1}:{2}".format(self.docker_org, model_id, tag))
 
     def fetch(self, model_id, pip=True, containerize=False, bentoml=False):
         if self.overwrite:

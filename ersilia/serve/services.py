@@ -9,8 +9,10 @@ from .. import ErsiliaBase
 from ..utils.terminal import run_command
 from ..utils.ports import find_free_port
 from ..db.environments.localdb import EnvironmentDb
+from ..db.environments.managers import DockerManager
 from ..utils.conda import SimpleConda
 from ..utils.docker import SimpleDocker
+from ..default import DOCKERHUB_ORG
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -103,6 +105,13 @@ class SystemBundleService(_BentoMLService):
     def __init__(self, model_id, config_json=None):
         _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
 
+    def __enter__(self):
+        self.serve()
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
     def _serve(self):
         self._bentoml_serve(run_command)
 
@@ -131,7 +140,15 @@ class CondaEnvironmentService(_BentoMLService):
     def __init__(self, model_id, config_json=None):
         _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
         self.db = EnvironmentDb()
+        self.db.table = "conda"
         self.conda = SimpleConda()
+
+    def __enter__(self):
+        self.serve()
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
 
     def _get_env_name(self):
         envs = list(self.db.envs_of_model(self.model_id))
@@ -165,15 +182,45 @@ class DockerImageService(BaseServing):
 
     def __init__(self, model_id, config_json=None):
         BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+        self.db = EnvironmentDb()
+        self.db.table = "docker"
+        self.docker = SimpleDocker()
+        self.dm = DockerManager(config_json=config_json)
+
+    def __enter__(self):
+        self.serve()
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
+    @staticmethod
+    def _splitter(env):
+        return env.split(":")
+
+    def _get_env_name(self):
+        envs = list(self.db.envs_of_model(self.model_id))
+        for env in envs:
+            img, tag = self._splitter(env)
+            if self.docker.exists(org=DOCKERHUB_ORG, img=img, tag=tag):
+                return env
+        return None
 
     def is_available(self):
-        pass
+        env = self._get_env_name()
+        if env is not None:
+            return True
+        else:
+            return False
 
     def serve(self):
-        pass
+        res = self.dm.run(self.model_id)
+        self.container_name = res["container_name"]
+        self.port = res["port"]
+        self.url = "http://localhost:{0}".format(self.port)
 
     def close(self):
-        pass
+        self.dm._delete_container(self.container_name)
 
     def api(self, api_name, input):
         return self._api_with_url(api_name, input)
@@ -183,6 +230,13 @@ class PipInstalledService(BaseServing):
 
     def __init__(self, model_id, config_json=None):
         BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+
+    def __enter__(self):
+        self.serve()
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
 
     def _import(self):
         try:
