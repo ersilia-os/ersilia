@@ -11,6 +11,7 @@ def test_fetch_conda():
     mf.fetch(model_id=MODEL_ID, containerize=False)
     assert (1 == 1)
 
+"""
 def test_conda_predict():
     from ersilia.serve.services import CondaEnvironmentService
     srv = CondaEnvironmentService(MODEL_ID)
@@ -18,3 +19,4 @@ def test_conda_predict():
     srv.api("predict", INPUT)
     srv.close()
     assert (1 == 1)
+"""

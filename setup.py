@@ -37,27 +37,30 @@ slim = [
     "pycrypto"
 ]
 slim_requires = _filter_requires(slim, install_requires)
+
 # Web app requirements
 webapp = slim + [
     "streamlit"
 ]
 webapp_requires = _filter_requires(webapp, install_requires)
+
 # Doc builder requirements
 doc_builder = slim + [
     "sphinx"
 ]
 doc_builder_requires = _filter_requires(doc_builder, install_requires)
+
 # Test requirements
 test = slim + [
     "pytest"
 ]
 test_requires = _filter_requires(test, install_requires)
+
 # Development requires
 dev_requires = install_requires
 
 # Define extras requires
 extras_require = {
-    "slim": slim_requires,
     "webapp": webapp_requires,
     "doc_builder": doc_builder_requires,
     "test": test_requires,
@@ -71,7 +74,7 @@ setup(
     author='Ersilia Open Source Initiative',
     author_email='miquel@ersilia.io',
     url='https://github.com/ersilia-os/ersilia',
-    description='Ersilia model hub for open source drug discovery',
+    description='Ersilia model hub for open source drug discovery and global health',
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT',
@@ -92,8 +95,8 @@ setup(
     ),
     keywords='drug-discovery machine-learning ersilia open-science global-health model-hub',
     project_urls={
-        "Landing page": "http://ersilia.io",
-        "Models": "https://github.com/ersilia-os/eos-models/",
+        "Landing page": "https://ersilia.io",
+        "Models": "https://ersilia-hub.netlify.app",
         "Source Code": "https://github.com/ersilia-os/ersilia/",
     },
     include_package_data=True,
