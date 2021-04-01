@@ -1,16 +1,33 @@
 """See available models in the Ersilia Model Hub"""
 
 import subprocess
-import pandas as pd
-import webbrowser
 import requests
 import os
-from tabulate import tabulate
 from .card import ModelCard
 from .. import ErsiliaBase
 from ..utils.paths import Paths
 from ..auth.auth import Auth
-from github import Github
+from ..default import GITHUB_ORG
+
+try:
+    import webbrowser
+except ModuleNotFoundError as err:
+    webbrowser = None
+
+try:
+    import pandas as pd
+except ModuleNotFoundError as err:
+    pd = None
+
+try:
+    from github import Github
+except:
+    Github = None
+
+try:
+    from tabulate import tabulate
+except:
+    tabulate = None
 
 
 class ModelCatalog(ErsiliaBase):
@@ -38,7 +55,8 @@ class ModelCatalog(ErsiliaBase):
     @staticmethod
     def spreadsheet():
         """List models available in our spreadsheets"""
-        webbrowser.open("https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193") # TODO: do not just go to the website
+        if webbrowser:
+            webbrowser.open("https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193") # TODO: do not just go to the website
 
     def github(self):
         """List models available in the GitHub model hub repository"""
@@ -49,12 +67,12 @@ class ModelCatalog(ErsiliaBase):
             repos = []
             for r in repo_list:
                 owner, name = r.full_name.split("/")
-                if owner != "ersilia-os":
+                if owner != GITHUB_ORG:
                     continue
                 repos += [name]
         else:
             repos = []
-            url = "https://api.github.com/users/ersilia-os/repos"
+            url = "https://api.github.com/users/{0}/repos".format(GITHUB_ORG)
             results = requests.get(url).json()
             for r in results:
                 repos += [r["name"]]
@@ -74,8 +92,11 @@ class ModelCatalog(ErsiliaBase):
             if card is None:
                 continue
             R += [[model_id, card["title"]]]
-        df = pd.DataFrame(R, columns=["MODEL_ID", "TITLE"])
-        return self._return(df)
+        if pd:
+            df = pd.DataFrame(R, columns=["MODEL_ID", "TITLE"])
+            return self._return(df)
+        else:
+            return R
 
     def local(self):
         """List models available locally"""
@@ -84,8 +105,11 @@ class ModelCatalog(ErsiliaBase):
         for model_id in os.listdir(self._bundles_dir):
             card = mc.get(model_id)
             R += [[model_id, card["title"]]]
-        df = pd.DataFrame(R, columns=["MODEL_ID", "TITLE"])
-        return self._return(df)
+        if pd:
+            df = pd.DataFrame(R, columns=["MODEL_ID", "TITLE"])
+            return self._return(df)
+        else:
+            return R
 
     def bentoml(self):
         """List models available as BentoServices"""
@@ -105,7 +129,10 @@ class ModelCatalog(ErsiliaBase):
             for i, idx in enumerate(zip(cut_idxs, cut_idxs[1:]+[None])):
                 r += [row[idx[0]:idx[1]].rstrip()]
             R += [r]
-        df = pd.DataFrame(R, columns=columns)
-        df["MODEL_ID"] = [x.split(":")[0] for x in list(df["BENTO_SERVICE"])]
-        df = df[["MODEL_ID"]+columns]
-        return self._return(df)
+        if pd:
+            df = pd.DataFrame(R, columns=columns)
+            df["MODEL_ID"] = [x.split(":")[0] for x in list(df["BENTO_SERVICE"])]
+            df = df[["MODEL_ID"]+columns]
+            return self._return(df)
+        else:
+            return R

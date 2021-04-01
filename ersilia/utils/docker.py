@@ -1,8 +1,7 @@
 import os
 from dockerfile_parse import DockerfileParser
 import tempfile
-import pandas as pd
-from .identifiers import LongIdentifier
+from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 
@@ -136,6 +135,9 @@ class SimpleDockerfileParser(DockerfileParser):
         if os.path.isdir(path):
             path = os.path.join(path, "Dockerfile")
         DockerfileParser.__init__(self, path=path)
+
+    def get_baseimage(self):
+        return self.baseimage
 
     def get_runs(self):
         structure = self.structure

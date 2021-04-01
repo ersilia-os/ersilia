@@ -8,7 +8,7 @@ from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 from ...utils.paths import Paths
 from ...utils.terminal import run_command
 from ...utils.docker import SimpleDocker
-from ...utils.identifiers import ShortIdentifier
+from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
 
 BENTOML_DOCKERPORT = 5000

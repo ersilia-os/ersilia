@@ -5,8 +5,7 @@ The Config provide access to all sort of useful parameters.
 import os
 import json
 from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, CREDENTIALS_JSON
-from autologging import logged
-import requests
+
 
 SECRETS_JSON = "secrets.json"
 ERSILIA_SECRETS_GITHUB_REPO = "ersilia-secrets"
@@ -116,7 +115,6 @@ def _eval_obj(json_file):
     return eval_obj_dict
 
 
-@logged
 class Config(object):
     """Config class.
 
@@ -132,7 +130,6 @@ class Config(object):
             try:
                 json_file = os.environ["EOS_CONFIG"]
             except KeyError as err:
-                self.__log.debug("EOS_CONFIG environment variable not set. " + "Using default config file.")
                 json_file = os.path.join(EOS, CONFIG_JSON)
             except Exception as err:
                 raise err
@@ -143,7 +140,6 @@ class Config(object):
         return self.__dict__.keys()
 
 
-@logged
 class Secrets(object):
 
     def __init__(self, overwrite=True):
@@ -190,7 +186,6 @@ class Secrets(object):
         return True
 
 
-@logged
 class Credentials(object):
 
     def __init__(self, json_file=None):
@@ -198,7 +193,6 @@ class Credentials(object):
             try:
                 json_file = os.environ["EOS_CREDENTIALS"]
             except KeyError as err:
-                self.__log.debug("EOS_CREDENTIALS environment variable not set. " + "Using default credentials file.")
                 json_file = os.path.join(EOS, CREDENTIALS_JSON)
             except Exception as err:
                 raise err

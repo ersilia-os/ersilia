@@ -5,8 +5,13 @@ Base on GitHub login.
 from pathlib import Path
 import os
 import yaml
-from github import Github
-from github.GithubException import UnknownObjectException
+try:
+    from github import Github
+    from github.GithubException import UnknownObjectException
+except ModuleNotFoundError as err:
+    Github = None
+    UnknownObjectException = None
+
 
 HOSTNAME = "github.com"
 SECRET_REPO = "ersilia-os/ersilia-secrets"
@@ -57,12 +62,15 @@ class Auth(object):
 
     def is_contributor(self):
         """Check if the GitHub user is a contributor of ersilia-os"""
-        gh = Github(login_or_token=self.oauth_token())
-        try:
-            repo = gh.get_repo(self.secret_repo)
-            if repo is None:
-                return False
-            else:
-                return True
-        except UnknownObjectException:
+        if Github is None:
             return False
+        else:
+            gh = Github(login_or_token=self.oauth_token())
+            try:
+                repo = gh.get_repo(self.secret_repo)
+                if repo is None:
+                    return False
+                else:
+                    return True
+            except UnknownObjectException:
+                return False

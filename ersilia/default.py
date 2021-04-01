@@ -17,6 +17,7 @@ INSTALL_STATUS_FILE = ".install.status"
 DOCKER_BENTO_PATH = "/bento"
 DOCKERHUB_ORG = "ersiliaos"
 DOCKERHUB_LATEST_TAG = "latest"
+DEFAULT_MODEL_ID = "eos0zzz"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

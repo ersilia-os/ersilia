@@ -1,5 +1,5 @@
-MODEL_ID = "eos0aaa"
-INPUT = ["CCC", "CCN"]
+MODEL_ID = "eos0t01"
+INPUT = {}
 
 def test_import():
     import ersilia

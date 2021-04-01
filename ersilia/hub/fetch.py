@@ -14,10 +14,12 @@ from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
 from ..utils.zip import Zipper
 from ..utils.docker import SimpleDocker
 from ..utils.conda import SimpleConda
-from ..utils.identifiers import FileIdentifier
+from ..utils.identifiers.file import FileIdentifier
 from ..utils.terminal import run_command
+from ..utils.paths import Paths
 from ..default import CONDA_ENV_YML_FILE
 from ..db.environments.localdb import EnvironmentDb
+from .repo import ServiceFile, DockerfileFile
 
 
 CONDA_INSTALLS = "conda_installs.sh"
@@ -143,9 +145,14 @@ class ModelFetcher(ErsiliaBase):
         if dev_path is None:
             return None
         path = os.path.join(dev_path, model_id)
-        if not os.path.exists(path):
-            return None
-        return path
+        if os.path.exists(path):
+            return path
+        else:
+            path = Paths().ersilia_development_path()
+            path = os.path.join(path, "test", "models", model_id)
+            if os.path.exists(path):
+                return path
+        return None
 
     def _data_path(self, model_id):
         return os.path.join(self.cfg.LOCAL.DATA, model_id)
@@ -186,7 +193,7 @@ class ModelFetcher(ErsiliaBase):
         else:
             self.github_down.clone(org=self.org, repo=model_id, destination=folder)
 
-    def get_model(self, model_id):
+    def get_model_parameters(self, model_id):
         """Create a ./model folder in the model repository"""
         folder = os.path.join(self._model_path(model_id), "model")
         if os.path.exists(folder):
@@ -196,19 +203,24 @@ class ModelFetcher(ErsiliaBase):
             self.pseudo_down.fetch(path, folder)
         else:
             path = os.path.join("models", model_id+".zip")
-            self.osf_down.fetch(project_id=self.cfg.EXT.OSF_PROJECT, filename=path,
-                                destination=self._dest_dir, tmp_folder=self._tmp_dir)
-            self.zipper.unzip(os.path.join(self._dest_dir, model_id+".zip"), os.path.join(self._tmp_dir, model_id))
-            src = os.path.join(self._tmp_dir, model_id)
-            dst = os.path.join(self._dest_dir, model_id, "model")
-            if os.path.exists(dst):
-                if self.overwrite:
-                    shutil.rmtree(dst)
-                else:
-                    shutil.rmtree(src)
-                    return
-            shutil.move(os.path.join(src, "model"), os.path.join(self._dest_dir, model_id))
-            shutil.rmtree(src)
+            try:
+                self.osf_down.fetch(project_id=self.cfg.EXT.OSF_PROJECT, filename=path,
+                                    destination=self._dest_dir, tmp_folder=self._tmp_dir)
+                zip_file = os.path.join(self._dest_dir, model_id+".zip")
+                self.zipper.unzip(zip_file, os.path.join(self._tmp_dir, model_id))
+                src = os.path.join(self._tmp_dir, model_id)
+                dst = os.path.join(self._dest_dir, model_id, "model")
+                if os.path.exists(dst):
+                    if self.overwrite:
+                        shutil.rmtree(dst)
+                    else:
+                        shutil.rmtree(src)
+                        return
+                shutil.move(os.path.join(src, "model"), os.path.join(self._dest_dir, model_id))
+                shutil.rmtree(src)
+            except:
+                if not os.path.exists(folder):
+                    os.mkdir(folder)
 
     def _repath_pack_save(self, model_id):
         folder = self._model_path(model_id)
@@ -290,18 +302,21 @@ class ModelFetcher(ErsiliaBase):
         yml_file = os.path.join(dir, ENVIRONMENT_YML)
         if not os.path.exists(yml_file):
             return
-        with open(yml_file, "r") as f:
-            data = yaml.safe_load(f)
-            for i, d in enumerate(data["dependencies"][:-1]):
-                if "libgfortran=" in d:
-                    data["dependencies"][i] = "libgfortran"
-            for i, p in enumerate(data["dependencies"][-1]["pip"]):
-                if "ruamel" in p:
-                    data["dependencies"][-1]["pip"][i] = None
-            v = [x for x in data["dependencies"][-1]["pip"] if x is not None]
-            data["dependencies"][-1]["pip"] = v
-        with open(yml_file, "w") as f:
-            yaml.safe_dump(data, f)
+        try:
+            with open(yml_file, "r") as f:
+                data = yaml.safe_load(f)
+                for i, d in enumerate(data["dependencies"][:-1]):
+                    if "libgfortran=" in d:
+                        data["dependencies"][i] = "libgfortran"
+                for i, p in enumerate(data["dependencies"][-1]["pip"]):
+                    if "ruamel" in p:
+                        data["dependencies"][-1]["pip"][i] = None
+                v = [x for x in data["dependencies"][-1]["pip"] if x is not None]
+                data["dependencies"][-1]["pip"] = v
+            with open(yml_file, "w") as f:
+                yaml.safe_dump(data, f)
+        except:
+            return
 
     def _bundle_environment_yml_has_ersilia(self, model_id):
         """Check if bundle environment.yml file installs ersilia"""
@@ -343,6 +358,7 @@ class ModelFetcher(ErsiliaBase):
         If a development path exists locally, then this is the one we use.
         If not, we use the latest version available from github. This may change in the future to use the PyPi version, correspondingly.
         """
+
         if not self._bundle_uses_ersilia(model_id):
             return
         if self._bundle_environment_yml_has_ersilia(model_id):
@@ -367,20 +383,33 @@ class ModelFetcher(ErsiliaBase):
     def pack(self, model_id):
         """Pack model. Greatly inspired by BentoML."""
         folder = self._model_path(model_id)
+        ServiceFile(folder).rename_service()
         sys.path.insert(0, folder)
         cwd = os.getcwd()
         os.chdir(folder)
-        cf = self._get_conda_installs_from_dockerfile(model_id)
-        df = self._get_dockerfile(model_id)
-        if cf is not None:
-            # pack using conda
-            self._run_pack_script_conda(model_id)
-        elif df is not None:
-            # pack using docker
-            self._run_pack_script_docker(model_id)
-        else:
-            # try to run without conda environment or docker (not recommended)
+        dockerfile = DockerfileFile(folder)
+        # if dockerfile has no runs (i.e. no installation is necessary, apart from bentoml),
+        #  run pack script from the current environment
+        if not dockerfile.has_runs():
+            # get bentoml version
+            res = dockerfile.get_bentoml_version()
+            if res is None:
+                raise Exception
+            bentoml_version = res["version"]
+            # TODO: use python virtual environment to use exact bentoml version
             self._run_pack_script(model_id)
+        else:
+            cf = self._get_conda_installs_from_dockerfile(model_id)
+            df = self._get_dockerfile(model_id)
+            if cf is not None:
+                # pack using conda
+                self._run_pack_script_conda(model_id)
+            elif df is not None:
+                # pack using docker
+                self._run_pack_script_docker(model_id)
+            else:
+                # try to run without conda environment or docker (not recommended)
+                self._run_pack_script(model_id)
         os.chdir(cwd)
         sys.path.remove(folder)
         # Slightly modify bundle environment YAML file, if exists
@@ -415,7 +444,7 @@ class ModelFetcher(ErsiliaBase):
         ms = ModelStatus()
         if not ms.is_downloaded(model_id):
             self.get_repo(model_id)
-            self.get_model(model_id)
+            self.get_model_parameters(model_id)
             self.pack(model_id)
         if bentoml:
             if not ms.is_bentoml(model_id):

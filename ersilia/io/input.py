@@ -1,6 +1,7 @@
-from ..utils.identifiers import MoleculeIdentifier, ProteinIdentifier
 import random
 import os
+from ..utils.identifiers.molecule import MoleculeIdentifier
+from ..utils.identifiers.protein import ProteinIdentifier
 
 MOLECULE_EXAMPLES = "molecules.tsv"
 PROTEIN_EXAMPLES = "proteins.tsv"

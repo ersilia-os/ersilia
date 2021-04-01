@@ -2,9 +2,153 @@ import os
 import json
 from .. import ErsiliaBase
 from ..utils.paths import Paths
-from ..default import CONDA_ENV_YML_FILE, DOCKER_BENTO_PATH
+from ..utils.docker import SimpleDockerfileParser
+from ..default import CONDA_ENV_YML_FILE, DOCKER_BENTO_PATH, DEFAULT_MODEL_ID
 
 ROOT_CHECKFILE = "README.md"
+
+
+class ReadmeFile(object):
+
+    def __init__(self, path):
+        self.path = os.path.abspath(path)
+
+    def get_file(self):
+        return os.path.join(self.path, "README.md")
+
+    def check(self):
+        return True
+
+
+class ServiceFile(object):
+
+    def __init__(self, path):
+        self.path = os.path.abspath(path)
+
+    def get_file(self):
+        return os.path.join(self.path, "src", "service.py")
+
+    def _has_service_class(self):
+        search_string = "class Service("
+        with open(self.get_file(), "r") as f:
+            for l in f:
+                if search_string == l[:len(search_string)]:
+                    return True
+        return False
+
+    def rename_service(self):
+        ru = RepoUtils(self.path)
+        model_id = ru.get_model_id()
+        add_text = ru.rename_service(model_id)
+        file_name = self.get_file()
+        with open(file_name, "r") as f:
+            text = f.read()
+        if add_text in text:
+            return
+        text += os.linesep
+        text += add_text
+        with open(file_name, "w") as f:
+            f.write(text)
+
+    def check(self):
+        return self._has_service_class()
+
+
+class PackFile(object):
+
+    def __init__(self, path):
+        self.path = os.path.abspath(path)
+
+    def get_file(self):
+        return os.path.join(self.path, "pack.py")
+
+    def check(self):
+        return True
+
+
+class DockerfileFile(object):
+
+    def __init__(self, path):
+        self.path = os.path.abspath(path)
+        self.parser = SimpleDockerfileParser(self.path)
+
+    def get_file(self):
+        return os.path.join(self.path, "Dockerfile")
+
+    def get_bentoml_version(self):
+        bimg = self.parser.baseimage
+        bimg = bimg.split("/")
+        if len(bimg) != 2:
+            return None
+        if bimg[0] != "bentoml":
+            return None
+        img = bimg[1]
+        img = img.split(":")
+        if len(img) != 2:
+            return None
+        if img[0] != "model-server":
+            return None
+        tag = img[1]
+        if "-slim-" in tag:
+            slim = True
+        else:
+            slim = False
+        if slim:
+            tag = tag.split("-")
+            if len(tag) != 3:
+                return None
+        else:
+            tag = tag.split("-")
+            if len(tag) != 2:
+                return None
+        result = {
+            "version": tag[0],
+            "slim": slim,
+            "python": tag[-1]
+        }
+        return result
+
+    def has_runs(self):
+        if self.parser.get_runs():
+            return True
+        else:
+            return False
+
+    def check(self):
+        return True
+
+
+class Integrity(object):
+
+    def __init__(self, path):
+        self.path = os.path.abspath(path)
+
+    def _readme_file(self):
+        return ReadmeFile(self.path).get_file()
+
+    def _service_file(self):
+        return ServiceFile(self.path).get_file()
+
+    def _pack_file(self):
+        return PackFile(self.path).get_file()
+
+    def has_readme(self):
+        if os.path.exists(self._readme_file()):
+            return True
+        else:
+            return False
+
+    def has_service(self):
+        if os.path.exists(self._service_file()):
+            return True
+        else:
+            return False
+
+    def has_pack(self):
+        if os.path.exists(self._pack_file()):
+            return True
+        else:
+            return False
 
 
 class RepoUtils(ErsiliaBase):
@@ -13,7 +157,10 @@ class RepoUtils(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.dockerhub_org = self.cfg.EXT.DOCKERHUB_ORG
         self.config_in_img = os.path.join(self.cfg.ENV.DOCKER.IMAGE_REPODIR, self.cfg.HUB.CONFIG_FILE)
-        self.path = os.path.normpath(os.path.dirname(os.path.abspath(path)))
+        if os.path.isdir(path):
+            self.path = os.path.normpath(os.path.abspath(path))
+        else:
+            self.path = os.path.normpath(os.path.dirname(os.path.abspath(path)))
 
     def _get_model_id_from_path(self):
         p = Paths()
@@ -29,9 +176,10 @@ class RepoUtils(ErsiliaBase):
     def get_model_id(self):
         model_id = self._get_model_id_from_path()
         if model_id is None:
-            return self._get_model_id_from_config()
-        else:
-            return model_id
+            model_id = self._get_model_id_from_config()
+        if model_id is None:
+            model_id = DEFAULT_MODEL_ID
+        return model_id
 
     def _root_path(self):
         model_id = self._get_model_id_from_path()

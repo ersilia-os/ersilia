@@ -2,7 +2,6 @@ from setuptools import setup, find_packages
 
 def get_version_and_cmdclass(package_path):
     """Load version.py module without importing the whole package.
-
     Template code from miniver
     """
     import os
@@ -21,21 +20,48 @@ with open("README.md", "r", encoding="utf8") as fh:
 with open('requirements.txt') as f:
     install_requires = f.read().splitlines()
 
-test_requires = []
+# Filter dependencies based on names and a larger list of requirements
+def _filter_requires(names, requires):
+    filt_reqs = []
+    for r in requires:
+        for n in names:
+            if n in r:
+                filt_reqs += [r]
+    return filt_reqs
 
-dev_requires = [] + test_requires
+# Slim requirements
+slim = [
+    "bentoml",
+    "PyYAML",
+    "dockerfile-parse",
+    "pycrypto"
+]
+slim_requires = _filter_requires(slim, install_requires)
+# Web app requirements
+webapp = slim + [
+    "streamlit"
+]
+webapp_requires = _filter_requires(webapp, install_requires)
+# Doc builder requirements
+doc_builder = slim + [
+    "sphinx"
+]
+doc_builder_requires = _filter_requires(doc_builder, install_requires)
+# Test requirements
+test = slim + [
+    "pytest"
+]
+test_requires = _filter_requires(test, install_requires)
+# Development requires
+dev_requires = install_requires
 
-docs_requires = []
-
-dev_all = install_requires + dev_requires + docs_requires
-
-yatai_service = []
-
+# Define extras requires
 extras_require = {
-    "dev": dev_all,
-    "doc_builder": docs_requires + install_requires,  # required by readthedocs.io
+    "slim": slim_requires,
+    "webapp": webapp_requires,
+    "doc_builder": doc_builder_requires,
     "test": test_requires,
-    "yatai_service": yatai_service + install_requires,
+    "dev": dev_requires,
 }
 
 setup(
@@ -43,14 +69,14 @@ setup(
     version=version,
     cmdclass=cmdclass,
     author='Ersilia Open Source Initiative',
-    author_email='hello@ersilia.io',
+    author_email='miquel@ersilia.io',
     url='https://github.com/ersilia-os/ersilia',
     description='Ersilia model hub for open source drug discovery',
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT',
     python_requires=">=3.7",
-    install_requires=install_requires,
+    install_requires=slim_requires,
     extras_require=extras_require,
     packages=find_packages(exclude=("utilities")),
     entry_points={
