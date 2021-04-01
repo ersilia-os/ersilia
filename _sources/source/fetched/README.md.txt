@@ -21,7 +21,7 @@ The ultimate goal of Ersilia is to effectively lower the barrier to drug discove
 
 ## Roadmap
 
-Our journey started in September 2020. We will launch an first version of the platform containing a hundred models by January 2021.
+Our journey started in September 2020. We will launch a first version of the platform containing 10 models by the end of March 2021. A version with 100 models will be available by September 2021.
 
 ### Literature-curated models
 

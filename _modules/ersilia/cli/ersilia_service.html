@@ -326,6 +326,17 @@
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;App could not be run or it is not available for model </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;Check that an app.py script exists in the model repository&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
 
+    <span class="c1"># Example usage: ersilia dockerize {MODEL_ID}</span>
+    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Containerize model using docker&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Containerize model in the BentoML style using docker&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">dockerize</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">ersilia.hub.fetch</span> <span class="kn">import</span> <span class="n">ModelFetcher</span>
+        <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">()</span>
+        <span class="n">mf</span><span class="o">.</span><span class="n">containerize</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
+
     <span class="c1"># Example usage: ersilia setup</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
         <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Setup ersilia&quot;</span><span class="p">,</span>

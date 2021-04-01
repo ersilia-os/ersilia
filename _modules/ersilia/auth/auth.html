@@ -168,8 +168,13 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
-<span class="kn">from</span> <span class="nn">github.GithubException</span> <span class="kn">import</span> <span class="n">UnknownObjectException</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
+    <span class="kn">from</span> <span class="nn">github.GithubException</span> <span class="kn">import</span> <span class="n">UnknownObjectException</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="n">Github</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">UnknownObjectException</span> <span class="o">=</span> <span class="kc">None</span>
+
 
 <span class="n">HOSTNAME</span> <span class="o">=</span> <span class="s2">&quot;github.com&quot;</span>
 <span class="n">SECRET_REPO</span> <span class="o">=</span> <span class="s2">&quot;ersilia-os/ersilia-secrets&quot;</span>
@@ -220,15 +225,18 @@
 
 <div class="viewcode-block" id="Auth.is_contributor"><a class="viewcode-back" href="../../../source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth.is_contributor">[docs]</a>    <span class="k">def</span> <span class="nf">is_contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check if the GitHub user is a contributor of ersilia-os&quot;&quot;&quot;</span>
-        <span class="n">gh</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">login_or_token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">oauth_token</span><span class="p">())</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">repo</span> <span class="o">=</span> <span class="n">gh</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">secret_repo</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">repo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">except</span> <span class="n">UnknownObjectException</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div></div>
+        <span class="k">if</span> <span class="n">Github</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gh</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">login_or_token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">oauth_token</span><span class="p">())</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">repo</span> <span class="o">=</span> <span class="n">gh</span><span class="o">.</span><span class="n">get_repo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">secret_repo</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">repo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="n">UnknownObjectException</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span></div></div>
 </pre></div>
 
            </div>

@@ -104,6 +104,7 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.viz.html">ersilia.viz package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.html#submodules">Submodules</a></li>
@@ -385,8 +386,8 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="ersilia.hub.fetch.ModelFetcher.get_model">
-<code class="descname">get_model</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.get_model" title="Permalink to this definition">¶</a></dt>
+<dt id="ersilia.hub.fetch.ModelFetcher.get_model_parameters">
+<code class="descname">get_model_parameters</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.get_model_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.get_model_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ./model folder in the model repository</p>
 </dd></dl>
 
@@ -491,6 +492,85 @@
 <div class="section" id="module-ersilia.hub.repo">
 <span id="ersilia-hub-repo-module"></span><h2>ersilia.hub.repo module<a class="headerlink" href="#module-ersilia.hub.repo" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="ersilia.hub.repo.DockerfileFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">DockerfileFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.get_bentoml_version">
+<code class="descname">get_bentoml_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.get_bentoml_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.get_bentoml_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.has_runs">
+<code class="descname">has_runs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.has_runs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.has_runs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.Integrity">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">Integrity</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#Integrity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.Integrity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.Integrity.has_pack">
+<code class="descname">has_pack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#Integrity.has_pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.Integrity.has_pack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.Integrity.has_readme">
+<code class="descname">has_readme</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#Integrity.has_readme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.Integrity.has_readme" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.Integrity.has_service">
+<code class="descname">has_service</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#Integrity.has_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.Integrity.has_service" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.PackFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">PackFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.PackFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.PackFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.ReadmeFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">ReadmeFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ReadmeFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ReadmeFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.ReadmeFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ReadmeFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ReadmeFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.ReadmeFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ReadmeFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ReadmeFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="ersilia.hub.repo.RepoUtils">
 <em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">RepoUtils</code><span class="sig-paren">(</span><em>path</em>, <em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#RepoUtils"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.RepoUtils" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
@@ -512,6 +592,27 @@
 <dl class="staticmethod">
 <dt id="ersilia.hub.repo.RepoUtils.rename_service">
 <em class="property">static </em><code class="descname">rename_service</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#RepoUtils.rename_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.RepoUtils.rename_service" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.ServiceFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">ServiceFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ServiceFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ServiceFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.ServiceFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ServiceFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ServiceFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.ServiceFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ServiceFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ServiceFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.ServiceFile.rename_service">
+<code class="descname">rename_service</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ServiceFile.rename_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ServiceFile.rename_service" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

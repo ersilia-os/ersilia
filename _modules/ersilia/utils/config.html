@@ -168,8 +168,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="n">GITHUB_ERSILIA_REPO</span><span class="p">,</span> <span class="n">CONFIG_JSON</span><span class="p">,</span> <span class="n">CREDENTIALS_JSON</span>
-<span class="kn">from</span> <span class="nn">autologging</span> <span class="kn">import</span> <span class="n">logged</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+
 
 <span class="n">SECRETS_JSON</span> <span class="o">=</span> <span class="s2">&quot;secrets.json&quot;</span>
 <span class="n">ERSILIA_SECRETS_GITHUB_REPO</span> <span class="o">=</span> <span class="s2">&quot;ersilia-secrets&quot;</span>
@@ -279,8 +278,7 @@
     <span class="k">return</span> <span class="n">eval_obj_dict</span>
 
 
-<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.config.Config">[docs]</a><span class="nd">@logged</span>
-<span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.config.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Config class.</span>
 
 <span class="sd">    An instance of this object holds config file section as attributes.</span>
@@ -295,7 +293,6 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;EOS_CONFIG&quot;</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;EOS_CONFIG environment variable not set. &quot;</span> <span class="o">+</span> <span class="s2">&quot;Using default config file.&quot;</span><span class="p">)</span>
                 <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">CONFIG_JSON</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">err</span>
@@ -306,7 +303,6 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div></div>
 
 
-<span class="nd">@logged</span>
 <span class="k">class</span> <span class="nc">Secrets</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -353,15 +349,13 @@
         <span class="k">return</span> <span class="kc">True</span>
 
 
-<div class="viewcode-block" id="Credentials"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.config.Credentials">[docs]</a><span class="nd">@logged</span>
-<span class="k">class</span> <span class="nc">Credentials</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Credentials"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.config.Credentials">[docs]</a><span class="k">class</span> <span class="nc">Credentials</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">json_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;EOS_CREDENTIALS&quot;</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;EOS_CREDENTIALS environment variable not set. &quot;</span> <span class="o">+</span> <span class="s2">&quot;Using default credentials file.&quot;</span><span class="p">)</span>
                 <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">CREDENTIALS_JSON</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">err</span>
