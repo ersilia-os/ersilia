@@ -3,7 +3,7 @@ import json
 from .. import ErsiliaBase
 from ..utils.paths import Paths
 from ..utils.docker import SimpleDockerfileParser
-from ..default import CONDA_ENV_YML_FILE, DOCKER_BENTO_PATH, DEFAULT_MODEL_ID
+from ..default import CONDA_ENV_YML_FILE, DOCKER_BENTO_PATH, DEFAULT_MODEL_ID, DOCKERFILE_FILE
 
 ROOT_CHECKFILE = "README.md"
 
@@ -73,7 +73,7 @@ class DockerfileFile(object):
         self.parser = SimpleDockerfileParser(self.path)
 
     def get_file(self):
-        return os.path.join(self.path, "Dockerfile")
+        return os.path.join(self.path, DOCKERFILE_FILE)
 
     def get_bentoml_version(self):
         bimg = self.parser.baseimage

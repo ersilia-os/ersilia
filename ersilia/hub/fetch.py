@@ -20,6 +20,7 @@ from ..utils.paths import Paths
 from ..default import CONDA_ENV_YML_FILE
 from ..db.environments.localdb import EnvironmentDb
 from .repo import ServiceFile, DockerfileFile
+from .bundle import BundleEnvironmentFile, BundleDockerfileFile
 
 
 CONDA_INSTALLS = "conda_installs.sh"
@@ -358,7 +359,6 @@ class ModelFetcher(ErsiliaBase):
         If a development path exists locally, then this is the one we use.
         If not, we use the latest version available from github. This may change in the future to use the PyPi version, correspondingly.
         """
-
         if not self._bundle_uses_ersilia(model_id):
             return
         if self._bundle_environment_yml_has_ersilia(model_id):
@@ -416,6 +416,8 @@ class ModelFetcher(ErsiliaBase):
         self._modify_bundle_environment_yml(model_id)
         # Slightly modify bundle Dockerfile, if necessary.
         self._modify_bundle_dockerfile(model_id)
+        # Check if conda is really necessary, if not, use slim base docker image
+        
 
     def as_bentoml(self, model_id):
         """Save in the system BentoML folder"""
