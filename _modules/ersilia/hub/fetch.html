@@ -183,6 +183,7 @@
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span>
 <span class="kn">from</span> <span class="nn">..db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
 <span class="kn">from</span> <span class="nn">.repo</span> <span class="kn">import</span> <span class="n">ServiceFile</span><span class="p">,</span> <span class="n">DockerfileFile</span>
+<span class="kn">from</span> <span class="nn">.bundle</span> <span class="kn">import</span> <span class="n">BundleEnvironmentFile</span><span class="p">,</span> <span class="n">BundleDockerfileFile</span>
 
 
 <span class="n">CONDA_INSTALLS</span> <span class="o">=</span> <span class="s2">&quot;conda_installs.sh&quot;</span>
@@ -521,7 +522,6 @@
 <span class="sd">        If a development path exists locally, then this is the one we use.</span>
 <span class="sd">        If not, we use the latest version available from github. This may change in the future to use the PyPi version, correspondingly.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bundle_uses_ersilia</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bundle_environment_yml_has_ersilia</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
@@ -579,6 +579,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_modify_bundle_environment_yml</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="c1"># Slightly modify bundle Dockerfile, if necessary.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modify_bundle_dockerfile</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
+        <span class="c1"># Check if conda is really necessary, if not, use slim base docker image</span>
+        
 
 <div class="viewcode-block" id="ModelFetcher.as_bentoml"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.fetch.ModelFetcher.as_bentoml">[docs]</a>    <span class="k">def</span> <span class="nf">as_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save in the system BentoML folder&quot;&quot;&quot;</span>
