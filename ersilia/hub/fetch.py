@@ -417,7 +417,8 @@ class ModelFetcher(ErsiliaBase):
         # Slightly modify bundle Dockerfile, if necessary.
         self._modify_bundle_dockerfile(model_id)
         # Check if conda is really necessary, if not, use slim base docker image
-        
+        if not BundleEnvironmentFile(model_id).needs_conda():
+            BundleDockerfileFile(model_id).set_to_slim()
 
     def as_bentoml(self, model_id):
         """Save in the system BentoML folder"""
@@ -429,8 +430,8 @@ class ModelFetcher(ErsiliaBase):
         bento = self._get_bundle_location(model_id)
         run_command([sys.executable, "-m", "pip", "install", bento], quiet=True)
 
-    def containerize(self, model_id):
-        """Containerize model using bentoml"""
+    def dockerize(self, model_id):
+        """Containerize model using bentoml with docker"""
         bento = self._get_bundle_location(model_id)
         tag = self.cfg.ENV.DOCKER.LATEST_TAG
         bundle_tag = self._get_latest_bundle_tag(model_id)
@@ -440,7 +441,7 @@ class ModelFetcher(ErsiliaBase):
         db.table = "docker"
         db.insert(model_id=model_id, env="{0}/{1}:{2}".format(self.docker_org, model_id, tag))
 
-    def fetch(self, model_id, pip=True, containerize=False, bentoml=False):
+    def fetch(self, model_id, pip=True, dockerize=False, bentoml=False):
         if self.overwrite:
             self.deleter.delete(model_id)
         ms = ModelStatus()
@@ -451,9 +452,9 @@ class ModelFetcher(ErsiliaBase):
         if bentoml:
             if not ms.is_bentoml(model_id):
                 self.as_bentoml(model_id)
-        if containerize:
+        if dockerize:
             if not ms.is_docker(model_id):
-                self.containerize(model_id)
+                self.dockerize(model_id)
         if pip:
             if not ms.is_pip(model_id):
                 self.pip_install(model_id)

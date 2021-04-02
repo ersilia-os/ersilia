@@ -10,6 +10,8 @@ from ...utils.terminal import run_command
 from ...utils.docker import SimpleDocker
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
+from .localdb import EnvironmentDb
+
 
 BENTOML_DOCKERPORT = 5000
 
