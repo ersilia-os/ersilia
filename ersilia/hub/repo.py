@@ -21,14 +21,23 @@ class ReadmeFile(object):
 
 
 class ServiceFile(object):
+    """checks the model service file
 
+    Service File is needed to run a bentoml web app.
+    Bentoml web app is named "service" by default.
+
+    Attributes:
+        path: directory path where model is stored. Uses os module.
+    """
     def __init__(self, path):
         self.path = os.path.abspath(path)
 
     def get_file(self):
+        """gets the file from the specific directory """
         return os.path.join(self.path, "src", "service.py")
 
     def _has_service_class(self):
+        """checks if the service.py contains the Service Class. """
         search_string = "class Service("
         with open(self.get_file(), "r") as f:
             for l in f:
@@ -37,6 +46,7 @@ class ServiceFile(object):
         return False
 
     def rename_service(self):
+        """renames the bentoml app from default "Service" to model_id."""
         ru = RepoUtils(self.path)
         model_id = ru.get_model_id()
         add_text = ru.rename_service(model_id)
@@ -51,8 +61,8 @@ class ServiceFile(object):
             f.write(text)
 
     def check(self):
+        """checks if the service.py contains the Service Class """
         return self._has_service_class()
-
 
 class PackFile(object):
 
@@ -65,17 +75,34 @@ class PackFile(object):
     def check(self):
         return True
 
-
 class DockerfileFile(object):
+    """checks the model Dockerfile.
 
+    Dockerfile specifies the bentoml version,
+    conda environment,
+    python version.
+
+    Attributes:
+        path: directory path where model is stored. Uses os module.
+    """
     def __init__(self, path):
         self.path = os.path.abspath(path)
         self.parser = SimpleDockerfileParser(self.path)
 
     def get_file(self):
+        """gets the file from the specific directory """
         return os.path.join(self.path, DOCKERFILE_FILE)
 
     def get_bentoml_version(self):
+        """Identifies the bentoml version required for the models.
+
+        Uses the parser from dockerfile module to retrieve the baseimage
+
+        Returns:
+            A dictionary collecting bentoml version, slim (no conda env)
+            and python version. For example:
+            {"version":0.9.2, "slim" = True, "python":py37}
+        """
         bimg = self.parser.baseimage
         bimg = bimg.split("/")
         if len(bimg) != 2:
