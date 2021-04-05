@@ -68,13 +68,12 @@ class ModelBentoDeleter(ErsiliaBase):
 
     def _delete(self, model_id, keep_latest=True):
         ml = ModelCatalog()
-        df = ml.bentoml()
-        if df is None:
+        catalog = ml.bentoml()
+        if catalog is None:
             return
-        df = df[df["MODEL_ID"] == model_id]
-        if df.shape[0] == 0:
+        if len(catalog.data) == 0:
             return
-        services = list(df["BENTO_SERVICE"])
+        services = [r[1] for r in catalog.data if r[0] == model_id]
         if keep_latest and len(services) > 1:
             services = services[1:]
         for service in services:
@@ -141,9 +140,9 @@ class ModelFullDeleter(object):
         self.config_json = config_json
 
     def delete(self, model_id):
-        ModelBentoDeleter(self.config_json).delete(model_id)
         ModelEosDeleter(self.config_json).delete(model_id)
         ModelBundleDeleter(self.config_json).delete(model_id)
+        ModelBentoDeleter(self.config_json).delete(model_id)
         ModelCondaDeleter(self.config_json).delete(model_id)
         ModelTmpDeleter(self.config_json).delete(model_id)
         ModelPipDeleter().delete(model_id)

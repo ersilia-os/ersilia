@@ -64,6 +64,7 @@ class ServiceFile(object):
         """checks if the service.py contains the Service Class """
         return self._has_service_class()
 
+
 class PackFile(object):
 
     def __init__(self, path):
@@ -72,8 +73,21 @@ class PackFile(object):
     def get_file(self):
         return os.path.join(self.path, "pack.py")
 
+    def needs_model(self):
+        # TODO: work on this function to account for more cases.
+        file_name = self.get_file()
+        line = None
+        with open(file_name, "r") as f:
+            for l in f:
+                if ".pack(" in l:
+                    line = l
+        if line is None: return False
+        if "None" in line: return False
+        return True
+
     def check(self):
         return True
+
 
 class DockerfileFile(object):
     """checks the model Dockerfile.

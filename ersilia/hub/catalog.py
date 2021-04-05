@@ -15,11 +15,6 @@ except ModuleNotFoundError as err:
     webbrowser = None
 
 try:
-    import pandas as pd
-except ModuleNotFoundError as err:
-    pd = None
-
-try:
     from github import Github
 except:
     Github = None
@@ -30,11 +25,23 @@ except:
     tabulate = None
 
 
+class CatalogTable(object):
+
+    def __init__(self, data, columns):
+        self.data = data
+        self.columns = columns
+
+    def as_table(self):
+        if not tabulate:
+            return None
+        else:
+            return tabulate(self.data, headers=self.columns)
+
+
 class ModelCatalog(ErsiliaBase):
 
-    def __init__(self, config_json=None, as_dataframe=True):
+    def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
-        self.as_dataframe = as_dataframe
         self.eos_regex = Paths._eos_regex()
 
     def _is_eos(self, s):
@@ -42,15 +49,6 @@ class ModelCatalog(ErsiliaBase):
             return True
         else:
             return False
-
-    def _return(self, df):
-        if self.as_dataframe:
-            return df
-        h = list(df.columns)
-        R = []
-        for r in df.values:
-            R += [r]
-        return tabulate(R, headers=h)
 
     @staticmethod
     def spreadsheet():
@@ -92,11 +90,7 @@ class ModelCatalog(ErsiliaBase):
             if card is None:
                 continue
             R += [[model_id, card["title"]]]
-        if pd:
-            df = pd.DataFrame(R, columns=["MODEL_ID", "TITLE"])
-            return self._return(df)
-        else:
-            return R
+        return CatalogTable(R, columns=["MODEL_ID", "TITLE"])
 
     def local(self):
         """List models available locally"""
@@ -105,15 +99,11 @@ class ModelCatalog(ErsiliaBase):
         for model_id in os.listdir(self._bundles_dir):
             card = mc.get(model_id)
             R += [[model_id, card["title"]]]
-        if pd:
-            df = pd.DataFrame(R, columns=["MODEL_ID", "TITLE"])
-            return self._return(df)
-        else:
-            return R
+        return CatalogTable(data=R, columns=["MODEL_ID", "TITLE"])
 
     def bentoml(self):
         """List models available as BentoServices"""
-        result = subprocess.run(['bentoml', 'list'], stdout=subprocess.PIPE)
+        result = subprocess.run(['bentoml', 'list'], stdout=subprocess.PIPE, env=os.environ)
         result = [r for r in result.stdout.decode("utf-8").split("\n") if r]
         if len(result) == 1:
             return
@@ -128,11 +118,6 @@ class ModelCatalog(ErsiliaBase):
             r = []
             for i, idx in enumerate(zip(cut_idxs, cut_idxs[1:]+[None])):
                 r += [row[idx[0]:idx[1]].rstrip()]
-            R += [r]
-        if pd:
-            df = pd.DataFrame(R, columns=columns)
-            df["MODEL_ID"] = [x.split(":")[0] for x in list(df["BENTO_SERVICE"])]
-            df = df[["MODEL_ID"]+columns]
-            return self._return(df)
-        else:
-            return R
+            R += [[r[0].split(":")[0]] + r]
+        columns = ["MODEL_ID"] + columns
+        return CatalogTable(data=R, columns=columns)

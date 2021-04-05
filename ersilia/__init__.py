@@ -12,6 +12,9 @@ if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
     from .utils.config import Checker
     Checker().config()
 
+# Environmental variables
+os.environ["EOS_HOME"] = EOS
+
 # Global imports
 from .utils.config import Config
 from .core.base import ErsiliaBase

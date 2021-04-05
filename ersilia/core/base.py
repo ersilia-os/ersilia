@@ -1,7 +1,10 @@
 from ..utils.config import Config, Credentials
 from ..default import EOS
 import os
+from pathlib import Path
 
+
+home = str(Path.home())
 
 class ErsiliaBase(object):
     """Base class of Ersilia.
@@ -26,16 +29,13 @@ class ErsiliaBase(object):
         self._dest_dir = self._abs_path(os.path.join(EOS, self.cfg.LOCAL.DEST))
         if not os.path.exists(self._dest_dir):
             os.makedirs(self._dest_dir, exist_ok=True)
-        self._bundles_dir = self._abs_path(os.path.join(EOS, self.cfg.LOCAL.BUNDLES))
+        self._bentoml_dir = os.path.join(self._abs_path(os.path.join(Path.home(), "bentoml")), "repository")
+        self._bundles_dir = os.path.join(self.eos_dir, "repository")
         if not os.path.exists(self._bundles_dir):
             os.makedirs(self._bundles_dir, exist_ok=True)
-        self._bentoml_dir = os.path.join(self._abs_path("~/bentoml"), "repository")
 
     @staticmethod
     def _abs_path(path):
-        if path[0] == "~":
-            home = os.path.expanduser("~")
-            return home+path[1:]
         return os.path.abspath(path)
 
     def _get_latest_bentoml_tag(self, model_id):

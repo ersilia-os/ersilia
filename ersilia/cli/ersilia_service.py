@@ -131,7 +131,7 @@ def create_ersilia_service_cli(pip_installed_bundle_path=None):
     )
     def catalog(local=False, hub=True):
         from ersilia.hub.catalog import ModelCatalog
-        mc = ModelCatalog(as_dataframe=False)
+        mc = ModelCatalog()
         if not local:
             click.echo(mc.hub())
         else:

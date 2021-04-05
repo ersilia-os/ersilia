@@ -2,12 +2,12 @@
 
 import os
 import shutil
-import runpy
 import sys
 import textwrap
 import tempfile
 import importlib
 import yaml
+import pathlib
 from bentoml import load as bentoml_load
 from .. import ErsiliaBase
 from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
@@ -19,7 +19,7 @@ from ..utils.terminal import run_command
 from ..utils.paths import Paths
 from ..default import CONDA_ENV_YML_FILE
 from ..db.environments.localdb import EnvironmentDb
-from .repo import ServiceFile, DockerfileFile
+from .repo import ServiceFile, PackFile, DockerfileFile
 from .bundle import BundleEnvironmentFile, BundleDockerfileFile
 
 
@@ -140,16 +140,13 @@ class ModelFetcher(ErsiliaBase):
         return folder
 
     def _dev_model_path(self, model_id):
-        if not self.cred.exists:
-            return None
-        dev_path = self.cred.LOCAL.DEVEL_MODELS_PATH
-        if dev_path is None:
-            return None
-        path = os.path.join(dev_path, model_id)
+        pt = Paths()
+        path = pt.models_development_path()
+        path = os.path.join(path, model_id)
         if os.path.exists(path):
             return path
         else:
-            path = Paths().ersilia_development_path()
+            path = pt.ersilia_development_path()
             path = os.path.join(path, "test", "models", model_id)
             if os.path.exists(path):
                 return path
@@ -196,9 +193,14 @@ class ModelFetcher(ErsiliaBase):
 
     def get_model_parameters(self, model_id):
         """Create a ./model folder in the model repository"""
+        model_path = self._model_path(model_id)
         folder = os.path.join(self._model_path(model_id), "model")
-        if os.path.exists(folder):
-            return
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+        # check if pack requires model parameters
+        pf = PackFile(model_path)
+        if not pf.needs_model():
+            return None
         if self.local:
             path = os.path.join(self._data_path(model_id), "model")
             self.pseudo_down.fetch(path, folder)
@@ -223,23 +225,18 @@ class ModelFetcher(ErsiliaBase):
                 if not os.path.exists(folder):
                     os.mkdir(folder)
 
-    def _repath_pack_save(self, model_id):
-        folder = self._model_path(model_id)
-        path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
-        with open(path, "r") as f:
-            text = f.read()
-        text = text.replace(
-            "service.save()",
-            "service.save('{0}')".format(self._bundles_dir)
-        )
-        with open(path, "w") as f:
-            f.write(text)
+    def _bentoml_bundle_symlink(self, model_id):
+        src = self._get_bentoml_location(model_id)
+        dst_ = os.path.join(self._bundles_dir, model_id)
+        pathlib.Path(dst_).mkdir(parents=True, exist_ok=True)
+        dst = os.path.join(dst_, os.path.basename(src))
+        os.symlink(src, dst, target_is_directory=True)
 
-    def _run_pack_script(self, model_id):
-        self._repath_pack_save(model_id)
+    def _run_pack_script_system(self, model_id):
         folder = self._model_path(model_id)
         script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
-        runpy.run_path(script_path)
+        run_command("python {0}".format(script_path), quiet=True)
+        self._bentoml_bundle_symlink(model_id)
 
     def _setup_conda(self, model_id):
         installs_file = os.path.join(self._model_path(model_id), CONDA_INSTALLS)
@@ -262,11 +259,11 @@ class ModelFetcher(ErsiliaBase):
 
     def _run_pack_script_conda(self, model_id):
         checksum = self._setup_conda(model_id)
-        self._repath_pack_save(model_id)
         pack_snippet = """
         python {0}
         """.format(self.cfg.HUB.PACK_SCRIPT)
         self.conda.run_commandlines(environment=checksum, commandlines=pack_snippet)
+        self._bentoml_bundle_symlink(model_id)
 
     def _run_pack_script_docker(self, model_id):
         # build docker image
@@ -275,9 +272,14 @@ class ModelFetcher(ErsiliaBase):
         name = self.docker.run(self.docker_org, model_id, self.docker_tag, name=None)
         self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
         # copy bundle from docker image to host
+        tmp_dir = tempfile.mkdtemp()
         self.docker.cp_from_container(name,
                                       "/root/bentoml/repository/%s" % model_id,
-                                      self._bundles_dir)
+                                      tmp_dir)
+        # save as bentoml
+        mdl = bentoml_load(tmp_dir)
+        mdl.save()
+        self._bentoml_bundle_symlink(model_id)
 
     def _bundle_uses_ersilia(self, model_id):
         """Check if the bundle imports ersilia"""
@@ -328,10 +330,11 @@ class ModelFetcher(ErsiliaBase):
             return None
         with open(yml_file, "r") as f:
             data = yaml.safe_load(f)
+            if not data["dependencies"]: return False
             for i, d in enumerate(data["dependencies"][:-1]):
                 if search in d:
                     return True
-            for i, p  in enumerate(data["dependencies"][-1]["pip"]):
+            for i, p in enumerate(data["dependencies"][-1]["pip"]):
                 if search in p:
                     return True
         return False
@@ -397,7 +400,7 @@ class ModelFetcher(ErsiliaBase):
                 raise Exception
             bentoml_version = res["version"]
             # TODO: use python virtual environment to use exact bentoml version
-            self._run_pack_script(model_id)
+            self._run_pack_script_system(model_id)
         else:
             cf = self._get_conda_installs_from_dockerfile(model_id)
             df = self._get_dockerfile(model_id)
@@ -409,7 +412,7 @@ class ModelFetcher(ErsiliaBase):
                 self._run_pack_script_docker(model_id)
             else:
                 # try to run without conda environment or docker (not recommended)
-                self._run_pack_script(model_id)
+                self._run_pack_script_system(model_id)
         os.chdir(cwd)
         sys.path.remove(folder)
         # Slightly modify bundle environment YAML file, if exists
@@ -419,11 +422,6 @@ class ModelFetcher(ErsiliaBase):
         # Check if conda is really necessary, if not, use slim base docker image
         if not BundleEnvironmentFile(model_id).needs_conda():
             BundleDockerfileFile(model_id).set_to_slim()
-
-    def as_bentoml(self, model_id):
-        """Save in the system BentoML folder"""
-        mdl = bentoml_load(self._get_bundle_location(model_id))
-        mdl.save()
 
     def pip_install(self, model_id):
         """Install the model and distribute as a python package"""
@@ -441,7 +439,7 @@ class ModelFetcher(ErsiliaBase):
         db.table = "docker"
         db.insert(model_id=model_id, env="{0}/{1}:{2}".format(self.docker_org, model_id, tag))
 
-    def fetch(self, model_id, pip=True, dockerize=False, bentoml=False):
+    def fetch(self, model_id, pip=True, dockerize=False):
         if self.overwrite:
             self.deleter.delete(model_id)
         ms = ModelStatus()
@@ -449,9 +447,6 @@ class ModelFetcher(ErsiliaBase):
             self.get_repo(model_id)
             self.get_model_parameters(model_id)
             self.pack(model_id)
-        if bentoml:
-            if not ms.is_bentoml(model_id):
-                self.as_bentoml(model_id)
         if dockerize:
             if not ms.is_docker(model_id):
                 self.dockerize(model_id)

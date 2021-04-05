@@ -10,11 +10,11 @@ def test_import():
 def test_fetch_conda():
     from ersilia.hub.fetch import ModelFetcher
     mf = ModelFetcher(overwrite=False)
-    mf.fetch(model_id=MODEL_ID, dockerize=False, bentoml=False)
+    mf.fetch(model_id=MODEL_ID, dockerize=False)
     assert (1 == 1)
 
 
-def test_conda_predict():
+def test_systembundle_predict():
     from ersilia.serve.services import SystemBundleService
     srv = SystemBundleService(MODEL_ID)
     srv.serve()
