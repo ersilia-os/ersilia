@@ -227,6 +227,7 @@
         <span class="sd">&quot;&quot;&quot;checks if the service.py contains the Service Class &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_service_class</span><span class="p">()</span></div></div>
 
+
 <div class="viewcode-block" id="PackFile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.PackFile">[docs]</a><span class="k">class</span> <span class="nc">PackFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -235,8 +236,21 @@
 <div class="viewcode-block" id="PackFile.get_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.PackFile.get_file">[docs]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;pack.py&quot;</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="PackFile.needs_model"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.PackFile.needs_model">[docs]</a>    <span class="k">def</span> <span class="nf">needs_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO: work on this function to account for more cases.</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">()</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;.pack(&quot;</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">l</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s2">&quot;None&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
 <div class="viewcode-block" id="PackFile.check"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.PackFile.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span></div></div>
+
 
 <div class="viewcode-block" id="DockerfileFile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.DockerfileFile">[docs]</a><span class="k">class</span> <span class="nc">DockerfileFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;checks the model Dockerfile.</span>

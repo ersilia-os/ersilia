@@ -370,8 +370,19 @@ False if conda env is not required</td>
 <span id="ersilia-hub-catalog-module"></span><h2>ersilia.hub.catalog module<a class="headerlink" href="#module-ersilia.hub.catalog" title="Permalink to this headline">¶</a></h2>
 <p>See available models in the Ersilia Model Hub</p>
 <dl class="class">
+<dt id="ersilia.hub.catalog.CatalogTable">
+<em class="property">class </em><code class="descclassname">ersilia.hub.catalog.</code><code class="descname">CatalogTable</code><span class="sig-paren">(</span><em>data</em>, <em>columns</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#CatalogTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.CatalogTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.catalog.CatalogTable.as_table">
+<code class="descname">as_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#CatalogTable.as_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.CatalogTable.as_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="ersilia.hub.catalog.ModelCatalog">
-<em class="property">class </em><code class="descclassname">ersilia.hub.catalog.</code><code class="descname">ModelCatalog</code><span class="sig-paren">(</span><em>config_json=None</em>, <em>as_dataframe=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ersilia.hub.catalog.</code><code class="descname">ModelCatalog</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
 <dl class="method">
 <dt id="ersilia.hub.catalog.ModelCatalog.bentoml">
@@ -515,20 +526,14 @@ False if conda env is not required</td>
 <em class="property">class </em><code class="descclassname">ersilia.hub.fetch.</code><code class="descname">ModelFetcher</code><span class="sig-paren">(</span><em>config_json=None</em>, <em>credentials_json=None</em>, <em>overwrite=True</em>, <em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
 <dl class="method">
-<dt id="ersilia.hub.fetch.ModelFetcher.as_bentoml">
-<code class="descname">as_bentoml</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.as_bentoml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.as_bentoml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save in the system BentoML folder</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ersilia.hub.fetch.ModelFetcher.containerize">
-<code class="descname">containerize</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.containerize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.containerize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Containerize model using bentoml</p>
+<dt id="ersilia.hub.fetch.ModelFetcher.dockerize">
+<code class="descname">dockerize</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.dockerize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.dockerize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Containerize model using bentoml with docker</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ersilia.hub.fetch.ModelFetcher.fetch">
-<code class="descname">fetch</code><span class="sig-paren">(</span><em>model_id</em>, <em>pip=True</em>, <em>containerize=False</em>, <em>bentoml=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.fetch" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fetch</code><span class="sig-paren">(</span><em>model_id</em>, <em>pip=True</em>, <em>dockerize=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.fetch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -719,6 +724,11 @@ and python version. For example:
 <dl class="method">
 <dt id="ersilia.hub.repo.PackFile.get_file">
 <code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.PackFile.needs_model">
+<code class="descname">needs_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile.needs_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile.needs_model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
