@@ -14,13 +14,25 @@ class Service(BentoService):
 
     """
     @api(input=JsonInput())
-    def predict(self, input):
-        """Makes a prediction for a specific input.
+    def invert(self, input):
+        """Inverts a string.
 
         Args:
-            input: json file
+            input: json string
 
         Returns:
-            Model prediction as a "string" with confidence value as integer
+            Inverted string
         """
-        return "Hello Ersilia!"
+        return "Inverted!"
+
+    @api(input=JsonInput())
+    def shuffle(self, input):
+        """Shuffles a string.
+
+        Args:
+            input: json string
+
+        Returns:
+            Shuffled string
+        """
+        return "Shuffled!"

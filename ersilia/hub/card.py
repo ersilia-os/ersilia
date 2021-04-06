@@ -8,10 +8,10 @@ from .. import ErsiliaBase
 from ..auth.auth import Auth
 
 
-class ReadmeParser(object):
+class ReadmeParser(ErsiliaBase):
 
-    def __init__(self):
-        pass
+    def __init__(self, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
         url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(model_id)
@@ -42,17 +42,22 @@ class ReadmeParser(object):
         return "https://github.com/ersilia-os/{0}".format(model_id)
 
     def parse(self, model_id):
-        if Auth().is_contributor():
-            text = self._gh_view(model_id)
-            if not text:
-                return None
-            text = "--".join(text.split("--")[1:])
+        readme = os.path.join(self._dest_dir, model_id, "README.md")
+        if os.path.exists(readme):
+            with open(readme, "r") as f:
+                text = f.read()
         else:
-            r = requests.get(self._raw_readme_url(model_id))
-            if r.status_code != 200:
-                return None
-            text = r.text
-        lines = text.split("\n")
+            if Auth().is_contributor():
+                text = self._gh_view(model_id)
+                if not text:
+                    return None
+                text = "--".join(text.split("--")[1:])
+            else:
+                r = requests.get(self._raw_readme_url(model_id))
+                if r.status_code != 200:
+                    return None
+                text = r.text
+        lines = text.split(os.linesep)
         title = self._title(lines)
         descr = self._description(lines)
         results = {
@@ -66,8 +71,8 @@ class ReadmeParser(object):
 
 class ModelCard(object):
 
-    def __init__(self):
-        self.rp = ReadmeParser()
+    def __init__(self, config_json=None):
+        self.rp = ReadmeParser(config_json=config_json)
 
     def get(self, model_id, as_json=False):
         r = self.rp.parse(model_id)

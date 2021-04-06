@@ -265,12 +265,6 @@ class Uninstaller(BaseInstaller):
             docker.delete(org, img, tag)
 
 
-def base_slimmer(ignore_status=False):
-    """Removes unnecessary packages for minimal functionality and produce a slim version of ersilia"""
-    status = check_install_status()
-    # TODO
-
-
 def base_installer(ignore_status=False):
     """The base installer does a bare minimum installation of dependencies.
     It is mainly used to make a base environment for the models."""

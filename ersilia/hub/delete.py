@@ -1,11 +1,12 @@
-from .. import ErsiliaBase
 import os
 import shutil
+from .. import ErsiliaBase
 from ..utils.terminal import run_command
 from ..utils.environment import Environment
 from ..utils.conda import SimpleConda
 from .catalog import ModelCatalog
 from ..db.environments.localdb import EnvironmentDb
+from .status import ModelStatus
 
 
 class ModelEosDeleter(ErsiliaBase):
@@ -138,6 +139,13 @@ class ModelFullDeleter(object):
 
     def __init__(self, config_json=None):
         self.config_json = config_json
+
+    def needs_delete(self, model_id):
+        ms = ModelStatus().status(model_id)
+        for k,v in ms.items():
+            if v:
+                return True
+        return False
 
     def delete(self, model_id):
         ModelEosDeleter(self.config_json).delete(model_id)

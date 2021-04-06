@@ -48,13 +48,8 @@ def check_install_status():
     }
     return results
 
-status = check_install_status()["status"]
-if status == "full":
-    pass
-elif status == "base":
-    click.echo(click.style("Only base install done. For a full functionality, run 'ersilia setup' in the terminal", fg="yellow"))
-else:
-    click.echo(click.style("No install status available, before continuing, run 'ersilia setup' in the terminal", fg="red"))
+
+INSTALL_STATUS = check_install_status()["status"]
 
 
 __all__ = [

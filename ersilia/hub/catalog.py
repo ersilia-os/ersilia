@@ -37,6 +37,12 @@ class CatalogTable(object):
         else:
             return tabulate(self.data, headers=self.columns)
 
+    def __str__(self):
+        return self.as_table()
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class ModelCatalog(ErsiliaBase):
 
@@ -51,14 +57,17 @@ class ModelCatalog(ErsiliaBase):
             return False
 
     @staticmethod
-    def spreadsheet():
-        """List models available in our spreadsheets"""
+    def backlog():
+        """List models available in our spreadsheets for future incorporation"""
         if webbrowser:
             webbrowser.open("https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193") # TODO: do not just go to the website
 
     def github(self):
         """List models available in the GitHub model hub repository"""
-        token = Auth().oauth_token()
+        if Github is None:
+            token = None
+        else:
+            token = Auth().oauth_token()
         if token:
             g = Github(token)
             repo_list = [i for i in g.get_user().get_repos()]
