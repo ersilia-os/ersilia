@@ -345,7 +345,7 @@ False if conda env is not required</td>
 <span id="ersilia-hub-card-module"></span><h2>ersilia.hub.card module<a class="headerlink" href="#module-ersilia.hub.card" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ersilia.hub.card.ModelCard">
-<em class="property">class </em><code class="descclassname">ersilia.hub.card.</code><code class="descname">ModelCard</code><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ModelCard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ModelCard" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ersilia.hub.card.</code><code class="descname">ModelCard</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ModelCard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ModelCard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="ersilia.hub.card.ModelCard.get">
@@ -356,8 +356,8 @@ False if conda env is not required</td>
 
 <dl class="class">
 <dt id="ersilia.hub.card.ReadmeParser">
-<em class="property">class </em><code class="descclassname">ersilia.hub.card.</code><code class="descname">ReadmeParser</code><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ReadmeParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ReadmeParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">ersilia.hub.card.</code><code class="descname">ReadmeParser</code><span class="sig-paren">(</span><em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ReadmeParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ReadmeParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
 <dl class="method">
 <dt id="ersilia.hub.card.ReadmeParser.parse">
 <code class="descname">parse</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ReadmeParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ReadmeParser.parse" title="Permalink to this definition">¶</a></dt>
@@ -384,6 +384,12 @@ False if conda env is not required</td>
 <dt id="ersilia.hub.catalog.ModelCatalog">
 <em class="property">class </em><code class="descclassname">ersilia.hub.catalog.</code><code class="descname">ModelCatalog</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="staticmethod">
+<dt id="ersilia.hub.catalog.ModelCatalog.backlog">
+<em class="property">static </em><code class="descname">backlog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.backlog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.backlog" title="Permalink to this definition">¶</a></dt>
+<dd><p>List models available in our spreadsheets for future incorporation</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="ersilia.hub.catalog.ModelCatalog.bentoml">
 <code class="descname">bentoml</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.bentoml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.bentoml" title="Permalink to this definition">¶</a></dt>
@@ -406,12 +412,6 @@ False if conda env is not required</td>
 <dt id="ersilia.hub.catalog.ModelCatalog.local">
 <code class="descname">local</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.local"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.local" title="Permalink to this definition">¶</a></dt>
 <dd><p>List models available locally</p>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="ersilia.hub.catalog.ModelCatalog.spreadsheet">
-<em class="property">static </em><code class="descname">spreadsheet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.spreadsheet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.spreadsheet" title="Permalink to this definition">¶</a></dt>
-<dd><p>List models available in our spreadsheets</p>
 </dd></dl>
 
 </dd></dl>
@@ -475,6 +475,11 @@ False if conda env is not required</td>
 <dl class="method">
 <dt id="ersilia.hub.delete.ModelFullDeleter.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelFullDeleter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelFullDeleter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelFullDeleter.needs_delete">
+<code class="descname">needs_delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelFullDeleter.needs_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelFullDeleter.needs_delete" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -558,48 +563,6 @@ False if conda env is not required</td>
 <dt id="ersilia.hub.fetch.ModelFetcher.pip_install">
 <code class="descname">pip_install</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.pip_install"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.pip_install" title="Permalink to this definition">¶</a></dt>
 <dd><p>Install the model and distribute as a python package</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ersilia.hub.fetch.ModelStatus">
-<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.</code><code class="descname">ModelStatus</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelStatus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
-<dl class="method">
-<dt id="ersilia.hub.fetch.ModelStatus.is_bentoml">
-<code class="descname">is_bentoml</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelStatus.is_bentoml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelStatus.is_bentoml" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.hub.fetch.ModelStatus.is_bundle">
-<code class="descname">is_bundle</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelStatus.is_bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelStatus.is_bundle" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.hub.fetch.ModelStatus.is_conda">
-<code class="descname">is_conda</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelStatus.is_conda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelStatus.is_conda" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.hub.fetch.ModelStatus.is_docker">
-<code class="descname">is_docker</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelStatus.is_docker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelStatus.is_docker" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.hub.fetch.ModelStatus.is_downloaded">
-<code class="descname">is_downloaded</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelStatus.is_downloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelStatus.is_downloaded" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.hub.fetch.ModelStatus.is_pip">
-<code class="descname">is_pip</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelStatus.is_pip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelStatus.is_pip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.hub.fetch.ModelStatus.status">
-<code class="descname">status</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelStatus.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelStatus.status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check installation and deployment status of the model</p>
 </dd></dl>
 
 </dd></dl>
@@ -816,6 +779,51 @@ Bentoml web app is named “service” by default.</p>
 <dt id="ersilia.hub.search.ModelSearch">
 <em class="property">class </em><code class="descclassname">ersilia.hub.search.</code><code class="descname">ModelSearch</code><a class="reference internal" href="../../_modules/ersilia/hub/search.html#ModelSearch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.search.ModelSearch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.hub.status">
+<span id="ersilia-hub-status-module"></span><h2>ersilia.hub.status module<a class="headerlink" href="#module-ersilia.hub.status" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.status.ModelStatus">
+<em class="property">class </em><code class="descclassname">ersilia.hub.status.</code><code class="descname">ModelStatus</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_bentoml">
+<code class="descname">is_bentoml</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_bentoml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_bentoml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_bundle">
+<code class="descname">is_bundle</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_bundle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_conda">
+<code class="descname">is_conda</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_conda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_conda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_docker">
+<code class="descname">is_docker</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_docker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_docker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_downloaded">
+<code class="descname">is_downloaded</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_downloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_downloaded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_pip">
+<code class="descname">is_pip</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_pip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_pip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.status">
+<code class="descname">status</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check installation and deployment status of the model</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

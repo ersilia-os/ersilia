@@ -161,14 +161,15 @@
            <div itemprop="articleBody">
             
   <h1>Source code for ersilia.hub.delete</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">..utils.environment</span> <span class="kn">import</span> <span class="n">Environment</span>
 <span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span> <span class="nn">.catalog</span> <span class="kn">import</span> <span class="n">ModelCatalog</span>
 <span class="kn">from</span> <span class="nn">..db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
+<span class="kn">from</span> <span class="nn">.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
 
 
 <div class="viewcode-block" id="ModelEosDeleter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelEosDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelEosDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -301,6 +302,13 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
+
+<div class="viewcode-block" id="ModelFullDeleter.needs_delete"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelFullDeleter.needs_delete">[docs]</a>    <span class="k">def</span> <span class="nf">needs_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="p">()</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="ModelFullDeleter.delete"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelFullDeleter.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">ModelEosDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>

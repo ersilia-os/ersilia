@@ -198,7 +198,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">tabulate</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_table</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ModelCatalog"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog">[docs]</a><span class="k">class</span> <span class="nc">ModelCatalog</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -213,15 +219,18 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="ModelCatalog.spreadsheet"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog.spreadsheet">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">spreadsheet</span><span class="p">():</span>
-        <span class="sd">&quot;&quot;&quot;List models available in our spreadsheets&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ModelCatalog.backlog"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog.backlog">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">backlog</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;List models available in our spreadsheets for future incorporation&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">webbrowser</span><span class="p">:</span>
             <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193&quot;</span><span class="p">)</span> <span class="c1"># TODO: do not just go to the website</span></div>
 
 <div class="viewcode-block" id="ModelCatalog.github"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.catalog.ModelCatalog.github">[docs]</a>    <span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List models available in the GitHub model hub repository&quot;&quot;&quot;</span>
-        <span class="n">token</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">oauth_token</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">Github</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">oauth_token</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">token</span><span class="p">:</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
             <span class="n">repo_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repos</span><span class="p">()]</span>
