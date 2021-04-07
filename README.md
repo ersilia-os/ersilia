@@ -32,8 +32,7 @@ You are done!
 ersilia --help
 ```
 
-# Windows Installation
-
+### Windows Installation
 Coming soon...
 
 ## Quick start
