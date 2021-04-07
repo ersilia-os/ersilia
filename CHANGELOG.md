@@ -5,6 +5,14 @@ All notable changes to the Ersilia project will be documented in this file. Sect
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.6] - 2021-04-07
+
+Lightweight version of Ersilia
+
+### Added
+- Improved CLI interface
+- Works with Docs
+
 ## [0.0.0] - 2020-11-30
 
 First version of Ersilia, containing the bare minimum functionalities of the CLI (fetching models, listing them...) plus some options for developers.
