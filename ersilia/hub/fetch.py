@@ -67,13 +67,15 @@ class ModelFetcher(ErsiliaBase):
     def _dev_model_path(self, model_id):
         pt = Paths()
         path = pt.models_development_path()
-        path = os.path.join(path, model_id)
-        if os.path.exists(path):
+        if path is not None:
+            path = os.path.join(path, model_id)
+        if pt.exists(path):
             return path
         else:
             path = pt.ersilia_development_path()
-            path = os.path.join(path, "test", "models", model_id)
-            if os.path.exists(path):
+            if path is not None:
+                path = os.path.join(path, "test", "models", model_id)
+            if pt.exists(path):
                 return path
         return None
 

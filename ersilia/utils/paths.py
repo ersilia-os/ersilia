@@ -33,7 +33,10 @@ class Paths(object):
     def org_development_path(self):
         """Guess generic development path"""
         path = self.ersilia_development_path()
-        return os.path.split(path)[0]
+        if path is None:
+            return
+        else:
+            return os.path.split(path)[0]
 
     def ersilia_development_path(self):
         """Try to guess the package development path in the local computer"""
@@ -48,9 +51,12 @@ class Paths(object):
     def models_development_path(self):
         """Try to guess the models path in the local computer.
         The directory with more 'eos0xxx' subdirectories will be returned."""
+        org_dev_path = self.org_development_path()
+        if org_dev_path is None:
+            return
         regex = self._eos_regex()
         cands = collections.defaultdict(int)
-        for dirpath, dirnames, filenames in os.walk(self.org_development_path()):
+        for dirpath, dirnames, filenames in os.walk(org_dev_path):
             ap = os.path.abspath(dirpath)
             bn = os.path.basename(ap)
             if bn == MODELS_DEVEL_DIRNAME:
@@ -59,3 +65,12 @@ class Paths(object):
                         cands[ap] += 1
         path = sorted(cands.items(), key=lambda item: -item[1])[0][0]
         return path
+
+    @staticmethod
+    def exists(path):
+        if path is None:
+            return False
+        if os.path.exists(path):
+            return True
+        else:
+            return False
