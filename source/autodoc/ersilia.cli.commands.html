@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ersilia.cli.commands package &mdash; Ersilia  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ersilia.cli.commands.utils package" href="ersilia.cli.commands.utils.html" />
+    <link rel="prev" title="ersilia.cli package" href="ersilia.cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Ersilia
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../fetched/README.html">Learn about Ersilia!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/usage.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/deployment.html">Model deployment</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">Package index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ersilia.html">ersilia package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ersilia.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.contrib.html">ersilia.contrib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.viz.html">ersilia.viz package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia.default">ersilia.default module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../devel.html">For developers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">About us:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/people.html">Ersilia team</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Ersilia</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../package.html">Package index</a> &raquo;</li>
+        
+          <li><a href="ersilia.html">ersilia package</a> &raquo;</li>
+        
+          <li><a href="ersilia.cli.html">ersilia.cli package</a> &raquo;</li>
+        
+      <li>ersilia.cli.commands package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/source/autodoc/ersilia.cli.commands.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ersilia-cli-commands-package">
+<h1>ersilia.cli.commands package<a class="headerlink" href="#ersilia-cli-commands-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ersilia.cli.commands.utils.html">ersilia.cli.commands.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.commands.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.commands.utils.html#module-ersilia.cli.commands.utils.utils">ersilia.cli.commands.utils.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.commands.utils.html#module-ersilia.cli.commands.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ersilia.cli.commands.api">
+<span id="ersilia-cli-commands-api-module"></span><h2>ersilia.cli.commands.api module<a class="headerlink" href="#module-ersilia.cli.commands.api" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.api.api_cmd">
+<code class="descclassname">ersilia.cli.commands.api.</code><code class="descname">api_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/api.html#api_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.api.api_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create api command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.auth">
+<span id="ersilia-cli-commands-auth-module"></span><h2>ersilia.cli.commands.auth module<a class="headerlink" href="#module-ersilia.cli.commands.auth" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.auth.auth_cmd">
+<code class="descclassname">ersilia.cli.commands.auth.</code><code class="descname">auth_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/auth.html#auth_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.auth.auth_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates auth command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.card">
+<span id="ersilia-cli-commands-card-module"></span><h2>ersilia.cli.commands.card module<a class="headerlink" href="#module-ersilia.cli.commands.card" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.card.card_cmd">
+<code class="descclassname">ersilia.cli.commands.card.</code><code class="descname">card_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/card.html#card_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.card.card_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates card command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.catalog">
+<span id="ersilia-cli-commands-catalog-module"></span><h2>ersilia.cli.commands.catalog module<a class="headerlink" href="#module-ersilia.cli.commands.catalog" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.catalog.catalog_cmd">
+<code class="descclassname">ersilia.cli.commands.catalog.</code><code class="descname">catalog_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/catalog.html#catalog_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.catalog.catalog_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates catalog command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.close">
+<span id="ersilia-cli-commands-close-module"></span><h2>ersilia.cli.commands.close module<a class="headerlink" href="#module-ersilia.cli.commands.close" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.close.close_cmd">
+<code class="descclassname">ersilia.cli.commands.close.</code><code class="descname">close_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/close.html#close_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.close.close_cmd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.conda">
+<span id="ersilia-cli-commands-conda-module"></span><h2>ersilia.cli.commands.conda module<a class="headerlink" href="#module-ersilia.cli.commands.conda" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.conda.conda_cmd">
+<code class="descclassname">ersilia.cli.commands.conda.</code><code class="descname">conda_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/conda.html#conda_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.conda.conda_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates conda command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.delete">
+<span id="ersilia-cli-commands-delete-module"></span><h2>ersilia.cli.commands.delete module<a class="headerlink" href="#module-ersilia.cli.commands.delete" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.delete.delete_cmd">
+<code class="descclassname">ersilia.cli.commands.delete.</code><code class="descname">delete_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/delete.html#delete_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.delete.delete_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create delete command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.deploy">
+<span id="ersilia-cli-commands-deploy-module"></span><h2>ersilia.cli.commands.deploy module<a class="headerlink" href="#module-ersilia.cli.commands.deploy" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.deploy.deploy_cmd">
+<code class="descclassname">ersilia.cli.commands.deploy.</code><code class="descname">deploy_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/deploy.html#deploy_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.deploy.deploy_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates deploy command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.dockerize">
+<span id="ersilia-cli-commands-dockerize-module"></span><h2>ersilia.cli.commands.dockerize module<a class="headerlink" href="#module-ersilia.cli.commands.dockerize" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.dockerize.dockerize_cmd">
+<code class="descclassname">ersilia.cli.commands.dockerize.</code><code class="descname">dockerize_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/dockerize.html#dockerize_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.dockerize.dockerize_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create dockerize command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.fetch">
+<span id="ersilia-cli-commands-fetch-module"></span><h2>ersilia.cli.commands.fetch module<a class="headerlink" href="#module-ersilia.cli.commands.fetch" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.fetch.fetch_cmd">
+<code class="descclassname">ersilia.cli.commands.fetch.</code><code class="descname">fetch_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/fetch.html#fetch_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.fetch.fetch_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create fetch commmand</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.serve">
+<span id="ersilia-cli-commands-serve-module"></span><h2>ersilia.cli.commands.serve module<a class="headerlink" href="#module-ersilia.cli.commands.serve" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.serve.serve_cmd">
+<code class="descclassname">ersilia.cli.commands.serve.</code><code class="descname">serve_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/serve.html#serve_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.serve.serve_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates serve command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.setup">
+<span id="ersilia-cli-commands-setup-module"></span><h2>ersilia.cli.commands.setup module<a class="headerlink" href="#module-ersilia.cli.commands.setup" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.setup.setup_cmd">
+<code class="descclassname">ersilia.cli.commands.setup.</code><code class="descname">setup_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/setup.html#setup_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.setup.setup_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates setup command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands.store">
+<span id="ersilia-cli-commands-store-module"></span><h2>ersilia.cli.commands.store module<a class="headerlink" href="#module-ersilia.cli.commands.store" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ersilia.cli.commands.store.store_cmd">
+<code class="descclassname">ersilia.cli.commands.store.</code><code class="descname">store_cmd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/store.html#store_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.cli.commands.store.store_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates store command</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.cli.commands">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.cli.commands" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="ersilia.cli.commands.utils.html" class="btn btn-neutral float-right" title="ersilia.cli.commands.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ersilia.cli.html" class="btn btn-neutral float-left" title="ersilia.cli package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Ersilia Open Source Initiative.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

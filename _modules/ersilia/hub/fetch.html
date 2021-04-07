@@ -184,6 +184,7 @@
 <span class="kn">from</span> <span class="nn">.repo</span> <span class="kn">import</span> <span class="n">ServiceFile</span><span class="p">,</span> <span class="n">PackFile</span><span class="p">,</span> <span class="n">DockerfileFile</span>
 <span class="kn">from</span> <span class="nn">.bundle</span> <span class="kn">import</span> <span class="n">BundleEnvironmentFile</span><span class="p">,</span> <span class="n">BundleDockerfileFile</span>
 <span class="kn">from</span> <span class="nn">.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
+<span class="kn">from</span> <span class="nn">..serve.autoservice</span> <span class="kn">import</span> <span class="n">AutoService</span>
 
 
 <span class="n">CONDA_INSTALLS</span> <span class="o">=</span> <span class="s2">&quot;conda_installs.sh&quot;</span>
@@ -539,7 +540,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">dockerize</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">pip</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">ms</span><span class="o">.</span><span class="n">is_pip</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pip_install</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pip_install</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">AutoService</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
