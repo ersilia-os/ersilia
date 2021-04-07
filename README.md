@@ -1,8 +1,10 @@
 # Welcome to Ersilia!
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![EOSI](https://circleci.com/gh/ersilia-os/ersilia.svg?style=svg)](https://circleci.com/gh/ersilia-os/ersilia)
 [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 
 This is work in progress.
 
@@ -10,24 +12,32 @@ This is work in progress.
 * High-level documentation is available at [Ersilia docs](http://ersilia-hub.netlify.app/docs/)
 * Low-level documentation is available at [Ersilia Read The Docs](https://ersilia-os.github.io/ersilia/) (work in progress)
 
-## Installation
+## Install
 
-Ersilia can be installed as a [PyPi package](https://pypi.org/project/ersilia/).
+### Mac and Linux
 
+We recommend working inside a [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) environment.
 ```
+conda create -n ersilia python=3.7
+conda activate ersilia
+```
+
+Then, simply install with pip.
+```
+# from pypi
 pip install ersilia
+# or latest from github
+pip install git+https://github.com/ersilia-os/ersilia.git
 ```
+You are done!
 
-To get install the latest version of Ersilia, you can install directly from GitHub.
-
-```
-pip install git+git://github.com/ersilia-os/ersilia.git
-```
-
-Check CLI.
 ```
 ersilia --help
 ```
+
+# Windows Installation
+
+Coming soon...
 
 ## Quick start
 
