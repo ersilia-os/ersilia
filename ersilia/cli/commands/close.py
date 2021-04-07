@@ -22,4 +22,4 @@ def close_cmd():
                 cmd = "kill {0}".format(pid)
                 run_command(cmd, quiet=True)
         os.remove(tmp_file)
-        echo("Model {0} closed".format(model_id), fg="green")
+        echo(":no_entry: Model {0} closed".format(model_id), fg="green")
