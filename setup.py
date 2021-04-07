@@ -33,9 +33,10 @@ def _filter_requires(names, requires):
 slim = [
     "bentoml",
     "PyYAML",
-    "pysmiles"
+    "pysmiles",
     "dockerfile-parse",
-    "pygit2"
+    "pygit2",
+    "emoji"
 ]
 slim_requires = _filter_requires(slim, install_requires)
 
