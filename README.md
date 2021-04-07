@@ -24,13 +24,10 @@ conda activate ersilia
 
 Then, simply install with pip.
 ```
-# from pypi
 pip install ersilia
-# or latest from github
-pip install git+https://github.com/ersilia-os/ersilia.git
 ```
-You are done!
 
+You are done!
 ```
 ersilia --help
 ```

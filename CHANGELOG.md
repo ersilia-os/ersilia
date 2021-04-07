@@ -5,6 +5,10 @@ All notable changes to the Ersilia project will be documented in this file. Sect
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.7] - 2021-04-07
+
+Lightweight version of Ersilia. Fixed path bugs.
+
 ## [0.0.6] - 2021-04-07
 
 Lightweight version of Ersilia
