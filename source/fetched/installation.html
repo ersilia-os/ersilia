@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installation &mdash; Ersilia  documentation</title>
+  <title>Mac and Linux Installation &mdash; Ersilia  documentation</title>
   
 
   
@@ -88,15 +88,9 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">Learn about Ersilia!</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#python-package">Python package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#set-up">Set up</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mac and Linux Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#windows-installation">Windows Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="deployment.html">Model deployment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../package.html">Package index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../devel.html">For developers</a></li>
 </ul>
@@ -151,7 +145,7 @@
     
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Installation</li>
+      <li>Mac and Linux Installation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -170,18 +164,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p><strong>This is work in progress!</strong> We are working day and night to have a first running version of the software before the end of 2020. Do not try to run this code yet.</p>
-<div class="section" id="python-package">
-<h2>Python package<a class="headerlink" href="#python-package" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="mac-and-linux-installation">
+<h1>Mac and Linux Installation<a class="headerlink" href="#mac-and-linux-installation" title="Permalink to this headline">¶</a></h1>
 <p>We recommend working inside a <a class="reference external" href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/">conda</a> environment.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create -n ersilia <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.7
 conda activate ersilia
 </pre></div>
 </div>
 <p>Then, simply install with pip.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from pypi (feature not ready yet)</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from pypi</span>
 pip install ersilia
 <span class="c1"># or latest from github</span>
 pip install git+https://github.com/ersilia-os/ersilia.git
@@ -191,19 +182,10 @@ pip install git+https://github.com/ersilia-os/ersilia.git
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ersilia --help
 </pre></div>
 </div>
-<div class="section" id="set-up">
-<h3>Set up<a class="headerlink" href="#set-up" title="Permalink to this headline">¶</a></h3>
-<p>The first time you run the <code class="docutils literal notranslate"><span class="pre">ersilia</span></code> command, additional dependencies will be installed and containers/images will be generated. So please be patient if it takes a while…</p>
-<p>The following will happen automatically. For your information, this is what Ersilia is going to do:</p>
-<ol class="simple">
-<li>Install conda and git. Most likely you have those installed in your computer.</li>
-<li>Install RDKit and BioPython.</li>
-<li>Create a <code class="docutils literal notranslate"><span class="pre">$HOME/eos</span></code> folder. This folder will be used to store models and meta-data.</li>
-<li>Create a conda environment called <code class="docutils literal notranslate"><span class="pre">eosbase-&lt;VERSION&gt;</span></code>. This environment will be used as a base by other models. It is a bare minumum environment for executing the <code class="docutils literal notranslate"><span class="pre">ersilia</span></code> command.</li>
-<li>Build a docker image named <code class="docutils literal notranslate"><span class="pre">ersiliaos/eos-server:&lt;VERSION&gt;</span></code>. This image will be used as a base for most of the docker images related to models.</li>
-</ol>
 </div>
-</div>
+<div class="section" id="windows-installation">
+<h1>Windows Installation<a class="headerlink" href="#windows-installation" title="Permalink to this headline">¶</a></h1>
+<p>Coming soon…</p>
 </div>
 
 
