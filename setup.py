@@ -34,7 +34,6 @@ slim = [
     "bentoml",
     "PyYAML",
     "dockerfile-parse",
-    "pycrypto",
     "pygit2"
 ]
 slim_requires = _filter_requires(slim, install_requires)
