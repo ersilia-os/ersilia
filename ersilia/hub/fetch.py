@@ -21,6 +21,7 @@ from ..db.environments.localdb import EnvironmentDb
 from .repo import ServiceFile, PackFile, DockerfileFile
 from .bundle import BundleEnvironmentFile, BundleDockerfileFile
 from .status import ModelStatus
+from ..serve.autoservice import AutoService
 
 
 CONDA_INSTALLS = "conda_installs.sh"
@@ -377,3 +378,4 @@ class ModelFetcher(ErsiliaBase):
         if pip:
             if not ms.is_pip(model_id):
                 self.pip_install(model_id)
+        AutoService(model_id)
