@@ -167,7 +167,6 @@
 
 
 <div class="viewcode-block" id="AppBase"><a class="viewcode-back" href="../../../source/autodoc/ersilia.app.html#ersilia.app.app.AppBase">[docs]</a><span class="k">class</span> <span class="nc">AppBase</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cards</span> <span class="o">=</span> <span class="kc">None</span>
@@ -176,6 +175,7 @@
     <span class="k">def</span> <span class="nf">_load_model_cards</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">..hub.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">cards</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_is_swagger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
@@ -213,7 +213,6 @@
 
 
 <div class="viewcode-block" id="StreamlitApp"><a class="viewcode-back" href="../../../source/autodoc/ersilia.app.html#ersilia.app.app.StreamlitApp">[docs]</a><span class="k">class</span> <span class="nc">StreamlitApp</span><span class="p">(</span><span class="n">AppBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">AppBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -229,23 +228,21 @@
 
 
 <div class="viewcode-block" id="DashApp"><a class="viewcode-back" href="../../../source/autodoc/ersilia.app.html#ersilia.app.app.DashApp">[docs]</a><span class="k">class</span> <span class="nc">DashApp</span><span class="p">(</span><span class="n">AppBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">AppBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DashApp.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.app.html#ersilia.app.app.DashApp.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_dash</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
             <span class="k">return</span> <span class="mi">0</span>
-        <span class="k">pass</span> <span class="c1"># TODO</span></div></div>
+        <span class="k">pass</span>  <span class="c1"># TODO</span></div></div>
 
 
 <div class="viewcode-block" id="SwaggerApp"><a class="viewcode-back" href="../../../source/autodoc/ersilia.app.html#ersilia.app.app.SwaggerApp">[docs]</a><span class="k">class</span> <span class="nc">SwaggerApp</span><span class="p">(</span><span class="n">AppBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">AppBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SwaggerApp.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.app.html#ersilia.app.app.SwaggerApp.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="k">pass</span> <span class="c1"># TODO</span></div></div>
+        <span class="k">pass</span>  <span class="c1"># TODO</span></div></div>
 </pre></div>
 
            </div>

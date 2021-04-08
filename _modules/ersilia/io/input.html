@@ -173,7 +173,6 @@
 
 
 <div class="viewcode-block" id="MoleculeInput"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.MoleculeInput">[docs]</a><span class="k">class</span> <span class="nc">MoleculeInput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mi</span> <span class="o">=</span> <span class="n">MoleculeIdentifier</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">example_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="s2">&quot;examples&quot;</span><span class="p">,</span> <span class="n">MOLECULE_EXAMPLES</span><span class="p">)</span>
@@ -181,11 +180,7 @@
 <div class="viewcode-block" id="MoleculeInput.random"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.MoleculeInput.random">[docs]</a>    <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">mol</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;inchikey&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="s2">&quot;smiles&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="p">}</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;inchikey&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;smiles&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span>
         <span class="k">return</span> <span class="n">mol</span></div>
 
 <div class="viewcode-block" id="MoleculeInput.single"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.MoleculeInput.single">[docs]</a>    <span class="k">def</span> <span class="nf">single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
@@ -198,7 +193,7 @@
             <span class="n">smi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">chemical_identifier_resolver</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">smi</span></div>
 
-<div class="viewcode-block" id="MoleculeInput.multiple"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.MoleculeInput.multiple">[docs]</a>    <span class="k">def</span> <span class="nf">multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span> <span class="c1"># TODO</span>
+<div class="viewcode-block" id="MoleculeInput.multiple"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.MoleculeInput.multiple">[docs]</a>    <span class="k">def</span> <span class="nf">multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>  <span class="c1"># TODO</span>
         <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">R</span><span class="p">:</span>
@@ -209,7 +204,6 @@
 
 
 <div class="viewcode-block" id="ProteinInput"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ProteinInput">[docs]</a><span class="k">class</span> <span class="nc">ProteinInput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pi</span> <span class="o">=</span> <span class="n">ProteinIdentifier</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">example_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="s2">&quot;examples&quot;</span><span class="p">,</span> <span class="n">PROTEIN_EXAMPLES</span><span class="p">)</span>
@@ -217,17 +211,13 @@
 <div class="viewcode-block" id="ProteinInput.random"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ProteinInput.random">[docs]</a>    <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">prot</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;uniprot_ac&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="s2">&quot;seq&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="p">}</span>
+        <span class="n">prot</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;uniprot_ac&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;seq&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span>
         <span class="k">return</span> <span class="n">prot</span></div>
 
-<div class="viewcode-block" id="ProteinInput.single"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ProteinInput.single">[docs]</a>    <span class="k">def</span> <span class="nf">single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span> <span class="c1"># TODO</span>
+<div class="viewcode-block" id="ProteinInput.single"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ProteinInput.single">[docs]</a>    <span class="k">def</span> <span class="nf">single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>  <span class="c1"># TODO</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="ProteinInput.multiple"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ProteinInput.multiple">[docs]</a>    <span class="k">def</span> <span class="nf">multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span> <span class="c1"># TODO</span>
+<div class="viewcode-block" id="ProteinInput.multiple"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ProteinInput.multiple">[docs]</a>    <span class="k">def</span> <span class="nf">multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>  <span class="c1"># TODO</span>
         <span class="k">pass</span></div></div>
 </pre></div>
 

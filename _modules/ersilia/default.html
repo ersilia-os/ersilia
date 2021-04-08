@@ -187,27 +187,32 @@
 <span class="n">_resolve_script</span> <span class="o">=</span> <span class="s2">&quot;conda_env_resolve.py&quot;</span>
 <span class="n">resolve_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">resolve_script</span><span class="p">):</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;utils&quot;</span><span class="p">,</span> <span class="s2">&quot;supp&quot;</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">),</span> <span class="n">resolve_script</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;utils&quot;</span><span class="p">,</span> <span class="s2">&quot;supp&quot;</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">),</span> <span class="n">resolve_script</span>
+    <span class="p">)</span>
 
-<span class="n">snippet</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2"># &gt;&gt;&gt; ersilia &gt;&gt;&gt;</span>
-<span class="s2"># !! Contents within this block are managed by &#39;ersilia&#39; !!</span>
-<span class="s2">eosconda() {</span>
-<span class="s2">    EOS_MODEL_ENV=$(python </span><span class="si">%s</span><span class="s2"> $2);</span>
-<span class="s2">    conda $1 $EOS_MODEL_ENV</span>
-<span class="s2">}</span>
+<span class="n">snippet</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"># &gt;&gt;&gt; ersilia &gt;&gt;&gt;</span>
+<span class="sd"># !! Contents within this block are managed by &#39;ersilia&#39; !!</span>
+<span class="sd">eosconda() {</span>
+<span class="sd">    EOS_MODEL_ENV=$(python %s $2);</span>
+<span class="sd">    conda $1 $EOS_MODEL_ENV</span>
+<span class="sd">}</span>
 
-<span class="s2">ersilia() {</span>
-<span class="s2">    if [[ $1 == &quot;conda&quot; ]]; then</span>
-<span class="s2">        eosconda &quot;${@: 2}&quot;</span>
-<span class="s2">    elif [[ $1 == &quot;auth&quot; ]]; then</span>
-<span class="s2">        gh auth &quot;${@: 2}&quot;</span>
-<span class="s2">    else</span>
-<span class="s2">        command ersilia &quot;$@&quot;</span>
-<span class="s2">    fi</span>
-<span class="s2">}</span>
-<span class="s2"># &lt;&lt;&lt; ersilia &lt;&lt;&lt;</span>
-<span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">resolve_script</span>
+<span class="sd">ersilia() {</span>
+<span class="sd">    if [[ $1 == &quot;conda&quot; ]]; then</span>
+<span class="sd">        eosconda &quot;${@: 2}&quot;</span>
+<span class="sd">    elif [[ $1 == &quot;auth&quot; ]]; then</span>
+<span class="sd">        gh auth &quot;${@: 2}&quot;</span>
+<span class="sd">    else</span>
+<span class="sd">        command ersilia &quot;$@&quot;</span>
+<span class="sd">    fi</span>
+<span class="sd">}</span>
+<span class="sd"># &lt;&lt;&lt; ersilia &lt;&lt;&lt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+    <span class="o">%</span> <span class="n">resolve_script</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="bashrc_cli_snippet"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_cli_snippet">[docs]</a><span class="k">def</span> <span class="nf">bashrc_cli_snippet</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>

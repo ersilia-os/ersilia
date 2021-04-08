@@ -173,7 +173,6 @@
 
 
 <div class="viewcode-block" id="ModelEosDeleter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelEosDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelEosDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -189,7 +188,6 @@
 
 
 <div class="viewcode-block" id="ModelTmpDeleter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelTmpDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelTmpDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -205,7 +203,6 @@
 
 
 <div class="viewcode-block" id="ModelBundleDeleter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelBundleDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelBundleDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -221,13 +218,12 @@
 
 
 <div class="viewcode-block" id="ModelBentoDeleter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelBentoDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelBentoDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_delete_service</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;echo yes | bentoml delete </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">service</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;echo yes | bentoml delete </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">service</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">keep_latest</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -251,7 +247,6 @@
 
 
 <div class="viewcode-block" id="ModelCondaDeleter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelCondaDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelCondaDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">envdb</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
@@ -259,7 +254,9 @@
 
     <span class="k">def</span> <span class="nf">_to_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">envdb</span><span class="o">.</span><span class="n">envs_of_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># Does not do anything if more than one model depend on the environment.</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span>
+        <span class="p">):</span>  <span class="c1"># Does not do anything if more than one model depend on the environment.</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -275,7 +272,6 @@
 
 
 <div class="viewcode-block" id="ModelPipDeleter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelPipDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelPipDeleter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
@@ -289,7 +285,6 @@
 
 
 <div class="viewcode-block" id="TmpCleaner"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.TmpCleaner">[docs]</a><span class="k">class</span> <span class="nc">TmpCleaner</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -299,13 +294,12 @@
 
 
 <div class="viewcode-block" id="ModelFullDeleter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelFullDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelFullDeleter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
 
 <div class="viewcode-block" id="ModelFullDeleter.needs_delete"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.delete.ModelFullDeleter.needs_delete">[docs]</a>    <span class="k">def</span> <span class="nf">needs_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="p">()</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>

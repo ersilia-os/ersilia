@@ -166,7 +166,6 @@
 
 
 <div class="viewcode-block" id="OsfUploader"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.upload.OsfUploader">[docs]</a><span class="k">class</span> <span class="nc">OsfUploader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
@@ -177,7 +176,7 @@
         <span class="n">environ</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OSF_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
         <span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OSF_PASSWORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span>
-        <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;osf&#39;</span><span class="p">,</span> <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s1">&#39;upload&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">destination</span><span class="p">]</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;osf&quot;</span><span class="p">,</span> <span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="s2">&quot;upload&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">destination</span><span class="p">]</span>
         <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">environ</span><span class="p">)</span></div></div>
 </pre></div>
 

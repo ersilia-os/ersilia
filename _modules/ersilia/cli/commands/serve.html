@@ -173,10 +173,7 @@
 <div class="viewcode-block" id="serve_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.serve.serve_cmd">[docs]</a><span class="k">def</span> <span class="nf">serve_cmd</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Creates serve command&quot;&quot;&quot;</span>
     <span class="c1"># Example usage: ersilia serve {MODEL_ID}</span>
-    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span>
-    <span class="p">)</span>
+    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
         <span class="n">srv</span> <span class="o">=</span> <span class="n">AutoService</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -187,7 +184,7 @@
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;    PID: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">srv</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Available APIs:&quot;</span><span class="p">)</span>
-        <span class="n">apis</span><span class="o">=</span><span class="n">srv</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
+        <span class="n">apis</span> <span class="o">=</span> <span class="n">srv</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">api</span> <span class="ow">in</span> <span class="n">apis</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;- </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">api</span><span class="p">))</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>

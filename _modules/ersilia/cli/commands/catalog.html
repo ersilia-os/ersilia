@@ -174,22 +174,22 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List a catalog of models&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s1">&#39;--hub&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;--hub&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the Ersilia Model Hub&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the Ersilia Model Hub&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s1">&#39;--local&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;--local&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the local computer&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the local computer&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-       <span class="s1">&#39;--backlog&#39;</span><span class="p">,</span>
-       <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-       <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show models backlog (wish list) in a Google Spreadsheet&quot;</span>
+        <span class="s2">&quot;--backlog&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show models backlog (wish list) in a Google Spreadsheet&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span><span class="n">hub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">backlog</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">()</span>
@@ -200,7 +200,9 @@
         <span class="k">elif</span> <span class="n">backlog</span><span class="p">:</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">backlog</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;Specifiy one of --hub --local or --backlog&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">))</span></div>
+            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;Specifiy one of --hub --local or --backlog&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+            <span class="p">)</span></div>
 </pre></div>
 
            </div>

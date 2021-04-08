@@ -166,13 +166,17 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">Paths</span>
 <span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDockerfileParser</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span> <span class="n">DOCKER_BENTO_PATH</span><span class="p">,</span> <span class="n">DEFAULT_MODEL_ID</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span>
+    <span class="n">DOCKER_BENTO_PATH</span><span class="p">,</span>
+    <span class="n">DEFAULT_MODEL_ID</span><span class="p">,</span>
+    <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">ROOT_CHECKFILE</span> <span class="o">=</span> <span class="s2">&quot;README.md&quot;</span>
 
 
 <div class="viewcode-block" id="ReadmeFile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.ReadmeFile">[docs]</a><span class="k">class</span> <span class="nc">ReadmeFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -192,6 +196,7 @@
 <span class="sd">    Attributes:</span>
 <span class="sd">        path: directory path where model is stored. Uses os module.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -204,7 +209,7 @@
         <span class="n">search_string</span> <span class="o">=</span> <span class="s2">&quot;class Service(&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">(),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">search_string</span> <span class="o">==</span> <span class="n">l</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">search_string</span><span class="p">)]:</span>
+                <span class="k">if</span> <span class="n">search_string</span> <span class="o">==</span> <span class="n">l</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">search_string</span><span class="p">)]:</span>
                     <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
@@ -229,7 +234,6 @@
 
 
 <div class="viewcode-block" id="PackFile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.PackFile">[docs]</a><span class="k">class</span> <span class="nc">PackFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -244,8 +248,10 @@
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">&quot;.pack(&quot;</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
                     <span class="n">line</span> <span class="o">=</span> <span class="n">l</span>
-        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="s2">&quot;None&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s2">&quot;None&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="PackFile.check"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.PackFile.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -262,6 +268,7 @@
 <span class="sd">    Attributes:</span>
 <span class="sd">        path: directory path where model is stored. Uses os module.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">SimpleDockerfileParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
@@ -305,11 +312,7 @@
             <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="s2">&quot;slim&quot;</span><span class="p">:</span> <span class="n">slim</span><span class="p">,</span>
-            <span class="s2">&quot;python&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;slim&quot;</span><span class="p">:</span> <span class="n">slim</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]}</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="DockerfileFile.has_runs"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.DockerfileFile.has_runs">[docs]</a>    <span class="k">def</span> <span class="nf">has_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -323,7 +326,6 @@
 
 
 <div class="viewcode-block" id="Integrity"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.Integrity">[docs]</a><span class="k">class</span> <span class="nc">Integrity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -356,11 +358,12 @@
 
 
 <div class="viewcode-block" id="RepoUtils"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.RepoUtils">[docs]</a><span class="k">class</span> <span class="nc">RepoUtils</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">DOCKERHUB_ORG</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config_in_img</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">IMAGE_REPODIR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">CONFIG_FILE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_in_img</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">IMAGE_REPODIR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">CONFIG_FILE</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -375,7 +378,7 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_in_img</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">cfg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RepoUtils.get_model_id"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.RepoUtils.get_model_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_id_from_path</span><span class="p">()</span>
@@ -422,18 +425,30 @@
             <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model_id</span><span class="p">()</span>
                 <span class="c1"># try to find yml in bundles</span>
-                <span class="n">yml</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bundle_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">)</span>
+                <span class="n">yml</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">,</span>
+                    <span class="n">model_id</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bundle_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+                    <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span>
+                <span class="p">)</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">yml</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">yml</span>
                 <span class="c1"># try to find yml in bentoml</span>
-                <span class="n">yml</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bentoml_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">)</span>
+                <span class="n">yml</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_dir</span><span class="p">,</span>
+                    <span class="n">model_id</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bentoml_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+                    <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span>
+                <span class="p">)</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">yml</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">yml</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="RepoUtils.get_docker_repo_image"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.RepoUtils.get_docker_repo_image">[docs]</a>    <span class="k">def</span> <span class="nf">get_docker_repo_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dockerhub_org</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">REPO_TAG</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub_org</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">REPO_TAG</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="RepoUtils.rename_service"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.RepoUtils.rename_service">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">rename_service</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>

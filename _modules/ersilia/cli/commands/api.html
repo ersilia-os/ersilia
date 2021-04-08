@@ -174,8 +174,7 @@
     <span class="sd">&quot;&quot;&quot;Create api command&quot;&quot;&quot;</span>
     <span class="c1"># Example usage: ersilia api {MODEL_ID} {API_NAME} {INPUT}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Run API on a served model&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run API on a served model&quot;</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Run API on a served model&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run API on a served model&quot;</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;api_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
@@ -183,7 +182,12 @@
     <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">):</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> is not served! run &#39;ersilia serve </span><span class="si">{0}</span><span class="s2">&#39; first&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> is not served! run &#39;ersilia serve </span><span class="si">{0}</span><span class="s2">&#39; first&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">model_id</span>
+                <span class="p">),</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="k">return</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>

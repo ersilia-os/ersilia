@@ -167,12 +167,11 @@
 
 
 <div class="viewcode-block" id="Zipper"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.zip.Zipper">[docs]</a><span class="k">class</span> <span class="nc">Zipper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remove</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span> <span class="o">=</span> <span class="n">remove</span>
 
 <div class="viewcode-block" id="Zipper.unzip"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.zip.Zipper.unzip">[docs]</a>    <span class="k">def</span> <span class="nf">unzip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
             <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>

@@ -165,6 +165,7 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">chembl_webresource_client.unichem</span> <span class="kn">import</span> <span class="n">unichem_client</span> <span class="k">as</span> <span class="n">unichem</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span>
 <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
@@ -172,7 +173,6 @@
 
 
 <div class="viewcode-block" id="MoleculeIdentifier"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.molecule.MoleculeIdentifier">[docs]</a><span class="k">class</span> <span class="nc">MoleculeIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
@@ -228,7 +228,9 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">smiles</span><span class="p">):</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://cactus.nci.nih.gov/chemical/structure/</span><span class="si">{0}</span><span class="s2">/stdinchikey&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://cactus.nci.nih.gov/chemical/structure/</span><span class="si">{0}</span><span class="s2">/stdinchikey&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">identifier</span>
+        <span class="p">)</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -237,7 +239,9 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">smiles</span><span class="p">):</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/</span><span class="si">{0}</span><span class="s2">/property/InChIKey/json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/</span><span class="si">{0}</span><span class="s2">/property/InChIKey/json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">identifier</span>
+        <span class="p">)</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -247,7 +251,9 @@
     <span class="k">def</span> <span class="nf">chemical_identifier_resolver</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns SMILES string of a given identifier, using NCI tool&quot;&quot;&quot;</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://cactus.nci.nih.gov/chemical/structure/</span><span class="si">{0}</span><span class="s2">/smiles&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://cactus.nci.nih.gov/chemical/structure/</span><span class="si">{0}</span><span class="s2">/smiles&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">identifier</span>
+        <span class="p">)</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -262,7 +268,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The SMILES string: </span><span class="si">%s</span><span class="s2"> is not valid or could not be converted to an InChIKey&quot;</span> <span class="o">%</span> <span class="n">smiles</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;The SMILES string: </span><span class="si">%s</span><span class="s2"> is not valid or could not be converted to an InChIKey&quot;</span>
+                    <span class="o">%</span> <span class="n">smiles</span>
+                <span class="p">)</span>
             <span class="n">inchi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">rdinchi</span><span class="o">.</span><span class="n">MolToInchi</span><span class="p">(</span><span class="n">mol</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">inchi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not obtain InChI&quot;</span><span class="p">)</span>

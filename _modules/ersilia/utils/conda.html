@@ -177,7 +177,6 @@
 
 
 <div class="viewcode-block" id="BaseConda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.BaseConda">[docs]</a><span class="k">class</span> <span class="nc">BaseConda</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SPECS_JSON</span> <span class="o">=</span> <span class="n">SPECS_JSON</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CHECKSUM_FILE</span> <span class="o">=</span> <span class="n">CHECKSUM_FILE</span>
@@ -202,7 +201,6 @@
 
 
 <div class="viewcode-block" id="CondaUtils"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils">[docs]</a><span class="k">class</span> <span class="nc">CondaUtils</span><span class="p">(</span><span class="n">BaseConda</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseConda</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">versions</span> <span class="o">=</span> <span class="n">Versioner</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
@@ -227,16 +225,12 @@
         <span class="k">if</span> <span class="n">tool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">packages</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">packages</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="n">tool</span><span class="p">,</span>
-            <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">channel</span><span class="p">,</span>
-            <span class="s2">&quot;packages&quot;</span><span class="p">:</span> <span class="n">packages</span>
-        <span class="p">}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="n">tool</span><span class="p">,</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span> <span class="n">channel</span><span class="p">,</span> <span class="s2">&quot;packages&quot;</span><span class="p">:</span> <span class="n">packages</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_text_checksum</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-        <span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="n">CHECKSUM_NCHAR</span><span class="p">]</span>
+        <span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="n">CHECKSUM_NCHAR</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">checksum</span>
 
 <div class="viewcode-block" id="CondaUtils.checksum_from_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">checksum_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
@@ -257,17 +251,20 @@
                 <span class="k">if</span> <span class="n">r</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;prefix&quot;</span><span class="p">:</span>
                     <span class="n">pref_idx</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span>
-            <span class="n">S</span> <span class="o">=</span> <span class="n">R</span><span class="p">[(</span><span class="n">name_idx</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">pref_idx</span><span class="p">]</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="n">R</span><span class="p">[(</span><span class="n">name_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:</span> <span class="n">pref_idx</span><span class="p">]</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
         <span class="n">checksum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text_checksum</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">env_yml</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;name: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">checksum</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;name: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">checksum</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">S</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-                <span class="n">prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">pref_idx</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;prefix: &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">checksum</span><span class="p">)</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;prefix: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">prefix</span><span class="p">)</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">pref_idx</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;prefix: &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                    <span class="n">checksum</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;prefix: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">prefix</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">checksum</span></div>
 
 <div class="viewcode-block" id="CondaUtils.get_install_commands_from_dockerfile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.get_install_commands_from_dockerfile">[docs]</a>    <span class="k">def</span> <span class="nf">get_install_commands_from_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -293,8 +290,7 @@
             <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="CondaUtils.specs_from_dockerfile_as_json"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.specs_from_dockerfile_as_json">[docs]</a>    <span class="k">def</span> <span class="nf">specs_from_dockerfile_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dockerfile_dir</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Writes a json file with the install requirements inferred from the Dockerfile.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Writes a json file with the install requirements inferred from the Dockerfile.&quot;&quot;&quot;</span>
         <span class="n">runs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_install_commands_from_dockerfile</span><span class="p">(</span><span class="n">dockerfile_dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">runs</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -320,7 +316,7 @@
                 <span class="k">continue</span>
             <span class="n">k</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;tool&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;channel&quot;</span><span class="p">]</span>
             <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;packages&quot;</span><span class="p">]</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">v</span><span class="p">)))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">v</span><span class="p">)))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="n">od</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">od</span><span class="p">[</span><span class="s2">&quot;base-env&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">base_conda_name</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
@@ -357,14 +353,12 @@
 <span class="s2">        source $</span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">        conda activate </span><span class="si">{1}</span><span class="s2"></span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span>
-            <span class="n">BASE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">False</span><span class="p">),</span> <span class="n">BASE</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">snippet</span></div></div>
 
 
 <div class="viewcode-block" id="SimpleConda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda">[docs]</a><span class="k">class</span> <span class="nc">SimpleConda</span><span class="p">(</span><span class="n">CondaUtils</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">CondaUtils</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -376,8 +370,7 @@
 <span class="s2">        source $</span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">        conda env list &gt; </span><span class="si">{1}</span><span class="s2"></span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span>
-            <span class="n">tmp_file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span> <span class="n">tmp_file</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
@@ -413,8 +406,7 @@
 <span class="s2">        source $</span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">        conda env remove --name </span><span class="si">{1}</span><span class="s2"></span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">environment</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="n">environment</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
@@ -438,9 +430,7 @@
 <span class="s2">        conda env export --no-builds &gt; </span><span class="si">{2}</span><span class="s2"></span>
 <span class="s2">        conda deactivate</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">environment</span><span class="p">,</span>
-            <span class="n">yml_file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="n">environment</span><span class="p">,</span> <span class="n">yml_file</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
@@ -461,9 +451,7 @@
 <span class="s2">        source $</span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">        conda create --clone </span><span class="si">{1}</span><span class="s2"> --name </span><span class="si">{2}</span><span class="s2"> -y</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">src_env</span><span class="p">,</span>
-            <span class="n">dst_env</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="n">src_env</span><span class="p">,</span> <span class="n">dst_env</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
@@ -484,9 +472,7 @@
 <span class="s2">        conda env list</span>
 <span class="s2">        </span><span class="si">{2}</span><span class="s2"></span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">environment</span><span class="p">,</span>
-            <span class="n">commandlines</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="n">environment</span><span class="p">,</span> <span class="n">commandlines</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>

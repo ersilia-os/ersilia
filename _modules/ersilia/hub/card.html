@@ -172,12 +172,15 @@
 
 
 <div class="viewcode-block" id="ReadmeParser"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.card.ReadmeParser">[docs]</a><span class="k">class</span> <span class="nc">ReadmeParser</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_raw_readme_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/master/README.md&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/master/README.md&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model_id</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">url</span>
 
     <span class="k">def</span> <span class="nf">_gh_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
@@ -227,13 +230,12 @@
             <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
             <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span>
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span>
-            <span class="s2">&quot;github_url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_github_url</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="s2">&quot;github_url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_github_url</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">results</span></div></div>
 
 
 <div class="viewcode-block" id="ModelCard"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.card.ModelCard">[docs]</a><span class="k">class</span> <span class="nc">ModelCard</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">ReadmeParser</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 

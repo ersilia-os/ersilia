@@ -182,6 +182,7 @@
 <span class="sd">        exists: environment.yml has been created</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -209,7 +210,7 @@
         <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="BundleEnvironmentFile.needs_conda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.bundle.BundleEnvironmentFile.needs_conda">[docs]</a>    <span class="k">def</span> <span class="nf">needs_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Checks if conda environment is required</span>
+        <span class="sd">&quot;&quot;&quot;Checks if conda environment is required</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            exists: environment.yml path</span>
@@ -246,6 +247,7 @@
 <span class="sd">        exists: Dockerfile has been created</span>
 <span class="sd">        parser: DockerfileParser function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -280,8 +282,10 @@
 <span class="sd">            For example: bentoml/model-server:0.9.2-slim-py37</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ver</span><span class="p">:</span> <span class="k">return</span>
-        <span class="k">if</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;slim&quot;</span><span class="p">]:</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ver</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;slim&quot;</span><span class="p">]:</span>
+            <span class="k">return</span>
         <span class="n">img</span> <span class="o">=</span> <span class="s2">&quot;bentoml/model-server:</span><span class="si">{0}</span><span class="s2">-slim-</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ver</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span> <span class="o">=</span> <span class="n">img</span></div>
 

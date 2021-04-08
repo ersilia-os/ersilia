@@ -170,13 +170,16 @@
 
 
 <div class="viewcode-block" id="DeployBase"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.DeployBase">[docs]</a><span class="k">class</span> <span class="nc">DeployBase</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">DOCKERHUB_ORG</span>
 
     <span class="k">def</span> <span class="nf">_get_bundle_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bundle_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bundle_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">path</span>
 
     <span class="k">def</span> <span class="nf">_get_tmp_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
@@ -191,7 +194,9 @@
         <span class="k">return</span> <span class="n">text</span>
 
     <span class="k">def</span> <span class="nf">_read_bundle_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">requirements</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_directory</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;requirements.txt&quot;</span><span class="p">)</span>
+        <span class="n">requirements</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_directory</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;requirements.txt&quot;</span>
+        <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">requirements</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">text</span>
@@ -208,7 +213,12 @@
     <span class="k">def</span> <span class="nf">_copy_app_to_tmp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">ab</span> <span class="o">=</span> <span class="n">AppBase</span><span class="p">()</span>
         <span class="n">app_script</span> <span class="o">=</span> <span class="n">ab</span><span class="o">.</span><span class="n">app_script</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">app_script</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_tmp_directory</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">app_script</span><span class="p">)))</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+            <span class="n">app_script</span><span class="p">,</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_get_tmp_directory</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">app_script</span><span class="p">)</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_copy_to_tmp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_copy_bundle_to_tmp</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -246,7 +256,9 @@
         <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;git+https://github.com/ersilia-os/ersilia</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">app_type</span> <span class="o">==</span> <span class="s2">&quot;streamlit&quot;</span><span class="p">:</span>
             <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;streamlit==</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">streamlit</span><span class="o">.</span><span class="n">__version__</span><span class="p">]</span>
-            <span class="n">requirements</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_tmp_directory</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;requirements.txt&quot;</span><span class="p">)</span>
+            <span class="n">requirements</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_get_tmp_directory</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;requirements.txt&quot;</span>
+            <span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">requirements</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">R</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
@@ -260,24 +272,25 @@
         <span class="n">app_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app_type</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">app_type</span> <span class="o">==</span> <span class="s2">&quot;streamlit&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">envport</span><span class="p">:</span>
-                <span class="n">R</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CMD streamlit run /bento/app.py --server.port $PORT</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">R</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CMD streamlit run /bento/app.py --server.port $PORT</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">R</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CMD streamlit run /bento/app.py</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">R</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;CMD streamlit run /bento/app.py</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">dockerfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_tmp_directory</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;Dockerfile&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dockerfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">R</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">R</span>
         <span class="k">if</span> <span class="n">app_type</span> <span class="o">==</span> <span class="s2">&quot;swagger&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="c1"># TODO</span>
+            <span class="k">return</span>  <span class="c1"># TODO</span>
         <span class="k">if</span> <span class="n">app_type</span> <span class="o">==</span> <span class="s2">&quot;dash&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="c1"># TODO</span></div>
+            <span class="k">return</span>  <span class="c1"># TODO</span></div>
 
 
 <div class="viewcode-block" id="Local"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Local">[docs]</a><span class="k">class</span> <span class="nc">Local</span><span class="p">(</span><span class="n">DeployBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">DeployBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">DeployBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="Local.deploy"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Local.deploy">[docs]</a>    <span class="k">def</span> <span class="nf">deploy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">app_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app_type</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -291,9 +304,10 @@
 
 
 <div class="viewcode-block" id="Heroku"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Heroku">[docs]</a><span class="k">class</span> <span class="nc">Heroku</span><span class="p">(</span><span class="n">DeployBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">DeployBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">DeployBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">()</span>
 
     <span class="nd">@staticmethod</span>
@@ -311,11 +325,15 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_push</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;heroku container:push web --app </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="s2">&quot;heroku container:push web --app </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_release</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="s2">&quot;heroku container:release web --app </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="s2">&quot;heroku container:release web --app </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Heroku.deploy"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Heroku.deploy">[docs]</a>    <span class="k">def</span> <span class="nf">deploy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
@@ -333,9 +351,10 @@
 
 
 <div class="viewcode-block" id="Aws"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Aws">[docs]</a><span class="k">class</span> <span class="nc">Aws</span><span class="p">(</span><span class="n">DeployBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">DeployBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">DeployBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -346,9 +365,10 @@
 
 
 <div class="viewcode-block" id="GoogleCloud"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.GoogleCloud">[docs]</a><span class="k">class</span> <span class="nc">GoogleCloud</span><span class="p">(</span><span class="n">DeployBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">DeployBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">DeployBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -359,9 +379,10 @@
 
 
 <div class="viewcode-block" id="Azure"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Azure">[docs]</a><span class="k">class</span> <span class="nc">Azure</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -372,7 +393,6 @@
 
 
 <div class="viewcode-block" id="Deployer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Deployer">[docs]</a><span class="k">class</span> <span class="nc">Deployer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cloud</span><span class="o">=</span><span class="s2">&quot;heroku&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize a cloud deployer. For now, only &#39;heroku&#39; is available.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cloud</span> <span class="o">=</span> <span class="n">cloud</span>
@@ -380,11 +400,15 @@
         <span class="k">if</span> <span class="n">cloud</span> <span class="o">==</span> <span class="s2">&quot;local&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">=</span> <span class="n">Local</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">cloud</span> <span class="o">==</span> <span class="s2">&quot;heroku&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">=</span> <span class="n">Heroku</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">=</span> <span class="n">Heroku</span><span class="p">(</span>
+                <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">cloud</span> <span class="o">==</span> <span class="s2">&quot;aws&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">=</span> <span class="n">Aws</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">cloud</span> <span class="o">==</span> <span class="s2">&quot;googlecloud&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">=</span> <span class="n">GoogleCloud</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">=</span> <span class="n">GoogleCloud</span><span class="p">(</span>
+                <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">cloud</span> <span class="o">==</span> <span class="s2">&quot;azure&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dep</span> <span class="o">=</span> <span class="n">Azure</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
 

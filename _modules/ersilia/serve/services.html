@@ -182,7 +182,6 @@
 
 
 <div class="viewcode-block" id="BaseServing"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.BaseServing">[docs]</a><span class="k">class</span> <span class="nc">BaseServing</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -192,7 +191,9 @@
         <span class="sd">&quot;&quot;&quot;Get info available from the Bento&quot;&quot;&quot;</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;info.json&quot;</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;bentoml info --quiet </span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bundle_tag</span><span class="p">,</span> <span class="n">tmp_file</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;bentoml info --quiet </span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bundle_tag</span><span class="p">,</span> <span class="n">tmp_file</span>
+        <span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">info</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -212,7 +213,6 @@
 
 
 <span class="k">class</span> <span class="nc">_BentoMLService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SEARCH_PRE_STRING</span> <span class="o">=</span> <span class="s2">&quot;* Running on &quot;</span>
@@ -226,18 +226,22 @@
         <span class="n">tmp_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;serve.sh&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;serve.log&quot;</span><span class="p">)</span>
         <span class="n">tmp_pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;serve.pid&quot;</span><span class="p">)</span>
-        <span class="n">sl</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#!/bin/bash&#39;</span><span class="p">]</span>
-        <span class="n">sl</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;bentoml serve </span><span class="si">{0}</span><span class="s1">:</span><span class="si">{1}</span><span class="s1"> --port </span><span class="si">{2}</span><span class="s1"> &amp;&gt; </span><span class="si">{3}</span><span class="s1"> &amp;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bundle_tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">tmp_file</span><span class="p">)]</span>
-        <span class="n">sl</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_pid=$!&#39;</span><span class="p">]</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#!/bin/bash&quot;</span><span class="p">]</span>
+        <span class="n">sl</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="s2">&quot;bentoml serve </span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2"> --port </span><span class="si">{2}</span><span class="s2"> &amp;&gt; </span><span class="si">{3}</span><span class="s2"> &amp;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bundle_tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">tmp_file</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">sl</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;_pid=$!&quot;</span><span class="p">]</span>
         <span class="n">sl</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;echo &quot;$_pid&quot; &gt; </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_pid</span><span class="p">)]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">sl</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_pid</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">TIMEOUT_SECONDS</span><span class="o">/</span><span class="n">SLEEP_SECONDS</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">TIMEOUT_SECONDS</span> <span class="o">/</span> <span class="n">SLEEP_SECONDS</span><span class="p">)):</span>
             <span class="c1"># If error string is identified, finish</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">r</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -264,7 +268,6 @@
 
 
 <div class="viewcode-block" id="SystemBundleService"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.SystemBundleService">[docs]</a><span class="k">class</span> <span class="nc">SystemBundleService</span><span class="p">(</span><span class="n">_BentoMLService</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">_BentoMLService</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -299,7 +302,6 @@
 
 
 <div class="viewcode-block" id="CondaEnvironmentService"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService">[docs]</a><span class="k">class</span> <span class="nc">CondaEnvironmentService</span><span class="p">(</span><span class="n">_BentoMLService</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">_BentoMLService</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">()</span>
@@ -342,7 +344,6 @@
 
 
 <div class="viewcode-block" id="DockerImageService"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DockerImageService">[docs]</a><span class="k">class</span> <span class="nc">DockerImageService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">()</span>
@@ -390,7 +391,6 @@
 
 
 <div class="viewcode-block" id="PipInstalledService"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService">[docs]</a><span class="k">class</span> <span class="nc">PipInstalledService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 

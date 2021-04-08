@@ -166,7 +166,14 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="n">GITHUB_ERSILIA_REPO</span><span class="p">,</span> <span class="n">CREDENTIALS_JSON</span><span class="p">,</span> <span class="n">CONFIG_JSON</span><span class="p">,</span> <span class="n">INSTALL_STATUS_FILE</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EOS</span><span class="p">,</span>
+    <span class="n">GITHUB_ORG</span><span class="p">,</span>
+    <span class="n">GITHUB_ERSILIA_REPO</span><span class="p">,</span>
+    <span class="n">CREDENTIALS_JSON</span><span class="p">,</span>
+    <span class="n">CONFIG_JSON</span><span class="p">,</span>
+    <span class="n">INSTALL_STATUS_FILE</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">check_install_status</span>
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Checker</span>
@@ -178,9 +185,10 @@
 
 
 <div class="viewcode-block" id="BaseInstaller"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller">[docs]</a><span class="k">class</span> <span class="nc">BaseInstaller</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="p">,</span> <span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_install_log</span> <span class="o">=</span> <span class="n">check_install_log</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">INSTALL_LOG_FILE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="kc">None</span>
@@ -195,9 +203,9 @@
 <div class="viewcode-block" id="BaseInstaller.write_log"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.write_log">[docs]</a>    <span class="k">def</span> <span class="nf">write_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">):</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseInstaller.update_log"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.update_log">[docs]</a>    <span class="k">def</span> <span class="nf">update_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -243,14 +251,19 @@
 
 
 <div class="viewcode-block" id="Installer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer">[docs]</a><span class="k">class</span> <span class="nc">Installer</span><span class="p">(</span><span class="n">BaseInstaller</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">BaseInstaller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="o">=</span><span class="n">check_install_log</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">BaseInstaller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">check_install_log</span><span class="o">=</span><span class="n">check_install_log</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
+            <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="Installer.profile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.profile">[docs]</a>    <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;profile&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">bashrc_cli_snippet</span>
+
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&gt;&gt; Setting up &#39;ersilia&#39; CLI in user profile&quot;</span><span class="p">)</span>
         <span class="n">bashrc_cli_snippet</span><span class="p">()</span></div>
 
@@ -275,6 +288,7 @@
             <span class="k">return</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">rdkit</span>
+
             <span class="n">exists</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
             <span class="n">exists</span> <span class="o">=</span> <span class="kc">False</span>
@@ -299,6 +313,7 @@
             <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">dev_path</span><span class="p">,</span> <span class="n">path_repo</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">.download</span> <span class="kn">import</span> <span class="n">GitHubDownloader</span>
+
             <span class="n">gd</span> <span class="o">=</span> <span class="n">GitHubDownloader</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">gd</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACKAGE</span><span class="p">,</span> <span class="n">path_repo</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">path_repo</span>
@@ -319,12 +334,16 @@
             <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            source $</span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">            conda deactivate</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        source $</span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">))</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        cd </span><span class="si">{0}</span><span class="s2"></span>
 <span class="s2">        conda create -n </span><span class="si">{1}</span><span class="s2"> python=</span><span class="si">{2}</span><span class="s2"> -y</span>
@@ -333,10 +352,7 @@
 <span class="s2">        python </span><span class="si">{3}</span><span class="s2"></span>
 <span class="s2">        conda deactivate</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">tmp_repo</span><span class="p">,</span>
-            <span class="n">eos_base_env</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">python_version</span><span class="p">(),</span>
-            <span class="n">tmp_python_script</span>
+            <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">eos_base_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">python_version</span><span class="p">(),</span> <span class="n">tmp_python_script</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
@@ -347,7 +363,7 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_python_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">python_script</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&gt;&gt; Creating a Base Conda environment </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">eos_base_env</span><span class="p">))</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">),</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
@@ -361,6 +377,7 @@
             <span class="k">return</span>
         <span class="kn">import</span> <span class="nn">tempfile</span>
         <span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
+
         <span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">server_docker_name</span><span class="p">(</span><span class="n">as_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
@@ -387,15 +404,19 @@
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">bentoml_version</span><span class="p">(),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">python_version</span><span class="p">(</span><span class="n">py_format</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">IMAGE_WORKDIR</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">IMAGE_WORKDIR</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_repo</span><span class="p">,</span> <span class="s2">&quot;Dockerfile&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">dockerfile</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&gt;&gt; Building docker server image </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">server_docker_name</span><span class="p">(</span><span class="n">as_tuple</span><span class="o">=</span><span class="kc">False</span><span class="p">)))</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+            <span class="s2">&quot;&gt;&gt; Building docker server image </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">server_docker_name</span><span class="p">(</span><span class="n">as_tuple</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">docker</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">tmp_repo</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Installer.server_docker_slim"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.server_docker_slim">[docs]</a>    <span class="k">def</span> <span class="nf">server_docker_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -405,9 +426,13 @@
 
 
 <div class="viewcode-block" id="Uninstaller"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller">[docs]</a><span class="k">class</span> <span class="nc">Uninstaller</span><span class="p">(</span><span class="n">BaseInstaller</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">BaseInstaller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="o">=</span><span class="n">check_install_log</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+        <span class="n">BaseInstaller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">check_install_log</span><span class="o">=</span><span class="n">check_install_log</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
+            <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="Uninstaller.rdkit"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.rdkit">[docs]</a>    <span class="k">def</span> <span class="nf">rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_from_log</span><span class="p">(</span><span class="s2">&quot;rdkit&quot;</span><span class="p">)</span>
@@ -422,6 +447,7 @@
 <div class="viewcode-block" id="Uninstaller.server_docker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.server_docker">[docs]</a>    <span class="k">def</span> <span class="nf">server_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_from_log</span><span class="p">(</span><span class="s2">&quot;server_docker&quot;</span><span class="p">)</span>
         <span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
+
         <span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">server_docker_name</span><span class="p">(</span><span class="n">as_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>

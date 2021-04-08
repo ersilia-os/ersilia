@@ -169,7 +169,6 @@
 
 
 <div class="viewcode-block" id="SimpleDocker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker">[docs]</a><span class="k">class</span> <span class="nc">SimpleDocker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">LongIdentifier</span><span class="p">()</span>
 
@@ -261,7 +260,10 @@
 <div class="viewcode-block" id="SimpleDocker.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run -it -d --name </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> bash&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">))</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run -it -d --name </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> bash&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">),</span>
+        <span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">name</span></div>
 
@@ -293,7 +295,6 @@
 
 
 <div class="viewcode-block" id="SimpleDockerfileParser"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDockerfileParser">[docs]</a><span class="k">class</span> <span class="nc">SimpleDockerfileParser</span><span class="p">(</span><span class="n">DockerfileParser</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;Dockerfile&quot;</span><span class="p">)</span>

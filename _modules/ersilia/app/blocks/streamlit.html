@@ -166,7 +166,6 @@
 
 
 <div class="viewcode-block" id="StreamlitBlocks"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.app.blocks.html#ersilia.app.blocks.streamlit.StreamlitBlocks">[docs]</a><span class="k">class</span> <span class="nc">StreamlitBlocks</span><span class="p">(</span><span class="n">AppBase</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">AppBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model_card</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -178,22 +177,35 @@
 <div class="viewcode-block" id="StreamlitBlocks.header"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.app.blocks.html#ersilia.app.blocks.streamlit.StreamlitBlocks.header">[docs]</a>    <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">st</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">card</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
         <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;`MODEL ID: </span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">card</span><span class="o">.</span><span class="n">description</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span>
-                    <span class="s2">&quot;To know more, please visit [Ersilia Model Hub](</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">).&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">WEB</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span></div>
+        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">card</span><span class="o">.</span><span class="n">description</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;To know more, please visit [Ersilia Model Hub](</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">).&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">WEB</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="StreamlitBlocks.molecule_input"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.app.blocks.html#ersilia.app.blocks.streamlit.StreamlitBlocks.molecule_input">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">molecule_input</span><span class="p">():</span>
         <span class="n">st</span><span class="o">.</span><span class="n">subheader</span><span class="p">(</span><span class="s2">&quot;Input molecule&quot;</span><span class="p">)</span>
-        <span class="n">inp</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">text_input</span><span class="p">(</span><span class="s2">&quot;Please enter a molecule (name, SMILES...)&quot;</span><span class="p">,</span>
-                            <span class="n">value</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_chars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">text_input</span><span class="p">(</span>
+            <span class="s2">&quot;Please enter a molecule (name, SMILES...)&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">max_chars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">inp</span></div>
 
 <div class="viewcode-block" id="StreamlitBlocks.protein_input"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.app.blocks.html#ersilia.app.blocks.streamlit.StreamlitBlocks.protein_input">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">protein_input</span><span class="p">():</span>
-        <span class="n">inp</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">text_input</span><span class="p">(</span><span class="s2">&quot;Please enter a protein (sequence, UniProtAC...)&quot;</span><span class="p">,</span>
-                            <span class="n">value</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_chars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">text_input</span><span class="p">(</span>
+            <span class="s2">&quot;Please enter a protein (sequence, UniProtAC...)&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">max_chars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">inp</span></div></div>
-
 </pre></div>
 
            </div>
