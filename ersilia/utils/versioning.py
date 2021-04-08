@@ -1,5 +1,7 @@
 import sys
 from .. import ErsiliaBase
+from .. import __version__ as __ersilia_version__
+from bentoml import __version__ as __bentoml_version__
 
 
 class Versioner(ErsiliaBase):
@@ -14,9 +16,7 @@ class Versioner(ErsiliaBase):
             return "{0}.{1}".format(vi.major, vi.minor)
 
     def ersilia_version(self):
-        from .. import __version__ as ver
-
-        ver = ver.split(".")
+        ver = __ersilia_version__.split(".")
         ver = "{0}.{1}.{2}".format(ver[0], ver[1], ver[2].split("+")[0])
         return ver
 
@@ -26,9 +26,7 @@ class Versioner(ErsiliaBase):
         return ver
 
     def bentoml_version(self):
-        from bentoml import __version__ as ver
-
-        return ver
+        return __bentoml_version__
 
     def server_docker_name(self, tag=None, as_tuple=False):
         if tag is None:
@@ -49,3 +47,9 @@ class Versioner(ErsiliaBase):
         env = self.cfg.ENV.CONDA.EOS_BASE_ENV
         name = "{0}-{1}".format(env, tag)
         return name
+
+    @staticmethod
+    def reformat_py(v):
+        if len(v) != 4:
+            raise Exception
+        return "{0}.{1}".format(v[2], v[3])

@@ -3,6 +3,7 @@ import json
 from .. import ErsiliaBase
 from ..utils.paths import Paths
 from ..utils.docker import SimpleDockerfileParser
+from ..utils.conda import SimpleConda
 from ..default import (
     CONDA_ENV_YML_FILE,
     DOCKER_BENTO_PATH,
@@ -96,7 +97,7 @@ class PackFile(object):
 
 
 class DockerfileFile(object):
-    """checks the model Dockerfile.
+    """Checks the model Dockerfile.
 
     Dockerfile specifies the bentoml version,
     conda environment,
@@ -109,6 +110,7 @@ class DockerfileFile(object):
     def __init__(self, path):
         self.path = os.path.abspath(path)
         self.parser = SimpleDockerfileParser(self.path)
+        self.conda = SimpleConda()
 
     def get_file(self):
         """gets the file from the specific directory """
@@ -157,6 +159,24 @@ class DockerfileFile(object):
             return True
         else:
             return False
+
+    def get_install_commands(self):
+        fn = self.get_file()
+        if fn is None:
+            return None
+        runs = self.conda.get_install_commands_from_dockerfile(fn)
+        if not runs:
+            return None
+        needs_conda = False
+        for r in runs:
+            c = "conda"
+            if r[:len(c)] == c:
+                needs_conda = True
+        result = {
+            "conda": needs_conda,
+            "commands": runs
+        }
+        return result
 
     def check(self):
         return True

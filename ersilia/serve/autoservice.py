@@ -1,4 +1,4 @@
-from .services import SystemBundleService, CondaEnvironmentService, DockerImageService
+from .services import SystemBundleService, VenvEnvironmentService, CondaEnvironmentService, DockerImageService
 from .. import ErsiliaBase
 import os
 
@@ -19,6 +19,10 @@ class AutoService(ErsiliaBase):
                     self.service = SystemBundleService(
                         model_id, config_json=config_json
                     )
+                elif s == "venv":
+                    self.service = VenvEnvironmentService(
+                        model_id, config_json=config_json
+                    )
                 elif s == "conda":
                     self.service = CondaEnvironmentService(
                         model_id, config_json=config_json
@@ -36,6 +40,13 @@ class AutoService(ErsiliaBase):
                             model_id, config_json=config_json
                         )
                         f.write("system")
+                    elif VenvEnvironmentService(
+                        model_id, config_json=config_json
+                    ).is_available():
+                        self.service = VenvEnvironmentService(
+                            model_id, config_json=config_json
+                        )
+                        f.write("venv")
                     elif CondaEnvironmentService(
                         model_id, config_json=config_json
                     ).is_available():

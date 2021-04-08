@@ -12,7 +12,10 @@ from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
 from ..utils.conda import SimpleConda
 from ..utils.docker import SimpleDocker
+from ..utils.venv import SimpleVenv
 from ..default import DOCKERHUB_ORG
+from ..default import DEFAULT_VENV
+from ..default import PACKMODE_FILE
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -56,7 +59,7 @@ class _BentoMLService(BaseServing):
         self.SEARCH_SUF_STRING = "(Press CTRL+C to quit)"
         self.ERROR_STRING = "error"
 
-    def _bentoml_serve(self, runcommand_func):
+    def _bentoml_serve(self, runcommand_func=None):
         """Simply try to serve model with bentoml, locally"""
         self.port = find_free_port()
         tmp_folder = tempfile.mkdtemp()
@@ -75,15 +78,19 @@ class _BentoMLService(BaseServing):
             for l in sl:
                 f.write(l + os.linesep)
         cmd = "bash {0}".format(tmp_script)
-        run_command(cmd, quiet=True)
+        if runcommand_func is None:
+            run_command(cmd, quiet=True)
+        else:
+            runcommand_func(cmd)
         with open(tmp_pid, "r") as f:
             self.pid = int(f.read().strip())
         for _ in range(int(TIMEOUT_SECONDS / SLEEP_SECONDS)):
             # If error string is identified, finish
             with open(tmp_file, "r") as f:
                 r = f.read()
-                if self.ERROR_STRING in r:
+                if self.ERROR_STRING in r.lower():
                     self.url = None
+                    print(r)
                     return
             # If everything looks good, wait until server is ready
             with open(tmp_file, "r") as f:
@@ -115,21 +122,54 @@ class SystemBundleService(_BentoMLService):
     def __exit__(self, exception_type, exception_value, traceback):
         self.close()
 
-    def _serve(self):
-        self._bentoml_serve(run_command)
+    def _run_command(self, cmd):
+        return run_command(cmd, quiet=True)
 
     def is_available(self):
-        self._serve()
-        self.close()
-        if self.url is not None:
-            avail = True
-        else:
-            avail = False
+        fn = os.path.join(self._dest_dir, self.model_id, PACKMODE_FILE)
+        avail = False
+        if os.path.exists(fn):
+            with open(fn, "r") as f:
+                pack_mode = f.read()
+                if pack_mode == "system":
+                    avail = True
         self.url = None
         return avail
 
     def serve(self):
-        self._serve()
+        self._bentoml_serve()
+
+    def close(self):
+        self._close()
+
+    def api(self, api_name, input):
+        return self._api_with_url(api_name, input)
+
+
+class VenvEnvironmentService(_BentoMLService):
+
+    def __init__(self, model_id, config_json=None):
+        _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
+        self.venv = SimpleVenv(self._model_path(model_id))
+
+    def __enter__(self):
+        self.serve()
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
+    def _model_path(self, model_id):
+        return os.path.join(self._dest_dir, model_id)
+
+    def _run_command(self, cmd):
+        return self.venv.run_commandlines(DEFAULT_VENV, cmd)
+
+    def is_available(self):
+        return self.venv.exists(DEFAULT_VENV)
+
+    def serve(self):
+        self._bentoml_serve(self._run_command)
 
     def close(self):
         self._close()

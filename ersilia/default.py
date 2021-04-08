@@ -19,6 +19,8 @@ DOCKER_BENTO_PATH = "/bento"
 DOCKERHUB_ORG = "ersiliaos"
 DOCKERHUB_LATEST_TAG = "latest"
 DEFAULT_MODEL_ID = "eos0zzz"
+DEFAULT_VENV = "env"
+PACKMODE_FILE = "pack_mode.txt"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

@@ -13,10 +13,12 @@ from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
 from ..utils.zip import Zipper
 from ..utils.docker import SimpleDocker
 from ..utils.conda import SimpleConda
+from ..utils.venv import SimpleVenv
 from ..utils.identifiers.file import FileIdentifier
 from ..utils.terminal import run_command
 from ..utils.paths import Paths
-from ..default import CONDA_ENV_YML_FILE
+from ..utils.versioning import Versioner
+from ..default import CONDA_ENV_YML_FILE, DEFAULT_VENV, PACKMODE_FILE
 from ..db.environments.localdb import EnvironmentDb
 from .repo import ServiceFile, PackFile, DockerfileFile
 from .bundle import BundleEnvironmentFile, BundleDockerfileFile
@@ -24,7 +26,7 @@ from .status import ModelStatus
 from ..serve.autoservice import AutoService
 
 
-CONDA_INSTALLS = "conda_installs.sh"
+PYTHON_INSTALLS = "python_installs.sh"
 DOCKERFILE = "Dockerfile"
 ENVIRONMENT_YML = "environment.yml"
 
@@ -48,6 +50,7 @@ class ModelFetcher(ErsiliaBase):
         self.zipper = Zipper(remove=True)  # TODO: Add overwrite?
         self.docker = SimpleDocker()
         self.conda = SimpleConda()
+        self.versioner = Versioner(config_json=config_json)
         self.file_identifier = FileIdentifier()
         self.local = local
         if self.overwrite:
@@ -82,13 +85,6 @@ class ModelFetcher(ErsiliaBase):
     def _data_path(self, model_id):
         return os.path.join(self.cfg.LOCAL.DATA, model_id)
 
-    def _get_dockerfile(self, model_id):
-        fn = os.path.join(self._model_path(model_id), DOCKERFILE)
-        if os.path.exists(fn):
-            return fn
-        else:
-            return None
-
     def _get_conda_env_yaml_file(self, model_id):
         fn = os.path.join(self._model_path(model_id), CONDA_ENV_YML_FILE)
         if os.path.exists(fn):
@@ -96,17 +92,18 @@ class ModelFetcher(ErsiliaBase):
         else:
             return None
 
-    def _get_conda_installs_from_dockerfile(self, model_id):
-        fn = self._get_dockerfile(model_id)
-        if fn is None:
-            return None
-        runs = self.conda.get_install_commands_from_dockerfile(fn)
-        if not runs:
-            return None
-        fn = os.path.join(self._model_path(model_id), CONDA_INSTALLS)
+    def _write_python_installs(self, model_id, dockerfile):
+        dis_warn = "--disable-pip-version-check"
+        version = dockerfile.get_bentoml_version()
+        runs = dockerfile.get_install_commands()["commands"]
+        fn = os.path.join(self._model_path(model_id), PYTHON_INSTALLS)
         with open(fn, "w") as f:
             for r in runs:
-                f.write("{0}\n".format(r))
+                if r[:3] == "pip":
+                    r = r.split(" ")
+                    r = " ".join([r[0]] + [dis_warn] + r[1:])
+                f.write("{0}{1}".format(r, os.linesep))
+            f.write("pip {2} install bentoml=={0}{1}".format(version["version"], os.linesep, dis_warn))
         return fn
 
     def get_repo(self, model_id):
@@ -171,8 +168,28 @@ class ModelFetcher(ErsiliaBase):
         run_command("python {0}".format(script_path), quiet=True)
         self._bentoml_bundle_symlink(model_id)
 
+    def _setup_venv(self, model_id):
+        installs_file = os.path.join(self._model_path(model_id), PYTHON_INSTALLS)
+        model_path = self._model_path(model_id)
+        venv = SimpleVenv(model_path)
+        venv.create(DEFAULT_VENV)
+        with open(installs_file, "r") as f:
+            commandlines = f.read()
+        venv.run_commandlines(environment=DEFAULT_VENV, commandlines=commandlines)
+        return venv
+
+    def _run_pack_script_venv(self, model_id):
+        venv = self._setup_venv(model_id)
+        pack_snippet = """
+        python {0}
+        """.format(
+            self.cfg.HUB.PACK_SCRIPT
+        )
+        venv.run_commandlines(environment=DEFAULT_VENV, commandlines=pack_snippet)
+        self._bentoml_bundle_symlink(model_id)
+
     def _setup_conda(self, model_id):
-        installs_file = os.path.join(self._model_path(model_id), CONDA_INSTALLS)
+        installs_file = os.path.join(self._model_path(model_id), PYTHON_INSTALLS)
         model_path = self._model_path(model_id)
         checksum = self.conda.checksum_from_dockerfile(model_path)
         if not self.conda.exists(checksum):
@@ -323,6 +340,31 @@ class ModelFetcher(ErsiliaBase):
             for l in lines:
                 f.write(l + os.linesep)
 
+    def _decide_pack_mode(self, model_id):
+        folder = self._model_path(model_id)
+        # check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)
+        dockerfile = DockerfileFile(folder)
+        # version bentoml & python
+        version = dockerfile.get_bentoml_version()
+        if not dockerfile.has_runs():
+            same_python = version["python"] == self.versioner.python_version(py_format=True)
+            same_bentoml = version["version"] == self.versioner.bentoml_version()
+            if same_python and same_bentoml:
+                return "system"
+        # model needs some installs
+        cmds = dockerfile.get_install_commands()
+        # only python/conda installs
+        if cmds is not None:
+            # no conda is necessary
+            if not cmds["conda"]:
+                return "venv"
+            # conda is necessary
+            else:
+                return "conda"
+        # python/conda installs are not sufficient, use dockerfile
+        else:
+            return "docker"
+
     def pack(self, model_id):
         """Pack model. Greatly inspired by BentoML."""
         folder = self._model_path(model_id)
@@ -331,28 +373,22 @@ class ModelFetcher(ErsiliaBase):
         cwd = os.getcwd()
         os.chdir(folder)
         dockerfile = DockerfileFile(folder)
-        # if dockerfile has no runs (i.e. no installation is necessary, apart from bentoml),
-        #  run pack script from the current environment
-        if not dockerfile.has_runs():
-            # get bentoml version
-            res = dockerfile.get_bentoml_version()
-            if res is None:
-                raise Exception
-            bentoml_version = res["version"]
-            # TODO: use python virtual environment to use exact bentoml version
+        version = dockerfile.get_bentoml_version()
+        if version is None:
+            raise Exception
+        pack_mode = self._decide_pack_mode(model_id)
+        with open(os.path.join(folder, PACKMODE_FILE), "w") as f:
+            f.write(pack_mode)
+        if pack_mode == "system":
             self._run_pack_script_system(model_id)
-        else:
-            cf = self._get_conda_installs_from_dockerfile(model_id)
-            df = self._get_dockerfile(model_id)
-            if cf is not None:
-                # pack using conda
-                self._run_pack_script_conda(model_id)
-            elif df is not None:
-                # pack using docker
-                self._run_pack_script_docker(model_id)
-            else:
-                # try to run without conda environment or docker (not recommended)
-                self._run_pack_script_system(model_id)
+        if pack_mode == "venv":
+            self._write_python_installs(model_id, dockerfile)
+            self._run_pack_script_venv(model_id)
+        if pack_mode == "conda":
+            self._write_python_installs(model_id, dockerfile)
+            self._run_pack_script_conda(model_id)
+        if pack_mode == "docker":
+            self._run_pack_script_docker(model_id)
         os.chdir(cwd)
         sys.path.remove(folder)
         # Slightly modify bundle environment YAML file, if exists

@@ -117,7 +117,7 @@ class CondaUtils(BaseConda):
             exec = r.split(" ")[0]
             if exec not in ["conda", "pip", "pip3"]:
                 is_valid = False
-            if " -y " not in r:
+            if " -y " not in r and exec == "conda":
                 runs_ += [r + " -y"]
             else:
                 runs_ += [r]
