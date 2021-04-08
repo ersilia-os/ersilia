@@ -1,5 +1,6 @@
 # Version
 from ._version import __version__
+
 del _version
 
 # External imports
@@ -8,8 +9,10 @@ import click
 
 # Default variables
 from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE
+
 if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
     from .utils.config import Checker
+
     Checker().config()
 
 # Environmental variables
@@ -22,6 +25,7 @@ from .core.model import ErsiliaModel
 
 # Clean version
 from ._clean_static_version import version
+
 script_path = os.path.dirname(os.path.abspath(__file__))
 clean_version_file = os.path.join(script_path, "_clean_static_version.py")
 if __version__[:7] == "unknown":
@@ -42,16 +46,11 @@ def check_install_status():
     else:
         with open(fn, "r") as f:
             status = f.read().strip()
-    results = {
-        "install_status_file": fn,
-        "status": status
-    }
+    results = {"install_status_file": fn, "status": status}
     return results
 
 
 INSTALL_STATUS = check_install_status()["status"]
 
 
-__all__ = [
-    "__version__"
-]
+__all__ = ["__version__"]

@@ -7,7 +7,7 @@ def auth_cmd():
     @ersilia_cli.command(
         short_help="Log in to ersilia to enter contributor mode.",
         help="Log in to ersilia to enter contributor mode. "
-             "GitHub credentials are used."
+        "GitHub credentials are used.",
     )
     def auth():
         """

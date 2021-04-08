@@ -6,6 +6,7 @@ from pathlib import Path
 
 home = str(Path.home())
 
+
 class ErsiliaBase(object):
     """Base class of Ersilia.
 
@@ -29,7 +30,9 @@ class ErsiliaBase(object):
         self._dest_dir = self._abs_path(os.path.join(EOS, self.cfg.LOCAL.DEST))
         if not os.path.exists(self._dest_dir):
             os.makedirs(self._dest_dir, exist_ok=True)
-        self._bentoml_dir = os.path.join(self._abs_path(os.path.join(Path.home(), "bentoml")), "repository")
+        self._bentoml_dir = os.path.join(
+            self._abs_path(os.path.join(Path.home(), "bentoml")), "repository"
+        )
         self._bundles_dir = os.path.join(self.eos_dir, "repository")
         if not os.path.exists(self._bundles_dir):
             os.makedirs(self._bundles_dir, exist_ok=True)
@@ -81,6 +84,7 @@ class ErsiliaBase(object):
     @staticmethod
     def _get_bento_location(model_id):
         import subprocess
+
         cmd = ["bentoml", "get", "%s:latest" % model_id, "--print-location", "--quiet"]
         result = subprocess.run(cmd, stdout=subprocess.PIPE)
         result = result.stdout.decode("utf-8").rstrip()

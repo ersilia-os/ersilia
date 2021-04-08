@@ -6,7 +6,7 @@ def conda_cmd():
     # Example usage: ersilia conda activate eos0aaa
     @ersilia_cli.command(
         short_help="Use conda from ersilia.",
-        help="Use conda from ersilia in order to access model environments."
+        help="Use conda from ersilia in order to access model environments.",
     )
     def conda():
         pass

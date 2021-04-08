@@ -30,13 +30,12 @@ ENVIRONMENT_YML = "environment.yml"
 
 
 class ModelFetcher(ErsiliaBase):
-
-    def __init__(self,
-                 config_json=None, credentials_json=None,
-                 overwrite=True, local=False):
-        ErsiliaBase.__init__(self,
-                             config_json=config_json,
-                             credentials_json=credentials_json)
+    def __init__(
+        self, config_json=None, credentials_json=None, overwrite=True, local=False
+    ):
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self.token = self.cfg.HUB.TOKEN
         self.org = self.cfg.HUB.ORG
         self.tag = self.cfg.HUB.TAG
@@ -45,14 +44,15 @@ class ModelFetcher(ErsiliaBase):
         self.overwrite = overwrite
         self.pseudo_down = PseudoDownloader(overwrite=overwrite)
         self.osf_down = OsfDownloader(overwrite=overwrite)
-        self.github_down = GitHubDownloader(self.token) # TODO: add overwrite?
-        self.zipper = Zipper(remove=True) # TODO: Add overwrite?
+        self.github_down = GitHubDownloader(self.token)  # TODO: add overwrite?
+        self.zipper = Zipper(remove=True)  # TODO: Add overwrite?
         self.docker = SimpleDocker()
         self.conda = SimpleConda()
         self.file_identifier = FileIdentifier()
         self.local = local
         if self.overwrite:
             from .delete import ModelFullDeleter
+
             self.deleter = ModelFullDeleter(config_json=config_json)
         else:
             self.deleter = None
@@ -132,11 +132,15 @@ class ModelFetcher(ErsiliaBase):
             path = os.path.join(self._data_path(model_id), "model")
             self.pseudo_down.fetch(path, folder)
         else:
-            path = os.path.join("models", model_id+".zip")
+            path = os.path.join("models", model_id + ".zip")
             try:
-                self.osf_down.fetch(project_id=self.cfg.EXT.OSF_PROJECT, filename=path,
-                                    destination=self._dest_dir, tmp_folder=self._tmp_dir)
-                zip_file = os.path.join(self._dest_dir, model_id+".zip")
+                self.osf_down.fetch(
+                    project_id=self.cfg.EXT.OSF_PROJECT,
+                    filename=path,
+                    destination=self._dest_dir,
+                    tmp_folder=self._tmp_dir,
+                )
+                zip_file = os.path.join(self._dest_dir, model_id + ".zip")
                 self.zipper.unzip(zip_file, os.path.join(self._tmp_dir, model_id))
                 src = os.path.join(self._tmp_dir, model_id)
                 dst = os.path.join(self._dest_dir, model_id, "model")
@@ -146,7 +150,9 @@ class ModelFetcher(ErsiliaBase):
                     else:
                         shutil.rmtree(src)
                         return
-                shutil.move(os.path.join(src, "model"), os.path.join(self._dest_dir, model_id))
+                shutil.move(
+                    os.path.join(src, "model"), os.path.join(self._dest_dir, model_id)
+                )
                 shutil.rmtree(src)
             except:
                 if not os.path.exists(folder):
@@ -188,7 +194,9 @@ class ModelFetcher(ErsiliaBase):
         checksum = self._setup_conda(model_id)
         pack_snippet = """
         python {0}
-        """.format(self.cfg.HUB.PACK_SCRIPT)
+        """.format(
+            self.cfg.HUB.PACK_SCRIPT
+        )
         self.conda.run_commandlines(environment=checksum, commandlines=pack_snippet)
         self._bentoml_bundle_symlink(model_id)
 
@@ -200,10 +208,10 @@ class ModelFetcher(ErsiliaBase):
         self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
         # copy bundle from docker image to host
         tmp_dir = tempfile.mkdtemp()
-        self.docker.cp_from_container(name,
-                                      "/root/bentoml/repository/%s" % model_id,
-                                      tmp_dir)
-        # save as bentoml
+        self.docker.cp_from_container(
+            name, "/root/bentoml/repository/%s" % model_id, tmp_dir
+        )
+        #  save as bentoml
         mdl = bentoml_load(tmp_dir)
         mdl.save()
         self._bentoml_bundle_symlink(model_id)
@@ -257,7 +265,8 @@ class ModelFetcher(ErsiliaBase):
             return None
         with open(yml_file, "r") as f:
             data = yaml.safe_load(f)
-            if not data["dependencies"]: return False
+            if not data["dependencies"]:
+                return False
             for i, d in enumerate(data["dependencies"][:-1]):
                 if search in d:
                     return True
@@ -297,7 +306,11 @@ class ModelFetcher(ErsiliaBase):
             return
         dockerfile = os.path.join(self._get_bundle_location(model_id), DOCKERFILE)
         text = ["", "# Install ersilia"]
-        text += ["RUN pip install git+https://github.com/{0}/{1}.git".format(self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE)] # TO-DO add version with the @ character
+        text += [
+            "RUN pip install git+https://github.com/{0}/{1}.git".format(
+                self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE
+            )
+        ]  #  TO-DO add version with the @ character
         with open(dockerfile, "r") as f:
             lines = []
             for l in f:
@@ -360,11 +373,18 @@ class ModelFetcher(ErsiliaBase):
         bento = self._get_bundle_location(model_id)
         tag = self.cfg.ENV.DOCKER.LATEST_TAG
         bundle_tag = self._get_latest_bundle_tag(model_id)
-        run_command("bentoml containerize {1}:{2} -t {0}/{1}:{2}".format(self.docker_org, model_id, tag), quiet=True)
+        run_command(
+            "bentoml containerize {1}:{2} -t {0}/{1}:{2}".format(
+                self.docker_org, model_id, tag
+            ),
+            quiet=True,
+        )
         # store docker in the local environment database
         db = EnvironmentDb(config_json=self.config_json)
         db.table = "docker"
-        db.insert(model_id=model_id, env="{0}/{1}:{2}".format(self.docker_org, model_id, tag))
+        db.insert(
+            model_id=model_id, env="{0}/{1}:{2}".format(self.docker_org, model_id, tag)
+        )
 
     def fetch(self, model_id, pip=True, dockerize=False):
         if self.overwrite:

@@ -11,8 +11,7 @@ def api_cmd():
     """Create api command"""
     # Example usage: ersilia api {MODEL_ID} {API_NAME} {INPUT}
     @ersilia_cli.command(
-        short_help="Run API on a served model",
-        help="Run API on a served model"
+        short_help="Run API on a served model", help="Run API on a served model"
     )
     @click.argument("model_id", type=click.STRING)
     @click.argument("api_name", type=click.STRING)
@@ -20,7 +19,12 @@ def api_cmd():
     def api(model_id, api_name, input):
         tmp_file = tmp_pid_file(model_id)
         if not os.path.exists(tmp_file):
-            echo("Model {0} is not served! run 'ersilia serve {0}' first".format(model_id), fg="red")
+            echo(
+                "Model {0} is not served! run 'ersilia serve {0}' first".format(
+                    model_id
+                ),
+                fg="red",
+            )
             return
         with open(tmp_file, "r") as f:
             for l in f:

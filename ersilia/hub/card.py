@@ -9,12 +9,15 @@ from ..auth.auth import Auth
 
 
 class ReadmeParser(ErsiliaBase):
-
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
-        url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(model_id)
+        url = (
+            "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
+                model_id
+            )
+        )
         return url
 
     def _gh_view(self, model_id):
@@ -64,13 +67,12 @@ class ReadmeParser(ErsiliaBase):
             "model_id": model_id,
             "title": self._title(lines),
             "description": self._description(lines),
-            "github_url": self._model_github_url(model_id)
+            "github_url": self._model_github_url(model_id),
         }
         return results
 
 
 class ModelCard(object):
-
     def __init__(self, config_json=None):
         self.rp = ReadmeParser(config_json=config_json)
 

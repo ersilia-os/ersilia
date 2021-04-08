@@ -5,7 +5,6 @@ import pkg_resources
 
 
 class Environment(object):
-
     def __init__(self):
         self.python_packages = {pkg.key for pkg in pkg_resources.working_set}
 

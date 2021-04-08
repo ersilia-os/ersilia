@@ -4,14 +4,20 @@ The Config provide access to all sort of useful parameters.
 """
 import os
 import json
-from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, CREDENTIALS_JSON
+from ..default import (
+    EOS,
+    GITHUB_ORG,
+    GITHUB_ERSILIA_REPO,
+    CONFIG_JSON,
+    CREDENTIALS_JSON,
+)
 
 
 SECRETS_JSON = "secrets.json"
 ERSILIA_SECRETS_GITHUB_REPO = "ersilia-secrets"
 
-class Checker(object):
 
+class Checker(object):
     def __init__(self):
         self.development_path = None
         self._config()
@@ -20,6 +26,7 @@ class Checker(object):
     def _package_path(self):
         if self.development_path is None:
             from .paths import Paths
+
             pt = Paths()
             self.development_path = pt.ersilia_development_path()
 
@@ -37,8 +44,14 @@ class Checker(object):
             os.symlink(src, dst)
         else:
             from .download import GitHubDownloader
+
             gd = GitHubDownloader(overwrite=True)
-            gd.download_single(GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, os.path.join(EOS, CONFIG_JSON))
+            gd.download_single(
+                GITHUB_ORG,
+                GITHUB_ERSILIA_REPO,
+                CONFIG_JSON,
+                os.path.join(EOS, CONFIG_JSON),
+            )
 
     def _credentials(self):
         dst = os.path.join(EOS, CREDENTIALS_JSON)
@@ -70,13 +83,20 @@ class Checker(object):
         dev_path = self.development_path
         if dev_path is not None:
             import shutil
+
             src = os.path.join(dev_path, CONFIG_JSON)
             dst = os.path.join(EOS, CONFIG_JSON)
             shutil.copyfile(src, dst)
         else:
             from .download import GitHubDownloader
+
             gd = GitHubDownloader(overwrite=True)
-            gd.download_single(GITHUB_ORG, GITHUB_ERSILIA_REPO, CONFIG_JSON, os.path.join(EOS, CONFIG_JSON))
+            gd.download_single(
+                GITHUB_ORG,
+                GITHUB_ERSILIA_REPO,
+                CONFIG_JSON,
+                os.path.join(EOS, CONFIG_JSON),
+            )
 
 
 class _Field(object):
@@ -141,7 +161,6 @@ class Config(object):
 
 
 class Secrets(object):
-
     def __init__(self, overwrite=True):
         self.overwrite = overwrite
         self.secrets_json = os.path.join(EOS, SECRETS_JSON)
@@ -149,13 +168,17 @@ class Secrets(object):
     def fetch_from_github(self):
         """Fetch secrets from ersilia-secrets repository"""
         from ..auth.auth import Auth
+
         auth = Auth()
         is_contributor = auth.is_contributor()
         if is_contributor:
             token = auth.oauth_token()
             from .download import GitHubDownloader
+
             ghd = GitHubDownloader(overwrite=self.overwrite, token=token)
-            ghd.download_single(GITHUB_ORG, ERSILIA_SECRETS_GITHUB_REPO, SECRETS_JSON, self.secrets_json)
+            ghd.download_single(
+                GITHUB_ORG, ERSILIA_SECRETS_GITHUB_REPO, SECRETS_JSON, self.secrets_json
+            )
 
     def to_credentials(self, json_file):
         """Convert secrets to credentials file"""
@@ -166,11 +189,12 @@ class Secrets(object):
         cred = {}
         # Start with secrets
         secrets = {}
-        for k,v in sj.items():
+        for k, v in sj.items():
             secrets[k] = "'{0}'".format(v)
         cred["SECRETS"] = secrets
         # Local paths
         from .paths import Paths
+
         pt = Paths()
         local = {}
         # .. development models path
@@ -187,7 +211,6 @@ class Secrets(object):
 
 
 class Credentials(object):
-
     def __init__(self, json_file=None):
         if json_file is None:
             try:
@@ -207,7 +230,4 @@ class Credentials(object):
         return self.__dict__.keys()
 
 
-__all__ = [
-    "Config",
-    "Credentials"
-]
+__all__ = ["Config", "Credentials"]

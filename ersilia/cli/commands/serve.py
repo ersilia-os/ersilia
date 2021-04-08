@@ -10,10 +10,7 @@ from .. import echo
 def serve_cmd():
     """Creates serve command"""
     # Example usage: ersilia serve {MODEL_ID}
-    @ersilia_cli.command(
-        short_help="Serve model",
-        help="Serve model"
-    )
+    @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model_id", type=click.STRING)
     def serve(model_id):
         srv = AutoService(model_id)
@@ -24,7 +21,7 @@ def serve_cmd():
         echo("    PID: {0}".format(srv.service.pid), fg="yellow")
         echo("")
         echo("Available APIs:")
-        apis=srv.get_apis()
+        apis = srv.get_apis()
         for api in apis:
             echo("- {0}".format(api))
         tmp_file = tmp_pid_file(model_id)

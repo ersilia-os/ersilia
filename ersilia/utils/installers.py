@@ -3,7 +3,14 @@ import os
 import sys
 import tempfile
 from .conda import SimpleConda
-from ..default import EOS, GITHUB_ORG, GITHUB_ERSILIA_REPO, CREDENTIALS_JSON, CONFIG_JSON, INSTALL_STATUS_FILE
+from ..default import (
+    EOS,
+    GITHUB_ORG,
+    GITHUB_ERSILIA_REPO,
+    CREDENTIALS_JSON,
+    CONFIG_JSON,
+    INSTALL_STATUS_FILE,
+)
 from .. import ErsiliaBase
 from .. import check_install_status
 from .config import Checker
@@ -15,9 +22,10 @@ INSTALL_LOG_FILE = ".install.log"
 
 
 class BaseInstaller(ErsiliaBase):
-
     def __init__(self, check_install_log, config_json, credentials_json):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self.check_install_log = check_install_log
         self.log_file = os.path.join(EOS, INSTALL_LOG_FILE)
         self.log = None
@@ -32,9 +40,9 @@ class BaseInstaller(ErsiliaBase):
     def write_log(self):
         if self.log is None:
             return
-        with open(self.log_file, 'w') as f:
+        with open(self.log_file, "w") as f:
             for l in sorted(self.log):
-                f.write(l+"\n")
+                f.write(l + "\n")
 
     def update_log(self, task):
         if self.log is None:
@@ -80,14 +88,19 @@ class BaseInstaller(ErsiliaBase):
 
 
 class Installer(BaseInstaller):
-
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
-        BaseInstaller.__init__(self, check_install_log=check_install_log, config_json=config_json, credentials_json=credentials_json)
+        BaseInstaller.__init__(
+            self,
+            check_install_log=check_install_log,
+            config_json=config_json,
+            credentials_json=credentials_json,
+        )
 
     def profile(self):
         if self._is_done("profile"):
             return
         from ..default import bashrc_cli_snippet
+
         click.echo(">> Setting up 'ersilia' CLI in user profile")
         bashrc_cli_snippet()
 
@@ -112,6 +125,7 @@ class Installer(BaseInstaller):
             return
         try:
             import rdkit
+
             exists = True
         except ModuleNotFoundError:
             exists = False
@@ -136,6 +150,7 @@ class Installer(BaseInstaller):
             shutil.copytree(dev_path, path_repo)
         else:
             from .download import GitHubDownloader
+
             gd = GitHubDownloader(overwrite=True)
             gd.clone(self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE, path_repo)
         return path_repo
@@ -156,12 +171,16 @@ class Installer(BaseInstaller):
             bash_script = """
             source ${0}/etc/profile.d/conda.sh
             conda deactivate
-            """.format(sc.conda_prefix(False))
+            """.format(
+                sc.conda_prefix(False)
+            )
         else:
             bash_script = ""
         bash_script += """
         source ${0}/etc/profile.d/conda.sh
-        """.format(sc.conda_prefix(True))
+        """.format(
+            sc.conda_prefix(True)
+        )
         bash_script += """
         cd {0}
         conda create -n {1} python={2} -y
@@ -170,10 +189,7 @@ class Installer(BaseInstaller):
         python {3}
         conda deactivate
         """.format(
-            tmp_repo,
-            eos_base_env,
-            self.versions.python_version(),
-            tmp_python_script
+            tmp_repo, eos_base_env, self.versions.python_version(), tmp_python_script
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
@@ -184,7 +200,7 @@ class Installer(BaseInstaller):
         with open(tmp_python_script, "w") as f:
             lines = python_script.split("\n")
             for l in lines:
-                f.write(l[8:]+"\n")
+                f.write(l[8:] + "\n")
         click.echo(">> Creating a Base Conda environment {0}".format(eos_base_env))
         run_command("bash {0}".format(tmp_script), quiet=True)
 
@@ -198,6 +214,7 @@ class Installer(BaseInstaller):
             return
         import tempfile
         from .docker import SimpleDocker
+
         docker = SimpleDocker()
         org, img, tag = self.versions.server_docker_name(as_tuple=True)
         if docker.exists(org, img, tag):
@@ -224,15 +241,19 @@ class Installer(BaseInstaller):
         """.format(
             self.versions.bentoml_version(),
             self.versions.python_version(py_format=True),
-            self.cfg.ENV.DOCKER.IMAGE_WORKDIR
+            self.cfg.ENV.DOCKER.IMAGE_WORKDIR,
         )
         path = os.path.join(tmp_repo, "Dockerfile")
         with open(path, "w") as f:
             lines = dockerfile.split("\n")
             lines = lines[1:-1]
             for l in lines:
-                f.write(l[8:]+"\n")
-        click.echo(">> Building docker server image {0}".format(self.versions.server_docker_name(as_tuple=False)))
+                f.write(l[8:] + "\n")
+        click.echo(
+            ">> Building docker server image {0}".format(
+                self.versions.server_docker_name(as_tuple=False)
+            )
+        )
         docker.build(path=tmp_repo, org=org, img=img, tag=tag)
 
     def server_docker_slim(self):
@@ -242,9 +263,13 @@ class Installer(BaseInstaller):
 
 
 class Uninstaller(BaseInstaller):
-
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
-        BaseInstaller.__init__(self, check_install_log=check_install_log, config_json=config_json, credentials_json=credentials_json)
+        BaseInstaller.__init__(
+            self,
+            check_install_log=check_install_log,
+            config_json=config_json,
+            credentials_json=credentials_json,
+        )
 
     def rdkit(self):
         self.remove_from_log("rdkit")
@@ -259,6 +284,7 @@ class Uninstaller(BaseInstaller):
     def server_docker(self):
         self.remove_from_log("server_docker")
         from .docker import SimpleDocker
+
         docker = SimpleDocker()
         org, img, tag = self.versions.server_docker_name(as_tuple=True)
         if docker.exists(org, img, tag):

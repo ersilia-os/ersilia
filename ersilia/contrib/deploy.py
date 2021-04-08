@@ -7,13 +7,16 @@ import streamlit
 
 
 class DeployBase(ErsiliaBase):
-
     def __init__(self, config_json=None, credentials_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self.docker_org = self.cfg.EXT.DOCKERHUB_ORG
 
     def _get_bundle_directory(self, model_id):
-        path = os.path.join(self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id))
+        path = os.path.join(
+            self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id)
+        )
         return path
 
     def _get_tmp_directory(self, model_id):
@@ -28,7 +31,9 @@ class DeployBase(ErsiliaBase):
         return text
 
     def _read_bundle_requirements(self, model_id):
-        requirements = os.path.join(self._get_bundle_directory(model_id), "requirements.txt")
+        requirements = os.path.join(
+            self._get_bundle_directory(model_id), "requirements.txt"
+        )
         with open(requirements, "r") as f:
             text = f.readlines()
         return text
@@ -45,7 +50,12 @@ class DeployBase(ErsiliaBase):
     def _copy_app_to_tmp(self, model_id):
         ab = AppBase()
         app_script = ab.app_script(model_id)
-        shutil.copy(app_script, os.path.join(self._get_tmp_directory(model_id), os.path.basename(app_script)))
+        shutil.copy(
+            app_script,
+            os.path.join(
+                self._get_tmp_directory(model_id), os.path.basename(app_script)
+            ),
+        )
 
     def _copy_to_tmp(self, model_id):
         self._copy_bundle_to_tmp(model_id)
@@ -83,7 +93,9 @@ class DeployBase(ErsiliaBase):
         R += ["git+https://github.com/ersilia-os/ersilia\n"]
         if app_type == "streamlit":
             R += ["streamlit==%s\n" % streamlit.__version__]
-            requirements = os.path.join(self._get_tmp_directory(model_id), "requirements.txt")
+            requirements = os.path.join(
+                self._get_tmp_directory(model_id), "requirements.txt"
+            )
             with open(requirements, "w") as f:
                 for r in R:
                     f.write(r)
@@ -97,24 +109,25 @@ class DeployBase(ErsiliaBase):
         app_type = self._app_type(model_id)
         if app_type == "streamlit":
             if envport:
-                R[-1] = 'CMD streamlit run /bento/app.py --server.port $PORT\n'
+                R[-1] = "CMD streamlit run /bento/app.py --server.port $PORT\n"
             else:
-                R[-1] = 'CMD streamlit run /bento/app.py\n'
+                R[-1] = "CMD streamlit run /bento/app.py\n"
             dockerfile = os.path.join(self._get_tmp_directory(model_id), "Dockerfile")
             with open(dockerfile, "w") as f:
                 for r in R:
                     f.write(r)
             return R
         if app_type == "swagger":
-            return # TODO
+            return  # TODO
         if app_type == "dash":
-            return # TODO
+            return  # TODO
 
 
 class Local(DeployBase):
-
     def __init__(self, config_json=None, credentials_json=None):
-        DeployBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        DeployBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
 
     def deploy(self, model_id):
         app_type = self._app_type(model_id)
@@ -128,9 +141,10 @@ class Local(DeployBase):
 
 
 class Heroku(DeployBase):
-
     def __init__(self, config_json=None, credentials_json=None):
-        DeployBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        DeployBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self._login()
 
     @staticmethod
@@ -148,11 +162,15 @@ class Heroku(DeployBase):
 
     @staticmethod
     def _push(model_id):
-        subprocess.Popen("heroku container:push web --app %s" % model_id, shell=True).wait()
+        subprocess.Popen(
+            "heroku container:push web --app %s" % model_id, shell=True
+        ).wait()
 
     @staticmethod
     def _release(model_id):
-        subprocess.Popen("heroku container:release web --app %s" % model_id, shell=True).wait()
+        subprocess.Popen(
+            "heroku container:release web --app %s" % model_id, shell=True
+        ).wait()
 
     def deploy(self, model_id):
         cwd = os.getcwd()
@@ -170,9 +188,10 @@ class Heroku(DeployBase):
 
 
 class Aws(DeployBase):
-
     def __init__(self, config_json=None, credentials_json=None):
-        DeployBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        DeployBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self._login()
 
     def _login(self):
@@ -183,9 +202,10 @@ class Aws(DeployBase):
 
 
 class GoogleCloud(DeployBase):
-
     def __init__(self, config_json=None, credentials_json=None):
-        DeployBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        DeployBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self._login()
 
     def _login(self):
@@ -196,9 +216,10 @@ class GoogleCloud(DeployBase):
 
 
 class Azure(ErsiliaBase):
-
     def __init__(self, config_json=None, credentials_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self._login()
 
     def _login(self):
@@ -209,7 +230,6 @@ class Azure(ErsiliaBase):
 
 
 class Deployer(object):
-
     def __init__(self, cloud="heroku", config_json=None, credentials_json=None):
         """Initialize a cloud deployer. For now, only 'heroku' is available."""
         self.cloud = cloud
@@ -217,11 +237,15 @@ class Deployer(object):
         if cloud == "local":
             self.dep = Local(config_json=config_json, credentials_json=credentials_json)
         if cloud == "heroku":
-            self.dep = Heroku(config_json=config_json, credentials_json=credentials_json)
+            self.dep = Heroku(
+                config_json=config_json, credentials_json=credentials_json
+            )
         if cloud == "aws":
             self.dep = Aws(config_json=config_json, credentials_json=credentials_json)
         if cloud == "googlecloud":
-            self.dep = GoogleCloud(config_json=config_json, credentials_json=credentials_json)
+            self.dep = GoogleCloud(
+                config_json=config_json, credentials_json=credentials_json
+            )
         if cloud == "azure":
             self.dep = Azure(config_json=config_json, credentials_json=credentials_json)
 

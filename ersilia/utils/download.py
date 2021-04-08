@@ -10,7 +10,6 @@ from .terminal import run_command
 
 
 class PseudoDownloader(object):
-
     def __init__(self, overwrite):
         self.overwrite = overwrite
 
@@ -27,11 +26,12 @@ class PseudoDownloader(object):
 
     def fetch(self, src, dst):
         """Copy entire directory"""
-        self._copy_local_directory(src, dst)  # TODO: Add smart functions to deal with zipped files etc.
+        self._copy_local_directory(
+            src, dst
+        )  # TODO: Add smart functions to deal with zipped files etc.
 
 
 class OsfDownloader(object):
-
     def __init__(self, overwrite):
         self.overwrite = overwrite
 
@@ -51,14 +51,13 @@ class OsfDownloader(object):
 
 
 class GoogleDriveDownloader(object):
-
     def __init__(self):
         pass
 
     @staticmethod
     def get_confirm_token(response):
         for key, value in response.cookies.items():
-            if key.startswith('download_warning'):
+            if key.startswith("download_warning"):
                 return value
         return None
 
@@ -73,10 +72,10 @@ class GoogleDriveDownloader(object):
     def download_file_from_google_drive(self, file_id, destination):
         url = "https://docs.google.com/uc?export=download"
         session = requests.Session()
-        response = session.get(url, params={'id': file_id}, stream=True)
+        response = session.get(url, params={"id": file_id}, stream=True)
         token = self.get_confirm_token(response)
         if token:
-            params = {'id': id, 'confirm': token}
+            params = {"id": id, "confirm": token}
             response = session.get(url, params=params, stream=True)
         self.save_response_content(response, destination)
 
@@ -90,7 +89,6 @@ class GoogleDriveDownloader(object):
 
 
 class GitHubDownloader(object):
-
     def __init__(self, overwrite, token=None):
         self.overwrite = overwrite
         self.token = token
@@ -110,6 +108,7 @@ class GitHubDownloader(object):
             run_command(cmd, quiet=True)
         else:
             import pygit2
+
             pygit2.clone_repository(url=self._repo_url(org, repo), path=destination)
 
     def download_single(self, org, repo, repo_path, destination):

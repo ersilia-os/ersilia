@@ -8,12 +8,11 @@ from .. import ErsiliaBase
 
 
 class ModelStatus(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def is_downloaded(self, model_id):
-        essentials = ["README.md", "model"] # essential files
+        essentials = ["README.md", "model"]  #  essential files
         dst_dir = os.path.join(self._dest_dir, model_id)
         if not os.path.exists(dst_dir):
             return False
@@ -79,6 +78,6 @@ class ModelStatus(ErsiliaBase):
             "bundle": self.is_bundle(model_id),
             "docker": self.is_docker(model_id),
             "conda": self.is_conda(model_id),
-            "pip": self.is_pip(model_id)
+            "pip": self.is_pip(model_id),
         }
         return results

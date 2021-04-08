@@ -9,11 +9,15 @@ def set_style(style=None):
     except Exception as ex:
         print(str(ex))
     if style is None:
-        style = ('ticks', {
-            'font.family': 'sans-serif',
-            'font.serif': ['Arial'],
-            'font.size': 16,
-            'axes.grid': True})
+        style = (
+            "ticks",
+            {
+                "font.family": "sans-serif",
+                "font.serif": ["Arial"],
+                "font.size": 16,
+                "axes.grid": True,
+            },
+        )
     else:
         style = style
     sns.set_style(*style)

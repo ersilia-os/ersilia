@@ -5,6 +5,7 @@ Base on GitHub login.
 from pathlib import Path
 import os
 import yaml
+
 try:
     from github import Github
     from github.GithubException import UnknownObjectException
@@ -18,7 +19,6 @@ SECRET_REPO = "ersilia-os/ersilia-secrets"
 
 
 class Auth(object):
-
     def __init__(self):
         self.hosts_yml = os.path.join(str(Path.home()), ".config", "gh", "hosts.yml")
         if os.path.exists(self.hosts_yml):
@@ -32,7 +32,7 @@ class Auth(object):
     def login(self):
         """Login using GitHub"""
         pass
-        # TODO
+        #  TODO
 
     def logout(self):
         """Logout from GitHub"""

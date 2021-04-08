@@ -6,7 +6,6 @@ DEFAULT_TAG = "repo"
 
 
 class RepoDockerizer(ErsiliaBase):
-
     def __init__(self, config_json=None, path=None, tag=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         if path is None:
@@ -25,10 +24,10 @@ class RepoDockerizer(ErsiliaBase):
 
     @staticmethod
     def _inside_docker():
-        with open('/proc/self/cgroup', 'r') as procfile:
+        with open("/proc/self/cgroup", "r") as procfile:
             for line in procfile:
-                fields = line.strip().split('/')
-                if fields[1] == 'docker':
+                fields = line.strip().split("/")
+                if fields[1] == "docker":
                     return True
         return False
 
@@ -48,10 +47,8 @@ def dockerize(model_id):
 
 
 class RepoCondaCreator(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
-
 
     def create(self, model_id):
         pass

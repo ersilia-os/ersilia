@@ -10,7 +10,6 @@ from .status import ModelStatus
 
 
 class ModelEosDeleter(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -26,7 +25,6 @@ class ModelEosDeleter(ErsiliaBase):
 
 
 class ModelTmpDeleter(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -42,7 +40,6 @@ class ModelTmpDeleter(ErsiliaBase):
 
 
 class ModelBundleDeleter(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -58,13 +55,12 @@ class ModelBundleDeleter(ErsiliaBase):
 
 
 class ModelBentoDeleter(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     @staticmethod
     def _delete_service(service):
-        cmd = 'echo yes | bentoml delete %s' % service
+        cmd = "echo yes | bentoml delete %s" % service
         run_command(cmd, quiet=True)
 
     def _delete(self, model_id, keep_latest=True):
@@ -88,7 +84,6 @@ class ModelBentoDeleter(ErsiliaBase):
 
 
 class ModelCondaDeleter(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.envdb = EnvironmentDb(config_json=config_json)
@@ -96,7 +91,9 @@ class ModelCondaDeleter(ErsiliaBase):
 
     def _to_delete(self, model_id):
         env = self.envdb.envs_of_model(model_id)
-        if len(env) != 1: # Does not do anything if more than one model depend on the environment.
+        if (
+            len(env) != 1
+        ):  # Does not do anything if more than one model depend on the environment.
             return None
         else:
             return list(env)[0]
@@ -112,7 +109,6 @@ class ModelCondaDeleter(ErsiliaBase):
 
 
 class ModelPipDeleter(object):
-
     def __init__(self):
         pass
 
@@ -126,7 +122,6 @@ class ModelPipDeleter(object):
 
 
 class TmpCleaner(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -136,13 +131,12 @@ class TmpCleaner(ErsiliaBase):
 
 
 class ModelFullDeleter(object):
-
     def __init__(self, config_json=None):
         self.config_json = config_json
 
     def needs_delete(self, model_id):
         ms = ModelStatus().status(model_id)
-        for k,v in ms.items():
+        for k, v in ms.items():
             if v:
                 return True
         return False

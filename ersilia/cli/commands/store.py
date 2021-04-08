@@ -10,7 +10,7 @@ def store_cmd():
     @ersilia_cli.command(
         short_help="Store a model",
         help="Store a model in GitHub and the chosen file storage. "
-             "This option is only for developers and requires credentials."
+        "This option is only for developers and requires credentials.",
     )
     @click.argument("model_id", type=click.STRING)
     @click.option("--path", required=True, type=click.Path())

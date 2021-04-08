@@ -1,4 +1,5 @@
 import random
+
 try:
     from hashids import Hashids
 except ModuleNotFoundError as err:
@@ -14,7 +15,6 @@ LENGTH = 8
 
 
 class ShortIdentifier(object):
-
     def __init__(self):
         super().__init__()
         if Hashids is None:

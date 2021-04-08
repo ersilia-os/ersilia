@@ -11,7 +11,9 @@ def run_command(cmd, quiet):
             subprocess.Popen(cmd, shell=True, env=os.environ).wait()
     else:
         if quiet:
-            subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, env=os.environ)
+            subprocess.check_call(
+                cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, env=os.environ
+            )
         else:
             subprocess.check_call(cmd, env=os.environ)
 

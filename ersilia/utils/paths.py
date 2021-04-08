@@ -7,7 +7,6 @@ MODELS_DEVEL_DIRNAME = "models"
 
 
 class Paths(object):
-
     def __init__(self):
         self.essentials = ["setup.py", "README.md", "CODE_OF_CONDUCT.md"]
 

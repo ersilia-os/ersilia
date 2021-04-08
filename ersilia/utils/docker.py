@@ -6,7 +6,6 @@ from .terminal import run_command, run_command_check_output
 
 
 class SimpleDocker(object):
-
     def __init__(self):
         self.identifier = LongIdentifier()
 
@@ -98,7 +97,10 @@ class SimpleDocker(object):
     def run(self, org, img, tag, name):
         if name is None:
             name = self.identifier.encode()
-        cmd = "docker run -it -d --name %s %s bash" % (name, self._image_name(org, img, tag))
+        cmd = "docker run -it -d --name %s %s bash" % (
+            name,
+            self._image_name(org, img, tag),
+        )
         run_command(cmd, quiet=True)
         return name
 
@@ -130,7 +132,6 @@ class SimpleDocker(object):
 
 
 class SimpleDockerfileParser(DockerfileParser):
-
     def __init__(self, path):
         if os.path.isdir(path):
             path = os.path.join(path, "Dockerfile")

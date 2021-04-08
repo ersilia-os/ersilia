@@ -3,7 +3,6 @@ import string
 
 
 class ModelIdentifier(object):
-
     def __init__(self):
         super().__init__()
         self.letters = string.ascii_lowercase
@@ -12,7 +11,9 @@ class ModelIdentifier(object):
     def encode(self):
         result_str = "eos"
         result_str += random.choice(self.numbers[1:])
-        result_str += "".join(random.choice(self.letters+self.numbers) for _ in range(3))
+        result_str += "".join(
+            random.choice(self.letters + self.numbers) for _ in range(3)
+        )
         return result_str
 
     def generate(self, n):

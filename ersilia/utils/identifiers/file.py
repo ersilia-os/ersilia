@@ -5,7 +5,6 @@ except:
 
 
 class FileIdentifier(object):
-
     def __init__(self, chunk_size=10000):
         super().__init__()
         self.chunk_size = chunk_size

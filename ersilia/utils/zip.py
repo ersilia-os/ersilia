@@ -4,12 +4,11 @@ import shutil
 
 
 class Zipper(object):
-
     def __init__(self, remove):
         self.remove = remove
 
     def unzip(self, file, destination):
-        with zipfile.ZipFile(file, 'r') as zip_ref:
+        with zipfile.ZipFile(file, "r") as zip_ref:
             zip_ref.extractall(destination)
         if self.remove:
             os.remove(file)

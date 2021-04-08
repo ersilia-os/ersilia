@@ -8,9 +8,10 @@ from pysmiles import read_smiles
 from bentoml.types import JsonSerializable
 
 
-@artifacts([JSONArtifact('model')])
+@artifacts([JSONArtifact("model")])
 class Service(BentoService):
     """The Service class uses BentoService to build multiple inference APIs"""
+
     @api(input=JsonInput())
     def predict(self, input: JsonSerializable):
         """

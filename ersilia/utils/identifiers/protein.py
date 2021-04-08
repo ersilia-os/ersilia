@@ -3,7 +3,6 @@ from bioservices.uniprot import UniProt
 
 
 class ProteinIdentifier(object):
-
     def __init__(self):
         super().__init__()
         self.seguid = seguid
@@ -19,7 +18,7 @@ class ProteinIdentifier(object):
     @staticmethod
     def protein_identifier_resolver():
         """Returns protein sequence of a given identifier, using """
-        pass # TODO
+        pass  # TODO
 
     @staticmethod
     def encode(sequence):

@@ -14,7 +14,7 @@ with open(os.path.join(PATH, "../workflows/write_secrets.yml"), "r") as f:
     chunks = text.split("- name: ")
     mychunk = None
     for chunk in chunks:
-        if chunk[:len(PHRASE)] == PHRASE:
+        if chunk[: len(PHRASE)] == PHRASE:
             mychunk = chunk
     envs = mychunk.split("env:\n")[1].split("run:")[0].split("\n")
     for env in envs:

@@ -2,7 +2,6 @@ from datetime import datetime
 
 
 class TimeStampIdentifier(object):
-
     def __init__(self):
         self.stamp = datetime.now()
 

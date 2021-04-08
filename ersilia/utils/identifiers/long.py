@@ -4,12 +4,11 @@ except ModuleNotFoundError as err:
     uuid = None
 
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-PATTERN = [8,4,4,4,12]
+PATTERN = [8, 4, 4, 4, 12]
 SEP = "-"
 
 
 class LongIdentifier(object):
-
     def __init__(self):
         super().__init__()
 

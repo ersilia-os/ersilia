@@ -2,6 +2,7 @@ import urllib.parse
 import requests
 import json
 from chembl_webresource_client.unichem import unichem_client as unichem
+
 try:
     from rdkit import Chem
 except ModuleNotFoundError as err:
@@ -9,7 +10,6 @@ except ModuleNotFoundError as err:
 
 
 class MoleculeIdentifier(object):
-
     def __init__(self, local=True):
         super().__init__()
         if local:
@@ -65,7 +65,9 @@ class MoleculeIdentifier(object):
     @staticmethod
     def _nci_smiles_to_inchikey(smiles):
         identifier = urllib.parse.quote(smiles)
-        url = "https://cactus.nci.nih.gov/chemical/structure/{0}/stdinchikey".format(identifier)
+        url = "https://cactus.nci.nih.gov/chemical/structure/{0}/stdinchikey".format(
+            identifier
+        )
         req = requests.get(url)
         if req.status_code != 200:
             return None
@@ -74,7 +76,9 @@ class MoleculeIdentifier(object):
     @staticmethod
     def _pubchem_smiles_to_inchikey(smiles):
         identifier = urllib.parse.quote(smiles)
-        url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{0}/property/InChIKey/json".format(identifier)
+        url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{0}/property/InChIKey/json".format(
+            identifier
+        )
         req = requests.get(url)
         if req.status_code != 200:
             return None
@@ -84,7 +88,9 @@ class MoleculeIdentifier(object):
     def chemical_identifier_resolver(identifier):
         """Returns SMILES string of a given identifier, using NCI tool"""
         identifier = urllib.parse.quote(identifier)
-        url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(identifier)
+        url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(
+            identifier
+        )
         req = requests.get(url)
         if req.status_code != 200:
             return None
@@ -99,7 +105,10 @@ class MoleculeIdentifier(object):
         else:
             mol = self.Chem.MolFromSmiles(smiles)
             if mol is None:
-                raise Exception("The SMILES string: %s is not valid or could not be converted to an InChIKey" % smiles)
+                raise Exception(
+                    "The SMILES string: %s is not valid or could not be converted to an InChIKey"
+                    % smiles
+                )
             inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
             if inchi is None:
                 raise Exception("Could not obtain InChI")

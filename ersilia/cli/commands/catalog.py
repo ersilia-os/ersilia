@@ -11,22 +11,22 @@ def catalog_cmd():
         help="List a catalog of models",
     )
     @click.option(
-        '--hub',
+        "--hub",
         is_flag=True,
         default=False,
-        help="Show catalog of models available in the Ersilia Model Hub"
+        help="Show catalog of models available in the Ersilia Model Hub",
     )
     @click.option(
-        '--local',
+        "--local",
         is_flag=True,
         default=False,
-        help="Show catalog of models available in the local computer"
+        help="Show catalog of models available in the local computer",
     )
     @click.option(
-       '--backlog',
-       is_flag=True,
-       default=False,
-       help="Show models backlog (wish list) in a Google Spreadsheet"
+        "--backlog",
+        is_flag=True,
+        default=False,
+        help="Show models backlog (wish list) in a Google Spreadsheet",
     )
     def catalog(hub=False, local=False, backlog=False):
         mc = ModelCatalog()
@@ -37,4 +37,6 @@ def catalog_cmd():
         elif backlog:
             click.echo(mc.backlog())
         else:
-            click.echo(click.style("Specifiy one of --hub --local or --backlog", fg="blue"))
+            click.echo(
+                click.style("Specifiy one of --hub --local or --backlog", fg="blue")
+            )

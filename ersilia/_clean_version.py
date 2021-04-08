@@ -25,6 +25,7 @@ with open(clean_version_file, "r") as f:
 
 __version__ = version
 
+
 def _write_version(fname):
     # This could be a hard link, so try to delete it first.  Is there any way
     # to do this atomically together with opening?

@@ -4,7 +4,6 @@ from .. import ErsiliaBase
 
 
 class AppBase(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.cards = None
@@ -13,6 +12,7 @@ class AppBase(ErsiliaBase):
     def _load_model_cards(self):
         if self.cards is None:
             from ..hub.card import ModelCard
+
             self.cards = ModelCard()
 
     def _is_swagger(self, model_id):
@@ -50,7 +50,6 @@ class AppBase(ErsiliaBase):
 
 
 class StreamlitApp(AppBase):
-
     def __init__(self, config_json=None):
         AppBase.__init__(self, config_json=config_json)
 
@@ -66,20 +65,18 @@ class StreamlitApp(AppBase):
 
 
 class DashApp(AppBase):
-
     def __init__(self, config_json=None):
         AppBase.__init__(self, config_json=config_json)
 
     def run(self):
         if not self._is_dash(model_id):
             return 0
-        pass # TODO
+        pass  # TODO
 
 
 class SwaggerApp(AppBase):
-
     def __init__(self, config_json=None):
         AppBase.__init__(self, config_json=config_json)
 
     def run(self, model_id):
-        pass # TODO
+        pass  # TODO

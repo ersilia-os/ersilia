@@ -3,16 +3,17 @@ from bentoml.adapters import JsonInput
 from bentoml.service.artifacts.common import JSONArtifact
 
 
-@artifacts([JSONArtifact('model')])
+@artifacts([JSONArtifact("model")])
 class Service(BentoService):
-    """ BentoML Service class
+    """BentoML Service class
 
-        Serves the model in a bentoml based web app
+    Serves the model in a bentoml based web app
 
-        Attributes:
-            input: a json file containing the input for the prediction
+    Attributes:
+        input: a json file containing the input for the prediction
 
     """
+
     @api(input=JsonInput())
     def invert(self, input):
         """Inverts a string.

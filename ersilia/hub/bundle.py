@@ -19,6 +19,7 @@ class BundleEnvironmentFile(ErsiliaBase):
         exists: environment.yml has been created
 
     """
+
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -46,7 +47,7 @@ class BundleEnvironmentFile(ErsiliaBase):
         return False
 
     def needs_conda(self):
-        """ Checks if conda environment is required
+        """Checks if conda environment is required
 
         Args:
             exists: environment.yml path
@@ -83,6 +84,7 @@ class BundleDockerfileFile(ErsiliaBase):
         exists: Dockerfile has been created
         parser: DockerfileParser function
     """
+
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -117,8 +119,10 @@ class BundleDockerfileFile(ErsiliaBase):
             For example: bentoml/model-server:0.9.2-slim-py37
         """
         ver = self.get_bentoml_version()
-        if not ver: return
-        if ver["slim"]: return
+        if not ver:
+            return
+        if ver["slim"]:
+            return
         img = "bentoml/model-server:{0}-slim-{1}".format(ver["version"], ver["python"])
         self.parser.baseimage = img
 

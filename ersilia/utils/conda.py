@@ -14,7 +14,6 @@ SPECS_JSON = ".specs.json"
 
 
 class BaseConda(object):
-
     def __init__(self):
         self.SPECS_JSON = SPECS_JSON
         self.CHECKSUM_FILE = CHECKSUM_FILE
@@ -39,7 +38,6 @@ class BaseConda(object):
 
 
 class CondaUtils(BaseConda):
-
     def __init__(self, config_json=None):
         BaseConda.__init__(self)
         self.versions = Versioner(config_json=config_json)
@@ -64,16 +62,12 @@ class CondaUtils(BaseConda):
         if tool is None:
             return None
         packages = sorted(packages)
-        result = {
-            "tool": tool,
-            "channel": channel,
-            "packages": packages
-        }
+        result = {"tool": tool, "channel": channel, "packages": packages}
         return result
 
     @staticmethod
     def _text_checksum(text):
-        checksum = hashlib.md5(text.encode('utf-8')).hexdigest()[:CHECKSUM_NCHAR]
+        checksum = hashlib.md5(text.encode("utf-8")).hexdigest()[:CHECKSUM_NCHAR]
         return checksum
 
     def checksum_from_file(self, filename):
@@ -94,17 +88,20 @@ class CondaUtils(BaseConda):
                 if r[:6] == "prefix":
                     pref_idx = i
                 R += [r]
-            S = R[(name_idx+1):pref_idx]
-            text = ''.join(S)
+            S = R[(name_idx + 1) : pref_idx]
+            text = "".join(S)
         checksum = self._text_checksum(text)
         if overwrite:
             with open(env_yml, "w") as f:
-                f.write('name: %s\n' % checksum)
+                f.write("name: %s\n" % checksum)
                 for s in S:
                     f.write(s)
-                prefix = os.path.join(os.sep.join(R[pref_idx].split('prefix: ')[1].split(os.sep)[:-1]), checksum)
-                f.write('prefix: %s\n' % prefix)
-                f.write('\n')
+                prefix = os.path.join(
+                    os.sep.join(R[pref_idx].split("prefix: ")[1].split(os.sep)[:-1]),
+                    checksum,
+                )
+                f.write("prefix: %s\n" % prefix)
+                f.write("\n")
         return checksum
 
     def get_install_commands_from_dockerfile(self, path):
@@ -130,8 +127,7 @@ class CondaUtils(BaseConda):
             return None
 
     def specs_from_dockerfile_as_json(self, dockerfile_dir, dest):
-        """Writes a json file with the install requirements inferred from the Dockerfile.
-        """
+        """Writes a json file with the install requirements inferred from the Dockerfile."""
         runs = self.get_install_commands_from_dockerfile(dockerfile_dir)
         if not runs:
             return None
@@ -157,7 +153,7 @@ class CondaUtils(BaseConda):
                 continue
             k = result["tool"], result["channel"]
             d[k] += result["packages"]
-        d = dict((k, sorted(set(v))) for k,v in d.items())
+        d = dict((k, sorted(set(v))) for k, v in d.items())
         od = OrderedDict()
         od["base-env"] = self.versions.base_conda_name(tag)
         for k in sorted(d.keys()):
@@ -194,14 +190,12 @@ class CondaUtils(BaseConda):
         source ${0}/etc/profile.d/conda.sh
         conda activate {1}
         """.format(
-            self.conda_prefix(False),
-            BASE
+            self.conda_prefix(False), BASE
         )
         return snippet
 
 
 class SimpleConda(CondaUtils):
-
     def __init__(self, config_json=None):
         CondaUtils.__init__(self, config_json=config_json)
 
@@ -213,8 +207,7 @@ class SimpleConda(CondaUtils):
         source ${0}/etc/profile.d/conda.sh
         conda env list > {1}
         """.format(
-            self.conda_prefix(self.is_base()),
-            tmp_file
+            self.conda_prefix(self.is_base()), tmp_file
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
@@ -250,8 +243,7 @@ class SimpleConda(CondaUtils):
         source ${0}/etc/profile.d/conda.sh
         conda env remove --name {1}
         """.format(
-            self.conda_prefix(True),
-            environment
+            self.conda_prefix(True), environment
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
@@ -275,9 +267,7 @@ class SimpleConda(CondaUtils):
         conda env export --no-builds > {2}
         conda deactivate
         """.format(
-            self.conda_prefix(True),
-            environment,
-            yml_file
+            self.conda_prefix(True), environment, yml_file
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
@@ -298,9 +288,7 @@ class SimpleConda(CondaUtils):
         source ${0}/etc/profile.d/conda.sh
         conda create --clone {1} --name {2} -y
         """.format(
-            self.conda_prefix(True),
-            src_env,
-            dst_env
+            self.conda_prefix(True), src_env, dst_env
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
@@ -321,9 +309,7 @@ class SimpleConda(CondaUtils):
         conda env list
         {2}
         """.format(
-            self.conda_prefix(True),
-            environment,
-            commandlines
+            self.conda_prefix(True), environment, commandlines
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)

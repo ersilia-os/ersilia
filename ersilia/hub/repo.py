@@ -3,13 +3,17 @@ import json
 from .. import ErsiliaBase
 from ..utils.paths import Paths
 from ..utils.docker import SimpleDockerfileParser
-from ..default import CONDA_ENV_YML_FILE, DOCKER_BENTO_PATH, DEFAULT_MODEL_ID, DOCKERFILE_FILE
+from ..default import (
+    CONDA_ENV_YML_FILE,
+    DOCKER_BENTO_PATH,
+    DEFAULT_MODEL_ID,
+    DOCKERFILE_FILE,
+)
 
 ROOT_CHECKFILE = "README.md"
 
 
 class ReadmeFile(object):
-
     def __init__(self, path):
         self.path = os.path.abspath(path)
 
@@ -29,6 +33,7 @@ class ServiceFile(object):
     Attributes:
         path: directory path where model is stored. Uses os module.
     """
+
     def __init__(self, path):
         self.path = os.path.abspath(path)
 
@@ -41,7 +46,7 @@ class ServiceFile(object):
         search_string = "class Service("
         with open(self.get_file(), "r") as f:
             for l in f:
-                if search_string == l[:len(search_string)]:
+                if search_string == l[: len(search_string)]:
                     return True
         return False
 
@@ -66,7 +71,6 @@ class ServiceFile(object):
 
 
 class PackFile(object):
-
     def __init__(self, path):
         self.path = os.path.abspath(path)
 
@@ -81,8 +85,10 @@ class PackFile(object):
             for l in f:
                 if ".pack(" in l:
                     line = l
-        if line is None: return False
-        if "None" in line: return False
+        if line is None:
+            return False
+        if "None" in line:
+            return False
         return True
 
     def check(self):
@@ -99,6 +105,7 @@ class DockerfileFile(object):
     Attributes:
         path: directory path where model is stored. Uses os module.
     """
+
     def __init__(self, path):
         self.path = os.path.abspath(path)
         self.parser = SimpleDockerfileParser(self.path)
@@ -142,11 +149,7 @@ class DockerfileFile(object):
             tag = tag.split("-")
             if len(tag) != 2:
                 return None
-        result = {
-            "version": tag[0],
-            "slim": slim,
-            "python": tag[-1]
-        }
+        result = {"version": tag[0], "slim": slim, "python": tag[-1]}
         return result
 
     def has_runs(self):
@@ -160,7 +163,6 @@ class DockerfileFile(object):
 
 
 class Integrity(object):
-
     def __init__(self, path):
         self.path = os.path.abspath(path)
 
@@ -193,11 +195,12 @@ class Integrity(object):
 
 
 class RepoUtils(ErsiliaBase):
-
     def __init__(self, path, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.dockerhub_org = self.cfg.EXT.DOCKERHUB_ORG
-        self.config_in_img = os.path.join(self.cfg.ENV.DOCKER.IMAGE_REPODIR, self.cfg.HUB.CONFIG_FILE)
+        self.config_in_img = os.path.join(
+            self.cfg.ENV.DOCKER.IMAGE_REPODIR, self.cfg.HUB.CONFIG_FILE
+        )
         if os.path.isdir(path):
             self.path = os.path.normpath(os.path.abspath(path))
         else:
@@ -212,7 +215,7 @@ class RepoUtils(ErsiliaBase):
             return None
         with open(self.config_in_img, "r") as f:
             cfg = json.load(f)
-        return cfg["model_id"].replace("'", "").replace('"', '')
+        return cfg["model_id"].replace("'", "").replace('"', "")
 
     def get_model_id(self):
         model_id = self._get_model_id_from_path()
@@ -259,18 +262,30 @@ class RepoUtils(ErsiliaBase):
             if root is None:
                 model_id = self.get_model_id()
                 # try to find yml in bundles
-                yml = os.path.join(self._bundles_dir, model_id, self._get_latest_bundle_tag(model_id), CONDA_ENV_YML_FILE)
+                yml = os.path.join(
+                    self._bundles_dir,
+                    model_id,
+                    self._get_latest_bundle_tag(model_id),
+                    CONDA_ENV_YML_FILE,
+                )
                 if os.path.exists(yml):
                     return yml
                 # try to find yml in bentoml
-                yml = os.path.join(self._bentoml_dir, model_id, self._get_latest_bentoml_tag(model_id), CONDA_ENV_YML_FILE)
+                yml = os.path.join(
+                    self._bentoml_dir,
+                    model_id,
+                    self._get_latest_bentoml_tag(model_id),
+                    CONDA_ENV_YML_FILE,
+                )
                 if os.path.exists(yml):
                     return yml
             else:
                 return os.path.join(root, CONDA_ENV_YML_FILE)
 
     def get_docker_repo_image(self, model_id):
-        return os.path.join(self.dockerhub_org, "{0}:{1}".format(model_id, self.cfg.ENV.DOCKER.REPO_TAG))
+        return os.path.join(
+            self.dockerhub_org, "{0}:{1}".format(model_id, self.cfg.ENV.DOCKER.REPO_TAG)
+        )
 
     @staticmethod
     def rename_service(model_id):

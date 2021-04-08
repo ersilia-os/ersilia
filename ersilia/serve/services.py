@@ -19,7 +19,6 @@ TIMEOUT_SECONDS = 1000
 
 
 class BaseServing(ErsiliaBase):
-
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -29,7 +28,9 @@ class BaseServing(ErsiliaBase):
         """Get info available from the Bento"""
         tmp_folder = tempfile.mkdtemp()
         tmp_file = os.path.join(tmp_folder, "info.json")
-        cmd = "bentoml info --quiet {0}:{1} > {2}".format(self.model_id, self.bundle_tag, tmp_file)
+        cmd = "bentoml info --quiet {0}:{1} > {2}".format(
+            self.model_id, self.bundle_tag, tmp_file
+        )
         run_command(cmd, quiet=True)
         with open(tmp_file, "r") as f:
             info = json.load(f)
@@ -49,7 +50,6 @@ class BaseServing(ErsiliaBase):
 
 
 class _BentoMLService(BaseServing):
-
     def __init__(self, model_id, config_json=None):
         BaseServing.__init__(self, model_id=model_id, config_json=config_json)
         self.SEARCH_PRE_STRING = "* Running on "
@@ -63,18 +63,22 @@ class _BentoMLService(BaseServing):
         tmp_script = os.path.join(tmp_folder, "serve.sh")
         tmp_file = os.path.join(tmp_folder, "serve.log")
         tmp_pid = os.path.join(tmp_folder, "serve.pid")
-        sl = ['#!/bin/bash']
-        sl += ['bentoml serve {0}:{1} --port {2} &> {3} &'.format(self.model_id, self.bundle_tag, self.port, tmp_file)]
-        sl += ['_pid=$!']
+        sl = ["#!/bin/bash"]
+        sl += [
+            "bentoml serve {0}:{1} --port {2} &> {3} &".format(
+                self.model_id, self.bundle_tag, self.port, tmp_file
+            )
+        ]
+        sl += ["_pid=$!"]
         sl += ['echo "$_pid" > {0}'.format(tmp_pid)]
         with open(tmp_script, "w") as f:
             for l in sl:
-                f.write(l+os.linesep)
+                f.write(l + os.linesep)
         cmd = "bash {0}".format(tmp_script)
         run_command(cmd, quiet=True)
         with open(tmp_pid, "r") as f:
             self.pid = int(f.read().strip())
-        for _ in range(int(TIMEOUT_SECONDS/SLEEP_SECONDS)):
+        for _ in range(int(TIMEOUT_SECONDS / SLEEP_SECONDS)):
             # If error string is identified, finish
             with open(tmp_file, "r") as f:
                 r = f.read()
@@ -101,7 +105,6 @@ class _BentoMLService(BaseServing):
 
 
 class SystemBundleService(_BentoMLService):
-
     def __init__(self, model_id, config_json=None):
         _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
 
@@ -136,7 +139,6 @@ class SystemBundleService(_BentoMLService):
 
 
 class CondaEnvironmentService(_BentoMLService):
-
     def __init__(self, model_id, config_json=None):
         _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
         self.db = EnvironmentDb()
@@ -179,7 +181,6 @@ class CondaEnvironmentService(_BentoMLService):
 
 
 class DockerImageService(BaseServing):
-
     def __init__(self, model_id, config_json=None):
         BaseServing.__init__(self, model_id=model_id, config_json=config_json)
         self.db = EnvironmentDb()
@@ -227,7 +228,6 @@ class DockerImageService(BaseServing):
 
 
 class PipInstalledService(BaseServing):
-
     def __init__(self, model_id, config_json=None):
         BaseServing.__init__(self, model_id=model_id, config_json=config_json)
 

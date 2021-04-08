@@ -9,19 +9,19 @@ def setup_cmd():
     # Example usage: ersilia setup
     @ersilia_cli.command(
         short_help="Setup ersilia",
-        help="Setup ersilia, including building a model-server image, a base environment (eos), rdkit, etc."
+        help="Setup ersilia, including building a model-server image, a base environment (eos), rdkit, etc.",
     )
     @click.option(
-        '--base',
+        "--base",
         is_flag=True,
         default=False,
-        help="Install only bare-minimum dependencies."
+        help="Install only bare-minimum dependencies.",
     )
     @click.option(
-        '--full',
+        "--full",
         is_flag=True,
         default=True,
-        help="Install all the necessary dependencies."
+        help="Install all the necessary dependencies.",
     )
     def setup(base=False, full=True):
         if base:

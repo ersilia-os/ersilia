@@ -20,7 +20,7 @@ if __name__ == "__main__":
         sys.exit()
     model_id = args[1]
     root = os.path.dirname(os.path.realpath(__file__))
-    path = os.path.join(root, 'dest', model_id)
+    path = os.path.join(root, "dest", model_id)
     checksum = read_checksum(path)
     if checksum is None:
         print(model_id)

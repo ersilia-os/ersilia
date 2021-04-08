@@ -11,8 +11,8 @@ def fetch_cmd():
     @ersilia_cli.command(
         short_help="Fetch model from Ersilia Model Hub",
         help="Fetch model from EOS repository. Model files are downloaded from GitHub and model data are "
-             "downloaded from a file storage system such as the Open Science Framework. Model is downloaded to "
-             "an EOS folder, then packed to a BentoML bundle",
+        "downloaded from a file storage system such as the Open Science Framework. Model is downloaded to "
+        "an EOS folder, then packed to a BentoML bundle",
     )
     @click.argument("model_id", type=click.STRING)
     def fetch(model_id):

@@ -9,10 +9,7 @@ from .utils.utils import tmp_pid_file
 
 def close_cmd():
     # Example usage: ersilia close {MODEL_ID}
-    @ersilia_cli.command(
-        short_help="Close model",
-        help="Close model"
-    )
+    @ersilia_cli.command(short_help="Close model", help="Close model")
     @click.argument("model_id", type=click.STRING)
     def close(model_id):
         tmp_file = tmp_pid_file(model_id)

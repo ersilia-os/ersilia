@@ -26,7 +26,6 @@ except:
 
 
 class CatalogTable(object):
-
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
@@ -45,7 +44,6 @@ class CatalogTable(object):
 
 
 class ModelCatalog(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.eos_regex = Paths._eos_regex()
@@ -60,7 +58,9 @@ class ModelCatalog(ErsiliaBase):
     def backlog():
         """List models available in our spreadsheets for future incorporation"""
         if webbrowser:
-            webbrowser.open("https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193") # TODO: do not just go to the website
+            webbrowser.open(
+                "https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193"
+            )  # TODO: do not just go to the website
 
     def github(self):
         """List models available in the GitHub model hub repository"""
@@ -112,7 +112,9 @@ class ModelCatalog(ErsiliaBase):
 
     def bentoml(self):
         """List models available as BentoServices"""
-        result = subprocess.run(['bentoml', 'list'], stdout=subprocess.PIPE, env=os.environ)
+        result = subprocess.run(
+            ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ
+        )
         result = [r for r in result.stdout.decode("utf-8").split("\n") if r]
         if len(result) == 1:
             return
@@ -125,8 +127,8 @@ class ModelCatalog(ErsiliaBase):
         R = []
         for row in values:
             r = []
-            for i, idx in enumerate(zip(cut_idxs, cut_idxs[1:]+[None])):
-                r += [row[idx[0]:idx[1]].rstrip()]
+            for i, idx in enumerate(zip(cut_idxs, cut_idxs[1:] + [None])):
+                r += [row[idx[0] : idx[1]].rstrip()]
             R += [[r[0].split(":")[0]] + r]
         columns = ["MODEL_ID"] + columns
         return CatalogTable(data=R, columns=columns)
