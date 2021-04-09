@@ -103,7 +103,11 @@ class ModelFetcher(ErsiliaBase):
                     r = r.split(" ")
                     r = " ".join([r[0]] + [dis_warn] + r[1:])
                 f.write("{0}{1}".format(r, os.linesep))
-            f.write("pip {2} install bentoml=={0}{1}".format(version["version"], os.linesep, dis_warn))
+            f.write(
+                "pip {2} install bentoml=={0}{1}".format(
+                    version["version"], os.linesep, dis_warn
+                )
+            )
         return fn
 
     def get_repo(self, model_id):
@@ -344,10 +348,12 @@ class ModelFetcher(ErsiliaBase):
         folder = self._model_path(model_id)
         # check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)
         dockerfile = DockerfileFile(folder)
-        # version bentoml & python
+        #  version bentoml & python
         version = dockerfile.get_bentoml_version()
         if not dockerfile.has_runs():
-            same_python = version["python"] == self.versioner.python_version(py_format=True)
+            same_python = version["python"] == self.versioner.python_version(
+                py_format=True
+            )
             same_bentoml = version["version"] == self.versioner.bentoml_version()
             if same_python and same_bentoml:
                 return "system"
@@ -355,10 +361,10 @@ class ModelFetcher(ErsiliaBase):
         cmds = dockerfile.get_install_commands()
         # only python/conda installs
         if cmds is not None:
-            # no conda is necessary
+            #  no conda is necessary
             if not cmds["conda"]:
                 return "venv"
-            # conda is necessary
+            #  conda is necessary
             else:
                 return "conda"
         # python/conda installs are not sufficient, use dockerfile

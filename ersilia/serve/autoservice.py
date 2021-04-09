@@ -1,4 +1,9 @@
-from .services import SystemBundleService, VenvEnvironmentService, CondaEnvironmentService, DockerImageService
+from .services import (
+    SystemBundleService,
+    VenvEnvironmentService,
+    CondaEnvironmentService,
+    DockerImageService,
+)
 from .. import ErsiliaBase
 import os
 

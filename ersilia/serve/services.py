@@ -147,7 +147,6 @@ class SystemBundleService(_BentoMLService):
 
 
 class VenvEnvironmentService(_BentoMLService):
-
     def __init__(self, model_id, config_json=None):
         _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
         self.venv = SimpleVenv(self._model_path(model_id))

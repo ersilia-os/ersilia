@@ -7,6 +7,7 @@
 [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/)
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black)
+[![Github All Releases](https://img.shields.io/github/downloads/ersilia-os/ersilia/total.svg)]()
 
 This is work in progress.
 

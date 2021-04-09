@@ -6,7 +6,6 @@ from .terminal import run_command
 
 
 class SimpleVenv(object):
-
     def __init__(self, root):
         self.root = os.path.abspath(root)
 

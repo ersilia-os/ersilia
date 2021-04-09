@@ -170,12 +170,9 @@ class DockerfileFile(object):
         needs_conda = False
         for r in runs:
             c = "conda"
-            if r[:len(c)] == c:
+            if r[: len(c)] == c:
                 needs_conda = True
-        result = {
-            "conda": needs_conda,
-            "commands": runs
-        }
+        result = {"conda": needs_conda, "commands": runs}
         return result
 
     def check(self):
