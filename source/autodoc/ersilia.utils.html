@@ -40,7 +40,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="ersilia.utils.identifiers package" href="ersilia.utils.identifiers.html" />
-    <link rel="prev" title="ersilia.serve package" href="ersilia.serve.html" /> 
+    <link rel="prev" title="ersilia.setup package" href="ersilia.setup.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -103,6 +103,7 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">ersilia.utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.viz.html">ersilia.viz package</a></li>
 </ul>
@@ -202,7 +203,7 @@
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#module-ersilia.utils.identifiers.file">ersilia.utils.identifiers.file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#module-ersilia.utils.identifiers.long">ersilia.utils.identifiers.long module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#module-ersilia.utils.identifiers.model">ersilia.utils.identifiers.model module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#module-ersilia.utils.identifiers.molecule">ersilia.utils.identifiers.molecule module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia-utils-identifiers-molecule-module">ersilia.utils.identifiers.molecule module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#module-ersilia.utils.identifiers.protein">ersilia.utils.identifiers.protein module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#module-ersilia.utils.identifiers.short">ersilia.utils.identifiers.short module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#module-ersilia.utils.identifiers.timestamp">ersilia.utils.identifiers.timestamp module</a></li>
@@ -280,6 +281,11 @@
 For now this command is conservative and returns None if at least
 one of the commands is not conda … or pip … or pip3 …</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="ersilia.utils.conda.CondaUtils.specs_from_dockerfile">
+<code class="descname">specs_from_dockerfile</code><span class="sig-paren">(</span><em>dockerfile_dir</em>, <em>dest=None</em>, <em>use_checksum=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/conda.html#CondaUtils.specs_from_dockerfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.conda.CondaUtils.specs_from_dockerfile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="ersilia.utils.conda.CondaUtils.specs_from_dockerfile_as_json">
@@ -786,7 +792,7 @@ The directory with more ‘eos0xxx’ subdirectories will be returned.</p>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
 <dl class="method">
 <dt id="ersilia.utils.versioning.Versioner.base_conda_name">
-<code class="descname">base_conda_name</code><span class="sig-paren">(</span><em>tag=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.base_conda_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.versioning.Versioner.base_conda_name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">base_conda_name</code><span class="sig-paren">(</span><em>org</em>, <em>tag</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.base_conda_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.versioning.Versioner.base_conda_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -797,6 +803,11 @@ The directory with more ‘eos0xxx’ subdirectories will be returned.</p>
 <dl class="method">
 <dt id="ersilia.utils.versioning.Versioner.ersilia_version">
 <code class="descname">ersilia_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.ersilia_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.versioning.Versioner.ersilia_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.utils.versioning.Versioner.ersilia_version_from_path">
+<code class="descname">ersilia_version_from_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.ersilia_version_from_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.versioning.Versioner.ersilia_version_from_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -853,7 +864,7 @@ The directory with more ‘eos0xxx’ subdirectories will be returned.</p>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="ersilia.utils.identifiers.html" class="btn btn-neutral float-right" title="ersilia.utils.identifiers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="ersilia.serve.html" class="btn btn-neutral float-left" title="ersilia.serve package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ersilia.setup.html" class="btn btn-neutral float-left" title="ersilia.setup package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
