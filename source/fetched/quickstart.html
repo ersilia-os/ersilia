@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>&lt;no title&gt; &mdash; Ersilia  documentation</title>
+  <title>Quick start &mdash; Ersilia  documentation</title>
   
 
   
@@ -40,7 +40,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Package index" href="../package.html" />
-    <link rel="prev" title="Quick start" href="usage.html" /> 
+    <link rel="prev" title="Mac and Linux Installation" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,17 +86,22 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">Learn about Ersilia!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Mac and Linux Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html#windows-installation">Windows Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Quick start</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command Line Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-package">Python Package</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../package.html">Package index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../devel.html">For developers</a></li>
 </ul>
-<p class="caption"><span class="caption-text">About us:</span></p>
+<p class="caption"><span class="caption-text">Support us:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="people.html">Ersilia team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support-our-project.html">Support our project</a></li>
 </ul>
 
             
@@ -145,13 +150,13 @@
     
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>&lt;no title&gt;</li>
+      <li>Quick start</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../_sources/source/fetched/deployment.md.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/source/fetched/quickstart.md.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,7 +169,55 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  
+  <div class="section" id="quick-start">
+<h1>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
+<p>Ersilia ML models are stored in GitHub and Open Science Framework. Once <code class="docutils literal notranslate"><span class="pre">ersilia</span></code> package is installed, you can fetch each model individually.</p>
+<p>Each model has a unique identifier in the format <code class="docutils literal notranslate"><span class="pre">eos0abc</span></code>.</p>
+<div class="section" id="command-line-interface">
+<h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
+<p>First, download your model of interest. It will be stored locally at <code class="docutils literal notranslate"><span class="pre">~/eos</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ersilia fetch eos0abc
+</pre></div>
+</div>
+<p>You can check the catalog of models available in your computer.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ersilia catalog --local
+</pre></div>
+</div>
+<p>For more information, check the model card.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ersilia card eos0abc
+</pre></div>
+</div>
+<p>Serve your model. A URL will be displayed, together with the APIs available for the model.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ersilia serve eos0abc
+</pre></div>
+</div>
+<p>To run the model, use your API of choice. For example, <code class="docutils literal notranslate"><span class="pre">predict</span></code> for Caffeine.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ersilia api eos0abc predict <span class="s2">&quot;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&quot;</span>
+</pre></div>
+</div>
+<p>Don’t forget to close the model when you are finished.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ersilia close eos0abc
+</pre></div>
+</div>
+<p>If you don’t want to use this model anymore, remove it from your computer.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ersilia delete eos0abc
+</pre></div>
+</div>
+</div>
+<div class="section" id="python-package">
+<h2>Python Package<a class="headerlink" href="#python-package" title="Permalink to this headline">¶</a></h2>
+<p>Ersilia can be also run as a Python package.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ersilia</span> <span class="kn">import</span> <span class="n">ErsiliaModel</span>
+
+<span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="s1">&#39;eos0abc&#39;</span><span class="p">)</span> <span class="c1"># fetches model if not available locally</span>
+<span class="n">mdl</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+<span class="n">mdl</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="s2">&quot;CN1C=NC2=C1C(=O)N(C(=O)N2C)C&quot;</span><span class="p">)</span>
+<span class="n">mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
 
            </div>
            
@@ -172,7 +225,7 @@
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="../package.html" class="btn btn-neutral float-right" title="Package index" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="usage.html" class="btn btn-neutral float-left" title="Quick start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Mac and Linux Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
