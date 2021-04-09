@@ -24,6 +24,7 @@ from .repo import ServiceFile, PackFile, DockerfileFile
 from .bundle import BundleEnvironmentFile, BundleDockerfileFile
 from .status import ModelStatus
 from ..serve.autoservice import AutoService
+from ..setup.baseconda import SetupBaseConda
 
 
 PYTHON_INSTALLS = "python_installs.sh"
@@ -59,9 +60,6 @@ class ModelFetcher(ErsiliaBase):
             self.deleter = ModelFullDeleter(config_json=config_json)
         else:
             self.deleter = None
-
-    def _file_checksum(self, path):
-        return self.file_identifier.encode(path, n=CHECKSUM_NCHAR)
 
     def _model_path(self, model_id):
         folder = os.path.join(self._dest_dir, model_id)
@@ -192,33 +190,39 @@ class ModelFetcher(ErsiliaBase):
         venv.run_commandlines(environment=DEFAULT_VENV, commandlines=pack_snippet)
         self._bentoml_bundle_symlink(model_id)
 
-    def _setup_conda(self, model_id):
+    def _setup_conda(self, model_id, use_checksum=False):
         installs_file = os.path.join(self._model_path(model_id), PYTHON_INSTALLS)
         model_path = self._model_path(model_id)
-        checksum = self.conda.checksum_from_dockerfile(model_path)
-        if not self.conda.exists(checksum):
+        env = self.conda.specs_from_dockerfile(
+            model_path, dest=None, use_checksum=use_checksum, name=model_id
+        )
+        if not self.conda.exists(env):
             # clone base conda environment and add model dependencies
             base_env = self.conda.get_base_env(model_path)
-            self.conda.clone(base_env, checksum)
+            if not self.conda.exists(base_env):
+                org = base_env.split("-")[1]
+                tag = "-".join(base_env.split("-")[-2:])
+                SetupBaseConda().setup(org=org, tag=tag)
+            self.conda.clone(base_env, env)
             with open(installs_file, "r") as f:
                 commandlines = f.read()
-            self.conda.run_commandlines(environment=checksum, commandlines=commandlines)
+            self.conda.run_commandlines(environment=env, commandlines=commandlines)
         # create environment yml file
-        self.conda.export_env_yml(checksum, model_path)
+        self.conda.export_env_yml(env, model_path)
         # store conda environment in the local environment database
         db = EnvironmentDb(config_json=self.config_json)
         db.table = "conda"
-        db.insert(model_id=model_id, env=checksum)
-        return checksum
+        db.insert(model_id=model_id, env=env)
+        return env
 
     def _run_pack_script_conda(self, model_id):
-        checksum = self._setup_conda(model_id)
+        env = self._setup_conda(model_id)
         pack_snippet = """
         python {0}
         """.format(
             self.cfg.HUB.PACK_SCRIPT
         )
-        self.conda.run_commandlines(environment=checksum, commandlines=pack_snippet)
+        self.conda.run_commandlines(environment=env, commandlines=pack_snippet)
         self._bentoml_bundle_symlink(model_id)
 
     def _run_pack_script_docker(self, model_id):

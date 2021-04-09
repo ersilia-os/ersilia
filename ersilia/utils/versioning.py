@@ -1,7 +1,8 @@
 import sys
+import os
+from bentoml import __version__ as __bentoml_version__
 from .. import ErsiliaBase
 from .. import __version__ as __ersilia_version__
-from bentoml import __version__ as __bentoml_version__
 
 
 class Versioner(ErsiliaBase):
@@ -25,6 +26,18 @@ class Versioner(ErsiliaBase):
         ver = "{0}-{1}".format(ver, self.python_version(py_format=True))
         return ver
 
+    def ersilia_version_from_path(self, path):
+        static_version_file = "_clean_static_version.py"
+        fn = os.path.join(path, "ersilia", static_version_file)
+        if not os.path.exists(fn):
+            fn = os.path.join(path, static_version_file)
+        if not os.path.exists(fn):
+            raise Exception
+        with open(fn, "r") as f:
+            text = f.read()
+            ver = text.split('"')[1]
+        return ver
+
     def bentoml_version(self):
         return __bentoml_version__
 
@@ -41,11 +54,11 @@ class Versioner(ErsiliaBase):
             name = "{0}/{1}:{2}".format(img, org, tag)
             return name
 
-    def base_conda_name(self, tag=None):
+    def base_conda_name(self, org, tag):
         if tag is None:
             tag = self.ersilia_version_with_py()
         env = self.cfg.ENV.CONDA.EOS_BASE_ENV
-        name = "{0}-{1}".format(env, tag)
+        name = "{0}-{1}-{2}".format(env, org, tag)
         return name
 
     @staticmethod

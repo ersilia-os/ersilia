@@ -155,7 +155,7 @@ class CondaUtils(BaseConda):
             d[k] += result["packages"]
         d = dict((k, sorted(set(v))) for k, v in d.items())
         od = OrderedDict()
-        od["base-env"] = self.versions.base_conda_name(tag)
+        od["base-env"] = self.versions.base_conda_name(org, tag)
         for k in sorted(d.keys()):
             if k[1] is None:
                 k_ = k[0]
@@ -182,6 +182,20 @@ class CondaUtils(BaseConda):
         with open(filename, "w") as f:
             f.write(checksum)
         return checksum
+
+    def specs_from_dockerfile(
+        self, dockerfile_dir, dest=None, use_checksum=False, name=None
+    ):
+        if use_checksum:
+            return self.checksum_from_dockerfile(dockerfile, dest)
+        else:
+            if dest is None:
+                dest = dockerfile_dir
+            json_path = self.specs_from_dockerfile_as_json(dockerfile_dir, dest=dest)
+            filename = os.path.join(dest, self.CHECKSUM_FILE)
+            with open(filename, "w") as f:
+                f.write(name)
+            return name
 
     def activate_base(self):
         if self.is_base():

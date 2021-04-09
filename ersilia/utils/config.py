@@ -98,6 +98,10 @@ class Checker(object):
                 os.path.join(EOS, CONFIG_JSON),
             )
 
+    def get_development_path(self):
+        self._package_path()
+        return self.development_path
+
 
 class _Field(object):
     """Config Field placeholder."""
