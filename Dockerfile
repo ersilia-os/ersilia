@@ -1,5 +1,11 @@
-FROM ersiliaos/conda:3.7
+FROM bentoml/model-server:0.11.0
+MAINTAINER ersilia
 
-WORKDIR ersilia
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+WORKDIR {1}
+
 COPY . .
 
+RUN conda --version
