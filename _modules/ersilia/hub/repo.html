@@ -166,6 +166,7 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">Paths</span>
 <span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDockerfileParser</span>
+<span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span>
     <span class="n">DOCKER_BENTO_PATH</span><span class="p">,</span>
@@ -259,7 +260,7 @@
 
 
 <div class="viewcode-block" id="DockerfileFile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.DockerfileFile">[docs]</a><span class="k">class</span> <span class="nc">DockerfileFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;checks the model Dockerfile.</span>
+    <span class="sd">&quot;&quot;&quot;Checks the model Dockerfile.</span>
 
 <span class="sd">    Dockerfile specifies the bentoml version,</span>
 <span class="sd">    conda environment,</span>
@@ -272,6 +273,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">SimpleDockerfileParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
 
 <div class="viewcode-block" id="DockerfileFile.get_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.DockerfileFile.get_file">[docs]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets the file from the specific directory &quot;&quot;&quot;</span>
@@ -320,6 +322,21 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DockerfileFile.get_install_commands"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.DockerfileFile.get_install_commands">[docs]</a>    <span class="k">def</span> <span class="nf">get_install_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">runs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">get_install_commands_from_dockerfile</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">runs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">needs_conda</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)]</span> <span class="o">==</span> <span class="n">c</span><span class="p">:</span>
+                <span class="n">needs_conda</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;conda&quot;</span><span class="p">:</span> <span class="n">needs_conda</span><span class="p">,</span> <span class="s2">&quot;commands&quot;</span><span class="p">:</span> <span class="n">runs</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="DockerfileFile.check"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.repo.DockerfileFile.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span></div></div>

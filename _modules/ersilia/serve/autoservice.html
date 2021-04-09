@@ -161,7 +161,12 @@
            <div itemprop="articleBody">
             
   <h1>Source code for ersilia.serve.autoservice</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.services</span> <span class="kn">import</span> <span class="n">SystemBundleService</span><span class="p">,</span> <span class="n">CondaEnvironmentService</span><span class="p">,</span> <span class="n">DockerImageService</span>
+<span></span><span class="kn">from</span> <span class="nn">.services</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SystemBundleService</span><span class="p">,</span>
+    <span class="n">VenvEnvironmentService</span><span class="p">,</span>
+    <span class="n">CondaEnvironmentService</span><span class="p">,</span>
+    <span class="n">DockerImageService</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -182,6 +187,10 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">SystemBundleService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
                     <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;venv&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">VenvEnvironmentService</span><span class="p">(</span>
+                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
+                    <span class="p">)</span>
                 <span class="k">elif</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">CondaEnvironmentService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
@@ -199,6 +208,13 @@
                             <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
                         <span class="p">)</span>
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">VenvEnvironmentService</span><span class="p">(</span>
+                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">VenvEnvironmentService</span><span class="p">(</span>
+                            <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
+                        <span class="p">)</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;venv&quot;</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="n">CondaEnvironmentService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
