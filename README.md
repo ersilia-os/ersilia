@@ -15,6 +15,8 @@ This is work in progress.
 * High-level documentation is available at [Ersilia docs](http://ersilia-hub.netlify.app/docs/)
 * Low-level documentation is available at [Ersilia Read The Docs](https://ersilia-os.github.io/ersilia/) (work in progress)
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
+
 ## Install
 
 ### Mac and Linux
