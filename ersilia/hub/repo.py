@@ -39,11 +39,11 @@ class ServiceFile(object):
         self.path = os.path.abspath(path)
 
     def get_file(self):
-        """gets the file from the specific directory """
+        """gets the file from the specific directory"""
         return os.path.join(self.path, "src", "service.py")
 
     def _has_service_class(self):
-        """checks if the service.py contains the Service Class. """
+        """checks if the service.py contains the Service Class."""
         search_string = "class Service("
         with open(self.get_file(), "r") as f:
             for l in f:
@@ -67,7 +67,7 @@ class ServiceFile(object):
             f.write(text)
 
     def check(self):
-        """checks if the service.py contains the Service Class """
+        """checks if the service.py contains the Service Class"""
         return self._has_service_class()
 
 
@@ -113,7 +113,7 @@ class DockerfileFile(object):
         self.conda = SimpleConda()
 
     def get_file(self):
-        """gets the file from the specific directory """
+        """gets the file from the specific directory"""
         return os.path.join(self.path, DOCKERFILE_FILE)
 
     def get_bentoml_version(self):

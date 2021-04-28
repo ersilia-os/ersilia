@@ -28,7 +28,7 @@ class BundleEnvironmentFile(ErsiliaBase):
         self.exists = os.path.exists(self.path)
 
     def get_file(self):
-        """ Fetches environment.yml file"""
+        """Fetches environment.yml file"""
         return self.path
 
     def _is_not_pip(self, dep):

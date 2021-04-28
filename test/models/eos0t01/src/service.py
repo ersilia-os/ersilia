@@ -7,10 +7,10 @@ from bentoml.service.artifacts.common import JSONArtifact
 class Service(BentoService):
     """BentoML Service class
 
-    Serves the model in a bentoml based web app
+    Serves the model as a bentoml
 
     Attributes:
-        input: a json file containing the input for the prediction
+        input: dummy input
 
     """
 

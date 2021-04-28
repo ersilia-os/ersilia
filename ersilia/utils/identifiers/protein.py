@@ -17,7 +17,7 @@ class ProteinIdentifier(object):
 
     @staticmethod
     def protein_identifier_resolver():
-        """Returns protein sequence of a given identifier, using """
+        """Returns protein sequence of a given identifier, using"""
         pass  # TODO
 
     @staticmethod

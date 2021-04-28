@@ -7,7 +7,9 @@ from ...hub.catalog import ModelCatalog
 def catalog_cmd():
     """Creates catalog command"""
     # Example usage: ersilia catalog
-    @ersilia_cli.command(help="List a catalog of models",)
+    @ersilia_cli.command(
+        help="List a catalog of models",
+    )
     @click.option(
         "--hub",
         is_flag=True,
