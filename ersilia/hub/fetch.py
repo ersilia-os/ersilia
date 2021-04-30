@@ -246,7 +246,7 @@ class ModelFetcher(ErsiliaBase):
         src = os.path.join(self._get_bundle_location(model_id), model_id, "src")
         tmp_folder = tempfile.mkdtemp()
         tmp_file = os.path.join(tmp_folder, "grep.txt")
-        cmd = "grep -R 'ersilia' */* > {0}".format(tmp_file)
+        cmd = "grep -R 'ersilia' {0}/* > {1}".format(src, tmp_file)
         run_command(cmd, quiet=True)
         with open(tmp_file, "r") as f:
             grep = f.read()
@@ -323,12 +323,16 @@ class ModelFetcher(ErsiliaBase):
         If a development path exists locally, then this is the one we use.
         If not, we use the latest version available from github. This may change in the future to use the PyPi version, correspondingly.
         """
+        print("A")
         if not self._bundle_uses_ersilia(model_id):
             return
+        print("B")
         if self._bundle_environment_yml_has_ersilia(model_id):
             return
+        print("C")
         if self._bundle_dockerfile_has_ersilia(model_id):
             return
+        print("D")
         dockerfile = os.path.join(self._get_bundle_location(model_id), DOCKERFILE)
         text = ["", "# Install ersilia"]
         text += [
