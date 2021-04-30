@@ -109,8 +109,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.html#ersilia-default-module">ersilia.default module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia.default">ersilia.default module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -197,35 +197,645 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="ersilia-hub-bundle-module">
-<h2>ersilia.hub.bundle module<a class="headerlink" href="#ersilia-hub-bundle-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.bundle">
+<span id="ersilia-hub-bundle-module"></span><h2>ersilia.hub.bundle module<a class="headerlink" href="#module-ersilia.hub.bundle" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.bundle.</code><code class="descname">BundleDockerfileFile</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleDockerfileFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<p>Analyses the Dockerfile created by bentoml during model fetching</p>
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.model_id">
+<code class="descname">model_id</code><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.model_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>standard string id for Ersilia models, ie eos0xxx</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.config_json">
+<code class="descname">config_json</code><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.config_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.path">
+<code class="descname">path</code><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>directory where Dockerfile is stored</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.exists">
+<code class="descname">exists</code><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dockerfile has been created</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.parser">
+<code class="descname">parser</code><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.parser" title="Permalink to this definition">¶</a></dt>
+<dd><p>DockerfileParser function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleDockerfileFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.get_bentoml_version">
+<code class="descname">get_bentoml_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleDockerfileFile.get_bentoml_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.get_bentoml_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets bentoml version necessary to run the model</p>
+<p>Uses the get_bentml_version function defined in the DockerfileFile class
+from repo.py</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bentoml/model-server:0.9.2-py37</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bento_ml version as a string, for example</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleDockerfileFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets file from directory path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.bundle.BundleDockerfileFile.set_to_slim">
+<code class="descname">set_to_slim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleDockerfileFile.set_to_slim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleDockerfileFile.set_to_slim" title="Permalink to this definition">¶</a></dt>
+<dd><p>modifies dockerfile to include the -slim- option in bentoml version</p>
+<p>-slim- option allows model deployment without conda dependencies</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bentoml version as a string, including the -slim-.
+For example: bentoml/model-server:0.9.2-slim-py37</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.bundle.BundleEnvironmentFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.bundle.</code><code class="descname">BundleEnvironmentFile</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleEnvironmentFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleEnvironmentFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<p>Analyses the environment.yml file created during model bundling</p>
+<p>environment.yml specifies the necessary dependencies; none,
+conda environment, pip dependencies</p>
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleEnvironmentFile.model_id">
+<code class="descname">model_id</code><a class="headerlink" href="#ersilia.hub.bundle.BundleEnvironmentFile.model_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>standard string id for Ersilia models, ie eos0xxx</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleEnvironmentFile.config_json">
+<code class="descname">config_json</code><a class="headerlink" href="#ersilia.hub.bundle.BundleEnvironmentFile.config_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleEnvironmentFile.path">
+<code class="descname">path</code><a class="headerlink" href="#ersilia.hub.bundle.BundleEnvironmentFile.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>directory where environment.yml is stored</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ersilia.hub.bundle.BundleEnvironmentFile.exists">
+<code class="descname">exists</code><a class="headerlink" href="#ersilia.hub.bundle.BundleEnvironmentFile.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>environment.yml has been created</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.bundle.BundleEnvironmentFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleEnvironmentFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleEnvironmentFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.bundle.BundleEnvironmentFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleEnvironmentFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleEnvironmentFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches environment.yml file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.bundle.BundleEnvironmentFile.needs_conda">
+<code class="descname">needs_conda</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle.html#BundleEnvironmentFile.needs_conda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.bundle.BundleEnvironmentFile.needs_conda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if conda environment is required</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>exists</strong> – environment.yml path</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if conda env is required
+False if conda env is not required</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Boolean value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="ersilia-hub-card-module">
-<h2>ersilia.hub.card module<a class="headerlink" href="#ersilia-hub-card-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.card">
+<span id="ersilia-hub-card-module"></span><h2>ersilia.hub.card module<a class="headerlink" href="#module-ersilia.hub.card" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.card.ModelCard">
+<em class="property">class </em><code class="descclassname">ersilia.hub.card.</code><code class="descname">ModelCard</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ModelCard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ModelCard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.card.ModelCard.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>model_id</em>, <em>as_json=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ModelCard.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ModelCard.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.card.ReadmeParser">
+<em class="property">class </em><code class="descclassname">ersilia.hub.card.</code><code class="descname">ReadmeParser</code><span class="sig-paren">(</span><em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ReadmeParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ReadmeParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.card.ReadmeParser.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/card.html#ReadmeParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.card.ReadmeParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="ersilia-hub-catalog-module">
-<h2>ersilia.hub.catalog module<a class="headerlink" href="#ersilia-hub-catalog-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.catalog">
+<span id="ersilia-hub-catalog-module"></span><h2>ersilia.hub.catalog module<a class="headerlink" href="#module-ersilia.hub.catalog" title="Permalink to this headline">¶</a></h2>
+<p>See available models in the Ersilia Model Hub</p>
+<dl class="class">
+<dt id="ersilia.hub.catalog.CatalogTable">
+<em class="property">class </em><code class="descclassname">ersilia.hub.catalog.</code><code class="descname">CatalogTable</code><span class="sig-paren">(</span><em>data</em>, <em>columns</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#CatalogTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.CatalogTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.catalog.CatalogTable.as_table">
+<code class="descname">as_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#CatalogTable.as_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.CatalogTable.as_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.catalog.ModelCatalog">
+<em class="property">class </em><code class="descclassname">ersilia.hub.catalog.</code><code class="descname">ModelCatalog</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="staticmethod">
+<dt id="ersilia.hub.catalog.ModelCatalog.backlog">
+<em class="property">static </em><code class="descname">backlog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.backlog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.backlog" title="Permalink to this definition">¶</a></dt>
+<dd><p>List models available in our spreadsheets for future incorporation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.catalog.ModelCatalog.bentoml">
+<code class="descname">bentoml</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.bentoml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.bentoml" title="Permalink to this definition">¶</a></dt>
+<dd><p>List models available as BentoServices</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.catalog.ModelCatalog.github">
+<code class="descname">github</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.github"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.github" title="Permalink to this definition">¶</a></dt>
+<dd><p>List models available in the GitHub model hub repository</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.catalog.ModelCatalog.hub">
+<code class="descname">hub</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.hub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.hub" title="Permalink to this definition">¶</a></dt>
+<dd><p>List models available in Ersilia model hub repository</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.catalog.ModelCatalog.local">
+<code class="descname">local</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/catalog.html#ModelCatalog.local"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.catalog.ModelCatalog.local" title="Permalink to this definition">¶</a></dt>
+<dd><p>List models available locally</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="ersilia-hub-delete-module">
-<h2>ersilia.hub.delete module<a class="headerlink" href="#ersilia-hub-delete-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.delete">
+<span id="ersilia-hub-delete-module"></span><h2>ersilia.hub.delete module<a class="headerlink" href="#module-ersilia.hub.delete" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.delete.ModelBentoDeleter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.delete.</code><code class="descname">ModelBentoDeleter</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelBentoDeleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelBentoDeleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelBentoDeleter.clean">
+<code class="descname">clean</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelBentoDeleter.clean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelBentoDeleter.clean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelBentoDeleter.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelBentoDeleter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelBentoDeleter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.delete.ModelBundleDeleter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.delete.</code><code class="descname">ModelBundleDeleter</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelBundleDeleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelBundleDeleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelBundleDeleter.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelBundleDeleter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelBundleDeleter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.delete.ModelCondaDeleter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.delete.</code><code class="descname">ModelCondaDeleter</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelCondaDeleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelCondaDeleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelCondaDeleter.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelCondaDeleter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelCondaDeleter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.delete.ModelEosDeleter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.delete.</code><code class="descname">ModelEosDeleter</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelEosDeleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelEosDeleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelEosDeleter.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelEosDeleter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelEosDeleter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.delete.ModelFullDeleter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.delete.</code><code class="descname">ModelFullDeleter</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelFullDeleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelFullDeleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelFullDeleter.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelFullDeleter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelFullDeleter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelFullDeleter.needs_delete">
+<code class="descname">needs_delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelFullDeleter.needs_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelFullDeleter.needs_delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.delete.ModelPipDeleter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.delete.</code><code class="descname">ModelPipDeleter</code><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelPipDeleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelPipDeleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelPipDeleter.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelPipDeleter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelPipDeleter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelPipDeleter.pip_uninstall">
+<code class="descname">pip_uninstall</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelPipDeleter.pip_uninstall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelPipDeleter.pip_uninstall" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.delete.ModelTmpDeleter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.delete.</code><code class="descname">ModelTmpDeleter</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelTmpDeleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelTmpDeleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.delete.ModelTmpDeleter.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#ModelTmpDeleter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.ModelTmpDeleter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.delete.TmpCleaner">
+<em class="property">class </em><code class="descclassname">ersilia.hub.delete.</code><code class="descname">TmpCleaner</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#TmpCleaner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.TmpCleaner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.delete.TmpCleaner.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete.html#TmpCleaner.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.delete.TmpCleaner.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="ersilia-hub-fetch-module">
-<h2>ersilia.hub.fetch module<a class="headerlink" href="#ersilia-hub-fetch-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.fetch">
+<span id="ersilia-hub-fetch-module"></span><h2>ersilia.hub.fetch module<a class="headerlink" href="#module-ersilia.hub.fetch" title="Permalink to this headline">¶</a></h2>
+<p>Fetch model and save it to a BentoML bundle</p>
+<dl class="class">
+<dt id="ersilia.hub.fetch.ModelFetcher">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.</code><code class="descname">ModelFetcher</code><span class="sig-paren">(</span><em>config_json=None</em>, <em>credentials_json=None</em>, <em>overwrite=True</em>, <em>local=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.ModelFetcher.dockerize">
+<code class="descname">dockerize</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.dockerize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.dockerize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Containerize model using bentoml with docker</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.fetch.ModelFetcher.fetch">
+<code class="descname">fetch</code><span class="sig-paren">(</span><em>model_id</em>, <em>pip=True</em>, <em>dockerize=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.fetch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.fetch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.fetch.ModelFetcher.get_model_parameters">
+<code class="descname">get_model_parameters</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.get_model_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.get_model_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a ./model folder in the model repository</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.fetch.ModelFetcher.get_repo">
+<code class="descname">get_repo</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.get_repo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.get_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch model from local development folder or download from GitHub</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.fetch.ModelFetcher.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pack model. Greatly inspired by BentoML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.fetch.ModelFetcher.pip_install">
+<code class="descname">pip_install</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch.html#ModelFetcher.pip_install"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.ModelFetcher.pip_install" title="Permalink to this definition">¶</a></dt>
+<dd><p>Install the model and distribute as a python package</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="ersilia-hub-pack-module">
-<h2>ersilia.hub.pack module<a class="headerlink" href="#ersilia-hub-pack-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.pack">
+<span id="ersilia-hub-pack-module"></span><h2>ersilia.hub.pack module<a class="headerlink" href="#module-ersilia.hub.pack" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.pack.RepoCondaCreator">
+<em class="property">class </em><code class="descclassname">ersilia.hub.pack.</code><code class="descname">RepoCondaCreator</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pack.html#RepoCondaCreator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.pack.RepoCondaCreator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.pack.RepoCondaCreator.create">
+<code class="descname">create</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pack.html#RepoCondaCreator.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.pack.RepoCondaCreator.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.pack.RepoDockerizer">
+<em class="property">class </em><code class="descclassname">ersilia.hub.pack.</code><code class="descname">RepoDockerizer</code><span class="sig-paren">(</span><em>config_json=None</em>, <em>path=None</em>, <em>tag=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pack.html#RepoDockerizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.pack.RepoDockerizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.pack.RepoDockerizer.dockerize">
+<code class="descname">dockerize</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pack.html#RepoDockerizer.dockerize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.pack.RepoDockerizer.dockerize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ersilia.hub.pack.condacreate">
+<code class="descclassname">ersilia.hub.pack.</code><code class="descname">condacreate</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pack.html#condacreate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.pack.condacreate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ersilia.hub.pack.dockerize">
+<code class="descclassname">ersilia.hub.pack.</code><code class="descname">dockerize</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pack.html#dockerize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.pack.dockerize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="ersilia-hub-repo-module">
-<h2>ersilia.hub.repo module<a class="headerlink" href="#ersilia-hub-repo-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.repo">
+<span id="ersilia-hub-repo-module"></span><h2>ersilia.hub.repo module<a class="headerlink" href="#module-ersilia.hub.repo" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.repo.DockerfileFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">DockerfileFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Checks the model Dockerfile.</p>
+<p>Dockerfile specifies the bentoml version,
+conda environment,
+python version.</p>
+<dl class="attribute">
+<dt id="ersilia.hub.repo.DockerfileFile.path">
+<code class="descname">path</code><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>directory path where model is stored. Uses os module.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.get_bentoml_version">
+<code class="descname">get_bentoml_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.get_bentoml_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.get_bentoml_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies the bentoml version required for the models.</p>
+<p>Uses the parser from dockerfile module to retrieve the baseimage</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dictionary collecting bentoml version, slim (no conda env)
+and python version. For example:
+{“version”:0.9.2, “slim” = True, “python”:py37}</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the file from the specific directory</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.get_install_commands">
+<code class="descname">get_install_commands</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.get_install_commands"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.get_install_commands" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.DockerfileFile.has_runs">
+<code class="descname">has_runs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#DockerfileFile.has_runs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.DockerfileFile.has_runs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.Integrity">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">Integrity</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#Integrity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.Integrity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.Integrity.has_pack">
+<code class="descname">has_pack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#Integrity.has_pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.Integrity.has_pack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.Integrity.has_readme">
+<code class="descname">has_readme</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#Integrity.has_readme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.Integrity.has_readme" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.Integrity.has_service">
+<code class="descname">has_service</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#Integrity.has_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.Integrity.has_service" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.PackFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">PackFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.PackFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.PackFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.PackFile.needs_model">
+<code class="descname">needs_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#PackFile.needs_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.PackFile.needs_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.ReadmeFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">ReadmeFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ReadmeFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ReadmeFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.ReadmeFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ReadmeFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ReadmeFile.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.ReadmeFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ReadmeFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ReadmeFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.RepoUtils">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">RepoUtils</code><span class="sig-paren">(</span><em>path</em>, <em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#RepoUtils"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.RepoUtils" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.repo.RepoUtils.get_conda_env_yml_file">
+<code class="descname">get_conda_env_yml_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#RepoUtils.get_conda_env_yml_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.RepoUtils.get_conda_env_yml_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.RepoUtils.get_docker_repo_image">
+<code class="descname">get_docker_repo_image</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#RepoUtils.get_docker_repo_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.RepoUtils.get_docker_repo_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.RepoUtils.get_model_id">
+<code class="descname">get_model_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#RepoUtils.get_model_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.RepoUtils.get_model_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ersilia.hub.repo.RepoUtils.rename_service">
+<em class="property">static </em><code class="descname">rename_service</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#RepoUtils.rename_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.RepoUtils.rename_service" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.repo.ServiceFile">
+<em class="property">class </em><code class="descclassname">ersilia.hub.repo.</code><code class="descname">ServiceFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ServiceFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ServiceFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>checks the model service file</p>
+<p>Service File is needed to run a bentoml web app.
+Bentoml web app is named “service” by default.</p>
+<dl class="attribute">
+<dt id="ersilia.hub.repo.ServiceFile.path">
+<code class="descname">path</code><a class="headerlink" href="#ersilia.hub.repo.ServiceFile.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>directory path where model is stored. Uses os module.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.ServiceFile.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ServiceFile.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ServiceFile.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks if the service.py contains the Service Class</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.ServiceFile.get_file">
+<code class="descname">get_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ServiceFile.get_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ServiceFile.get_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>gets the file from the specific directory</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.repo.ServiceFile.rename_service">
+<code class="descname">rename_service</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/repo.html#ServiceFile.rename_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.repo.ServiceFile.rename_service" title="Permalink to this definition">¶</a></dt>
+<dd><p>renames the bentoml app from default “Service” to model_id.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="ersilia-hub-search-module">
-<h2>ersilia.hub.search module<a class="headerlink" href="#ersilia-hub-search-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.search">
+<span id="ersilia-hub-search-module"></span><h2>ersilia.hub.search module<a class="headerlink" href="#module-ersilia.hub.search" title="Permalink to this headline">¶</a></h2>
+<p>Search for models</p>
+<dl class="class">
+<dt id="ersilia.hub.search.ModelSearch">
+<em class="property">class </em><code class="descclassname">ersilia.hub.search.</code><code class="descname">ModelSearch</code><a class="reference internal" href="../../_modules/ersilia/hub/search.html#ModelSearch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.search.ModelSearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
 </div>
-<div class="section" id="ersilia-hub-status-module">
-<h2>ersilia.hub.status module<a class="headerlink" href="#ersilia-hub-status-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub.status">
+<span id="ersilia-hub-status-module"></span><h2>ersilia.hub.status module<a class="headerlink" href="#module-ersilia.hub.status" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.status.ModelStatus">
+<em class="property">class </em><code class="descclassname">ersilia.hub.status.</code><code class="descname">ModelStatus</code><span class="sig-paren">(</span><em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_bentoml">
+<code class="descname">is_bentoml</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_bentoml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_bentoml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_bundle">
+<code class="descname">is_bundle</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_bundle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_bundle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_conda">
+<code class="descname">is_conda</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_conda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_conda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_docker">
+<code class="descname">is_docker</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_docker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_docker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_downloaded">
+<code class="descname">is_downloaded</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_downloaded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_downloaded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.is_pip">
+<code class="descname">is_pip</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.is_pip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.is_pip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.status.ModelStatus.status">
+<code class="descname">status</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/status.html#ModelStatus.status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.status.ModelStatus.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check installation and deployment status of the model</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.hub">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.hub" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
