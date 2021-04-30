@@ -9,7 +9,7 @@ except ModuleNotFoundError as err:
     Chem = None
 
 
-class MoleculeIdentifier(object):
+class CompoundIdentifier(object):
     def __init__(self, local=True):
         super().__init__()
         if local:
@@ -54,6 +54,8 @@ class MoleculeIdentifier(object):
         return "name"
 
     def unichem_resolver(self, inchikey):
+        if Chem is None:
+            return None
         try:
             ret = self.unichem.inchiFromKey(inchikey)
         except:

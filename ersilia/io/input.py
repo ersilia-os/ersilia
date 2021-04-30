@@ -1,58 +1,55 @@
-import random
 import os
-from ..utils.identifiers.molecule import MoleculeIdentifier
-from ..utils.identifiers.protein import ProteinIdentifier
+import json
 
-MOLECULE_EXAMPLES = "molecules.tsv"
-PROTEIN_EXAMPLES = "proteins.tsv"
-
-PATH = os.path.dirname(os.path.realpath(__file__))
+from .readers.file import TabularFileReader
 
 
-class MoleculeInput(object):
-    def __init__(self):
-        self.mi = MoleculeIdentifier()
-        self.example_file = os.path.join(PATH, "examples", MOLECULE_EXAMPLES)
+class GenericAdapter(object):
+    def __init__(self, BaseIO):
+        self.IO = BaseIO()
 
-    def random(self):
-        with open(self.example_file, "r") as f:
-            line = random.choice(f.readlines()).rstrip("\n").split("\t")
-        mol = {"inchikey": line[0], "smiles": line[1], "name": line[2]}
-        return mol
-
-    def single(self, inp):
-        inp_type = self.mi.guess_type(inp)
-        if inp_type == "smiles":
-            smi = inp
-        elif inp_type == "inchikey":
-            smi = self.mi.unichem_resolver(inp)
+    def _is_file(self, inp):
+        if os.path.isfile(inp):
+            return True
         else:
-            smi = self.mi.chemical_identifier_resolver(inp)
-        return smi
+            return False
 
-    def multiple(self, filename):  # TODO
-        R = []
-        with open(filename, "r") as f:
-            for r in R:
-                if not self.mi._is_smiles(r):
-                    continue
-                else:
-                    pass
+    def _is_list(self, inp):
+        if type(inp) is list:
+            return True
+        else:
+            return False
 
+    def _is_string(self, inp):
+        if type(inp) is str:
+            return True
+        else:
+            return False
 
-class ProteinInput(object):
-    def __init__(self):
-        self.pi = ProteinIdentifier()
-        self.example_file = os.path.join(PATH, "examples", PROTEIN_EXAMPLES)
+    def _string_reader(self, inp):
+        try:
+            data = eval(inp)
+        except:
+            data = inp
+        if type(data) is str:
+            data = [data]
+        return data
 
-    def random(self):
-        with open(self.example_file, "r") as f:
-            line = random.choice(f.readlines()).rstrip("\n").split("\t")
-        prot = {"uniprot_ac": line[0], "seq": line[1], "name": line[2]}
-        return prot
+    def _file_reader(self, inp):
+        reader = TabularFileReader(self.IO)
+        data = reader.read(inp)
+        return data
 
-    def single(self, inp):  # TODO
-        pass
-
-    def multiple(self, filename):  # TODO
-        pass
+    def adapt(self, inp):
+        """Given an input object (typically text), it returns a JSON Serializable object (typically a list of dictionaries)"""
+        if self._is_string(inp):
+            if self._is_file(inp):
+                data = self._file_reader(inp)
+            else:
+                data = self._string_reader(inp)
+        elif self._is_list(inp):
+            data = inp
+        else:
+            return None
+        data = [self.IO.parse(d) for d in data]
+        return data

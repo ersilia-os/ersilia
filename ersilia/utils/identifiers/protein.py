@@ -1,4 +1,5 @@
-from Bio.SeqUtils.CheckSum import seguid
+# Martino suggested:
+# https://pypi.org/project/crc64iso/
 from bioservices.uniprot import UniProt
 
 
