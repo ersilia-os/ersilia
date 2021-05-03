@@ -17,7 +17,7 @@ def test_eos0t02():
     INPUT = "CCCC"
     em = ErsiliaModel(MODEL_ID)
     em.serve()
-    em.predict(INPUT)
+    pred = em.predict(INPUT)
     em.close()
     assert 1 == 1
 

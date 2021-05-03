@@ -1,7 +1,11 @@
 import urllib.parse
 import requests
 import json
-from chembl_webresource_client.unichem import unichem_client as unichem
+
+try:
+    from chembl_webresource_client.unichem import unichem_client as unichem
+except:
+    unichem = None
 
 try:
     from rdkit import Chem
@@ -54,7 +58,7 @@ class CompoundIdentifier(object):
         return "name"
 
     def unichem_resolver(self, inchikey):
-        if Chem is None:
+        if Chem is None or unichem is None:
             return None
         try:
             ret = self.unichem.inchiFromKey(inchikey)
