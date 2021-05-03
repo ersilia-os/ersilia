@@ -24,4 +24,5 @@
     * [Test model](test/models/eos0t03.md)
 * [Changelog](changelog.md)
 * [Contributor Covenant Code of Conduct](code_of_conduct.md)
+* [Antibiotic activity of small molecules](antibiotic-activity-of-small-molecules.md)
 
