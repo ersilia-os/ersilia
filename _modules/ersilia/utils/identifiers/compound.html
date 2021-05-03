@@ -165,7 +165,11 @@
 <span></span><span class="kn">import</span> <span class="nn">urllib.parse</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">chembl_webresource_client.unichem</span> <span class="kn">import</span> <span class="n">unichem_client</span> <span class="k">as</span> <span class="n">unichem</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">chembl_webresource_client.unichem</span> <span class="kn">import</span> <span class="n">unichem_client</span> <span class="k">as</span> <span class="n">unichem</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">unichem</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span>
@@ -218,7 +222,7 @@
         <span class="k">return</span> <span class="s2">&quot;name&quot;</span></div>
 
 <div class="viewcode-block" id="CompoundIdentifier.unichem_resolver"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">[docs]</a>    <span class="k">def</span> <span class="nf">unichem_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inchikey</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">unichem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unichem</span><span class="o">.</span><span class="n">inchiFromKey</span><span class="p">(</span><span class="n">inchikey</span><span class="p">)</span>

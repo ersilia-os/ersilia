@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>ersilia.io.types.protein &mdash; Ersilia  documentation</title>
+  <title>ersilia.io.types.naive &mdash; Ersilia  documentation</title>
   
 
   
@@ -146,7 +146,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>ersilia.io.types.protein</li>
+      <li>ersilia.io.types.naive</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -161,28 +161,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for ersilia.io.types.protein</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">...utils.identifiers.protein</span> <span class="kn">import</span> <span class="n">ProteinIdentifier</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">EXAMPLES_FOLDER</span>
-
-<span class="n">EXAMPLES</span> <span class="o">=</span> <span class="s2">&quot;protein.tsv&quot;</span>
-
-
-<div class="viewcode-block" id="IO"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.protein.IO">[docs]</a><span class="k">class</span> <span class="nc">IO</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <h1>Source code for ersilia.io.types.naive</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="IO"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.naive.IO">[docs]</a><span></span><span class="k">class</span> <span class="nc">IO</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">ProteinIdentifier</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">example_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EXAMPLES_FOLDER</span><span class="p">,</span> <span class="n">EXAMPLES</span><span class="p">)</span>
+        <span class="k">pass</span>
 
-<div class="viewcode-block" id="IO.random"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.protein.IO.random">[docs]</a>    <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">prot</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;uniprot_ac&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;seq&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span>
-        <span class="k">return</span> <span class="n">prot</span></div>
-
-<div class="viewcode-block" id="IO.parse"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.protein.IO.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>  <span class="c1"># TODO</span>
-        <span class="k">pass</span></div></div>
+<div class="viewcode-block" id="IO.parse"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.naive.IO.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
 </pre></div>
 
            </div>

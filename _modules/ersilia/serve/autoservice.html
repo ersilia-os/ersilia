@@ -162,19 +162,23 @@
            <div itemprop="articleBody">
             
   <h1>Source code for ersilia.serve.autoservice</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.services</span> <span class="kn">import</span> <span class="p">(</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">.services</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">SystemBundleService</span><span class="p">,</span>
     <span class="n">VenvEnvironmentService</span><span class="p">,</span>
     <span class="n">CondaEnvironmentService</span><span class="p">,</span>
     <span class="n">DockerImageService</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.api</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">GenericAdapter</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">import</span> <span class="nn">os</span>
 
 
 <div class="viewcode-block" id="AutoService"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService">[docs]</a><span class="k">class</span> <span class="nc">AutoService</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="k">if</span> <span class="n">service_class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># decide automatically</span>
@@ -242,7 +246,7 @@
 
     <span class="k">def</span> <span class="nf">_set_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">_method</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="n">api_name</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="n">api_name</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="n">_method</span><span class="p">)</span>
 
@@ -285,7 +289,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="AutoService.api"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.api">[docs]</a>    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span></div></div>
+        <span class="n">_api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
