@@ -1,10 +1,10 @@
 import click
-import requests
 import os
 
 from . import ersilia_cli
 from .. import echo
 from .utils.utils import tmp_pid_file
+from ...serve.api import Api
 
 
 def api_cmd():
@@ -29,8 +29,9 @@ def api_cmd():
         with open(tmp_file, "r") as f:
             for l in f:
                 url = l.rstrip().split()[1]
-        response = requests.post("{0}/{1}".format(url, api_name), json=input)
-        if response.status_code == 200:
-            click.echo(response.json())
+        api = Api(model_id, url, api_name)
+        result = api.post(input)
+        if result is not None:
+            click.echo(result)
         else:
             echo("Something went wrong", fg="red")

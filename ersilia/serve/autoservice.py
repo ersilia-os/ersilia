@@ -1,16 +1,20 @@
+import os
+
 from .services import (
     SystemBundleService,
     VenvEnvironmentService,
     CondaEnvironmentService,
     DockerImageService,
 )
+from .api import Api
+from ..io.input import GenericAdapter
 from .. import ErsiliaBase
-import os
 
 
 class AutoService(ErsiliaBase):
     def __init__(self, model_id, service_class=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
+        self.config_json = config_json
         self.model_id = model_id
         if service_class is None:
             # decide automatically
@@ -78,7 +82,7 @@ class AutoService(ErsiliaBase):
 
     def _set_api(self, api_name):
         def _method(x):
-            return self.service.api(api_name, x)
+            return self.api(api_name, x)
 
         setattr(self, api_name, _method)
 
@@ -121,4 +125,10 @@ class AutoService(ErsiliaBase):
         self.service.close()
 
     def api(self, api_name, input):
-        return self.service.api(api_name=api_name, input=input)
+        _api = Api(
+            model_id=self.model_id,
+            url=self.service.url,
+            api_name=api_name,
+            config_json=self.config_json,
+        )
+        return _api.post(input)

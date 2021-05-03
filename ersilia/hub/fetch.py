@@ -25,7 +25,7 @@ from .bundle import BundleEnvironmentFile, BundleDockerfileFile
 from .status import ModelStatus
 from ..serve.autoservice import AutoService
 from ..setup.baseconda import SetupBaseConda
-
+from .delete import ModelFullDeleter
 
 PYTHON_INSTALLS = "python_installs.sh"
 DOCKERFILE = "Dockerfile"
@@ -55,15 +55,9 @@ class ModelFetcher(ErsiliaBase):
         self.file_identifier = FileIdentifier()
         self.local = local
         if self.overwrite:
-            from .delete import ModelFullDeleter
-
             self.deleter = ModelFullDeleter(config_json=config_json)
         else:
             self.deleter = None
-
-    def _model_path(self, model_id):
-        folder = os.path.join(self._dest_dir, model_id)
-        return folder
 
     def _dev_model_path(self, model_id):
         pt = Paths()

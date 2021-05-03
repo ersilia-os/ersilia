@@ -41,6 +41,10 @@ class ErsiliaBase(object):
     def _abs_path(path):
         return os.path.abspath(path)
 
+    def _model_path(self, model_id):
+        folder = os.path.join(self._dest_dir, model_id)
+        return folder
+
     def _get_latest_bentoml_tag(self, model_id):
         path = os.path.join(self._bentoml_dir, model_id)
         if not os.path.exists(path):

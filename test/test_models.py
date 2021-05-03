@@ -1,8 +1,9 @@
+from ersilia import ErsiliaModel
+
+
 def test_eos0t01():
     MODEL_ID = "eos0t01"
     INPUT = ""
-    from ersilia import ErsiliaModel
-
     em = ErsiliaModel(MODEL_ID)
     em.serve()
     em.invert(INPUT)
@@ -14,8 +15,6 @@ def test_eos0t01():
 def test_eos0t02():
     MODEL_ID = "eos0t02"
     INPUT = "CCCC"
-    from ersilia import ErsiliaModel
-
     em = ErsiliaModel(MODEL_ID)
     em.serve()
     em.predict(INPUT)
@@ -26,8 +25,6 @@ def test_eos0t02():
 def test_eos0t03():
     MODEL_ID = "eos0t03"
     INPUT = "CCCNC"
-    from ersilia import ErsiliaModel
-
     em = ErsiliaModel(MODEL_ID)
     em.serve()
     em.predict(INPUT)

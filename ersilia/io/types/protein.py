@@ -6,7 +6,7 @@ from . import EXAMPLES_FOLDER
 EXAMPLES = "protein.tsv"
 
 
-class ProteinIO(object):
+class IO(object):
     def __init__(self):
         self.identifier = ProteinIdentifier()
         self.example_file = os.path.join(EXAMPLES_FOLDER, EXAMPLES)
@@ -17,8 +17,5 @@ class ProteinIO(object):
         prot = {"uniprot_ac": line[0], "seq": line[1], "name": line[2]}
         return prot
 
-    def single(self, inp):  # TODO
-        pass
-
-    def multiple(self, filename):  # TODO
+    def parse(self, text):  # TODO
         pass

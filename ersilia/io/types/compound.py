@@ -6,7 +6,7 @@ from . import EXAMPLES_FOLDER
 EXAMPLES = "compound.tsv"
 
 
-class CompoundIO(object):
+class IO(object):
     def __init__(self):
         self.identifier = CompoundIdentifier()
         self.example_file = os.path.join(EXAMPLES_FOLDER, EXAMPLES)

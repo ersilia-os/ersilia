@@ -1,39 +1,31 @@
+import random
+
+from typing import List
+
 from bentoml import BentoService, api, artifacts
+from bentoml.types import JsonSerializable
 from bentoml.adapters import JsonInput
 from bentoml.service.artifacts.common import JSONArtifact
 
 
 @artifacts([JSONArtifact("model")])
 class Service(BentoService):
-    """BentoML Service class
+    @api(input=JsonInput(), batch=True)
+    def invert(self, input: List[JsonSerializable]):
+        input = input[0]
+        output = []
+        for inp in input:
+            inp = inp["input"]
+            output += [inp[::-1]]
+        return [output]
 
-    Serves the model as a bentoml
-
-    Attributes:
-        input: dummy input
-
-    """
-
-    @api(input=JsonInput())
-    def invert(self, input):
-        """Inverts a string.
-
-        Args:
-            input: json string
-
-        Returns:
-            Inverted string
-        """
-        return "Inverted!"
-
-    @api(input=JsonInput())
-    def shuffle(self, input):
-        """Shuffles a string.
-
-        Args:
-            input: json string
-
-        Returns:
-            Shuffled string
-        """
-        return "Shuffled!"
+    @api(input=JsonInput(), batch=True)
+    def shuffle(self, input: List[JsonSerializable]):
+        input = input[0]
+        output = []
+        for inp in input:
+            inp = inp["input"]
+            linp = list(inp)
+            random.shuffle(linp)
+            output += ["".join(linp)]
+        return [output]
