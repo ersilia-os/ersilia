@@ -80,3 +80,7 @@ If you don't want to use this model anymore, remove it from your computer.
 ```text
 ersilia delete eos0abc
 ```
+
+# Special thanks
+
+We would like to thank the Open source community and, especially, [FossHost](https://fosshost.org/) for providing help with infrastructure.
