@@ -8,12 +8,15 @@ import os
 import click
 
 # Default variables
-from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE
+from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE, LOGGING_FILE
 
 if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
     from .utils.config import Checker
 
     Checker().config()
+
+# Logger
+from .utils.logging import logger
 
 # Environmental variables
 os.environ["EOS_HOME"] = EOS

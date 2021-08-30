@@ -1,10 +1,10 @@
 import os
 import json
-from .. import ErsiliaBase
-from ..utils.paths import Paths
-from ..utils.docker import SimpleDockerfileParser
-from ..utils.conda import SimpleConda
-from ..default import (
+from ... import ErsiliaBase
+from ...utils.paths import Paths
+from ...utils.docker import SimpleDockerfileParser
+from ...utils.conda import SimpleConda
+from ...default import (
     CONDA_ENV_YML_FILE,
     DOCKER_BENTO_PATH,
     DEFAULT_MODEL_ID,

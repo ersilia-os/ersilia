@@ -42,7 +42,7 @@ slim = [
     "dockerfile-parse",
     "pygit2",
     "emoji",
-    "animation",
+    "loguru",
 ]
 slim_requires = _filter_requires(slim, install_requires)
 

@@ -1,15 +1,13 @@
 import click
-import animation
 
 from . import ersilia_cli
 from .. import echo
-from ...hub.fetch import ModelFetcher
+from ...hub.fetch.fetch import ModelFetcher
 
 
 def fetch_cmd():
     """Create fetch commmand"""
 
-    @animation.wait("elipses")
     def _fetch(mf, model_id):
         mf.fetch(model_id)
 

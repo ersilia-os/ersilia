@@ -4,10 +4,11 @@ import subprocess
 import requests
 import os
 from .card import ModelCard
-from .. import ErsiliaBase
-from ..utils.paths import Paths
-from ..auth.auth import Auth
-from ..default import GITHUB_ORG
+from ... import ErsiliaBase
+from ...utils.identifiers.model import ModelIdentifier
+from ...auth.auth import Auth
+from ...default import GITHUB_ORG
+from ... import logger
 
 try:
     import webbrowser
@@ -16,12 +17,12 @@ except ModuleNotFoundError as err:
 
 try:
     from github import Github
-except:
+except ModuleNotFoundError as err:
     Github = None
 
 try:
     from tabulate import tabulate
-except:
+except ModuleNotFoundError as err:
     tabulate = None
 
 
@@ -46,13 +47,13 @@ class CatalogTable(object):
 class ModelCatalog(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
-        self.eos_regex = Paths._eos_regex()
+        self.mi = ModelIdentifier()
 
     def _is_eos(self, s):
-        if self.eos_regex.match(s):
-            return True
-        else:
-            return False
+        if self.mi.is_valid(s):
+            if not self.mi.is_test(s):
+                return True
+        return False
 
     @staticmethod
     def backlog():
@@ -68,6 +69,7 @@ class ModelCatalog(ErsiliaBase):
             token = None
         else:
             token = Auth().oauth_token()
+        logger.debug("Looking for model repositories in {0} organization".format(GITHUB_ORG))
         if token:
             g = Github(token)
             repo_list = [i for i in g.get_user().get_repos()]
@@ -87,6 +89,7 @@ class ModelCatalog(ErsiliaBase):
         for repo in repos:
             if self._is_eos(repo):
                 models += [repo]
+        logger.info("Found {0} models".format(len(models)))
         return models
 
     def hub(self):
@@ -104,10 +107,15 @@ class ModelCatalog(ErsiliaBase):
     def local(self):
         """List models available locally"""
         mc = ModelCard()
+        mi = ModelIdentifier()
         R = []
+        logger.debug("Looking for models in {0}".format(self._bundles_dir))
         for model_id in os.listdir(self._bundles_dir):
+            if not self._is_eos(model_id):
+                continue
             card = mc.get(model_id)
             R += [[model_id, card["title"]]]
+        logger.info("Found {0} models".format(len(R)))
         return CatalogTable(data=R, columns=["MODEL_ID", "TITLE"])
 
     def bentoml(self):

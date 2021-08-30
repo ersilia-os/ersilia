@@ -1,7 +1,7 @@
 import click
 
 from . import ersilia_cli
-from ...hub.fetch import ModelFetcher
+from ...hub.fetch.fetch import ModelFetcher
 
 
 def dockerize_cmd():

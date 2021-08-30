@@ -1,15 +1,13 @@
 import click
-import animation
 
 from . import ersilia_cli
 from .. import echo
-from ...hub.delete import ModelFullDeleter
+from ...hub.delete.delete import ModelFullDeleter
 
 
 def delete_cmd():
     """Create delete command"""
 
-    @animation.wait("elipses")
     def _delete(md, model_id):
         md.delete(model_id)
 

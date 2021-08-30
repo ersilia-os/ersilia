@@ -1,7 +1,7 @@
 import click
 
 from . import ersilia_cli
-from ...hub.card import ModelCard
+from ...hub.content.card import ModelCard
 
 
 def card_cmd():

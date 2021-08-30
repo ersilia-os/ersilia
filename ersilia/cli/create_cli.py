@@ -1,10 +1,4 @@
-import os
-import sys
-import click
-
-from ..default import EOS
 from ..auth.auth import Auth
-
 from .cmd import Command
 from .commands import ersilia_cli
 

@@ -1,7 +1,7 @@
 import os
 import yaml
-from ..core.base import ErsiliaBase
-from ..default import CONDA_ENV_YML_FILE, DOCKERFILE_FILE
+from ...core.base import ErsiliaBase
+from ...default import CONDA_ENV_YML_FILE, DOCKERFILE_FILE
 from .repo import DockerfileFile
 from dockerfile_parse import DockerfileParser
 

@@ -1,10 +1,10 @@
 import os
 import importlib
 
-from ..utils.docker import SimpleDocker
-from ..utils.conda import SimpleConda
-from ..db.environments.localdb import EnvironmentDb
-from .. import ErsiliaBase
+from ...utils.docker import SimpleDocker
+from ...utils.conda import SimpleConda
+from ...db.environments.localdb import EnvironmentDb
+from ... import ErsiliaBase
 
 
 class ModelStatus(ErsiliaBase):

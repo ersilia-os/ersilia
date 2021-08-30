@@ -1,12 +1,13 @@
 import os
 import shutil
-from .. import ErsiliaBase
-from ..utils.terminal import run_command
-from ..utils.environment import Environment
-from ..utils.conda import SimpleConda
-from .catalog import ModelCatalog
-from ..db.environments.localdb import EnvironmentDb
-from .status import ModelStatus
+from ... import ErsiliaBase
+from ... import logger
+from ...utils.terminal import run_command
+from ...utils.environment import Environment
+from ...utils.conda import SimpleConda
+from ..content.catalog import ModelCatalog
+from ...db.environments.localdb import EnvironmentDb
+from ..bundle.status import ModelStatus
 
 
 class ModelEosDeleter(ErsiliaBase):
@@ -21,6 +22,7 @@ class ModelEosDeleter(ErsiliaBase):
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
+        logger.info("Removing folder {0}".format(folder))
         shutil.rmtree(folder)
 
 
@@ -36,6 +38,7 @@ class ModelTmpDeleter(ErsiliaBase):
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
+        logger.info("Removing folder {0}".format(folder))
         shutil.rmtree(folder)
 
 
@@ -51,6 +54,7 @@ class ModelBundleDeleter(ErsiliaBase):
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
+        logger.info("Removing folder {0}".format(folder))
         shutil.rmtree(folder)
 
 
@@ -74,6 +78,7 @@ class ModelBentoDeleter(ErsiliaBase):
         if keep_latest and len(services) > 1:
             services = services[1:]
         for service in services:
+            logger.info("Removing BentoML service {0}".format(service))
             self._delete_service(service)
 
     def delete(self, model_id):
@@ -103,6 +108,7 @@ class ModelCondaDeleter(ErsiliaBase):
         for env in envs:
             models = self.envdb.models_of_env(env)
             if len(models) == 1:
+                logger.info("Deleting conda environment {0}".format(env))
                 conda = SimpleConda()
                 conda.delete(env)
             self.envdb.delete(model_id, env)
@@ -118,6 +124,7 @@ class ModelPipDeleter(object):
     def delete(self, model_id):
         env = Environment()
         if env.has_module(model_id):
+            logger.info("Uninstalling pip package {0}".format(model_id))
             self.pip_uninstall(model_id)
 
 
@@ -142,9 +149,11 @@ class ModelFullDeleter(object):
         return False
 
     def delete(self, model_id):
+        logger.info("Starting delete of model {0}".format(model_id))
         ModelEosDeleter(self.config_json).delete(model_id)
         ModelBundleDeleter(self.config_json).delete(model_id)
         ModelBentoDeleter(self.config_json).delete(model_id)
         ModelCondaDeleter(self.config_json).delete(model_id)
         ModelTmpDeleter(self.config_json).delete(model_id)
         ModelPipDeleter().delete(model_id)
+        logger.success("Model {0} deleted successfully".format(model_id))

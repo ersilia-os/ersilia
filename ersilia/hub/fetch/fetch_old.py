@@ -8,24 +8,24 @@ import tempfile
 import yaml
 import pathlib
 from bentoml import load as bentoml_load
-from .. import ErsiliaBase
-from ..utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
-from ..utils.zip import Zipper
-from ..utils.docker import SimpleDocker
-from ..utils.conda import SimpleConda
-from ..utils.venv import SimpleVenv
-from ..utils.identifiers.file import FileIdentifier
-from ..utils.terminal import run_command
-from ..utils.paths import Paths
-from ..utils.versioning import Versioner
-from ..default import CONDA_ENV_YML_FILE, DEFAULT_VENV, PACKMODE_FILE
-from ..db.environments.localdb import EnvironmentDb
-from .repo import ServiceFile, PackFile, DockerfileFile
-from .bundle import BundleEnvironmentFile, BundleDockerfileFile
-from .status import ModelStatus
-from ..serve.autoservice import AutoService
-from ..setup.baseconda import SetupBaseConda
-from .delete import ModelFullDeleter
+from ... import ErsiliaBase
+from ...utils.download import GitHubDownloader, OsfDownloader, PseudoDownloader
+from ...utils.zip import Zipper
+from ...utils.docker import SimpleDocker
+from ...utils.conda import SimpleConda
+from ...utils.venv import SimpleVenv
+from ...utils.identifiers.file import FileIdentifier
+from ...utils.terminal import run_command
+from ...utils.paths import Paths
+from ...utils.versioning import Versioner
+from ...default import CONDA_ENV_YML_FILE, DEFAULT_VENV, PACKMODE_FILE
+from ...db.environments.localdb import EnvironmentDb
+from ..bundle.repo import ServiceFile, PackFile, DockerfileFile
+from ..bundle.bundle import BundleEnvironmentFile, BundleDockerfileFile
+from ..bundle.status import ModelStatus
+from ...serve.autoservice import AutoService
+from ...setup.baseconda import SetupBaseConda
+from ..delete.delete import ModelFullDeleter
 
 PYTHON_INSTALLS = "python_installs.sh"
 DOCKERFILE = "Dockerfile"
@@ -103,7 +103,7 @@ class ModelFetcher(ErsiliaBase):
         return fn
 
     def get_repo(self, model_id):
-        """Fetch model from local development folder or download from GitHub"""
+        """Copy model from local development folder or download from GitHub"""
         folder = self._model_path(model_id)
         dev_model_path = self._dev_model_path(model_id)
         if dev_model_path is not None:
@@ -329,7 +329,7 @@ class ModelFetcher(ErsiliaBase):
             "RUN pip install git+https://github.com/{0}/{1}.git".format(
                 self.cfg.HUB.ORG, self.cfg.HUB.PACKAGE
             )
-        ]  #  TO-DO add version with the @ character
+        ]  # TODO: add version with the @ character
         with open(dockerfile, "r") as f:
             lines = []
             for l in f:

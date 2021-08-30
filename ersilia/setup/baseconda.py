@@ -84,7 +84,7 @@ class SetupBaseConda(object):
         )
         bash_script += """
         cd {0}
-        conda create -n {1} python={2} -y
+        conda create --no-default-packages -n {1} python={2} -y
         conda activate {1}
         {3}
         conda deactivate

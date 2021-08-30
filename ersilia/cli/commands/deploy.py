@@ -1,11 +1,11 @@
 import click
 
 from . import ersilia_cli
+from ...contrib.deploy import Deployer
 
 
 def deploy_cmd():
     """Creates deploy command"""
-    from ...contrib.deploy import Deployer
 
     # Example usage: ersilia deploy {MODEL_ID}
     @ersilia_cli.command(

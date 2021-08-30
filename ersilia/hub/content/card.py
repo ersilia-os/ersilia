@@ -3,9 +3,9 @@ import json
 import collections
 import tempfile
 import requests
-from ..utils.terminal import run_command
-from .. import ErsiliaBase
-from ..auth.auth import Auth
+from ... import ErsiliaBase
+from ...utils.terminal import run_command
+from ...auth.auth import Auth
 
 
 class ReadmeParser(ErsiliaBase):
@@ -13,10 +13,8 @@ class ReadmeParser(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
-        url = (
-            "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
-                model_id
-            )
+        url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
+            model_id
         )
         return url
 

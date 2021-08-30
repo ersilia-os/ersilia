@@ -1,5 +1,5 @@
-from ..core.base import ErsiliaBase
-from ..utils.docker import SimpleDocker
+from ...core.base import ErsiliaBase
+from ...utils.docker import SimpleDocker
 import os
 
 DEFAULT_TAG = "repo"
