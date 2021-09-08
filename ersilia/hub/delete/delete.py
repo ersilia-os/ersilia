@@ -7,6 +7,7 @@ from ...utils.environment import Environment
 from ...utils.conda import SimpleConda
 from ..content.catalog import ModelCatalog
 from ...db.environments.localdb import EnvironmentDb
+from ...db.hubdata.localslugs import SlugDb
 from ..bundle.status import ModelStatus
 
 
@@ -88,6 +89,15 @@ class ModelBentoDeleter(ErsiliaBase):
         self._delete(model_id, keep_latest=True)
 
 
+class ModelSlugDeleter(ErsiliaBase):
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        self.slugdb = SlugDb(config_json=config_json)
+
+    def delete(self, model_id):
+        self.slugdb.delete_by_model_id(model_id)
+
+
 class ModelCondaDeleter(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -151,6 +161,7 @@ class ModelFullDeleter(object):
     def delete(self, model_id):
         logger.info("Starting delete of model {0}".format(model_id))
         ModelEosDeleter(self.config_json).delete(model_id)
+        ModelSlugDeleter(self.config_json).delete(model_id)
         ModelBundleDeleter(self.config_json).delete(model_id)
         ModelBentoDeleter(self.config_json).delete(model_id)
         ModelCondaDeleter(self.config_json).delete(model_id)

@@ -22,6 +22,12 @@ DEFAULT_MODEL_ID = "eos0zzz"
 DEFAULT_VENV = "env"
 PACKMODE_FILE = "pack_mode.txt"
 LOGGING_FILE = "console.log"
+CARD_FILE = "card.json"
+
+# Airtable
+AIRTABLE_READONLY_API_KEY = "keycTTh5uQ7v2CPbI"
+AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
+AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

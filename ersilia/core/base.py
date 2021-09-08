@@ -1,8 +1,8 @@
-from ..utils.config import Config, Credentials
-from ..default import EOS
 import os
 from pathlib import Path
-
+from ..utils.config import Config, Credentials
+from ..default import EOS
+from .. import logger
 
 home = str(Path.home())
 
@@ -36,6 +36,7 @@ class ErsiliaBase(object):
         self._bundles_dir = os.path.join(self.eos_dir, "repository")
         if not os.path.exists(self._bundles_dir):
             os.makedirs(self._bundles_dir, exist_ok=True)
+        self.logger = logger
 
     @staticmethod
     def _abs_path(path):

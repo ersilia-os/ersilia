@@ -3,12 +3,19 @@ import json
 import collections
 import tempfile
 import requests
+from pyairtable import Table
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
 
+from ...default import AIRTABLE_READONLY_API_KEY, AIRTABLE_MODEL_HUB_BASE_ID, AIRTABLE_MODEL_HUB_TABLE_NAME
+from ...default import CARD_FILE
 
-class ReadmeParser(ErsiliaBase):
+AIRTABLE_MAX_ROWS = 100000
+AIRTABLE_PAGE_SIZE = 100
+
+
+class ReadmeCard(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -69,14 +76,80 @@ class ReadmeParser(ErsiliaBase):
         }
         return results
 
+    def get(self, model_id):
+        return self.parse(model_id)
+
+
+class AirtableCard(ErsiliaBase):
+
+    def __init__(self, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        self.api_key = AIRTABLE_READONLY_API_KEY
+        self.base_id = AIRTABLE_MODEL_HUB_BASE_ID
+        self.table_name = AIRTABLE_MODEL_HUB_TABLE_NAME
+        self.max_rows = AIRTABLE_MAX_ROWS
+        self.page_size = AIRTABLE_PAGE_SIZE
+        self.table = Table(self.api_key, self.base_id, self.table_name)
+
+    def _find_card(self, text, field):
+        card = None
+        for records in self.table.iterate(page_size=self.page_size, max_records=self.max_rows):
+            for record in records:
+                fields = record["fields"]
+                if field not in fields:
+                    continue
+                if text == record['fields'][field]:
+                    card = record["fields"]
+        return card
+
+    def find_card_by_model_id(self, model_id):
+        return self._find_card(model_id, "Identifier")
+
+    def find_card_by_slug(self, slug):
+        return self._find_card(slug, "Slug")
+
+    def get(self, model_id):
+        return self.find_card_by_model_id(model_id)
+
+
+class LocalCard(ErsiliaBase):
+
+    def __init__(self, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json)
+
+    def get(self, model_id):
+        model_path = self._model_path(model_id)
+        card_path = os.path.join(model_path, CARD_FILE)
+        if os.path.exists(card_path):
+            with open(card_path, "r") as f:
+                card = json.load(f)
+            return card
+        else:
+            return None
+
 
 class ModelCard(object):
     def __init__(self, config_json=None):
-        self.rp = ReadmeParser(config_json=config_json)
+        self.lc = LocalCard(config_json=config_json)
+        self.ac = AirtableCard(config_json=config_json)
+        self.rc = ReadmeCard(config_json=config_json)
+
+    def _get(self, model_id):
+        card = self.lc.get(model_id)
+        if card is not None:
+            return card
+        card = self.ac.get(model_id)
+        if card is not None:
+            return card
+        card = self.rc.get(model_id)
+        if card is not None:
+            return card
 
     def get(self, model_id, as_json=False):
-        r = self.rp.parse(model_id)
+        card = self._get(model_id)
+        if card is None:
+            return
         if as_json:
-            return json.dumps(r, indent=4)
+            return json.dumps(card, indent=4)
         else:
-            return r
+            return card

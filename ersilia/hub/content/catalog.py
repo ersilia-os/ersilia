@@ -45,9 +45,10 @@ class CatalogTable(object):
 
 
 class ModelCatalog(ErsiliaBase):
-    def __init__(self, config_json=None):
+    def __init__(self, tabular_view=True, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mi = ModelIdentifier()
+        self.tabular_view = tabular_view
 
     def _is_eos(self, s):
         if self.mi.is_valid(s):
@@ -55,13 +56,31 @@ class ModelCatalog(ErsiliaBase):
                 return True
         return False
 
-    @staticmethod
-    def backlog():
-        """List models available in our spreadsheets for future incorporation"""
-        if webbrowser:
-            webbrowser.open(
-                "https://docs.google.com/spreadsheets/d/1WE-rKey0WAFktZ_ODNFLvHm2lPe27Xew02tS3EEwi28/edit#gid=1723939193"
-            )  # TODO: do not just go to the website
+    def _get_title(self, card):
+        if "title" in card:
+            return card["title"]
+        if "Title" in card:
+            return card["Title"]
+        return None
+
+    def _get_slug(self, card):
+        if "slug" in card:
+            return card["slug"]
+        if "Slug" in card:
+            return card["Slug"]
+        return None
+
+    def airtable(self):
+        """List models available in AirTable Ersilia Model Hub base"""
+        if webbrowser: # TODO: explore models online
+            if not self.tabular_view:
+                webbrowser.open(
+                    "https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP"
+                )
+            else:
+                webbrowser.open(
+                    "https://airtable.com/shrUcrUnd7jB9ChZV"
+                )
 
     def github(self):
         """List models available in the GitHub model hub repository"""
@@ -101,8 +120,10 @@ class ModelCatalog(ErsiliaBase):
             card = mc.get(model_id)
             if card is None:
                 continue
-            R += [[model_id, card["title"]]]
-        return CatalogTable(R, columns=["MODEL_ID", "TITLE"])
+            slug = self._get_slug(card)
+            title = self._get_title(card)
+            R += [[model_id, slug, title]]
+        return CatalogTable(R, columns=["MODEL_ID", "SLUG", "TITLE"])
 
     def local(self):
         """List models available locally"""
@@ -114,9 +135,11 @@ class ModelCatalog(ErsiliaBase):
             if not self._is_eos(model_id):
                 continue
             card = mc.get(model_id)
-            R += [[model_id, card["title"]]]
+            slug = self._get_slug(card)
+            title = self._get_title(card)
+            R += [[model_id, slug, title]]
         logger.info("Found {0} models".format(len(R)))
-        return CatalogTable(data=R, columns=["MODEL_ID", "TITLE"])
+        return CatalogTable(data=R, columns=["MODEL_ID", "SLUG", "TITLE"])
 
     def bentoml(self):
         """List models available as BentoServices"""

@@ -13,15 +13,16 @@ class Logger(object):
         self.logger.remove()
         self._console = None
         self._file = None
+        self.fmt = "{time:HH:mm:ss} | {level: <8} | {message}"
         self._log_to_file()
         self._log_to_console()
 
     def _log_to_file(self):
-        self._file = self.logger.add(os.path.join(EOS, LOGGING_FILE), rotation=ROTATION)
+        self._file = self.logger.add(os.path.join(EOS, LOGGING_FILE), format=self.fmt, rotation=ROTATION)
 
     def _log_to_console(self):
         if self._console is None:
-            self._console = self.logger.add(sys.stderr)
+            self._console = self.logger.add(sys.stderr, format=self.fmt)
 
     def _unlog_from_console(self):
         if self._console is not None:

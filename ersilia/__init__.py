@@ -24,6 +24,7 @@ os.environ["EOS_HOME"] = EOS
 # Global imports
 from .utils.config import Config
 from .core.base import ErsiliaBase
+from .core.modelbase import ModelBase
 from .core.model import ErsiliaModel
 
 # Clean version

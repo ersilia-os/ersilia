@@ -5,14 +5,16 @@ from ...serve.autoservice import AutoService
 from .utils.utils import tmp_pid_file
 from . import ersilia_cli
 from .. import echo
+from ... import ModelBase
 
 
 def serve_cmd():
     """Creates serve command"""
-    # Example usage: ersilia serve {MODEL_ID}
+    # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
-    @click.argument("model_id", type=click.STRING)
-    def serve(model_id):
+    @click.argument("model", type=click.STRING)
+    def serve(model):
+        model_id = ModelBase(model).model_id
         srv = AutoService(model_id)
         srv.serve()
         echo(":rocket: Serving model {0}!".format(model_id), fg="green")

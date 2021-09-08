@@ -1,13 +1,15 @@
 import os
 import pathlib
-from ....utils.terminal import run_command
+from .... import ErsiliaBase
+from ...bundle.repo import DockerfileFile
 
-QUIET = True
+from .. import PYTHON_INSTALLS
 
 
-class _Symlinker(object):
-    def __init__(self):
-        pass
+class _Symlinker(ErsiliaBase):
+    def __init__(self, model_id, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.model_id = model_id
 
     def _dest_bundle_symlink(self):
         #  TODO: Symbolic links between dest folder and bundle or bentoml folders
@@ -25,15 +27,17 @@ class _Symlinker(object):
         os.symlink(src, dst, target_is_directory=True)
 
 
-class _Writer(object):
-    def __init__(self):
-        pass
+class _Writer(ErsiliaBase):
+    def __init__(self, model_id, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.model_id = model_id
 
-    def _write_python_install(self):
+    def _write_python_installs(self):
+        dockerfile = DockerfileFile(self._model_path(self.model_id))
         dis_warn = "--disable-pip-version-check"
         version = dockerfile.get_bentoml_version()
         runs = dockerfile.get_install_commands()["commands"]
-        fn = os.path.join(self._model_path(model_id), PYTHON_INSTALLS)
+        fn = os.path.join(self._model_path(self.model_id), PYTHON_INSTALLS)
         with open(fn, "w") as f:
             for r in runs:
                 if r[:3] == "pip":
@@ -48,48 +52,8 @@ class _Writer(object):
         return fn
 
 
-class SystemPack(object):
-    def __init__(self, model_id):
-        self.model_id = model_id
+class BasePack(_Symlinker, _Writer):
 
-    def setup(self):
-        pass
-
-    def run(self):
-        folder = self._model_path(self.model_id)
-        script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
-        run_command("python {0}".format(script_path), quiet=QUIET)
-        self._bentoml_bundle_symlink(self.model_id)
-
-
-class VenvPack(object):
-    def __init__(self, model_id):
-        self.model_id = model_id
-
-    def setup(self):
-        pass
-
-    def run(self):
-        pass
-
-
-class CondaPack(object):
-    def __init__(self, model_id):
-        pass
-
-    def setup(self):
-        pass
-
-    def run(self):
-        pass
-
-
-class DockerPack(object):
-    def __init__(self, model_id):
-        pass
-
-    def setup(self):
-        pass
-
-    def run(self):
-        pass
+    def __init__(self, model_id, config_json):
+        _Symlinker.__init__(self, model_id, config_json)
+        _Writer.__init__(self, model_id, config_json)
