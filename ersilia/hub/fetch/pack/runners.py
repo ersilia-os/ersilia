@@ -7,6 +7,7 @@ from ....db.environments.localdb import EnvironmentDb
 from ....utils.venv import SimpleVenv
 from ....utils.conda import SimpleConda
 from ....utils.docker import SimpleDocker
+from ....setup.baseconda import SetupBaseConda
 
 from ....default import DEFAULT_VENV
 from .. import PYTHON_INSTALLS
