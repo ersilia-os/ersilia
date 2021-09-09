@@ -172,7 +172,6 @@
 
 
 <div class="viewcode-block" id="ModelToolizer"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer">[docs]</a><span class="k">class</span> <span class="nc">ModelToolizer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
@@ -184,7 +183,7 @@
         <span class="sd">&quot;&quot;&quot;Install the model and distribute as a python package&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Distributing as a python package with pip&quot;</span><span class="p">)</span>
         <span class="n">bento</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">run_command</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="n">bento</span><span class="p">],</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="n">run_command</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="n">bento</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="ModelToolizer.dockerize"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize">[docs]</a>    <span class="k">def</span> <span class="nf">dockerize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Containerize model using bentoml with docker&quot;&quot;&quot;</span>
@@ -195,8 +194,7 @@
         <span class="n">run_command</span><span class="p">(</span>
             <span class="s2">&quot;bentoml containerize </span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2"> -t </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">docker_org</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">tag</span>
-            <span class="p">),</span>
-            <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="p">)</span>
         <span class="c1"># store docker in the local environment database</span>
         <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>

@@ -230,7 +230,7 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_delete_service</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;echo yes | bentoml delete </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">service</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">keep_latest</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">ml</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">()</span>
@@ -293,7 +293,7 @@
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="ModelPipDeleter.pip_uninstall"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelPipDeleter.pip_uninstall">[docs]</a>    <span class="k">def</span> <span class="nf">pip_uninstall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;echo y | pip uninstall </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;echo y | pip uninstall </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelPipDeleter.delete"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelPipDeleter.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">()</span>

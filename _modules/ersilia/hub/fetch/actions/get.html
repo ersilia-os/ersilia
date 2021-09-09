@@ -212,8 +212,12 @@
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">dev_model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dev_model_path</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">dev_model_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Copying from local </span><span class="si">{0}</span><span class="s2"> to </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dev_model_path</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_local</span><span class="p">(</span><span class="n">dev_model_path</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cloning from github to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_github</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span></div></div>
 
 

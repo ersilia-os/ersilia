@@ -177,7 +177,9 @@
 
 <div class="viewcode-block" id="PackModeDecision.decide"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.mode.PackModeDecision.decide">[docs]</a>    <span class="k">def</span> <span class="nf">decide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)&quot;</span>
+        <span class="p">)</span>
         <span class="n">dockerfile</span> <span class="o">=</span> <span class="n">DockerfileFile</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Check bentoml and python version&quot;</span><span class="p">)</span>
         <span class="n">version</span> <span class="o">=</span> <span class="n">dockerfile</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span>

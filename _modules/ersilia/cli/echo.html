@@ -169,14 +169,10 @@
 <span class="kn">import</span> <span class="nn">click</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">EOS</span>
-
-<span class="c1"># TODO: Use environmental variable instead?</span>
-<span class="n">SILENCE_FILE</span> <span class="o">=</span> <span class="s2">&quot;.silence.json&quot;</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">SILENCE_FILE</span>
 
 
 <div class="viewcode-block" id="Silencer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer">[docs]</a><span class="k">class</span> <span class="nc">Silencer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">SILENCE_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">):</span>

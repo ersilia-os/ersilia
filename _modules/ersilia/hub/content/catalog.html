@@ -236,15 +236,13 @@
 
 <div class="viewcode-block" id="ModelCatalog.airtable"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.airtable">[docs]</a>    <span class="k">def</span> <span class="nf">airtable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List models available in AirTable Ersilia Model Hub base&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">webbrowser</span><span class="p">:</span> <span class="c1"># TODO: explore models online</span>
+        <span class="k">if</span> <span class="n">webbrowser</span><span class="p">:</span>  <span class="c1"># TODO: explore models online</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_view</span><span class="p">:</span>
                 <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
                     <span class="s2">&quot;https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP&quot;</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-                    <span class="s2">&quot;https://airtable.com/shrUcrUnd7jB9ChZV&quot;</span>
-                <span class="p">)</span></div>
+                <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://airtable.com/shrUcrUnd7jB9ChZV&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelCatalog.github"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.github">[docs]</a>    <span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List models available in the GitHub model hub repository&quot;&quot;&quot;</span>
@@ -252,7 +250,9 @@
             <span class="n">token</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">token</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">oauth_token</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for model repositories in </span><span class="si">{0}</span><span class="s2"> organization&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">GITHUB_ORG</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Looking for model repositories in </span><span class="si">{0}</span><span class="s2"> organization&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">GITHUB_ORG</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">token</span><span class="p">:</span>
             <span class="n">g</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
             <span class="n">repo_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repos</span><span class="p">()]</span>

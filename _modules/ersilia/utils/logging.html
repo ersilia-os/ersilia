@@ -170,8 +170,8 @@
 
 <span class="n">ROTATION</span> <span class="o">=</span> <span class="s2">&quot;10 MB&quot;</span>
 
-<div class="viewcode-block" id="Logger"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger">[docs]</a><span class="k">class</span> <span class="nc">Logger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
+<div class="viewcode-block" id="Logger"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger">[docs]</a><span class="k">class</span> <span class="nc">Logger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
@@ -182,7 +182,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_to_console</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_log_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">LOGGING_FILE</span><span class="p">),</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fmt</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">ROTATION</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">LOGGING_FILE</span><span class="p">),</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fmt</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">ROTATION</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_log_to_console</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_console</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -216,6 +218,7 @@
 
 <div class="viewcode-block" id="Logger.success"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.success">[docs]</a>    <span class="k">def</span> <span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div></div>
+
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
 </pre></div>

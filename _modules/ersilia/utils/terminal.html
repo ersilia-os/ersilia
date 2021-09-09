@@ -162,11 +162,21 @@
            <div itemprop="articleBody">
             
   <h1>Source code for ersilia.utils.terminal</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">SILENCE_FILE</span>
 
 
-<div class="viewcode-block" id="run_command"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.run_command">[docs]</a><span class="k">def</span> <span class="nf">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="p">):</span>
+<div class="viewcode-block" id="is_quiet"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.is_quiet">[docs]</a><span class="k">def</span> <span class="nf">is_quiet</span><span class="p">():</span>
+    <span class="n">silence_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">SILENCE_FILE</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;silence&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="run_command"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.run_command">[docs]</a><span class="k">def</span> <span class="nf">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+    <span class="n">quiet</span> <span class="o">=</span> <span class="n">is_quiet</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
