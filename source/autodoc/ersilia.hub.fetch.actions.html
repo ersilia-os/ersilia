@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ersilia.hub.fetch.actions package &mdash; Ersilia  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ersilia.hub.fetch.pack package" href="ersilia.hub.fetch.pack.html" />
+    <link rel="prev" title="ersilia.hub.fetch package" href="ersilia.hub.fetch.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Ersilia
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../fetched/README.html">Learn about Ersilia!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/installation.html">Mac and Linux Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/installation.html#windows-installation">Windows Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/quickstart.html">Quick start</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">Package index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ersilia.html">ersilia package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ersilia.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.contrib.html">ersilia.contrib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.viz.html">ersilia.viz package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia.default">ersilia.default module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../devel.html">For developers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Support us:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fetched/support-our-project.html">Support our project</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Ersilia</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../package.html">Package index</a> &raquo;</li>
+        
+          <li><a href="ersilia.html">ersilia package</a> &raquo;</li>
+        
+          <li><a href="ersilia.hub.html">ersilia.hub package</a> &raquo;</li>
+        
+          <li><a href="ersilia.hub.fetch.html">ersilia.hub.fetch package</a> &raquo;</li>
+        
+      <li>ersilia.hub.fetch.actions package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/source/autodoc/ersilia.hub.fetch.actions.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ersilia-hub-fetch-actions-package">
+<h1>ersilia.hub.fetch.actions package<a class="headerlink" href="#ersilia-hub-fetch-actions-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ersilia.hub.fetch.actions.check">
+<span id="ersilia-hub-fetch-actions-check-module"></span><h2>ersilia.hub.fetch.actions.check module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.check" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.check.ModelChecker">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.check.</code><code class="descname">ModelChecker</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/check.html#ModelChecker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.check.ModelChecker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.check.ModelChecker.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/check.html#ModelChecker.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.check.ModelChecker.check" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.hub.fetch.actions.content">
+<span id="ersilia-hub-fetch-actions-content-module"></span><h2>ersilia.hub.fetch.actions.content module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.content" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.content.CardGetter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.content.</code><code class="descname">CardGetter</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/content.html#CardGetter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.content.CardGetter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.content.CardGetter.get">
+<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/content.html#CardGetter.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.content.CardGetter.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.hub.fetch.actions.get">
+<span id="ersilia-hub-fetch-actions-get-module"></span><h2>ersilia.hub.fetch.actions.get module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.get" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.get.ModelGetter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.get.</code><code class="descname">ModelGetter</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelGetter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelGetter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.get.ModelGetter.get">
+<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelGetter.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelGetter.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.get.ModelParametersGetter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.get.</code><code class="descname">ModelParametersGetter</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelParametersGetter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelParametersGetter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.get.ModelParametersGetter.get">
+<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelParametersGetter.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelParametersGetter.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a ./model folder in the model repository</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.get.ModelRepositoryGetter">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.get.</code><code class="descname">ModelRepositoryGetter</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelRepositoryGetter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelRepositoryGetter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.get.ModelRepositoryGetter.get">
+<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelRepositoryGetter.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelRepositoryGetter.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy model repository from local or download from GitHub</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.hub.fetch.actions.modify">
+<span id="ersilia-hub-fetch-actions-modify-module"></span><h2>ersilia.hub.fetch.actions.modify module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.modify" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.modify.ModelModifier">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.modify.</code><code class="descname">ModelModifier</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/modify.html#ModelModifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.modify.ModelModifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.modify.ModelModifier.modify">
+<code class="descname">modify</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/modify.html#ModelModifier.modify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.modify.ModelModifier.modify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.hub.fetch.actions.pack">
+<span id="ersilia-hub-fetch-actions-pack-module"></span><h2>ersilia.hub.fetch.actions.pack module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.pack" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.pack.ModelPacker">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.pack.</code><code class="descname">ModelPacker</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack.html#ModelPacker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack.ModelPacker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.pack.ModelPacker.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack.html#ModelPacker.pack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack.ModelPacker.pack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.hub.fetch.actions.prepare">
+<span id="ersilia-hub-fetch-actions-prepare-module"></span><h2>ersilia.hub.fetch.actions.prepare module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.prepare" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.prepare.ModelPreparer">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.prepare.</code><code class="descname">ModelPreparer</code><span class="sig-paren">(</span><em>model_id</em>, <em>overwrite</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/prepare.html#ModelPreparer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.prepare.ModelPreparer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.prepare.ModelPreparer.prepare">
+<code class="descname">prepare</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/prepare.html#ModelPreparer.prepare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.prepare.ModelPreparer.prepare" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.hub.fetch.actions.toolize">
+<span id="ersilia-hub-fetch-actions-toolize-module"></span><h2>ersilia.hub.fetch.actions.toolize module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.toolize" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.toolize.ModelToolizer">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.toolize.</code><code class="descname">ModelToolizer</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.hub.fetch.actions.BaseAction</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize">
+<code class="descname">dockerize</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.dockerize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Containerize model using bentoml with docker</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install">
+<code class="descname">pip_install</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.pip_install"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install" title="Permalink to this definition">¶</a></dt>
+<dd><p>Install the model and distribute as a python package</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize">
+<code class="descname">toolize</code><span class="sig-paren">(</span><em>do_pip</em>, <em>do_docker</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.toolize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.hub.fetch.actions">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.hub.fetch.actions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.hub.fetch.actions.BaseAction">
+<em class="property">class </em><code class="descclassname">ersilia.hub.fetch.actions.</code><code class="descname">BaseAction</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json</em>, <em>credentials_json</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions.html#BaseAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.BaseAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="ersilia.hub.fetch.pack.html" class="btn btn-neutral float-right" title="ersilia.hub.fetch.pack package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ersilia.hub.fetch.html" class="btn btn-neutral float-left" title="ersilia.hub.fetch package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Ersilia Open Source Initiative.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

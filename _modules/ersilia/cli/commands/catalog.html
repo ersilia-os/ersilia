@@ -165,45 +165,31 @@
 <span></span><span class="kn">import</span> <span class="nn">click</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
-<span class="kn">from</span> <span class="nn">...hub.catalog</span> <span class="kn">import</span> <span class="n">ModelCatalog</span>
+<span class="kn">from</span> <span class="nn">...hub.content.catalog</span> <span class="kn">import</span> <span class="n">ModelCatalog</span>
+<span class="kn">from</span> <span class="nn">...hub.content.search</span> <span class="kn">import</span> <span class="n">ModelSearcher</span>
 
 
 <div class="viewcode-block" id="catalog_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.catalog.catalog_cmd">[docs]</a><span class="k">def</span> <span class="nf">catalog_cmd</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Creates catalog command&quot;&quot;&quot;</span>
     <span class="c1"># Example usage: ersilia catalog</span>
-    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List a catalog of models&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;List a catalog of models&quot;</span><span class="p">,)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--hub&quot;</span><span class="p">,</span>
-        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the Ersilia Model Hub&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;-l&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--local&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the local computer&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--backlog&quot;</span><span class="p">,</span>
-        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show models backlog (wish list) in a Google Spreadsheet&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span><span class="n">hub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">backlog</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--search&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">search</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">hub</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">())</span>
-        <span class="k">elif</span> <span class="n">local</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">())</span>
-        <span class="k">elif</span> <span class="n">backlog</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">backlog</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">local</span><span class="p">:</span>
+            <span class="n">catalog</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;Specifiy one of --hub --local or --backlog&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-            <span class="p">)</span></div>
+            <span class="n">catalog</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">search</span><span class="p">:</span>
+            <span class="n">catalog</span> <span class="o">=</span> <span class="n">ModelSearcher</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search</span><span class="p">)</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

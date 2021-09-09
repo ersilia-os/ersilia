@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>ersilia.hub.fetch.pack.runners &mdash; Ersilia  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> Ersilia
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../source/fetched/README.html">Learn about Ersilia!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../source/fetched/installation.html">Mac and Linux Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../source/fetched/installation.html#windows-installation">Windows Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../source/fetched/quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../source/package.html">Package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../source/devel.html">For developers</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Support us:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../source/fetched/codeofconduct.html">Contributor Covenant Code of Conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../source/fetched/support-our-project.html">Support our project</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Ersilia</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../pack.html">ersilia.hub.fetch.pack</a> &raquo;</li>
+        
+      <li>ersilia.hub.fetch.pack.runners</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ersilia.hub.fetch.pack.runners</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BasePack</span>
+<span class="kn">from</span> <span class="nn">....utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">....db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
+<span class="kn">from</span> <span class="nn">....utils.venv</span> <span class="kn">import</span> <span class="n">SimpleVenv</span>
+<span class="kn">from</span> <span class="nn">....utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
+<span class="kn">from</span> <span class="nn">....utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
+<span class="kn">from</span> <span class="nn">....setup.baseconda</span> <span class="kn">import</span> <span class="n">SetupBaseConda</span>
+
+<span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">DEFAULT_VENV</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">PYTHON_INSTALLS</span>
+
+
+<span class="n">QUIET</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">USE_CHECKSUM</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="SystemPack"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.SystemPack">[docs]</a><span class="k">class</span> <span class="nc">SystemPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+        <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing system packer&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SystemPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.SystemPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with system installation&quot;</span><span class="p">)</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">script_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACK_SCRIPT</span><span class="p">)</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;python </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">script_path</span><span class="p">),</span> <span class="n">quiet</span><span class="o">=</span><span class="n">QUIET</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="VenvPack"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.VenvPack">[docs]</a><span class="k">class</span> <span class="nc">VenvPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+        <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing virtualenv packer&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">installs_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">PYTHON_INSTALLS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading python installs from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">installs_file</span><span class="p">))</span>
+        <span class="n">venv</span> <span class="o">=</span> <span class="n">SimpleVenv</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+        <span class="n">venv</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">DEFAULT_VENV</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">installs_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">commandlines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">venv</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="n">DEFAULT_VENV</span><span class="p">,</span> <span class="n">commandlines</span><span class="o">=</span><span class="n">commandlines</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">venv</span>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">venv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span>
+        <span class="n">pack_snippet</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        python </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACK_SCRIPT</span>
+        <span class="p">)</span>
+        <span class="n">venv</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="n">DEFAULT_VENV</span><span class="p">,</span> <span class="n">commandlines</span><span class="o">=</span><span class="n">pack_snippet</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span>
+
+<div class="viewcode-block" id="VenvPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.VenvPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with VirtualEnv&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_python_installs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="CondaPack"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.CondaPack">[docs]</a><span class="k">class</span> <span class="nc">CondaPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+        <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing conda packer&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting up&quot;</span><span class="p">)</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="n">installs_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">PYTHON_INSTALLS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Installs file </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">installs_file</span><span class="p">))</span>
+        <span class="n">model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">specs_from_dockerfile</span><span class="p">(</span>
+            <span class="n">model_path</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_checksum</span><span class="o">=</span><span class="n">USE_CHECKSUM</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">model_id</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Conda environment </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Environment </span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
+            <span class="c1"># clone base conda environment and add model dependencies</span>
+            <span class="n">base_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">get_base_env</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">base_env</span><span class="p">):</span>
+                <span class="n">org</span> <span class="o">=</span> <span class="n">base_env</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_env</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+                <span class="n">SetupBaseConda</span><span class="p">()</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">installs_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">commandlines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">commandlines</span><span class="o">=</span><span class="n">commandlines</span><span class="p">)</span>
+        <span class="c1"># create environment yml file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating environment YAML file&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">export_env_yml</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+        <span class="c1"># store conda environment in the local environment database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Storing Conda environment in the local environment database&quot;</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done with the Conda setup&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">env</span>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span>
+        <span class="n">pack_snippet</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        python </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACK_SCRIPT</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">commandlines</span><span class="o">=</span><span class="n">pack_snippet</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CondaPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.CondaPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with Conda&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_python_installs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="DockerPack"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.DockerPack">[docs]</a><span class="k">class</span> <span class="nc">DockerPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+        <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">DOCKERHUB_ORG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">REPO_TAG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing docker packer&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DockerPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.DockerPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with Docker&quot;</span><span class="p">)</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="c1"># build docker image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_org</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="p">)</span>
+        <span class="c1"># pack with the docker script</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docker_org</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">exec_container</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;python </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACK_SCRIPT</span><span class="p">)</span>
+        <span class="c1"># copy bundle from docker image to host</span>
+        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">cp_from_container</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;/root/bentoml/repository/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">tmp_dir</span>
+        <span class="p">)</span>
+        <span class="c1">#  save as bentoml</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">bentoml_load</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
+        <span class="n">mdl</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="get_runner"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.get_runner">[docs]</a><span class="k">def</span> <span class="nf">get_runner</span><span class="p">(</span><span class="n">pack_mode</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SystemPack</span>
+    <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;venv&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VenvPack</span>
+    <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">CondaPack</span>
+    <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;docker&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DockerPack</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Ersilia Open Source Initiative.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

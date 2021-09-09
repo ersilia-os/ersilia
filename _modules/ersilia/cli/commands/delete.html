@@ -163,28 +163,28 @@
             
   <h1>Source code for ersilia.cli.commands.delete</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">import</span> <span class="nn">animation</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
-<span class="kn">from</span> <span class="nn">...hub.delete</span> <span class="kn">import</span> <span class="n">ModelFullDeleter</span>
+<span class="kn">from</span> <span class="nn">...hub.delete.delete</span> <span class="kn">import</span> <span class="n">ModelFullDeleter</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 
 
 <div class="viewcode-block" id="delete_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.delete.delete_cmd">[docs]</a><span class="k">def</span> <span class="nf">delete_cmd</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Create delete command&quot;&quot;&quot;</span>
 
-    <span class="nd">@animation</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="s2">&quot;elipses&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 
-    <span class="c1"># Example usage: ersilia delete {MODEL_ID}</span>
+    <span class="c1"># Example usage: ersilia delete {MODEL}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
         <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Delete model from local computer&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Delete model from local computer. The BentoML bundle is deleted, as well as the files stored in &quot;</span>
         <span class="s2">&quot;the EOS directory and the Pip-installed package&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">md</span><span class="o">.</span><span class="n">needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
             <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Deleting model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>

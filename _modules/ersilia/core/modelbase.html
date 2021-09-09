@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>ersilia.hub.search &mdash; Ersilia  documentation</title>
+  <title>ersilia.core.modelbase &mdash; Ersilia  documentation</title>
   
 
   
@@ -146,7 +146,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>ersilia.hub.search</li>
+      <li>ersilia.core.modelbase</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -161,13 +161,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for ersilia.hub.search</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Search for models&quot;&quot;&quot;</span>
+  <h1>Source code for ersilia.core.modelbase</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">..hub.content.slug</span> <span class="kn">import</span> <span class="n">Slug</span>
 
+<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class of a Model.</span>
 
-<div class="viewcode-block" id="ModelSearch"><a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.html#ersilia.hub.search.ModelSearch">[docs]</a><span class="k">class</span> <span class="nc">ModelSearch</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id_or_slug</span><span class="p">):</span>
+        <span class="n">slugger</span> <span class="o">=</span> <span class="n">Slug</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">slugger</span><span class="o">.</span><span class="n">is_slug</span><span class="p">(</span><span class="n">model_id_or_slug</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">model_id_or_slug</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">slugger</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id_or_slug</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slugger</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

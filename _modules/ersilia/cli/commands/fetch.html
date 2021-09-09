@@ -163,30 +163,31 @@
             
   <h1>Source code for ersilia.cli.commands.fetch</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">import</span> <span class="nn">animation</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
-<span class="kn">from</span> <span class="nn">...hub.fetch</span> <span class="kn">import</span> <span class="n">ModelFetcher</span>
+<span class="kn">from</span> <span class="nn">...hub.fetch.fetch</span> <span class="kn">import</span> <span class="n">ModelFetcher</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 
 
 <div class="viewcode-block" id="fetch_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.fetch.fetch_cmd">[docs]</a><span class="k">def</span> <span class="nf">fetch_cmd</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Create fetch commmand&quot;&quot;&quot;</span>
 
-    <span class="nd">@animation</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="s2">&quot;elipses&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 
-    <span class="c1"># Example usage: ersilia fetch {MODEL_ID}</span>
+    <span class="c1"># Example usage: ersilia fetch {MODEL}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
         <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Fetch model from Ersilia Model Hub&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fetch model from EOS repository. Model files are downloaded from GitHub and model data are &quot;</span>
         <span class="s2">&quot;downloaded from a file storage system such as the Open Science Framework. Model is downloaded to &quot;</span>
         <span class="s2">&quot;an EOS folder, then packed to a BentoML bundle&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Fetching model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:down_arrow: Fetching model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">()</span>
         <span class="n">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> fetched successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span></div>
