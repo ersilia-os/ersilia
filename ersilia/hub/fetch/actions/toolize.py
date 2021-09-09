@@ -6,7 +6,6 @@ from ....db.environments.localdb import EnvironmentDb
 
 
 class ModelToolizer(BaseAction):
-
     def __init__(self, model_id, config_json):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -18,7 +17,7 @@ class ModelToolizer(BaseAction):
         """Install the model and distribute as a python package"""
         self.logger.debug("Distributing as a python package with pip")
         bento = self._get_bundle_location(model_id)
-        run_command([sys.executable, "-m", "pip", "install", bento], quiet=True)
+        run_command([sys.executable, "-m", "pip", "install", bento])
 
     def dockerize(self, model_id):
         """Containerize model using bentoml with docker"""
@@ -29,8 +28,7 @@ class ModelToolizer(BaseAction):
         run_command(
             "bentoml containerize {1}:{2} -t {0}/{1}:{2}".format(
                 self.docker_org, model_id, tag
-            ),
-            quiet=True,
+            )
         )
         # store docker in the local environment database
         db = EnvironmentDb(config_json=self.config_json)

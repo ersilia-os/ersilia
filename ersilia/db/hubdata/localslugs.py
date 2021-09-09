@@ -6,7 +6,6 @@ SLUGDB_FILE = ".slug.db"
 
 
 class SlugDb(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.file_path = os.path.join(self.eos_dir, SLUGDB_FILE)

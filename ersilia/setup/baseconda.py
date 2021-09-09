@@ -93,7 +93,7 @@ class SetupBaseConda(object):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script), quiet=True)
+        run_command("bash {0}".format(tmp_script))
 
     def delete(self, org, tag):
         env = self._get_env_name(org, tag)

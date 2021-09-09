@@ -8,6 +8,8 @@ from .docker import SimpleDockerfileParser
 from .versioning import Versioner
 from .supp.conda_env_resolve import CHECKSUM_NCHAR, CHECKSUM_FILE
 from ..default import CONDA_ENV_YML_FILE
+from .. import logger
+
 
 BASE = "base"
 SPECS_JSON = ".specs.json"
@@ -225,7 +227,7 @@ class SimpleConda(CondaUtils):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script), quiet=True)
+        run_command("bash {0}".format(tmp_script))
         with open(tmp_file, "r") as f:
             envs = []
             for l in f:
@@ -261,7 +263,7 @@ class SimpleConda(CondaUtils):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script), quiet=True)
+        run_command("bash {0}".format(tmp_script))
 
     def export_env_yml(self, environment, dest):
         """
@@ -285,7 +287,7 @@ class SimpleConda(CondaUtils):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script), quiet=True)
+        run_command("bash {0}".format(tmp_script))
 
     def clone(self, src_env, dst_env):
         """
@@ -306,12 +308,14 @@ class SimpleConda(CondaUtils):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script), quiet=True)
+        run_command("bash {0}".format(tmp_script))
 
     def run_commandlines(self, environment, commandlines):
         """
         Run commands in a given conda environment.
         """
+        logger.debug("Run commandlines on {0}".format(environment))
+        logger.debug(commandlines)
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
         tmp_folder = tempfile.mkdtemp()
@@ -327,4 +331,4 @@ class SimpleConda(CondaUtils):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script), quiet=True)
+        run_command("bash {0}".format(tmp_script))

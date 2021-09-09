@@ -17,7 +17,7 @@ class SimpleDocker(object):
         tmp_dir = tempfile.mkdtemp()
         tmp_file = os.path.join(tmp_dir, "images.txt")
         cmd = "docker images > {0}".format(tmp_file)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
         img_dict = {}
         with open(tmp_file, "r") as f:
             h = next(f)
@@ -40,7 +40,7 @@ class SimpleDocker(object):
         else:
             all_str = ""
         cmd = "docker ps {0} > {1}".format(all_str, tmp_file)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
         cnt_dict = {}
         with open(tmp_file, "r") as f:
             h = next(f)
@@ -87,12 +87,12 @@ class SimpleDocker(object):
         cwd = os.getcwd()
         os.chdir(path)
         cmd = "docker build -t %s %s" % (self._image_name(org, img, tag), path)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
         os.chdir(cwd)
 
     def delete(self, org, img, tag):
         cmd = "docker rmi %s" % self._image_name(org, img, tag)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
     def run(self, org, img, tag, name):
         if name is None:
@@ -101,19 +101,19 @@ class SimpleDocker(object):
             name,
             self._image_name(org, img, tag),
         )
-        run_command(cmd, quiet=True)
+        run_command(cmd)
         return name
 
     @staticmethod
     def kill(name):
         cmd = "docker kill %s" % name
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
     @staticmethod
     def cp_from_container(name, img_path, local_path):
         local_path = os.path.abspath(local_path)
         cmd = "docker cp %s:%s %s" % (name, img_path, local_path)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
     def cp_from_image(self, img_path, local_path, org, img, tag):
         name = self.run(org, img, tag, name=None)
@@ -123,7 +123,7 @@ class SimpleDocker(object):
     @staticmethod
     def exec_container(name, cmd):
         cmd = 'docker exec -i %s bash -c "%s"' % (name, cmd)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
     def exec(self, cmd, org, img, tag, name):
         name = self.run(org, img, tag, name=name)

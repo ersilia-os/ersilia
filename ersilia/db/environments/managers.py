@@ -94,7 +94,7 @@ class DockerManager(ErsiliaBase):
             for cmd in cmdlines:
                 f.write(cmd + os.linesep)
         cmd = "bash {0}".format(tmp_file)
-        run_command(cmd, quiet=False)
+        run_command(cmd)
         self.db.insert(
             model_id=model_id,
             env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG),
@@ -124,20 +124,20 @@ class DockerManager(ErsiliaBase):
         cmd = "docker run --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
             name, port, BENTOML_DOCKERPORT, img, workers, mb_string
         )
-        run_command(cmd, quiet=True)
+        run_command(cmd)
         return {"container_name": name, "port": port}
 
     def start(self, container_name):
         cmd = "docker start {0}".format(container_name)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
     def stop(self, container_name):
         cmd = "docker stop {0}".format(container_name)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
     def _delete_container(self, container_name):
         cmd = "docker rm --force {0}".format(container_name)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
     def delete_containers(self, model_id):
         for k, v in self.containers_of_model(

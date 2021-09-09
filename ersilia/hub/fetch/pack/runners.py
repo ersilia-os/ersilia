@@ -13,7 +13,6 @@ from ....default import DEFAULT_VENV
 from .. import PYTHON_INSTALLS
 
 
-QUIET = True
 USE_CHECKSUM = False
 
 
@@ -26,7 +25,7 @@ class SystemPack(BasePack):
         self.logger.debug("Packing model with system installation")
         folder = self._model_path(self.model_id)
         script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
-        run_command("python {0}".format(script_path), quiet=QUIET)
+        run_command("python {0}".format(script_path))
         self._bentoml_bundle_symlink()
 
 
@@ -83,9 +82,16 @@ class CondaPack(BasePack):
             # clone base conda environment and add model dependencies
             base_env = self.conda.get_base_env(model_path)
             if not self.conda.exists(base_env):
+                self.logger.debug(
+                    "{0} base environment does not exist".format(base_env)
+                )
                 org = base_env.split("-")[1]
                 tag = "-".join(base_env.split("-")[-2:])
+                self.logger.debug("Setting up base environment {0}".format(base_env))
                 SetupBaseConda().setup(org=org, tag=tag)
+            self.logger.info(
+                "Cloning base conda environment and adding model dependencies"
+            )
             self.conda.clone(base_env, env)
             with open(installs_file, "r") as f:
                 commandlines = f.read()
@@ -109,6 +115,8 @@ class CondaPack(BasePack):
         """.format(
             self.cfg.HUB.PACK_SCRIPT
         )
+        self.logger.debug("Using environment {0}".format(env))
+        self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)
         self._bentoml_bundle_symlink()
 

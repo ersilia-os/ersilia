@@ -11,11 +11,14 @@ from .actions.check import ModelChecker
 
 
 class ModelFetcher(ErsiliaBase):
-    def __init__(self,
-                 config_json=None, credentials_json=None,
-                 overwrite=True,
-                 pip=True,
-                 dockerize=False):
+    def __init__(
+        self,
+        config_json=None,
+        credentials_json=None,
+        overwrite=True,
+        pip=True,
+        dockerize=False,
+    ):
         self.config_json = config_json
         self.credentials_json = credentials_json
         self.overwrite = overwrite
@@ -23,9 +26,11 @@ class ModelFetcher(ErsiliaBase):
         self.do_docker = dockerize
 
     def _prepare(self):
-        mp = ModelPreparer(model_id=self.model_id,
-                           overwrite=self.overwrite,
-                           config_json=self.config_json)
+        mp = ModelPreparer(
+            model_id=self.model_id,
+            overwrite=self.overwrite,
+            config_json=self.config_json,
+        )
         mp.prepare()
 
     def _get(self):

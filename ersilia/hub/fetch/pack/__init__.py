@@ -21,9 +21,12 @@ class _Symlinker(ErsiliaBase):
     def _bentoml_bundle_symlink(self):
         model_id = self.model_id
         src = self._get_bentoml_location(model_id)
+        self.logger.debug("BentoML location is {0}".format(src))
         dst_ = os.path.join(self._bundles_dir, model_id)
         pathlib.Path(dst_).mkdir(parents=True, exist_ok=True)
         dst = os.path.join(dst_, os.path.basename(src))
+        self.logger.debug("Destination location is {0}".format(src))
+        self.logger.debug("Building symlinks between {0} and {1}".format(src, dst))
         os.symlink(src, dst, target_is_directory=True)
 
 
@@ -53,7 +56,6 @@ class _Writer(ErsiliaBase):
 
 
 class BasePack(_Symlinker, _Writer):
-
     def __init__(self, model_id, config_json):
         _Symlinker.__init__(self, model_id, config_json)
         _Writer.__init__(self, model_id, config_json)

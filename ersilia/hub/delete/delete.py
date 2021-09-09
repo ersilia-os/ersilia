@@ -66,7 +66,7 @@ class ModelBentoDeleter(ErsiliaBase):
     @staticmethod
     def _delete_service(service):
         cmd = "echo yes | bentoml delete %s" % service
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
     def _delete(self, model_id, keep_latest=True):
         ml = ModelCatalog()
@@ -129,7 +129,7 @@ class ModelPipDeleter(object):
         pass
 
     def pip_uninstall(self, model_id):
-        run_command("echo y | pip uninstall %s" % model_id, quiet=True)
+        run_command("echo y | pip uninstall %s" % model_id)
 
     def delete(self, model_id):
         env = Environment()

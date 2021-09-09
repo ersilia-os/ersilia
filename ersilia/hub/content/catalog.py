@@ -72,15 +72,13 @@ class ModelCatalog(ErsiliaBase):
 
     def airtable(self):
         """List models available in AirTable Ersilia Model Hub base"""
-        if webbrowser: # TODO: explore models online
+        if webbrowser:  # TODO: explore models online
             if not self.tabular_view:
                 webbrowser.open(
                     "https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP"
                 )
             else:
-                webbrowser.open(
-                    "https://airtable.com/shrUcrUnd7jB9ChZV"
-                )
+                webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")
 
     def github(self):
         """List models available in the GitHub model hub repository"""
@@ -88,7 +86,9 @@ class ModelCatalog(ErsiliaBase):
             token = None
         else:
             token = Auth().oauth_token()
-        logger.debug("Looking for model repositories in {0} organization".format(GITHUB_ORG))
+        logger.debug(
+            "Looking for model repositories in {0} organization".format(GITHUB_ORG)
+        )
         if token:
             g = Github(token)
             repo_list = [i for i in g.get_user().get_repos()]

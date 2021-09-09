@@ -23,6 +23,7 @@ DEFAULT_VENV = "env"
 PACKMODE_FILE = "pack_mode.txt"
 LOGGING_FILE = "console.log"
 CARD_FILE = "card.json"
+SILENCE_FILE = ".silence.json"
 
 # Airtable
 AIRTABLE_READONLY_API_KEY = "keycTTh5uQ7v2CPbI"

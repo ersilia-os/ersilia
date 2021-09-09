@@ -58,7 +58,7 @@ class StreamlitApp(AppBase):
             return 0
         filename = os.path.join(self._dest_dir, model_id, self.APP_SCRIPT)
         if os.path.exists(filename):
-            run_command("streamlit run %s" % filename, quiet=False)
+            run_command("streamlit run %s" % filename)
             return 1
         else:
             return 0

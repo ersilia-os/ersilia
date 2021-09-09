@@ -6,6 +6,7 @@ import requests
 import shutil
 import tempfile
 import uuid
+import pygit2
 from .terminal import run_command
 
 
@@ -45,7 +46,7 @@ class OsfDownloader(object):
                 return
         cwd = os.getcwd()
         os.chdir(tmp_folder)
-        run_command("osf -p %s fetch %s" % (project_id, filename), quiet=True)
+        run_command("osf -p %s fetch %s" % (project_id, filename))
         shutil.move(src, outfile)
         os.chdir(cwd)
 
@@ -104,21 +105,35 @@ class GitHubDownloader(object):
             shutil.rmtree(dotgit)
             os.remove(os.path.join(path, ".gitignore"))
 
+    def _exists(self, destination):
+        if os.path.exists(destination):
+            return True
+        else:
+            return False
+
+    def _clone_with_gh(self, org, repo, destination):
+        if shutil.which("gh") is not None:
+            cmd = "gh repo clone {0}/{1} {2} -- --depth=1".format(
+                org, repo, destination
+            )
+            run_command(cmd)
+        return self._exists(destination)
+
+    def _clone_with_pygit2(self, org, repo, destination):
+        pygit2.clone_repository(url=self._repo_url(org, repo), path=destination)
+        return self._exists(destination)
+
     def clone(self, org, repo, destination):
         if os.path.exists(destination):
             if self.overwrite:
                 shutil.rmtree(destination)
             else:
                 return
-        if shutil.which("gh") is not None:
-            cmd = "gh repo clone {0}/{1} {2} -- --depth=1".format(
-                org, repo, destination
-            )
-            run_command(cmd, quiet=False)
-        else:
-            import pygit2
-
-            pygit2.clone_repository(url=self._repo_url(org, repo), path=destination)
+        is_done = self._clone_with_pygit2(org, repo, destination)
+        if not is_done:
+            is_done = self._clone_with_gh(org, repo, destination)
+        if not is_done:
+            raise Exception("Download from {0}/{1} did not work".format(org, repo))
         self._ungit(destination)
 
     def download_single(self, org, repo, repo_path, destination):

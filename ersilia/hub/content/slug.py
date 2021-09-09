@@ -5,7 +5,6 @@ from .card import ModelCard
 
 
 class Slug(ErsiliaBase):
-
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.db = SlugDb(config_json=config_json)
@@ -32,7 +31,8 @@ class Slug(ErsiliaBase):
     def encode(self, slug):
         """Given a slug, get the model_id"""
         model_id = self._local_encode(slug)
-        if model_id is not None: return model_id
+        if model_id is not None:
+            return model_id
         model_id = self._remote_encode(slug)
         return model_id
 
@@ -50,6 +50,7 @@ class Slug(ErsiliaBase):
     def decode(self, model_id):
         """Given a model_id, get the slug"""
         slug = self._local_decode(model_id)
-        if slug is not None: return slug
+        if slug is not None:
+            return slug
         slug = self._remote_decode(model_id)
         return slug

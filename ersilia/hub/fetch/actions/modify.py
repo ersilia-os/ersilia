@@ -7,7 +7,6 @@ from ...bundle.bundle import BundleEnvironmentFile, BundleDockerfileFile
 
 
 class ModelModifier(BaseAction):
-
     def __init__(self, model_id, config_json):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -19,7 +18,7 @@ class ModelModifier(BaseAction):
         tmp_folder = tempfile.mkdtemp()
         tmp_file = os.path.join(tmp_folder, "grep.txt")
         cmd = "grep -R 'ersilia' {0}/* > {1}".format(src, tmp_file)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
         with open(tmp_file, "r") as f:
             grep = f.read()
         if grep:
@@ -81,7 +80,7 @@ class ModelModifier(BaseAction):
         tmp_folder = tempfile.mkdtemp()
         tmp_file = os.path.join(tmp_folder, "grep.txt")
         cmd = "grep -R 'ersilia' {0} > {1}".format(dockerfile, tmp_file)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
         with open(tmp_file, "r") as f:
             grep = f.read()
         if grep:

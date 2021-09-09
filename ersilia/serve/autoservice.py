@@ -14,16 +14,22 @@ from .. import ErsiliaBase
 class AutoService(ErsiliaBase):
     def __init__(self, model_id, service_class=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
+        self.logger.debug("Setting AutoService for {0}".format(model_id))
         self.config_json = config_json
         self.model_id = model_id
         if service_class is None:
+            self.logger.debug("No service class provided, deciding automatically")
             # decide automatically
             service_class_file = os.path.join(
                 self._get_bundle_location(model_id), "service_class.txt"
             )
             if os.path.exists(service_class_file):
+                self.logger.debug(
+                    "Service class file exists in folder {0}".format(service_class_file)
+                )
                 with open(service_class_file, "r") as f:
                     s = f.read()
+                self.logger.debug("Service class: {0}".format(s))
                 if s == "system":
                     self.service = SystemBundleService(
                         model_id, config_json=config_json
@@ -41,6 +47,9 @@ class AutoService(ErsiliaBase):
                 else:
                     self.service = None
             else:
+                self.logger.debug(
+                    "No service class file exists in {0}".format(service_class_file)
+                )
                 with open(service_class_file, "w") as f:
                     if SystemBundleService(
                         model_id, config_json=config_json
@@ -73,6 +82,7 @@ class AutoService(ErsiliaBase):
                     else:
                         self.service = None
         else:
+            self.logger.info("Service class provided")
             # predefined service class
             if service_class(model_id, config_json).is_available():
                 self.service = service_class(model_id, config_json=config_json)

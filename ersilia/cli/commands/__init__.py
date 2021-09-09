@@ -12,14 +12,14 @@ from ..echo import Silencer
     "--verbose",
     default=False,
     is_flag=True,
-    help="Show logging on terminal when running commands."
+    help="Show logging on terminal when running commands.",
 )
 @click.option(
     "-s",
     "--silent",
     default=False,
     is_flag=True,
-    help="Do not echo any progress message."
+    help="Do not echo any progress message.",
 )
 def ersilia_cli(verbose, silent):
     """
@@ -30,6 +30,6 @@ def ersilia_cli(verbose, silent):
     else:
         logger.set_verbosity(0)
     silencer = Silencer()
-    silencer.speak() # To reset default
+    silencer.speak()  # To reset default
     if silent:
         silencer.silence()

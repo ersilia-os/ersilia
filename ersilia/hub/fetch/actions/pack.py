@@ -10,7 +10,6 @@ from ....default import PACKMODE_FILE
 
 
 class ModelPacker(BaseAction):
-
     def __init__(self, model_id, config_json):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -46,7 +45,9 @@ class ModelPacker(BaseAction):
         mm.modify()
 
     def _run(self):
-        runner = get_runner(self.pack_mode)(model_id=self.model_id, config_json=self.config_json)
+        runner = get_runner(self.pack_mode)(
+            model_id=self.model_id, config_json=self.config_json
+        )
         runner.run()
 
     def pack(self):

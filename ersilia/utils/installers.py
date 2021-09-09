@@ -132,7 +132,7 @@ class Installer(BaseInstaller):
         if exists:
             return
         click.echo(">> Installing RDKit from Conda")
-        run_command("conda install -c conda-forge -y -q rdkit", quiet=True)
+        run_command("conda install -c conda-forge -y -q rdkit")
 
     def config(self):
         if self._is_done("config"):
@@ -202,7 +202,7 @@ class Installer(BaseInstaller):
             for l in lines:
                 f.write(l[8:] + "\n")
         click.echo(">> Creating a Base Conda environment {0}".format(eos_base_env))
-        run_command("bash {0}".format(tmp_script), quiet=True)
+        run_command("bash {0}".format(tmp_script))
 
     def base_conda_slim(self):
         if self._is_done("base_conda_slim"):

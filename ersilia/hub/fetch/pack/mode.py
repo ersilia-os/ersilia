@@ -11,7 +11,9 @@ class PackModeDecision(ErsiliaBase):
 
     def decide(self):
         folder = self._model_path(self.model_id)
-        self.logger.debug("Check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)")
+        self.logger.debug(
+            "Check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)"
+        )
         dockerfile = DockerfileFile(folder)
         self.logger.debug("Check bentoml and python version")
         version = dockerfile.get_bentoml_version()

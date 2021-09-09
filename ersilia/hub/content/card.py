@@ -8,7 +8,11 @@ from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
 
-from ...default import AIRTABLE_READONLY_API_KEY, AIRTABLE_MODEL_HUB_BASE_ID, AIRTABLE_MODEL_HUB_TABLE_NAME
+from ...default import (
+    AIRTABLE_READONLY_API_KEY,
+    AIRTABLE_MODEL_HUB_BASE_ID,
+    AIRTABLE_MODEL_HUB_TABLE_NAME,
+)
 from ...default import CARD_FILE
 
 AIRTABLE_MAX_ROWS = 100000
@@ -20,8 +24,10 @@ class ReadmeCard(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
-        url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
-            model_id
+        url = (
+            "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
+                model_id
+            )
         )
         return url
 
@@ -29,7 +35,7 @@ class ReadmeCard(ErsiliaBase):
         tmp_folder = tempfile.mkdtemp()
         tmp_file = os.path.join(tmp_folder, "view.md")
         cmd = "gh repo view {0}/{1} > {2}".format("ersilia-os", model_id, tmp_file)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
         with open(tmp_file, "r") as f:
             text = f.read()
         return text
@@ -81,7 +87,6 @@ class ReadmeCard(ErsiliaBase):
 
 
 class AirtableCard(ErsiliaBase):
-
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.api_key = AIRTABLE_READONLY_API_KEY
@@ -93,12 +98,14 @@ class AirtableCard(ErsiliaBase):
 
     def _find_card(self, text, field):
         card = None
-        for records in self.table.iterate(page_size=self.page_size, max_records=self.max_rows):
+        for records in self.table.iterate(
+            page_size=self.page_size, max_records=self.max_rows
+        ):
             for record in records:
                 fields = record["fields"]
                 if field not in fields:
                     continue
-                if text == record['fields'][field]:
+                if text == record["fields"][field]:
                     card = record["fields"]
         return card
 
@@ -113,7 +120,6 @@ class AirtableCard(ErsiliaBase):
 
 
 class LocalCard(ErsiliaBase):
-
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 

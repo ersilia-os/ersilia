@@ -22,7 +22,7 @@ class SimpleVenv(object):
         path = self._get_path(environment)
         if self.exists(path):
             return
-        run_command("python -m venv {0}".format(path), quiet=True)
+        run_command("python -m venv {0}".format(path))
 
     def delete(self, environment):
         path = self._get_path(environment)
@@ -40,4 +40,4 @@ class SimpleVenv(object):
             f.write("source {0}/bin/activate{1}".format(environment, os.linesep))
             f.write("{0}{1}".format(commandlines, os.linesep))
             f.write("deactivate")
-        run_command("bash {0}".format(tmp_script), quiet=True)
+        run_command("bash {0}".format(tmp_script))

@@ -24,8 +24,10 @@ TIMEOUT_SECONDS = 1000
 class BaseServing(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
+        self.logger.debug("Initializing base service")
         self.model_id = model_id
         self.bundle_tag = self._get_latest_bundle_tag(model_id=self.model_id)
+        self.logger.debug("{0}:{1}".format(self.model_id, self.bundle_tag))
 
     def _get_info_from_bento(self):
         """Get info available from the Bento"""
@@ -34,9 +36,13 @@ class BaseServing(ErsiliaBase):
         cmd = "bentoml info --quiet {0}:{1} > {2}".format(
             self.model_id, self.bundle_tag, tmp_file
         )
-        run_command(cmd, quiet=True)
+        self.logger.debug(
+            "Getting info from BentoML and storing in {0}".format(tmp_file)
+        )
+        run_command(cmd)
         with open(tmp_file, "r") as f:
             info = json.load(f)
+        self.logger.debug("Info {0}".format(info))
         return info
 
     def _get_apis_from_bento(self):
@@ -48,6 +54,7 @@ class BaseServing(ErsiliaBase):
     def _api_with_url(self, api_name, input):
         if self.url is None:
             return
+        self.logger.debug("Using URL: {0}".format(self.url))
         response = requests.post("{0}/{1}".format(self.url, api_name), json=input)
         return response.json()
 
@@ -79,12 +86,16 @@ class _BentoMLService(BaseServing):
                 f.write(l + os.linesep)
         cmd = "bash {0}".format(tmp_script)
         if runcommand_func is None:
-            run_command(cmd, quiet=True)
+            self.logger.debug("Run command function not available. Running from shell")
+            run_command(cmd)
         else:
+            self.logger.debug("Run command function available")
             runcommand_func(cmd)
         with open(tmp_pid, "r") as f:
             self.pid = int(f.read().strip())
         for _ in range(int(TIMEOUT_SECONDS / SLEEP_SECONDS)):
+            if not os.path.exists(tmp_file):
+                continue
             # If error string is identified, finish
             with open(tmp_file, "r") as f:
                 r = f.read()
@@ -108,7 +119,7 @@ class _BentoMLService(BaseServing):
 
     def _close(self):
         cmd = "kill {0}".format(self.pid)
-        run_command(cmd, quiet=True)
+        run_command(cmd)
 
 
 class SystemBundleService(_BentoMLService):
@@ -123,7 +134,7 @@ class SystemBundleService(_BentoMLService):
         self.close()
 
     def _run_command(self, cmd):
-        return run_command(cmd, quiet=True)
+        return run_command(cmd)
 
     def is_available(self):
         fn = os.path.join(self._dest_dir, self.model_id, PACKMODE_FILE)
@@ -200,6 +211,7 @@ class CondaEnvironmentService(_BentoMLService):
 
     def _run_command(self, cmd):
         env = self._get_env_name()
+        self.logger.debug("Running on conda environment {0}".format(env))
         return self.conda.run_commandlines(env, cmd)
 
     def is_available(self):

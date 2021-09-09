@@ -46,8 +46,12 @@ class ModelRepositoryGetter(BaseAction):
         folder = self._model_path(self.model_id)
         dev_model_path = self._dev_model_path()
         if dev_model_path is not None:
+            self.logger.debug(
+                "Copying from local {0} to {1}".format(dev_model_path, folder)
+            )
             self._copy_from_local(dev_model_path, folder)
         else:
+            self.logger.debug("Cloning from github to {0}".format(folder))
             self._copy_from_github(folder)
 
 

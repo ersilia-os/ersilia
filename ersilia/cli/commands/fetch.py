@@ -23,7 +23,9 @@ def fetch_cmd():
     def fetch(model):
         mdl = ModelBase(model)
         model_id = mdl.model_id
-        echo(":down_arrow: Fetching model {0}: {1}".format(model_id, mdl.slug), fg="blue")
+        echo(
+            ":down_arrow: Fetching model {0}: {1}".format(model_id, mdl.slug), fg="blue"
+        )
         mf = ModelFetcher()
         _fetch(mf, model_id)
         echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")

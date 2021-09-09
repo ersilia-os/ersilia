@@ -19,6 +19,6 @@ def close_cmd():
             for l in f:
                 pid = int(l.rstrip().split()[0])
                 cmd = "kill {0}".format(pid)
-                run_command(cmd, quiet=True)
+                run_command(cmd)
         os.remove(tmp_file)
         echo(":no_entry: Model {0} closed".format(model_id), fg="green")

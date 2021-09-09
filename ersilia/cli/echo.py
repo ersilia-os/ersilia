@@ -5,14 +5,10 @@ except:
 import click
 import os
 import json
-from ..default import EOS
-
-# TODO: Use environmental variable instead?
-SILENCE_FILE = ".silence.json"
+from ..default import EOS, SILENCE_FILE
 
 
 class Silencer(object):
-
     def __init__(self):
         self.silence_file = os.path.join(EOS, SILENCE_FILE)
         if not os.path.exists(self.silence_file):

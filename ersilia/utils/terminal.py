@@ -1,8 +1,18 @@
-import subprocess
 import os
+import subprocess
+import json
+from ..default import EOS, SILENCE_FILE
 
 
-def run_command(cmd, quiet):
+def is_quiet():
+    silence_file = os.path.join(EOS, SILENCE_FILE)
+    with open(silence_file, "r") as f:
+        d = json.load(f)
+    return d["silence"]
+
+
+def run_command(cmd):
+    quiet = is_quiet()
     if type(cmd) == str:
         if quiet:
             with open(os.devnull, "w") as fp:
