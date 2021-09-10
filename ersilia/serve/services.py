@@ -101,7 +101,6 @@ class _BentoMLService(BaseServing):
                 r = f.read()
                 if self.ERROR_STRING in r.lower():
                     self.url = None
-                    print(r)
                     return
             # If everything looks good, wait until server is ready
             with open(tmp_file, "r") as f:
