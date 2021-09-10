@@ -1,7 +1,8 @@
 import sys
 import os
+import json
 from loguru import logger
-from ..default import EOS, LOGGING_FILE
+from ..default import EOS, LOGGING_FILE, VERBOSE_FILE
 
 
 ROTATION = "10 MB"
@@ -14,8 +15,10 @@ class Logger(object):
         self._console = None
         self._file = None
         self.fmt = "{time:HH:mm:ss} | {level: <8} | {message}"
+        self._verbose_file = os.path.join(EOS, VERBOSE_FILE)
         self._log_to_file()
         self._log_to_console()
+        self._log_terminal_commands_to_console()
 
     def _log_to_file(self):
         self._file = self.logger.add(
@@ -31,11 +34,23 @@ class Logger(object):
             self.logger.remove(self._console)
             self._console = None
 
+    def _log_terminal_commands_to_console(self):
+        d = {"verbose": True}
+        with open(self._verbose_file, "w") as f:
+            json.dump(d, f, indent=4)
+
+    def _unlog_terminal_commands_from_console(self):
+        d = {"verbose": False}
+        with open(self._verbose_file, "w") as f:
+            json.dump(d, f, indent=4)
+
     def set_verbosity(self, verbose):
         if verbose:
             self._log_to_console()
+            self._log_terminal_commands_to_console()
         else:
             self._unlog_from_console()
+            self._unlog_terminal_commands_from_console()
 
     def debug(self, text):
         self.logger.debug(text)

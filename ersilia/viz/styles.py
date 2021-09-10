@@ -4,10 +4,7 @@ import matplotlib
 
 def set_style(style=None):
     """Set basic plotting style and fonts."""
-    try:
-        matplotlib.font_manager._rebuild()
-    except Exception as ex:
-        print(str(ex))
+    matplotlib.font_manager._rebuild()
     if style is None:
         style = (
             "ticks",

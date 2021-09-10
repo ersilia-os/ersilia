@@ -1,14 +1,17 @@
 import os
 import subprocess
 import json
-from ..default import EOS, SILENCE_FILE
+from ..default import EOS, VERBOSE_FILE
 
 
 def is_quiet():
-    silence_file = os.path.join(EOS, SILENCE_FILE)
-    with open(silence_file, "r") as f:
+    verbose_file = os.path.join(EOS, VERBOSE_FILE)
+    with open(verbose_file, "r") as f:
         d = json.load(f)
-    return d["silence"]
+    if d["verbose"]:
+        return False
+    else:
+        return True
 
 
 def run_command(cmd):
