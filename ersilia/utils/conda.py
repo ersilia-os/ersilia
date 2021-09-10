@@ -320,6 +320,7 @@ class SimpleConda(CondaUtils):
             raise Exception("{0} environment does not exist".format(environment))
         tmp_folder = tempfile.mkdtemp()
         tmp_script = os.path.join(tmp_folder, "script.sh")
+        logger.debug("Activating base environment")
         bash_script = self.activate_base()
         bash_script += """
         source ${0}/etc/profile.d/conda.sh
@@ -331,4 +332,7 @@ class SimpleConda(CondaUtils):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script))
+        cmd = "bash {0}".format(tmp_script)
+        logger.debug("Running {0}".format(cmd))
+        run_command(cmd)
+        logger.debug("Activation done")
