@@ -45,11 +45,15 @@ class GenericOutputAdapter(ErsiliaBase):
     def _to_dataframe(self, result):
         result = json.loads(result)
         R = []
+        output_keys = None
         for r in result:
             inp = r["input"]
             out = r["output"]
-            R += [[inp["key"], inp["input"], out]]
-        df = DataFrame(data=R, columns = ["key", "input", "output"])
+            if output_keys is None:
+                output_keys = [k for k in out.keys()]
+            vals = [out[k] for k in output_keys]
+            R += [[inp["key"], inp["input"]] + vals]
+        df = DataFrame(data=R, columns = ["key", "input"] + output_keys)
         return df
 
     def adapt(self, result, output):

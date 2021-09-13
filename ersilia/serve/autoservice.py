@@ -136,7 +136,7 @@ class AutoService(ErsiliaBase):
     def api(self, api_name, input):
         self.logger.debug("API: {0}".format(api_name))
         self.logger.debug("MODEL ID: {0}".format(self.model_id))
-        self.logger.debug("SERVICE URL: {0}".format(self.service_url))
+        self.logger.debug("SERVICE URL: {0}".format(self.service.url))
         _api = Api(
             model_id=self.model_id,
             url=self.service.url,
