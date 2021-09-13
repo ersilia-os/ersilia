@@ -47,6 +47,7 @@ class BaseServing(ErsiliaBase):
 
     def _get_apis_from_bento(self):
         """Get APIs available for the model, according to the info Bento"""
+        self.logger.debug("Getting APIs from Bento")
         info = self._get_info_from_bento()
         for item in info["apis"]:
             yield item["name"]
@@ -67,8 +68,9 @@ class _BentoMLService(BaseServing):
         self.ERROR_STRING = "error"
 
     def _bentoml_serve(self, runcommand_func=None):
-        """Simply try to serve model with bentoml, locally"""
+        self.logger.debug("Trying to serve model with BentoML locally")
         self.port = find_free_port()
+        self.logger.debug("Free port: {0}".format(self.port))
         tmp_folder = tempfile.mkdtemp()
         tmp_script = os.path.join(tmp_folder, "serve.sh")
         tmp_file = os.path.join(tmp_folder, "serve.log")
@@ -81,8 +83,10 @@ class _BentoMLService(BaseServing):
         ]
         sl += ["_pid=$!"]
         sl += ['echo "$_pid" > {0}'.format(tmp_pid)]
+        self.logger.debug("Writing on {0}".format(tmp_script))
         with open(tmp_script, "w") as f:
             for l in sl:
+                self.logger.debug(l)
                 f.write(l + os.linesep)
         cmd = "bash {0}".format(tmp_script)
         if runcommand_func is None:
@@ -93,27 +97,41 @@ class _BentoMLService(BaseServing):
             runcommand_func(cmd)
         with open(tmp_pid, "r") as f:
             self.pid = int(f.read().strip())
+            self.logger.debug("Process id: {0}".format(self.pid))
+        _logged_file_done = False
+        _logged_server_done = False
         for _ in range(int(TIMEOUT_SECONDS / SLEEP_SECONDS)):
             if not os.path.exists(tmp_file):
+                if not _logged_file_done:
+                    self.logger.debug("Waiting for file {0}".format(tmp_file))
+                _logged_file_done = True
+                time.sleep(SLEEP_SECONDS)
                 continue
             # If error string is identified, finish
             with open(tmp_file, "r") as f:
                 r = f.read()
                 if self.ERROR_STRING in r.lower():
+                    self.logger.error("Error string found in: {0}".format(r))
                     self.url = None
                     return
             # If everything looks good, wait until server is ready
             with open(tmp_file, "r") as f:
                 r = f.read()
                 if self.SEARCH_PRE_STRING not in r or self.SEARCH_SUF_STRING not in r:
+                    if not _logged_server_done:
+                        self.logger.debug("Waiting for server")
                     time.sleep(SLEEP_SECONDS)
+                    _logged_server_done = True
                     continue
             # When the search strings are found get url
             with open(tmp_file, "r") as f:
                 for l in f:
                     if self.SEARCH_PRE_STRING in l and self.SEARCH_SUF_STRING in l:
                         self.url = l.split(self.SEARCH_PRE_STRING)[1].split(" ")[0]
+                        self.logger.debug("URL found: {0}".format(self.url))
                         return
+                self.logger.debug("Search strings not found yet")
+        self.logger.debug("No URL found")
         self.url = None
 
     def _close(self):

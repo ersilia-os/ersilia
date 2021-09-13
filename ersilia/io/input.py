@@ -85,7 +85,7 @@ class _GenericAdapter(object):
         return data
 
 
-class GenericAdapter(object):
+class GenericInputAdapter(object):
     def __init__(self, model_id, config_json=None):
         baseio = BaseIOGetter(config_json=config_json).get(model_id)
         self.adapter = _GenericAdapter(baseio)

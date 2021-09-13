@@ -19,6 +19,9 @@ def serve_cmd():
         slug = model.slug
         srv = AutoService(model_id)
         srv.serve()
+        if srv.service.url is None:
+            echo("No URL found. Service unsuccessful.", fg="red")
+            return
         echo(":rocket: Serving model {0}: {1}".format(model_id, slug), fg="green")
         echo("")
         echo("   URL: {0}".format(srv.service.url), fg="yellow")

@@ -7,7 +7,6 @@ from .services import (
     DockerImageService,
 )
 from .api import Api
-from ..io.input import GenericAdapter
 from .. import ErsiliaBase
 
 
@@ -135,6 +134,9 @@ class AutoService(ErsiliaBase):
         self.service.close()
 
     def api(self, api_name, input):
+        self.logger.debug("API: {0}".format(api_name))
+        self.logger.debug("MODEL ID: {0}".format(self.model_id))
+        self.logger.debug("SERVICE URL: {0}".format(self.service_url))
         _api = Api(
             model_id=self.model_id,
             url=self.service.url,
