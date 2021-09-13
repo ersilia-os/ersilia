@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ersilia.cli.commands.card &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>ersilia.setup.requirements.rdkit &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
@@ -63,7 +63,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>ersilia.cli.commands.card</li>
+      <li>ersilia.setup.requirements.rdkit</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -72,27 +72,22 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for ersilia.cli.commands.card</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">click</span>
-
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
-<span class="kn">from</span> <span class="nn">...hub.content.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+  <h1>Source code for ersilia.setup.requirements.rdkit</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 
 
-<div class="viewcode-block" id="card_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.card.card_cmd">[docs]</a><span class="k">def</span> <span class="nf">card_cmd</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Creates card command&quot;&quot;&quot;</span>
-    <span class="c1"># Example usage: ersilia card {MODEL}</span>
-    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Get model info card&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Get model info card from Ersilia Model Hub.&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">card</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
-        <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
-        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
+<div class="viewcode-block" id="RdkitRequirement"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.rdkit.RdkitRequirement">[docs]</a><span class="k">class</span> <span class="nc">RdkitRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;rdkit&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RdkitRequirement.install"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.rdkit.RdkitRequirement.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;pip install rdkit-pypi&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
