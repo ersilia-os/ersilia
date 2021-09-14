@@ -26,6 +26,8 @@ class Api(object):
         self.logger.debug(url)
         self.logger.debug(input)
         response = requests.post(url, json=input)
+        self.logger.debug("{0}".format(response.status_code))
+        self.logger.debug(response.text)
         if response.status_code == 200:
             result_ = response.json()
             result = []
