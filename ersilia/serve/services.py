@@ -111,9 +111,10 @@ class _BentoMLService(BaseServing):
             with open(tmp_file, "r") as f:
                 r = f.read()
                 if self.ERROR_STRING in r.lower():
-                    self.logger.error("Error string found in: {0}".format(r))
-                    self.url = None
-                    return
+                    self.logger.warning("Error string found in: {0}".format(r))
+                    # TODO perhaps find a better error string.
+                    #self.url = None
+                    #return
             # If everything looks good, wait until server is ready
             with open(tmp_file, "r") as f:
                 r = f.read()
