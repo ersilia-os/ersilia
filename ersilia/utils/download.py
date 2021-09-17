@@ -123,6 +123,14 @@ class GitHubDownloader(object):
         pygit2.clone_repository(url=self._repo_url(org, repo), path=destination)
         return self._exists(destination)
 
+    def _git_lfs(self, destination):
+        script = "cd {0}; git lfs pull".format(destination)
+        tmp_folder = tempfile.mkdtemp()
+        run_file = os.path.join(tmp_folder, "run_lfs.sh")
+        with open(run_file, "w") as f:
+            f.write(script)
+        run_command("bash {0}".format(run_file))
+
     def clone(self, org, repo, destination):
         if os.path.exists(destination):
             if self.overwrite:
@@ -134,6 +142,7 @@ class GitHubDownloader(object):
             is_done = self._clone_with_gh(org, repo, destination)
         if not is_done:
             raise Exception("Download from {0}/{1} did not work".format(org, repo))
+        self._git_lfs(destination)
         self._ungit(destination)
 
     def download_single(self, org, repo, repo_path, destination):
