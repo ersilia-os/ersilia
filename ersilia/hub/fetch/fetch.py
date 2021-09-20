@@ -53,6 +53,10 @@ class ModelFetcher(ErsiliaBase):
         mc = ModelChecker(self.model_id, self.config_json)
         mc.check()
 
+    def _sniff(self):
+        sn = ModelSniffer(self.model_id, self.config_json)
+        sn.sniff()
+
     def fetch(self, model_id):
         self.model_id = model_id
         self._prepare()
@@ -61,4 +65,5 @@ class ModelFetcher(ErsiliaBase):
         self._toolize()
         self._content()
         self._check()
+        self._sniff()
         logger.info("Fetching {0} done successfully".format(model_id))

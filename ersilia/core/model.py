@@ -14,3 +14,5 @@ class ErsiliaModel(AutoService):
         self.model_id = model.model_id
         self.slug = model.slug
         AutoService.__init__(self, self.model_id, config_json=config_json)
+
+    
