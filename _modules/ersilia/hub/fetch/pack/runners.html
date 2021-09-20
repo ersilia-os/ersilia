@@ -102,7 +102,7 @@
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">script_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACK_SCRIPT</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;python </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">script_path</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symlinks</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="VenvPack"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.VenvPack">[docs]</a><span class="k">class</span> <span class="nc">VenvPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
@@ -129,7 +129,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACK_SCRIPT</span>
         <span class="p">)</span>
         <span class="n">venv</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="n">DEFAULT_VENV</span><span class="p">,</span> <span class="n">commandlines</span><span class="o">=</span><span class="n">pack_snippet</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symlinks</span><span class="p">()</span>
 
 <div class="viewcode-block" id="VenvPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.VenvPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with VirtualEnv&quot;</span><span class="p">)</span>
@@ -194,7 +194,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using environment </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running command: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pack_snippet</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">commandlines</span><span class="o">=</span><span class="n">pack_snippet</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symlinks</span><span class="p">()</span>
 
 <div class="viewcode-block" id="CondaPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.CondaPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with Conda&quot;</span><span class="p">)</span>
@@ -226,7 +226,7 @@
         <span class="c1">#  save as bentoml</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">bentoml_load</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
         <span class="n">mdl</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symlinks</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="get_runner"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.get_runner">[docs]</a><span class="k">def</span> <span class="nf">get_runner</span><span class="p">(</span><span class="n">pack_mode</span><span class="p">):</span>
