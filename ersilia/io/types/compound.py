@@ -3,17 +3,20 @@ import os
 from ...utils.identifiers.compound import CompoundIdentifier
 from ...setup.requirements.rdkit import RdkitRequirement
 from . import EXAMPLES_FOLDER
+from ... import logger
 
 EXAMPLES = "compound.tsv"
 
 
 class IO(object):
     def __init__(self):
+        self.logger = logger
         self.identifier = CompoundIdentifier()
         self.example_file = os.path.join(EXAMPLES_FOLDER, EXAMPLES)
         self.setup()
 
     def setup(self):
+        self.logger.debug("Checking RDKIT requirement")
         RdkitRequirement()
 
     def random(self):
@@ -36,3 +39,9 @@ class IO(object):
             key = self.identifier.encode(inp)
         result = {"key": key, "input": inp, "text": text}
         return result
+
+    def is_input(self, text):
+        return self.identifier._is_smiles(text)
+
+    def is_key(self, text):
+        return self.identifier._is_inchikey(text)

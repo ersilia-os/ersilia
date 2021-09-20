@@ -4,33 +4,29 @@ import importlib
 import tempfile
 
 from .readers.file import TabularFileReader
+from ..hub.content.card import ModelCard
 from .. import ErsiliaBase
-
-ERSILIA_CFG = "ersilia.json"
 
 
 class BaseIOGetter(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
+        self.mc = ModelCard(config_json=config_json)
 
-    def _read_ersilia_file(self, model_id):
-        path = os.path.join(self._model_path(model_id), ERSILIA_CFG)
-        if not os.path.exists(path):
-            return None
-        with open(path, "r") as f:
-            return json.load(f)
-
-    def _read_input_type(self, model_id):
-        data = self._read_ersilia_file(model_id)
-        if data is None:
-            return None
+    def _read_input_from_card(self, model_id):
+        self.logger.debug("Reading card from {0}".format(model_id))
+        input_type = self.mc.get(model_id)["Input"]
+        if len(input_type) != 1:
+            self.logger.error("Ersilia does not deal with multiple inputs yet..!")
         else:
-            return data["input"]
+            input_type = input_type[0]
+            return input_type.lower()
 
     def get(self, model_id):
-        input_type = self._read_input_type(model_id)
+        input_type = self._read_input_from_card(model_id)
         if input_type is None:
             input_type = "naive"
+        self.logger.debug("Input type is: {0}".format(input_type))
         module = ".types.{0}".format(input_type)
         return importlib.import_module(module, package="ersilia.io").IO
 
