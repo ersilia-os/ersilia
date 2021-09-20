@@ -10,7 +10,8 @@ except:
 try:
     from rdkit import Chem
     from rdkit import RDLogger
-    RDLogger.DisableLog('rdApp.*')
+
+    RDLogger.DisableLog("rdApp.*")
 except ModuleNotFoundError as err:
     Chem = None
 

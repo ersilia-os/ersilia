@@ -1,5 +1,6 @@
 import os
 import pathlib
+import shutil
 from .... import ErsiliaBase
 from ...bundle.repo import DockerfileFile
 
@@ -12,11 +13,15 @@ class _Symlinker(ErsiliaBase):
         self.model_id = model_id
 
     def _dest_bundle_symlink(self):
-        #  TODO: Symbolic links between dest folder and bundle or bentoml folders
-        #       This will reduce the storage by 1/2.
-        #        Additionally, we may want to delete from dest all of the files that are not necessary or
-        #       Are outdated.
-        pass
+        # TODO: improve function so that it treats other files.
+        #       at the moment it only deals with the model folder
+        model_id = self.model_id
+        path = self._model_path(model_id)
+        model_path = os.path.join(path, "model")
+        if os.path.exists(model_path):
+            shutil.rmtree(model_path)
+            src = os.path.join(self._bundles_dir, model_id, "artifacts")
+            os.symlink(src, model_path, target_is_directory=True)
 
     def _bentoml_bundle_symlink(self):
         model_id = self.model_id
@@ -28,6 +33,10 @@ class _Symlinker(ErsiliaBase):
         self.logger.debug("Destination location is {0}".format(src))
         self.logger.debug("Building symlinks between {0} and {1}".format(src, dst))
         os.symlink(src, dst, target_is_directory=True)
+
+    def _symlinks(self):
+        self._bentoml_bundle_symlink()
+        self._dest_bundle_symlink()
 
 
 class _Writer(ErsiliaBase):

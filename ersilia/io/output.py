@@ -4,7 +4,6 @@ from .. import ErsiliaBase
 
 
 class DataFrame(object):
-
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
@@ -21,7 +20,6 @@ class DataFrame(object):
 
 
 class GenericOutputAdapter(ErsiliaBase):
-
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Generic output adapter initialized")
@@ -53,7 +51,7 @@ class GenericOutputAdapter(ErsiliaBase):
                 output_keys = [k for k in out.keys()]
             vals = [out[k] for k in output_keys]
             R += [[inp["key"], inp["input"]] + vals]
-        df = DataFrame(data=R, columns = ["key", "input"] + output_keys)
+        df = DataFrame(data=R, columns=["key", "input"] + output_keys)
         return df
 
     def adapt(self, result, output):

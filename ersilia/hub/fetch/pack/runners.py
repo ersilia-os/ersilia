@@ -26,7 +26,7 @@ class SystemPack(BasePack):
         folder = self._model_path(self.model_id)
         script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
         run_command("python {0}".format(script_path))
-        self._bentoml_bundle_symlink()
+        self._symlinks()
 
 
 class VenvPack(BasePack):
@@ -53,7 +53,7 @@ class VenvPack(BasePack):
             self.cfg.HUB.PACK_SCRIPT
         )
         venv.run_commandlines(environment=DEFAULT_VENV, commandlines=pack_snippet)
-        self._bentoml_bundle_symlink()
+        self._symlinks()
 
     def run(self):
         self.logger.debug("Packing model with VirtualEnv")
@@ -118,7 +118,7 @@ class CondaPack(BasePack):
         self.logger.debug("Using environment {0}".format(env))
         self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)
-        self._bentoml_bundle_symlink()
+        self._symlinks()
 
     def run(self):
         self.logger.debug("Packing model with Conda")
@@ -150,7 +150,7 @@ class DockerPack(BasePack):
         #  save as bentoml
         mdl = bentoml_load(tmp_dir)
         mdl.save()
-        self._bentoml_bundle_symlink()
+        self._symlinks()
 
 
 def get_runner(pack_mode):

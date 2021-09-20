@@ -8,6 +8,7 @@ from .actions.pack import ModelPacker
 from .actions.toolize import ModelToolizer
 from .actions.content import CardGetter
 from .actions.check import ModelChecker
+from .actions.sniff import ModelSniffer
 
 
 class ModelFetcher(ErsiliaBase):

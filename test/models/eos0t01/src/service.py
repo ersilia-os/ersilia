@@ -16,7 +16,7 @@ class Service(BentoService):
         output = []
         for inp in input:
             inp = inp["input"]
-            output += [inp[::-1]]
+            output += [{"inverted": inp[::-1]}]
         return [output]
 
     @api(input=JsonInput(), batch=True)
@@ -27,5 +27,5 @@ class Service(BentoService):
             inp = inp["input"]
             linp = list(inp)
             random.shuffle(linp)
-            output += ["".join(linp)]
+            output += [{"shuffled": "".join(linp)}]
         return [output]

@@ -3,7 +3,6 @@ from ...utils.terminal import run_command
 
 
 class RdkitRequirement(object):
-
     def __init__(self):
         self.name = "rdkit"
         try:

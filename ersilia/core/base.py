@@ -1,4 +1,5 @@
 import os
+import subprocess
 from pathlib import Path
 from ..utils.config import Config, Credentials
 from ..default import EOS
@@ -88,8 +89,6 @@ class ErsiliaBase(object):
 
     @staticmethod
     def _get_bento_location(model_id):
-        import subprocess
-
         cmd = ["bentoml", "get", "%s:latest" % model_id, "--print-location", "--quiet"]
         result = subprocess.run(cmd, stdout=subprocess.PIPE)
         result = result.stdout.decode("utf-8").rstrip()

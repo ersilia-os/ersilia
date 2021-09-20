@@ -25,7 +25,9 @@ class TabularFileReader(object):
                     break
                 delimiter = csv.Sniffer().sniff(l, delimiters="\t,;").delimiter
                 delimiters[delimiter] += 1
-        delimiters = [(k,v) for k, v in sorted(delimiters.items(), key=lambda item: -item[1])]
+        delimiters = [
+            (k, v) for k, v in sorted(delimiters.items(), key=lambda item: -item[1])
+        ]
         self.delimiter = delimiters[0][0]
 
     def resolve_columns(self, path):
@@ -36,7 +38,7 @@ class TabularFileReader(object):
             reader = csv.reader(f, delimiter=self.delimiter)
             N = 0
             for r in reader:
-                for j,v in enumerate(r):
+                for j, v in enumerate(r):
                     if self.IO.is_input(v):
                         input[j] += 1
                     if self.IO.is_key(v):
@@ -45,19 +47,20 @@ class TabularFileReader(object):
         if len(key) == 0:
             key = None
         else:
-            key, n = [(k,v) for k,v in sorted(key.items(), key=lambda item: -item[1])][0]
-            if float(n+1)/N < MIN_COLUMN_VALIDITY:
+            key, n = [
+                (k, v) for k, v in sorted(key.items(), key=lambda item: -item[1])
+            ][0]
+            if float(n + 1) / N < MIN_COLUMN_VALIDITY:
                 key = None
         if len(input) == 0:
             input = None
         else:
-            input, n = [(k,v) for k,v in sorted(input.items(), key=lambda item: -item[1])][0]
-            if float(n+1)/N < MIN_COLUMN_VALIDITY:
+            input, n = [
+                (k, v) for k, v in sorted(input.items(), key=lambda item: -item[1])
+            ][0]
+            if float(n + 1) / N < MIN_COLUMN_VALIDITY:
                 input = None
-        matching = {
-            "input": input,
-            "key": key
-        }
+        matching = {"input": input, "key": key}
         self.matching = matching
 
     def has_header(self, path):
