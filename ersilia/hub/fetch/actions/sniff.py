@@ -86,7 +86,7 @@ class ModelSniffer(BaseAction):
         all_schemas = {}
         for api_name in self.model.get_apis():
             self.logger.debug("Running {0}".format(api_name))
-            results = json.loads(self.model.api(api_name, self.inputs))
+            results = [result for result in self.model.api(api_name, self.inputs)]
             schema = self._get_schema(results)
             all_schemas[api_name] = schema
         path = os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE)

@@ -148,4 +148,5 @@ class AutoService(ErsiliaBase):
             api_name=api_name,
             config_json=self.config_json,
         )
-        return _api.post(input=input, output=output, batch_size=batch_size)
+        for result in _api.post(input=input, output=output, batch_size=batch_size):
+            yield result

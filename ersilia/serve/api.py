@@ -1,5 +1,7 @@
+import os
 import requests
 import json
+import tempfile
 
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
@@ -21,10 +23,7 @@ class Api(object):
             "API {0}:{1} initialized at URL {2}".format(model_id, api_name, url)
         )
 
-    def post(self, input, output, batch_size):
-        logger.debug("Posting to {0}".format(self.api_name))
-        logger.debug("Batch size {0}".format(batch_size))
-        input = self.input_adapter.adapt(input, batch_size=batch_size)
+    def _post(self, input, output):
         url = "{0}/{1}".format(self.url, self.api_name)
         self.logger.debug(url)
         self.logger.debug(input)
@@ -41,7 +40,30 @@ class Api(object):
                 return result
             else:
                 self.output_adapter.adapt(result, output)
-                return {"output": output}
+                return [{"output": output}]
         else:
             self.logger.error(response)
             return None
+
+    def post(self, input, output, batch_size):
+        self.logger.debug("Posting to {0}".format(self.api_name))
+        self.logger.debug("Batch size {0}".format(batch_size))
+        if output is not None:
+            self.logger.debug("Output is a file")
+            tmp_folder = tempfile.mkdtemp()
+            fmt = output.split(".")[-1]
+            i = 0
+            for input in self.input_adapter.adapt(input, batch_size=batch_size):
+                subfile = os.path.join(tmp_folder, "{chunk-0}.{1}".format(i, fmt))
+                self._post(input, subfile)
+                subfiles += [subfile]
+                i += 1
+            self.output_adapter.merge(subfiles, output)
+            for o in [output]:
+                yield o
+        else:
+            self.logger.debug("Output is not a file")
+            for input in self.input_adapter.adapt(input, batch_size=batch_size):
+                result = json.loads(self._post(input, output))
+                for r in result:
+                    yield r

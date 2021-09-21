@@ -31,6 +31,10 @@ class GenericOutputAdapter(ErsiliaBase):
         else:
             return False
 
+    @staticmethod
+    def _extension(filename):
+        return filename.split(".")[-1]
+
     def _has_extension(self, output, extension):
         if not self._is_string(output):
             return False
@@ -53,6 +57,24 @@ class GenericOutputAdapter(ErsiliaBase):
             R += [[inp["key"], inp["input"]] + vals]
         df = DataFrame(data=R, columns=["key", "input"] + output_keys)
         return df
+
+    def merge(self, subfiles, output_file):
+        self.logger.debug("Merging {0} files into {1}".format(len(subfiles), output_file))
+        extensions = set([self._extension(x) for x in subfiles + [output_file]])
+        assert (len(extensions) == 1)
+        if self._has_extension(output_file, "json"):
+            data = []
+            for subfile in subfiles:
+                with open(subfile, "r") as f:
+                    data += json.load(f)
+            with open(output_file, "w") as f:
+                json.dump(data, f, indent=4)
+        else:
+            with open(output_file, "w") as fo:
+                for subfile in subfiles:
+                    with open(subfile, "r") as fi:
+                        for l in fi:
+                            fo.write(l)
 
     def adapt(self, result, output):
         if self._has_extension(output, "json"):

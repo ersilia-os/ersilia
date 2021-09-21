@@ -88,7 +88,7 @@ class GenericInputAdapter(object):
         self.adapter = _GenericAdapter(baseio)
 
     def batch_iter(self, data, batch_size):
-        it = iter(iterable)
+        it = iter(data)
         while True:
             chunk = tuple(itertools.islice(it, batch_size))
             if not chunk:

@@ -1,5 +1,6 @@
 import click
 import os
+import json
 
 from . import ersilia_cli
 from .. import echo
@@ -38,11 +39,11 @@ def api_cmd():
             for l in f:
                 url = l.rstrip().split()[1]
         api = Api(model_id, url, api_name)
-        result = api.post(input=input, output=output, batch_size=batch_size)
-        if result is not None:
-            click.echo(result)
-        else:
-            echo(
-                "Something went wrong. Try running in verbose mode (-v) or contact us at hello@ersilia.io",
-                fg="red",
-            )
+        for result in api.post(input=input, output=output, batch_size=batch_size):
+            if result is not None:
+                click.echo(json.dumps(result, indent=4))
+            else:
+                echo(
+                    "Something went wrong. Try running in verbose mode (-v) or contact us at hello@ersilia.io",
+                    fg="red",
+                )
