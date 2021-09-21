@@ -1,17 +1,41 @@
+import os
+import json
 from ..core.modelbase import ModelBase
 from ..serve.autoservice import AutoService
+from ..default import API_SCHEMA_FILE, MODEL_SIZE_FILE, CARD_FILE
 from .. import logger
 
 
 class ErsiliaModel(AutoService):
     def __init__(self, model, config_json=None, overwrite=False, verbose=False):
+        self.logger = logger
         if verbose:
-            logger.set_verbosity(1)
+            self.logger.set_verbosity(1)
         else:
-            logger.set_verbosity(0)
+            self.logger.set_verbosity(0)
         model = ModelBase(model)
         self.overwrite = overwrite
         self.config_json = config_json
         self.model_id = model.model_id
         self.slug = model.slug
         AutoService.__init__(self, self.model_id, config_json=config_json)
+
+    @property
+    def input_type(self):
+        with open(os.path.join(self._model_path(self.model_id), CARD_FILE), "r") as f:
+            return [x.lower() for x in json.load(f)["Input"]]
+
+    @property
+    def output_type(self):
+        with open(os.path.join(self._model_path(self.model_id), CARD_FILE), "r") as f:
+            return [x.lower() for x in json.load(f)["Output"]]
+
+    @property
+    def schema(self):
+        with open(os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE), "r") as f:
+            return json.load(f)
+
+    @property
+    def size(self):
+        with open(os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE), "r") as f:
+            return json.load(f)

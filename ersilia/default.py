@@ -27,6 +27,7 @@ SILENCE_FILE = ".silence.json"
 VERBOSE_FILE = ".verbose.json"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
+DEFAULT_BATCH_SIZE = 100
 
 # Airtable
 AIRTABLE_READONLY_API_KEY = "keycTTh5uQ7v2CPbI"

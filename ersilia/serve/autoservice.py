@@ -7,6 +7,7 @@ from .services import (
     DockerImageService,
 )
 from .api import Api
+from ..default import DEFAULT_BATCH_SIZE
 from .. import ErsiliaBase
 
 
@@ -133,14 +134,18 @@ class AutoService(ErsiliaBase):
     def close(self):
         self.service.close()
 
-    def api(self, api_name, input):
+    def api(self, api_name, input, output=None, batch_size=None):
         self.logger.debug("API: {0}".format(api_name))
         self.logger.debug("MODEL ID: {0}".format(self.model_id))
         self.logger.debug("SERVICE URL: {0}".format(self.service.url))
+        if batch_size is None:
+            batch_size = DEFAULT_BATCH_SIZE
+        else:
+            batch_size = batch_size
         _api = Api(
             model_id=self.model_id,
             url=self.service.url,
             api_name=api_name,
             config_json=self.config_json,
         )
-        return _api.post(input)
+        return _api.post(input=input, output=output, batch_size=batch_size)

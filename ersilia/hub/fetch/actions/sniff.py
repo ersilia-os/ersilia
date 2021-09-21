@@ -79,7 +79,7 @@ class ModelSniffer(BaseAction):
         size = self._get_size_in_mb()
         path = os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE)
         with open(path, "w") as f:
-            json.dump({"size": size}, f, indent=4)
+            json.dump({"size": size, "units": "MB"}, f, indent=4)
         self.logger.debug("Serving model")
         self.model.serve()
         self.logger.debug("Iterating over APIs")

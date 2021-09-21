@@ -21,9 +21,10 @@ class Api(object):
             "API {0}:{1} initialized at URL {2}".format(model_id, api_name, url)
         )
 
-    def post(self, input, output=None):
+    def post(self, input, output, batch_size):
         logger.debug("Posting to {0}".format(self.api_name))
-        input = self.input_adapter.adapt(input)
+        logger.debug("Batch size {0}".format(batch_size))
+        input = self.input_adapter.adapt(input, batch_size=batch_size)
         url = "{0}/{1}".format(self.url, self.api_name)
         self.logger.debug(url)
         self.logger.debug(input)

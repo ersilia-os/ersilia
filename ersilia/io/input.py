@@ -2,6 +2,7 @@ import os
 import json
 import importlib
 import tempfile
+import itertools
 
 from .readers.file import TabularFileReader
 from ..hub.content.card import ModelCard
@@ -86,6 +87,15 @@ class GenericInputAdapter(object):
         baseio = BaseIOGetter(config_json=config_json).get(model_id)
         self.adapter = _GenericAdapter(baseio)
 
-    def adapt(self, inp):
+    def batch_iter(self, data, batch_size):
+        it = iter(iterable)
+        while True:
+            chunk = tuple(itertools.islice(it, batch_size))
+            if not chunk:
+                break
+            yield chunk
+
+    def adapt(self, inp, batch_size):
         data = self.adapter.adapt(inp)
-        return data
+        for chunk in self.batch_iter(data, batch_size):
+            yield chunk

@@ -10,7 +10,7 @@ from ... import ModelBase
 
 def api_cmd():
     """Create api command"""
-    # Example usage: ersilia api {MODEL} {API_NAME} -i {INPUT}
+    # Example usage: ersilia api {MODEL} {API_NAME} -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
     @ersilia_cli.command(
         short_help="Run API on a served model", help="Run API on a served model"
     )
@@ -20,7 +20,10 @@ def api_cmd():
     @click.option(
         "-o", "--output", "output", required=False, default=None, type=click.STRING
     )
-    def api(model, api_name, input, output):
+    @click.option(
+        "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
+    )
+    def api(model, api_name, input, output, batch_size):
         model_id = ModelBase(model).model_id
         tmp_file = tmp_pid_file(model_id)
         if not os.path.exists(tmp_file):
@@ -35,7 +38,7 @@ def api_cmd():
             for l in f:
                 url = l.rstrip().split()[1]
         api = Api(model_id, url, api_name)
-        result = api.post(input, output)
+        result = api.post(input=input, output=output, batch_size=batch_size)
         if result is not None:
             click.echo(result)
         else:
