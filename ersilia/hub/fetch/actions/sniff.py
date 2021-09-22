@@ -5,7 +5,7 @@ from pathlib import Path
 
 from . import BaseAction
 from .... import ErsiliaModel
-from ....io.input import GenericInputAdapter
+from ....io.input import ExampleGenerator
 from ....io.pure import PureDataTyper
 from ....default import API_SCHEMA_FILE, MODEL_SIZE_FILE
 
@@ -18,9 +18,9 @@ class ModelSniffer(BaseAction):
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
         self.model = ErsiliaModel(model_id, config_json=config_json, overwrite=False)
-        io = GenericInputAdapter(model_id, config_json=config_json).adapter.IO
-        self.inputs = [io.random()["input"] for _ in range(N)]
-        self.logger.debug("Inputs sampled")
+        eg = ExampleGenerator(model_id, config_json=config_json)
+        self.inputs = eg.example(N, file_name=None, simple=True)
+        self.logger.debug("Inputs sampled: {0}".format(len(self.inputs)))
 
     @staticmethod
     def __dicts_are_identical(dicts):
@@ -33,14 +33,16 @@ class ModelSniffer(BaseAction):
     @staticmethod
     def _get_directory_size(dir):
         root_directory = Path(dir)
-        bytes = sum(f.stat().st_size for f in root_directory.glob('**/*') if f.is_file())
+        bytes = sum(
+            f.stat().st_size for f in root_directory.glob("**/*") if f.is_file()
+        )
         return bytes
 
     def _get_size_in_mb(self):
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
-        mbytes = size/(1024**2)
+        mbytes = size / (1024 ** 2)
         return mbytes
 
     def _get_schema(self, results):
@@ -48,29 +50,26 @@ class ModelSniffer(BaseAction):
         output_schema = collections.defaultdict(list)
         for res in results:
             inp = res["input"]
-            for k,v in inp.items():
+            for k, v in inp.items():
                 pdt = PureDataTyper(v)
                 input_schema[k] += [pdt.get_type()]
             out = res["output"]
-            for k,v in out.items():
+            for k, v in out.items():
                 pdt = PureDataTyper(v)
                 output_schema[k] += [pdt.get_type()]
         input_schema_ = {}
-        for k,v in input_schema.items():
+        for k, v in input_schema.items():
             if self.__dicts_are_identical(v):
                 input_schema_[k] = v[0]
             else:
                 self.looger.error("Input data types are not consistent")
         output_schema_ = {}
-        for k,v in output_schema.items():
+        for k, v in output_schema.items():
             if self.__dicts_are_identical(v):
                 output_schema_[k] = v[0]
             else:
                 self.logger.error("Output data types are not consistent")
-        schema = {
-            "input": input_schema_,
-            "output": output_schema_
-        }
+        schema = {"input": input_schema_, "output": output_schema_}
         return schema
 
     def sniff(self):

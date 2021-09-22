@@ -1,5 +1,6 @@
 import os
 import json
+import csv
 import importlib
 import tempfile
 import itertools
@@ -99,3 +100,42 @@ class GenericInputAdapter(object):
         data = self.adapter.adapt(inp)
         for chunk in self.batch_iter(data, batch_size):
             yield chunk
+
+
+class ExampleGenerator(object):
+    def __init__(self, model_id, config_json=None):
+        self.IO = BaseIOGetter(config_json=config_json).get(model_id)()
+
+    @staticmethod
+    def _get_delimiter(file_name):
+        extension = file_name.split(".")[-1]
+        if extension == "tsv":
+            return "\t"
+        else:
+            return ","
+
+    def example(self, n_samples, file_name, simple):
+        if file_name is None:
+            data = [v for v in self.IO.example(n_samples)]
+            if simple:
+                data = [d["input"] for d in data]
+            return data
+        else:
+            extension = file_name.split(".")[-1]
+            if extension == "json":
+                with open(file_name, "w") as f:
+                    data = [v for v in self.IO.example(n_samples)]
+                    if simple:
+                        data = [d["input"] for d in data]
+                    json.dump(data, f, indent=4)
+            else:
+                delimiter = self._get_delimiter(file_name)
+                with open(file_name, "w", newline="") as f:
+                    writer = csv.writer(f, delimiter=delimiter)
+                    if simple:
+                        for v in self.IO.example(n_samples):
+                            writer.writerow([v["input"]])
+                    else:
+                        writer.writerow(["key", "input", "text"])
+                        for v in self.IO.example(n_samples):
+                            writer.writerow([v["key"], v["input"], v["text"]])

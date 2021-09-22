@@ -53,8 +53,9 @@ class Api(object):
             tmp_folder = tempfile.mkdtemp()
             fmt = output.split(".")[-1]
             i = 0
+            subfiles = []
             for input in self.input_adapter.adapt(input, batch_size=batch_size):
-                subfile = os.path.join(tmp_folder, "{chunk-0}.{1}".format(i, fmt))
+                subfile = os.path.join(tmp_folder, "chunk-{0}.{1}".format(i, fmt))
                 self._post(input, subfile)
                 subfiles += [subfile]
                 i += 1

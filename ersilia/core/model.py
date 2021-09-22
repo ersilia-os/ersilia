@@ -2,6 +2,7 @@ import os
 import json
 from ..core.modelbase import ModelBase
 from ..serve.autoservice import AutoService
+from ..io.input import ExampleGenerator
 from ..default import API_SCHEMA_FILE, MODEL_SIZE_FILE, CARD_FILE
 from .. import logger
 
@@ -32,10 +33,18 @@ class ErsiliaModel(AutoService):
 
     @property
     def schema(self):
-        with open(os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE), "r") as f:
+        with open(
+            os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE), "r"
+        ) as f:
             return json.load(f)
 
     @property
     def size(self):
-        with open(os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE), "r") as f:
+        with open(
+            os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE), "r"
+        ) as f:
             return json.load(f)
+
+    def example(self, n_samples, file_name=None, simple=True):
+        eg = ExampleGenerator(model_id=self.model_id, config_json=self.config_json)
+        return eg.example(n_samples=n_samples, file_name=file_name, simple=simple)

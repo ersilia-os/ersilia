@@ -15,6 +15,7 @@ def create_ersilia_cli(pip_installed_bundle_path=None):
     cmd.serve()
     cmd.close()
     cmd.api()
+    cmd.example()
     cmd.catalog()
     cmd.card()
 

@@ -1,21 +1,70 @@
 import csv
 import json
+import itertools
 from .. import ErsiliaBase
 
 
 class DataFrame(object):
     def __init__(self, data, columns):
+        self._is_serialized = False
         self.data = data
         self.columns = columns
+
+    @staticmethod
+    def _get_delimiter(file_name):
+        extension = file_name.split(".")[-1]
+        if extension == "tsv":
+            return "\t"
+        else:
+            return ","
+
+    @staticmethod
+    def _default_feature_names(col, n):
+        chars = len(str(n))
+        names = []
+        for i in range(n):
+            i = str(i).zfill(chars)
+            names += ["{0}-{1}".format(col, i)]
+        return names
+
+    def serialize(self):
+        if self._is_serialized:
+            return
+        skip_cols = ["key", "input"]
+        skip_cols_set = set(skip_cols)
+        idx_cols = [(j, col) for j, col in enumerate(self.columns) if col not in skip_cols_set]
+        new_cols = []
+        done_cols = set()
+        R = []
+        for d in self.data:
+            r = []
+            for j, col in idx_cols:
+                v = [v for v in itertools.chain.from_iterable([d[j]])]
+                if col not in done_cols:
+                    if len(v) == 1:
+                        names = [col]
+                    else:
+                        names = self._default_feature_names(col, len(v))
+                    new_cols += names
+                r += v
+            R += [r]
+        S = []
+        for i in range(len(self.data)):
+            s = [self.data[i][0], self.data[i][1]] + R[i]
+            S += [s]
+        self.data = S
+        self.columns = skip_cols + new_cols
+        self._is_serialized = True
 
     def write(self, file_name, delimiter=None):
         with open(file_name, "w", newline="") as f:
             if delimiter is None:
-                writer = csv.writer(f)
-            else:
-                writer = csv.writer(f, delimiter=delimiter)
+                delimiter = self._get_delimiter(file_name)
+            writer = csv.writer(f, delimiter=delimiter)
             writer.writerow(self.columns)
-            for row in self.data:
+            for i, row in enumerate(self.data):
+                if type(row) is float:
+                    print(i, row)
                 writer.writerow(row)
 
 
@@ -56,12 +105,15 @@ class GenericOutputAdapter(ErsiliaBase):
             vals = [out[k] for k in output_keys]
             R += [[inp["key"], inp["input"]] + vals]
         df = DataFrame(data=R, columns=["key", "input"] + output_keys)
+        df.serialize()
         return df
 
     def merge(self, subfiles, output_file):
-        self.logger.debug("Merging {0} files into {1}".format(len(subfiles), output_file))
+        self.logger.debug(
+            "Merging {0} files into {1}".format(len(subfiles), output_file)
+        )
         extensions = set([self._extension(x) for x in subfiles + [output_file]])
-        assert (len(extensions) == 1)
+        assert len(extensions) == 1
         if self._has_extension(output_file, "json"):
             data = []
             for subfile in subfiles:

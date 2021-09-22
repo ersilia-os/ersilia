@@ -1,9 +1,12 @@
-import random
 import os
+import csv
+import random
 from ...utils.identifiers.compound import CompoundIdentifier
 from ...setup.requirements.rdkit import RdkitRequirement
-from . import EXAMPLES_FOLDER
 from ... import logger
+from ..readers.file import TabularFileReader
+from . import EXAMPLES_FOLDER
+
 
 EXAMPLES = "compound.tsv"
 
@@ -19,11 +22,20 @@ class IO(object):
         self.logger.debug("Checking RDKIT requirement")
         RdkitRequirement()
 
-    def random(self):
+    def example(self, n_samples):
+        tfr = TabularFileReader(self)
+        tfr.get_delimiter(self.example_file)
+        R = []
         with open(self.example_file, "r") as f:
-            line = random.choice(f.readlines()).rstrip("\n").split("\t")
-        result = {"key": line[0], "input": line[1], "text": line[2]}
-        return result
+            reader = csv.reader(f, delimiter=tfr.delimiter)
+            for r in reader:
+                R += [r]
+        idxs = [i for i in range(len(R))]
+        idxs = random.choices(idxs, k=n_samples)
+        for idx in idxs:
+            r = R[idx]
+            d = {"key": r[0], "input": r[1], "text": r[2]}
+            yield d
 
     def parse(self, text):
         text_type = self.identifier.guess_type(text)

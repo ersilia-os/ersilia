@@ -1,5 +1,3 @@
-# TODO: A file reader that automatically guesses a format based on the content of the file.
-
 import csv
 import collections
 from ... import logger

@@ -47,6 +47,11 @@ class Command(object):
 
         dockerize_cmd()
 
+    def example(self):
+        from .commands.example import example_cmd
+
+        example_cmd()
+
     def fetch(self):
         from .commands.fetch import fetch_cmd
 

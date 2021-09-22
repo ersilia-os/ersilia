@@ -10,6 +10,9 @@ from .api import Api
 from ..default import DEFAULT_BATCH_SIZE
 from .. import ErsiliaBase
 
+DEFAULT_OUTPUT = None
+DEFAULT_BATCH_SIZE = None
+
 
 class AutoService(ErsiliaBase):
     def __init__(self, model_id, service_class=None, config_json=None):
@@ -91,8 +94,8 @@ class AutoService(ErsiliaBase):
         self._set_apis()
 
     def _set_api(self, api_name):
-        def _method(x):
-            return self.api(api_name, x)
+        def _method(input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE):
+            return self.api(api_name, input, output, batch_size)
 
         setattr(self, api_name, _method)
 
@@ -134,7 +137,7 @@ class AutoService(ErsiliaBase):
     def close(self):
         self.service.close()
 
-    def api(self, api_name, input, output=None, batch_size=None):
+    def api(self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE):
         self.logger.debug("API: {0}".format(api_name))
         self.logger.debug("MODEL ID: {0}".format(self.model_id))
         self.logger.debug("SERVICE URL: {0}".format(self.service.url))
