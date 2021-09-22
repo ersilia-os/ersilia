@@ -103,7 +103,12 @@ class GitHubDownloader(object):
         dotgit = os.path.join(path, ".git")
         if os.path.exists(dotgit):
             shutil.rmtree(dotgit)
-            os.remove(os.path.join(path, ".gitignore"))
+        gitignore = os.path.join(path, ".gitignore")
+        if os.path.exists(gitignore):
+            os.remove(gitignore)
+        gitattributes = os.path.join(path, ".gitattributes")
+        if os.path.exists(gitattributes):
+            os.remove(gitattributes)
 
     def _exists(self, destination):
         if os.path.exists(destination):
