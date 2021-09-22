@@ -198,10 +198,14 @@
                 <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+                <span class="n">use_header</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">for</span> <span class="n">subfile</span> <span class="ow">in</span> <span class="n">subfiles</span><span class="p">:</span>
                     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">use_header</span><span class="p">:</span>
+                            <span class="nb">next</span><span class="p">(</span><span class="n">fi</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">fi</span><span class="p">:</span>
-                            <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span></div>
+                            <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+                    <span class="n">use_header</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="GenericOutputAdapter.adapt"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">):</span>

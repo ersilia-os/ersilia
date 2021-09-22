@@ -78,6 +78,7 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="n">MIN_COLUMN_VALIDITY</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">DEFAULT_DELIMITER</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
 
 
 <div class="viewcode-block" id="TabularFileReader"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader">[docs]</a><span class="k">class</span> <span class="nc">TabularFileReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -96,7 +97,10 @@
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">sniff_line_limit</span><span class="p">:</span>
                     <span class="k">break</span>
-                <span class="n">delimiter</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">Sniffer</span><span class="p">()</span><span class="o">.</span><span class="n">sniff</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">delimiters</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">,;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">delimiter</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">delimiter</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">Sniffer</span><span class="p">()</span><span class="o">.</span><span class="n">sniff</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">delimiters</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">,;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">delimiter</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">delimiter</span> <span class="o">=</span> <span class="n">DEFAULT_DELIMITER</span>
                 <span class="n">delimiters</span><span class="p">[</span><span class="n">delimiter</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">delimiters</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">delimiters</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="o">-</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
