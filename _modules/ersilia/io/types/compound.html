@@ -73,12 +73,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.io.types.compound</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">...utils.identifiers.compound</span> <span class="kn">import</span> <span class="n">CompoundIdentifier</span>
 <span class="kn">from</span> <span class="nn">...setup.requirements.rdkit</span> <span class="kn">import</span> <span class="n">RdkitRequirement</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">EXAMPLES_FOLDER</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">..readers.file</span> <span class="kn">import</span> <span class="n">TabularFileReader</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">EXAMPLES_FOLDER</span>
+
 
 <span class="n">EXAMPLES</span> <span class="o">=</span> <span class="s2">&quot;compound.tsv&quot;</span>
 
@@ -94,11 +97,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking RDKIT requirement&quot;</span><span class="p">)</span>
         <span class="n">RdkitRequirement</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="IO.random"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.random">[docs]</a>    <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IO.example"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.example">[docs]</a>    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+        <span class="n">tfr</span> <span class="o">=</span> <span class="n">TabularFileReader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">tfr</span><span class="o">.</span><span class="n">get_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_file</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">tfr</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span>
+        <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">))]</span>
+        <span class="n">idxs</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">idxs</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]}</span>
+            <span class="k">yield</span> <span class="n">d</span></div>
 
 <div class="viewcode-block" id="IO.parse"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="n">text_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">guess_type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>

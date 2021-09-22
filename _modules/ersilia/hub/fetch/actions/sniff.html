@@ -81,7 +81,7 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">ErsiliaModel</span>
-<span class="kn">from</span> <span class="nn">....io.input</span> <span class="kn">import</span> <span class="n">GenericInputAdapter</span>
+<span class="kn">from</span> <span class="nn">....io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span> <span class="nn">....io.pure</span> <span class="kn">import</span> <span class="n">PureDataTyper</span>
 <span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">API_SCHEMA_FILE</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span>
 
@@ -94,9 +94,9 @@
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">io</span> <span class="o">=</span> <span class="n">GenericInputAdapter</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">IO</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">io</span><span class="o">.</span><span class="n">random</span><span class="p">()[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Inputs sampled&quot;</span><span class="p">)</span>
+        <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Inputs sampled: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)))</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__dicts_are_identical</span><span class="p">(</span><span class="n">dicts</span><span class="p">):</span>
@@ -109,14 +109,16 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_directory_size</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
         <span class="n">root_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
-        <span class="nb">bytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">root_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;**/*&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">())</span>
+        <span class="nb">bytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">root_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="nb">bytes</span>
 
     <span class="k">def</span> <span class="nf">_get_size_in_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">repo_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_directory_size</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_directory_size</span><span class="p">(</span><span class="n">repo_dir</span><span class="p">)</span>
-        <span class="n">mbytes</span> <span class="o">=</span> <span class="n">size</span><span class="o">/</span><span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">mbytes</span> <span class="o">=</span> <span class="n">size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">mbytes</span>
 
     <span class="k">def</span> <span class="nf">_get_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
@@ -124,29 +126,26 @@
         <span class="n">output_schema</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="n">inp</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">pdt</span> <span class="o">=</span> <span class="n">PureDataTyper</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                 <span class="n">input_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">pdt</span><span class="o">.</span><span class="n">get_type</span><span class="p">()]</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">pdt</span> <span class="o">=</span> <span class="n">PureDataTyper</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                 <span class="n">output_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">pdt</span><span class="o">.</span><span class="n">get_type</span><span class="p">()]</span>
         <span class="n">input_schema_</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">input_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">input_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dicts_are_identical</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
                 <span class="n">input_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">looger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Input data types are not consistent&quot;</span><span class="p">)</span>
         <span class="n">output_schema_</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">output_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">output_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dicts_are_identical</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
                 <span class="n">output_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Output data types are not consistent&quot;</span><span class="p">)</span>
-        <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">input_schema_</span><span class="p">,</span>
-            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output_schema_</span>
-        <span class="p">}</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">input_schema_</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output_schema_</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">schema</span>
 
 <div class="viewcode-block" id="ModelSniffer.sniff"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.sniff.ModelSniffer.sniff">[docs]</a>    <span class="k">def</span> <span class="nf">sniff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
