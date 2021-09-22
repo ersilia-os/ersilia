@@ -3,6 +3,7 @@ import collections
 from ... import logger
 
 MIN_COLUMN_VALIDITY = 0.8
+DEFAULT_DELIMITER = ","
 
 
 class TabularFileReader(object):
@@ -21,7 +22,10 @@ class TabularFileReader(object):
                 i += 1
                 if i > self.sniff_line_limit:
                     break
-                delimiter = csv.Sniffer().sniff(l, delimiters="\t,;").delimiter
+                try:
+                    delimiter = csv.Sniffer().sniff(l, delimiters="\t,;").delimiter
+                except:
+                    delimiter = DEFAULT_DELIMITER
                 delimiters[delimiter] += 1
         delimiters = [
             (k, v) for k, v in sorted(delimiters.items(), key=lambda item: -item[1])

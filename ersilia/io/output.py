@@ -123,10 +123,14 @@ class GenericOutputAdapter(ErsiliaBase):
                 json.dump(data, f, indent=4)
         else:
             with open(output_file, "w") as fo:
+                use_header = True
                 for subfile in subfiles:
                     with open(subfile, "r") as fi:
+                        if not use_header:
+                            next(fi)
                         for l in fi:
                             fo.write(l)
+                    use_header = False
 
     def adapt(self, result, output):
         if self._has_extension(output, "json"):
