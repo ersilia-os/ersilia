@@ -22,7 +22,7 @@ class SimpleVenv(object):
         path = self._get_path(environment)
         if self.exists(path):
             return
-        run_command("python -m venv {0}".format(path))
+        run_command("python -m venv {0} --symlinks --clear".format(path))
 
     def delete(self, environment):
         path = self._get_path(environment)
