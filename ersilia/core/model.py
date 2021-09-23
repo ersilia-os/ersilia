@@ -20,7 +20,9 @@ class ErsiliaModel(AutoService):
         self.config_json = config_json
         self.model_id = model.model_id
         self.slug = model.slug
-        self.api_schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
+        self.api_schema = ApiSchema(
+            model_id=self.model_id, config_json=self.config_json
+        )
         AutoService.__init__(self, self.model_id, config_json=self.config_json)
 
     @property

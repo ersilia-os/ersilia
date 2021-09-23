@@ -32,7 +32,9 @@ class DataFrame(object):
             return
         skip_cols = ["key", "input"]
         skip_cols_set = set(skip_cols)
-        idx_cols = [(j, col) for j, col in enumerate(self.columns) if col not in skip_cols_set]
+        idx_cols = [
+            (j, col) for j, col in enumerate(self.columns) if col not in skip_cols_set
+        ]
         new_cols = []
         done_cols = set()
         R = []

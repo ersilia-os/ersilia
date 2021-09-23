@@ -8,6 +8,7 @@ from ..io.output import GenericOutputAdapter
 from .. import logger
 from .schema import ApiSchema
 
+
 class Api(object):
     def __init__(self, model_id, url, api_name, config_json=None):
         self.model_id = model_id
@@ -22,7 +23,13 @@ class Api(object):
         self.logger.debug(
             "API {0}:{1} initialized at URL {2}".format(model_id, api_name, url)
         )
-        self._empty_output = ApiSchema(model_id=model_id, config_json=None).empty_output_by_api(api_name=api_name)
+        try:
+            self._empty_output = ApiSchema(
+                model_id=model_id, config_json=None
+            ).empty_output_by_api(api_name=api_name)
+        except:
+            self.logger.info("No empty output available")
+            self._empty_output = None
 
     def __result_returner(self, result, output):
         if output is None:
@@ -48,7 +55,9 @@ class Api(object):
     def _post(self, input, output):
         result = self._do_post(input, output)
         if result is None and self._batch_size > 1:
-            self.logger.warning("Batch prediction didn't seem to work. Doing predictions one by one...")
+            self.logger.warning(
+                "Batch prediction didn't seem to work. Doing predictions one by one..."
+            )
             result = []
             for inp_one in input:
                 r = self._do_post([inp_one], output=None)
@@ -73,7 +82,9 @@ class Api(object):
             i = 0
             subfiles = []
             for input in self.input_adapter.adapt(input, batch_size=batch_size):
-                subfile = os.path.join(tmp_folder, "{0}-chunk-{1}.{2}".format(output_base, i, fmt))
+                subfile = os.path.join(
+                    tmp_folder, "{0}-chunk-{1}.{2}".format(output_base, i, fmt)
+                )
                 self._post(input, subfile)
                 subfiles += [subfile]
                 i += 1
