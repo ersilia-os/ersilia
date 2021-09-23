@@ -2,8 +2,9 @@ import os
 import json
 from ..core.modelbase import ModelBase
 from ..serve.autoservice import AutoService
+from ..serve.schema import ApiSchema
 from ..io.input import ExampleGenerator
-from ..default import API_SCHEMA_FILE, MODEL_SIZE_FILE, CARD_FILE
+from ..default import MODEL_SIZE_FILE, CARD_FILE
 from .. import logger
 
 
@@ -19,7 +20,8 @@ class ErsiliaModel(AutoService):
         self.config_json = config_json
         self.model_id = model.model_id
         self.slug = model.slug
-        AutoService.__init__(self, self.model_id, config_json=config_json)
+        self.api_schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
+        AutoService.__init__(self, self.model_id, config_json=self.config_json)
 
     @property
     def input_type(self):
@@ -33,10 +35,7 @@ class ErsiliaModel(AutoService):
 
     @property
     def schema(self):
-        with open(
-            os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE), "r"
-        ) as f:
-            return json.load(f)
+        return self.api_schema.schema
 
     @property
     def size(self):
