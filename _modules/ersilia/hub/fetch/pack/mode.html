@@ -102,20 +102,20 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Same python and same bentoml, run in system&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: system&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="s2">&quot;system&quot;</span>
-        <span class="c1"># model needs some installs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model needs some installs&quot;</span><span class="p">)</span>
         <span class="n">cmds</span> <span class="o">=</span> <span class="n">dockerfile</span><span class="o">.</span><span class="n">get_install_commands</span><span class="p">()</span>
-        <span class="c1"># only python/conda installs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking if only python/conda install will be sufficient&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">cmds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1">#  no conda is necessary</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">cmds</span><span class="p">[</span><span class="s2">&quot;conda&quot;</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: venv&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="s2">&quot;venv&quot;</span>
-            <span class="c1">#  conda is necessary</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: conda&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="s2">&quot;conda&quot;</span>
-        <span class="c1"># python/conda installs are not sufficient, use dockerfile</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;The python/conda installs are not sufficient, use docker&quot;</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: docker&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;docker&quot;</span></div></div>
 </pre></div>
