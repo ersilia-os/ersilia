@@ -11,7 +11,7 @@ from ..default import DEFAULT_BATCH_SIZE
 from .. import ErsiliaBase
 
 DEFAULT_OUTPUT = None
-DEFAULT_BATCH_SIZE = None
+DEFAULT_BATCH_SIZE = 1
 
 
 class AutoService(ErsiliaBase):
@@ -22,7 +22,6 @@ class AutoService(ErsiliaBase):
         self.model_id = model_id
         if service_class is None:
             self.logger.debug("No service class provided, deciding automatically")
-            # decide automatically
             service_class_file = os.path.join(
                 self._get_bundle_location(model_id), "service_class.txt"
             )

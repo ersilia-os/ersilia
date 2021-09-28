@@ -54,7 +54,8 @@ class Api(object):
 
     def _post(self, input, output):
         result = self._do_post(input, output)
-        if result is None and self._batch_size > 1:
+        if result is None and self._batch_size > 1 and len(input) > 1:
+            # if batch predictions didn't work, do one by one
             self.logger.warning(
                 "Batch prediction didn't seem to work. Doing predictions one by one..."
             )
@@ -66,6 +67,11 @@ class Api(object):
                 else:
                     r = json.loads(r)
                 result += r
+            result = json.dumps(result, indent=4)
+            result = self.__result_returner(result, output)
+        if result is None and len(input) == 1:
+            # if the only one prediction did not work, return empty
+            result = [{"input": input[0], "output": self._empty_output}]
             result = json.dumps(result, indent=4)
             result = self.__result_returner(result, output)
         return result

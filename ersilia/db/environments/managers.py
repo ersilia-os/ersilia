@@ -55,12 +55,10 @@ class DockerManager(ErsiliaBase):
 
     def images_of_model(self, model_id, only_latest=True):
         images = self.images()
-        regex = re.compile("{0}/{1}".format(DOCKERHUB_ORG, model_id))
         img_dict = {}
         for k, v in images.items():
-            if regex.search(k):
-                if only_latest and k.split(":")[-1] != DOCKERHUB_LATEST_TAG:
-                    continue
+            org, img, tag = self.docker._splitter(k)
+            if img == model_id:
                 img_dict[k] = v
         return img_dict
 
@@ -108,7 +106,9 @@ class DockerManager(ErsiliaBase):
         )
 
     def run(self, model_id, workers=1, enable_microbatch=True):
+        self.logger.debug("Running docker manager")
         imgs = self.images_of_model(model_id, only_latest=True)
+        self.logger.debug("Available images: {0}".format(imgs))
         img = [k for k in imgs.keys()][0]
         if enable_microbatch:
             mb_string = "--enable-microbatch"

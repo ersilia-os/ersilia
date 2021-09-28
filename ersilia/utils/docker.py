@@ -10,6 +10,23 @@ class SimpleDocker(object):
         self.identifier = LongIdentifier()
 
     @staticmethod
+    def _splitter(name):
+        name = name.split("/")
+        if len(name) == 2:
+            org = name[0]
+            img = name[1]
+        else:
+            org = None
+            img = name[0]
+        img_ = img.split(":")
+        if len(img_) == 2:
+            img = img_[0]
+            tag = img_[1]
+        else:
+            img = img_[0]
+        return org, img, tag
+
+    @staticmethod
     def _image_name(org, img, tag):
         return "%s/%s:%s" % (org, img, tag)
 

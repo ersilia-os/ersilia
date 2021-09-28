@@ -65,8 +65,6 @@ class DataFrame(object):
             writer = csv.writer(f, delimiter=delimiter)
             writer.writerow(self.columns)
             for i, row in enumerate(self.data):
-                if type(row) is float:
-                    print(i, row)
                 writer.writerow(row)
 
 

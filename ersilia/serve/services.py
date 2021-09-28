@@ -13,7 +13,6 @@ from ..db.environments.managers import DockerManager
 from ..utils.conda import SimpleConda
 from ..utils.docker import SimpleDocker
 from ..utils.venv import SimpleVenv
-from ..default import DOCKERHUB_ORG
 from ..default import DEFAULT_VENV
 from ..default import PACKMODE_FILE
 
@@ -24,10 +23,8 @@ TIMEOUT_SECONDS = 1000
 class BaseServing(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
-        self.logger.debug("Initializing base service")
         self.model_id = model_id
         self.bundle_tag = self._get_latest_bundle_tag(model_id=self.model_id)
-        self.logger.debug("{0}:{1}".format(self.model_id, self.bundle_tag))
 
     def _get_info_from_bento(self):
         """Get info available from the Bento"""
@@ -264,26 +261,26 @@ class DockerImageService(BaseServing):
     def __exit__(self, exception_type, exception_value, traceback):
         self.close()
 
-    @staticmethod
-    def _splitter(env):
-        return env.split(":")
-
     def _get_env_name(self):
         envs = list(self.db.envs_of_model(self.model_id))
         for env in envs:
-            img, tag = self._splitter(env)
-            if self.docker.exists(org=DOCKERHUB_ORG, img=img, tag=tag):
+            org, img, tag = self.docker._splitter(env)
+            if self.docker.exists(org=org, img=img, tag=tag):
+                self.logger.debug("Docker image found {0}".format(env))
                 return env
         return None
 
     def is_available(self):
         env = self._get_env_name()
         if env is not None:
+            self.logger.debug("Docker image service available")
             return True
         else:
+            self.logger.debug("Docker image service not available")
             return False
 
     def serve(self):
+        self.logger.debug("Calling docker manager")
         res = self.dm.run(self.model_id)
         self.container_name = res["container_name"]
         self.port = res["port"]

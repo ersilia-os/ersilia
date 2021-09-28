@@ -1,5 +1,6 @@
 import os
 import tempfile
+import bentoml
 
 from . import BasePack
 from ....utils.terminal import run_command
@@ -134,21 +135,46 @@ class DockerPack(BasePack):
         self.docker_tag = self.cfg.ENV.DOCKER.REPO_TAG
         self.logger.debug("Initializing docker packer")
 
+    def _load_model_from_tmp(self, path):
+        path = os.path.join(path, self.model_id)
+        if not os.path.exists(path):
+            return None
+        items = sorted(os.listdir(path))
+        if not items:
+            return None
+        else:
+            tag = items[-1]
+        path = os.path.join(path, tag)
+        return bentoml.load(path)
+
+    def _setup(self):
+        name = self.docker._image_name(self.docker_org, self.model_id, self.docker_tag)
+        self.logger.debug(
+            "Storing Docker image {0} in the local environment database".format(name)
+        )
+        db = EnvironmentDb(config_json=self.config_json)
+        db.table = "docker"
+        db.insert(model_id=self.model_id, env=name)
+        self.logger.debug("Done with the Docker setup")
+
     def run(self):
         self.logger.debug("Packing model with Docker")
         model_id = self.model_id
-        # build docker image
+        self._setup()
+        self.logger.debug("Building docker image")
         self.docker.build(".", self.docker_org, model_id, self.docker_tag)
-        # pack with the docker script
+        self.logger.debug("Running docker")
         name = self.docker.run(self.docker_org, model_id, self.docker_tag, name=None)
+        self.logger.debug("Executing container {0}".format(name))
         self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
-        # copy bundle from docker image to host
+        self.logger.debug("Copying bundle from docker image to host")
         tmp_dir = tempfile.mkdtemp()
+        self.logger.debug("Using this temporary directory: {0}".format(tmp_dir))
         self.docker.cp_from_container(
             name, "/root/bentoml/repository/%s" % model_id, tmp_dir
         )
-        #  save as bentoml
-        mdl = bentoml_load(tmp_dir)
+        self.logger.debug("Loading bentoml")
+        mdl = self._load_model_from_tmp(tmp_dir)
         mdl.save()
         self._symlinks()
 

@@ -26,19 +26,19 @@ class PackModeDecision(ErsiliaBase):
                 self.logger.debug("Same python and same bentoml, run in system")
                 self.logger.debug("Mode: system")
                 return "system"
-        # model needs some installs
+        self.logger.debug("Model needs some installs")
         cmds = dockerfile.get_install_commands()
-        # only python/conda installs
+        self.logger.debug("Checking if only python/conda install will be sufficient")
         if cmds is not None:
-            #  no conda is necessary
             if not cmds["conda"]:
                 self.logger.debug("Mode: venv")
                 return "venv"
-            #  conda is necessary
             else:
                 self.logger.debug("Mode: conda")
                 return "conda"
-        # python/conda installs are not sufficient, use dockerfile
         else:
+            self.logger.debug(
+                "The python/conda installs are not sufficient, use docker"
+            )
             self.logger.debug("Mode: docker")
             return "docker"
