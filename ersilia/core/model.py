@@ -9,12 +9,13 @@ from .. import logger
 
 
 class ErsiliaModel(AutoService):
-    def __init__(self, model, config_json=None, overwrite=False, verbose=False):
+    def __init__(self, model, config_json=None, overwrite=False, verbose=None):
         self.logger = logger
-        if verbose:
-            self.logger.set_verbosity(1)
-        else:
-            self.logger.set_verbosity(0)
+        if verbose is not None:
+            if verbose:
+                self.logger.set_verbosity(1)
+            else:
+                self.logger.set_verbosity(0)
         model = ModelBase(model)
         self.overwrite = overwrite
         self.config_json = config_json
@@ -38,6 +39,10 @@ class ErsiliaModel(AutoService):
     @property
     def schema(self):
         return self.api_schema.schema
+
+    @property
+    def meta(self):
+        return self.api_schema.meta
 
     @property
     def size(self):

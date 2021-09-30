@@ -33,8 +33,9 @@ class Api(object):
 
     def __result_returner(self, result, output):
         if output is None:
-            return result
+            return self.output_adapter.adapt(result, output)
         else:
+            self.logger.debug("Working on output: {0}".format(output))
             self.output_adapter.adapt(result, output)
             return [{"output": output}]
 
@@ -43,6 +44,7 @@ class Api(object):
         response = requests.post(url, json=input)
         if response.status_code == 200:
             result_ = response.json()
+            result_ = self.output_adapter.refactor_response(result_)
             result = []
             for i, o in zip(input, result_):
                 result += [{"input": i, "output": o}]
@@ -103,3 +105,6 @@ class Api(object):
                 result = json.loads(self._post(input, output))
                 for r in result:
                     yield r
+
+    def meta(self):
+        return self.output_adapter.meta()

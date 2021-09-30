@@ -17,6 +17,8 @@ class Service(BentoService):
         for inp in input:
             inp = inp["input"]
             output += [{"inverted": inp[::-1]}]
+        output = {"result": output,
+                  "meta": None}
         return [output]
 
     @api(input=JsonInput(), batch=True)

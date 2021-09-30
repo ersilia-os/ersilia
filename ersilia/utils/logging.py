@@ -51,6 +51,7 @@ class Logger(object):
         else:
             self._unlog_from_console()
             self._unlog_terminal_commands_from_console()
+        self.verbosity = verbose
 
     def debug(self, text):
         self.logger.debug(text)

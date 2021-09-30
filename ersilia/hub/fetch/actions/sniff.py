@@ -71,6 +71,9 @@ class ModelSniffer(BaseAction):
                 output_schema_[k] = v[0]
             else:
                 self.logger.error("Output data types are not consistent")
+        meta = self.model._latest_meta
+        for k,v in output_schema_.items():
+            output_schema_[k]["meta"] = meta[k]
         schema = {"input": input_schema_, "output": output_schema_}
         return schema
 

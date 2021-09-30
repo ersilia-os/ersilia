@@ -20,6 +20,7 @@ class AutoService(ErsiliaBase):
         self.logger.debug("Setting AutoService for {0}".format(model_id))
         self.config_json = config_json
         self.model_id = model_id
+        self._meta = None
         if service_class is None:
             self.logger.debug("No service class provided, deciding automatically")
             service_class_file = os.path.join(
@@ -153,4 +154,16 @@ class AutoService(ErsiliaBase):
             config_json=self.config_json,
         )
         for result in _api.post(input=input, output=output, batch_size=batch_size):
+            if self._meta is None:
+                do_meta = True
+            else:
+                if api_name not in self._meta:
+                    do_meta = True
+                else:
+                    do_meta = False
+            if do_meta:
+                self._latest_meta = _api.meta()
+                self._meta = {api_name: self._latest_meta}
+            if api_name not in self._meta:
+                self._meta = {api_name: _api.meta()}
             yield result
