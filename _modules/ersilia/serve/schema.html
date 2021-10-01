@@ -85,16 +85,59 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">API_SCHEMA_FILE</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">o</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">o</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">o</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">o</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="c1"># TODO: work with arbitrary shape arrays/tensors</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">chars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">chars</span><span class="p">)</span>
+            <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;f</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">names</span>
+
+<div class="viewcode-block" id="ApiSchema.isfile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.isfile">[docs]</a>    <span class="k">def</span> <span class="nf">isfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema_file</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ApiSchema.get"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">api</span><span class="p">,</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">o</span> <span class="ow">in</span> <span class="n">sc</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">api</span><span class="p">][</span><span class="s2">&quot;output&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
-<div class="viewcode-block" id="ApiSchema.get"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">API_SCHEMA_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span>
-        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+<div class="viewcode-block" id="ApiSchema.get_schema_by_api"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_schema_by_api">[docs]</a>    <span class="k">def</span> <span class="nf">get_schema_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">api_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ApiSchema.get_output_by_api"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_output_by_api">[docs]</a>    <span class="k">def</span> <span class="nf">get_output_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">api_name</span><span class="p">][</span><span class="s2">&quot;output&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ApiSchema.get_meta_by_api"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_meta_by_api">[docs]</a>    <span class="k">def</span> <span class="nf">get_meta_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+        <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">api_name</span><span class="p">][</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">meta</span></div>
+
+<div class="viewcode-block" id="ApiSchema.get_meta"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_meta">[docs]</a>    <span class="k">def</span> <span class="nf">get_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">api</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">meta_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_meta_by_api</span><span class="p">(</span><span class="n">api</span><span class="p">)</span>
+            <span class="n">meta</span><span class="p">[</span><span class="n">api</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta_</span>
+        <span class="k">return</span> <span class="n">meta</span></div>
 
 <div class="viewcode-block" id="ApiSchema.get_apis"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_apis">[docs]</a>    <span class="k">def</span> <span class="nf">get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
