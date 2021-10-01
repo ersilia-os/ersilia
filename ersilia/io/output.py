@@ -2,13 +2,12 @@ import csv
 import json
 import random
 import itertools
-from ..io.pure import PureDataTyper
+from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 
 
 class DataFrame(object):
     def __init__(self, data, columns):
-        self._is_serialized = False
         self.data = data
         self.columns = columns
 
@@ -20,37 +19,6 @@ class DataFrame(object):
         else:
             return ","
 
-    def serialize(self):
-        if self._is_serialized:
-            return
-        skip_cols = ["key", "input"]
-        skip_cols_set = set(skip_cols)
-        idx_cols = [
-            (j, col) for j, col in enumerate(self.columns) if col not in skip_cols_set
-        ]
-        new_cols = []
-        done_cols = set()
-        R = []
-        for d in self.data:
-            r = []
-            for j, col in idx_cols:
-                v = [v for v in itertools.chain.from_iterable([d[j]])]
-                if col not in done_cols:
-                    if len(v) == 1:
-                        names = [col]
-                    else:
-                        names = self._default_feature_names(col, len(v))
-                    new_cols += names
-                r += v
-            R += [r]
-        S = []
-        for i in range(len(self.data)):
-            s = [self.data[i][0], self.data[i][1]] + R[i]
-            S += [s]
-        self.data = S
-        self.columns = skip_cols + new_cols
-        self._is_serialized = True
-
     def write(self, file_name, delimiter=None):
         with open(file_name, "w", newline="") as f:
             if delimiter is None:
@@ -59,7 +27,6 @@ class DataFrame(object):
             writer.writerow(self.columns)
             for i, row in enumerate(self.data):
                 writer.writerow(row)
-
 
 
 class ResponseRefactor(ErsiliaBase):
@@ -118,11 +85,12 @@ class ResponseRefactor(ErsiliaBase):
         return r
 
 
-
 class GenericOutputAdapter(ResponseRefactor):
     def __init__(self, config_json):
         ResponseRefactor.__init__(self, config_json=config_json)
+        self.api_schema = None
         self.logger.debug("Generic output adapter initialized")
+        self._schema = None
 
     @staticmethod
     def _is_string(output):
@@ -144,40 +112,43 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             return False
 
-    def __pure_dtype(self, v):
-        dt = PureDataTyper(v)
-        t = dt.get_type()
+    def __pure_dtype(self, k):
+        t = self._schema[k]["type"]
         return t
 
-    def __cast_values(self, v):
-        t = self.__pure_dtype(v)
-        if t == "array":
-            return v
-        else:
-            return [v]
+    def __meta_by_key(self, k):
+        return self._schema[k]["meta"]
 
-    @staticmethod
-    def __default_feature_names(col, n):
-        chars = len(str(n))
-        names = []
-        for i in range(n):
-            i = str(i).zfill(chars)
-            names += ["{0}-{1}".format(col, i)]
-        return names
+    def __cast_values(self, vals, dtypes):
+        v = []
+        for v_, t_ in zip(vals, dtypes):
+            if t_ == "array":
+                v += v_
+            else:
+                v += [v_]
+        return v
 
     def __expand_output_keys(self, vals, output_keys):
         output_keys_expanded = []
+        if len(output_keys) == 1:
+            merge_key = False
+        else:
+            merge_key = True
         for v, ok in zip(vals, output_keys):
-            m = self._meta[ok]
-            t = self.__pure_dtype(v)
+            m = self.__meta_by_key(ok)
+            t = self.__pure_dtype(ok)
             if t == "array":
-                if m is None:
-                    output_keys_expanded += self._default_feature_names(ok, len(v))
+                assert m is not None
+                assert len(m) == len(v)
+                if merge_key:
+                    output_keys_expanded += ["{0}-{1}".format(ok, m_) for m_ in m]
                 else:
-                    assert len(m) == len(v)
-                    output_keys_expanded += ["{0}-{1}".format(ok, m)]
+                    output_keys_expanded += ["{0}".format(m_) for m_ in m]
             else:
-                output_keys_expanded += [ok]
+                if merge_key:
+                    output_keys_expanded += [ok]
+                else:
+                    output_keys_expanded += ["f0"]
         return output_keys_expanded
 
     def _to_dataframe(self, result):
@@ -191,17 +162,20 @@ class GenericOutputAdapter(ResponseRefactor):
             if output_keys is None:
                 output_keys = [k for k in out.keys()]
             vals = [out[k] for k in output_keys]
+            dtypes = [self.__pure_dtype(k) for k in output_keys]
             if output_keys_expanded is None:
                 output_keys_expanded = self.__expand_output_keys(vals, output_keys)
-            vals = self.__cast_values(vals)
+            vals = self.__cast_values(vals, dtypes)
             R += [[inp["key"], inp["input"]] + vals]
-        df = DataFrame(data=R, columns=["key", "input"] + output_keys_expanded)
-        df.serialize()
+        columns = ["key", "input"] + output_keys_expanded
+        df = DataFrame(data=R, columns=columns)
         return df
 
     def meta(self):
         if self._meta is None:
-            self.logger.error("Meta not available, run some adapations first and it will be inferred atomatically")
+            self.logger.error(
+                "Meta not available, run some adapations first and it will be inferred atomatically"
+            )
         else:
             return self._meta
 
@@ -229,7 +203,16 @@ class GenericOutputAdapter(ResponseRefactor):
                             fo.write(l)
                     use_header = False
 
-    def adapt(self, result, output):
+    def adapt(self, result, output, model_id=None, api_name=None):
+        if model_id is not None and api_name is not None and self.api_schema is None:
+            self.api_schema = ApiSchema(model_id=model_id, config_json=self.config_json)
+        if self.api_schema is not None:
+            if self.api_schema.isfile():
+                self._schema = self.api_schema.get_output_by_api(api_name)
+        else:
+            self.api_schema = None
+        if output is not None and self._schema is None:
+            raise Exception
         if self._has_extension(output, "json"):
             with open(output, "w") as f:
                 json.dump(result, output, indent=4)

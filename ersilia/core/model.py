@@ -27,6 +27,13 @@ class ErsiliaModel(AutoService):
         AutoService.__init__(self, self.model_id, config_json=self.config_json)
 
     @property
+    def paths(self):
+        p = {"dest": self._model_path(self.model_id),
+             "repository": self._get_bundle_location(self.model_id),
+             "bentoml": self._get_bentoml_location(self.model_id)}
+        return p
+
+    @property
     def input_type(self):
         with open(os.path.join(self._model_path(self.model_id), CARD_FILE), "r") as f:
             return [x.lower() for x in json.load(f)["Input"]]
@@ -42,7 +49,7 @@ class ErsiliaModel(AutoService):
 
     @property
     def meta(self):
-        return self.api_schema.meta
+        return self.api_schema.get_meta()
 
     @property
     def size(self):

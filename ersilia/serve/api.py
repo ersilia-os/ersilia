@@ -33,10 +33,10 @@ class Api(object):
 
     def __result_returner(self, result, output):
         if output is None:
-            return self.output_adapter.adapt(result, output)
+            return self.output_adapter.adapt(result, output, model_id=self.model_id, api_name=self.api_name)
         else:
             self.logger.debug("Working on output: {0}".format(output))
-            self.output_adapter.adapt(result, output)
+            self.output_adapter.adapt(result, output, model_id=self.model_id, api_name=self.api_name)
             return [{"output": output}]
 
     def _do_post(self, input, output):

@@ -10,16 +10,59 @@ class ApiSchema(ErsiliaBase):
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
+        self.schema_file = os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE)
+
+    def _features(self, o):
+        if o["meta"] is not None:
+            return o["meta"]
+        if o["type"] == "array":
+            shape = o["shape"]
+        else:
+            return None
+        assert len(shape) == 1 # TODO: work with arbitrary shape arrays/tensors
+        n = shape[0]
+        chars = len(str(n))
+        names = []
+        for i in range(n):
+            i = str(i).zfill(chars)
+            names += ["f{0}".format(i)]
+        return names
+
+    def isfile(self):
+        return os.path.isfile(self.schema_file)
+
+    def get(self):
+        with open(self.schema_file) as f:
+            data = json.load(f)
+        for api, sc in data.items():
+            for k,o in sc["output"].items():
+                data[api]["output"][k]["meta"] = self._features(o)
+        return data
 
     @property
     def schema(self):
         return self.get()
 
-    def get(self):
-        with open(
-            os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE), "r"
-        ) as f:
-            return json.load(f)
+    def get_schema_by_api(self, api_name):
+        return self.schema[api_name]
+
+    def get_output_by_api(self, api_name):
+        return self.schema[api_name]["output"]
+
+    def get_meta_by_api(self, api_name):
+        sc = self.schema[api_name]["output"]
+        meta = {}
+        for k,v in sc.items():
+            meta[k] = v["meta"]
+        return meta
+
+    def get_meta(self):
+        sc = self.schema
+        meta = {}
+        for api, _ in sc.items():
+            meta_ = self.get_meta_by_api(api)
+            meta[api] = meta_
+        return meta
 
     def get_apis(self):
         return sorted(self.schema.keys())
