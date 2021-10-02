@@ -116,13 +116,19 @@ class GenericOutputAdapter(ResponseRefactor):
         t = self._schema[k]["type"]
         return t
 
+    def __array_shape(self, k):
+        s = self._schema[k]["shape"]
+        return s[0] # TODO work with tensors
+
     def __meta_by_key(self, k):
         return self._schema[k]["meta"]
 
-    def __cast_values(self, vals, dtypes):
+    def __cast_values(self, vals, dtypes, output_keys):
         v = []
-        for v_, t_ in zip(vals, dtypes):
+        for v_, t_, k_ in zip(vals, dtypes, output_keys):
             if t_ == "array":
+                if v_ is None:
+                    v_ = [None]*self.__array_shape(k_)
                 v += v_
             else:
                 v += [v_]
@@ -139,7 +145,8 @@ class GenericOutputAdapter(ResponseRefactor):
             t = self.__pure_dtype(ok)
             if t == "array":
                 assert m is not None
-                assert len(m) == len(v)
+                if v is not None:
+                    assert len(m) == len(v)
                 if merge_key:
                     output_keys_expanded += ["{0}-{1}".format(ok, m_) for m_ in m]
                 else:
@@ -165,7 +172,7 @@ class GenericOutputAdapter(ResponseRefactor):
             dtypes = [self.__pure_dtype(k) for k in output_keys]
             if output_keys_expanded is None:
                 output_keys_expanded = self.__expand_output_keys(vals, output_keys)
-            vals = self.__cast_values(vals, dtypes)
+            vals = self.__cast_values(vals, dtypes, output_keys)
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)
