@@ -23,6 +23,9 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 with open("requirements.txt") as f:
     install_requires = f.read().splitlines()
+    install_requires += [
+        "isaura @ git+git://github.com/ersilia-os/isaura#egg=isaura"
+    ]
 
 # Filter dependencies based on names and a larger list of requirements
 def _filter_requires(names, requires):
@@ -36,6 +39,7 @@ def _filter_requires(names, requires):
 
 # Slim requirements
 slim = [
+    "isaura",
     "bentoml",
     "PyYAML",
     "virtualenv",
@@ -77,7 +81,7 @@ setup(
     author="Ersilia Open Source Initiative",
     author_email="miquel@ersilia.io",
     url="https://github.com/ersilia-os/ersilia",
-    description="Ersilia model hub for open source drug discovery and global health",
+    description="A hub of AI/ML models for open source drug discovery and global health",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT",
@@ -92,7 +96,7 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ),
-    keywords="drug-discovery machine-learning ersilia open-science global-health model-hub",
+    keywords="drug-discovery machine-learning ersilia open-science global-health model-hub infectious-diseases",
     project_urls={
         "Landing page": "https://ersilia.io",
         "Models": "https://ersilia-hub.netlify.app",
