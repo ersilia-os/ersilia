@@ -10,7 +10,9 @@ class ApiSchema(ErsiliaBase):
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
-        self.schema_file = os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE)
+        self.schema_file = os.path.join(
+            self._model_path(self.model_id), API_SCHEMA_FILE
+        )
 
     def _features(self, o):
         if o["meta"] is not None:
@@ -19,7 +21,7 @@ class ApiSchema(ErsiliaBase):
             shape = o["shape"]
         else:
             return None
-        assert len(shape) == 1 # TODO: work with arbitrary shape arrays/tensors
+        assert len(shape) == 1  # TODO: work with arbitrary shape arrays/tensors
         n = shape[0]
         chars = len(str(n))
         names = []
@@ -35,7 +37,7 @@ class ApiSchema(ErsiliaBase):
         with open(self.schema_file) as f:
             data = json.load(f)
         for api, sc in data.items():
-            for k,o in sc["output"].items():
+            for k, o in sc["output"].items():
                 data[api]["output"][k]["meta"] = self._features(o)
         return data
 
@@ -52,7 +54,7 @@ class ApiSchema(ErsiliaBase):
     def get_meta_by_api(self, api_name):
         sc = self.schema[api_name]["output"]
         meta = {}
-        for k,v in sc.items():
+        for k, v in sc.items():
             meta[k] = v["meta"]
         return meta
 

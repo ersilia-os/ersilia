@@ -28,9 +28,11 @@ class ErsiliaModel(AutoService):
 
     @property
     def paths(self):
-        p = {"dest": self._model_path(self.model_id),
-             "repository": self._get_bundle_location(self.model_id),
-             "bentoml": self._get_bentoml_location(self.model_id)}
+        p = {
+            "dest": self._model_path(self.model_id),
+            "repository": self._get_bundle_location(self.model_id),
+            "bentoml": self._get_bentoml_location(self.model_id),
+        }
         return p
 
     @property

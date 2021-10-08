@@ -33,10 +33,14 @@ class Api(object):
 
     def __result_returner(self, result, output):
         if output is None:
-            return self.output_adapter.adapt(result, output, model_id=self.model_id, api_name=self.api_name)
+            return self.output_adapter.adapt(
+                result, output, model_id=self.model_id, api_name=self.api_name
+            )
         else:
             self.logger.debug("Working on output: {0}".format(output))
-            self.output_adapter.adapt(result, output, model_id=self.model_id, api_name=self.api_name)
+            self.output_adapter.adapt(
+                result, output, model_id=self.model_id, api_name=self.api_name
+            )
             return [{"output": output}]
 
     def _do_post(self, input, output):
@@ -83,7 +87,7 @@ class Api(object):
         self.logger.debug("Posting to {0}".format(self.api_name))
         self.logger.debug("Batch size {0}".format(batch_size))
         if output is not None:
-            self.logger.debug("Output is a file")
+            self.logger.debug("Output is a file {0}".format(output))
             tmp_folder = tempfile.mkdtemp()
             fmt = output.split(".")[-1]
             output_base = ".".join(os.path.basename(output).split(".")[:-1])
@@ -100,7 +104,6 @@ class Api(object):
             for o in [output]:
                 yield o
         else:
-            self.logger.debug("Output is not a file")
             for input in self.input_adapter.adapt(input, batch_size=batch_size):
                 result = json.loads(self._post(input, output))
                 for r in result:

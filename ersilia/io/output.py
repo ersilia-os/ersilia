@@ -1,9 +1,12 @@
 import csv
 import json
 import random
+import tempfile
 import itertools
+import collections
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
+from ..default import FEATURE_MERGE_PATTERN
 
 
 class DataFrame(object):
@@ -148,7 +151,9 @@ class GenericOutputAdapter(ResponseRefactor):
                 if v is not None:
                     assert len(m) == len(v)
                 if merge_key:
-                    output_keys_expanded += ["{0}-{1}".format(ok, m_) for m_ in m]
+                    output_keys_expanded += [
+                        "{0}{1}{2}".format(ok, FEATURE_MERGE_PATTERN, m_) for m_ in m
+                    ]
                 else:
                     output_keys_expanded += ["{0}".format(m_) for m_ in m]
             else:
@@ -229,4 +234,55 @@ class GenericOutputAdapter(ResponseRefactor):
         if self._has_extension(output, "tsv"):
             df = self._to_dataframe(result)
             df.write(output, delimiter="\t")
+        return result
+
+
+class DictlistDataframeConverter(GenericOutputAdapter):
+    def __init__(self, config_json):
+        GenericOutputAdapter.__init__(self, config_json=config_json)
+
+    def dictlist2dataframe(self, dl, model_id, api_name):
+        tmp_dir = tempfile.mkdtemp()
+        df_file = os.path.join(tmp_dir, "data.csv")
+        self.adapt(dl, df_file, model_id, api_name)
+        df = Dataframe()
+        df.from_csv(df_file)
+        return df
+
+    def dataframe2dictlist(self, df, model_id, api_name):
+        schema = ApiSchema(
+            model_id=model_id, config_json=self.config_json
+        ).get_output_by_api(api_name=api_name)
+        the_keys = [k for k,_ in schema.items()]
+        if len(the_keys) == 1:
+            the_key = the_keys[0]
+        else:
+            the_key = None
+        result = []
+        features = df.features
+        grouped_features_idxs = collections.defaultdict(list)
+        grouped_features = collections.defaultdict(list)
+        for i, f in enumerate(features):
+            if the_key is None:
+                g, f = f.split(FEATURE_MERGE_PATTERN)
+            else:
+                g = the_key
+            grouped_features_idxs[g] += [i]
+            grouped_features[g] += [f]
+        # Reorder to match schema, just to be sure
+        for k,v in grouped_features.items():
+            ords = dict((k_,i_) for i_,k_ in enumerate(v))
+            ord_idxs = [ords[v_] for v_ in schema[k]["meta"]]
+            grouped_features[k] = [v[idx] for idx in ord_idxs]
+            w = grouped_features_idxs[k]
+            grouped_features_idxs[k] = [w[idx] for idx in ord_idxs]
+        for r in df.iterrows():
+            output = {}
+            for k, idxs in grouped_features_idxs.items():
+                output[k] = r["values"][idxs].tolist()
+            res = {
+                "input": {"key": r["key"], "input": r["input"], "text": None},
+                "output": output,
+            }
+            result += [res]
         return result

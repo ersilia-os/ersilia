@@ -55,6 +55,13 @@ class ModelRepositoryGetter(BaseAction):
             self._copy_from_github(folder)
 
 
+# TODO: Jason
+class ModelPrecalculationsGetter(BaseAction):
+
+    def __init__(self):
+        pass
+
+
 #  TODO: work outside GIT LFS
 class ModelParametersGetter(BaseAction):
     def __init__(self, model_id, config_json):
