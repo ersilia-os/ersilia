@@ -37,7 +37,7 @@ class IO(object):
             d = {"key": r[0], "input": r[1], "text": r[2]}
             yield d
 
-    def parse(self, text):
+    def _parse_text(self, text):
         text_type = self.identifier.guess_type(text)
         key = None
         if text_type == "smiles":
@@ -51,6 +51,12 @@ class IO(object):
             key = self.identifier.encode(inp)
         result = {"key": key, "input": inp, "text": text}
         return result
+
+    def parse(self, data):
+        if type(data) is dict:
+            return data
+        else:
+            return self._parse_text(data)
 
     def is_input(self, text):
         return self.identifier._is_smiles(text)

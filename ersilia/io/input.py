@@ -101,6 +101,11 @@ class GenericInputAdapter(object):
         for chunk in self.batch_iter(data, batch_size):
             yield chunk
 
+    def adapt_one_by_one(self, inp):
+        data = self.adapter.adapt(inp)
+        for d in data:
+            yield d
+
 
 class ExampleGenerator(object):
     def __init__(self, model_id, config_json=None):

@@ -2,6 +2,7 @@ import os
 import csv
 import requests
 import json
+import collections
 import tempfile
 
 from ..io.input import GenericInputAdapter
@@ -187,7 +188,7 @@ class Api(object):
         else:
             return False
 
-    def post_amenable_to_h5(input, output, batch_size):
+    def post_amenable_to_h5(self, input, output, batch_size):
         self.logger.debug(
             "Checking for already available calculations in the data lake"
         )
@@ -244,9 +245,17 @@ class Api(object):
             for result in results:
                 yield result
 
-    def post(self, input, output, batch_size):
-        self.logger.debug("Posting to {0}".format(self.api_name))
-        self.logger.debug("Batch size {0}".format(batch_size))
+    def _unique_input(self, input):
+        mapping = collections.defaultdict(list)
+        unique_input = []
+        for i, inp in enumerate(self.input_adapter.adapt_one_by_one(input)):
+            key = inp["key"]
+            if key not in mapping:
+                unique_input += [inp]
+            mapping[key] += [i]
+        return unique_input, mapping
+
+    def post_unique_input(self, input, output, batch_size):
         schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
         if not schema.isfile() or not schema.is_h5_serializable(api_name=self.api_name):
             for res in self.post_only_calculations(input, output, batch_size):
@@ -254,6 +263,27 @@ class Api(object):
         else:
             for res in self.post_amenable_to_h5(input, output, batch_size):
                 yield res
+
+    def post(self, input, output, batch_size):
+        self.logger.debug("Posting to {0}".format(self.api_name))
+        self.logger.debug("Batch size {0}".format(batch_size))
+        unique_input, mapping = self._unique_input(input)
+        results_ = {}
+        for res in self.post_unique_input(input=unique_input, output=None, batch_size=batch_size):
+            for i in mapping[res["input"]["key"]]:
+                results_[i] = res
+        sorted_idxs = sorted(results_.keys())
+        results = [results_[i] for i in sorted_idxs]
+        if output is not None:
+            results = json.dumps(results)
+            self.output_adapter.adapt(
+                results, output, model_id=self.model_id, api_name=self.api_name
+            )
+            for o in [output]:
+                yield o
+        else:
+            for result in results:
+                yield result
 
     def meta(self):
         return self.output_adapter.meta()
