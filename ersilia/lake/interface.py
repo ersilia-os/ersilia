@@ -1,5 +1,11 @@
+import json
+import numpy as np
+
 from isaura.core.hdf5 import Hdf5ApiExplorer
+
 from .base import LakeBase
+from ..io.dataframe import Dataframe
+from ..io.output import DictlistDataframeConverter
 
 
 class IsauraInterface(LakeBase):
@@ -8,26 +14,45 @@ class IsauraInterface(LakeBase):
         self.model_id = model_id
         self.api_name = api_name
         self.hdf5 = Hdf5ApiExplorer(model_id=model_id, api_name=api_name)
+        self.converter = DictlistDataframeConverter(config_json=config_json)
 
-    def _dict_to_lists(self, d):
-        keys = []
-        vals = []
-        for k, v in d.items():
-            keys += [k]
-            vals += [v]
-        return keys, vals
+    def _dict_to_list(self, d, input):
+        result = []
+        for k, i in d.items():
+            res = input[i]
+            res["idx"] = i
+            result += [res]
+        return result
 
     def done_todo(self, input):
         keys = [inp["key"] for inp in input]
-        result = self.hdf5.check_keys_exist(api_name=self.hdf5.api_name, key_list=keys)
-        keys, idxs = self._dict_to_lists(result["available_keys"])
-        done = {"key": keys, "idx": idxs}
-        keys, vals = self._dict_to_lists(result["unavailable_keys"])
-        todo = {"key": keys, "idx": idxs}
+        result = self.hdf5.check_keys_exist(key_list=keys)
+        done = self._dict_to_list(result["available_keys"], input)
+        todo = self._dict_to_list(result["unavailable_keys"], input)
         return done, todo
 
-    def write(self, results):
-        pass
-
     def read(self, input):
-        pass
+        keys = [inp["key"] for inp in input]
+        values = [res for res in self.hdf5.read_by_key(keys)]
+        dtype = self.hdf5.dtype
+        features = self.hdf5.get_features()
+        df = Dataframe(
+            keys=keys,
+            values=np.array(values, dtype=dtype),
+            features=features,
+        )
+        results_ = self.converter.dataframe2dictlist(
+            df, model_id=self.model_id, api_name=self.api_name
+        )
+        results = []
+        for inp, res in zip(input, results_):
+            results += [{"input": inp, "output": res["output"]}]
+        return results
+
+    def write(self, results):
+        results = json.dumps(results)
+        df = self.converter.dictlist2dataframe(
+            results, model_id=self.model_id, api_name=self.api_name
+        )
+        self.hdf5.write_api(df.keys, df.values)
+        self.hdf5.write_features(df.features)

@@ -11,7 +11,6 @@ from ..default import DEFAULT_BATCH_SIZE
 from .. import ErsiliaBase
 
 DEFAULT_OUTPUT = None
-DEFAULT_BATCH_SIZE = 1
 
 
 class AutoService(ErsiliaBase):

@@ -11,12 +11,19 @@ class Dataframe(object):
         self.features = features
         self._homogenize()
 
+    def _process(self, col, idx):
+        if col is None:
+            return None
+        else:
+            return col[idx]
+
     def iterrows(self):
         for i in range(len(self.keys)):
             result = {
-                "key": self.keys[i],
-                "input": self.inputs[i],
-                "values": self.values[i],
+                "key": self._process(self.keys, i),
+                "input": self._process(self.inputs, i),
+                "text": self._process(self.texts, i),
+                "values": self._process(self.values, i),
             }
             yield result
 

@@ -13,6 +13,7 @@ class ApiSchema(ErsiliaBase):
         self.schema_file = os.path.join(
             self._model_path(self.model_id), API_SCHEMA_FILE
         )
+        self.logger.debug("Schema available in {0}".format(self.schema_file))
 
     def _features(self, o):
         if o["meta"] is not None:
@@ -50,6 +51,13 @@ class ApiSchema(ErsiliaBase):
 
     def get_output_by_api(self, api_name):
         return self.schema[api_name]["output"]
+
+    def is_h5_serializable(self, api_name):
+        schema = self.get_output_by_api(api_name)
+        for k,v in schema.items():
+            if v["type"] != "numeric" and v["type"] != "array": # TODO generalize
+                return False
+        return True
 
     def get_meta_by_api(self, api_name):
         sc = self.schema[api_name]["output"]

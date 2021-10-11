@@ -23,9 +23,7 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 with open("requirements.txt") as f:
     install_requires = f.read().splitlines()
-    install_requires += [
-        "isaura @ git+git://github.com/ersilia-os/isaura#egg=isaura"
-    ]
+    install_requires += ["isaura @ git+git://github.com/ersilia-os/isaura#egg=isaura"]
 
 # Filter dependencies based on names and a larger list of requirements
 def _filter_requires(names, requires):

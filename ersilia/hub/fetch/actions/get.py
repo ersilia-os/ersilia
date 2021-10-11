@@ -57,7 +57,6 @@ class ModelRepositoryGetter(BaseAction):
 
 # TODO: Jason
 class ModelPrecalculationsGetter(BaseAction):
-
     def __init__(self):
         pass
 

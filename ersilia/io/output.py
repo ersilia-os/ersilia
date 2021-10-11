@@ -1,9 +1,11 @@
 import csv
+import os
 import json
 import random
 import tempfile
 import itertools
 import collections
+from .dataframe import Dataframe
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..default import FEATURE_MERGE_PATTERN
@@ -121,7 +123,7 @@ class GenericOutputAdapter(ResponseRefactor):
 
     def __array_shape(self, k):
         s = self._schema[k]["shape"]
-        return s[0] # TODO work with tensors
+        return s[0]  # TODO work with tensors
 
     def __meta_by_key(self, k):
         return self._schema[k]["meta"]
@@ -131,7 +133,7 @@ class GenericOutputAdapter(ResponseRefactor):
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
             if t_ == "array":
                 if v_ is None:
-                    v_ = [None]*self.__array_shape(k_)
+                    v_ = [None] * self.__array_shape(k_)
                 v += v_
             else:
                 v += [v_]
@@ -226,8 +228,9 @@ class GenericOutputAdapter(ResponseRefactor):
         if output is not None and self._schema is None:
             raise Exception
         if self._has_extension(output, "json"):
+            data = json.loads(result)
             with open(output, "w") as f:
-                json.dump(result, output, indent=4)
+                json.dump(data, f, indent=4)
         if self._has_extension(output, "csv"):
             df = self._to_dataframe(result)
             df.write(output)
@@ -253,7 +256,7 @@ class DictlistDataframeConverter(GenericOutputAdapter):
         schema = ApiSchema(
             model_id=model_id, config_json=self.config_json
         ).get_output_by_api(api_name=api_name)
-        the_keys = [k for k,_ in schema.items()]
+        the_keys = [k for k, _ in schema.items()]
         if len(the_keys) == 1:
             the_key = the_keys[0]
         else:
@@ -270,8 +273,8 @@ class DictlistDataframeConverter(GenericOutputAdapter):
             grouped_features_idxs[g] += [i]
             grouped_features[g] += [f]
         # Reorder to match schema, just to be sure
-        for k,v in grouped_features.items():
-            ords = dict((k_,i_) for i_,k_ in enumerate(v))
+        for k, v in grouped_features.items():
+            ords = dict((k_, i_) for i_, k_ in enumerate(v))
             ord_idxs = [ords[v_] for v_ in schema[k]["meta"]]
             grouped_features[k] = [v[idx] for idx in ord_idxs]
             w = grouped_features_idxs[k]
