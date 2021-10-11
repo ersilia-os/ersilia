@@ -31,7 +31,8 @@ class Logger(object):
 
     def _unlog_from_console(self):
         if self._console is not None:
-            self.logger.remove(self._console)
+            # self.logger.remove(self._console)
+            self.logger.remove()  # TODO: check why console is not found
             self._console = None
 
     def _log_terminal_commands_to_console(self):
