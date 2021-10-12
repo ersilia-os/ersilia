@@ -257,7 +257,11 @@ class Api(object):
 
     def post_unique_input(self, input, output, batch_size):
         schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
-        if not schema.isfile() or not schema.is_h5_serializable(api_name=self.api_name):
+        if (
+            not schema.isfile()
+            or not schema.is_h5_serializable(api_name=self.api_name)
+            or not self.lake.is_available()
+        ):
             for res in self.post_only_calculations(input, output, batch_size):
                 yield res
         else:
@@ -269,7 +273,9 @@ class Api(object):
         self.logger.debug("Batch size {0}".format(batch_size))
         unique_input, mapping = self._unique_input(input)
         results_ = {}
-        for res in self.post_unique_input(input=unique_input, output=None, batch_size=batch_size):
+        for res in self.post_unique_input(
+            input=unique_input, output=None, batch_size=batch_size
+        ):
             for i in mapping[res["input"]["key"]]:
                 results_[i] = res
         sorted_idxs = sorted(results_.keys())

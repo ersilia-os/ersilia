@@ -1,7 +1,10 @@
 import json
 import numpy as np
 
-from isaura.core.hdf5 import Hdf5ApiExplorer
+try:
+    from isaura.core.hdf5 import Hdf5ApiExplorer
+except:
+    Hdf5ApiExplorer = None
 
 from .base import LakeBase
 from ..io.dataframe import Dataframe
@@ -13,8 +16,12 @@ class IsauraInterface(LakeBase):
         LakeBase.__init__(self, config_json=config_json)
         self.model_id = model_id
         self.api_name = api_name
-        self.hdf5 = Hdf5ApiExplorer(model_id=model_id, api_name=api_name)
-        self.converter = DictlistDataframeConverter(config_json=config_json)
+        if Hdf5ApiExplorer is not None:
+            self.hdf5 = Hdf5ApiExplorer(model_id=model_id, api_name=api_name)
+            self.converter = DictlistDataframeConverter(config_json=config_json)
+            self.is_available = True
+        else:
+            self.is_available = False
 
     def _dict_to_list(self, d, input):
         result = []
