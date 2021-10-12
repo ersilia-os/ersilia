@@ -165,7 +165,12 @@
 <div class="viewcode-block" id="GenericInputAdapter.adapt"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_iter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
-            <span class="k">yield</span> <span class="n">chunk</span></div></div>
+            <span class="k">yield</span> <span class="n">chunk</span></div>
+
+<div class="viewcode-block" id="GenericInputAdapter.adapt_one_by_one"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.adapt_one_by_one">[docs]</a>    <span class="k">def</span> <span class="nf">adapt_one_by_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">d</span></div></div>
 
 
 <div class="viewcode-block" id="ExampleGenerator"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator">[docs]</a><span class="k">class</span> <span class="nc">ExampleGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
