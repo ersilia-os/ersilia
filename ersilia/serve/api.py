@@ -260,7 +260,7 @@ class Api(object):
         if (
             not schema.isfile()
             or not schema.is_h5_serializable(api_name=self.api_name)
-            or not self.lake.is_available()
+            or not self.lake.is_available
         ):
             for res in self.post_only_calculations(input, output, batch_size):
                 yield res
