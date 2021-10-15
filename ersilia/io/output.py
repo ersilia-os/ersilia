@@ -159,10 +159,7 @@ class GenericOutputAdapter(ResponseRefactor):
                 else:
                     output_keys_expanded += ["{0}".format(m_) for m_ in m]
             else:
-                if merge_key:
-                    output_keys_expanded += [ok]
-                else:
-                    output_keys_expanded += ["f0"]
+                output_keys_expanded += [ok]
         return output_keys_expanded
 
     def _to_dataframe(self, result):
@@ -275,10 +272,11 @@ class DictlistDataframeConverter(GenericOutputAdapter):
         # Reorder to match schema, just to be sure
         for k, v in grouped_features.items():
             ords = dict((k_, i_) for i_, k_ in enumerate(v))
-            ord_idxs = [ords[v_] for v_ in schema[k]["meta"]]
-            grouped_features[k] = [v[idx] for idx in ord_idxs]
-            w = grouped_features_idxs[k]
-            grouped_features_idxs[k] = [w[idx] for idx in ord_idxs]
+            if schema[k]["meta"] is not None:
+                ord_idxs = [ords[v_] for v_ in schema[k]["meta"]]
+                grouped_features[k] = [v[idx] for idx in ord_idxs]
+                w = grouped_features_idxs[k]
+                grouped_features_idxs[k] = [w[idx] for idx in ord_idxs]
         for r in df.iterrows():
             output = {}
             for k, idxs in grouped_features_idxs.items():

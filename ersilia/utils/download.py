@@ -136,7 +136,7 @@ class GitHubDownloader(object):
             f.write(script)
         run_command("bash {0}".format(run_file))
 
-    def clone(self, org, repo, destination):
+    def clone(self, org, repo, destination, ungit=False):
         if os.path.exists(destination):
             if self.overwrite:
                 shutil.rmtree(destination)
@@ -148,7 +148,8 @@ class GitHubDownloader(object):
         if not is_done:
             raise Exception("Download from {0}/{1} did not work".format(org, repo))
         self._git_lfs(destination)
-        self._ungit(destination)
+        if ungit:
+            self._ungit(destination)
 
     def download_single(self, org, repo, repo_path, destination):
         if os.path.exists(destination):
