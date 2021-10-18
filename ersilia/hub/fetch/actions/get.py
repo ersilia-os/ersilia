@@ -57,8 +57,20 @@ class ModelRepositoryGetter(BaseAction):
 
 # TODO: Jason
 class ModelPrecalculationsGetter(BaseAction):
-    def __init__(self):
-        pass
+    def __init__(self, model_id):
+        BaseAction.__init__(
+            self, model_id=model_id, config_json=None, credentials_json=None
+        )
+        df = DVCFetcher(self._model_path(self.model_id))  ###CHECK HERE###
+
+    def fetch_data(self):
+        if self.df.check_dvc_exists():
+            df.get_data()
+        #TO DO SimLink
+
+    def _h5_simlink(self):
+        if self.df.has_data():
+            pass
 
 
 #  TODO: work outside GIT LFS

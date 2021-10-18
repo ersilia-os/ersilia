@@ -1,9 +1,9 @@
 from . import terminal
 import h5py
 import os
-from ..default import H5_DATA_FILE, ISAURA_GDRIVE
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
+from ..default import H5_DATA_FILE, ISAURA_GDRIVE, ISAURA_TEAM_GDRIVE
+from pydrive2.auth import GoogleAuth
+from pydrive2.drive import GoogleDrive
 
 
 class DVCFetcher(object):
@@ -11,7 +11,8 @@ class DVCFetcher(object):
         self.repo_path = local_repo_path
 
     def get_data(self):
-        terminal.run_command("dvc --cd " + self.repo_path + " pull")
+        if self.check_dvc_exists():
+            terminal.run_command("dvc --cd " + self.repo_path + " pull")
 
     def check_dvc_exists(self):
         if os.path.isfile(self._data_path() + ".dvc"):
@@ -43,28 +44,34 @@ class DVCSetup(object):
     def __init__(self, local_repo_path, model_id):
         self.repo_path = local_repo_path
         self.model_id = model_id
-        gauth = GoogleAuth().LocalWebserverAuth()
-        drive = GoogleDrive(gauth)
+        gauth = GoogleAuth()
+        gauth.LocalWebserverAuth()
+        self.drive = GoogleDrive(gauth)
 
     def gdrive_setup(self):
-        folder = drive.CreateFile(
+        folder = self.drive.CreateFile(
             {
                 "title": self.model_id,
                 "parents": [{"id": ISAURA_GDRIVE}],
-                "mimeType": "application/vnd.google-apps.folder"
+                "mimeType": "application/vnd.google-apps.folder",
             }
         )
         folder.Upload()
 
     def gdrive_folder_id(self):
-        folder = self.drive.ListFile(
+        fileList = self.drive.ListFile(
             {
-                "q": "title='"
-                + self.model_id
-                + "' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+                "q": "'" + ISAURA_GDRIVE + "' in parents and trashed=false",
+                "corpora": "teamDrive",
+                "teamDriveId": ISAURA_TEAM_GDRIVE,
+                "includeTeamDriveItems": True,
+                "supportsTeamDrives": True,
             }
         ).GetList()
-        return folder["id"]
+
+        for file in fileList:
+            if file['title'] == self.model_id:
+                return str(file['id'])
 
     def set_dvc_gdrive(self):
         terminal.run_command(
@@ -74,3 +81,7 @@ class DVCSetup(object):
             + self.gdrive_folder_id()
         )
         terminal.run_command("dvc --cd " + self.repo_path + " push")
+
+        #TO DO GIT ADD_COMMIT (pygit2 github_cli)
+        # terminal.run_command("git add ".....)
+        # terminal.run_command("git commit -m 'Set public data repo'")
