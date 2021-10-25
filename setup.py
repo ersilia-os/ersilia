@@ -44,7 +44,8 @@ slim = [
     "emoji",
     "loguru",
     "pyairtable",
-    "h5py"
+    "h5py",
+    "PyDrive2"
 ]
 slim_requires = _filter_requires(slim, install_requires)
 
