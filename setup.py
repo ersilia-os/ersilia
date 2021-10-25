@@ -44,6 +44,7 @@ slim = [
     "emoji",
     "loguru",
     "pyairtable",
+    "h5py"
 ]
 slim_requires = _filter_requires(slim, install_requires)
 
