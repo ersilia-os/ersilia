@@ -93,6 +93,10 @@ class GitHubDownloader(object):
     def __init__(self, overwrite, token=None):
         self.overwrite = overwrite
         self.token = token
+        auth_method = "x-access-token"
+        self.pygit2_callbacks = pygit2.RemoteCallbacks(
+            pygit2.UserPass(auth_method, token)
+        )
 
     @staticmethod
     def _repo_url(org, repo):
@@ -125,7 +129,11 @@ class GitHubDownloader(object):
         return self._exists(destination)
 
     def _clone_with_pygit2(self, org, repo, destination):
-        pygit2.clone_repository(url=self._repo_url(org, repo), path=destination)
+        pygit2.clone_repository(
+            url=self._repo_url(org, repo),
+            path=destination,
+            callbacks=self.pygit2_callbacks,
+        )
         return self._exists(destination)
 
     def _git_lfs(self, destination):
@@ -169,3 +177,4 @@ class GitHubDownloader(object):
             if os.path.isdir(source):
                 shutil.copytree(source, destination)
         shutil.rmtree(tmpdir)
+        print("file in destination {0}".format(destination))

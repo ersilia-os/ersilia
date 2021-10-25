@@ -5,6 +5,18 @@ from ..default import H5_DATA_FILE, ISAURA_GDRIVE, ISAURA_TEAM_GDRIVE
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 
+from .config import Secrets
+
+
+def set_secrets_file():
+    secrets = Secrets()
+    if not os.path.exists(secrets.gdrive_client_secrets_json):
+        secrets.fetch_gdrive_secrets_from_github()
+    GoogleAuth.DEFAULT_SETTINGS[
+        "client_config_file"
+    ] = secrets.gdrive_client_secrets_json
+    return GoogleAuth
+
 
 class DVCFetcher(object):
     def __init__(self, local_repo_path):
@@ -44,6 +56,7 @@ class DVCSetup(object):
     def __init__(self, local_repo_path, model_id):
         self.repo_path = local_repo_path
         self.model_id = model_id
+        GoogleAuth = set_secrets_file()
         gauth = GoogleAuth()
         gauth.LocalWebserverAuth()
         self.drive = GoogleDrive(gauth)

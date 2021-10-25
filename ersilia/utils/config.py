@@ -14,6 +14,7 @@ from ..default import (
 
 
 SECRETS_JSON = "secrets.json"
+GDRIVE_CLIENT_SECRETS_JSON = "gdrive_client_secrets.json"
 ERSILIA_SECRETS_GITHUB_REPO = "ersilia-secrets"
 
 
@@ -168,9 +169,10 @@ class Secrets(object):
     def __init__(self, overwrite=True):
         self.overwrite = overwrite
         self.secrets_json = os.path.join(EOS, SECRETS_JSON)
+        self.gdrive_client_secrets_json = os.path.join(EOS, GDRIVE_CLIENT_SECRETS_JSON)
 
-    def fetch_from_github(self):
-        """Fetch secrets from ersilia-secrets repository"""
+    def _fetch_from_github(self, remote_path, local_path):
+        """Fetch filename from ersilia-secrets repository"""
         from ..auth.auth import Auth
 
         auth = Auth()
@@ -181,8 +183,16 @@ class Secrets(object):
 
             ghd = GitHubDownloader(overwrite=self.overwrite, token=token)
             ghd.download_single(
-                GITHUB_ORG, ERSILIA_SECRETS_GITHUB_REPO, SECRETS_JSON, self.secrets_json
+                GITHUB_ORG, ERSILIA_SECRETS_GITHUB_REPO, remote_path, local_path
             )
+
+    def fetch_from_github(sel):
+        self._fetch_from_github(SECRETS_JSON, self.secrets_json)
+
+    def fetch_gdrive_secrets_from_github(self):
+        self._fetch_from_github(
+            GDRIVE_CLIENT_SECRETS_JSON, self.gdrive_client_secrets_json
+        )
 
     def to_credentials(self, json_file):
         """Convert secrets to credentials file"""

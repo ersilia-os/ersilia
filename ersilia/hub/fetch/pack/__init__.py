@@ -35,6 +35,7 @@ class _Symlinker(ErsiliaBase):
         os.symlink(src, dst, target_is_directory=True)
 
     def _dest_lake_symlink(self):
+        return # TODO
         src = os.path.join(self._model_path(self.model_id), DATA_FILE)
         dst = os.path.join(self._lake_path(self.model_id), DATA_FILE)
         self.logger.debug("Symbolic link from {0}".format(src))
