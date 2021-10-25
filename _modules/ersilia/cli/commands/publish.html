@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ersilia.cli.commands.deploy &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>ersilia.cli.commands.publish &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
@@ -54,7 +54,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>ersilia.cli.commands.deploy</li>
+      <li>ersilia.cli.commands.publish</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -63,38 +63,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for ersilia.cli.commands.deploy</h1><div class="highlight"><pre>
+  <h1>Source code for ersilia.cli.commands.publish</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">click</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
-<span class="kn">from</span> <span class="nn">...contrib.deploy</span> <span class="kn">import</span> <span class="n">Deployer</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
+<span class="kn">from</span> <span class="nn">...publish.publish</span> <span class="kn">import</span> <span class="n">ModelPublisher</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 
 
-<div class="viewcode-block" id="deploy_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.deploy.deploy_cmd">[docs]</a><span class="k">def</span> <span class="nf">deploy_cmd</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Creates deploy command&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="publish_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.publish.publish_cmd">[docs]</a><span class="k">def</span> <span class="nf">publish_cmd</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Create publish commmand&quot;&quot;&quot;</span>
 
-    <span class="c1"># Example usage: ersilia deploy {MODEL}</span>
+    <span class="k">def</span> <span class="nf">_publish</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">mf</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+
+    <span class="c1"># Example usage: ersilia publish {STEP} {MODEL}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Deploy model to the cloud&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Deploy model in a cloud service. &quot;</span>
-        <span class="s2">&quot;This option is only for developers and requires credentials.&quot;</span><span class="p">,</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Publish model&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Contribute a model to the Ersilia Model Hub&quot;</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--cloud&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;heroku&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">deploy</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cloud</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
-        <span class="n">dp</span> <span class="o">=</span> <span class="n">Deployer</span><span class="p">(</span><span class="n">cloud</span><span class="o">=</span><span class="n">cloud</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dp</span><span class="o">.</span><span class="n">dep</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;Please enter a valid cloud option&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                    <span class="s2">&quot;Only &#39;heroku&#39; and &#39;local&#39; are available for the moment...&quot;</span><span class="p">,</span>
-                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
+        <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPublisher</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">step</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span><span class="p">:</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">step</span> <span class="o">==</span> <span class="s2">&quot;push&quot;</span><span class="p">:</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">push</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">step</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">test</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">&quot;Step </span><span class="si">{0}</span><span class="s2"> is not valid. Please choose one of &#39;create&#39;, &#39;push&#39; and &#39;test&#39;&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span>
-        <span class="n">dp</span><span class="o">.</span><span class="n">deploy</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">&quot;:thumbs_up: Publishing step </span><span class="si">{0}</span><span class="s2"> for model </span><span class="si">{1}</span><span class="s2"> done successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">step</span><span class="p">,</span> <span class="n">model_id</span>
+            <span class="p">),</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -148,9 +148,9 @@
 </li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService">AutoService (class in ersilia.serve.autoservice)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Aws">Aws (class in ersilia.contrib.deploy)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Aws">Aws (class in ersilia.publish.deploy)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Azure">Azure (class in ersilia.contrib.deploy)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Azure">Azure (class in ersilia.publish.deploy)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -236,6 +236,10 @@
         <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.check.ModelChecker.check">(ersilia.hub.fetch.actions.check.ModelChecker method)</a>
 </li>
       </ul></li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_dvc_exists">check_dvc_exists() (ersilia.utils.dvc.DVCFetcher method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_h5_exists">check_h5_exists() (ersilia.utils.dvc.DVCFetcher method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_conda_yml_file">checksum_from_conda_yml_file() (ersilia.utils.conda.CondaUtils static method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_dockerfile">checksum_from_dockerfile() (ersilia.utils.conda.CondaUtils method)</a>
@@ -322,8 +326,12 @@
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cp_from_image">cp_from_image() (ersilia.utils.docker.SimpleDocker method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.venv.SimpleVenv.create">create() (ersilia.utils.venv.SimpleVenv method)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.create">create() (ersilia.publish.publish.ModelPublisher method)</a>
+
+      <ul>
+        <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.venv.SimpleVenv.create">(ersilia.utils.venv.SimpleVenv method)</a>
 </li>
+      </ul></li>
       <li><a href="source/autodoc/ersilia.cli.html#ersilia.cli.create_cli.create_ersilia_cli">create_ersilia_cli() (in module ersilia.cli.create_cli)</a>
 </li>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.localdb.EnvironmentDb.create_table">create_table() (ersilia.db.environments.localdb.EnvironmentDb method)</a>
@@ -390,39 +398,37 @@
       </ul></li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.delete.delete_cmd">delete_cmd() (in module ersilia.cli.commands.delete)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.delete_containers">delete_containers() (ersilia.db.environments.managers.DockerManager method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.delete_image">delete_image() (ersilia.db.environments.managers.DockerManager method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.deploy">deploy() (ersilia.cli.cmd.Command method)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Aws.deploy">deploy() (ersilia.publish.deploy.Aws method)</a>
 
       <ul>
-        <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Aws.deploy">(ersilia.contrib.deploy.Aws method)</a>
+        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Azure.deploy">(ersilia.publish.deploy.Azure method)</a>
 </li>
-        <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Azure.deploy">(ersilia.contrib.deploy.Azure method)</a>
+        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Deployer.deploy">(ersilia.publish.deploy.Deployer method)</a>
 </li>
-        <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Deployer.deploy">(ersilia.contrib.deploy.Deployer method)</a>
+        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.GoogleCloud.deploy">(ersilia.publish.deploy.GoogleCloud method)</a>
 </li>
-        <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.GoogleCloud.deploy">(ersilia.contrib.deploy.GoogleCloud method)</a>
+        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Heroku.deploy">(ersilia.publish.deploy.Heroku method)</a>
 </li>
-        <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Heroku.deploy">(ersilia.contrib.deploy.Heroku method)</a>
-</li>
-        <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Local.deploy">(ersilia.contrib.deploy.Local method)</a>
+        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Local.deploy">(ersilia.publish.deploy.Local method)</a>
 </li>
       </ul></li>
-      <li><a href="source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.deploy.deploy_cmd">deploy_cmd() (in module ersilia.cli.commands.deploy)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.DeployBase">DeployBase (class in ersilia.publish.deploy)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.DeployBase">DeployBase (class in ersilia.contrib.deploy)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Deployer">Deployer (class in ersilia.publish.deploy)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Deployer">Deployer (class in ersilia.contrib.deploy)</a>
-</li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Heroku.destroy">destroy() (ersilia.contrib.deploy.Heroku static method)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Heroku.destroy">destroy() (ersilia.publish.deploy.Heroku static method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dictlist2dataframe">dictlist2dataframe() (ersilia.io.output.DictlistDataframeConverter method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter">DictlistDataframeConverter (class in ersilia.io.output)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.docker">docker() (ersilia.publish.publish.ModelPublisher method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile">DockerfileFile (class in ersilia.hub.bundle.repo)</a>
 </li>
@@ -445,6 +451,14 @@
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.download_file_from_google_drive">download_file_from_google_drive() (ersilia.utils.download.GoogleDriveDownloader method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.download.GitHubDownloader.download_single">download_single() (ersilia.utils.download.GitHubDownloader method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.dvc">dvc() (ersilia.publish.publish.ModelPublisher method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCBrancher">DVCBrancher (class in ersilia.utils.dvc)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher">DVCFetcher (class in ersilia.utils.dvc)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup">DVCSetup (class in ersilia.utils.dvc)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -528,19 +542,17 @@
 </li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.delete">ersilia.cli.commands.delete (module)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.deploy">ersilia.cli.commands.deploy (module)</a>
-</li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.dockerize">ersilia.cli.commands.dockerize (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.example">ersilia.cli.commands.example (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.fetch">ersilia.cli.commands.fetch (module)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.publish">ersilia.cli.commands.publish (module)</a>
+</li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.serve">ersilia.cli.commands.serve (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.setup">ersilia.cli.commands.setup (module)</a>
-</li>
-      <li><a href="source/autodoc/ersilia.cli.commands.html#module-ersilia.cli.commands.store">ersilia.cli.commands.store (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.cli.commands.utils.html#module-ersilia.cli.commands.utils">ersilia.cli.commands.utils (module)</a>
 </li>
@@ -549,12 +561,6 @@
       <li><a href="source/autodoc/ersilia.cli.html#module-ersilia.cli.create_cli">ersilia.cli.create_cli (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.cli.html#module-ersilia.cli.echo">ersilia.cli.echo (module)</a>
-</li>
-      <li><a href="source/autodoc/ersilia.contrib.html#module-ersilia.contrib">ersilia.contrib (module)</a>
-</li>
-      <li><a href="source/autodoc/ersilia.contrib.html#module-ersilia.contrib.deploy">ersilia.contrib.deploy (module)</a>
-</li>
-      <li><a href="source/autodoc/ersilia.contrib.html#module-ersilia.contrib.store">ersilia.contrib.store (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.core.html#module-ersilia.core">ersilia.core (module)</a>
 </li>
@@ -608,6 +614,8 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#module-ersilia.hub.fetch.actions.get">ersilia.hub.fetch.actions.get (module)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#module-ersilia.hub.fetch.actions.lake">ersilia.hub.fetch.actions.lake (module)</a>
+</li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#module-ersilia.hub.fetch.actions.modify">ersilia.hub.fetch.actions.modify (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#module-ersilia.hub.fetch.actions.pack">ersilia.hub.fetch.actions.pack (module)</a>
@@ -618,8 +626,6 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#module-ersilia.hub.fetch.actions.toolize">ersilia.hub.fetch.actions.toolize (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.hub.fetch.html#module-ersilia.hub.fetch.fetch">ersilia.hub.fetch.fetch (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.pack.html#module-ersilia.hub.fetch.pack">ersilia.hub.fetch.pack (module)</a>
@@ -628,6 +634,8 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.pack.html#module-ersilia.hub.fetch.pack.runners">ersilia.hub.fetch.pack.runners (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io">ersilia.io (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io.dataframe">ersilia.io.dataframe (module)</a>
@@ -655,6 +663,14 @@
       <li><a href="source/autodoc/ersilia.lake.html#module-ersilia.lake.base">ersilia.lake.base (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.lake.html#module-ersilia.lake.interface">ersilia.lake.interface (module)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.publish.html#module-ersilia.publish">ersilia.publish (module)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.publish.html#module-ersilia.publish.deploy">ersilia.publish.deploy (module)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.publish.html#module-ersilia.publish.publish">ersilia.publish.publish (module)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.publish.html#module-ersilia.publish.store">ersilia.publish.store (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.serve.html#module-ersilia.serve">ersilia.serve (module)</a>
 </li>
@@ -693,6 +709,8 @@
       <li><a href="source/autodoc/ersilia.utils.html#module-ersilia.utils.docker">ersilia.utils.docker (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#module-ersilia.utils.download">ersilia.utils.download (module)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.utils.html#module-ersilia.utils.dvc">ersilia.utils.dvc (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#module-ersilia.utils.environment">ersilia.utils.environment (module)</a>
 </li>
@@ -836,6 +854,10 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_folder_id">gdrive_folder_id() (ersilia.utils.dvc.DVCSetup method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_setup">gdrive_setup() (ersilia.utils.dvc.DVCSetup method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.model.ModelIdentifier.generate">generate() (ersilia.utils.identifiers.model.ModelIdentifier method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter">GenericInputAdapter (class in ersilia.io.input)</a>
@@ -858,6 +880,8 @@
         <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.ModelParametersGetter.get">(ersilia.hub.fetch.actions.get.ModelParametersGetter method)</a>
 </li>
         <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.ModelRepositoryGetter.get">(ersilia.hub.fetch.actions.get.ModelRepositoryGetter method)</a>
+</li>
+        <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.lake.LakeGetter.get">(ersilia.hub.fetch.actions.lake.LakeGetter method)</a>
 </li>
         <li><a href="source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter.get">(ersilia.io.input.BaseIOGetter method)</a>
 </li>
@@ -884,12 +908,14 @@
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.get_confirm_token">get_confirm_token() (ersilia.utils.download.GoogleDriveDownloader static method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader.get_delimiter">get_delimiter() (ersilia.io.readers.file.TabularFileReader method)</a>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.get_data">get_data() (ersilia.utils.dvc.DVCFetcher method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.RepoUtils.get_docker_repo_image">get_docker_repo_image() (ersilia.hub.bundle.repo.RepoUtils method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader.get_delimiter">get_delimiter() (ersilia.io.readers.file.TabularFileReader method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.RepoUtils.get_docker_repo_image">get_docker_repo_image() (ersilia.hub.bundle.repo.RepoUtils method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_file">get_file() (ersilia.hub.bundle.bundle.BundleDockerfileFile method)</a>
 
       <ul>
@@ -928,11 +954,15 @@
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.git">git() (ersilia.utils.installers.Installer method)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.git_add_and_commit">git_add_and_commit() (ersilia.utils.dvc.DVCSetup method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.git_push">git_push() (ersilia.publish.publish.ModelPublisher method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.github">github() (ersilia.hub.content.catalog.ModelCatalog method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.download.GitHubDownloader">GitHubDownloader (class in ersilia.utils.download)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.GoogleCloud">GoogleCloud (class in ersilia.contrib.deploy)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.GoogleCloud">GoogleCloud (class in ersilia.publish.deploy)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader">GoogleDriveDownloader (class in ersilia.utils.download)</a>
 </li>
@@ -944,6 +974,8 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.has_data">has_data() (ersilia.utils.dvc.DVCFetcher method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader.has_header">has_header() (ersilia.io.readers.file.TabularFileReader method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.environment.Environment.has_module">has_module() (ersilia.utils.environment.Environment method)</a>
@@ -952,15 +984,15 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.Integrity.has_readme">has_readme() (ersilia.hub.bundle.repo.Integrity method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.has_runs">has_runs() (ersilia.hub.bundle.repo.DockerfileFile method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.has_runs">has_runs() (ersilia.hub.bundle.repo.DockerfileFile method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.Integrity.has_service">has_service() (ersilia.hub.bundle.repo.Integrity method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.app.blocks.html#ersilia.app.blocks.streamlit.StreamlitBlocks.header">header() (ersilia.app.blocks.streamlit.StreamlitBlocks method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Heroku">Heroku (class in ersilia.contrib.deploy)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Heroku">Heroku (class in ersilia.publish.deploy)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.home">home() (ersilia.utils.paths.Paths static method)</a>
 </li>
@@ -1088,9 +1120,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.base.LakeBase">LakeBase (class in ersilia.lake.base)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.lake.LakeGetter">LakeGetter (class in ersilia.hub.fetch.actions.lake)</a>
+</li>
       <li><a href="source/autodoc/ersilia.app.blocks.html#ersilia.app.blocks.streamlit.StreamlitBlocks.load_model">load_model() (ersilia.app.blocks.streamlit.StreamlitBlocks method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.deploy.Local">Local (class in ersilia.contrib.deploy)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.deploy.Local">Local (class in ersilia.publish.deploy)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.local">local() (ersilia.hub.content.catalog.ModelCatalog method)</a>
 </li>
@@ -1154,10 +1188,10 @@
 </li>
       <li><a href="source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.model.ModelIdentifier">ModelIdentifier (class in ersilia.utils.identifiers.model)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.modify.ModelModifier">ModelModifier (class in ersilia.hub.fetch.actions.modify)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.pack.ModelPacker">ModelPacker (class in ersilia.hub.fetch.actions.pack)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.ModelParametersGetter">ModelParametersGetter (class in ersilia.hub.fetch.actions.get)</a>
@@ -1168,7 +1202,9 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.prepare.ModelPreparer">ModelPreparer (class in ersilia.hub.fetch.actions.prepare)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.store.ModelRemover">ModelRemover (class in ersilia.contrib.store)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher">ModelPublisher (class in ersilia.publish.publish)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelRemover">ModelRemover (class in ersilia.publish.store)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.ModelRepositoryGetter">ModelRepositoryGetter (class in ersilia.hub.fetch.actions.get)</a>
 </li>
@@ -1186,7 +1222,7 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus">ModelStatus (class in ersilia.hub.bundle.status)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.store.ModelStorager">ModelStorager (class in ersilia.contrib.store)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager">ModelStorager (class in ersilia.publish.store)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelTmpDeleter">ModelTmpDeleter (class in ersilia.hub.delete.delete)</a>
 </li>
@@ -1270,12 +1306,12 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install">pip_install() (ersilia.hub.fetch.actions.toolize.ModelToolizer method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelPipDeleter.pip_uninstall">pip_uninstall() (ersilia.hub.delete.delete.ModelPipDeleter method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService">PipInstalledService (class in ersilia.serve.services)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.api.Api.post">post() (ersilia.serve.api.Api method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.api.Api.post_amenable_to_h5">post_amenable_to_h5() (ersilia.serve.api.Api method)</a>
@@ -1298,10 +1334,18 @@
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.download.PseudoDownloader">PseudoDownloader (class in ersilia.utils.download)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.publish">publish() (ersilia.cli.cmd.Command method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.publish.publish_cmd">publish_cmd() (in module ersilia.cli.commands.publish)</a>
+</li>
       <li><a href="source/autodoc/ersilia.io.html#ersilia.io.pure.PureDataTyper">PureDataTyper (class in ersilia.io.pure)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.upload.OsfUploader.push">push() (ersilia.utils.upload.OsfUploader method)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.push">push() (ersilia.publish.publish.ModelPublisher method)</a>
+
+      <ul>
+        <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.upload.OsfUploader.push">(ersilia.utils.upload.OsfUploader method)</a>
 </li>
+      </ul></li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.python_version">python_version() (ersilia.utils.versioning.Versioner method)</a>
 </li>
   </ul></td>
@@ -1336,10 +1380,10 @@
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.reformat_py">reformat_py() (ersilia.utils.versioning.Versioner static method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.store.ModelRemover.remove">remove() (ersilia.contrib.store.ModelRemover method)</a>
+      <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.remove">remove() (ersilia.db.environments.managers.DockerManager method)</a>
 
       <ul>
-        <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.remove">(ersilia.db.environments.managers.DockerManager method)</a>
+        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelRemover.remove">(ersilia.publish.store.ModelRemover method)</a>
 </li>
         <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.remove.OsfRemover.remove">(ersilia.utils.remove.OsfRemover method)</a>
 </li>
@@ -1440,6 +1484,10 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile">ServiceFile (class in ersilia.hub.bundle.repo)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.set_dvc_gdrive">set_dvc_gdrive() (ersilia.utils.dvc.DVCSetup method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.dvc.set_secrets_file">set_secrets_file() (in module ersilia.utils.dvc)</a>
+</li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_slim">set_to_slim() (ersilia.hub.bundle.bundle.BundleDockerfileFile method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.set_verbosity">set_verbosity() (ersilia.utils.logging.Logger method)</a>
@@ -1460,12 +1508,12 @@
         <li><a href="source/autodoc/ersilia.setup.html#ersilia.setup.profile.SetupProfile.setup">(ersilia.setup.profile.SetupProfile method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.setup.setup_cmd">setup_cmd() (in module ersilia.cli.commands.setup)</a>
 </li>
       <li><a href="source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda">SetupBaseConda (class in ersilia.setup.baseconda)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.setup.html#ersilia.setup.basedocker.SetupBaseDocker">SetupBaseDocker (class in ersilia.setup.basedocker)</a>
 </li>
       <li><a href="source/autodoc/ersilia.setup.html#ersilia.setup.conda.SetupConda">SetupConda (class in ersilia.setup.conda)</a>
@@ -1510,13 +1558,7 @@
       </ul></li>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.stop">stop() (ersilia.db.environments.managers.DockerManager method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.store">store() (ersilia.cli.cmd.Command method)</a>
-
-      <ul>
-        <li><a href="source/autodoc/ersilia.contrib.html#ersilia.contrib.store.ModelStorager.store">(ersilia.contrib.store.ModelStorager method)</a>
-</li>
-      </ul></li>
-      <li><a href="source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.store.store_cmd">store_cmd() (in module ersilia.cli.commands.store)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager.store">store() (ersilia.publish.store.ModelStorager method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.app.html#ersilia.app.app.StreamlitApp">StreamlitApp (class in ersilia.app.app)</a>
 </li>
@@ -1540,10 +1582,12 @@
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader">TabularFileReader (class in ersilia.io.readers.file)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.timestamp.TimeStampIdentifier">TimeStampIdentifier (class in ersilia.utils.identifiers.timestamp)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.test">test() (ersilia.publish.publish.ModelPublisher method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.timestamp.TimeStampIdentifier">TimeStampIdentifier (class in ersilia.utils.identifiers.timestamp)</a>
+</li>
       <li><a href="source/autodoc/ersilia.cli.commands.utils.html#ersilia.cli.commands.utils.utils.tmp_pid_file">tmp_pid_file() (in module ersilia.cli.commands.utils.utils)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.TmpCleaner">TmpCleaner (class in ersilia.hub.delete.delete)</a>

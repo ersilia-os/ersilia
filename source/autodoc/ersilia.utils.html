@@ -43,12 +43,12 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.contrib.html">ersilia.contrib package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">ersilia.utils package</a></li>
@@ -413,8 +413,71 @@ one of the commands is not conda … or pip … or pip3 …</p>
 </dd></dl>
 
 </div>
-<div class="section" id="ersilia-utils-dvc-module">
-<h2>ersilia.utils.dvc module<a class="headerlink" href="#ersilia-utils-dvc-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-ersilia.utils.dvc">
+<span id="ersilia-utils-dvc-module"></span><h2>ersilia.utils.dvc module<a class="headerlink" href="#module-ersilia.utils.dvc" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.utils.dvc.DVCBrancher">
+<em class="property">class </em><code class="descclassname">ersilia.utils.dvc.</code><code class="descname">DVCBrancher</code><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCBrancher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCBrancher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.utils.dvc.DVCFetcher">
+<em class="property">class </em><code class="descclassname">ersilia.utils.dvc.</code><code class="descname">DVCFetcher</code><span class="sig-paren">(</span><em>local_repo_path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCFetcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCFetcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.utils.dvc.DVCFetcher.check_dvc_exists">
+<code class="descname">check_dvc_exists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCFetcher.check_dvc_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCFetcher.check_dvc_exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.utils.dvc.DVCFetcher.check_h5_exists">
+<code class="descname">check_h5_exists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCFetcher.check_h5_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCFetcher.check_h5_exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.utils.dvc.DVCFetcher.get_data">
+<code class="descname">get_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCFetcher.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCFetcher.get_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.utils.dvc.DVCFetcher.has_data">
+<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCFetcher.has_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCFetcher.has_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ersilia.utils.dvc.DVCSetup">
+<em class="property">class </em><code class="descclassname">ersilia.utils.dvc.</code><code class="descname">DVCSetup</code><span class="sig-paren">(</span><em>local_repo_path</em>, <em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCSetup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.utils.dvc.DVCSetup.gdrive_folder_id">
+<code class="descname">gdrive_folder_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCSetup.gdrive_folder_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCSetup.gdrive_folder_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.utils.dvc.DVCSetup.gdrive_setup">
+<code class="descname">gdrive_setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCSetup.gdrive_setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCSetup.gdrive_setup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.utils.dvc.DVCSetup.git_add_and_commit">
+<code class="descname">git_add_and_commit</code><span class="sig-paren">(</span><em>message='Set to public data repo'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCSetup.git_add_and_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCSetup.git_add_and_commit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.utils.dvc.DVCSetup.set_dvc_gdrive">
+<code class="descname">set_dvc_gdrive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#DVCSetup.set_dvc_gdrive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.DVCSetup.set_dvc_gdrive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ersilia.utils.dvc.set_secrets_file">
+<code class="descclassname">ersilia.utils.dvc.</code><code class="descname">set_secrets_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/dvc.html#set_secrets_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.utils.dvc.set_secrets_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-ersilia.utils.environment">
 <span id="ersilia-utils-environment-module"></span><h2>ersilia.utils.environment module<a class="headerlink" href="#module-ersilia.utils.environment" title="Permalink to this headline">¶</a></h2>

@@ -80,6 +80,7 @@
 
 
 <span class="n">SECRETS_JSON</span> <span class="o">=</span> <span class="s2">&quot;secrets.json&quot;</span>
+<span class="n">GDRIVE_CLIENT_SECRETS_JSON</span> <span class="o">=</span> <span class="s2">&quot;gdrive_client_secrets.json&quot;</span>
 <span class="n">ERSILIA_SECRETS_GITHUB_REPO</span> <span class="o">=</span> <span class="s2">&quot;ersilia-secrets&quot;</span>
 
 
@@ -234,9 +235,10 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">secrets_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">SECRETS_JSON</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gdrive_client_secrets_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">GDRIVE_CLIENT_SECRETS_JSON</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">fetch_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fetch secrets from ersilia-secrets repository&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_fetch_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fetch filename from ersilia-secrets repository&quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">..auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
 
         <span class="n">auth</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span>
@@ -247,8 +249,16 @@
 
             <span class="n">ghd</span> <span class="o">=</span> <span class="n">GitHubDownloader</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
             <span class="n">ghd</span><span class="o">.</span><span class="n">download_single</span><span class="p">(</span>
-                <span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="n">ERSILIA_SECRETS_GITHUB_REPO</span><span class="p">,</span> <span class="n">SECRETS_JSON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secrets_json</span>
+                <span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="n">ERSILIA_SECRETS_GITHUB_REPO</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span>
             <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fetch_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_github</span><span class="p">(</span><span class="n">SECRETS_JSON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secrets_json</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fetch_gdrive_secrets_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_github</span><span class="p">(</span>
+            <span class="n">GDRIVE_CLIENT_SECRETS_JSON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gdrive_client_secrets_json</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">to_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert secrets to credentials file&quot;&quot;&quot;</span>

@@ -70,6 +70,7 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">.actions.prepare</span> <span class="kn">import</span> <span class="n">ModelPreparer</span>
 <span class="kn">from</span> <span class="nn">.actions.get</span> <span class="kn">import</span> <span class="n">ModelGetter</span>
+<span class="kn">from</span> <span class="nn">.actions.lake</span> <span class="kn">import</span> <span class="n">LakeGetter</span>
 <span class="kn">from</span> <span class="nn">.actions.pack</span> <span class="kn">import</span> <span class="n">ModelPacker</span>
 <span class="kn">from</span> <span class="nn">.actions.toolize</span> <span class="kn">import</span> <span class="n">ModelToolizer</span>
 <span class="kn">from</span> <span class="nn">.actions.content</span> <span class="kn">import</span> <span class="n">CardGetter</span>
@@ -103,6 +104,10 @@
     <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mg</span> <span class="o">=</span> <span class="n">ModelGetter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">mg</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_lake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ml</span> <span class="o">=</span> <span class="n">LakeGetter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">ml</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_pack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPacker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
