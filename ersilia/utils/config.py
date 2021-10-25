@@ -186,7 +186,7 @@ class Secrets(object):
                 GITHUB_ORG, ERSILIA_SECRETS_GITHUB_REPO, remote_path, local_path
             )
 
-    def fetch_from_github(sel):
+    def fetch_from_github(self):
         self._fetch_from_github(SECRETS_JSON, self.secrets_json)
 
     def fetch_gdrive_secrets_from_github(self):
