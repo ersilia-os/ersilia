@@ -66,7 +66,7 @@ class ModelPrecalculationsGetter(BaseAction):
     def fetch_data(self):
         if self.df.check_dvc_exists():
             df.get_data()
-        #TO DO SimLink
+        # TO DO SimLink
 
     def _h5_simlink(self):
         if self.df.has_data():

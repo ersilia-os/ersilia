@@ -37,11 +37,6 @@ class Command(object):
 
         delete_cmd()
 
-    def deploy(self):
-        from .commands.deploy import deploy_cmd
-
-        deploy_cmd()
-
     def dockerize(self):
         from .commands.dockerize import dockerize_cmd
 
@@ -57,6 +52,11 @@ class Command(object):
 
         fetch_cmd()
 
+    def publish(self):
+        from .commands.publish import publish_cmd
+
+        publish_cmd()
+
     def serve(self):
         from .commands.serve import serve_cmd
 
@@ -66,8 +66,3 @@ class Command(object):
         from .commands.setup import setup_cmd
 
         setup_cmd()
-
-    def store(self):
-        from .commands.store import store_cmd
-
-        store_cmd()

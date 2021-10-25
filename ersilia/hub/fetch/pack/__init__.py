@@ -34,9 +34,17 @@ class _Symlinker(ErsiliaBase):
         self.logger.debug("Building symlinks between {0} and {1}".format(src, dst))
         os.symlink(src, dst, target_is_directory=True)
 
+    def _dest_lake_symlink(self):
+        src = os.path.join(self._model_path(self.model_id), DATA_FILE)
+        dst = os.path.join(self._lake_path(self.model_id), DATA_FILE)
+        self.logger.debug("Symbolic link from {0}".format(src))
+        self.logger.debug("Symbolic link to {1}".format(dst))
+        os.symlink(src, dst, target_is_directory=False)
+
     def _symlinks(self):
         self._bentoml_bundle_symlink()
         self._dest_bundle_symlink()
+        self._dest_lake_symlink()
 
 
 class _Writer(ErsiliaBase):

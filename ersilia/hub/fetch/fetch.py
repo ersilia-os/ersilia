@@ -4,6 +4,7 @@ from ... import ErsiliaBase
 from ... import logger
 from .actions.prepare import ModelPreparer
 from .actions.get import ModelGetter
+from .actions.lake import LakeGetter
 from .actions.pack import ModelPacker
 from .actions.toolize import ModelToolizer
 from .actions.content import CardGetter
@@ -37,6 +38,10 @@ class ModelFetcher(ErsiliaBase):
     def _get(self):
         mg = ModelGetter(self.model_id, self.config_json)
         mg.get()
+
+    def _lake(self):
+        ml = LakeGetter(self.model_id, self.config_json)
+        ml.get()
 
     def _pack(self):
         mp = ModelPacker(self.model_id, self.config_json)

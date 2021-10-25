@@ -5,7 +5,6 @@ from .commands import ersilia_cli
 
 def create_ersilia_cli(pip_installed_bundle_path=None):
     is_contributor = Auth().is_contributor()
-    is_contributor = False
 
     cmd = Command()
 
@@ -19,15 +18,17 @@ def create_ersilia_cli(pip_installed_bundle_path=None):
     cmd.catalog()
     cmd.card()
 
+    if is_contributor:
+        cmd.publish()
+
     # TODO: check if conda and docker are installed.
     if is_contributor:
         cmd.conda()
         cmd.dockerize()
 
+    # TODO: functions only for contributors
     # Functions only for contributors
     if is_contributor:
-        cmd.store()
-        cmd.deploy()
         cmd.setup()
 
     return ersilia_cli

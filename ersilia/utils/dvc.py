@@ -70,8 +70,8 @@ class DVCSetup(object):
         ).GetList()
 
         for file in fileList:
-            if file['title'] == self.model_id:
-                return str(file['id'])
+            if file["title"] == self.model_id:
+                return str(file["id"])
 
     def set_dvc_gdrive(self):
         terminal.run_command(
@@ -82,6 +82,11 @@ class DVCSetup(object):
         )
         terminal.run_command("dvc --cd " + self.repo_path + " push")
 
-        #TO DO GIT ADD_COMMIT (pygit2 github_cli)
-        # terminal.run_command("git add ".....)
-        # terminal.run_command("git commit -m 'Set public data repo'")
+    def git_add_and_commit(self, message="Set to public data repo"):
+        cwd = os.getcwd()
+        os.chdir(self.repo_path)
+        terminal.run_command(
+            "git add *dvc*"
+        )  # TODO: Be more specific in the files/folders to be added
+        terminal.run_command("git commit -m '{0}'".format(message))
+        os.chdir(cwd)
