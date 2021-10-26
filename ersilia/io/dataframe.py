@@ -27,9 +27,21 @@ class Dataframe(object):
             }
             yield result
 
+    def _float(self, x):
+        try:
+            return float(x)
+        except:
+            return np.nan
+
     def _homogenize(self):
+        if self.values is None:
+            return
+        values = np.zeros((len(self.values), len(self.values[0])))
+        for i, v in enumerate(self.values):
+            for j, x in enumerate(v):
+                values[i,j] = self._float(x)
+        self.values = np.array(values, dtype=np.float32)
         # TODO: Deal with other types of inputs
-        self.values = np.array(self.values, dtype=np.float32)
 
     def from_csv(self, filename):
         keys = []
