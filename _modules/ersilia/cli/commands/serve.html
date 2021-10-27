@@ -72,6 +72,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+<span class="kn">from</span> <span class="nn">..messages</span> <span class="kn">import</span> <span class="n">ModelNotFound</span>
 
 
 <div class="viewcode-block" id="serve_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.serve.serve_cmd">[docs]</a><span class="k">def</span> <span class="nf">serve_cmd</span><span class="p">():</span>
@@ -81,6 +82,8 @@
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">slug</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">slug</span>
         <span class="n">srv</span> <span class="o">=</span> <span class="n">AutoService</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
