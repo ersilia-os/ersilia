@@ -26,7 +26,11 @@ class Slug(ErsiliaBase):
             return list(r)[0]
 
     def _remote_encode(self, slug):
-        return self.mc.ac.find_card_by_slug(slug)["Identifier"].strip()
+        res = self.mc.ac.find_card_by_slug(slug)
+        if res is None:
+            return None
+        else:
+            return res["Identifier"].strip()
 
     def encode(self, slug):
         """Given a slug, get the model_id"""
@@ -45,7 +49,11 @@ class Slug(ErsiliaBase):
             return list(r)[0]
 
     def _remote_decode(self, model_id):
-        return self.mc.ac.find_card_by_model_id(model_id)["Slug"].strip()
+        res = self.mc.ac.find_card_by_model_id(model_id)
+        if res is None:
+            return None
+        else:
+            return res["Slug"].strip()
 
     def decode(self, model_id):
         """Given a model_id, get the slug"""

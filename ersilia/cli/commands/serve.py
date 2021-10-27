@@ -6,6 +6,7 @@ from .utils.utils import tmp_pid_file
 from . import ersilia_cli
 from .. import echo
 from ... import ModelBase
+from ..messages import ModelNotFound
 
 
 def serve_cmd():
@@ -15,6 +16,8 @@ def serve_cmd():
     @click.argument("model", type=click.STRING)
     def serve(model):
         model = ModelBase(model)
+        if not model.is_valid():
+            ModelNotFound(model).echo()
         model_id = model.model_id
         slug = model.slug
         srv = AutoService(model_id)

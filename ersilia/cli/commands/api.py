@@ -6,6 +6,7 @@ from . import ersilia_cli
 from .. import echo
 from .utils.utils import tmp_pid_file
 from ...serve.api import Api
+from ...serve.autoservice import AutoService
 from ... import ModelBase
 
 
@@ -15,8 +16,8 @@ def api_cmd():
     @ersilia_cli.command(
         short_help="Run API on a served model", help="Run API on a served model"
     )
-    @click.argument("model", type=click.STRING)
-    @click.argument("api_name", type=click.STRING)
+    @click.argument("model", default=None, type=click.STRING)
+    @click.argument("api_name", required=False, default=None, type=click.STRING)
     @click.option("-i", "--input", "input", required=True, type=click.STRING)
     @click.option(
         "-o", "--output", "output", required=False, default=None, type=click.STRING
@@ -38,6 +39,11 @@ def api_cmd():
         with open(tmp_file, "r") as f:
             for l in f:
                 url = l.rstrip().split()[1]
+        if api_name is None:
+            api_names = AutoService(model_id).get_apis()
+            if len(api_names) > 1:
+                echo("More than one API found, please specificy", fg="red")
+            api_name = api_names[0]
         api = Api(model_id, url, api_name)
         for result in api.post(input=input, output=output, batch_size=batch_size):
             if result is not None:

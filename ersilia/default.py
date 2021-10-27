@@ -40,6 +40,10 @@ AIRTABLE_READONLY_API_KEY = "keycTTh5uQ7v2CPbI"
 AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
 AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 
+# URLS
+ERSILIA_WEB_URL = "https://ersilia.io"
+ERSILIA_MODEL_HUB_URL = "https://airtable.com/shrUcrUnd7jB9ChZV"
+
 # EOS conda
 _resolve_script = "conda_env_resolve.py"
 resolve_script = os.path.join(EOS, _resolve_script)
