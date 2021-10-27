@@ -25,6 +25,7 @@ class ErsiliaBase(object):
         self.config_json = config_json
         self.cfg = Config(json_file=config_json)
         self.cred = Credentials(json_file=credentials_json)
+        self._lake_dir = self._abs_path(os.path.join(EOS, "isaura", "lake"))
         self._tmp_dir = self._abs_path(os.path.join(EOS, self.cfg.LOCAL.TMP))
         if not os.path.exists(self._tmp_dir):
             os.makedirs(self._tmp_dir, exist_ok=True)

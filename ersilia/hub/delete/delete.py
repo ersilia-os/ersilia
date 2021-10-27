@@ -10,6 +10,8 @@ from ...db.environments.localdb import EnvironmentDb
 from ...db.hubdata.localslugs import SlugDb
 from ..bundle.status import ModelStatus
 
+from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
+
 
 class ModelEosDeleter(ErsiliaBase):
     def __init__(self, config_json=None):
@@ -25,6 +27,26 @@ class ModelEosDeleter(ErsiliaBase):
             return
         logger.info("Removing folder {0}".format(folder))
         shutil.rmtree(folder)
+
+
+class ModelLakeDeleter(ErsiliaBase):
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        self.path = self._lake_dir
+
+    def delete_local(self, model_id):
+        path = os.path.join(self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG_LOCAL))
+        if os.path.exists(path):
+            os.remove(path)
+
+    def delete_public(self, model_id):
+        path = os.path.join(self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG))
+        if os.path.exists(path):
+            os.remove(path)
+
+    def delete(self, model_id):
+        self.delete_local(model_id)
+        self.delete_public(model_id)
 
 
 class ModelTmpDeleter(ErsiliaBase):
@@ -166,5 +188,6 @@ class ModelFullDeleter(object):
         ModelBentoDeleter(self.config_json).delete(model_id)
         ModelCondaDeleter(self.config_json).delete(model_id)
         ModelTmpDeleter(self.config_json).delete(model_id)
+        ModelLakeDeleter(self.config_json).delete(model_id)
         ModelPipDeleter().delete(model_id)
         logger.success("Model {0} deleted successfully".format(model_id))
