@@ -56,6 +56,8 @@ class ModelSniffer(BaseAction):
                 pdt = PureDataTyper(v)
                 input_schema[k] += [pdt.get_type()]
             out = res["output"]
+            if out is None:
+                continue
             for k, v in out.items():
                 pdt = PureDataTyper(v)
                 output_schema[k] += [pdt.get_type()]
