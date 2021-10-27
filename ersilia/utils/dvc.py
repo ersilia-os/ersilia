@@ -99,7 +99,7 @@ class DVCSetup(object):
         cwd = os.getcwd()
         os.chdir(self.repo_path)
         terminal.run_command(
-            "git add *dvc*"
+            "git add data.h5.dvc"
         )  # TODO: Be more specific in the files/folders to be added
         terminal.run_command("git commit -m '{0}'".format(message))
         os.chdir(cwd)

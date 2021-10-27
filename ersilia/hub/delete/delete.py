@@ -35,7 +35,9 @@ class ModelLakeDeleter(ErsiliaBase):
         self.path = self._lake_dir
 
     def delete_local(self, model_id):
-        path = os.path.join(self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG_LOCAL))
+        path = os.path.join(
+            self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG_LOCAL)
+        )
         if os.path.exists(path):
             os.remove(path)
 

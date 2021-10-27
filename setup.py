@@ -45,7 +45,7 @@ slim = [
     "loguru",
     "pyairtable",
     "h5py",
-    "PyDrive2"
+    "PyDrive2",
 ]
 slim_requires = _filter_requires(slim, install_requires)
 

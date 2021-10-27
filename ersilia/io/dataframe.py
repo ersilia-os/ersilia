@@ -39,7 +39,7 @@ class Dataframe(object):
         values = np.zeros((len(self.values), len(self.values[0])))
         for i, v in enumerate(self.values):
             for j, x in enumerate(v):
-                values[i,j] = self._float(x)
+                values[i, j] = self._float(x)
         self.values = np.array(values, dtype=np.float32)
         # TODO: Deal with other types of inputs
 

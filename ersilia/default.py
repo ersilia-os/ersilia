@@ -28,6 +28,9 @@ VERBOSE_FILE = ".verbose.json"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
+
+# Isaura data lake
+H5_EXTENSION = ".h5"
 H5_DATA_FILE = "data.h5"
 ISAURA_FILE_TAG = "_public"
 ISAURA_FILE_TAG_LOCAL = "_local"
