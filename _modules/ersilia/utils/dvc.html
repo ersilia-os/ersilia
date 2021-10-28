@@ -153,13 +153,15 @@
                 <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="DVCSetup.set_dvc_gdrive"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.set_dvc_gdrive">[docs]</a>    <span class="k">def</span> <span class="nf">set_dvc_gdrive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;dvc --cd </span><span class="si">{0}</span><span class="s2"> add data.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">))</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
             <span class="s2">&quot;dvc --cd &quot;</span>
             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span>
             <span class="o">+</span> <span class="s2">&quot; remote add -d public_repo gdrive://&quot;</span>
             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gdrive_folder_id</span><span class="p">()</span>
         <span class="p">)</span>
-        <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;dvc --cd &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot; push&quot;</span><span class="p">)</span></div>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;dvc --cd &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot; push&quot;</span>
+        <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DVCSetup.git_add_and_commit"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.git_add_and_commit">[docs]</a>    <span class="k">def</span> <span class="nf">git_add_and_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Set to public data repo&quot;</span><span class="p">):</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
