@@ -23,6 +23,7 @@ class ErsiliaBase(object):
         """
         self.eos_dir = EOS
         self.config_json = config_json
+        self.credentials_json = credentials_json
         self.cfg = Config(json_file=config_json)
         self.cred = Credentials(json_file=credentials_json)
         self._lake_dir = self._abs_path(os.path.join(EOS, "isaura", "lake"))

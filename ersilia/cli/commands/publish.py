@@ -24,13 +24,15 @@ def publish_cmd():
         mp = ModelPublisher(model_id, config_json=None, credentials_json=None)
         if step == "create":
             mp.create()
+        if step == "rebase":
+            mp.rebase()
         elif step == "push":
             mp.push()
         elif step == "test":
             mp.test()
         else:
             echo(
-                "Step {0} is not valid. Please choose one of 'create', 'push' and 'test'",
+                "Step {0} is not valid. Please choose one of 'create', 'rebase', 'push' and 'test'",
                 fg="red",
             )
         echo(

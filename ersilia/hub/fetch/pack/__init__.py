@@ -5,6 +5,7 @@ from .... import ErsiliaBase
 from ...bundle.repo import DockerfileFile
 
 from .. import PYTHON_INSTALLS
+from ....default import H5_DATA_FILE, ISAURA_FILE_TAG, H5_EXTENSION
 
 
 class _Symlinker(ErsiliaBase):
@@ -37,7 +38,7 @@ class _Symlinker(ErsiliaBase):
     def _dest_lake_symlink(self):
         src = os.path.join(self._model_path(self.model_id), H5_DATA_FILE)
         dst = os.path.join(
-            self._lake_path(),
+            self._lake_dir,
             "{0}{1}.{2}".format(self.model_id, ISAURA_FILE_TAG, H5_EXTENSION),
         )
         if os.path.exists(src):
