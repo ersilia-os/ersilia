@@ -74,7 +74,6 @@ class TemplateRebaser(ErsiliaBase):
         # TODO: Better overwritting functionality
         self.file_folder_rebaser.do_file("data.h5", overwrite=False)
         self.file_folder_rebaser.do_file(".dvcignore", overwrite=False)
-        self.file_folder_rebaser.do_file(".data.h5.dvc", overwrite=False)
         self.file_folder_rebaser.do_folder(".dvc", overwrite=False)
 
     def clean(self):

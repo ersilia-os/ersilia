@@ -14,8 +14,9 @@ def is_quiet():
         return True
 
 
-def run_command(cmd):
-    quiet = is_quiet()
+def run_command(cmd, quiet=None):
+    if quiet is None:
+        quiet = is_quiet()
     if type(cmd) == str:
         if quiet:
             with open(os.devnull, "w") as fp:

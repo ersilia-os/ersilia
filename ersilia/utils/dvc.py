@@ -87,13 +87,15 @@ class DVCSetup(object):
                 return str(file["id"])
 
     def set_dvc_gdrive(self):
+        terminal.run_command("dvc --cd {0} add data.h5".format(self.repo_path))
         terminal.run_command(
             "dvc --cd "
             + self.repo_path
             + " remote add -d public_repo gdrive://"
             + self.gdrive_folder_id()
         )
-        terminal.run_command("dvc --cd " + self.repo_path + " push")
+        cmd = "dvc --cd " + self.repo_path + " push"
+        terminal.run_command(cmd, quiet=False)
 
     def git_add_and_commit(self, message="Set to public data repo"):
         cwd = os.getcwd()
