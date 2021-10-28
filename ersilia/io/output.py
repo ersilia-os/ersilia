@@ -37,7 +37,6 @@ class DataFrame(object):
 class ResponseRefactor(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
-        self.logger.debug("Generic output adapter initialized")
         self._expect_meta = None
         self._meta = None
 
@@ -94,7 +93,6 @@ class GenericOutputAdapter(ResponseRefactor):
     def __init__(self, config_json):
         ResponseRefactor.__init__(self, config_json=config_json)
         self.api_schema = None
-        self.logger.debug("Generic output adapter initialized")
         self._schema = None
 
     @staticmethod

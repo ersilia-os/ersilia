@@ -2,7 +2,7 @@ import click
 import json
 
 from . import ersilia_cli
-from ...hub.content.card import ModelCard
+from ...hub.content.card import ModelCard, LakeCard
 from ...serve.schema import ApiSchema
 from ... import ModelBase
 
@@ -22,12 +22,23 @@ def card_cmd():
         default=False,
         help="Show schema of the model",
     )
-    def card(model, schema):
+    @click.option(
+        "-l",
+        "--lake",
+        is_flag=True,
+        default=False,
+        help="Show the properties of the data lake"
+    )
+    def card(model, schema, lake):
         mdl = ModelBase(model)
         model_id = mdl.model_id
-        if not schema:
+        if schema:
             mc = ModelCard()
             click.echo(mc.get(model_id, as_json=True))
-        else:
-            ac = ApiSchema(model_id, config_json=None)
-            click.echo(json.dumps(ac.get(), indent=4))
+            return
+        if lake:
+            mc = LakeCard()
+            click.echo(mc.get(model_id, as_json=True))
+            return
+        ac = ApiSchema(model_id, config_json=None)
+        click.echo(json.dumps(ac.get(), indent=4))

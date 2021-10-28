@@ -197,6 +197,7 @@ class Api(object):
         todo_input = os.path.join(tmp_folder, "todo_input.csv")
         cur_idx = 0
         for input in self.input_adapter.adapt(input, batch_size=batch_size):
+            self.logger.debug("Inspecting {0}...".format(cur_idx))
             done, todo = self.lake.done_todo(input)
             self._write_done_todo_file(cur_idx, done_input, done)
             self._write_done_todo_file(cur_idx, todo_input, todo)
@@ -278,6 +279,7 @@ class Api(object):
         ):
             for i in mapping[res["input"]["key"]]:
                 results_[i] = res
+        self.logger.debug("Done with unique posting")
         sorted_idxs = sorted(results_.keys())
         results = [results_[i] for i in sorted_idxs]
         if output is not None:

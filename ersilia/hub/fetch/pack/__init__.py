@@ -39,11 +39,11 @@ class _Symlinker(ErsiliaBase):
         src = os.path.join(self._model_path(self.model_id), H5_DATA_FILE)
         dst = os.path.join(
             self._lake_dir,
-            "{0}{1}.{2}".format(self.model_id, ISAURA_FILE_TAG, H5_EXTENSION),
+            "{0}{1}{2}".format(self.model_id, ISAURA_FILE_TAG, H5_EXTENSION),
         )
         if os.path.exists(src):
             self.logger.debug("Symbolic link from {0}".format(src))
-            self.logger.debug("Symbolic link to {1}".format(dst))
+            self.logger.debug("Symbolic link to {0}".format(dst))
             os.symlink(src, dst, target_is_directory=False)
 
     def _symlinks(self):

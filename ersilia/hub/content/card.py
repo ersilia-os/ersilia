@@ -8,12 +8,21 @@ from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
 
+try:
+    from isaura.core.hdf5 import Hdf5Explorer
+except:
+    Hdf5Explorer = None
+
 from ...default import (
     AIRTABLE_READONLY_API_KEY,
     AIRTABLE_MODEL_HUB_BASE_ID,
     AIRTABLE_MODEL_HUB_TABLE_NAME,
+    ISAURA_DIR,
+    ISAURA_FILE_TAG,
+    ISAURA_FILE_TAG_LOCAL,
+    H5_EXTENSION,
+    CARD_FILE
 )
-from ...default import CARD_FILE
 
 AIRTABLE_MAX_ROWS = 100000
 AIRTABLE_PAGE_SIZE = 100
@@ -132,6 +141,21 @@ class LocalCard(ErsiliaBase):
             return card
         else:
             return None
+
+
+class LakeCard(ErsiliaBase):
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+
+    def get(self, model_id, as_json=False):
+        if Hdf5Explorer is None:
+            self.logger.debug("No lake found")
+            return None
+        card = Hdf5Explorer(model_id=model_id).info()
+        if as_json:
+            return json.dumps(card, indent=4)
+        else:
+            return card
 
 
 class ModelCard(object):
