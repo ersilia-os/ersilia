@@ -70,26 +70,39 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 
 
-
 <div class="viewcode-block" id="ModelNotFound"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.ModelNotFound">[docs]</a><span class="k">class</span> <span class="nc">ModelNotFound</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
 
 <div class="viewcode-block" id="ModelNotFound.echo"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.ModelNotFound.echo">[docs]</a>    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Model not found... </span><span class="si">{0}</span><span class="s2"> is not a valid model identifier&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">text</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Find valid identifiers in the Ersilia Model Hub: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ERSILIA_MODEL_HUB_URL</span><span class="p">))</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">&quot;Model not found... </span><span class="si">{0}</span><span class="s2"> is not a valid model identifier&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">text</span>
+            <span class="p">),</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">&quot;Find valid identifiers in the Ersilia Model Hub: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">ERSILIA_MODEL_HUB_URL</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ModelNotInLocal"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.ModelNotInLocal">[docs]</a><span class="k">class</span> <span class="nc">ModelNotInLocal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
 <div class="viewcode-block" id="ModelNotInLocal.echo"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.ModelNotInLocal.echo">[docs]</a>    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> could not be found in local device&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Please fetch the model from the Ersilia Model Hub: ersilia fetch </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> could not be found in local device&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">&quot;Please fetch the model from the Ersilia Model Hub: ersilia fetch </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
 </pre></div>
 

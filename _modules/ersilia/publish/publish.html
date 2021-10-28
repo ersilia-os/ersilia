@@ -67,11 +67,13 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 
-<span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">.rebase</span> <span class="kn">import</span> <span class="n">TemplateRebaser</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">EOS_TEMPLATE_REPOSITORY</span>
 
+<span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..utils.dvc</span> <span class="kn">import</span> <span class="n">DVCSetup</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">EOS_TEMPLATE_REPOSITORY</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">GITHUB_ORG</span>
 
 
 <div class="viewcode-block" id="ModelPublisher"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher">[docs]</a><span class="k">class</span> <span class="nc">ModelPublisher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -82,10 +84,29 @@
             <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">repo_remote_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;ersilia-os&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">template_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;ersilia-os&quot;</span><span class="p">,</span> <span class="n">EOS_TEMPLATE_REPOSITORY</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_repo</span> <span class="o">=</span> <span class="n">EOS_TEMPLATE_REPOSITORY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repo_remote_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_repo</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cwd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Commit from Ersilia&quot;</span>
+
+<div class="viewcode-block" id="ModelPublisher.rebase"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.rebase">[docs]</a>    <span class="k">def</span> <span class="nf">rebase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rb</span> <span class="o">=</span> <span class="n">TemplateRebaser</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">template_repo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_repo</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
+            <span class="n">credentials_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials_json</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">rb</span><span class="o">.</span><span class="n">rebase</span><span class="p">()</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">rb</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Rebased repository </span><span class="si">{0}</span><span class="s2"> with template </span><span class="si">{1}</span><span class="s2">. Local path: </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_repo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">rb</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Rebased from template </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_repo</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelPublisher.create"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">public</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">public</span><span class="p">:</span>
@@ -102,7 +123,8 @@
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Created repository in GitHub. Local path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Initial commit&quot;</span></div>
 
 <div class="viewcode-block" id="ModelPublisher.dvc"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.dvc">[docs]</a>    <span class="k">def</span> <span class="nf">dvc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dvc</span> <span class="o">=</span> <span class="n">DVCSetup</span><span class="p">(</span><span class="n">local_repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -110,7 +132,9 @@
         <span class="n">dvc</span><span class="o">.</span><span class="n">set_dvc_gdrive</span><span class="p">()</span>
         <span class="n">dvc</span><span class="o">.</span><span class="n">git_add_and_commit</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ModelPublisher.git_push"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.git_push">[docs]</a>    <span class="k">def</span> <span class="nf">git_push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Initial commit&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelPublisher.git_push"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.git_push">[docs]</a>    <span class="k">def</span> <span class="nf">git_push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;git add .&quot;</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;git commit -m &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
