@@ -74,12 +74,21 @@
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">...auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">isaura.core.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5Explorer</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">Hdf5Explorer</span> <span class="o">=</span> <span class="kc">None</span>
+
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AIRTABLE_READONLY_API_KEY</span><span class="p">,</span>
     <span class="n">AIRTABLE_MODEL_HUB_BASE_ID</span><span class="p">,</span>
     <span class="n">AIRTABLE_MODEL_HUB_TABLE_NAME</span><span class="p">,</span>
+    <span class="n">ISAURA_DIR</span><span class="p">,</span>
+    <span class="n">ISAURA_FILE_TAG</span><span class="p">,</span>
+    <span class="n">ISAURA_FILE_TAG_LOCAL</span><span class="p">,</span>
+    <span class="n">H5_EXTENSION</span><span class="p">,</span>
+    <span class="n">CARD_FILE</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">CARD_FILE</span>
 
 <span class="n">AIRTABLE_MAX_ROWS</span> <span class="o">=</span> <span class="mi">100000</span>
 <span class="n">AIRTABLE_PAGE_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
@@ -198,6 +207,21 @@
             <span class="k">return</span> <span class="n">card</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="LakeCard"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LakeCard">[docs]</a><span class="k">class</span> <span class="nc">LakeCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LakeCard.get"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LakeCard.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Hdf5Explorer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No lake found&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">card</span> <span class="o">=</span> <span class="n">Hdf5Explorer</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">as_json</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">card</span></div></div>
 
 
 <div class="viewcode-block" id="ModelCard"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ModelCard">[docs]</a><span class="k">class</span> <span class="nc">ModelCard</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
