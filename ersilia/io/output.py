@@ -9,12 +9,20 @@ from .dataframe import Dataframe
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..default import FEATURE_MERGE_PATTERN
-
+from ..utils.hdf5 import Hdf5Data
 
 class DataFrame(object):
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
+
+    @staticmethod
+    def _is_h5(file_name):
+        extension = file_name.split(".")[-1]
+        if extension == "h5":
+            return True
+        else:
+            return False
 
     @staticmethod
     def _get_delimiter(file_name):
@@ -24,7 +32,24 @@ class DataFrame(object):
         else:
             return ","
 
-    def write(self, file_name, delimiter=None):
+    def decompose(self):
+        features = self.columns[2:]
+        keys = [r[0] for r in self.data]
+        inputs = [r[1] for r in self.data]
+        values = [r[2:] for r in self.data]
+        return {
+            "keys": keys,
+            "inputs": inputs,
+            "features": features,
+            "values": values
+        }
+
+    def write_hdf5(self, file_name):
+        res = self.decompose()
+        hdf5 = Hdf5Data(values=res["values"], keys=res["keys"], inputs=res["inputs"], features=res["features"])
+        hdf5.save(file_name)
+
+    def write_text(self, file_name, delimiter=None):
         with open(file_name, "w", newline="") as f:
             if delimiter is None:
                 delimiter = self._get_delimiter(file_name)
@@ -32,6 +57,12 @@ class DataFrame(object):
             writer.writerow(self.columns)
             for i, row in enumerate(self.data):
                 writer.writerow(row)
+
+    def write(self, file_name, delimiter=None):
+        if self._is_h5(file_name):
+            self.write_hdf5(file_name)
+        else:
+            self.write_text(file_name, delimiter=delimiter)
 
 
 class ResponseRefactor(ErsiliaBase):
@@ -232,6 +263,9 @@ class GenericOutputAdapter(ResponseRefactor):
         if self._has_extension(output, "tsv"):
             df = self._to_dataframe(result)
             df.write(output, delimiter="\t")
+        if self._has_extension(output, "h5"):
+            df = self._to_dataframe(result)
+            df.write(output)
         return result
 
 
