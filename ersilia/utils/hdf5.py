@@ -2,7 +2,6 @@ import h5py
 
 
 class Hdf5Data(object):
-
     def __init__(self, values, keys, inputs, features):
         self.values = values
         self.keys = keys

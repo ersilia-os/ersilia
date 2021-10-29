@@ -21,7 +21,7 @@ from ...default import (
     ISAURA_FILE_TAG,
     ISAURA_FILE_TAG_LOCAL,
     H5_EXTENSION,
-    CARD_FILE
+    CARD_FILE,
 )
 
 AIRTABLE_MAX_ROWS = 100000

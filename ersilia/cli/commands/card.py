@@ -27,7 +27,7 @@ def card_cmd():
         "--lake",
         is_flag=True,
         default=False,
-        help="Show the properties of the data lake"
+        help="Show the properties of the data lake",
     )
     def card(model, schema, lake):
         mdl = ModelBase(model)

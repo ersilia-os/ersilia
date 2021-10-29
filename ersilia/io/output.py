@@ -11,6 +11,7 @@ from .. import ErsiliaBase
 from ..default import FEATURE_MERGE_PATTERN
 from ..utils.hdf5 import Hdf5Data
 
+
 class DataFrame(object):
     def __init__(self, data, columns):
         self.data = data
@@ -37,16 +38,16 @@ class DataFrame(object):
         keys = [r[0] for r in self.data]
         inputs = [r[1] for r in self.data]
         values = [r[2:] for r in self.data]
-        return {
-            "keys": keys,
-            "inputs": inputs,
-            "features": features,
-            "values": values
-        }
+        return {"keys": keys, "inputs": inputs, "features": features, "values": values}
 
     def write_hdf5(self, file_name):
         res = self.decompose()
-        hdf5 = Hdf5Data(values=res["values"], keys=res["keys"], inputs=res["inputs"], features=res["features"])
+        hdf5 = Hdf5Data(
+            values=res["values"],
+            keys=res["keys"],
+            inputs=res["inputs"],
+            features=res["features"],
+        )
         hdf5.save(file_name)
 
     def write_text(self, file_name, delimiter=None):
