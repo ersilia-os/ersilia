@@ -138,6 +138,8 @@
 </li>
       <li><a href="source/autodoc/ersilia.app.html#ersilia.app.app.AppBase">AppBase (class in ersilia.app.app)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.append_local_to_public">append_local_to_public() (ersilia.lake.manager.IsauraManager method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_table">as_table() (ersilia.hub.content.catalog.CatalogTable method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth">Auth (class in ersilia.auth.auth)</a>
@@ -658,10 +660,10 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.pack.html#module-ersilia.hub.fetch.pack.runners">ersilia.hub.fetch.pack.runners (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io">ersilia.io (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io.dataframe">ersilia.io.dataframe (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io.input">ersilia.io.input (module)</a>
@@ -687,6 +689,8 @@
       <li><a href="source/autodoc/ersilia.lake.html#module-ersilia.lake.base">ersilia.lake.base (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.lake.html#module-ersilia.lake.interface">ersilia.lake.interface (module)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.lake.html#module-ersilia.lake.manager">ersilia.lake.manager (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.publish.html#module-ersilia.publish">ersilia.publish (module)</a>
 </li>
@@ -1126,6 +1130,8 @@
       </ul></li>
       <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.interface.IsauraInterface">IsauraInterface (class in ersilia.lake.interface)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager">IsauraManager (class in ersilia.lake.manager)</a>
+</li>
       <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.isaura.IsauraRequirement">IsauraRequirement (class in ersilia.setup.requirements.isaura)</a>
 </li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.isfile">isfile() (ersilia.serve.schema.ApiSchema method)</a>
@@ -1160,7 +1166,7 @@
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.lake.LakeGetter">LakeGetter (class in ersilia.hub.fetch.actions.lake)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.lake.LakeSynchronizer">LakeSynchronizer (class in ersilia.publish.lake)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.lake.LakeStorer">LakeStorer (class in ersilia.publish.lake)</a>
 </li>
       <li><a href="source/autodoc/ersilia.app.blocks.html#ersilia.app.blocks.streamlit.StreamlitBlocks.load_model">load_model() (ersilia.app.blocks.streamlit.StreamlitBlocks method)</a>
 </li>
@@ -1379,18 +1385,14 @@
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.download.PseudoDownloader">PseudoDownloader (class in ersilia.utils.download)</a>
 </li>
       <li><a href="source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.publish">publish() (ersilia.cli.cmd.Command method)</a>
-
-      <ul>
-        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.lake.LakeSynchronizer.publish">(ersilia.publish.lake.LakeSynchronizer method)</a>
 </li>
-      </ul></li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.publish.publish_cmd">publish_cmd() (in module ersilia.cli.commands.publish)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.lake.LakeSynchronizer.pull">pull() (ersilia.publish.lake.LakeSynchronizer method)</a>
+      <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.pull">pull() (ersilia.lake.manager.IsauraManager method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.html#ersilia.io.pure.PureDataTyper">PureDataTyper (class in ersilia.io.pure)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.lake.LakeSynchronizer.push">push() (ersilia.publish.lake.LakeSynchronizer method)</a>
+      <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.push">push() (ersilia.lake.manager.IsauraManager method)</a>
 
       <ul>
         <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.push">(ersilia.publish.publish.ModelPublisher method)</a>
@@ -1448,10 +1450,12 @@
       </ul></li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_from_log">remove_from_log() (ersilia.utils.installers.BaseInstaller method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_log">remove_log() (ersilia.utils.installers.BaseInstaller method)</a>
+      <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.remove_local_duplicates">remove_local_duplicates() (ersilia.lake.manager.IsauraManager method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_log">remove_log() (ersilia.utils.installers.BaseInstaller method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.RepoUtils.rename_service">rename_service() (ersilia.hub.bundle.repo.RepoUtils static method)</a>
 
       <ul>
@@ -1618,8 +1622,12 @@
       </ul></li>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.stop">stop() (ersilia.db.environments.managers.DockerManager method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager.store">store() (ersilia.publish.store.ModelStorager method)</a>
+      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.lake.LakeStorer.store">store() (ersilia.publish.lake.LakeStorer method)</a>
+
+      <ul>
+        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager.store">(ersilia.publish.store.ModelStorager method)</a>
 </li>
+      </ul></li>
       <li><a href="source/autodoc/ersilia.app.html#ersilia.app.app.StreamlitApp">StreamlitApp (class in ersilia.app.app)</a>
 </li>
       <li><a href="source/autodoc/ersilia.app.blocks.html#ersilia.app.blocks.streamlit.StreamlitBlocks">StreamlitBlocks (class in ersilia.app.blocks.streamlit)</a>

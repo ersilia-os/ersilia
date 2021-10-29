@@ -77,6 +77,7 @@
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">FEATURE_MERGE_PATTERN</span>
 <span class="kn">from</span> <span class="nn">..utils.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5Data</span>
 
+
 <div class="viewcode-block" id="DataFrame"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame">[docs]</a><span class="k">class</span> <span class="nc">DataFrame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
@@ -103,16 +104,16 @@
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;keys&quot;</span><span class="p">:</span> <span class="n">keys</span><span class="p">,</span>
-            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="n">inputs</span><span class="p">,</span>
-            <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span>
-            <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">values</span>
-        <span class="p">}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;keys&quot;</span><span class="p">:</span> <span class="n">keys</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="n">inputs</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">values</span><span class="p">}</span></div>
 
 <div class="viewcode-block" id="DataFrame.write_hdf5"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_hdf5">[docs]</a>    <span class="k">def</span> <span class="nf">write_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
-        <span class="n">hdf5</span> <span class="o">=</span> <span class="n">Hdf5Data</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">],</span> <span class="n">keys</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;keys&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">],</span> <span class="n">features</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">])</span>
+        <span class="n">hdf5</span> <span class="o">=</span> <span class="n">Hdf5Data</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">],</span>
+            <span class="n">keys</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;keys&quot;</span><span class="p">],</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">],</span>
+            <span class="n">features</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
         <span class="n">hdf5</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataFrame.write_text"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_text">[docs]</a>    <span class="k">def</span> <span class="nf">write_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
