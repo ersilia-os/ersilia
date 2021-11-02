@@ -2,6 +2,7 @@ import csv
 import os
 import json
 import random
+import numpy as np
 import tempfile
 import itertools
 import collections
@@ -282,6 +283,11 @@ class DictlistDataframeConverter(GenericOutputAdapter):
         df.from_csv(df_file)
         return df
 
+    def __nan_to_none(self, x):
+        if np.isnan(x):
+            return None
+        return x
+
     def dataframe2dictlist(self, df, model_id, api_name):
         schema = ApiSchema(
             model_id=model_id, config_json=self.config_json
@@ -313,7 +319,7 @@ class DictlistDataframeConverter(GenericOutputAdapter):
         for r in df.iterrows():
             output = {}
             for k, idxs in grouped_features_idxs.items():
-                output[k] = r["values"][idxs].tolist()
+                output[k] = [self.__nan_to_none(x) for x in r["values"][idxs].tolist()]
             res = {
                 "input": {"key": r["key"], "input": r["input"], "text": None},
                 "output": output,

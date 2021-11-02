@@ -38,13 +38,19 @@ class IsauraInterface(LakeBase):
         todo = self._dict_to_list(result["unavailable_keys"], input)
         return done, todo
 
+    def __nan_to_none(self, x):
+        if np.isnan(x):
+            return None
+        else:
+            return x
+
     def read(self, input):
         keys = [inp["key"] for inp in input]
-        values = [res for res in self.hdf5.read_by_key(keys)]
+        values = [[self.__nan_to_none(x) for x in res] for res in self.hdf5.read_by_key(keys)]
         features = self.hdf5.get_features()
         df = Dataframe(
             keys=keys,
-            values=np.array(values),
+            values=values,
             features=features,
         )
         results_ = self.converter.dataframe2dictlist(
