@@ -303,7 +303,11 @@ class DictlistDataframeConverter(GenericOutputAdapter):
         grouped_features = collections.defaultdict(list)
         for i, f in enumerate(features):
             if the_key is None:
-                g, f = f.split(FEATURE_MERGE_PATTERN)
+                splitted = f.split(FEATURE_MERGE_PATTERN)
+                if len(splitted) == 2:
+                    g, f = f.split(FEATURE_MERGE_PATTERN)
+                else:
+                    g = f
             else:
                 g = the_key
             grouped_features_idxs[g] += [i]
@@ -319,7 +323,10 @@ class DictlistDataframeConverter(GenericOutputAdapter):
         for r in df.iterrows():
             output = {}
             for k, idxs in grouped_features_idxs.items():
-                output[k] = [self.__nan_to_none(x) for x in r["values"][idxs].tolist()]
+                v = [self.__nan_to_none(x) for x in r["values"][idxs].tolist()]
+                if len(v) == 1:
+                    v = v[0]
+                output[k] = v
             res = {
                 "input": {"key": r["key"], "input": r["input"], "text": None},
                 "output": output,

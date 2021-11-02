@@ -40,7 +40,7 @@ class IsauraInterface(LakeBase):
 
     def read(self, input):
         keys = [inp["key"] for inp in input]
-        values = [res for res in self.hdf5.read_by_key(keys)]
+        values = np.array([res for res in self.hdf5.read_by_key(keys)])
         features = self.hdf5.get_features()
         df = Dataframe(
             keys=keys,
