@@ -1,9 +1,10 @@
 import h5py
+import numpy as np
 
 
 class Hdf5Data(object):
     def __init__(self, values, keys, inputs, features):
-        self.values = values
+        self.values = np.array(values, dtype=np.float32)
         self.keys = keys
         self.inputs = inputs
         self.features = features
