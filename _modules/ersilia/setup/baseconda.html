@@ -127,7 +127,7 @@
             <span class="k">return</span>
         <span class="n">ptag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_install_command</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
-        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_ersiliaos</span><span class="p">(</span><span class="n">org</span><span class="p">):</span>
             <span class="n">tmp_repo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cloner</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">ptag</span><span class="p">[</span><span class="s2">&quot;ver&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>

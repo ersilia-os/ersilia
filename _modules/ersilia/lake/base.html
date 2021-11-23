@@ -80,7 +80,15 @@
         <span class="k">if</span> <span class="n">ISAURA_REPOSITORY_PATH</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lake_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">ISAURA_REPOSITORY_PATH</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lake_dir</span> <span class="o">=</span> <span class="kc">None</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lake_dir</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="LakeBase.is_installed"><a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.base.LakeBase.is_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">isaura</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Lake manager &#39;isaura&#39; is not installed! We strongly recommend installing it to store calculations persistently&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div></div>
 </pre></div>
 
            </div>
