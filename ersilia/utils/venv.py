@@ -33,7 +33,7 @@ class SimpleVenv(object):
     def run_commandlines(self, environment, commandlines):
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         with open(tmp_script, "w") as f:
             f.write("cd {0}{1}".format(self.root, os.linesep))

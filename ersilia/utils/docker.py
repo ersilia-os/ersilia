@@ -31,7 +31,7 @@ class SimpleDocker(object):
         return "%s/%s:%s" % (org, img, tag)
 
     def images(self):
-        tmp_dir = tempfile.mkdtemp()
+        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_dir, "images.txt")
         cmd = "docker images > {0}".format(tmp_file)
         run_command(cmd)
@@ -50,7 +50,7 @@ class SimpleDocker(object):
         return img_dict
 
     def containers(self, only_run):
-        tmp_dir = tempfile.mkdtemp()
+        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_dir, "containers.txt")
         if not only_run:
             all_str = "-a"
@@ -86,7 +86,7 @@ class SimpleDocker(object):
           echo "False"
         fi
         """
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "exists.sh")
         with open(tmp_script, "w") as f:
             f.write(bash_script)

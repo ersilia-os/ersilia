@@ -1,11 +1,10 @@
 import click
 import os
 
-from ...serve.autoservice import AutoService
-from .utils.utils import tmp_pid_file
+from ...utils import tmp_pid_file
 from . import ersilia_cli
 from .. import echo
-from ... import ModelBase
+from ... import ErsiliaModel
 from ..messages import ModelNotFound
 
 
@@ -15,25 +14,19 @@ def serve_cmd():
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
     def serve(model):
-        model = ModelBase(model)
-        if not model.is_valid():
-            ModelNotFound(model).echo()
-        model_id = model.model_id
-        slug = model.slug
-        srv = AutoService(model_id)
-        srv.serve()
-        if srv.service.url is None:
+        mdl = ErsiliaModel(model)
+        if not mdl.is_valid():
+            ModelNotFound(srv).echo()
+        mdl.serve()
+        if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")
             return
-        echo(":rocket: Serving model {0}: {1}".format(model_id, slug), fg="green")
+        echo(":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green")
         echo("")
-        echo("   URL: {0}".format(srv.service.url), fg="yellow")
-        echo("   PID: {0}".format(srv.service.pid), fg="yellow")
+        echo("   URL: {0}".format(mdl.url), fg="yellow")
+        echo("   PID: {0}".format(mdl.pid), fg="yellow")
         echo("")
         echo(":backhand_index_pointing_right: Available APIs:", fg="blue")
-        apis = srv.get_apis()
+        apis = mdl.get_apis()
         for api in apis:
             echo("   - {0}".format(api), fg="blue")
-        tmp_file = tmp_pid_file(model_id)
-        with open(tmp_file, "a+") as f:
-            f.write("{0} {1}{2}".format(srv.service.pid, srv.service.url, os.linesep))

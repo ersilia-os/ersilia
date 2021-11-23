@@ -276,7 +276,7 @@ class DictlistDataframeConverter(GenericOutputAdapter):
         GenericOutputAdapter.__init__(self, config_json=config_json)
 
     def dictlist2dataframe(self, dl, model_id, api_name):
-        tmp_dir = tempfile.mkdtemp()
+        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
         df_file = os.path.join(tmp_dir, "data.csv")
         self.adapt(dl, df_file, model_id, api_name)
         df = Dataframe()

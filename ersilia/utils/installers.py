@@ -162,7 +162,7 @@ class Installer(BaseInstaller):
         sc = SimpleConda()
         if sc.exists(eos_base_env):
             return
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_repo = self._clone_repo(tmp_folder)
         tmp_script = os.path.join(tmp_folder, "script.sh")
         tmp_python_script = os.path.join(tmp_folder, "base_installer.py")
@@ -220,7 +220,7 @@ class Installer(BaseInstaller):
         if docker.exists(org, img, tag):
             return
         # get a copy of the repository in a temporary directory
-        tmp_dir = tempfile.mkdtemp()
+        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
         tmp_repo = self._clone_repo(tmp_dir)
         # write the dockerfile
         dockerfile = """

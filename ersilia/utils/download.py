@@ -138,7 +138,7 @@ class GitHubDownloader(object):
 
     def _git_lfs(self, destination):
         script = "cd {0}; git lfs pull".format(destination)
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         run_file = os.path.join(tmp_folder, "run_lfs.sh")
         with open(run_file, "w") as f:
             f.write(script)

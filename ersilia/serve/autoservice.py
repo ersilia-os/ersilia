@@ -1,4 +1,6 @@
 import os
+import tempfile
+import shutil
 
 from .services import (
     SystemBundleService,
@@ -9,6 +11,8 @@ from .services import (
 from .api import Api
 from ..default import DEFAULT_BATCH_SIZE
 from .. import ErsiliaBase
+from ..utils import tmp_pid_file
+
 
 DEFAULT_OUTPUT = None
 
@@ -130,11 +134,63 @@ class AutoService(ErsiliaBase):
         else:
             return True
 
+    def is_served(self):
+        tmp_file = tmp_pid_file(self.model_id)
+        if os.path.exists(tmp_file):
+            return True
+        else:
+            return False
+
+    def _pids_from_file(self, fn):
+        pids = []
+        with open(fn, "r") as f:
+            for l in f:
+                pids += [int(l.split(" ")[0])]
+        return pids
+
+    def _kill_pids(self, pids):
+        for pid in pids:
+            try:
+                os.kill(pid, 9)
+            except:
+                self.logger.info("PID {0} is unassigned".format(pid))
+
+    def clean_before_serving(self):
+        self.logger.debug("Cleaning processes before serving")
+        tmp_file = tmp_pid_file(self.model_id)
+        dir_name = os.path.dirname(tmp_file)
+        pids = []
+        for proc_file in os.listdir(dir_name):
+            if proc_file[-3:] != "pid": continue
+            proc_file = os.path.join(dir_name, proc_file)
+            pids += self._pids_from_file(proc_file)
+            os.remove(proc_file)
+        self.logger.debug("Cleaning {0} processes".format(pids))
+        self._kill_pids(pids)
+
+    def clean_temp_dir(self):
+        self.logger.debug("Cleaning temp dir")
+        tmp_folder = tempfile.gettempdir()
+        for d in os.listdir(tmp_folder):
+            if "ersilia-" in d:
+                d = os.path.join(tmp_folder, d)
+                self.logger.debug("Flushing temporary directory {0}".format(d))
+                shutil.rmtree(d)
+
     def serve(self):
+        self.clean_before_serving()
+        self.clean_temp_dir()
         self.service.serve()
+        tmp_file = tmp_pid_file(self.model_id)
+        with open(tmp_file, "a+") as f:
+            f.write("{0} {1}{2}".format(self.service.pid, self.service.url, os.linesep))
 
     def close(self):
-        self.service.close()
+        tmp_file = tmp_pid_file(self.model_id)
+        pids = self._pids_from_file(tmp_file)
+        self._kill_pids(pids)
+        os.remove(tmp_file)
+        self.clean_temp_dir()
 
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE

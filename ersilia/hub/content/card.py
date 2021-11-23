@@ -41,7 +41,7 @@ class ReadmeCard(ErsiliaBase):
         return url
 
     def _gh_view(self, model_id):
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "view.md")
         cmd = "gh repo view {0}/{1} > {2}".format("ersilia-os", model_id, tmp_file)
         run_command(cmd)

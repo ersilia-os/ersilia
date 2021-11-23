@@ -168,7 +168,7 @@ class DockerPack(BasePack):
         self.logger.debug("Executing container {0}".format(name))
         self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
         self.logger.debug("Copying bundle from docker image to host")
-        tmp_dir = tempfile.mkdtemp()
+        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
         self.logger.debug("Using this temporary directory: {0}".format(tmp_dir))
         self.docker.cp_from_container(
             name, "/root/bentoml/repository/%s" % model_id, tmp_dir

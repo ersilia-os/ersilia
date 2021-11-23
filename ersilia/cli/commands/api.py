@@ -1,13 +1,11 @@
 import click
 import os
 import json
+import types
 
 from . import ersilia_cli
 from .. import echo
-from .utils.utils import tmp_pid_file
-from ...serve.api import Api
-from ...serve.autoservice import AutoService
-from ... import ModelBase
+from ... import ErsiliaModel
 
 
 def api_cmd():
@@ -26,30 +24,13 @@ def api_cmd():
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
     def api(model, api_name, input, output, batch_size):
-        model_id = ModelBase(model).model_id
-        tmp_file = tmp_pid_file(model_id)
-        if not os.path.exists(tmp_file):
-            echo(
-                "Model {0} is not served! run 'ersilia serve {0}' first".format(
-                    model_id
-                ),
-                fg="red",
-            )
-            return
-        with open(tmp_file, "r") as f:
-            for l in f:
-                url = l.rstrip().split()[1]
-        if api_name is None:
-            api_names = AutoService(model_id).get_apis()
-            if len(api_names) > 1:
-                echo("More than one API found, please specificy", fg="red")
-            api_name = api_names[0]
-        api = Api(model_id, url, api_name)
-        for result in api.post(input=input, output=output, batch_size=batch_size):
-            if result is not None:
-                click.echo(json.dumps(result, indent=4))
-            else:
-                echo(
-                    "Something went wrong. Try running in verbose mode (-v) or contact us at hello@ersilia.io",
-                    fg="red",
-                )
+        mdl = ErsiliaModel(model)
+        result = mdl.api(api_name=api_name, input=input, output=output, batch_size=batch_size)
+        if isinstance(result, types.GeneratorType):
+            for result in mdl.api(api_name=api_name, input=input, output=output, batch_size=batch_size):
+                if result is not None:
+                    click.echo(json.dumps(result, indent=4))
+                else:
+                    click.echo("Something went wrong", fg="red")
+        else:
+            click.echo(result)

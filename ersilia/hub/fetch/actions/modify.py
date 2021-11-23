@@ -15,7 +15,7 @@ class ModelModifier(BaseAction):
     def _bundle_uses_ersilia(self, model_id):
         """Check if the bundle imports ersilia"""
         src = os.path.join(self._get_bundle_location(model_id), model_id, "src")
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "grep.txt")
         cmd = "grep -R 'ersilia' {0}/* > {1}".format(src, tmp_file)
         run_command(cmd)
@@ -77,7 +77,7 @@ class ModelModifier(BaseAction):
         dockerfile = os.path.join(dir, DOCKERFILE)
         if not os.path.exists(dockerfile):
             return None
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "grep.txt")
         cmd = "grep -R 'ersilia' {0} > {1}".format(dockerfile, tmp_file)
         run_command(cmd)

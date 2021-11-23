@@ -28,7 +28,7 @@ class BaseServing(ErsiliaBase):
 
     def _get_info_from_bento(self):
         """Get info available from the Bento"""
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "info.json")
         cmd = "bentoml info --quiet {0}:{1} > {2}".format(
             self.model_id, self.bundle_tag, tmp_file
@@ -68,7 +68,7 @@ class _BentoMLService(BaseServing):
         self.logger.debug("Trying to serve model with BentoML locally")
         self.port = find_free_port()
         self.logger.debug("Free port: {0}".format(self.port))
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "serve.sh")
         tmp_file = os.path.join(tmp_folder, "serve.log")
         tmp_pid = os.path.join(tmp_folder, "serve.pid")
@@ -133,8 +133,10 @@ class _BentoMLService(BaseServing):
         self.url = None
 
     def _close(self):
-        cmd = "kill {0}".format(self.pid)
-        run_command(cmd)
+        try:
+            os.kill(self.pid, 9)
+        except:
+            self.logger.info("PID {0} is unassigned".format(self.pid))
 
 
 class SystemBundleService(_BentoMLService):

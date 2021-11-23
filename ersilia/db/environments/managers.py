@@ -76,7 +76,7 @@ class DockerManager(ErsiliaBase):
 
     def build(self, model_id, use_cache=True):
         bundle_path = self._get_bundle_location(model_id)
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "build.sh")
         cmdlines = ["cd {0}".format(bundle_path)]
         if use_cache:

@@ -61,7 +61,7 @@ class SetupBaseConda(object):
             return
         ptag = self._parse_tag(tag)
         cmd = self._install_command(org, tag)
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         if self._is_ersiliaos(org):
             tmp_repo = self.cloner.clone(tmp_folder, version=ptag["ver"])
         else:

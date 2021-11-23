@@ -1,30 +1,200 @@
 import os
 import json
-from ..core.modelbase import ModelBase
+import tempfile
+import types
+import collections
+import __main__ as main
+from .. import logger
+from .base import ErsiliaBase
+from .modelbase import ModelBase
 from ..serve.autoservice import AutoService
 from ..serve.schema import ApiSchema
+from ..serve.api import Api
 from ..io.input import ExampleGenerator
 from ..default import MODEL_SIZE_FILE, CARD_FILE
-from .. import logger
+from ..default import DEFAULT_BATCH_SIZE
+from ..utils import tmp_pid_file
+from ..utils.hdf5 import Hdf5DataLoader
+try:
+    import pandas as pd
+except:
+    pd = None
 
 
-class ErsiliaModel(AutoService):
-    def __init__(self, model, config_json=None, overwrite=False, verbose=None):
+class ErsiliaModel(ErsiliaBase):
+    def __init__(self, model, config_json=None, credentials_json=None, overwrite=False, verbose=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
         self.logger = logger
         if verbose is not None:
             if verbose:
                 self.logger.set_verbosity(1)
             else:
                 self.logger.set_verbosity(0)
-        model = ModelBase(model)
+        else:
+            if not hasattr(main, '__file__'):
+                self.logger.set_verbosity(0)
+        mdl = ModelBase(model)
+        self._is_valid = mdl.is_valid()
+        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(model)
         self.overwrite = overwrite
         self.config_json = config_json
-        self.model_id = model.model_id
-        self.slug = model.slug
+        self.model_id = mdl.model_id
+        self.slug = mdl.slug
+        self.text = mdl.text
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
         )
-        AutoService.__init__(self, self.model_id, config_json=self.config_json)
+        self.autoservice = AutoService(model_id=self.model_id, config_json=self.config_json)
+        self._set_apis()
+
+    def __enter__(self):
+        self.serve()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def is_valid(self):
+        return self._is_valid
+
+    def _set_api(self, api_name):
+        def _method(input, output, batch_size):
+            return self.api(api_name, input, output, batch_size)
+
+        setattr(self, api_name, _method)
+
+    def _set_apis(self):
+        apis_list = os.path.join(
+            self._get_bundle_location(self.model_id), "apis_list.txt"
+        )
+        if os.path.exists(apis_list):
+            with open(apis_list, "r") as f:
+                for l in f:
+                    api_name = l.rstrip()
+                    self._set_api(api_name)
+        else:
+            with open(apis_list, "w") as f:
+                for api_name in self.autoservice.service._get_apis_from_bento():
+                    self._set_api(api_name)
+                    f.write(api_name + os.linesep)
+        self.apis_list = apis_list
+
+    def _get_api_instance(self, api_name):
+        model_id = self.model_id
+        tmp_file = tmp_pid_file(model_id)
+        assert os.path.exists(tmp_file), "Process ID file does not exist"
+        with open(tmp_file, "r") as f:
+            for l in f:
+                url = l.rstrip().split()[1]
+        if api_name is None:
+            api_names = self.autoservice.get_apis()
+            assert len(api_names) == 1, "More than one API found, please specificy api_name"
+            api_name = api_names[0]
+        api = Api(model_id, url, api_name)
+        return api
+
+    def _api_runner_iter(self, api, input, output, batch_size):
+        for result in api.post(input=input, output=output, batch_size=batch_size):
+            assert result is not None, "Something went wrong. Please contact us at hello@ersila.io"
+            yield result
+
+    def _api_runner_return(self, api, input, output, batch_size):
+        if output=="pandas" and pd is None:
+            raise Exception
+        if output == "json":
+            R = []
+            for r in self._api_runner_iter(api=api, input=input, output=None, batch_size=batch_size):
+                R += [r]
+            return json.dumps(R, indent=4)
+        else:
+            tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+            tmp_output = os.path.join(tmp_folder, "temporary.h5")
+            for r in self._api_runner_iter(api=api, input=input, output=tmp_output, batch_size=batch_size):
+                continue
+            data = Hdf5DataLoader()
+            data.load(tmp_output)
+            if output == "numpy":
+                return data.values[:]
+            if output == "pandas":
+                d = collections.OrderedDict()
+                d["key"] = data.keys
+                d["input"] = data.inputs
+                for j, f in enumerate(data.features):
+                    d[f] = data.values[:,j]
+                return pd.DataFrame(d)
+            if output == "dict":
+                d = collections.OrderedDict()
+                d["keys"] = data.keys
+                d["inputs"] = data.inputs
+                d["values"] = data.values
+                return d
+
+    @staticmethod
+    def __output_is_file(output):
+        if output is None:
+            return False
+        if type(output) != str:
+            return False
+        if output[-4:] == ".csv":
+            return True
+        if output[-3:] == ".h5":
+            return True
+        return False
+
+    @staticmethod
+    def __output_is_format(output):
+        if output is None:
+            return False
+        if type(output) != str:
+            return False
+        if output == "json":
+            return True
+        if output == "numpy":
+            return True
+        if output == "pandas":
+            return True
+        if output == "dict":
+            return True
+        return False
+
+    def _get_api_runner(self, output):
+        if output is None:
+            use_iter = True
+        elif self.__output_is_file(output):
+            use_iter = True
+        elif self.__output_is_format(output):
+            use_iter = False
+        if use_iter:
+            return self._api_runner_iter
+        else:
+            return self._api_runner_return
+
+    def api(self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
+        api_instance = self._get_api_instance(api_name=api_name)
+        api_runner = self._get_api_runner(output=output)
+        result = api_runner(api=api_instance, input=input, output=output, batch_size=batch_size)
+        if output is None:
+            # Result is a generator
+            return result
+        if isinstance(result, types.GeneratorType):
+            # Result is a file
+            for r in result:
+                pass
+            return output
+        else:
+            # Result is a dict, a numpy array, a dataframe...
+            return result
+
+    def serve(self):
+        self.autoservice.serve()
+        self.url = self.autoservice.service.url
+        self.pid = self.autoservice.service.pid
+
+    def close(self):
+        self.autoservice.close()
+
+    def get_apis(self):
+        return self.autoservice.get_apis()
 
     @property
     def paths(self):

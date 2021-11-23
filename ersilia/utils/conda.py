@@ -216,7 +216,7 @@ class SimpleConda(CondaUtils):
         CondaUtils.__init__(self, config_json=config_json)
 
     def _env_list(self):
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "env_list.tsv")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = """
@@ -252,7 +252,7 @@ class SimpleConda(CondaUtils):
     def delete(self, environment):
         if not self.exists(environment):
             return
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
@@ -274,7 +274,7 @@ class SimpleConda(CondaUtils):
         if self.is_base():
             return
         yml_file = os.path.join(dest, CONDA_ENV_YML_FILE)
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
@@ -297,7 +297,7 @@ class SimpleConda(CondaUtils):
             raise Exception("{0} source environment does not exist".format(src_env))
         if self.exists(dst_env):
             raise Exception("{0} destination environment exists".format(dst_env))
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
@@ -318,7 +318,7 @@ class SimpleConda(CondaUtils):
         logger.debug(commandlines)
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.debug("Activating base environment")
         bash_script = self.activate_base()

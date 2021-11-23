@@ -92,7 +92,7 @@ class Api(object):
     def post_only_calculations(self, input, output, batch_size):
         self._batch_size = batch_size
         if output is not None:
-            tmp_folder = tempfile.mkdtemp()
+            tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
             fmt = output.split(".")[-1]
             output_base = ".".join(os.path.basename(output).split(".")[:-1])
             i = 0
@@ -121,7 +121,7 @@ class Api(object):
     def post_only_reads(self, input, output, batch_size):
         self._batch_size = batch_size
         if output is not None:
-            tmp_folder = tempfile.mkdtemp()
+            tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
             fmt = output.split(".")[-1]
             output_base = ".".join(os.path.basename(output).split(".")[:-1])
             i = 0
@@ -192,7 +192,7 @@ class Api(object):
         self.logger.debug(
             "Checking for already available calculations in the data lake"
         )
-        tmp_folder = tempfile.mkdtemp()
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         done_input = os.path.join(tmp_folder, "done_input.csv")
         todo_input = os.path.join(tmp_folder, "todo_input.csv")
         cur_idx = 0
