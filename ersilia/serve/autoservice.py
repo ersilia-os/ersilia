@@ -206,6 +206,7 @@ class AutoService(ErsiliaBase):
             model_id=self.model_id,
             url=self.service.url,
             api_name=api_name,
+            save_to_lake=False,
             config_json=self.config_json,
         )
         for result in _api.post(input=input, output=output, batch_size=batch_size):

@@ -13,7 +13,7 @@ from .schema import ApiSchema
 
 
 class Api(object):
-    def __init__(self, model_id, url, api_name, config_json=None):
+    def __init__(self, model_id, url, api_name, save_to_lake, config_json):
         self.config_json = config_json
         self.model_id = model_id
         self.input_adapter = GenericInputAdapter(self.model_id, config_json=config_json)
@@ -21,6 +21,7 @@ class Api(object):
         self.lake = IsauraInterface(
             model_id=model_id, api_name=api_name, config_json=config_json
         )
+        self.save_to_lake = save_to_lake
         if url[-1] == "/":
             self.url = url[:-1]
         else:
@@ -224,10 +225,11 @@ class Api(object):
             ):
                 continue
 
-            self.logger.debug("Saving calculations in the lake")
             with open(todo_output, "r") as f:
                 results = json.load(f)
-            self.lake.write(results)
+            if self.save_to_lake:
+                self.logger.debug("Saving calculations in the lake")
+                self.lake.write(results)
 
         self.logger.debug("Rearranging and returning")
         results = []

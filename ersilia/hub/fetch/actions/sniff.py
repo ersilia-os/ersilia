@@ -73,7 +73,7 @@ class ModelSniffer(BaseAction):
                 output_schema_[k] = v[0]
             else:
                 self.logger.error("Output data types are not consistent")
-        meta = self.model._latest_meta
+        meta = self.model.autoservice._latest_meta
         for k, v in output_schema_.items():
             output_schema_[k]["meta"] = meta[k]
         schema = {"input": input_schema_, "output": output_schema_}
@@ -87,12 +87,12 @@ class ModelSniffer(BaseAction):
         with open(path, "w") as f:
             json.dump({"size": size, "units": "MB"}, f, indent=4)
         self.logger.debug("Serving model")
-        self.model.serve()
+        self.model.autoservice.serve()
         self.logger.debug("Iterating over APIs")
         all_schemas = {}
-        for api_name in self.model.get_apis():
+        for api_name in self.model.autoservice.get_apis():
             self.logger.debug("Running {0}".format(api_name))
-            results = [result for result in self.model.api(api_name, self.inputs)]
+            results = [result for result in self.model.autoservice.api(api_name, self.inputs)]
             schema = self._get_schema(results)
             all_schemas[api_name] = schema
         path = os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE)

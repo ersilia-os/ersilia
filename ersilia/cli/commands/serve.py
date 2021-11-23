@@ -13,10 +13,11 @@ def serve_cmd():
     # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
-    def serve(model):
-        mdl = ErsiliaModel(model)
+    @click.option("--lake/--no-lake", is_flag=True, default=True)
+    def serve(model, lake):
+        mdl = ErsiliaModel(model, save_to_lake=lake)
         if not mdl.is_valid():
-            ModelNotFound(srv).echo()
+            ModelNotFound(mdl).echo()
         mdl.serve()
         if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")

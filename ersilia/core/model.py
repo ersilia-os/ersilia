@@ -15,6 +15,7 @@ from ..default import MODEL_SIZE_FILE, CARD_FILE
 from ..default import DEFAULT_BATCH_SIZE
 from ..utils import tmp_pid_file
 from ..utils.hdf5 import Hdf5DataLoader
+from ..lake.base import LakeBase
 try:
     import pandas as pd
 except:
@@ -22,7 +23,7 @@ except:
 
 
 class ErsiliaModel(ErsiliaBase):
-    def __init__(self, model, config_json=None, credentials_json=None, overwrite=False, verbose=None):
+    def __init__(self, model, save_to_lake=True, config_json=None, credentials_json=None, overwrite=False, verbose=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
         self.logger = logger
         if verbose is not None:
@@ -33,6 +34,12 @@ class ErsiliaModel(ErsiliaBase):
         else:
             if not hasattr(main, '__file__'):
                 self.logger.set_verbosity(0)
+        self.save_to_lake = save_to_lake
+        if self.save_to_lake:
+            lake = LakeBase(config_json=self.config_json)
+            if not lake.is_installed():
+                self.logger.error("Isaura is not installed! Calculations will be done without storing and reading from the lake, unfortunately.")
+                self.save_to_lake = False
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
         assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(model)
@@ -58,7 +65,7 @@ class ErsiliaModel(ErsiliaBase):
         return self._is_valid
 
     def _set_api(self, api_name):
-        def _method(input, output, batch_size):
+        def _method(input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
             return self.api(api_name, input, output, batch_size)
 
         setattr(self, api_name, _method)
@@ -82,7 +89,7 @@ class ErsiliaModel(ErsiliaBase):
     def _get_api_instance(self, api_name):
         model_id = self.model_id
         tmp_file = tmp_pid_file(model_id)
-        assert os.path.exists(tmp_file), "Process ID file does not exist"
+        assert os.path.exists(tmp_file), "Process ID file does not exist. Please serve the model first!"
         with open(tmp_file, "r") as f:
             for l in f:
                 url = l.rstrip().split()[1]
@@ -90,7 +97,7 @@ class ErsiliaModel(ErsiliaBase):
             api_names = self.autoservice.get_apis()
             assert len(api_names) == 1, "More than one API found, please specificy api_name"
             api_name = api_names[0]
-        api = Api(model_id, url, api_name)
+        api = Api(model_id=model_id, url=url, api_name=api_name, save_to_lake=self.save_to_lake, config_json=self.config_json)
         return api
 
     def _api_runner_iter(self, api, input, output, batch_size):

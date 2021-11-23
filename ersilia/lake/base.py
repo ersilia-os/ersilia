@@ -15,3 +15,11 @@ class LakeBase(ErsiliaBase):
             self.lake_dir = os.path.abspath(ISAURA_REPOSITORY_PATH)
         else:
             self.lake_dir = None
+
+    def is_installed(self):
+        try:
+            import isaura
+            return True
+        except ModuleNotFoundError:
+            self.logger.warning("Lake manager 'isaura' is not installed! We strongly recommend installing it to store calculations persistently")
+            return False
