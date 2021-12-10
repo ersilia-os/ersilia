@@ -1,10 +1,16 @@
+import os
+import json
+
+from .. import ErsiliaBase
 from ..hub.content.slug import Slug
+from ..hub.fetch import STATUS_FILE, DONE_TAG
 
 
-class ModelBase(object):
+class ModelBase(ErsiliaBase):
     """Base class of a Model."""
 
-    def __init__(self, model_id_or_slug):
+    def __init__(self, model_id_or_slug, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.text = model_id_or_slug
         slugger = Slug()
         if slugger.is_slug(model_id_or_slug):
@@ -19,3 +25,14 @@ class ModelBase(object):
             return False
         else:
             return True
+
+    def is_available_locally(self):
+        fetch_status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
+        if not os.path.exists(fetch_status_file):
+            is_fetched = False
+        else:
+            with open(fetch_status_file, "r") as f:
+                status = json.load(f)
+            is_fetched = status[DONE_TAG]
+        self.logger.debug("Is fetched: {0}".format(is_fetched))
+        return is_fetched

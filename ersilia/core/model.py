@@ -3,6 +3,7 @@ import json
 import tempfile
 import types
 import collections
+import importlib
 import __main__ as main
 from .. import logger
 from .base import ErsiliaBase
@@ -15,6 +16,7 @@ from ..default import MODEL_SIZE_FILE, CARD_FILE
 from ..default import DEFAULT_BATCH_SIZE
 from ..utils import tmp_pid_file
 from ..utils.hdf5 import Hdf5DataLoader
+from ..utils.terminal import yes_no_input
 from ..lake.base import LakeBase
 try:
     import pandas as pd
@@ -23,7 +25,7 @@ except:
 
 
 class ErsiliaModel(ErsiliaBase):
-    def __init__(self, model, save_to_lake=True, config_json=None, credentials_json=None, overwrite=False, verbose=None):
+    def __init__(self, model, save_to_lake=True, config_json=None, credentials_json=None, verbose=None, fetch_if_not_available=True):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
         self.logger = logger
         if verbose is not None:
@@ -43,11 +45,20 @@ class ErsiliaModel(ErsiliaBase):
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
         assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(model)
-        self.overwrite = overwrite
         self.config_json = config_json
         self.model_id = mdl.model_id
         self.slug = mdl.slug
         self.text = mdl.text
+        self._is_available_locally = mdl.is_available_locally()
+        if not self._is_available_locally and fetch_if_not_available:
+            self.logger.info("Model is not available locally")
+            do_fetch = yes_no_input("Requested model {0} if not available locally. Do you want to fetch it? [Y/n]".format(self.model_id), default_answer="Y")
+            if do_fetch:
+                fetch = importlib.import_module("ersilia.hub.fetch.fetch")
+                mf = fetch.ModelFetcher(config_json=self.config_json, credentials_json=self.credentials_json)
+                mf.fetch(self.model_id)
+            else:
+                return
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
         )

@@ -34,17 +34,23 @@ class ModelLakeDeleter(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.path = self._lake_dir
 
+    def delete_if_exists(self, path):
+        if os.path.isfile(path):
+            os.remove(path)
+        if os.path.islink(path):
+            os.remove(path)
+
     def delete_local(self, model_id):
         path = os.path.join(
             self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG_LOCAL)
         )
-        if os.path.exists(path):
-            os.remove(path)
+        self.logger.debug("Deleting {0}".format(path))
+        self.delete_if_exists(path)
 
     def delete_public(self, model_id):
         path = os.path.join(self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG))
-        if os.path.exists(path):
-            os.remove(path)
+        self.logger.debug("Deleting {0}".format(path))
+        self.delete_if_exists(path)
 
     def delete(self, model_id):
         self.delete_local(model_id)

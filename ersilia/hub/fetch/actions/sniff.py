@@ -18,7 +18,7 @@ class ModelSniffer(BaseAction):
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
         self.logger.debug("Initializing model for inferring its structure")
-        self.model = ErsiliaModel(model_id, config_json=config_json, overwrite=False)
+        self.model = ErsiliaModel(model_id, config_json=config_json, fetch_if_not_available=False)
         self.logger.debug("Model successfully initialized in sniffer")
         eg = ExampleGenerator(model_id, config_json=config_json)
         self.inputs = eg.example(N, file_name=None, simple=True)

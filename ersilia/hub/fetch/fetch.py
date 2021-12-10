@@ -1,5 +1,8 @@
 """Fetch model from the Ersilia Model Hub"""
 
+import json
+import os
+
 from ... import ErsiliaBase
 from ... import logger
 from .actions.prepare import ModelPreparer
@@ -11,6 +14,8 @@ from .actions.content import CardGetter
 from .actions.check import ModelChecker
 from .actions.sniff import ModelSniffer
 
+from . import STATUS_FILE, DONE_TAG
+
 
 class ModelFetcher(ErsiliaBase):
     def __init__(
@@ -21,8 +26,7 @@ class ModelFetcher(ErsiliaBase):
         pip=True,
         dockerize=False,
     ):
-        self.config_json = config_json
-        self.credentials_json = credentials_json
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
         self.overwrite = overwrite
         self.do_pip = pip
         self.do_docker = dockerize
@@ -63,6 +67,12 @@ class ModelFetcher(ErsiliaBase):
         sn = ModelSniffer(self.model_id, self.config_json)
         sn.sniff()
 
+    def _success(self):
+        done = {DONE_TAG: True}
+        status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
+        with open(status_file, "w") as f:
+            json.dump(done, f, indent=4)
+
     def fetch(self, model_id):
         self.model_id = model_id
         self._prepare()
@@ -72,4 +82,5 @@ class ModelFetcher(ErsiliaBase):
         self._content()
         self._check()
         self._sniff()
+        self._success()
         logger.info("Fetching {0} done successfully".format(model_id))
