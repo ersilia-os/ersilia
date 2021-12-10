@@ -111,7 +111,7 @@
 <span id="ersilia-core-model-module"></span><h2>ersilia.core.model module<a class="headerlink" href="#module-ersilia.core.model" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ersilia.core.model.ErsiliaModel">
-<em class="property">class </em><code class="descclassname">ersilia.core.model.</code><code class="descname">ErsiliaModel</code><span class="sig-paren">(</span><em>model</em>, <em>save_to_lake=True</em>, <em>config_json=None</em>, <em>credentials_json=None</em>, <em>overwrite=False</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ersilia.core.model.</code><code class="descname">ErsiliaModel</code><span class="sig-paren">(</span><em>model</em>, <em>save_to_lake=True</em>, <em>config_json=None</em>, <em>credentials_json=None</em>, <em>verbose=None</em>, <em>fetch_if_not_available=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
 <dl class="method">
 <dt id="ersilia.core.model.ErsiliaModel.api">
@@ -180,9 +180,14 @@
 <span id="ersilia-core-modelbase-module"></span><h2>ersilia.core.modelbase module<a class="headerlink" href="#module-ersilia.core.modelbase" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="ersilia.core.modelbase.ModelBase">
-<em class="property">class </em><code class="descclassname">ersilia.core.modelbase.</code><code class="descname">ModelBase</code><span class="sig-paren">(</span><em>model_id_or_slug</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">ersilia.core.modelbase.</code><code class="descname">ModelBase</code><span class="sig-paren">(</span><em>model_id_or_slug</em>, <em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
 <p>Base class of a Model.</p>
+<dl class="method">
+<dt id="ersilia.core.modelbase.ModelBase.is_available_locally">
+<code class="descname">is_available_locally</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase.is_available_locally"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase.is_available_locally" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="ersilia.core.modelbase.ModelBase.is_valid">
 <code class="descname">is_valid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase.is_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase.is_valid" title="Permalink to this definition">¶</a></dt>

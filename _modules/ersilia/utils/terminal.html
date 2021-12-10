@@ -68,6 +68,13 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">json</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">inputimeout</span> <span class="kn">import</span> <span class="n">inputimeout</span><span class="p">,</span> <span class="n">TimeoutOccurred</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">inputimeout</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">TimeoutOccurred</span> <span class="o">=</span> <span class="kc">None</span>
+
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">VERBOSE_FILE</span>
 
 
@@ -107,6 +114,29 @@
 <div class="viewcode-block" id="run_command_check_output"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.run_command_check_output">[docs]</a><span class="k">def</span> <span class="nf">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span></div>
+
+
+<div class="viewcode-block" id="raw_input_with_timeout"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.raw_input_with_timeout">[docs]</a><span class="k">def</span> <span class="nf">raw_input_with_timeout</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">inputimeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">input</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">inputimeout</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">TimeoutOccurred</span><span class="p">:</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">default_answer</span>
+    <span class="k">return</span> <span class="n">answer</span></div>
+
+
+<div class="viewcode-block" id="yes_no_input"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.yes_no_input">[docs]</a><span class="k">def</span> <span class="nf">yes_no_input</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">raw_input_with_timeout</span><span class="p">(</span>
+        <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="o">=</span><span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ans</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default_answer</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ans</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ans</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
 </pre></div>
 
            </div>
