@@ -46,7 +46,7 @@ slim = [
     "pyairtable",
     "h5py",
     "PyDrive2",
-    "inputimeout"
+    "inputimeout",
 ]
 slim_requires = _filter_requires(slim, install_requires)
 

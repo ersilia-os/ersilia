@@ -25,9 +25,13 @@ def api_cmd():
     )
     def api(model, api_name, input, output, batch_size):
         mdl = ErsiliaModel(model)
-        result = mdl.api(api_name=api_name, input=input, output=output, batch_size=batch_size)
+        result = mdl.api(
+            api_name=api_name, input=input, output=output, batch_size=batch_size
+        )
         if isinstance(result, types.GeneratorType):
-            for result in mdl.api(api_name=api_name, input=input, output=output, batch_size=batch_size):
+            for result in mdl.api(
+                api_name=api_name, input=input, output=output, batch_size=batch_size
+            ):
                 if result is not None:
                     click.echo(json.dumps(result, indent=4))
                 else:

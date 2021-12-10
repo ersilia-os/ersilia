@@ -22,7 +22,9 @@ def serve_cmd():
         if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")
             return
-        echo(":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green")
+        echo(
+            ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"
+        )
         echo("")
         echo("   URL: {0}".format(mdl.url), fg="yellow")
         echo("   PID: {0}".format(mdl.pid), fg="yellow")

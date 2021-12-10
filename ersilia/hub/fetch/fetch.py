@@ -26,7 +26,9 @@ class ModelFetcher(ErsiliaBase):
         pip=True,
         dockerize=False,
     ):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self.overwrite = overwrite
         self.do_pip = pip
         self.do_docker = dockerize

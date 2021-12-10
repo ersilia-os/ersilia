@@ -60,7 +60,9 @@ def raw_input_with_timeout(prompt, default_answer, timeout=5):
 
 
 def yes_no_input(prompt, default_answer, timeout=5):
-    ans = raw_input_with_timeout(prompt=prompt, default_answer=default_answer, timeout=timeout)
+    ans = raw_input_with_timeout(
+        prompt=prompt, default_answer=default_answer, timeout=timeout
+    )
     if ans is None:
         return default_answer
     ans = str(ans).lower()

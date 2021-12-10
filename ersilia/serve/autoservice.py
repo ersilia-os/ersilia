@@ -161,7 +161,8 @@ class AutoService(ErsiliaBase):
         dir_name = os.path.dirname(tmp_file)
         pids = []
         for proc_file in os.listdir(dir_name):
-            if proc_file[-3:] != "pid": continue
+            if proc_file[-3:] != "pid":
+                continue
             proc_file = os.path.join(dir_name, proc_file)
             pids += self._pids_from_file(proc_file)
             os.remove(proc_file)

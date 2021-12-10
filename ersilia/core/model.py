@@ -18,6 +18,7 @@ from ..utils import tmp_pid_file
 from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.terminal import yes_no_input
 from ..lake.base import LakeBase
+
 try:
     import pandas as pd
 except:
@@ -25,8 +26,18 @@ except:
 
 
 class ErsiliaModel(ErsiliaBase):
-    def __init__(self, model, save_to_lake=True, config_json=None, credentials_json=None, verbose=None, fetch_if_not_available=True):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+    def __init__(
+        self,
+        model,
+        save_to_lake=True,
+        config_json=None,
+        credentials_json=None,
+        verbose=None,
+        fetch_if_not_available=True,
+    ):
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self.logger = logger
         if verbose is not None:
             if verbose:
@@ -34,17 +45,23 @@ class ErsiliaModel(ErsiliaBase):
             else:
                 self.logger.set_verbosity(0)
         else:
-            if not hasattr(main, '__file__'):
+            if not hasattr(main, "__file__"):
                 self.logger.set_verbosity(0)
         self.save_to_lake = save_to_lake
         if self.save_to_lake:
             lake = LakeBase(config_json=self.config_json)
             if not lake.is_installed():
-                self.logger.error("Isaura is not installed! Calculations will be done without storing and reading from the lake, unfortunately.")
+                self.logger.error(
+                    "Isaura is not installed! Calculations will be done without storing and reading from the lake, unfortunately."
+                )
                 self.save_to_lake = False
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
-        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(model)
+        assert (
+            self._is_valid
+        ), "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+            model
+        )
         self.config_json = config_json
         self.model_id = mdl.model_id
         self.slug = mdl.slug
@@ -52,17 +69,26 @@ class ErsiliaModel(ErsiliaBase):
         self._is_available_locally = mdl.is_available_locally()
         if not self._is_available_locally and fetch_if_not_available:
             self.logger.info("Model is not available locally")
-            do_fetch = yes_no_input("Requested model {0} if not available locally. Do you want to fetch it? [Y/n]".format(self.model_id), default_answer="Y")
+            do_fetch = yes_no_input(
+                "Requested model {0} if not available locally. Do you want to fetch it? [Y/n]".format(
+                    self.model_id
+                ),
+                default_answer="Y",
+            )
             if do_fetch:
                 fetch = importlib.import_module("ersilia.hub.fetch.fetch")
-                mf = fetch.ModelFetcher(config_json=self.config_json, credentials_json=self.credentials_json)
+                mf = fetch.ModelFetcher(
+                    config_json=self.config_json, credentials_json=self.credentials_json
+                )
                 mf.fetch(self.model_id)
             else:
                 return
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
         )
-        self.autoservice = AutoService(model_id=self.model_id, config_json=self.config_json)
+        self.autoservice = AutoService(
+            model_id=self.model_id, config_json=self.config_json
+        )
         self._set_apis()
 
     def __enter__(self):
@@ -100,34 +126,50 @@ class ErsiliaModel(ErsiliaBase):
     def _get_api_instance(self, api_name):
         model_id = self.model_id
         tmp_file = tmp_pid_file(model_id)
-        assert os.path.exists(tmp_file), "Process ID file does not exist. Please serve the model first!"
+        assert os.path.exists(
+            tmp_file
+        ), "Process ID file does not exist. Please serve the model first!"
         with open(tmp_file, "r") as f:
             for l in f:
                 url = l.rstrip().split()[1]
         if api_name is None:
             api_names = self.autoservice.get_apis()
-            assert len(api_names) == 1, "More than one API found, please specificy api_name"
+            assert (
+                len(api_names) == 1
+            ), "More than one API found, please specificy api_name"
             api_name = api_names[0]
-        api = Api(model_id=model_id, url=url, api_name=api_name, save_to_lake=self.save_to_lake, config_json=self.config_json)
+        api = Api(
+            model_id=model_id,
+            url=url,
+            api_name=api_name,
+            save_to_lake=self.save_to_lake,
+            config_json=self.config_json,
+        )
         return api
 
     def _api_runner_iter(self, api, input, output, batch_size):
         for result in api.post(input=input, output=output, batch_size=batch_size):
-            assert result is not None, "Something went wrong. Please contact us at hello@ersila.io"
+            assert (
+                result is not None
+            ), "Something went wrong. Please contact us at hello@ersila.io"
             yield result
 
     def _api_runner_return(self, api, input, output, batch_size):
-        if output=="pandas" and pd is None:
+        if output == "pandas" and pd is None:
             raise Exception
         if output == "json":
             R = []
-            for r in self._api_runner_iter(api=api, input=input, output=None, batch_size=batch_size):
+            for r in self._api_runner_iter(
+                api=api, input=input, output=None, batch_size=batch_size
+            ):
                 R += [r]
             return json.dumps(R, indent=4)
         else:
             tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
             tmp_output = os.path.join(tmp_folder, "temporary.h5")
-            for r in self._api_runner_iter(api=api, input=input, output=tmp_output, batch_size=batch_size):
+            for r in self._api_runner_iter(
+                api=api, input=input, output=tmp_output, batch_size=batch_size
+            ):
                 continue
             data = Hdf5DataLoader()
             data.load(tmp_output)
@@ -138,7 +180,7 @@ class ErsiliaModel(ErsiliaBase):
                 d["key"] = data.keys
                 d["input"] = data.inputs
                 for j, f in enumerate(data.features):
-                    d[f] = data.values[:,j]
+                    d[f] = data.values[:, j]
                 return pd.DataFrame(d)
             if output == "dict":
                 d = collections.OrderedDict()
@@ -187,10 +229,14 @@ class ErsiliaModel(ErsiliaBase):
         else:
             return self._api_runner_return
 
-    def api(self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
+    def api(
+        self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
+    ):
         api_instance = self._get_api_instance(api_name=api_name)
         api_runner = self._get_api_runner(output=output)
-        result = api_runner(api=api_instance, input=input, output=output, batch_size=batch_size)
+        result = api_runner(
+            api=api_instance, input=input, output=output, batch_size=batch_size
+        )
         if output is None:
             # Result is a generator
             return result

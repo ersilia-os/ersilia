@@ -18,7 +18,9 @@ class ModelSniffer(BaseAction):
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
         self.logger.debug("Initializing model for inferring its structure")
-        self.model = ErsiliaModel(model_id, config_json=config_json, fetch_if_not_available=False)
+        self.model = ErsiliaModel(
+            model_id, config_json=config_json, fetch_if_not_available=False
+        )
         self.logger.debug("Model successfully initialized in sniffer")
         eg = ExampleGenerator(model_id, config_json=config_json)
         self.inputs = eg.example(N, file_name=None, simple=True)
@@ -92,7 +94,9 @@ class ModelSniffer(BaseAction):
         all_schemas = {}
         for api_name in self.model.autoservice.get_apis():
             self.logger.debug("Running {0}".format(api_name))
-            results = [result for result in self.model.autoservice.api(api_name, self.inputs)]
+            results = [
+                result for result in self.model.autoservice.api(api_name, self.inputs)
+            ]
             schema = self._get_schema(results)
             all_schemas[api_name] = schema
         path = os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE)

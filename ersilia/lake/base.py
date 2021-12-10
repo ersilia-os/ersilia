@@ -19,7 +19,10 @@ class LakeBase(ErsiliaBase):
     def is_installed(self):
         try:
             import isaura
+
             return True
         except ModuleNotFoundError:
-            self.logger.warning("Lake manager 'isaura' is not installed! We strongly recommend installing it to store calculations persistently")
+            self.logger.warning(
+                "Lake manager 'isaura' is not installed! We strongly recommend installing it to store calculations persistently"
+            )
             return False
