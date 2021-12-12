@@ -6,15 +6,15 @@ import types
 from . import ersilia_cli
 from .. import echo
 from ... import ErsiliaModel
+from ...core.session import Session
 
 
 def api_cmd():
     """Create api command"""
-    # Example usage: ersilia api {MODEL} {API_NAME} -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
+    # Example usage: ersilia api {API_NAME} -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
     @ersilia_cli.command(
         short_help="Run API on a served model", help="Run API on a served model"
     )
-    @click.argument("model", default=None, type=click.STRING)
     @click.argument("api_name", required=False, default=None, type=click.STRING)
     @click.option("-i", "--input", "input", required=True, type=click.STRING)
     @click.option(
@@ -23,7 +23,11 @@ def api_cmd():
     @click.option(
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
-    def api(model, api_name, input, output, batch_size):
+    def api(api_name, input, output, batch_size):
+        model_id = Session(config_json=None).current_model_id()
+        if model_id is None:
+            click.echo("No model seems to be served. Please run 'ersilia serve ...' before.", fg="red")
+            return
         mdl = ErsiliaModel(model)
         result = mdl.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size

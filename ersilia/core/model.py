@@ -8,6 +8,7 @@ import __main__ as main
 from .. import logger
 from .base import ErsiliaBase
 from .modelbase import ModelBase
+from .session import Session
 from ..serve.autoservice import AutoService
 from ..serve.schema import ApiSchema
 from ..serve.api import Api
@@ -90,6 +91,7 @@ class ErsiliaModel(ErsiliaBase):
             model_id=self.model_id, config_json=self.config_json
         )
         self._set_apis()
+        self.session = Session(model_id=self.model_id, config_json=self.config_json)
 
     def __enter__(self):
         self.serve()
@@ -250,12 +252,14 @@ class ErsiliaModel(ErsiliaBase):
             return result
 
     def serve(self):
+        self.session.open()
         self.autoservice.serve()
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
 
     def close(self):
         self.autoservice.close()
+        self.session.close()
 
     def get_apis(self):
         return self.autoservice.get_apis()
