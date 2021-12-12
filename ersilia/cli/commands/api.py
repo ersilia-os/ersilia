@@ -26,7 +26,10 @@ def api_cmd():
     def api(api_name, input, output, batch_size):
         model_id = Session(config_json=None).current_model_id()
         if model_id is None:
-            click.echo("No model seems to be served. Please run 'ersilia serve ...' before.", fg="red")
+            click.echo(
+                "No model seems to be served. Please run 'ersilia serve ...' before.",
+                fg="red",
+            )
             return
         mdl = ErsiliaModel(model)
         result = mdl.api(

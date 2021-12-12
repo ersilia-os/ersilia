@@ -13,9 +13,7 @@ from ..default import GITHUB_ORG
 class ModelPublisher(ErsiliaBase):
     def __init__(self, model_id, config_json, credentials_json):
         ErsiliaBase.__init__(
-            self,
-            config_json=config_json,
-            credentials_json=credentials_json,
+            self, config_json=config_json, credentials_json=credentials_json,
         )
         self.model_id = model_id
         self.template_repo = EOS_TEMPLATE_REPOSITORY

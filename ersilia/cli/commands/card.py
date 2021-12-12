@@ -16,11 +16,7 @@ def card_cmd():
     )
     @click.argument("model", type=click.STRING)
     @click.option(
-        "-s",
-        "--schema",
-        is_flag=True,
-        default=False,
-        help="Show schema of the model",
+        "-s", "--schema", is_flag=True, default=False, help="Show schema of the model",
     )
     @click.option(
         "-l",

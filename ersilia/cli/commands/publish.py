@@ -15,8 +15,7 @@ def publish_cmd():
 
     # Example usage: ersilia publish {STEP} {MODEL}
     @ersilia_cli.command(
-        short_help="Publish model",
-        help="Contribute a model to the Ersilia Model Hub",
+        short_help="Publish model", help="Contribute a model to the Ersilia Model Hub",
     )
     @click.argument("step", type=click.STRING)
     @click.argument("model", type=click.STRING)

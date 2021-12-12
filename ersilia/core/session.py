@@ -7,7 +7,6 @@ from ..default import EOS
 
 
 class Session(ErsiliaBase):
-
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.session_file = os.path.join(EOS, "session.json")
@@ -24,8 +23,7 @@ class Session(ErsiliaBase):
         session = {
             "model_id": self.model_id,
             "timestamp": str(time.time()),
-            "identifier": str(uuid.uuid4())
-
+            "identifier": str(uuid.uuid4()),
         }
         with open(self.session_file, "w") as f:
             json.dump(session, f, indent=4)
