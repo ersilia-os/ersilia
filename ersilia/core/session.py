@@ -1,6 +1,7 @@
 import json
 import time
 import uuid
+import os
 
 from .base import ErsiliaBase
 from ..default import EOS
@@ -21,7 +22,7 @@ class Session(ErsiliaBase):
     def open(self, model_id):
         self.logger.debug("Opening session {0}".format(self.session_file))
         session = {
-            "model_id": self.model_id,
+            "model_id": model_id,
             "timestamp": str(time.time()),
             "identifier": str(uuid.uuid4()),
         }

@@ -1,5 +1,4 @@
 import click
-import os
 import json
 import types
 
@@ -26,12 +25,12 @@ def api_cmd():
     def api(api_name, input, output, batch_size):
         model_id = Session(config_json=None).current_model_id()
         if model_id is None:
-            click.echo(
+            echo(
                 "No model seems to be served. Please run 'ersilia serve ...' before.",
                 fg="red",
             )
             return
-        mdl = ErsiliaModel(model)
+        mdl = ErsiliaModel(model_id)
         result = mdl.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )
@@ -40,8 +39,8 @@ def api_cmd():
                 api_name=api_name, input=input, output=output, batch_size=batch_size
             ):
                 if result is not None:
-                    click.echo(json.dumps(result, indent=4))
+                    echo(json.dumps(result, indent=4))
                 else:
-                    click.echo("Something went wrong", fg="red")
+                    echo("Something went wrong", fg="red")
         else:
-            click.echo(result)
+            echo(result)

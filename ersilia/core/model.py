@@ -91,7 +91,7 @@ class ErsiliaModel(ErsiliaBase):
             model_id=self.model_id, config_json=self.config_json
         )
         self._set_apis()
-        self.session = Session(model_id=self.model_id, config_json=self.config_json)
+        self.session = Session(config_json=self.config_json)
 
     def __enter__(self):
         self.serve()
@@ -252,7 +252,7 @@ class ErsiliaModel(ErsiliaBase):
             return result
 
     def serve(self):
-        self.session.open()
+        self.session.open(model_id=self.model_id)
         self.autoservice.serve()
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
