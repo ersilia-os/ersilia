@@ -22,12 +22,15 @@ class SystemPack(BasePack):
         BasePack.__init__(self, model_id, config_json)
         self.logger.debug("Initializing system packer")
 
-    def run(self):
+    def _run(self):
         self.logger.debug("Packing model with system installation")
         folder = self._model_path(self.model_id)
         script_path = os.path.join(folder, self.cfg.HUB.PACK_SCRIPT)
         run_command("python {0}".format(script_path))
         self._symlinks()
+
+    def run(self):
+        self._run()
 
 
 class VenvPack(BasePack):
@@ -112,7 +115,6 @@ class CondaPack(BasePack):
         return env
 
     def _run(self):
-        model_id = self.model_id
         env = self._setup()
         pack_snippet = """
         python {0}

@@ -91,6 +91,7 @@ class DockerManager(ErsiliaBase):
                 cache_str, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
             )
         ]
+        self.logger.debug(cmdlines)
         with open(tmp_file, "w") as f:
             for cmd in cmdlines:
                 f.write(cmd + os.linesep)

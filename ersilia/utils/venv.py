@@ -22,7 +22,7 @@ class SimpleVenv(ErsiliaBase):
         else:
             return False
 
-    def create(self, environment, python=None):
+    def create(self, environment):
         path = self._get_path(environment)
         if self.exists(path):
             return

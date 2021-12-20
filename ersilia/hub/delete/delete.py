@@ -1,7 +1,6 @@
 import os
 import shutil
 from ... import ErsiliaBase
-from ... import logger
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
 from ...utils.conda import SimpleConda
@@ -11,6 +10,17 @@ from ...db.hubdata.localslugs import SlugDb
 from ..bundle.status import ModelStatus
 
 from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
+
+
+def rmtree(path):
+    try:
+        shutil.rmtree(path)
+    except:
+        pass
+    try:
+        os.unlink(path)
+    except:
+        pass
 
 
 class ModelEosDeleter(ErsiliaBase):
@@ -25,8 +35,8 @@ class ModelEosDeleter(ErsiliaBase):
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
-        logger.info("Removing folder {0}".format(folder))
-        shutil.rmtree(folder)
+        self.logger.info("Removing folder {0}".format(folder))
+        rmtree(folder)
 
 
 class ModelLakeDeleter(ErsiliaBase):
@@ -69,7 +79,7 @@ class ModelTmpDeleter(ErsiliaBase):
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
-        logger.info("Removing folder {0}".format(folder))
+        self.logger.info("Removing folder {0}".format(folder))
         shutil.rmtree(folder)
 
 
@@ -85,8 +95,13 @@ class ModelBundleDeleter(ErsiliaBase):
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
-        logger.info("Removing folder {0}".format(folder))
-        shutil.rmtree(folder)
+        bento_folder = self._get_bentoml_location(model_id)
+        if bento_folder is not None:
+            self.logger.info("Removing bento folder first {0}".format(bento_folder))
+            rmtree(bento_folder)
+            os.makedirs(bento_folder, exist_ok=True)
+        self.logger.info("Removing folder {0}".format(folder))
+        rmtree(folder)
 
 
 class ModelBentoDeleter(ErsiliaBase):
@@ -109,7 +124,7 @@ class ModelBentoDeleter(ErsiliaBase):
         if keep_latest and len(services) > 1:
             services = services[1:]
         for service in services:
-            logger.info("Removing BentoML service {0}".format(service))
+            self.logger.info("Removing BentoML service {0}".format(service))
             self._delete_service(service)
 
     def delete(self, model_id):
@@ -148,15 +163,15 @@ class ModelCondaDeleter(ErsiliaBase):
         for env in envs:
             models = self.envdb.models_of_env(env)
             if len(models) == 1:
-                logger.info("Deleting conda environment {0}".format(env))
+                self.logger.info("Deleting conda environment {0}".format(env))
                 conda = SimpleConda()
                 conda.delete(env)
             self.envdb.delete(model_id, env)
 
 
-class ModelPipDeleter(object):
-    def __init__(self):
-        pass
+class ModelPipDeleter(ErsiliaBase):
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
     def pip_uninstall(self, model_id):
         run_command("echo y | pip uninstall %s" % model_id)
@@ -164,7 +179,7 @@ class ModelPipDeleter(object):
     def delete(self, model_id):
         env = Environment()
         if env.has_module(model_id):
-            logger.info("Uninstalling pip package {0}".format(model_id))
+            self.logger.info("Uninstalling pip package {0}".format(model_id))
             self.pip_uninstall(model_id)
 
 
@@ -177,9 +192,9 @@ class TmpCleaner(ErsiliaBase):
         os.makedirs(self._tmp_dir)
 
 
-class ModelFullDeleter(object):
+class ModelFullDeleter(ErsiliaBase):
     def __init__(self, config_json=None):
-        self.config_json = config_json
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
     def needs_delete(self, model_id):
         ms = ModelStatus().status(model_id)
@@ -189,7 +204,7 @@ class ModelFullDeleter(object):
         return False
 
     def delete(self, model_id):
-        logger.info("Starting delete of model {0}".format(model_id))
+        self.logger.info("Starting delete of model {0}".format(model_id))
         ModelEosDeleter(self.config_json).delete(model_id)
         ModelSlugDeleter(self.config_json).delete(model_id)
         ModelBundleDeleter(self.config_json).delete(model_id)
@@ -197,5 +212,5 @@ class ModelFullDeleter(object):
         ModelCondaDeleter(self.config_json).delete(model_id)
         ModelTmpDeleter(self.config_json).delete(model_id)
         ModelLakeDeleter(self.config_json).delete(model_id)
-        ModelPipDeleter().delete(model_id)
-        logger.success("Model {0} deleted successfully".format(model_id))
+        ModelPipDeleter(self.config_json).delete(model_id)
+        self.logger.success("Model {0} deleted successfully".format(model_id))

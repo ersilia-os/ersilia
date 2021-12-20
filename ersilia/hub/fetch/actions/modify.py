@@ -4,7 +4,7 @@ import yaml
 
 from ersilia.default import PACKMODE_FILE
 from . import BaseAction
-from .. import ENVIRONMENT_YML, DOCKERFILE
+from .. import ENVIRONMENT_YML, DOCKERFILE, PYTHON_INSTALLS
 from ....utils.terminal import run_command
 from ...bundle.bundle import BundleEnvironmentFile, BundleDockerfileFile
 
@@ -122,13 +122,39 @@ class ModelModifier(BaseAction):
             for l in lines:
                 f.write(l + os.linesep)
 
+    def _add_python_installs_to_requirements_txt(self, model_id):
+        f0 = os.path.join(self._get_bundle_location(model_id), "requirements.txt")
+        reqs = []
+        with open(f0, "r") as f:
+            for l in f:
+                reqs += [l.strip(os.linesep)]
+        f1 = os.path.join(self._get_bundle_location(model_id), PYTHON_INSTALLS)
+        with open(f1, "r") as f:
+            for l in f:
+                if "pip " in l:
+                    r = l.rstrip(os.linesep).split(" ")[-1]
+                    if r not in reqs:
+                        reqs += [r]
+        with open(f0, "w") as f:
+            for l in reqs:
+                f.write(l + os.linesep)
+
+    def _add_python_installs_to_environment_yml(self, model_id):
+        # TODO
+        pass
+
     def modify(self):
+        # Add installs to requirements and environment
+        self._add_python_installs_to_requirements_txt(self.model_id)
+        self._add_python_installs_to_environment_yml(self.model_id)
         # Slightly modify bundle environment YAML file, if exists
         self._modify_bundle_environment_yml(self.model_id)
         # Slightly modify bundle Dockerfile, if necessary.
         self._modify_bundle_dockerfile(self.model_id)
         # Check if conda is really necessary, if not, use slim base docker image
-        with open(os.path.join(self._model_path(self.model_id), PACKMODE_FILE), "r") as f:
+        with open(
+            os.path.join(self._model_path(self.model_id), PACKMODE_FILE), "r"
+        ) as f:
             pack_mode = f.read()
         if pack_mode == "conda":
             needs_conda = True
@@ -141,4 +167,3 @@ class ModelModifier(BaseAction):
         else:
             self.logger.debug("Conda is not needed")
             dockerfile.set_to_slim()
-

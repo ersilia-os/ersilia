@@ -29,22 +29,32 @@ class _Symlinker(ErsiliaBase):
         # env
         env_path = os.path.join(path, "env")
         if os.path.exists(env_path):
-            self.logger.debug("Creating env symlink dest > bundle")
+            self.logger.debug("Creating env symlink dest <> bundle")
             trg = os.path.join(bundle_dir, "env")
             self.logger.debug(trg)
             shutil.move(env_path, trg)
             os.symlink(trg, env_path, target_is_directory=True)
+        # python_installs
+        python_installs_path = os.path.join(path, PYTHON_INSTALLS)
+        if not os.path.exists(python_installs_path):
+            with open(python_installs_path, "w") as f:
+                pass
+        trg = os.path.join(bundle_dir, PYTHON_INSTALLS)
+        self.logger.debug("Creating python_installs.sh symlink dest <> bundle")
+        shutil.move(python_installs_path, trg)
+        os.symlink(trg, python_installs_path)
 
     def _bentoml_bundle_symlink(self):
         model_id = self.model_id
         src = self._get_bentoml_location(model_id)
         self.logger.debug("BentoML location is {0}".format(src))
         dst_ = os.path.join(self._bundles_dir, model_id)
-        pathlib.Path(dst_).mkdir(parents=True, exist_ok=True)
+        os.makedirs(dst_, exist_ok=True)
         dst = os.path.join(dst_, os.path.basename(src))
-        self.logger.debug("Destination location is {0}".format(src))
-        self.logger.debug("Building symlinks between {0} and {1}".format(src, dst))
-        os.symlink(src, dst, target_is_directory=True)
+        shutil.move(src, dst)
+        self.logger.debug("Ersilia Bento location is {0}".format(dst))
+        self.logger.debug("Building symlinks between {0} and {1}".format(dst, src))
+        os.symlink(dst, src, target_is_directory=True)
 
     def _dest_lake_symlink(self):
         src = os.path.join(self._model_path(self.model_id), H5_DATA_FILE)
@@ -69,10 +79,12 @@ class _Writer(ErsiliaBase):
         self.model_id = model_id
 
     def _write_python_installs(self):
+        self.logger.debug("Writing python installs")
         dockerfile = DockerfileFile(self._model_path(self.model_id))
         dis_warn = "--disable-pip-version-check"
         version = dockerfile.get_bentoml_version()
         runs = dockerfile.get_install_commands()["commands"]
+        self.logger.debug("Run commands: {0}".format(runs))
         fn = os.path.join(self._model_path(self.model_id), PYTHON_INSTALLS)
         with open(fn, "w") as f:
             for r in runs:
