@@ -166,7 +166,7 @@
 <div class="viewcode-block" id="BundleDockerfileFile.get_bentoml_version"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_bentoml_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;gets bentoml version necessary to run the model</span>
 
-<span class="sd">        Uses the get_bentml_version function defined in the DockerfileFile class</span>
+<span class="sd">        Uses the get_bentoml_version function defined in the DockerfileFile class</span>
 <span class="sd">        from repo.py</span>
 
 <span class="sd">        Returns:</span>
@@ -190,7 +190,21 @@
         <span class="k">if</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;slim&quot;</span><span class="p">]:</span>
             <span class="k">return</span>
         <span class="n">img</span> <span class="o">=</span> <span class="s2">&quot;bentoml/model-server:</span><span class="si">{0}</span><span class="s2">-slim-</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ver</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span> <span class="o">=</span> <span class="n">img</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span> <span class="o">=</span> <span class="n">img</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BundleDockerfileFile.set_to_full"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_full">[docs]</a>    <span class="k">def</span> <span class="nf">set_to_full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ver</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;slim&quot;</span><span class="p">]:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="s2">&quot;bentoml/model-server:</span><span class="si">{0}</span><span class="s2">-</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ver</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span> <span class="o">=</span> <span class="n">img</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BundleDockerfileFile.check"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span></div></div>

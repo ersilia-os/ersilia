@@ -148,6 +148,28 @@
 <span class="p">)</span>
 
 
+<div class="viewcode-block" id="bashrc_path"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_path">[docs]</a><span class="k">def</span> <span class="nf">bashrc_path</span><span class="p">():</span>
+    <span class="n">home_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">&quot;.bashrc&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">rc</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">&quot;.bash_profile&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pr</span></div>
+
+
+<div class="viewcode-block" id="has_profile_snippet"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.has_profile_snippet">[docs]</a><span class="k">def</span> <span class="nf">has_profile_snippet</span><span class="p">():</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="n">bashrc_path</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">snippet</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
 <div class="viewcode-block" id="bashrc_cli_snippet"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_cli_snippet">[docs]</a><span class="k">def</span> <span class="nf">bashrc_cli_snippet</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Write a conda snippet in the user profile.</span>
 
@@ -159,16 +181,6 @@
 <span class="sd">    Args:</span>
 <span class="sd">        - overwrite (bool): Overwrite the current bash profile file if the eosconda string is found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">bashrc_path</span><span class="p">():</span>
-        <span class="n">home_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
-        <span class="n">rc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">&quot;.bashrc&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">rc</span>
-        <span class="n">pr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">&quot;.bash_profile&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pr</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">pr</span>
-
     <span class="n">fn</span> <span class="o">=</span> <span class="n">bashrc_path</span><span class="p">()</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -181,10 +193,6 @@
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">snippet</span><span class="p">)</span></div>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">bashrc_cli_snippet</span><span class="p">()</span>
 </pre></div>
 
            </div>

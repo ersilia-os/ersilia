@@ -70,6 +70,7 @@
 <span class="kn">from</span> <span class="nn">...bundle.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
 <span class="kn">from</span> <span class="nn">....utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">....db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
+<span class="kn">from</span> <span class="nn">....setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
 
 
 <div class="viewcode-block" id="ModelToolizer"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer">[docs]</a><span class="k">class</span> <span class="nc">ModelToolizer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
@@ -88,10 +89,12 @@
 
 <div class="viewcode-block" id="ModelToolizer.dockerize"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize">[docs]</a>    <span class="k">def</span> <span class="nf">dockerize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Containerize model using bentoml with docker&quot;&quot;&quot;</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cannot dockerize. Please make sure docker is installed.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Dockerizing&quot;</span><span class="p">)</span>
-        <span class="n">bento</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">LATEST_TAG</span>
-        <span class="n">bundle_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bundle_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span>
             <span class="s2">&quot;bentoml containerize </span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2"> -t </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">docker_org</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">tag</span>
@@ -106,7 +109,6 @@
 
 <div class="viewcode-block" id="ModelToolizer.toolize"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize">[docs]</a>    <span class="k">def</span> <span class="nf">toolize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">do_pip</span><span class="p">,</span> <span class="n">do_docker</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking if model needs to be integrated to a tool&quot;</span><span class="p">)</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="k">if</span> <span class="n">do_pip</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_status</span><span class="o">.</span><span class="n">is_pip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pip_install</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>

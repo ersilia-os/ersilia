@@ -69,7 +69,7 @@
 <span class="kn">from</span> <span class="nn">.commands</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 
 
-<div class="viewcode-block" id="create_ersilia_cli"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.create_cli.create_ersilia_cli">[docs]</a><span class="k">def</span> <span class="nf">create_ersilia_cli</span><span class="p">(</span><span class="n">pip_installed_bundle_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="create_ersilia_cli"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.create_cli.create_ersilia_cli">[docs]</a><span class="k">def</span> <span class="nf">create_ersilia_cli</span><span class="p">():</span>
     <span class="n">is_contributor</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">is_contributor</span><span class="p">()</span>
 
     <span class="n">cmd</span> <span class="o">=</span> <span class="n">Command</span><span class="p">()</span>
@@ -84,13 +84,9 @@
     <span class="n">cmd</span><span class="o">.</span><span class="n">catalog</span><span class="p">()</span>
     <span class="n">cmd</span><span class="o">.</span><span class="n">card</span><span class="p">()</span>
 
+    <span class="c1"># TODO: publishing functionalities</span>
     <span class="k">if</span> <span class="n">is_contributor</span><span class="p">:</span>
         <span class="n">cmd</span><span class="o">.</span><span class="n">publish</span><span class="p">()</span>
-
-    <span class="c1"># TODO: check if conda and docker are installed.</span>
-    <span class="k">if</span> <span class="n">is_contributor</span><span class="p">:</span>
-        <span class="n">cmd</span><span class="o">.</span><span class="n">conda</span><span class="p">()</span>
-        <span class="n">cmd</span><span class="o">.</span><span class="n">dockerize</span><span class="p">()</span>
 
     <span class="c1"># TODO: functions only for contributors</span>
     <span class="c1"># Functions only for contributors</span>

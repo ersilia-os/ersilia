@@ -67,8 +67,11 @@
   <h1>Source code for ersilia.hub.fetch.actions.modify</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">ersilia.default</span> <span class="kn">import</span> <span class="n">PACKMODE_FILE</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ENVIRONMENT_YML</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ENVIRONMENT_YML</span><span class="p">,</span> <span class="n">DOCKERFILE</span>
 <span class="kn">from</span> <span class="nn">....utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">...bundle.bundle</span> <span class="kn">import</span> <span class="n">BundleEnvironmentFile</span><span class="p">,</span> <span class="n">BundleDockerfileFile</span>
 
@@ -192,8 +195,20 @@
         <span class="c1"># Slightly modify bundle Dockerfile, if necessary.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modify_bundle_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="c1"># Check if conda is really necessary, if not, use slim base docker image</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">BundleEnvironmentFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span><span class="o">.</span><span class="n">needs_conda</span><span class="p">():</span>
-            <span class="n">BundleDockerfileFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_to_slim</span><span class="p">()</span></div></div>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">PACKMODE_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pack_mode</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span><span class="p">:</span>
+            <span class="n">needs_conda</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">needs_conda</span> <span class="o">=</span> <span class="n">BundleEnvironmentFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span><span class="o">.</span><span class="n">needs_conda</span><span class="p">()</span>
+        <span class="n">dockerfile</span> <span class="o">=</span> <span class="n">BundleDockerfileFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">needs_conda</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Conda is needed&quot;</span><span class="p">)</span>
+            <span class="n">dockerfile</span><span class="o">.</span><span class="n">set_to_full</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Conda is not needed&quot;</span><span class="p">)</span>
+            <span class="n">dockerfile</span><span class="o">.</span><span class="n">set_to_slim</span><span class="p">()</span></div></div>
+
 </pre></div>
 
            </div>

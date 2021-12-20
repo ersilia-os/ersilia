@@ -79,11 +79,13 @@
     <span class="c1"># Example usage: ersilia close {MODEL}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Close model&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Close model&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">close</span><span class="p">():</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
+        <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No model was served&quot;</span><span class="p">)</span>
             <span class="k">return</span>
-        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
         <span class="n">mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:no_entry: Model </span><span class="si">{0}</span><span class="s2"> closed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span></div>
 </pre></div>

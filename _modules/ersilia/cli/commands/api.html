@@ -89,14 +89,16 @@
         <span class="s2">&quot;-b&quot;</span><span class="p">,</span> <span class="s2">&quot;--batch_size&quot;</span><span class="p">,</span> <span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span>
     <span class="p">)</span>
     <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
+        <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
                 <span class="s2">&quot;No model seems to be served. Please run &#39;ersilia serve ...&#39; before.&quot;</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span>
-        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">api</span><span class="p">(</span>
             <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
         <span class="p">)</span>

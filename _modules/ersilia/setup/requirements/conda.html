@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ersilia.cli.commands.conda &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>ersilia.setup.requirements.conda &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
@@ -54,7 +54,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
-      <li>ersilia.cli.commands.conda</li>
+      <li>ersilia.setup.requirements.conda</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -63,19 +63,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for ersilia.cli.commands.conda</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
+  <h1>Source code for ersilia.setup.requirements.conda</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command_check_output</span>
 
 
-<div class="viewcode-block" id="conda_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.conda.conda_cmd">[docs]</a><span class="k">def</span> <span class="nf">conda_cmd</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Creates conda command&quot;&quot;&quot;</span>
-    <span class="c1"># Example usage: ersilia conda activate eos0aaa</span>
-    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Use conda from ersilia.&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use conda from ersilia in order to access model environments.&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">conda</span><span class="p">():</span>
-        <span class="k">pass</span></div>
+<div class="viewcode-block" id="CondaRequirement"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement">[docs]</a><span class="k">class</span> <span class="nc">CondaRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
+
+<div class="viewcode-block" id="CondaRequirement.is_installed"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement.is_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;command -v </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="CondaRequirement.install"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Install docker</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

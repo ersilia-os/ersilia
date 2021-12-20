@@ -68,7 +68,6 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
@@ -321,6 +320,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
@@ -352,7 +352,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dm</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">container_name</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;container_name&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://0.0.0.0:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DockerImageService.close"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DockerImageService.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dm</span><span class="o">.</span><span class="n">_delete_container</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">container_name</span><span class="p">)</span></div>
@@ -361,9 +361,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_with_url</span><span class="p">(</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span></div></div>
 
 
+<span class="c1"># TODO: Include &#39;pip&#39; within available service_class</span>
 <div class="viewcode-block" id="PipInstalledService"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService">[docs]</a><span class="k">class</span> <span class="nc">PipInstalledService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>

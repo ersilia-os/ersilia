@@ -68,6 +68,10 @@
 <span></span><span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...bundle.repo</span> <span class="kn">import</span> <span class="n">DockerfileFile</span>
 <span class="kn">from</span> <span class="nn">....utils.versioning</span> <span class="kn">import</span> <span class="n">Versioner</span>
+<span class="kn">from</span> <span class="nn">....setup.requirements.conda</span> <span class="kn">import</span> <span class="n">CondaRequirement</span>
+<span class="kn">from</span> <span class="nn">....setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
+
+<span class="n">AVAILABLE_MODES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;venv&quot;</span><span class="p">,</span> <span class="s2">&quot;conda&quot;</span><span class="p">,</span> <span class="s2">&quot;docker&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PackModeDecision"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.mode.PackModeDecision">[docs]</a><span class="k">class</span> <span class="nc">PackModeDecision</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -97,7 +101,8 @@
         <span class="n">cmds</span> <span class="o">=</span> <span class="n">dockerfile</span><span class="o">.</span><span class="n">get_install_commands</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking if only python/conda install will be sufficient&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">cmds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">cmds</span><span class="p">[</span><span class="s2">&quot;conda&quot;</span><span class="p">]:</span>
+            <span class="n">condareq</span> <span class="o">=</span> <span class="n">CondaRequirement</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cmds</span><span class="p">[</span><span class="s2">&quot;conda&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">condareq</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: venv&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="s2">&quot;venv&quot;</span>
             <span class="k">else</span><span class="p">:</span>
@@ -108,6 +113,8 @@
                 <span class="s2">&quot;The python/conda installs are not sufficient, use docker&quot;</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: docker&quot;</span><span class="p">)</span>
+            <span class="n">dockerreq</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">dockerreq</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span>
             <span class="k">return</span> <span class="s2">&quot;docker&quot;</span></div></div>
 </pre></div>
 

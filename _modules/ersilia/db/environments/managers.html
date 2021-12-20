@@ -124,6 +124,9 @@
         <span class="n">img_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">images</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">_splitter</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">only_latest</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;latest&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
             <span class="k">if</span> <span class="n">img</span> <span class="o">==</span> <span class="n">model_id</span><span class="p">:</span>
                 <span class="n">img_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="k">return</span> <span class="n">img_dict</span></div>
@@ -190,6 +193,7 @@
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run --name </span><span class="si">{0}</span><span class="s2"> -d -p </span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span><span class="s2"> --workers=</span><span class="si">{4}</span><span class="s2"> </span><span class="si">{5}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">BENTOML_DOCKERPORT</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">workers</span><span class="p">,</span> <span class="n">mb_string</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;container_name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">port</span><span class="p">}</span></div>
 

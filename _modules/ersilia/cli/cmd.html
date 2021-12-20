@@ -64,74 +64,56 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.cli.cmd</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="Command"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command">[docs]</a><span></span><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span></span><span class="kn">import</span> <span class="nn">importlib</span>
+
+
+<div class="viewcode-block" id="Command"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command">[docs]</a><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="Command.api"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.api">[docs]</a>    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.api</span> <span class="kn">import</span> <span class="n">api_cmd</span>
-
-        <span class="n">api_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.api&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">api_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.auth"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.auth">[docs]</a>    <span class="k">def</span> <span class="nf">auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.auth</span> <span class="kn">import</span> <span class="n">auth_cmd</span>
-
-        <span class="n">auth_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.auth&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">auth_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.card"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.card">[docs]</a>    <span class="k">def</span> <span class="nf">card</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.card</span> <span class="kn">import</span> <span class="n">card_cmd</span>
-
-        <span class="n">card_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.card&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">card_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.catalog"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.catalog">[docs]</a>    <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.catalog</span> <span class="kn">import</span> <span class="n">catalog_cmd</span>
-
-        <span class="n">catalog_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.catalog&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">catalog_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.close"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.close</span> <span class="kn">import</span> <span class="n">close_cmd</span>
-
-        <span class="n">close_cmd</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="Command.conda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.conda">[docs]</a>    <span class="k">def</span> <span class="nf">conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.conda</span> <span class="kn">import</span> <span class="n">conda_cmd</span>
-
-        <span class="n">conda_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.close&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">close_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.delete"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.delete</span> <span class="kn">import</span> <span class="n">delete_cmd</span>
-
-        <span class="n">delete_cmd</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="Command.dockerize"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.dockerize">[docs]</a>    <span class="k">def</span> <span class="nf">dockerize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.dockerize</span> <span class="kn">import</span> <span class="n">dockerize_cmd</span>
-
-        <span class="n">dockerize_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.delete&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">delete_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.example"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.example">[docs]</a>    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.example</span> <span class="kn">import</span> <span class="n">example_cmd</span>
-
-        <span class="n">example_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.example&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">example_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.fetch"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.fetch</span> <span class="kn">import</span> <span class="n">fetch_cmd</span>
-
-        <span class="n">fetch_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.fetch&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">fetch_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.publish"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.publish">[docs]</a>    <span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.publish</span> <span class="kn">import</span> <span class="n">publish_cmd</span>
-
-        <span class="n">publish_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.publish&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">publish_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.serve"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.serve">[docs]</a>    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.serve</span> <span class="kn">import</span> <span class="n">serve_cmd</span>
-
-        <span class="n">serve_cmd</span><span class="p">()</span></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.serve&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">serve_cmd</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Command.setup"><a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.cmd.Command.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">.commands.setup</span> <span class="kn">import</span> <span class="n">setup_cmd</span>
-
-        <span class="n">setup_cmd</span><span class="p">()</span></div></div>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.cli.commands.setup&quot;</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">setup_cmd</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>
