@@ -1,6 +1,8 @@
 import os
 import tempfile
 import yaml
+
+from ersilia.default import PACKMODE_FILE
 from . import BaseAction
 from .. import ENVIRONMENT_YML, DOCKERFILE
 from ....utils.terminal import run_command
@@ -126,5 +128,17 @@ class ModelModifier(BaseAction):
         # Slightly modify bundle Dockerfile, if necessary.
         self._modify_bundle_dockerfile(self.model_id)
         # Check if conda is really necessary, if not, use slim base docker image
-        if not BundleEnvironmentFile(self.model_id).needs_conda():
-            BundleDockerfileFile(self.model_id).set_to_slim()
+        with open(os.path.join(self._model_path(self.model_id), PACKMODE_FILE), "r") as f:
+            pack_mode = f.read()
+        if pack_mode == "conda":
+            needs_conda = True
+        else:
+            needs_conda = BundleEnvironmentFile(self.model_id).needs_conda()
+        dockerfile = BundleDockerfileFile(self.model_id)
+        if needs_conda:
+            self.logger.debug("Conda is needed")
+            dockerfile.set_to_full()
+        else:
+            self.logger.debug("Conda is not needed")
+            dockerfile.set_to_slim()
+

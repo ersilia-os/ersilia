@@ -100,7 +100,7 @@ class BundleDockerfileFile(ErsiliaBase):
     def get_bentoml_version(self):
         """gets bentoml version necessary to run the model
 
-        Uses the get_bentml_version function defined in the DockerfileFile class
+        Uses the get_bentoml_version function defined in the DockerfileFile class
         from repo.py
 
         Returns:
@@ -125,6 +125,20 @@ class BundleDockerfileFile(ErsiliaBase):
             return
         img = "bentoml/model-server:{0}-slim-{1}".format(ver["version"], ver["python"])
         self.parser.baseimage = img
+        content = self.parser.content
+        with open(self.path, "w") as f:
+            f.write(content)
+
+    def set_to_full(self):
+        ver = self.get_bentoml_version()
+        if not ver:
+            return
+        if ver["slim"]:
+            img = "bentoml/model-server:{0}-{1}".format(ver["version"], ver["python"])
+            self.parser.baseimage = img
+        content = self.parser.content
+        with open(self.path, "w") as f:
+            f.write(content)
 
     def check(self):
         return True

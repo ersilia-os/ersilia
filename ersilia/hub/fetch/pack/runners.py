@@ -82,6 +82,9 @@ class CondaPack(BasePack):
             self.logger.debug("Environment {0} does not exist".format(env))
             # clone base conda environment and add model dependencies
             base_env = self.conda.get_base_env(model_path)
+            if "-slim-" in base_env:
+                self.logger.debug("Removing -slim- from base environment!")
+                base_env = base_env.replace("-slim", "")
             if not self.conda.exists(base_env):
                 self.logger.debug(
                     "{0} base environment does not exist".format(base_env)
