@@ -23,14 +23,16 @@ def api_cmd():
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
     def api(api_name, input, output, batch_size):
-        model_id = Session(config_json=None).current_model_id()
+        session = Session(config_json=None)
+        model_id = session.current_model_id()
+        service_class = session.current_service_class()
         if model_id is None:
             echo(
                 "No model seems to be served. Please run 'ersilia serve ...' before.",
                 fg="red",
             )
             return
-        mdl = ErsiliaModel(model_id)
+        mdl = ErsiliaModel(model_id, service_class=service_class, config_json=None)
         result = mdl.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )

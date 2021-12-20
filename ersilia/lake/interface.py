@@ -42,7 +42,7 @@ class IsauraInterface(LakeBase):
         keys = [inp["key"] for inp in input]
         values = np.array([res for res in self.hdf5.read_by_key(keys)])
         features = self.hdf5.get_features()
-        df = Dataframe(keys=keys, values=np.array(values), features=features,)
+        df = Dataframe(keys=keys, values=np.array(values), features=features)
         results_ = self.converter.dataframe2dictlist(
             df, model_id=self.model_id, api_name=self.api_name
         )

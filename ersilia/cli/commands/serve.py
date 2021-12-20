@@ -14,8 +14,13 @@ def serve_cmd():
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
     @click.option("--lake/--no-lake", is_flag=True, default=True)
-    def serve(model, lake):
-        mdl = ErsiliaModel(model, save_to_lake=lake)
+    @click.option("--docker/--no-docker", is_flag=True, default=False)
+    def serve(model, lake, docker):
+        if docker:
+            service_class = "docker"
+        else:
+            service_class = None
+        mdl = ErsiliaModel(model, save_to_lake=lake, service_class=service_class)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
         mdl.serve()
@@ -28,6 +33,7 @@ def serve_cmd():
         echo("")
         echo("   URL: {0}".format(mdl.url), fg="yellow")
         echo("   PID: {0}".format(mdl.pid), fg="yellow")
+        echo("   SRV: {0}".format(mdl.scl), fg="yellow")
         echo("")
         echo(":backhand_index_pointing_right: Available APIs:", fg="blue")
         apis = mdl.get_apis()

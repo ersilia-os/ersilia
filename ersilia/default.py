@@ -82,6 +82,28 @@ ersilia() {
 )
 
 
+def bashrc_path():
+    home_path = Path.home()
+    rc = os.path.join(home_path, ".bashrc")
+    if os.path.exists(rc):
+        return rc
+    pr = os.path.join(home_path, ".bash_profile")
+    if os.path.exists(pr):
+        return pr
+
+
+def has_profile_snippet():
+    fn = bashrc_path()
+    if not os.path.exists(fn):
+        return False
+    with open(fn, "r") as f:
+        text = f.read()
+    if snippet in text:
+        return True
+    else:
+        return False
+
+
 def bashrc_cli_snippet(overwrite=True):
     """Write a conda snippet in the user profile.
 
@@ -93,16 +115,6 @@ def bashrc_cli_snippet(overwrite=True):
     Args:
         - overwrite (bool): Overwrite the current bash profile file if the eosconda string is found.
     """
-
-    def bashrc_path():
-        home_path = Path.home()
-        rc = os.path.join(home_path, ".bashrc")
-        if os.path.exists(rc):
-            return rc
-        pr = os.path.join(home_path, ".bash_profile")
-        if os.path.exists(pr):
-            return pr
-
     fn = bashrc_path()
     with open(fn, "r") as f:
         text = f.read()
@@ -115,7 +127,3 @@ def bashrc_cli_snippet(overwrite=True):
         f.write(text)
     with open(fn, "a+") as f:
         f.write(snippet)
-
-
-if __name__ == "__main__":
-    bashrc_cli_snippet()

@@ -5,7 +5,9 @@ del _version
 
 # External imports
 import os
-import click
+
+# Disable GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # Default variables
 from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE, LOGGING_FILE
@@ -41,6 +43,13 @@ else:
         with open(clean_version_file, "w") as f:
             f.write('version = "{0}"'.format(ver))
     __version__ = ver
+
+
+# User profile
+from .default import bashrc_cli_snippet
+
+bashrc_cli_snippet(overwrite=False)
+
 
 # Check status of installs
 def check_install_status():

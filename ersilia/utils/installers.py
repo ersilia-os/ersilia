@@ -3,14 +3,7 @@ import os
 import sys
 import tempfile
 from .conda import SimpleConda
-from ..default import (
-    EOS,
-    GITHUB_ORG,
-    GITHUB_ERSILIA_REPO,
-    CREDENTIALS_JSON,
-    CONFIG_JSON,
-    INSTALL_STATUS_FILE,
-)
+from ..default import EOS, CONFIG_JSON
 from .. import ErsiliaBase
 from .. import check_install_status
 from .config import Checker

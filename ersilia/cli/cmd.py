@@ -1,68 +1,50 @@
+import importlib
+
+
 class Command(object):
     def __init__(self):
         pass
 
     def api(self):
-        from .commands.api import api_cmd
-
-        api_cmd()
+        m = importlib.import_module("ersilia.cli.commands.api")
+        m.api_cmd()
 
     def auth(self):
-        from .commands.auth import auth_cmd
-
-        auth_cmd()
+        m = importlib.import_module("ersilia.cli.commands.auth")
+        m.auth_cmd()
 
     def card(self):
-        from .commands.card import card_cmd
-
-        card_cmd()
+        m = importlib.import_module("ersilia.cli.commands.card")
+        m.card_cmd()
 
     def catalog(self):
-        from .commands.catalog import catalog_cmd
-
-        catalog_cmd()
+        m = importlib.import_module("ersilia.cli.commands.catalog")
+        m.catalog_cmd()
 
     def close(self):
-        from .commands.close import close_cmd
-
-        close_cmd()
-
-    def conda(self):
-        from .commands.conda import conda_cmd
-
-        conda_cmd()
+        m = importlib.import_module("ersilia.cli.commands.close")
+        m.close_cmd()
 
     def delete(self):
-        from .commands.delete import delete_cmd
-
-        delete_cmd()
-
-    def dockerize(self):
-        from .commands.dockerize import dockerize_cmd
-
-        dockerize_cmd()
+        m = importlib.import_module("ersilia.cli.commands.delete")
+        m.delete_cmd()
 
     def example(self):
-        from .commands.example import example_cmd
-
-        example_cmd()
+        m = importlib.import_module("ersilia.cli.commands.example")
+        m.example_cmd()
 
     def fetch(self):
-        from .commands.fetch import fetch_cmd
-
-        fetch_cmd()
+        m = importlib.import_module("ersilia.cli.commands.fetch")
+        m.fetch_cmd()
 
     def publish(self):
-        from .commands.publish import publish_cmd
-
-        publish_cmd()
+        m = importlib.import_module("ersilia.cli.commands.publish")
+        m.publish_cmd()
 
     def serve(self):
-        from .commands.serve import serve_cmd
-
-        serve_cmd()
+        m = importlib.import_module("ersilia.cli.commands.serve")
+        m.serve_cmd()
 
     def setup(self):
-        from .commands.setup import setup_cmd
-
-        setup_cmd()
+        m = importlib.import_module("ersilia.cli.commands.setup")
+        m.setup_cmd()

@@ -2,7 +2,6 @@ import tempfile
 import os
 import json
 import time
-import subprocess
 import importlib
 import requests
 from .. import ErsiliaBase
@@ -255,6 +254,7 @@ class DockerImageService(BaseServing):
         self.db.table = "docker"
         self.docker = SimpleDocker()
         self.dm = DockerManager(config_json=config_json)
+        self.pid = -1
 
     def __enter__(self):
         self.serve()
@@ -286,7 +286,7 @@ class DockerImageService(BaseServing):
         res = self.dm.run(self.model_id)
         self.container_name = res["container_name"]
         self.port = res["port"]
-        self.url = "http://localhost:{0}".format(self.port)
+        self.url = "http://0.0.0.0:{0}".format(self.port)
 
     def close(self):
         self.dm._delete_container(self.container_name)
@@ -295,9 +295,11 @@ class DockerImageService(BaseServing):
         return self._api_with_url(api_name, input)
 
 
+# TODO: Include 'pip' within available service_class
 class PipInstalledService(BaseServing):
     def __init__(self, model_id, config_json=None):
         BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+        self.pid = -1
 
     def __enter__(self):
         self.serve()

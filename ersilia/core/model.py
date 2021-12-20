@@ -31,6 +31,7 @@ class ErsiliaModel(ErsiliaBase):
         self,
         model,
         save_to_lake=True,
+        service_class=None,
         config_json=None,
         credentials_json=None,
         verbose=None,
@@ -56,6 +57,14 @@ class ErsiliaModel(ErsiliaBase):
                     "Isaura is not installed! Calculations will be done without storing and reading from the lake, unfortunately."
                 )
                 self.save_to_lake = False
+        assert service_class in [
+            None,
+            "system",
+            "venv",
+            "conda",
+            "docker",
+        ], "Wrong service class"
+        self.service_class = service_class
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
         assert (
@@ -88,7 +97,9 @@ class ErsiliaModel(ErsiliaBase):
             model_id=self.model_id, config_json=self.config_json
         )
         self.autoservice = AutoService(
-            model_id=self.model_id, config_json=self.config_json
+            model_id=self.model_id,
+            service_class=self.service_class,
+            config_json=self.config_json,
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
@@ -252,10 +263,13 @@ class ErsiliaModel(ErsiliaBase):
             return result
 
     def serve(self):
+        self.close()
         self.session.open(model_id=self.model_id)
         self.autoservice.serve()
+        self.session.register_service_class(self.autoservice._service_class)
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
+        self.scl = self.autoservice._service_class
 
     def close(self):
         self.autoservice.close()

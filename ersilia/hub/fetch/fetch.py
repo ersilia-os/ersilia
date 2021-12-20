@@ -23,13 +23,15 @@ class ModelFetcher(ErsiliaBase):
         config_json=None,
         credentials_json=None,
         overwrite=True,
-        pip=True,
-        dockerize=False,
+        mode=None,
+        pip=False,
+        dockerize=True,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
         )
         self.overwrite = overwrite
+        self.mode = mode
         self.do_pip = pip
         self.do_docker = dockerize
 
@@ -50,7 +52,7 @@ class ModelFetcher(ErsiliaBase):
         ml.get()
 
     def _pack(self):
-        mp = ModelPacker(self.model_id, self.config_json)
+        mp = ModelPacker(self.model_id, self.mode, self.config_json)
         mp.pack()
 
     def _toolize(self):

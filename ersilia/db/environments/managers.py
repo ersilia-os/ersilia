@@ -58,6 +58,9 @@ class DockerManager(ErsiliaBase):
         img_dict = {}
         for k, v in images.items():
             org, img, tag = self.docker._splitter(k)
+            if only_latest:
+                if tag != "latest":
+                    continue
             if img == model_id:
                 img_dict[k] = v
         return img_dict
@@ -124,6 +127,7 @@ class DockerManager(ErsiliaBase):
         cmd = "docker run --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
             name, port, BENTOML_DOCKERPORT, img, workers, mb_string
         )
+        self.logger.debug(cmd)
         run_command(cmd)
         return {"container_name": name, "port": port}
 

@@ -52,6 +52,7 @@ class AutoService(ErsiliaBase):
                     self.service = DockerImageService(model_id, config_json=config_json)
                 else:
                     self.service = None
+                self._service_class = s
             else:
                 self.logger.debug(
                     "No service class file exists in {0}".format(service_class_file)
@@ -64,6 +65,7 @@ class AutoService(ErsiliaBase):
                             model_id, config_json=config_json
                         )
                         f.write("system")
+                        self._service_class = "system"
                     elif VenvEnvironmentService(
                         model_id, config_json=config_json
                     ).is_available():
@@ -71,6 +73,7 @@ class AutoService(ErsiliaBase):
                             model_id, config_json=config_json
                         )
                         f.write("venv")
+                        self._service_class = "venv"
                     elif CondaEnvironmentService(
                         model_id, config_json=config_json
                     ).is_available():
@@ -78,6 +81,7 @@ class AutoService(ErsiliaBase):
                             model_id, config_json=config_json
                         )
                         f.write("conda")
+                        self._service_class = "conda"
                     elif DockerImageService(
                         model_id, config_json=config_json
                     ).is_available():
@@ -85,11 +89,13 @@ class AutoService(ErsiliaBase):
                             model_id, config_json=config_json
                         )
                         f.write("docker")
+                        self._service_class = "docker"
                     else:
                         self.service = None
         else:
             self.logger.info("Service class provided")
             # predefined service class
+            service_class = self._service_class_loader(service_class)
             if service_class(model_id, config_json).is_available():
                 self.service = service_class(model_id, config_json=config_json)
             else:
@@ -119,6 +125,31 @@ class AutoService(ErsiliaBase):
                     self._set_api(api_name)
                     f.write(api_name + os.linesep)
         self.apis_list = apis_list
+
+    def _service_class_loader(self, service_class):
+        if type(service_class) is SystemBundleService:
+            self._service_class = "system"
+            return service_class
+        elif type(service_class) is VenvEnvironmentService:
+            self._service_class = "venv"
+            return service_class
+        elif type(service_class) is CondaEnvironmentService:
+            self._service_class = "conda"
+            return service_class
+        elif type(service_class) is DockerImageService:
+            self._service_class = "docker"
+            return service_class
+        else:
+            self._service_class = service_class
+            if service_class == "system":
+                return SystemBundleService
+            elif service_class == "venv":
+                return VenvEnvironmentService
+            elif service_class == "conda":
+                return CondaEnvironmentService
+            elif service_class == "docker":
+                return DockerImageService
+            raise Exception()
 
     def get_apis(self):
         apis = []
@@ -164,6 +195,7 @@ class AutoService(ErsiliaBase):
             if proc_file[-3:] != "pid":
                 continue
             proc_file = os.path.join(dir_name, proc_file)
+            self.logger.debug(proc_file)
             pids += self._pids_from_file(proc_file)
             os.remove(proc_file)
         self.logger.debug("Cleaning {0} processes".format(pids))
@@ -188,9 +220,10 @@ class AutoService(ErsiliaBase):
 
     def close(self):
         tmp_file = tmp_pid_file(self.model_id)
-        pids = self._pids_from_file(tmp_file)
-        self._kill_pids(pids)
-        os.remove(tmp_file)
+        if os.path.isfile(tmp_file):
+            pids = self._pids_from_file(tmp_file)
+            self._kill_pids(pids)
+            os.remove(tmp_file)
         self.clean_temp_dir()
 
     def api(

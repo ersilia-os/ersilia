@@ -1,6 +1,8 @@
 import os
 import subprocess
 import json
+import tempfile
+import shutil
 
 try:
     from inputimeout import inputimeout, TimeoutOccurred
@@ -45,8 +47,19 @@ def run_command(cmd, quiet=None):
 
 
 def run_command_check_output(cmd):
-    result = subprocess.run(cmd, stdout=subprocess.PIPE, env=os.environ)
-    return result.stdout
+    if type(cmd) is str:
+        assert ">" not in cmd
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_file = os.path.join(tmp_folder, "out.txt")
+        cmd = cmd + " > " + tmp_file
+        subprocess.Popen(cmd, shell=True).wait()
+        with open(tmp_file, "r") as f:
+            result = f.read()
+        shutil.rmtree(tmp_folder)
+        return result
+    else:
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, env=os.environ)
+        return result.stdout
 
 
 def raw_input_with_timeout(prompt, default_answer, timeout=5):

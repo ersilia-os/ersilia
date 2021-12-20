@@ -3,9 +3,5 @@ class IO(object):
         pass
 
     def parse(self, text):
-        data = {
-            "key": text,
-            "input": text,
-            "text": text,
-        }
+        data = {"key": text, "input": text, "text": text}
         return data

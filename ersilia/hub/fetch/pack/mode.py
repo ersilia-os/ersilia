@@ -1,6 +1,10 @@
 from .... import ErsiliaBase
 from ...bundle.repo import DockerfileFile
 from ....utils.versioning import Versioner
+from ....setup.requirements.conda import CondaRequirement
+from ....setup.requirements.docker import DockerRequirement
+
+AVAILABLE_MODES = ["system", "venv", "conda", "docker"]
 
 
 class PackModeDecision(ErsiliaBase):
@@ -30,7 +34,8 @@ class PackModeDecision(ErsiliaBase):
         cmds = dockerfile.get_install_commands()
         self.logger.debug("Checking if only python/conda install will be sufficient")
         if cmds is not None:
-            if not cmds["conda"]:
+            condareq = CondaRequirement()
+            if not cmds["conda"] and not condareq.is_installed():
                 self.logger.debug("Mode: venv")
                 return "venv"
             else:
@@ -41,4 +46,6 @@ class PackModeDecision(ErsiliaBase):
                 "The python/conda installs are not sufficient, use docker"
             )
             self.logger.debug("Mode: docker")
+            dockerreq = DockerRequirement()
+            assert dockerreq.is_installed()
             return "docker"

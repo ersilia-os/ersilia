@@ -2,12 +2,16 @@ import tempfile
 import os
 import shutil
 
+from .. import ErsiliaBase
+
 from .terminal import run_command
 
 
-class SimpleVenv(object):
+class SimpleVenv(ErsiliaBase):
     def __init__(self, root):
+        ErsiliaBase.__init__(self, config_json=None, credentials_json=None)
         self.root = os.path.abspath(root)
+        self.logger.debug("Setting virtual environment at {0}".format(self.root))
 
     def _get_path(self, environment):
         return os.path.join(self.root, environment)

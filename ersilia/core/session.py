@@ -19,6 +19,19 @@ class Session(ErsiliaBase):
         else:
             return data["model_id"]
 
+    def current_service_class(self):
+        data = self.get()
+        if data is None:
+            return None
+        else:
+            return data["service_class"]
+
+    def register_service_class(self, service_class):
+        data = self.get()
+        data["service_class"] = service_class
+        with open(self.session_file, "w") as f:
+            json.dump(data, f, indent=4)
+
     def open(self, model_id):
         self.logger.debug("Opening session {0}".format(self.session_file))
         session = {

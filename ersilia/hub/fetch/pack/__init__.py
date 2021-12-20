@@ -16,13 +16,24 @@ class _Symlinker(ErsiliaBase):
     def _dest_bundle_symlink(self):
         # TODO: improve function so that it treats other files.
         #       at the moment it only deals with the model folder
+        # model
+        self.logger.debug("Creating model symlink bundle artifacts > dest")
         model_id = self.model_id
         path = self._model_path(model_id)
         model_path = os.path.join(path, "model")
         if os.path.exists(model_path):
             shutil.rmtree(model_path)
-            src = os.path.join(self._bundles_dir, model_id, "artifacts")
-            os.symlink(src, model_path, target_is_directory=True)
+        bundle_dir = self._get_bundle_location(model_id)
+        src = os.path.join(bundle_dir, model_id, "artifacts")
+        os.symlink(src, model_path, target_is_directory=True)
+        # env
+        env_path = os.path.join(path, "env")
+        if os.path.exists(env_path):
+            self.logger.debug("Creating env symlink dest > bundle")
+            trg = os.path.join(bundle_dir, "env")
+            self.logger.debug(trg)
+            shutil.move(env_path, trg)
+            os.symlink(trg, env_path, target_is_directory=True)
 
     def _bentoml_bundle_symlink(self):
         model_id = self.model_id

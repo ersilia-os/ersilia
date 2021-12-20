@@ -8,7 +8,7 @@ from ...hub.content.search import ModelSearcher
 def catalog_cmd():
     """Creates catalog command"""
     # Example usage: ersilia catalog
-    @ersilia_cli.command(help="List a catalog of models",)
+    @ersilia_cli.command(help="List a catalog of models")
     @click.option(
         "-l",
         "--local",

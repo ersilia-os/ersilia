@@ -3,6 +3,7 @@ from . import BaseAction
 from ...bundle.status import ModelStatus
 from ....utils.terminal import run_command
 from ....db.environments.localdb import EnvironmentDb
+from ....setup.requirements.docker import DockerRequirement
 
 
 class ModelToolizer(BaseAction):
@@ -21,10 +22,12 @@ class ModelToolizer(BaseAction):
 
     def dockerize(self, model_id):
         """Containerize model using bentoml with docker"""
+        req = DockerRequirement()
+        if not req.is_installed():
+            self.logger.info("Cannot dockerize. Please make sure docker is installed.")
+            return
         self.logger.debug("Dockerizing")
-        bento = self._get_bundle_location(model_id)
         tag = self.cfg.ENV.DOCKER.LATEST_TAG
-        bundle_tag = self._get_latest_bundle_tag(model_id)
         run_command(
             "bentoml containerize {1}:{2} -t {0}/{1}:{2}".format(
                 self.docker_org, model_id, tag
@@ -39,7 +42,6 @@ class ModelToolizer(BaseAction):
 
     def toolize(self, do_pip, do_docker):
         self.logger.debug("Checking if model needs to be integrated to a tool")
-        model_id = self.model_id
         if do_pip:
             if not self.model_status.is_pip(self.model_id):
                 self.pip_install(self.model_id)

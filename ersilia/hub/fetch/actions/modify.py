@@ -1,7 +1,8 @@
 import os
 import tempfile
+import yaml
 from . import BaseAction
-from .. import ENVIRONMENT_YML
+from .. import ENVIRONMENT_YML, DOCKERFILE
 from ....utils.terminal import run_command
 from ...bundle.bundle import BundleEnvironmentFile, BundleDockerfileFile
 
