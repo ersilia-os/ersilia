@@ -89,12 +89,15 @@
         <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing system packer&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SystemPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.SystemPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with system installation&quot;</span><span class="p">)</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">script_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACK_SCRIPT</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;python </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">script_path</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_symlinks</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symlinks</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SystemPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.SystemPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="VenvPack"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.VenvPack">[docs]</a><span class="k">class</span> <span class="nc">VenvPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
@@ -179,7 +182,6 @@
         <span class="k">return</span> <span class="n">env</span>
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span>
         <span class="n">pack_snippet</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        python </span><span class="si">{0}</span><span class="s2"></span>

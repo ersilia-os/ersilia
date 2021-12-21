@@ -66,26 +66,15 @@
   <h1>Source code for ersilia.hub.bundle.bundle</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">from</span> <span class="nn">...core.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span>
+<span class="kn">from</span> <span class="nn">...hub.fetch</span> <span class="kn">import</span> <span class="n">PYTHON_INSTALLS</span><span class="p">,</span> <span class="n">REQUIREMENTS_TXT</span>
 <span class="kn">from</span> <span class="nn">.repo</span> <span class="kn">import</span> <span class="n">DockerfileFile</span>
 <span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
 
 
 <div class="viewcode-block" id="BundleEnvironmentFile"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile">[docs]</a><span class="k">class</span> <span class="nc">BundleEnvironmentFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Analyses the environment.yml file created during model bundling</span>
-
-<span class="sd">    environment.yml specifies the necessary dependencies; none,</span>
-<span class="sd">    conda environment, pip dependencies</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        model_id: standard string id for Ersilia models, ie eos0xxx</span>
-<span class="sd">        config_json:</span>
-<span class="sd">        path: directory where environment.yml is stored</span>
-<span class="sd">        exists: environment.yml has been created</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -94,36 +83,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">exists</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BundleEnvironmentFile.get_file"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.get_file">[docs]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fetches environment.yml file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span></div>
 
     <span class="k">def</span> <span class="nf">_is_not_pip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checks that pip dependencies are not specified</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            dep:</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            Boolean value:</span>
-<span class="sd">                True if pip dependencies not required</span>
-<span class="sd">                False if pip dependencies are required</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dep</span> <span class="o">!=</span> <span class="s2">&quot;pip&quot;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="BundleEnvironmentFile.needs_conda"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.needs_conda">[docs]</a>    <span class="k">def</span> <span class="nf">needs_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checks if conda environment is required</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            exists: environment.yml path</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Boolean value:</span>
-<span class="sd">                True if conda env is required</span>
-<span class="sd">                False if conda env is not required</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -136,21 +104,72 @@
                     <span class="k">return</span> <span class="kc">False</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
+<div class="viewcode-block" id="BundleEnvironmentFile.add_python_installs"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.add_python_installs">[docs]</a>    <span class="k">def</span> <span class="nf">add_python_installs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">PYTHON_INSTALLS</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">l</span><span class="p">[:</span><span class="mi">13</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;conda install&quot;</span><span class="p">:</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="mi">13</span><span class="p">:]</span>
+                    <span class="n">l</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; -y&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="c1"># find channel</span>
+                    <span class="k">if</span> <span class="s2">&quot; -c &quot;</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; -c &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">c</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="c1"># find dependency</span>
+                    <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">l</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; -c </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">d</span><span class="p">]</span>
+        <span class="n">data_</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">data_</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">data_</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span>
+        <span class="n">data_</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;dependencies&quot;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">data_</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="BundleEnvironmentFile.check"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span></div></div>
 
 
+<div class="viewcode-block" id="BundleRequirementsFile"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleRequirementsFile">[docs]</a><span class="k">class</span> <span class="nc">BundleRequirementsFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">REQUIREMENTS_TXT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exists</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BundleRequirementsFile.add_python_installs"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleRequirementsFile.add_python_installs">[docs]</a>    <span class="k">def</span> <span class="nf">add_python_installs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f0</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">REQUIREMENTS_TXT</span><span class="p">)</span>
+        <span class="n">reqs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">reqs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)]</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">PYTHON_INSTALLS</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;pip &quot;</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reqs</span><span class="p">:</span>
+                        <span class="n">reqs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f0</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">reqs</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BundleRequirementsFile.check"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleRequirementsFile.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div></div>
+
+
 <div class="viewcode-block" id="BundleDockerfileFile"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile">[docs]</a><span class="k">class</span> <span class="nc">BundleDockerfileFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Analyses the Dockerfile created by bentoml during model fetching</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        model_id:standard string id for Ersilia models, ie eos0xxx</span>
-<span class="sd">        config_json:</span>
-<span class="sd">        path: directory where Dockerfile is stored</span>
-<span class="sd">        exists: Dockerfile has been created</span>
-<span class="sd">        parser: DockerfileParser function</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -160,30 +179,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">DockerfileParser</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BundleDockerfileFile.get_file"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_file">[docs]</a>    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;gets file from directory path&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span></div>
 
 <div class="viewcode-block" id="BundleDockerfileFile.get_bentoml_version"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_bentoml_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;gets bentoml version necessary to run the model</span>
-
-<span class="sd">        Uses the get_bentoml_version function defined in the DockerfileFile class</span>
-<span class="sd">        from repo.py</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            bento_ml version as a string, for example:</span>
-<span class="sd">            bentoml/model-server:0.9.2-py37</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DockerfileFile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BundleDockerfileFile.set_to_slim"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_slim">[docs]</a>    <span class="k">def</span> <span class="nf">set_to_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;modifies dockerfile to include the -slim- option in bentoml version</span>
-
-<span class="sd">        -slim- option allows model deployment without conda dependencies</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            bentoml version as a string, including the -slim-.</span>
-<span class="sd">            For example: bentoml/model-server:0.9.2-slim-py37</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ver</span><span class="p">:</span>
             <span class="k">return</span>

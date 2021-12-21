@@ -73,7 +73,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ENVIRONMENT_YML</span><span class="p">,</span> <span class="n">DOCKERFILE</span>
 <span class="kn">from</span> <span class="nn">....utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">...bundle.bundle</span> <span class="kn">import</span> <span class="n">BundleEnvironmentFile</span><span class="p">,</span> <span class="n">BundleDockerfileFile</span>
+<span class="kn">from</span> <span class="nn">...bundle.bundle</span> <span class="kn">import</span> <span class="n">BundleEnvironmentFile</span><span class="p">,</span> <span class="n">BundleDockerfileFile</span><span class="p">,</span> <span class="n">BundleRequirementsFile</span>
 
 
 <div class="viewcode-block" id="ModelModifier"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.modify.ModelModifier">[docs]</a><span class="k">class</span> <span class="nc">ModelModifier</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
@@ -189,13 +189,24 @@
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_add_python_installs_to_requirements_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">BundleRequirementsFile</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span><span class="o">.</span><span class="n">add_python_installs</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_add_python_installs_to_environment_yml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">BundleEnvironmentFile</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span><span class="o">.</span><span class="n">add_python_installs</span><span class="p">()</span>
+
 <div class="viewcode-block" id="ModelModifier.modify"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.modify.ModelModifier.modify">[docs]</a>    <span class="k">def</span> <span class="nf">modify</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Add installs to requirements and environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_python_installs_to_requirements_txt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_python_installs_to_environment_yml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="c1"># Slightly modify bundle environment YAML file, if exists</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modify_bundle_environment_yml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="c1"># Slightly modify bundle Dockerfile, if necessary.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modify_bundle_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="c1"># Check if conda is really necessary, if not, use slim base docker image</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">PACKMODE_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">PACKMODE_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">pack_mode</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span><span class="p">:</span>
             <span class="n">needs_conda</span> <span class="o">=</span> <span class="kc">True</span>
@@ -208,7 +219,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Conda is not needed&quot;</span><span class="p">)</span>
             <span class="n">dockerfile</span><span class="o">.</span><span class="n">set_to_slim</span><span class="p">()</span></div></div>
-
 </pre></div>
 
            </div>
