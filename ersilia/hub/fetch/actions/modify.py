@@ -6,7 +6,11 @@ from ersilia.default import PACKMODE_FILE
 from . import BaseAction
 from .. import ENVIRONMENT_YML, DOCKERFILE
 from ....utils.terminal import run_command
-from ...bundle.bundle import BundleEnvironmentFile, BundleDockerfileFile, BundleRequirementsFile
+from ...bundle.bundle import (
+    BundleEnvironmentFile,
+    BundleDockerfileFile,
+    BundleRequirementsFile,
+)
 
 
 class ModelModifier(BaseAction):

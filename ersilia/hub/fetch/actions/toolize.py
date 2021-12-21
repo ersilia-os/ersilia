@@ -43,8 +43,10 @@ class ModelToolizer(BaseAction):
     def toolize(self, do_pip, do_docker):
         self.logger.debug("Checking if model needs to be integrated to a tool")
         if do_pip:
+            self.logger.debug("Integrating to pip")
             if not self.model_status.is_pip(self.model_id):
                 self.pip_install(self.model_id)
         if do_docker:
+            self.logger.debug("Integrating to docker")
             if not self.model_status.is_docker(self.model_id):
                 self.dockerize(self.model_id)

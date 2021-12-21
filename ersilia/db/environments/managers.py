@@ -157,7 +157,55 @@ class DockerManager(ErsiliaBase):
     def delete_image(self, model_id):
         self.remove(model_id)
 
+    def remove_stopped_containers(self):
+        cmd = "docker container prune -f"
+        self.logger.debug("Removing stopped containers")
+        run_command(cmd)
+
+    def _stop_containers_with_model_id(self, model_id):
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
+        cmd = "docker ps > {0}".format(tmp_file)
+        self.logger.debug("Running {0}".format(cmd))
+        run_command(cmd)
+        cids = []
+        with open(tmp_file, "r") as f:
+            h = next(f)
+            col_idx = len(h.split("IMAGE")[0])
+            for l in f:
+                img_str = l[col_idx:].split(" ")[0]
+                if model_id in img_str:
+                    cid = l.split(" ")[0]
+                    cids += [cid]
+        for cid in cids:
+            cmd = "docker container kill {0}".format(cid)
+            run_command(cmd)
+        shutil.rmtree(tmp_folder)
+
+    def _stop_containers_with_entrypoint_sh(self):
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
+        cmd = "docker ps > {0}".format(tmp_file)
+        self.logger.debug("Running {0}".format(cmd))
+        run_command(cmd)
+        cids = []
+        with open(tmp_file, "r") as f:
+            h = next(f)
+            col_idx = len(h.split("COMMAND")[0])
+            for l in f:
+                cmd_str = l[col_idx:].split(" ")[0]
+                if "entrypoint.sh bash" in cmd_str:
+                    cid = l.split(" ")[0]
+                    cids += [cid]
+        for cid in cids:
+            cmd = "docker container kill {0}".format(cid)
+            run_command(cmd)
+        shutil.rmtree(tmp_folder)
+
     def stop_containers(self, model_id):
+        self._stop_containers_with_model_id(model_id)
+        self._stop_containers_with_entrypoint_sh()
+        self.remove_stopped_containers()
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
         cmd = "docker ps > {0}".format(tmp_file)
@@ -175,7 +223,8 @@ class DockerManager(ErsiliaBase):
             cmd = "docker container kill {0}".format(cid)
             run_command(cmd)
         shutil.rmtree(tmp_folder)
-    
+        self.remove_stopped_containers()
+
     def delete_images(self, model_id, purge_unnamed=True):
         self.stop_containers(model_id)
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")

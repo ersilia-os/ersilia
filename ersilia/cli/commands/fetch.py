@@ -21,12 +21,13 @@ def fetch_cmd():
     )
     @click.argument("model", type=click.STRING)
     @click.option("--mode", "-m", default=None, type=click.STRING)
-    def fetch(model, mode):
+    @click.option("--dockerize/--not-dockerize", default=False)
+    def fetch(model, mode, dockerize):
         mdl = ModelBase(model)
         model_id = mdl.model_id
         echo(
             ":down_arrow: Fetching model {0}: {1}".format(model_id, mdl.slug), fg="blue"
         )
-        mf = ModelFetcher(mode=mode)
+        mf = ModelFetcher(mode=mode, dockerize=dockerize)
         _fetch(mf, model_id)
         echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")

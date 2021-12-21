@@ -5,6 +5,7 @@ import bentoml
 from . import BasePack
 from ....utils.terminal import run_command
 from ....db.environments.localdb import EnvironmentDb
+from ....db.environments.managers import DockerManager
 from ....utils.venv import SimpleVenv
 from ....utils.conda import SimpleConda
 from ....utils.docker import SimpleDocker
@@ -162,8 +163,11 @@ class DockerPack(BasePack):
         db.insert(model_id=self.model_id, env=name)
         self.logger.debug("Done with the Docker setup")
 
-    def run(self):
-        self.logger.debug("Packing model with Docker")
+    def _delete_packer_container(self):
+        dm = DockerManager(config_json=self.config_json)
+        dm.delete_images(self.model_id)
+
+    def _run(self):
         model_id = self.model_id
         self._setup()
         self.logger.debug("Building docker image")
@@ -182,6 +186,12 @@ class DockerPack(BasePack):
         mdl = self._load_model_from_tmp(tmp_dir)
         mdl.save()
         self._symlinks()
+        self._delete_packer_container()
+
+    def run(self):
+        self.logger.debug("Packing model with Docker")
+        self._write_python_installs()
+        self._run()
 
 
 def get_runner(pack_mode):

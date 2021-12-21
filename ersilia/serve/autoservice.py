@@ -36,6 +36,11 @@ class AutoService(ErsiliaBase):
                 )
                 with open(service_class_file, "r") as f:
                     s = f.read()
+                if not s:
+                    s = None
+            else:
+                s = None
+            if s is not None:
                 self.logger.debug("Service class: {0}".format(s))
                 if s == "system":
                     self.service = SystemBundleService(
@@ -65,6 +70,7 @@ class AutoService(ErsiliaBase):
                         self.service = SystemBundleService(
                             model_id, config_json=config_json
                         )
+                        self.logger.debug("Service class: system")
                         f.write("system")
                         self._service_class = "system"
                     elif VenvEnvironmentService(
@@ -74,6 +80,7 @@ class AutoService(ErsiliaBase):
                             model_id, config_json=config_json
                         )
                         f.write("venv")
+                        self.logger.debug("Service class: venv")
                         self._service_class = "venv"
                     elif CondaEnvironmentService(
                         model_id, config_json=config_json
@@ -82,6 +89,7 @@ class AutoService(ErsiliaBase):
                             model_id, config_json=config_json
                         )
                         f.write("conda")
+                        self.logger.debug("Service class: conda")
                         self._service_class = "conda"
                     elif DockerImageService(
                         model_id, config_json=config_json
@@ -90,6 +98,7 @@ class AutoService(ErsiliaBase):
                             model_id, config_json=config_json
                         )
                         f.write("docker")
+                        self.logger.debug("Service class: docker")
                         self._service_class = "docker"
                     else:
                         self.service = None
@@ -218,7 +227,7 @@ class AutoService(ErsiliaBase):
         dm = DockerManager(config_json=self.config_json)
         if dm.is_installed():
             dm.stop_containers(self.model_id)
-        
+
     def serve(self):
         self.clean_before_serving()
         self.clean_temp_dir()

@@ -192,7 +192,8 @@ class VenvEnvironmentService(_BentoMLService):
         return self.venv.run_commandlines(DEFAULT_VENV, cmd)
 
     def is_available(self):
-        return self.venv.exists(DEFAULT_VENV)
+        if not self.venv.exists(DEFAULT_VENV):
+            return False
 
     def serve(self):
         self._bentoml_serve(self._run_command)

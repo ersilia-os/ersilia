@@ -66,7 +66,7 @@ class BundleEnvironmentFile(ErsiliaBase):
         data_["name"] = data["name"]
         data_["channels"] = data["channels"]
         data_["dependencies"] = data["dependencies"]
-        data = dict((k,v) for k,v in data_.items())
+        data = dict((k, v) for k, v in data_.items())
         with open(f0, "w") as f:
             yaml.safe_dump(data, f, sort_keys=False)
 

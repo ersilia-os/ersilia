@@ -1,5 +1,7 @@
 import os
 import shutil
+
+from ersilia.db.environments.managers import DockerManager
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
@@ -183,6 +185,20 @@ class ModelPipDeleter(ErsiliaBase):
             self.pip_uninstall(model_id)
 
 
+class ModelDockerDeleter(ErsiliaBase):
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+
+    def delete(self, model_id):
+        self.logger.info(
+            "Removing docker images and stopping containers related to {0}".format(
+                model_id
+            )
+        )
+        dm = DockerManager(config_json=self.config_json)
+        dm.delete_images(model_id)
+
+
 class TmpCleaner(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -213,4 +229,5 @@ class ModelFullDeleter(ErsiliaBase):
         ModelTmpDeleter(self.config_json).delete(model_id)
         ModelLakeDeleter(self.config_json).delete(model_id)
         ModelPipDeleter(self.config_json).delete(model_id)
+        ModelDockerDeleter(self.config_json).delete(model_id)
         self.logger.success("Model {0} deleted successfully".format(model_id))
