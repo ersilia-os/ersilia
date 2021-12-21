@@ -1,5 +1,6 @@
 PYTHON_INSTALLS = "python_installs.sh"
 DOCKERFILE = "Dockerfile"
 ENVIRONMENT_YML = "environment.yml"
+REQUIREMENTS_TXT = "requirements.txt"
 STATUS_FILE = "status.json"
 DONE_TAG = "done"

@@ -1,25 +1,14 @@
 import os
 import yaml
+import collections
 from ...core.base import ErsiliaBase
 from ...default import CONDA_ENV_YML_FILE, DOCKERFILE_FILE
+from ...hub.fetch import PYTHON_INSTALLS, REQUIREMENTS_TXT
 from .repo import DockerfileFile
 from dockerfile_parse import DockerfileParser
 
 
 class BundleEnvironmentFile(ErsiliaBase):
-    """Analyses the environment.yml file created during model bundling
-
-    environment.yml specifies the necessary dependencies; none,
-    conda environment, pip dependencies
-
-    Attributes:
-        model_id: standard string id for Ersilia models, ie eos0xxx
-        config_json:
-        path: directory where environment.yml is stored
-        exists: environment.yml has been created
-
-    """
-
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -28,36 +17,15 @@ class BundleEnvironmentFile(ErsiliaBase):
         self.exists = os.path.exists(self.path)
 
     def get_file(self):
-        """Fetches environment.yml file"""
         return self.path
 
     def _is_not_pip(self, dep):
-        """Checks that pip dependencies are not specified
-
-        Args:
-            dep:
-        Returns:
-            Boolean value:
-                True if pip dependencies not required
-                False if pip dependencies are required
-        """
         if type(dep) is str:
             if dep != "pip":
                 return True
         return False
 
     def needs_conda(self):
-        """Checks if conda environment is required
-
-        Args:
-            exists: environment.yml path
-
-        Returns:
-            Boolean value:
-                True if conda env is required
-                False if conda env is not required
-
-        """
         if not self.exists:
             return False
         with open(self.path, "r") as f:
@@ -70,21 +38,72 @@ class BundleEnvironmentFile(ErsiliaBase):
                     return False
             return False
 
+    def add_python_installs(self):
+        f0 = self.path
+        with open(f0, "r") as f:
+            data = yaml.safe_load(f)
+        f1 = os.path.join(self._get_bundle_location(self.model_id), PYTHON_INSTALLS)
+        with open(f1, "r") as f:
+            for l in f:
+                l = l.rstrip(os.linesep)
+                if l[:13] == "conda install":
+                    l = l[13:]
+                    l = l.replace(" -y", "")
+                    # find channel
+                    if " -c " in l:
+                        c = l.split(" -c ")[1].lstrip().split(" ")[0]
+                    else:
+                        c = None
+                    # find dependency
+                    if c is not None:
+                        l = l.replace(" -c {0}".format(c), "")
+                    d = l.strip()
+                    if c not in data["channels"]:
+                        data["channels"] += [c]
+                    if d not in data["dependencies"]:
+                        data["dependencies"] += [d]
+        data_ = collections.OrderedDict()
+        data_["name"] = data["name"]
+        data_["channels"] = data["channels"]
+        data_["dependencies"] = data["dependencies"]
+        data = dict((k,v) for k,v in data_.items())
+        with open(f0, "w") as f:
+            yaml.safe_dump(data, f, sort_keys=False)
+
+    def check(self):
+        return True
+
+
+class BundleRequirementsFile(ErsiliaBase):
+    def __init__(self, model_id, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        self.model_id = model_id
+        self.dir = os.path.abspath(self._get_bundle_location(model_id))
+        self.path = os.path.join(self.dir, REQUIREMENTS_TXT)
+        self.exists = os.path.exists(self.path)
+
+    def add_python_installs(self):
+        f0 = os.path.join(self._get_bundle_location(self.model_id), REQUIREMENTS_TXT)
+        reqs = []
+        with open(f0, "r") as f:
+            for l in f:
+                reqs += [l.strip(os.linesep)]
+        f1 = os.path.join(self._get_bundle_location(self.model_id), PYTHON_INSTALLS)
+        with open(f1, "r") as f:
+            for l in f:
+                if "pip " in l:
+                    r = l.rstrip(os.linesep).split(" ")[-1]
+                    if r not in reqs:
+                        reqs += [r]
+        with open(f0, "w") as f:
+            for l in reqs:
+                f.write(l + os.linesep)
+
     def check(self):
         return True
 
 
 class BundleDockerfileFile(ErsiliaBase):
-    """Analyses the Dockerfile created by bentoml during model fetching
-
-    Attributes:
-        model_id:standard string id for Ersilia models, ie eos0xxx
-        config_json:
-        path: directory where Dockerfile is stored
-        exists: Dockerfile has been created
-        parser: DockerfileParser function
-    """
-
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -94,30 +113,12 @@ class BundleDockerfileFile(ErsiliaBase):
         self.parser = DockerfileParser(path=self.path)
 
     def get_file(self):
-        """gets file from directory path"""
         return self.path
 
     def get_bentoml_version(self):
-        """gets bentoml version necessary to run the model
-
-        Uses the get_bentoml_version function defined in the DockerfileFile class
-        from repo.py
-
-        Returns:
-            bento_ml version as a string, for example:
-            bentoml/model-server:0.9.2-py37
-        """
         return DockerfileFile(path=self.path).get_bentoml_version()
 
     def set_to_slim(self):
-        """modifies dockerfile to include the -slim- option in bentoml version
-
-        -slim- option allows model deployment without conda dependencies
-
-        Returns:
-            bentoml version as a string, including the -slim-.
-            For example: bentoml/model-server:0.9.2-slim-py37
-        """
         ver = self.get_bentoml_version()
         if not ver:
             return
