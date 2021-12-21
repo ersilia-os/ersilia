@@ -289,7 +289,7 @@ class DockerImageService(BaseServing):
         self.url = "http://0.0.0.0:{0}".format(self.port)
 
     def close(self):
-        self.dm._delete_container(self.container_name)
+        self.df.stop_containers(self.model_id)
 
     def api(self, api_name, input):
         return self._api_with_url(api_name, input)

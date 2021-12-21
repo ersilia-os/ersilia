@@ -9,10 +9,11 @@ from .services import (
     DockerImageService,
 )
 from .api import Api
-from ..default import DEFAULT_BATCH_SIZE
+from ..db.environments.managers import DockerManager
 from .. import ErsiliaBase
 from ..utils import tmp_pid_file
 
+from ..default import DEFAULT_BATCH_SIZE
 
 DEFAULT_OUTPUT = None
 
@@ -181,6 +182,8 @@ class AutoService(ErsiliaBase):
 
     def _kill_pids(self, pids):
         for pid in pids:
+            if pid == -1:
+                continue
             try:
                 os.kill(pid, 9)
             except:
@@ -210,6 +213,12 @@ class AutoService(ErsiliaBase):
                 self.logger.debug("Flushing temporary directory {0}".format(d))
                 shutil.rmtree(d)
 
+    def clean_docker_containers(self):
+        self.logger.debug("Silencing docker containers if necessary")
+        dm = DockerManager(config_json=self.config_json)
+        if dm.is_installed():
+            dm.stop_containers(self.model_id)
+        
     def serve(self):
         self.clean_before_serving()
         self.clean_temp_dir()
@@ -225,6 +234,7 @@ class AutoService(ErsiliaBase):
             self._kill_pids(pids)
             os.remove(tmp_file)
         self.clean_temp_dir()
+        self.clean_docker_containers()
 
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE

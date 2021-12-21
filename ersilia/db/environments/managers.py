@@ -1,10 +1,10 @@
 import os
 import tempfile
 import re
-import collections
+import shutil
 
 from ...core.base import ErsiliaBase
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ...setup.requirements.docker import DockerRequirement
 from ...utils.paths import Paths
 from ...utils.terminal import run_command
 from ...utils.docker import SimpleDocker
@@ -12,6 +12,7 @@ from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
 from .localdb import EnvironmentDb
 
+from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 
 BENTOML_DOCKERPORT = 5000
 
@@ -24,6 +25,9 @@ class DockerManager(ErsiliaBase):
         self.docker = SimpleDocker()
         self.db = EnvironmentDb()
         self.db.table = "docker"
+
+    def is_installed(self):
+        return DockerRequirement().is_installed()
 
     def image_exists(self, model_id):
         if self._images_of_model(model_id, only_latest=True):
@@ -57,7 +61,7 @@ class DockerManager(ErsiliaBase):
         images = self.images()
         img_dict = {}
         for k, v in images.items():
-            org, img, tag = self.docker._splitter(k)
+            _, img, tag = self.docker._splitter(k)
             if only_latest:
                 if tag != "latest":
                     continue
@@ -145,13 +149,59 @@ class DockerManager(ErsiliaBase):
         run_command(cmd)
 
     def delete_containers(self, model_id):
-        for k, v in self.containers_of_model(
+        for k, _ in self.containers_of_model(
             model_id, only_run=False, only_latest=False
         ).items():
             self._delete_container(k)
 
     def delete_image(self, model_id):
         self.remove(model_id)
+
+    def stop_containers(self, model_id):
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
+        cmd = "docker ps > {0}".format(tmp_file)
+        self.logger.debug("Running {0}".format(cmd))
+        run_command(cmd)
+        cids = []
+        with open(tmp_file, "r") as f:
+            next(f)
+            for l in f:
+                mid = l.rstrip().split(" ")[-1].split("_")[0]
+                if mid == model_id:
+                    cid = l.split(" ")[0]
+                    cids += [cid]
+        for cid in cids:
+            cmd = "docker container kill {0}".format(cid)
+            run_command(cmd)
+        shutil.rmtree(tmp_folder)
+    
+    def delete_images(self, model_id, purge_unnamed=True):
+        self.stop_containers(model_id)
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_file = os.path.join(tmp_folder, "docker-images.txt")
+        cmd = "docker images > {0}".format(tmp_file)
+        self.logger.debug("Running {0}".format(cmd))
+        run_command(cmd)
+        unnamed_images = []
+        named_images = []
+        with open(tmp_file, "r") as f:
+            h = next(f)
+            img_idx = len(h.split("IMAGE ID")[0])
+            for l in f:
+                img = l[img_idx:].split(" ")[0]
+                name = l.split(" ")[0]
+                if model_id in name:
+                    named_images += [img]
+                if "<none>" in name:
+                    unnamed_images += [img]
+        images = named_images
+        if purge_unnamed:
+            images += unnamed_images
+        for img in images:
+            self.logger.debug("Removing docker image {0}".format(img))
+            cmd = "docker image rm {0} --force".format(img)
+            run_command(cmd)
 
 
 class CondaManager(object):

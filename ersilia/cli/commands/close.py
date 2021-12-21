@@ -1,10 +1,5 @@
-import click
-import os
-
 from . import ersilia_cli
 from .. import echo
-from ...utils.terminal import run_command
-from ...utils import tmp_pid_file
 from ... import ErsiliaModel
 from ...core.session import Session
 
