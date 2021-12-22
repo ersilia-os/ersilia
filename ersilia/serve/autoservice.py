@@ -7,6 +7,7 @@ from .services import (
     VenvEnvironmentService,
     CondaEnvironmentService,
     DockerImageService,
+    DummyService,
 )
 from .api import Api
 from ..db.environments.managers import DockerManager
@@ -101,7 +102,8 @@ class AutoService(ErsiliaBase):
                         self.logger.debug("Service class: docker")
                         self._service_class = "docker"
                     else:
-                        self.service = None
+                        self.logger.debug("Service class: dummy")
+                        self.service = DummyService(model_id, config_json=config_json)
         else:
             self.logger.info("Service class provided")
             # predefined service class
@@ -231,6 +233,7 @@ class AutoService(ErsiliaBase):
     def serve(self):
         self.clean_before_serving()
         self.clean_temp_dir()
+        self.close()
         self.service.serve()
         tmp_file = tmp_pid_file(self.model_id)
         with open(tmp_file, "a+") as f:
@@ -262,6 +265,7 @@ class AutoService(ErsiliaBase):
             save_to_lake=False,
             config_json=self.config_json,
         )
+        self.logger.debug("Meta: {0}".format(self._meta))
         for result in _api.post(input=input, output=output, batch_size=batch_size):
             if self._meta is None:
                 do_meta = True
@@ -271,6 +275,7 @@ class AutoService(ErsiliaBase):
                 else:
                     do_meta = False
             if do_meta:
+                self.logger.debug("Metadata needs to be calculated")
                 self._latest_meta = _api.meta()
                 self._meta = {api_name: self._latest_meta}
             if api_name not in self._meta:

@@ -124,16 +124,20 @@ class ErsiliaModel(ErsiliaBase):
         apis_list = os.path.join(
             self._get_bundle_location(self.model_id), "apis_list.txt"
         )
+        api_names = []
         if os.path.exists(apis_list):
             with open(apis_list, "r") as f:
                 for l in f:
                     api_name = l.rstrip()
-                    self._set_api(api_name)
-        else:
+                    api_names += [api_name]
+        if len(api_names) == 0:
+            self.logger.debug("No apis found. Writing...")
             with open(apis_list, "w") as f:
                 for api_name in self.autoservice.service._get_apis_from_bento():
-                    self._set_api(api_name)
+                    api_names += [api_name]
                     f.write(api_name + os.linesep)
+        for api_name in api_names:
+            self._set_api(api_name)
         self.apis_list = apis_list
 
     def _get_api_instance(self, api_name):

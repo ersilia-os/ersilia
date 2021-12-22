@@ -33,6 +33,9 @@ class ModelFetcher(ErsiliaBase):
         self.overwrite = overwrite
         self.mode = mode
         self.do_pip = pip
+        if self.mode == "docker":
+            self.logger.debug("When packing mode is docker, dockerization is mandatory")
+            dockerize = True
         self.do_docker = dockerize
 
     def _prepare(self):

@@ -4,11 +4,13 @@ import requests
 import json
 import collections
 import tempfile
+import time
 
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
 from ..lake.interface import IsauraInterface
 from .. import logger
+from .. import ErsiliaBase
 from .schema import ApiSchema
 
 
@@ -38,6 +40,24 @@ class Api(object):
         except:
             self.logger.info("No empty output available")
             self._empty_output = None
+        if self._is_during_fetch():
+            self._do_sleep = True
+        else:
+            self._do_sleep = False
+
+    def _is_during_fetch(self):
+        base = ErsiliaBase(config_json=self.config_json, credentials_json=None)
+        path = os.path.join(
+            base._get_bundle_location(model_id=self.model_id), "status.json"
+        )
+        if not os.path.exists(path):
+            return True
+        with open(path, "r") as f:
+            data = json.load(f)
+        if data["done"]:
+            return False
+        else:
+            return True
 
     def __result_returner(self, result, output):
         if output is None:
@@ -53,7 +73,10 @@ class Api(object):
 
     def _do_post(self, input, output):
         url = "{0}/{1}".format(self.url, self.api_name)
+        if self._do_sleep:
+            time.sleep(3)
         response = requests.post(url, json=input)
+        self.logger.debug("Status code: {0}".format(response.status_code))
         if response.status_code == 200:
             result_ = response.json()
             result_ = self.output_adapter.refactor_response(result_)

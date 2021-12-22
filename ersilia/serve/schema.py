@@ -13,7 +13,10 @@ class ApiSchema(ErsiliaBase):
         self.schema_file = os.path.join(
             self._model_path(self.model_id), API_SCHEMA_FILE
         )
-        self.logger.debug("Schema available in {0}".format(self.schema_file))
+        if not os.path.exists(self.schema_file):
+            self.logger.debug("Schema not yet available")
+        else:
+            self.logger.debug("Schema available in {0}".format(self.schema_file))
 
     def _features(self, o):
         if o["meta"] is not None:

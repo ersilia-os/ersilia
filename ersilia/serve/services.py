@@ -333,3 +333,26 @@ class PipInstalledService(BaseServing):
     def api(self, api_name, input):
         method = getattr(self.mdl, api_name)
         return method(input)
+
+
+class DummyService(BaseServing):
+    def __init__(self, model_id, config_json=None):
+        BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
+    def is_available(self):
+        return True
+
+    def serve(self):
+        pass
+
+    def close(self):
+        pass
+
+    def api(self, api_name, input):
+        return self._api_with_url(api_name, input)

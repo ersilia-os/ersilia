@@ -85,6 +85,7 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")
         size = self._get_size_in_mb()
+        self.logger.debug("Mode size is {0} MB".format(size))
         path = os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE)
         with open(path, "w") as f:
             json.dump({"size": size, "units": "MB"}, f, indent=4)
@@ -93,11 +94,13 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Iterating over APIs")
         all_schemas = {}
         for api_name in self.model.autoservice.get_apis():
-            self.logger.debug("Running {0}".format(api_name))
+            self.logger.debug("Running API: {0}".format(api_name))
+            self.logger.debug(self.inputs)
             results = [
                 result for result in self.model.autoservice.api(api_name, self.inputs)
             ]
             schema = self._get_schema(results)
+            self.logger.debug(schema)
             all_schemas[api_name] = schema
         path = os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE)
         with open(path, "w") as f:

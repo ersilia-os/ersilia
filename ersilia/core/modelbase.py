@@ -29,6 +29,7 @@ class ModelBase(ErsiliaBase):
     def is_available_locally(self):
         fetch_status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         if not os.path.exists(fetch_status_file):
+            self.logger.debug("No status file exists")
             is_fetched = False
         else:
             with open(fetch_status_file, "r") as f:
