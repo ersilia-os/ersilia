@@ -72,6 +72,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BasePack</span>
 <span class="kn">from</span> <span class="nn">....utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">....db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
+<span class="kn">from</span> <span class="nn">....db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
 <span class="kn">from</span> <span class="nn">....utils.venv</span> <span class="kn">import</span> <span class="n">SimpleVenv</span>
 <span class="kn">from</span> <span class="nn">....utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span> <span class="nn">....utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
@@ -229,8 +230,11 @@
         <span class="n">db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done with the Docker setup&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DockerPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.DockerPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with Docker&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_delete_packer_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">dm</span><span class="o">.</span><span class="n">delete_images</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Building docker image&quot;</span><span class="p">)</span>
@@ -248,7 +252,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading bentoml&quot;</span><span class="p">)</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_model_from_tmp</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
         <span class="n">mdl</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_symlinks</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_symlinks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delete_packer_container</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DockerPack.run"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.DockerPack.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with Docker&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_python_installs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="get_runner"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.get_runner">[docs]</a><span class="k">def</span> <span class="nf">get_runner</span><span class="p">(</span><span class="n">pack_mode</span><span class="p">):</span>

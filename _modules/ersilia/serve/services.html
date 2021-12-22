@@ -258,7 +258,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">venv</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">DEFAULT_VENV</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VenvEnvironmentService.is_available"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.is_available">[docs]</a>    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">venv</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DEFAULT_VENV</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">venv</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DEFAULT_VENV</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="VenvEnvironmentService.serve"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.serve">[docs]</a>    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_serve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_command</span><span class="p">)</span></div>
