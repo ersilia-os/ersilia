@@ -399,6 +399,29 @@
 <div class="viewcode-block" id="PipInstalledService.api"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService.api">[docs]</a>    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
         <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl</span><span class="p">,</span> <span class="n">api_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DummyService"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService">[docs]</a><span class="k">class</span> <span class="nc">DummyService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DummyService.is_available"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService.is_available">[docs]</a>    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DummyService.serve"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService.serve">[docs]</a>    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="DummyService.close"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="DummyService.api"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService.api">[docs]</a>    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_with_url</span><span class="p">(</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
