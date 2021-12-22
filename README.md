@@ -9,7 +9,8 @@
 2. [Getting started](https://github.com/ersilia-os/ersilia#getting-started)
 3. [Contribute](https://github.com/ersilia-os/ersilia#contribute)
 4. [Roadmap](https://github.com/ersilia-os/ersilia#roadmap)
-5. [About us](https://github.com/ersilia-os/ersilia#about-us)
+5. [License and citation](https://github.com/ersilia-os/ersilia#license-and-citation)
+6. [About us](https://github.com/ersilia-os/ersilia#about-us)
 
 # Project Description
 The Ersilia Model Hub is the main project of the Ersilia Open Source Initiative. The aim is to provide a platform for a user-friendly deployment of AI/ML models, where scientists can browse through the assets, identify those relevant to their research and obtain predictions without the need of coding expertise. Currently, most of the tools developed, even when published and fully open-sourced, remain unusable by a large majority of the scientific community who does not have the necessary expertise. This gap becomes even larger in Low and Middle Income Country institutions where access to bioinformatic facilities or data science experts is scarce. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
@@ -57,7 +58,11 @@ We are working to grow the Hub organically and responding to our users needs. He
 2. Automated third-party model contributions (expected: March 2022)
 3. Possibility to run lite models online (expected: May 2022)
 
+# License and citation
+This repository is open-sourced under an MIT License.
+Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+
 # About us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
-You can support us via our [Open Collective](https:/opencollective.com/ersilia)
+You can support us via our [Open Collective](https:/opencollective.com/ersilia).
