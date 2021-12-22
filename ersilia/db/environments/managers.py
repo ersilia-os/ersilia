@@ -158,11 +158,15 @@ class DockerManager(ErsiliaBase):
         self.remove(model_id)
 
     def remove_stopped_containers(self):
+        if not self.is_installed():
+            return
         cmd = "docker container prune -f"
         self.logger.debug("Removing stopped containers")
         run_command(cmd)
 
     def _stop_containers_with_model_id(self, model_id):
+        if not self.is_installed():
+            return
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
         cmd = "docker ps > {0}".format(tmp_file)
@@ -183,6 +187,8 @@ class DockerManager(ErsiliaBase):
         shutil.rmtree(tmp_folder)
 
     def _stop_containers_with_entrypoint_sh(self):
+        if not self.is_installed():
+            return
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
         cmd = "docker ps > {0}".format(tmp_file)
@@ -203,6 +209,8 @@ class DockerManager(ErsiliaBase):
         shutil.rmtree(tmp_folder)
 
     def stop_containers(self, model_id):
+        if not self.is_installed():
+            return
         self._stop_containers_with_model_id(model_id)
         self._stop_containers_with_entrypoint_sh()
         self.remove_stopped_containers()
@@ -226,6 +234,8 @@ class DockerManager(ErsiliaBase):
         self.remove_stopped_containers()
 
     def delete_images(self, model_id, purge_unnamed=True):
+        if not self.is_installed():
+            return
         self.stop_containers(model_id)
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-images.txt")
