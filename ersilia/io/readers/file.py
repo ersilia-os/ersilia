@@ -1,9 +1,62 @@
+import os
+import tempfile
 import csv
 import collections
 from ... import logger
 
 MIN_COLUMN_VALIDITY = 0.8
 DEFAULT_DELIMITER = ","
+FILE_CHUNKSIZE = 10000
+
+
+class FileTyper(object):
+    def __init__(self, path):
+        self.path = os.path.join(path)
+
+    def is_valid_input_file(self):
+        if self.is_csv() or self.is_tsv() or self.is_json():
+            return True
+        else:
+            return False
+
+    def is_valid_output_file(self):
+        if self.is_csv() or self.is_tsv() or self.is_json() or self.is_hdf5():
+            return True
+        else:
+            return False
+
+    def is_tabular(self):
+        if self.is_csv() or self.is_tsv():
+            return True
+        else:
+            return False
+
+    def is_csv(self):
+        if self.path.endswith(".csv"):
+            return True
+        else:
+            return False
+
+    def is_tsv(self):
+        if self.path.endswith(".tsv"):
+            return True
+        else:
+            return False
+
+    def is_hdf5(self):
+        if self.path.endswith(".h5"):
+            return True
+        else:
+            return False
+
+    def is_json(self):
+        if self.path.endswith(".json"):
+            return True
+        else:
+            return False
+
+    def get_extension(self):
+        return self.path.split(".")[-1]
 
 
 class TabularFileReader(object):
@@ -11,6 +64,7 @@ class TabularFileReader(object):
         self.logger = logger
         self.IO = IO
         self.sniff_line_limit = sniff_line_limit
+        self._has_header = None
 
     def get_delimiter(self, path):
         delimiters = collections.defaultdict(int)
@@ -21,6 +75,7 @@ class TabularFileReader(object):
                 R += [l]
                 i += 1
                 if i > self.sniff_line_limit:
+                    self.logger.debug("Stopping sniffer for finding delimiter")
                     break
                 try:
                     delimiter = csv.Sniffer().sniff(l, delimiters="\t,;").delimiter
@@ -39,7 +94,10 @@ class TabularFileReader(object):
         with open(path, "r") as f:
             reader = csv.reader(f, delimiter=self.delimiter)
             N = 0
-            for r in reader:
+            for i, r in enumerate(reader):
+                if i > self.sniff_line_limit:
+                    self.logger.debug("Stopping sniffer for resolving column types")
+                    break
                 for j, v in enumerate(r):
                     if self.IO.is_input(v):
                         input[j] += 1
@@ -66,6 +124,8 @@ class TabularFileReader(object):
         self.matching = matching
 
     def has_header(self, path):
+        if self._has_header is not None:
+            return self._has_header
         self.resolve_columns(path)
         with open(path, "r") as f:
             reader = csv.reader(f, delimiter=self.delimiter)
@@ -83,9 +143,10 @@ class TabularFileReader(object):
         else:
             hk = False
         if hi or hk:
-            return False
+            self._has_header = False
         else:
-            return True
+            self._has_header = True
+        return self._has_header
 
     def read(self, path):
         header = self.has_header(path)
@@ -100,3 +161,73 @@ class TabularFileReader(object):
             for l in reader:
                 R += [l[input]]
         return R
+
+    def is_worth_splitting(self, path):
+        with open(path, "r") as f:
+            n = 0
+            for _ in f:
+                n += 1
+        self.logger.debug("File has {0} lines".format(n))
+        if n > FILE_CHUNKSIZE:
+            self.logger.debug("Worth splitting it")
+            return True
+        else:
+            return False
+
+    def split_in_cache(self, path):
+        ft = FileTyper(path)
+        extension = ft.get_extension()
+        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.logger.debug("Splitting file in cache: {0}".format(self.tmp_folder))
+        has_header = self.has_header(path)
+        with open(path, "r") as f:
+            j = 0
+            if has_header:
+                header = next(f)
+            i = 0
+            for l in f:
+                if i == 0:
+                    gn = os.path.join(
+                        self.tmp_folder, "chunk-input-{0}.{1}".format(j, extension)
+                    )
+                    g = open(gn, "w")
+                    if has_header:
+                        g.write(header)
+                    g.write(l)
+                    i += 1
+                elif i == FILE_CHUNKSIZE:
+                    g.write(l)
+                    g.close()
+                    j += 1
+                    i = 0
+                else:
+                    g.write(l)
+                    i += 1
+        return self.get_cached_input_files()
+
+    def get_cached_files(self, prefix):
+        idx2fn = {}
+        for fn in os.listdir(self.tmp_folder):
+            if fn.startswith(prefix):
+                idx = int(fn.split("-")[-1].split(".")[0])
+                idx2fn[idx] = os.path.join(self.tmp_folder, fn)
+        idxs = sorted(idx2fn.keys())
+        return [idx2fn[idx] for idx in idxs]
+
+    def get_cached_input_files(self):
+        return self.get_cached_files(prefix="chunk-input-")
+
+    def get_cached_output_files(self):
+        return self.get_cached_files(prefix="chunk-output-")
+
+    def name_cached_output_files(self, cached_inputs, output_template):
+        ft = FileTyper(output_template)
+        extension = ft.get_extension()
+        cached_outputs = []
+        for i, _ in enumerate(cached_inputs):
+            cached_outputs += [
+                os.path.join(
+                    self.tmp_folder, "chunk-output-{0}.{1}".format(i, extension)
+                )
+            ]
+        return cached_outputs

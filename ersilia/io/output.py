@@ -4,13 +4,13 @@ import json
 import random
 import numpy as np
 import tempfile
-import itertools
 import collections
 from .dataframe import Dataframe
+from .readers.file import FileTyper
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..default import FEATURE_MERGE_PATTERN
-from ..utils.hdf5 import Hdf5Data
+from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 
 
 class DataFrame(object):
@@ -333,3 +333,32 @@ class DictlistDataframeConverter(GenericOutputAdapter):
             }
             result += [res]
         return result
+
+
+class TabularOutputStacker(object):
+    def __init__(self, file_names):
+        ft = FileTyper(file_names[0])
+        self.is_hdf5 = ft.is_hdf5()
+        self.file_names = file_names
+
+    def stack_text(self, output):
+        has_header = False
+        with open(output, "w") as f0:
+            for fn in self.file_names:
+                with open(fn, "r") as f1:
+                    header = next(f1)
+                    if not has_header:
+                        f0.write(header)
+                        has_header = True
+                    for l in f1:
+                        f0.write(l)
+
+    def stack_hdf5(self, output):
+        stacker = Hdf5DataStacker(self.file_names)
+        stacker.stack(output)
+
+    def stack(self, output):
+        if self.is_hdf5:
+            self.stack_hdf5(output)
+        else:
+            self.stack_text(output)

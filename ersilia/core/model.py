@@ -5,6 +5,7 @@ import types
 import collections
 import importlib
 import __main__ as main
+
 from .. import logger
 from .base import ErsiliaBase
 from .modelbase import ModelBase
@@ -12,7 +13,9 @@ from .session import Session
 from ..serve.autoservice import AutoService
 from ..serve.schema import ApiSchema
 from ..serve.api import Api
-from ..io.input import ExampleGenerator
+from ..io.input import ExampleGenerator, BaseIOGetter
+from ..io.output import TabularOutputStacker
+from ..io.readers.file import FileTyper, TabularFileReader
 from ..default import MODEL_SIZE_FILE, CARD_FILE
 from ..default import DEFAULT_BATCH_SIZE
 from ..utils import tmp_pid_file
@@ -22,7 +25,7 @@ from ..lake.base import LakeBase
 
 try:
     import pandas as pd
-except:
+except ModuleNotFoundError:
     pd = None
 
 
@@ -246,9 +249,62 @@ class ErsiliaModel(ErsiliaBase):
         else:
             return self._api_runner_return
 
+    def _evaluate_do_cache_splits(self, input, output):
+        if input is None:
+            return False
+        if output is None:
+            return False
+        if type(input) != str:
+            return False
+        if type(output) != str:
+            return False
+        if not os.path.exists(input):
+            return False
+        fti = FileTyper(input)
+        if not fti.is_tabular():
+            return False
+        fto = FileTyper(output)
+        if not fto.is_valid_output_file():
+            return False
+        return True
+
+    def _do_cache_splits(self, input, output):
+        self.tfr = None
+        if self._evaluate_do_cache_splits(input, output):
+            self.tfr = TabularFileReader(
+                BaseIOGetter(config_json=self.config_json).get(self.model_id)()
+            )
+            if self.tfr.is_worth_splitting(path=input):
+                return True
+            else:
+                self.tfr = None
+                return False
+        else:
+            return False
+
     def api(
         self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
     ):
+        if self._do_cache_splits(input=input, output=output):
+            splitted_inputs = self.tfr.split_in_cache(input)
+            splitted_outputs = self.tfr.name_cached_output_files(
+                splitted_inputs, output
+            )
+            for input_, output_ in zip(splitted_inputs, splitted_outputs):
+                self.api_task(
+                    api_name=api_name,
+                    input=input_,
+                    output=output_,
+                    batch_size=batch_size,
+                )
+            TabularOutputStacker(splitted_outputs).stack(output)
+            return output
+        else:
+            return self.api_task(
+                api_name=api_name, input=input, output=output, batch_size=batch_size
+            )
+
+    def api_task(self, api_name, input, output, batch_size):
         api_instance = self._get_api_instance(api_name=api_name)
         api_runner = self._get_api_runner(output=output)
         result = api_runner(

@@ -26,7 +26,8 @@ def fetch_cmd():
         mdl = ModelBase(model)
         model_id = mdl.model_id
         echo(
-            ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug), fg="blue"
+            ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
+            fg="blue",
         )
         mf = ModelFetcher(mode=mode, dockerize=dockerize)
         _fetch(mf, model_id)

@@ -4,6 +4,7 @@ import json
 from chembl_webresource_client.unichem import unichem_client as unichem
 from rdkit import Chem
 from rdkit import RDLogger
+
 RDLogger.DisableLog("rdApp.*")
 
 

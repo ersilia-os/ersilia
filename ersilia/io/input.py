@@ -2,7 +2,6 @@ import os
 import json
 import csv
 import importlib
-import tempfile
 import itertools
 
 from .readers.file import TabularFileReader
