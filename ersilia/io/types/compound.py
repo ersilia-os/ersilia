@@ -2,7 +2,7 @@ import os
 import csv
 import random
 import importlib
-from ...setup.requirements.rdkit import RdkitRequirement
+from ...setup.requirements.compound import ChemblWebResourceClientRequirement, RdkitRequirement
 from ... import logger
 from ..readers.file import TabularFileReader
 from . import EXAMPLES_FOLDER
@@ -19,8 +19,9 @@ class IO(object):
         self.identifier = importlib.import_module("ersilia.utils.identifiers.compound").CompoundIdentifier()
 
     def setup(self):
-        self.logger.debug("Checking RDKIT requirement")
+        self.logger.debug("Checking RDKIT and other requirements")
         RdkitRequirement()
+        ChemblWebResourceClientRequirement()
 
     def example(self, n_samples):
         tfr = TabularFileReader(self)
