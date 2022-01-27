@@ -68,4 +68,4 @@ Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)
 # About us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
-You can support us via our [Open Collective](https:/opencollective.com/ersilia).
+You can support us via [Open Collective](https:/opencollective.com/ersilia).
