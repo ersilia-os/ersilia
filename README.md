@@ -1,6 +1,8 @@
 # Welcome to the Ersilia Model Hub!
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia-hub.netlify.app/docs/) [![EOSI](https://circleci.com/gh/ersilia-os/ersilia.svg?style=svg)](https://circleci.com/gh/ersilia-os/ersilia) [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black) [![Github All Releases](https://img.shields.io/github/downloads/ersilia-os/ersilia/total.svg)](./) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/) [![EOSI](https://circleci.com/gh/ersilia-os/ersilia.svg?style=svg)](https://circleci.com/gh/ersilia-os/ersilia) [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black) [![Github All Releases](https://img.shields.io/github/downloads/ersilia-os/ersilia/total.svg)](./) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
 
 ![logo](https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png)
 
@@ -21,27 +23,28 @@ The models embedded in the hub include both models published in the literature (
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 
 # Getting started
-The current version of the Ersilia Model Hub runs in your local computer (UNIX or MacOS system required) and is available via CLI. 
-We recommend creating a conda environment and cloning the repository:
-```
-conda create -n ersilia python=3.7
-conda activate ersilia
-git clone git@github.com:ersilia-os/ersilia.git
-cd ersilia
-```
+Follow the **installation instructions** from the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).
 
-Then, select the desired model from our catalog, fecth it and run using the apis (available apis will show up at fetch time)
+Once Ersilia is installed, you can **browse models** in the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg).
+
+Select one model. For example `chemprop-antibiotic`. You can **fetch** your model with the Ersilia CLI:
 ```
-ersilia catalog
-ersilia fetch eos0aaa
-ersilia api <api-name> -i "<input file>" -o "<output file>"
+ersilia fetch chemprop-antibiotic
+```
+Then, **serve** your model:
+```
+ersilia serve chemprop-antibiotic
+```
+And run the prediction **API**:
+```
+ersilia api -i my_molecules.csv -o my_predictions.csv
+```
+Finally, **close** the service when you are done.
+```
 ersilia close
 ```
 
-The input file must be a .csv or .txt containing a list of SMILES or InchiKeys.
-
-* More detailed installation instructinons and examples are available at [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation)
-* Low-level documentation is available at [Ersilia Read The Docs](https://ersilia-os.github.io/ersilia/)
+Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailes explanations.
 
 # Contribute
 The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! There are several ways in which you can contribute to the project:
