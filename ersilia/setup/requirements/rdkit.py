@@ -13,4 +13,3 @@ class RdkitRequirement(object):
 
     def install(self):
         run_command("python -m pip install rdkit-pypi")
-        sys.exit("We have installed the rdkit dependency. Run your command again.")

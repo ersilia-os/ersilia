@@ -1,7 +1,7 @@
 import os
 import csv
 import random
-from ...utils.identifiers.compound import CompoundIdentifier
+import importlib
 from ...setup.requirements.rdkit import RdkitRequirement
 from ... import logger
 from ..readers.file import TabularFileReader
@@ -14,9 +14,9 @@ EXAMPLES = "compound.tsv"
 class IO(object):
     def __init__(self):
         self.logger = logger
-        self.identifier = CompoundIdentifier()
         self.example_file = os.path.join(EXAMPLES_FOLDER, EXAMPLES)
         self.setup()
+        self.identifier = importlib.import_module("ersilia.utils.identifiers.compound").CompoundIdentifier()
 
     def setup(self):
         self.logger.debug("Checking RDKIT requirement")
