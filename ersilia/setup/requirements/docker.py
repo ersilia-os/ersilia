@@ -1,4 +1,4 @@
-from ...utils.terminal import run_command_check_output
+from ...utils.terminal import run_command_check_output, run_command
 
 
 class DockerRequirement(object):

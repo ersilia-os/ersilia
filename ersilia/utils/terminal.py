@@ -52,7 +52,8 @@ def run_command_check_output(cmd):
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "out.txt")
         cmd = cmd + " > " + tmp_file
-        subprocess.Popen(cmd, shell=True).wait()
+        with open(os.devnull, "w") as fp:
+            subprocess.Popen(cmd, shell=True, stderr=fp, stdout=fp).wait()
         with open(tmp_file, "r") as f:
             result = f.read()
         shutil.rmtree(tmp_folder)

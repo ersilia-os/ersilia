@@ -1,7 +1,6 @@
 import os
 import shutil
 
-from ersilia.db.environments.managers import DockerManager
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
@@ -9,6 +8,7 @@ from ...utils.conda import SimpleConda
 from ..content.catalog import ModelCatalog
 from ...db.environments.localdb import EnvironmentDb
 from ...db.hubdata.localslugs import SlugDb
+from ...db.environments.managers import DockerManager
 from ..bundle.status import ModelStatus
 
 from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
