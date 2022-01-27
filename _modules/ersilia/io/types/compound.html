@@ -67,8 +67,8 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">...utils.identifiers.compound</span> <span class="kn">import</span> <span class="n">CompoundIdentifier</span>
-<span class="kn">from</span> <span class="nn">...setup.requirements.rdkit</span> <span class="kn">import</span> <span class="n">RdkitRequirement</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">from</span> <span class="nn">...setup.requirements.compound</span> <span class="kn">import</span> <span class="n">ChemblWebResourceClientRequirement</span><span class="p">,</span> <span class="n">RdkitRequirement</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">..readers.file</span> <span class="kn">import</span> <span class="n">TabularFileReader</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">EXAMPLES_FOLDER</span>
@@ -80,13 +80,14 @@
 <div class="viewcode-block" id="IO"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO">[docs]</a><span class="k">class</span> <span class="nc">IO</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">CompoundIdentifier</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">example_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EXAMPLES_FOLDER</span><span class="p">,</span> <span class="n">EXAMPLES</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.utils.identifiers.compound&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">CompoundIdentifier</span><span class="p">()</span>
 
 <div class="viewcode-block" id="IO.setup"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking RDKIT requirement&quot;</span><span class="p">)</span>
-        <span class="n">RdkitRequirement</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking RDKIT and other requirements&quot;</span><span class="p">)</span>
+        <span class="n">RdkitRequirement</span><span class="p">()</span>
+        <span class="n">ChemblWebResourceClientRequirement</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="IO.example"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.example">[docs]</a>    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
         <span class="n">tfr</span> <span class="o">=</span> <span class="n">TabularFileReader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
