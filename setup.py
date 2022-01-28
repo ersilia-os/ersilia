@@ -87,7 +87,7 @@ setup(
     python_requires=">=3.7",
     install_requires=slim_requires,
     extras_require=extras_require,
-    packages=find_packages(exclude=("utilities")),
+    packages=find_packages(),
     entry_points={"console_scripts": ["ersilia=ersilia.cli:cli"]},
     classifiers=(
         "Programming Language :: Python :: 3.7",
