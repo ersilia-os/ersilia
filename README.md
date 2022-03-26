@@ -35,7 +35,7 @@ Then, **serve** your model:
 ```
 ersilia serve chemprop-antibiotic
 ```
-And run the prediction **API**:
+And run the prediction **Application program interface (API)**:
 ```
 ersilia api -i my_molecules.csv -o my_predictions.csv
 ```
