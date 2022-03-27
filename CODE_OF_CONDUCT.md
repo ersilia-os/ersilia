@@ -8,7 +8,7 @@ We pledge to act and interact in the way that will contribute towards an open, w
 
 ## Our Standards
 
-Examples of behavior that contributes to a positive environment for our community includes:
+**Examples of behavior that contributes to a positive environment for our community includes:**
 
 * Demonstrating empathy and kindness towards other people
 * Being respectful of differing opinions, viewpoints, and experiences
@@ -21,7 +21,7 @@ Examples of behavior that contributes to a positive environment for our communit
 
   overall community
 
-Examples of unacceptable behavior includes:
+**Examples of unacceptable behavior includes:**
 
 * The use of sexualized language or imagery, and sexual attention or
 
