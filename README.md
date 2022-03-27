@@ -15,7 +15,7 @@
 6. [About us](https://github.com/ersilia-os/ersilia#about-us)
 
 # Project Description
-The Ersilia Model Hub is the main project of the [Ersilia Open Source Initiative](https://ersilia.io). The aim is to provide a platform for a user-friendly deployment of AI/ML models, where scientists can browse through the assets, identify those relevant to their research and obtain predictions without the need of coding expertise. Currently, most of the tools developed, even when published and fully open-sourced, remain unusable by a large majority of the scientific community who does not have the necessary expertise. This gap becomes even larger in Low and Middle Income Country institutions where access to bioinformatic facilities or data science experts is scarce. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
+The Ersilia Model Hub is the main project of the [Ersilia Open Source Initiative](https://ersilia.io). The aim is to provide a platform for a user-friendly deployment of AI/ML models, where scientists can browse through the assets, identify those which is relevant to their research and obtain predictions without the need of coding expertise. Currently, most of the tools developed, even when published and fully open-sourced, remain unusable by a large majority of the scientific community who does not have the necessary expertise. This gap becomes even larger in Low and Middle Income Country institutions where access to bioinformatic facilities or data science experts are scarce. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
 
 The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgment) and models developed by the Ersilia team or contributors. All assets are open source, but please do check the Licenses of each model before using them.
 
@@ -48,7 +48,7 @@ Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more
 
 # Contribute
 The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! There are several ways in which you can contribute to the project:
-- If you are a developer, check the [issues](https://github.com/ersilia-os/ersilia/issues) and help us improve the tool
+- If you are a developer, check the [issues](https://github.com/ersilia-os/ersilia/issues) and help us to improve the tool
 - If you have developed a model and would like to include it in the Hub to increase its visibility and usability, please [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues). We are currently working on an automated contribution tool to facilitate the process.
 - If you are a scientist with a cool dataset, also [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues) as we might be interested in developing a model based on the data!
 - If there is a third-party model you have identified and would like to see it in the Hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
@@ -57,13 +57,12 @@ The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https:/
 
 # Roadmap
 We are working to grow the Hub organically and responding to our users needs. Here a detail of the next features to come, stay tuned!
-Outreachy applicants, these are ideas we can work on during your internship.
 1. Deployment for Windows System (expected: February 2022)
 2. Automated third-party model contributions (expected: March 2022)
 3. Possibility to run lite models online (expected: May 2022)
 
 # License and citation
-This repository is open-sourced under an MIT License.
+This repository is open-sourced under the MIT License.
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 
 # About us
