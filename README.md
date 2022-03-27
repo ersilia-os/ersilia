@@ -63,7 +63,7 @@ We are working to grow the Hub organically and responding to our users' needs. H
 
 # License and citation
 This repository is open-sourced under the MIT License.
-Please [cite](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) us if you use it.
+Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 
 # About us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
