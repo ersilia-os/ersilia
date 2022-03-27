@@ -35,7 +35,7 @@ Then, **serve** your model:
 ```
 ersilia serve chemprop-antibiotic
 ```
-And run the prediction **API**:
+And run the prediction **Application program interface (API)**:
 ```
 ersilia api -i my_molecules.csv -o my_predictions.csv
 ```
@@ -53,10 +53,10 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 - If you are a scientist with a cool dataset, also [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues) as we might be interested in developing a model based on the data!
 - If there is a third-party model you have identified and would like to see it in the Hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
 
-The Ersilia Open Source Initiative is adhered to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/) guidelines.
+The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
 
 # Roadmap
-We are working to grow the Hub organically and responding to our users' needs. Here is the detail of next features to come, stay tuned!
+We are working to grow the Hub organically and responding to our users needs. Here a detail of the next features to come, stay tuned!
 1. Deployment for Windows System (expected: February 2022)
 2. Automated third-party model contributions (expected: March 2022)
 3. Possibility to run lite models online (expected: May 2022)
