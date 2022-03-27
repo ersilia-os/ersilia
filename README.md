@@ -44,7 +44,7 @@ Finally, **close** the service when you are done.
 ersilia close
 ```
 
-Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailes explanations.
+Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
 
 # Contribute
 The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! There are several ways in which you can contribute to the project:
