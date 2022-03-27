@@ -57,6 +57,7 @@ The Ersilia Open Source Initiative is adhered to the [Contributor Covenant](http
 
 # Roadmap
 We are working to grow the Hub organically and responding to our users needs. Here a detail of the next features to come, stay tuned!
+Outreachy applicants, these are ideas we can work on during your internship.
 1. Deployment for Windows System (expected: February 2022)
 2. Automated third-party model contributions (expected: March 2022)
 3. Possibility to run lite models online (expected: May 2022)
