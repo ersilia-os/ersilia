@@ -31,11 +31,15 @@ Select one model. For example `chemprop-antibiotic`. You can **fetch** your mode
 ```
 ersilia fetch chemprop-antibiotic
 ```
+Generate a few (5) example molecules, to be used as input. Molecules are typically expressed in SMILES format.
+```
+ersilia example chemprop-antibiotic -n 5 -f my_molecules.csv
+```
 Then, **serve** your model:
 ```
 ersilia serve chemprop-antibiotic
 ```
-And run the prediction **Application program interface (API)**:
+And run the prediction **API**:
 ```
 ersilia api -i my_molecules.csv -o my_predictions.csv
 ```
