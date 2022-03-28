@@ -13,7 +13,7 @@
 6. [About us](#about-us)
 7. [FAQs](#faqs)
 8. [Related Projects](#related-projects)
-# Project Description
+## Project Description
 The Ersilia Model Hub is a patient zero of [Ersilia Open Source Initiative](https://ersilia.io). The aim is to provide a platform for a user-friendly deployment of AI/ML models, where scientists can browse through the assets, identify those which is relevant to their research and obtain predictions without the need of coding expertise. Currently, most of the tools developed, even when published and fully open-sourced, remain unusable by a large majority of the scientific community who does not have the necessary expertise. This gap becomes even larger in Low and Middle Income Country institutions where access to bioinformatic facilities or data science experts are scarce. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
 
 The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgment) and models developed by the Ersilia team or contributors. All assets are open source, but please do check the Licenses of each model before using them.
@@ -22,7 +22,7 @@ The models embedded in the hub include both models published in the literature (
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 
 ## Installation Guide
-#### Prerequisites
+### Prerequisites
 - [Docker](https://docs.docker.com/engine/install/)
 - [Python](https://www.python.org/downloads/)
 - [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
@@ -30,15 +30,15 @@ The models embedded in the hub include both models published in the literature (
 - [Git LFS](https://git-lfs.github.com/)
 - [Git CLI](https://cli.github.com/manual/installation)
 ### Install on Linux and MacOSX
-###### Step 1: Set up conda environment
+**Step 1: Set up conda environment**
 ```
 conda create -n ersilia python=3.7
 ```
-###### Step 2: Activate the environment
+**Step 2: Activate the environment**
 ```
 conda activate ersilia
 ```
-###### Step 3: Install ersilia python package
+**Step 3: Install ersilia python package**
 Clone from Github
 ```
 git clone https://github.com/ersilia-os/ersilia.git
