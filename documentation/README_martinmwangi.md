@@ -102,16 +102,16 @@ Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
 ## FAQs
-**Can I modify your code?**
+**Can I modify your code?**  
 Definitely! Our code is released under an MIT license. You can copy, download and modify the code provided you maintain the license notice. Code from third-party authors is licensed according to the original license, in that case, please check carefully the license restrictions.
 
-**Is there a subscription fee?** 
+**Is there a subscription fee?**  
 The Ersilia Model Hub is available for everyone to download and run in their computers. You can become a subscriptor and contribute to our mission via Open Collective.
 
-**What is your legal structure?** 
+**What is your legal structure?**  
 The Ersilia Open Source Initiative is a Charitable Incorporated Organization recognized by the Charity Commission of England and Wales (number 1192266)
 
-**Can I get a tax deduction on my donation?** 
+**Can I get a tax deduction on my donation?**  
 Yes, if you are based in the UK your donations are Tax Deductible. Help us further by completing the GiftAid declaration and your gift will be matched at a rate of 25cts for each pound.
 
 ## Related Projects
