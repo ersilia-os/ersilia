@@ -37,12 +37,12 @@ The models embedded in the hub include both models published in the literature (
 ![Screenshot (33)](https://user-images.githubusercontent.com/95097508/160673917-7942a3e8-0b74-4577-b481-ca84a2b51572.png)
 
 
-<p><b>Ersilia is faster drug discovery compared to coventional methods</b> </p>
+<p><b>Ersilia is faster in drug discovery compared to coventional methods</b> </p>
 
 ![Screenshot (26)](https://user-images.githubusercontent.com/95097508/160673091-3e4e0102-9c71-4f4e-90f0-76c09ee9e523.png)
 
-<p><b>Ersilia uses the 7 step approach in producing a model.
-Before Ersilia, the existing AI model stops at external validation level 6 which made it unusable. With Ersilia scientist with no coding experience can evaluate if their molecule is active.</b> </p>
+<p><b>Ersilia uses the 7 steps approach in producing a model.
+Before Ersilia, the existing AI model stops at external validation (level 6) which made it unusable. With Ersilia scientist with no coding experience can evaluate if their molecule is active with its simple user interface</b> </p>
  <img src="https://user-images.githubusercontent.com/95097508/160668731-20eb417d-ca5f-44d2-8435-1c3125d0b72f.png" width="100" height="50">
 
 
