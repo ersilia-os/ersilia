@@ -16,12 +16,12 @@ pp# Welcome to the Ersilia Model Hub!
 6. [About us](#about-us)
 
 # Project Description
-[Ersilia Open Source Initiative](https://ersilia.io) is a nonprofit organisation that is focused on research into infectious diseases. We intend to fast-track the development of new medicines by utilizing artificial intelligence tools.
+[Ersilia Open Source Initiative](https://ersilia.io) is a nonprofit organisation that is focused on the research into infectious diseases. We intend to fast-track the development of new medicines by utilizing artificial intelligence tools.
 
-The [Ersilia Model Hub](https://airtable.com/shrUcrUnd7jB9ChZV) is the key project of the Ersilia Open Source Initiative. It is a free repository consisting of Artificial Intelligence and Machine Learning (AI/ML) models. The aim is to provide user friendly models to scientists to aid their research and predict outcomes easily without requiring complex coding expertise.
+The [Ersilia Model Hub](https://airtable.com/shrUcrUnd7jB9ChZV) is the key project of the Ersilia Open Source Initiative. It is a free repository which contains Artificial Intelligence and Machine Learning (AI/ML) models. The aim is to provide user friendly models to scientists to aid their research and predict outcomes easily without requiring complex coding abilities.
 
 <p align='justify'>
-The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgment) and models developed by the Ersilia team or contributors. All assets are open source, but please do check the Licenses of each model before using them.
+The models embedded in the hub include established models as well as propriety models developed by the Ersilia team.
 </p>
 
 * Read more about the project at [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
@@ -47,38 +47,38 @@ The steps for installing this project on a Linux or MacOSX are as follows:
 
 - Install Conda environments, either [anaconda](https://docs.anaconda.com/anaconda/install/index.html) or [miniconda](https://docs.conda.io/en/latest/miniconda.html), for handling dependencies effectively. 
 ```
-- create a conda environment
+- to create a conda environment
 conda create -n ersilia python=3.7
 
-- activate the environment
+- to activate the environment
 conda activate ersilia
 ```
-Detailed instructions for setting up your conda environment can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+Detailed instructions for setting up the conda environment can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
 
-- Install [Docker](https://www.docker.com/) to ensure that all the AI/ML models will work smoothly in your local device.
+- Install [Docker](https://www.docker.com/). This  ensures that all the AI/ML models will work seamlessly on your local device.
 
-- To enable the Ersilia tool retrieve our codes hosted on [Github](https://github.com/ersilia-os), install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) or [GitCLI](https://cli.github.com/manual/installation). 
+- To enable the Ersilia tool retrieve the codes hosted on [Github](https://github.com/ersilia-os), install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) or [GitCLI](https://cli.github.com/manual/installation). 
 
 - Clone the ersilia repo.
 ```
-- clone the repo from github
+- To clone the repo from github
 $ git clone https://github.com/ersilia-os/ersilia.git
 
-- change directory into the isausa folder    
+- change directory into the ersilia folder    
 $ cd ersilia
       
 -  install with pip (use -e for developer mode)
-$ pip install -e .
+$ pip install -e
 ```
 
 
-- Clone the [Isaura data lake](https://github.com/ersilia-os/isaura) repo. With Isaura, you will be able to store your model predictions on your local computer.
+- Clone the [Isaura data lake](https://github.com/ersilia-os/isaura) repo. This allows you to backup your model predictions on your local computer.
 
 ```
-- clone the repo from github
+- To clone the repo from github
 $ git clone https://github.com/ersilia-os/isaura.git
 
-- change directory into the isausa folder    
+- To change directory into the isaura folder    
 $ cd isaura
       
 -  install with pip (use -e for developer mode)
@@ -86,27 +86,28 @@ $ pip install -e
 ```
 
 
-For more detailed instructions, specific to your operating enviornment, please follow the **installation instructions** from the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).
+For more detailed instructions, specific to your operating enviornment, please follow the instructions outlined in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).
 
 #
 # Getting Started
-Once Ersilia is successfully installed, you can search for your AI/ML models of interest in the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg). All models available in the catalog are accessible through the [Ersilia Python package](https://github.com/ersilia-os/ersilia). 
+Once Ersilia is successfully installed, you can search for your AI/ML models of interest in the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg). All available models are accessible through the [Ersilia Python package](https://github.com/ersilia-os/ersilia). 
 
-The image below provides an overview of the Ersilia Model Hub
+Below is an overview of the Ersilia Model Hub
 
 ![systemic-diagram-of-elsilia-model-hub](https://2591732297-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-Mj44wxA7bU1hQH19m8I%2F-MjPA_JIOzuKGPtPDw1U%2F-MjPDmAAJkYPLJmKKSD1%2FErsilia_Hub-02.png?alt=media&token=8a876edc-c02e-400c-80c5-b6f3c4060c21)
 
-Select one model. For example `chemprop-antibiotic`. You can **retrieve** your model with the Ersilia CLI:
+
+Select a model, for example `mycpermcheck`.
 ```
-ersilia fetch chemprop-antibiotic
+ersilia fetch mycpermcheck
 ```
-Generate a few (5) example molecules, to be used as input. Molecules are typically expressed in SMILES format.
+Generate some example molecules, to be used as input.
 ```
-ersilia example chemprop-antibiotic -n 5 -f my_molecules.csv
+ersilia example mycpermcheck -n 5 -f my_molecules.csv
 ```
 Then, **serve** your model:
 ```
-ersilia serve chemprop-antibiotic
+ersilia serve mycpermcheck
 ```
 And run the prediction **API**:
 ```
@@ -116,22 +117,31 @@ Finally, **close** the service when you are done.
 ```
 ersilia close
 ```
-Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
+More detailed instructions and examples can be found in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/).
 
 #
 # Future development
-We are working to grow the Hub organically and responding to our users needs. Here a detail of the next features to come, stay tuned!
-1. Deployment for Windows System (expected: February 2022)
-2. Automated third-party model contributions (expected: March 2022)
-3. Possibility to run lite models online (expected: May 2022)
+We are still undergoing processes in order to expand the hub, taking into account the needs from our end users. Some of the features we intend to implement in the future include:
+- Deployment for Windows based Systems (expected: February 2022)
+
+- Automated third-party model contributions (expected: March 2022)
+
+- Possibility to run lite models online (expected: May 2022)
 
 #
 # Contribute
-The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! There are several ways in which you can contribute to the project:
-- If you are a developer, check the [issues](https://github.com/ersilia-os/ersilia/issues) and help us to improve the tool
-- If you have developed a model and would like to include it in the Hub to increase its visibility and usability, please [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues). We are currently working on an automated contribution tool to facilitate the process.
-- If you are a scientist with a cool dataset, also [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues) as we might be interested in developing a model based on the data!
-- If there is a third-party model you have identified and would like to see it in the Hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
+
+<p aligh='justify'>
+The Ersilia Model Hub is constantly being developed and maintained by a team of Ersilia employees and volunteers. If you would like to contribute to this project, there are several ways in which you can!
+</p>
+
+- If you are a developer, check the [issues](https://github.com/ersilia-os/ersilia/issues) and assist us in making imporvements to the ersilia tool.
+
+- If you have some experience developing models and would like to include your models in the Hub, [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues).
+
+- If you are a scientist with an interesting dataset, please [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues) as we might be interested in developing a model based on the data.
+
+- If there is a third-party model you have identified and would like us to add it to the hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
 
@@ -145,8 +155,9 @@ Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)
 
 #
 # About us
-The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
+
+The [Ersilia Open Source Initiative](https://ersilia.io) is incorporated with the Charity Commission for England and Wales (number 1192266). We are passionate about reducing the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
 You can support us via [Open Collective](https:/opencollective.com/ersilia).
 
-For more enquiries, contact us on our [website](https://ersilia.io) or via [email](hello@ersilia.io)
+For more enquiries, contact us on our [website](https://ersilia.io) or via [email](hello@ersilia.io).
