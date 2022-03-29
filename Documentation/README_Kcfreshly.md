@@ -41,7 +41,7 @@ The models embedded in the hub include both models published in the literature (
 | --- | --- |
 | Data driven | Ersilia technology achieves state-of-the-art performance thanks to the integration of chemical, genomic and biomedical text data. Our AI tools are trained on millions of data points collected from the scientific literature and are available at no cost. |
 | Bioactivity signatures | Our tools are designed to facilitate the use of AI/ML tools. Scientists can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing a single line of code. |
-| User friendly | Our tools are designed to facilitate the use of AI/ML tools. Scientists can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing a single line of code. |
+| User friendly platform | Our tools are designed to facilitate the use of AI/ML tools. Scientists can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing a single line of code. |
 | Open source | All our assets are released under a permissive open source license. This means the scientific community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system. |
 
 # Getting Started
