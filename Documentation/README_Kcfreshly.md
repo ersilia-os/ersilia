@@ -4,8 +4,6 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
-
 [![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/) [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
 
 </div>
@@ -34,6 +32,19 @@ Ersilia Model Hub aims to fulfill the ultimate goal of Ersilia, which is to lowe
 The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors. All assets are open source, but please do check the Licenses of each model before using them.
 * Read more about the project better at the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
+
+## Ersilia Overview
+![Screenshot (33)](https://user-images.githubusercontent.com/95097508/160673917-7942a3e8-0b74-4577-b481-ca84a2b51572.png)
+
+
+<p><b>Ersilia is faster drug discovery compared to coventional methods</b> </p>
+
+![Screenshot (26)](https://user-images.githubusercontent.com/95097508/160673091-3e4e0102-9c71-4f4e-90f0-76c09ee9e523.png)
+
+<p><b>Ersilia uses the 7 step approach in producing a model.
+Before Ersilia, the existing AI model stops at external validation level 6 which made it unusable. With Ersilia scientist with no coding experience can evaluate if their molecule is active.</b> </p>
+ <img src="https://user-images.githubusercontent.com/95097508/160668731-20eb417d-ca5f-44d2-8435-1c3125d0b72f.png" width="100" height="50">
+
 
 # Features
 
