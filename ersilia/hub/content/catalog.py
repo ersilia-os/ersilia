@@ -69,6 +69,13 @@ class ModelCatalog(ErsiliaBase):
         if "Slug" in card:
             return card["Slug"]
         return None
+    
+
+    def _get_mode(self, card):
+        if "mode" in card:
+            return card["mode"]
+        if "Mode" in card:
+            return card["Mode"]
 
     def airtable(self):
         """List models available in AirTable Ersilia Model Hub base"""
@@ -110,7 +117,7 @@ class ModelCatalog(ErsiliaBase):
                 models += [repo]
         logger.info("Found {0} models".format(len(models)))
         return models
-
+     
     def hub(self):
         """List models available in Ersilia model hub repository"""
         mc = ModelCard()
@@ -122,8 +129,9 @@ class ModelCatalog(ErsiliaBase):
                 continue
             slug = self._get_slug(card)
             title = self._get_title(card)
-            R += [[model_id, slug, title]]
-        return CatalogTable(R, columns=["MODEL_ID", "SLUG", "TITLE"])
+            mode = self._get_mode(card)
+            R += [[model_id, slug, title,mode]]
+        return CatalogTable(R, columns=["MODEL_ID", "SLUG", "TITLE", "MODE"])
 
     def local(self):
         """List models available locally"""
@@ -137,9 +145,10 @@ class ModelCatalog(ErsiliaBase):
             card = mc.get(model_id)
             slug = self._get_slug(card)
             title = self._get_title(card)
-            R += [[model_id, slug, title]]
+            mode = self._get_mode(card)
+            R += [[model_id, slug, title, mode]]
         logger.info("Found {0} models".format(len(R)))
-        return CatalogTable(data=R, columns=["MODEL_ID", "SLUG", "TITLE"])
+        return CatalogTable(data=R, columns=["MODEL_ID", "SLUG", "TITLE", "MODE"])
 
     def bentoml(self):
         """List models available as BentoServices"""
