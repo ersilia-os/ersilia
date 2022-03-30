@@ -21,6 +21,9 @@ pp# Welcome to the Ersilia Model Hub!
 The [Ersilia Model Hub](https://airtable.com/shrUcrUnd7jB9ChZV) is the key project of the Ersilia Open Source Initiative. It is a free repository which contains Artificial Intelligence and Machine Learning (AI/ML) models. The aim is to provide user friendly models to scientists to aid their research and predict outcomes easily without requiring complex coding abilities.
 
 <p align='justify'>
+Currently, majority of the developed tools, including published and open-sourced, remain unusable to a vast majority of the scientific community who lack the necessary expertise. This is problematic especially in Low and Middle Income Country institutions with limited access to bioinformatic facilities or data science experts. This project aims to provide access to this expertise and support research into a variety of neglected and infectious diseases.
+
+<p align='justify'>
 The models embedded in the hub include established models as well as propriety models developed by the Ersilia team.
 </p>
 
@@ -31,7 +34,7 @@ The models embedded in the hub include established models as well as propriety m
 # Installation
 To set up the project on your local machine, you need to install a few third-party dependencies before proceeding with the installation of the Ersilia tool. 
 
-They include:-
+They include:
 | <b></b>     | <b></b>           
 | :------------------------ | :---------------------------- |
 | **`Python`** |
@@ -41,6 +44,7 @@ They include:-
 | **`Isaura data lake (Recommended)`**      |
 
 
+## Installation on MacOSX or Linux
 The steps for installing this project on a Linux or MacOSX are as follows: 
 
 - First install Python 3.7 upwards from the official [Python website](https://www.python.org/) to your local device
@@ -85,6 +89,16 @@ $ cd isaura
 $ pip install -e
 ```
 
+## Installation on Windows
+The Elrisia tool was optimized for a system with Ubuntu OS. For installation on a windows system, we recommend that Ubuntu is installed. This can be done very easily using the Windows Subsystem for Linux (WSL).
+
+
+WSL is a free, optional feature of Windows 10 that allows Linux programs to run on Windows. To install WSL, run Command Prompt as Administrator, then type the following command.
+```
+wsl --install
+```
+Once the Ubuntu terminal is up and running, follow the installation steps outlined for installation on a MacOSX or Linux system.
+
 
 For more detailed instructions, specific to your operating enviornment, please follow the instructions outlined in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).
 
@@ -97,23 +111,24 @@ Below is an overview of the Ersilia Model Hub
 ![systemic-diagram-of-elsilia-model-hub](https://2591732297-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-Mj44wxA7bU1hQH19m8I%2F-MjPA_JIOzuKGPtPDw1U%2F-MjPDmAAJkYPLJmKKSD1%2FErsilia_Hub-02.png?alt=media&token=8a876edc-c02e-400c-80c5-b6f3c4060c21)
 
 
-Select a model, for example `mycpermcheck`.
+## Usage steps
+First fetch the model of interest:
 ```
-ersilia fetch mycpermcheck
+ersilia fetch <name-of-model>
 ```
-Generate some example molecules, to be used as input.
+Generate some example molecules, to be used as input:
 ```
-ersilia example mycpermcheck -n 5 -f my_molecules.csv
+ersilia example <name-of-model> -n 5 -f my_molecules.csv
 ```
-Then, **serve** your model:
+Serve your model:
 ```
-ersilia serve mycpermcheck
+ersilia serve <name-of-model>
 ```
-And run the prediction **API**:
+Run the prediction API:
 ```
 ersilia api -i my_molecules.csv -o my_predictions.csv
 ```
-Finally, **close** the service when you are done.
+Finally, close the service when you are done.
 ```
 ersilia close
 ```
