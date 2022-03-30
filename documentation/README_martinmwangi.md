@@ -7,7 +7,7 @@
 ### Table of Contents:
 1. [Project Description](#project-description)
 2. [Installation Guide](#installation-guide)
-3. [Guidelines for onboarding of new contributors](#contribute)
+3. [Guidelines for onboarding of new contributors](#Guidelines for onboarding of new contributors)
 4. [Roadmap](#roadmap)
 5. [License and citation](#license-and-citation)
 6. [About us](#about-us)
