@@ -8,12 +8,16 @@ pp# Welcome to the Ersilia Model Hub!
 
 # Table of Contents:
 1. [Project Description](#project-description)
-2. [Installation](#installation)
-3. [Getting started](#getting-started)
-3. [Future development](#future-development)
-4. [Contribute](#contribute)
-5. [License and citation](#license-and-citation)
-6. [About us](#about-us)
+2. [Elrisia Model Hub](#ersilia-model-hub)
+3. [Installation](#installation)
+    - [Installation on MacOSX or Linux](#installation-on-macosx-or-linux)
+    - [Installation on Windows](#installation-on-windows)
+4. [Getting started](#getting-started)
+5. [Future development](#future-development)
+6. [Contribute](#contribute)
+7. [License and citation](#license-and-citation)
+8. [About us](#about-us)
+    
 
 # Project Description
 [Ersilia Open Source Initiative](https://ersilia.io) is a nonprofit organisation that is focused on the research into infectious diseases. We intend to fast-track the development of new medicines by utilizing artificial intelligence tools.
@@ -31,19 +35,33 @@ The models embedded in the hub include established models as well as propriety m
 * You can check out the available models at the [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 
 #
+# Ersilia Model Hub
+
+![systemic-diagram-of-elsilia-model-hub](https://2591732297-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-Mj44wxA7bU1hQH19m8I%2F-MjPA_JIOzuKGPtPDw1U%2F-MjPDmAAJkYPLJmKKSD1%2FErsilia_Hub-02.png?alt=media&token=8a876edc-c02e-400c-80c5-b6f3c4060c21)
+
+| <b>Attributes</b>     | <b>Description</b>           
+| :------------------------ | :---------------------------- |
+| **`Open Source`** |All the Ersilia assets are released under the MIT license. This enables the scientific community to review, contribute and improve our code. The advantage is the development of tools which have been validated more extensively than in the usual peer-review system. |
+| **`User friendly`**|Our tools are designed with scientists without complex coding expertise in mind, thus they are beginner friendly. Anyone can browse and make a choice from the collection of models based on their research interest and run predictions with ease.  |
+| **`Bioactivity Signatures`**|The models available in the hub are built upon a rich representation of molecules consisting of extensive experimental data including targets and side effect profiles, resulting in more clinically relevant and powerful predictions. |
+| **`Data driven`**|Ersilia technology achieves a state-of-the-art performance due to the integration of chemical, genomic and biomedical text data. Our AI tools are extensively trained using millions of data from scientific literature.|
+
+
+
+#
 # Installation
 To set up the project on your local machine, you need to install a few third-party dependencies before proceeding with the installation of the Ersilia tool. 
 
 They include:
 | <b></b>     | <b></b>           
 | :------------------------ | :---------------------------- |
-| **`Python`** |
-| **`Anaconda or Miniconda (optional)`**            |
-| **`Docker (Recommended)`**            |
-| **`Git or GitCLI`**            |
-| **`Isaura data lake (Recommended)`**      |
+| Python |
+| Anaconda or Miniconda (optional)            |
+| Docker (Recommended)            |
+| Git or GitCLI            |
+| Isaura data lake (Recommended)     |
 
-
+#
 ## Installation on MacOSX or Linux
 The steps for installing this project on a Linux or MacOSX are as follows: 
 
@@ -88,7 +106,7 @@ $ cd isaura
 -  install with pip (use -e for developer mode)
 $ pip install -e
 ```
-
+#
 ## Installation on Windows
 The Elrisia tool was optimized for a system with Ubuntu OS. For installation on a windows system, we recommend that Ubuntu is installed. This can be done very easily using the Windows Subsystem for Linux (WSL).
 
@@ -105,11 +123,6 @@ For more detailed instructions, specific to your operating enviornment, please f
 #
 # Getting Started
 Once Ersilia is successfully installed, you can search for your AI/ML models of interest in the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg). All available models are accessible through the [Ersilia Python package](https://github.com/ersilia-os/ersilia). 
-
-Below is an overview of the Ersilia Model Hub
-
-![systemic-diagram-of-elsilia-model-hub](https://2591732297-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-Mj44wxA7bU1hQH19m8I%2F-MjPA_JIOzuKGPtPDw1U%2F-MjPDmAAJkYPLJmKKSD1%2FErsilia_Hub-02.png?alt=media&token=8a876edc-c02e-400c-80c5-b6f3c4060c21)
-
 
 ## Usage steps
 First fetch the model of interest:
