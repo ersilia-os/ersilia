@@ -57,14 +57,14 @@ conda activate ersilia
 ```
 **Then, simply install the Ersilia Python package.**
 
-- clone from github
+- Clone from github
 
 ```
 git clone https://github.com/ersilia-os/ersilia.git
 cd ersilia
 ```
 
-- install with pip (use -e for developer mode)
+- Install with pip (use -e for developer mode)
 
 ```
 pip install -e .
