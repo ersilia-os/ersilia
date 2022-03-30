@@ -82,6 +82,7 @@ ersilia close
 ```
 ## contribute
 A small team of Ersilia staff and volunteers develops and maintains the Ersilia Model Hub, and any help is greatly appreciated! There are a number of ways you may help with the project: 
+
 1 Create a GitHub account (if you don't have one)
 
 2 Go through documentation on basic knowledge on how to use, write and contribute on GitHub , especially how to make a pull request and how to commit changes. You can find the video link below very helpful.
@@ -89,9 +90,9 @@ https://youtu.be/PQsJR8ci3J0.
 
 3 Go through the Ersilia's code of conduct and familiarize yourself with it. Please do ensure you adhere to the code of conduct during your contribution phase.
 
-4  When contributing to a project, the first step is to go to the project site and pick an issue that you'd want to work on and that fits your skill set. Before tackling larger, more difficult issues, as a first-time contributor, you should try to find something modest and reasonably simple to utilize as a pleasant entry into the project. On your first few contributions, don't try to go too deep!
+4  When contributing to a project, the first step is to go to the project site and pick an issue that you'd want to work on and that fits your skill set. Before tackling larger and more difficult issues as a first-time contributor, you should try to find something modest and reasonably simple to utilize as a pleasant entry into the project. On your first few contributions, don't try to go too deep!
 
- 5 If you see an issue you are interested in tackling, you can indicate interest in the comment section to be assigned that issue. You can also open issues you feel should be added.
+5 If you see an issue you are interested in tackling, you can indicate interest in the comment section to be assigned that issue. You can also open issues you feel should be added.
 
 6  After making a contribution ensure you record your contribution on the outreachy website. https://www.outreachy.org/apply/project-selection/
 
