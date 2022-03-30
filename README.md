@@ -56,11 +56,17 @@ conda create -n ersilia python=3.7
 conda activate ersilia
 ```
 **Then, simply install the Ersilia Python package.**
+
+- clone from github
+
 ```
-# clone from github
 git clone https://github.com/ersilia-os/ersilia.git
 cd ersilia
-# install with pip (use -e for developer mode)
+```
+
+- install with pip (use -e for developer mode)
+
+```
 pip install -e .
 ```
 **You should be done! Quickly check that the CLI works on your terminal.**
@@ -77,7 +83,7 @@ We highly recommend installation of the [Isaura](https://github.com/ersilia-os/i
 git clone https://github.com/ersilia-os/isaura.git
 cd isaura
 ```
--Install with pip (use **-e** for developer mode)
+- Install with pip (use **-e** for developer mode)
 ```
 pip install -e .
 ```
