@@ -1,3 +1,5 @@
+<div id="top"></div>
+
 # Welcome to the Ersilia Model Hub!
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -21,6 +23,7 @@ The models embedded in the hub include both models published in the literature (
 
 * Read more about the project better at the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 # Getting started
 Follow the **installation instructions** from the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).
@@ -49,6 +52,7 @@ ersilia close
 ```
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 # Contribute
 The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! There are several ways in which you can contribute to the project:
@@ -58,18 +62,22 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 - If there is a third-party model you have identified and would like to see it in the Hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 # Roadmap
 We are working to grow the Hub organically and responding to our users needs. Here are the details of the next features to come, stay tuned!
 1. Deployment for Windows System (expected: February 2022)
 2. Automated third-party model contributions (expected: March 2022)
 3. Possibility to run lite models online (expected: May 2022)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 # License and citation
 This repository is open-sourced under the MIT License.
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 # About us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
 You can support us via [Open Collective](https:/opencollective.com/ersilia).
+<p align="right">(<a href="#top">back to top</a>)</p>
