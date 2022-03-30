@@ -27,9 +27,8 @@ The models embedded in the hub include both models published in the literature (
 
 ![image-1](https://user-images.githubusercontent.com/63330165/160850205-9d269457-06ad-46b7-9aaa-7a934c2fb47c.png)
 
-
-* Read more about the project better at the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
-* Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
+- **Read more about the project better at the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)**</br>
+- **Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)**
 
 # Getting started
 
