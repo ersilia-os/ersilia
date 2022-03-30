@@ -7,8 +7,9 @@ For now, Ersilia does not work natively on Windows operating systems. To use Ers
 There are two ways you can use a Linux operating system in Windows:
 
 - You can use [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/install) to install a Linux distribution. (Ubuntu is the default for Windows Subsystem for Linux). 
+You can also use [Visual studio code](https://code.visualstudio.com/docs/remote/wsl) with Windows Subsystem for Linux.
 
-**Note: You can also use [Visual studio code](https://code.visualstudio.com/docs/remote/wsl) with Windows Subsystem for Linux.**
+**Note: Windows Subsystem for Linux is not available on Windows 8.1 and previous versions.**
 
 - Or you can download a Virtual Machine for Windows hosts ([Oracle Virtualbox](https://www.virtualbox.org/wiki/Downloads) or [VMWare Workstation Player](https://www.vmware.com/products/workstation-player.html)) and download a Linux distribution (for example [Ubuntu](https://ubuntu.com/download/desktop)) to enable you use the Linux operating system in Windows.
 
