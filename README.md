@@ -1,4 +1,4 @@
-M<div align="center">
+<div align="center">
 
 # Welcome to the **Ersilia Model Hub**!
 
