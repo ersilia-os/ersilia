@@ -96,7 +96,7 @@ https://youtu.be/PQsJR8ci3J0.
 
 6  After making a contribution ensure you record your contribution on the outreachy website. https://www.outreachy.org/apply/project-selection/
 
-7  If you have developed a model and would like to include it in the Hub to increase its visibility and usability, please https://ersilia.io/ or open an issue. We are currently working on an automated contribution tool to facilitate the process.
+7  If you have developed a model and would like to include it in the Hub to increase its visibility and usability, please contact us or open an issue. We are currently working on an automated contribution tool to facilitate the process.
 
 8 If you are a scientist with a cool dataset, also contact us or open an issue as we might be interested in developing a model based on the data!
 
