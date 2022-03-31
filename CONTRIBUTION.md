@@ -24,6 +24,28 @@ https://youtu.be/PQsJR8ci3J0.
 
 9  If there is a third-party model you have identified and would like to see it in the Hub, open an issue with the relevant information and we will get back to you as soon as possible.
 
+## How to Contribute 
+
+1. Fork this repo, and then clone it:
+```bash
+$ git clone github.com:your-username/ersilia.git
+$ cd ersilia/
+```
+
+2. Create a new branch
+```bash
+$ git checkout -b my-new-branch
+```
+3. Make your change(s).
+
+4. Commit the change(s) and push to your fork
+```bash
+$ git add .
+$ git commit -m "This is my first contribution"
+$ git push -u origin my-new-branch
+```
+5. Then, submit a pull request.
+
 
 
 # Writing Pull Requests
