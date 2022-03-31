@@ -25,34 +25,105 @@ The models embedded in the hub include both models published in the literature (
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-# Getting started
-Follow the **installation instructions** from the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).
+# Overview
 
-Once Ersilia is installed, you can **browse models** in the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg).
-
-Select one model. For example `chemprop-antibiotic`. You can **fetch** your model with the Ersilia CLI:
-```
-ersilia fetch chemprop-antibiotic
-```
-Generate a few (5) example molecules, to be used as input. Molecules are typically expressed in SMILES format.
-```
-ersilia example chemprop-antibiotic -n 5 -f my_molecules.csv
-```
-Then, **serve** your model:
-```
-ersilia serve chemprop-antibiotic
-```
-And run the prediction **API**:
-```
-ersilia api -i my_molecules.csv -o my_predictions.csv
-```
-Finally, **close** the service when you are done.
-```
-ersilia close
-```
-
-Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
+![.](https://user-images.githubusercontent.com/63330165/160850205-9d269457-06ad-46b7-9aaa-7a934c2fb47c.png)
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+
+# Prerequisites
+
+Please make sure you have the installation of below libraries on your machine.
+1.	[Python 3.7 and above](https://www.python.org/)
+2.	[Docker](https://www.docker.com/)
+3.	[Conda](https://www.docker.com/) / [Anaconda](https://docs.anaconda.com/anaconda/install/index.html) / [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
+4.	[Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Git LFS](https://git-lfs.github.com/)
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+
+#  Installation Instruction
+
+### For Windows
+We recommend that you install Ubuntu on your Windows. This can be now done very easily with WSL. You will need at least Windows 10.
+
+	Open a Power Shell with Admin permissions and type:
+```bash
+  1.	wsl –install
+```
+
+
+	Then simply install the Ubuntu terminal on Windows.
+
+	Inside the Ubuntu terminal. Open a terminal. The best is to set up a Conda environment.
+```bash
+1.    # create a conda environment
+2.	  conda create -n ersilia python=3.7
+3.	  # activate the environment
+4.    conda activate ersilia
+```
+
+
+	Then, simply install the Ersilia Python package.
+```bash
+1.	  # clone from github
+2.    git clone https://github.com/ersilia-os/ersilia.git
+3.	  cd ersilia
+4.    # install with pip (use -e for developer mode)
+5.    pip install -e .
+```
+
+
+	You should be done! Quickly check that the CLI works on your terminal.
+```bash
+1.    # see ersilia CLI options
+2.	  ersilia --help
+
+```
+
+
+### For MacOSX and Linux
+
+	Open a terminal. The best is to set up a Conda environment.
+```bash
+1.	  # create a conda environment
+2.	  conda create -n ersilia python=3.7
+3.	  # activate the environment
+4.	  conda activate ersilia
+
+```
+
+
+	Then, simply install the Ersilia Python package.
+```bash
+1.	  # clone from github
+2.    git clone https://github.com/ersilia-os/ersilia.git
+3.    cd ersilia
+4.    # install with pip (use -e for developer mode)
+5.    pip install -e .
+
+```
+
+
+	You should be done! Quickly check that the CLI works on your terminal.
+```bash
+1.    # see ersilia CLI options
+2.	  ersilia --help
+
+```
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+# Features
+
+| Feature           | Description                                                              |
+| ----------------- | ------------------------------------------------------------------ |
+| Bioactivity signatures | Tools are designed to facilitate the use of AI/ML tools. Anyone even from non-coding background can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing even a single line of code. |
+| Data driven | Ersilia technology achieves state-of-the-art performance thanks to the integration of chemical, genomic and biomedical text data.|
+| User friendly platform | Our tools are designed to facilitate the use of AI/ML tools and platform is user friendly, it is beginners-friendly as well. |
+| Open source | All our assets are released under the MIT license. This means the anyone in ersilia community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system. |
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 # Contribute
 The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! There are several ways in which you can contribute to the project:
