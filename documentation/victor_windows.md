@@ -4,7 +4,7 @@ INSTALLATION STEPS FOR ERSILIA USING WINDOWS
 The Ersilia model cannot be installed on windows. It can only be installed in a linux based operating system. One of the best ways to do this is to install Ubuntu on windows with the aid of a virtual box. They steps below shows how to install Ubuntu on windows which will enable us install the Ersilia model.
 
 Step 1:
-Download and install the [Oracle Virtualbox](https://www.virtualbox.org/wiki/Downloads).
+Download and install the [Oracle Virtualbox](https://www.oracle.com/in/virtualization/technologies/vm/downloads/virtualbox-downloads.html).
 
 Step 2:
 Download a Linux distribution for example [Ubuntu](https://ubuntu.com/download/desktop) to enable you use the Linux operating system in Windows. Don’t install yet.
