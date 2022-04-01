@@ -1,5 +1,7 @@
 import click
 import os
+import time
+import csv
 
 from ...utils import tmp_pid_file
 from . import ersilia_cli
@@ -30,6 +32,37 @@ def serve_cmd():
         echo(
             ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"
         )
+
+        # update last usage time of model in fetched_models.txt, every time it 'serves' 
+
+        ts_str = str(time.time())
+
+        with open("fetched_models.txt") as infile:
+            models = dict(csv.reader(infile))
+        infile.close()
+        
+        if mdl.slug in models.keys():
+            models[mdl.slug] = ts_str
+
+        # delete all models older than 5 minutes
+        ts = time.time()
+        for m_name in models: 
+            if( ts - float(models[m_name])) > 300 :
+                print("Deleting Model " + m_name + "\n")
+                del_cmd = 'ersilia delete ' + m_name
+                test_op = os.system(del_cmd)
+                # to delete entry in the maintained dictionary
+                models[m_name] = "null"       
+            
+        # delete entries with "null" value
+        models = {key:val for key, val in models.items() if val != "null"}
+        
+        # write the maintained dictionary to fetched_models.txt file
+        with open('fetched_models.txt', 'w') as f:
+            for key, values in models.items():
+                f.write(f"{key},{values}\n")
+
+
         echo("")
         echo("   URL: {0}".format(mdl.url), fg="yellow")
         echo("   PID: {0}".format(mdl.pid), fg="yellow")

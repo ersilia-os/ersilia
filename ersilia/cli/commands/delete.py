@@ -1,4 +1,5 @@
 import click
+import csv
 
 from . import ersilia_cli
 from .. import echo
@@ -29,6 +30,15 @@ def delete_cmd():
                 ":collision: Model {0} deleted successfully!".format(model_id),
                 fg="green",
             )
+
+            # Remove deleted model's entry from fetched_models.txt
+            with open("fetched_models.txt") as infile:
+                models = dict(csv.reader(infile))
+            infile.close()
+            del models[model]
+            with open('fetched_models.txt', 'w') as f:
+                for key, values in models.items():
+                    f.write(f"{key},{values}\n")
         else:
             echo(
                 ":person_tipping_hand: Model {0} is not available locally. No delete is necessary".format(

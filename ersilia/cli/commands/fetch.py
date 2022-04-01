@@ -1,4 +1,5 @@
 import click
+import time
 
 import os
 from . import ersilia_cli
@@ -39,3 +40,14 @@ def fetch_cmd():
         mf = ModelFetcher(mode=mode, dockerize=dockerize)
         _fetch(mf, model_id)
         echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
+
+        # current timestamp 
+        ts = time.time()
+
+        # write model_name and timestamp to file whenever a new model gets fetched
+        with open("fetched_models.txt","a") as file:
+            file.write(model)
+            file.write(',')
+            file.write(str(ts))
+            file.write('\n')
+
