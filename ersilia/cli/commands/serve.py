@@ -44,20 +44,15 @@ def serve_cmd():
         if mdl.slug in models.keys():
             models[mdl.slug] = ts_str
 
-        # delete all models older than 5 minutes
+        # delete all models older than 30 days
         ts = time.time()
         for m_name in models: 
-            if( ts - float(models[m_name])) > 300 :
+            if( ts - float(models[m_name])) > 2592000 :
                 print("Deleting Model " + m_name + "\n")
                 del_cmd = 'ersilia delete ' + m_name
                 test_op = os.system(del_cmd)
-                # to delete entry in the maintained dictionary
-                models[m_name] = "null"       
-            
-        # delete entries with "null" value
-        models = {key:val for key, val in models.items() if val != "null"}
         
-        # write the maintained dictionary to fetched_models.txt file
+        # write the dictionary to fetched_models.txt file
         with open('fetched_models.txt', 'w') as f:
             for key, values in models.items():
                 f.write(f"{key},{values}\n")
