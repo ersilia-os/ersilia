@@ -1,7 +1,5 @@
 # Outreachy Documentation Project: <ApplicantName>
 Applicant: <applicant github handle>
-
-Mentor: @GemmaTuron
   
 Welcome to the Ersilia Open Source Initiative. This issue will serve to track all your contributions for the project “Improve the documentation and outreach material of the Ersilia Model Hub”.
   
@@ -20,7 +18,7 @@ This project can be adapted to the applicants interests, please focus on the typ
 - [ ] Incorporate feedback from the mentor
 ---
 ### Writing dissemination material
-- [ ] Read the Strategic plan 2021-2023 for Ersilia and create a 1-page blogpost with the main points
+- [ ] Read the [Strategic plan 2021-2023](https://ersilia.gitbook.io/ersilia-wiki/) for Ersilia and create a 1-page blogpost with the main points
 - [ ] Comment under this issue with a link to the blogpost (a google docs for example)
 - [ ] Incorporate feedback from the mentor
 - [ ] Choose your own topic related to Ersilia (AI/ML for biomedical research, neglected diseases, drug discovery…) and write a 1-page blogpost to communicate to a non-expert audience
@@ -30,13 +28,13 @@ This project can be adapted to the applicants interests, please focus on the typ
 - [ ] Create a template short Newsletter (1 paragraph) to send every month to our community (funders, users, contributors). It should mention metrics (models in the hub, number of users, funding…), thank you etc 
 ---
 ### Technical skills (required for the tutorial only)
-- [ ] Install the Ersilia Model Hub
+- [ ] [Install](https://ersilia.gitbook.io/ersilia-book/quick-start/installation) the Ersilia Model Hub
 - [ ] Test one model
 - [ ] Add a screenshot under this issue showing the model running in your computer
 ---
 ### Graphic material
-- [ ] Read the Ersilia Brand Guidelines
-- [ ] Read “Why Ersilia?”
+- [ ] Read the [Ersilia Brand Guidelines](https://medium.com/ersiliaio/ersilia-open-source-initiative-brand-guidelines-130fe53104f5)
+- [ ] Read [“Why Ersilia?”](https://ersilia.gitbook.io/ersilia-wiki/)
 - [ ] Create one image / slide to explain Ersilia’s mission and vision
 - [ ] Link to the image/slide as a comment under this issue
 - [ ] Incorporate feedback from the mentor
@@ -45,7 +43,7 @@ This project can be adapted to the applicants interests, please focus on the typ
 - [ ] Incorporate feedback from the mentor
 ---
 ### Scientific content
-- [ ] Check the models available in the Hub
+- [ ] Check the models available in the [Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg)
 - [ ] Select one model from the list and write a technical card (what is the model for, what input, which data was used to create it, what kind of ML algorithm uses…) for it
 - [ ] Add your card as a comment to this issue
 - [ ] Search the scientific literature and suggest 3 new models (comment in this issue) that would be relevant to incorporate in the Hub.
