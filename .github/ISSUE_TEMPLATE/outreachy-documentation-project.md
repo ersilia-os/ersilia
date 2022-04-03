@@ -11,9 +11,8 @@ Applicant: <applicant github handle>
   
 Welcome to the Ersilia Open Source Initiative. This issue will serve to track all your contributions for the project “Improve the documentation and outreach material of the Ersilia Model Hub”.
   
-Please tick the tasks as you complete them. To make a final application it is *not* required to have completed all tasks. Only the *Initial Steps* and *Community* sections are REQUIRED. The tasks are not ordered from more to less important, they are simply related to different skills. Start where you feel most comfortable.
-  
-This project can be adapted to the applicants interests, please focus on the type of tasks that you prefer / have better skills / would like to work on as an intern.
+Please tick the tasks as you complete them. To make a final application it is *not* required to have completed all tasks. Only the *Initial Steps* and *Community* sections are REQUIRED. The tasks are not ordered from more to less important, they are simply related to different skills. Start where you feel most comfortable. This project can be adapted to the applicants interests, please focus on the type of tasks that you prefer / have better skills / would like to work on as an intern.
+
 ---
 ### Initial steps:
 - [ ] Record your application for the project in the outreachy website referencing this issue. Please make sure to select the right project on the website.
