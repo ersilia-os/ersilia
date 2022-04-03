@@ -43,6 +43,9 @@ Please tick the tasks as you complete them. To make a final application it is no
 - [ ] Search the scientific literature and suggest 3 new models (comment in this issue) that would be relevant to incorporate in the Hub.
 ---
 ### Other
+If you have interest in working on related topics, or have new suggestions, please do the following
+- [ ] Add a comment in this issue with your new idea, tagging the mentor 
+- [ ] Get feedback from the mentor and act accordingly
 - [ ] Link in the comments any other PR you have contributed to.
 ---
 ### Community
@@ -53,6 +56,3 @@ Please tick the tasks as you complete them. To make a final application it is no
 - [ ] I have answered all comments from mentors and contributors
 - [ ] All PR or issues assigned to me are complete
 - [ ] I have submitted my final application to the project
-
-
-If you want to suggest other tasks, create an issue and link it under a comment in this one.
