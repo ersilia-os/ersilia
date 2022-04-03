@@ -8,7 +8,8 @@ Read our [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/NEW
 As a new contributor, you might find difficulties in understanding where to start. Don't worry! We got you.
 
 In the interest of getting more new people involved we have issues marked as [good-first-issues](https://github.com/ersilia-os/ersilia/labels/good%20first%20issue). These are the issues that have a smaller scope, and are great in order to get started with.
-<img src ="assets\good first issue.jpg" alt="">
+
+<img src ="assets\good first issue.png" alt="">
 
 The good-first-issues should also provide you details on how to get things resolved or how to proceed. If you find it is missing or incomplete please tag the person who created the issue and let them know.
 
