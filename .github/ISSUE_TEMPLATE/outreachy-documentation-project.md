@@ -38,6 +38,7 @@ Please tick the tasks as you complete them. To make a final application it is *n
 - [ ] [Install](https://ersilia.gitbook.io/ersilia-book/quick-start/installation) the Ersilia Model Hub
 - [ ] Test one model
 - [ ] Add a screenshot under this issue showing the model running in your computer
+- [ ] Write a docstring for the ErsiliaModel class. Use the Google Python Style guide. Paste the docstring as a comment below (do not use a PR).
 ---
 ### Graphic material
 - [ ] Read the [Ersilia Brand Guidelines](https://medium.com/ersiliaio/ersilia-open-source-initiative-brand-guidelines-130fe53104f5)
@@ -59,9 +60,13 @@ Please tick the tasks as you complete them. To make a final application it is *n
 - [ ] Look up two other projects and comment on their issues with feedback on one of their tasks
 - [ ] If you have feedback from your peers, answer it in this issue.
 ---
+### Other
+If you have interest in working on related topics, or have new suggestions, please do the following
+- [ ] Add a comment in this issue with your new idea, tagging the mentor 
+- [ ] Get feedback from the mentor and act accordingly
+- [ ] Link in the comments any other PR you have contributed to.
+---
 ### Final application
 - [ ] I have answered all comments from mentors and contributors
 - [ ] All PR or issues assigned to me are complete
 - [ ] I have submitted my final application to the project
-
-If you want to suggest other tasks, create an issue and link it under a comment in this one.
