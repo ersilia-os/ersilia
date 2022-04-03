@@ -32,32 +32,6 @@ def serve_cmd():
         echo(
             ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"
         )
-
-        # update last usage time of model in fetched_models.txt, every time it 'serves' 
-
-        ts_str = str(time.time())
-
-        with open("fetched_models.txt") as infile:
-            models = dict(csv.reader(infile))
-        infile.close()
-        
-        if mdl.slug in models.keys():
-            models[mdl.slug] = ts_str
-
-        # delete all models older than 30 days
-        ts = time.time()
-        for m_name in models: 
-            if( ts - float(models[m_name])) > 2592000 :
-                print("Deleting Model " + m_name + "\n")
-                del_cmd = 'ersilia delete ' + m_name
-                test_op = os.system(del_cmd)
-        
-        # write the dictionary to fetched_models.txt file
-        with open('fetched_models.txt', 'w') as f:
-            for key, values in models.items():
-                f.write(f"{key},{values}\n")
-
-
         echo("")
         echo("   URL: {0}".format(mdl.url), fg="yellow")
         echo("   PID: {0}".format(mdl.pid), fg="yellow")
@@ -67,3 +41,14 @@ def serve_cmd():
         apis = mdl.get_apis()
         for api in apis:
             echo("   - {0}".format(api), fg="blue")
+            
+        # update last usage time of model in fetched_models.txt, every time it 'serves' 
+        ts_str = str(time.time())
+        with open("fetched_models.txt") as infile:
+            models = dict(csv.reader(infile))
+        infile.close()
+        if mdl.slug in models.keys():
+            models[mdl.slug] = ts_str
+        with open('fetched_models.txt', 'w') as f:
+            for key, values in models.items():
+                f.write(f"{key},{values}\n")
