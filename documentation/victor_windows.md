@@ -77,7 +77,7 @@ Click on your profile to enter your details and open the Ubuntu OS. There you ha
 
 
 
-### Install dependencies
+### Installation of dependencies
 
 Dependencies are software packages or programs that’s essential for a particular code or command to work. You will need to install the following dependencies in your Ubuntu OS so that our Ersilia model could work. It doesn't matter if you already have the dependencies installed in windows, you need to install them again in the Ubuntu OS.
 
