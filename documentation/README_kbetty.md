@@ -12,15 +12,15 @@
 1. [Project Description](https://github.com/ersilia-os/ersilia#project-description)
 2. [Getting started](https://github.com/ersilia-os/ersilia#getting-started)
 3. [Contribute](https://github.com/ersilia-os/ersilia#contribute)
-  i. Code
-  ii. Code Reviews
-5. [Documentation]()
- i. Developer Guides
- ii. Website
-7. [Roadmap](https://github.com/ersilia-os/ersilia#roadmap)
-8. [License and citation](https://github.com/ersilia-os/ersilia#license-and-citation)
-9. Support
-10. [About us](https://github.com/ersilia-os/ersilia#about-us)
+   1. Code
+   2. Code Reviews
+4. [Documentation]()
+   1. Developer Guides
+   2. Website
+5. [Roadmap](https://github.com/ersilia-os/ersilia#roadmap)
+6. [License and citation](https://github.com/ersilia-os/ersilia#license-and-citation)
+7. Support
+8. [About us](https://github.com/ersilia-os/ersilia#about-us)
 
 # Project Description
 The Ersilia Model Hub is the main project of the [Ersilia Open Source Initiative](https://ersilia.io). The aim is to provide a platform for a user-friendly deployment of AI/ML models, where scientists can browse through the assets, identify those which is relevant to their research and obtain predictions without the need of coding expertise. Currently, most of the tools developed, even when published and fully open-sourced, remain unusable by a large majority of the scientific community who does not have the necessary expertise. This gap becomes even larger in Low and Middle Income Country institutions where access to bioinformatic facilities or data science experts are scarce. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
