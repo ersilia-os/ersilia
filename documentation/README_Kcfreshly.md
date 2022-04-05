@@ -36,10 +36,6 @@ The models embedded in the hub include both models published in the literature (
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 
 ## Ersilia Overview
-![Screenshot (33)](https://user-images.githubusercontent.com/95097508/160673917-7942a3e8-0b74-4577-b481-ca84a2b51572.png)
-
-
-#### Ersilia is faster in drug discovery compared to coventional methods
 
 ![Screenshot (26)](https://user-images.githubusercontent.com/95097508/160673091-3e4e0102-9c71-4f4e-90f0-76c09ee9e523.png)
 
@@ -51,14 +47,10 @@ The models embedded in the hub include both models published in the literature (
 | Feature | Description |
 | --- | --- |
 | Data driven | Ersilia technology achieves state-of-the-art performance thanks to the integration of chemical, genomic and biomedical text data. Our AI tools are trained on millions of data points collected from the scientific literature and are available at no cost. |
-| Bioactivity signatures | Our tools are designed to facilitate the use of AI/ML tools. Scientists can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing a single line of code. |
+| Bioactivity signatures | The Ersilia Hub Model uses the Chemical Checker Ersilia's backbone technology developed in patrick aloy lab, IRB Barcelonia. The Chemical Checker signatures facilitate the conversion of bioactivity data to a format that is readily amenable to machine learning methods. |
 | User friendly platform | Our tools are designed to facilitate the use of AI/ML tools. Scientists can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing a single line of code. |
 | Open source | All our assets are released under a permissive open source license. This means the scientific community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system. |
-<p align="right">(<a href="#top">back to top</a>)</p>
 
-# Technology
-The Ersilia Hub Model uses the Chemical Checker Ersilia's backbone technology developed in patrick aloy lab, IRB Barcelonia.
-The Chemical Checker encodes chemical information and biological information of the model, it encodes chemical and biological information of this model molecules and represent them in numerical vector so that a computer can analyse.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # Getting Started
@@ -78,39 +70,39 @@ Please make sure you have the right installation of python and the other librari
 **Open a terminal. The best is to set up a Conda environment.**
 
 ```
-1 #create a [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) environment
-2 conda create -n ersilia [Python 3.7](https://www.python.org/)
-3 #activate the environment
-4 conda activate ersilia
+#create a Conda environment
+conda create -n ersilia Python 3.7
+#activate the environment
+conda activate ersilia
 ```
 **Then, simply install the Ersilia Python package.**
 ```
-1 #clone from github
-2 https://github.com/ersilia-os/ersilia.git
-3 cd ersilia
-4 #install with pip (use -e for developer mode)
-5 pip install -e .
+#clone from github
+$ git clone https://github.com/ersilia-os/ersilia.git
+$ cd ersilia
+#install with pip (use -e for developer mode)
+$ pip install -e .
 ```
 **You should be done! Quickly check that the CLI works on your terminal.**
 ```
-1 #see ersilia CLI options
-2 ersilia --help
+#see ersilia CLI options
+$ ersilia --help
 ```
 ## The Isaura data lake
 We highly recommend installation of the[Python 3.7](https://github.com/ersilia-os/isaura) data lake. With Isaura, you will be able to cache your model predictions (i.e. store them in your local computer). Isaura is a relatively light Python package:
 ```
-1 #clone from github
-2 git clone https://github.com/ersilia-os/isaura.git
-3 cd isaura
-4 #install with pip (use -e for developer mode)
-5 pip install -e
+#clone from github
+$ git clone https://github.com/ersilia-os/isaura.git
+$ cd isaura
+#install with pip (use -e for developer mode)
+$ pip install -e
 ```
 ## Install on Windows
 >We are not testing Windows installation consistently. If you encounter problems, please reach out to us at hello@ersilia.io.
 We recommend that you install Ubuntu on your Windows machine. This can be now done very easily with WSL. You will need at least Windows 10.
 Open a Power Shell with Admin permissions and type:
 ```
-1 wsl --install
+wsl --install
 ```
 Then simply install the [Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6#activetab=pivot:overviewtab) terminal on Windows.
 Inside the Ubuntu terminal, you can now follow the installation instructions [above](https://github.com/ersilia-os/ersilia###Install-on-Linux-and-MacOSX).
@@ -123,36 +115,36 @@ Below you can find a few snippets that can help you install dependencies in a Ub
 ### The gcc compiler
 **Probably you have the gcc compiler installed already. Just in case:**
 ```
-1 sudo apt install build-essential
+sudo apt install build-essential
 ```
 ### Conda package manager
 If you don't have the Conda package manager yet, we suggest you install Miniconda:
 ```
-1 mkdir -p ~/miniconda3
-2 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-3 bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-4 rm -rf ~/miniconda3/miniconda.sh
-5 ~/miniconda3/bin/conda init bash
-6 ~/miniconda3/bin/conda init zsh
+mkdir -p ~/miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+rm -rf ~/miniconda3/miniconda.sh
+~/miniconda3/bin/conda init bash
+~/miniconda3/bin/conda init zsh
 ```
 ### GitHub CLI
 Once Conda is installed (see above), you can use it to install the fantastic GitHub CLI:
 ```
-1 conda install gh -c conda-forge
+conda install gh -c conda-forge
 ```
 Use the GitHub CLI to login. This may be helpful if you have contributor permissions at Ersilia. Type:
 ```
-1 gh auth login
+gh auth login
 ```
 And then follow the instructions.
 ### Git LFS
 Git Large File Storage (LFS) can be installed from Conda as well:
 ```
-1 conda install git-lfs -c conda-forge
+conda install git-lfs -c conda-forge
 ```
 Activate Git LFS:
 ```
-1 git-lfs install
+git-lfs install
 ```
 </details>
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -163,76 +155,83 @@ We provide a command-line interface (CLI) to interact with the [Ersilia Model Hu
 
 To check the available commands, simply type:
 ```
-1 #list available commands
-2 ersilia --help
+#list available commands
+ersilia --help
 ```
 ## Browse the model catalog
 You can explore our catalog of models. The following will return a list of models currently available in our remote repositories.
 ```
-1 #catalog of models
-2 ersilia catalog
+#catalog of models
+ersilia catalog
 ```
 ## Fetch model and install it locally
 The first step is to download the model to your local device and install it along with its dependencies. By default, a `~/eos` directory (for Ersilia Open Source) will be created in your `HOME`. This folder will contain all fetched models along with additional files to manage the AI/ML content available locally.
 
 To download and install the model, simply use the `fetch` command:
 ```
-1 #fetch model from remote repository
-2 ersilia fetch <model>
+#fetch model from remote repository
+ersilia fetch <model>
 ```
 ## Serve model
 Once the model has been fetched, it should be ready to be used. A model in the [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP) can be thought of as a set of APIs. You can serve the model like this:
 ```
-1 ersilia serve <model>
+ersilia serve <model>
 ```
 # Usage
 Let's consider the chemprop-antibiotic as an example. First you need to fetch your model with the Ersilia CLI as shown above:
 ## Make predictions
 ```
-1 ersilia fetch chemprop-antibiotic
+ersilia fetch chemprop-antibiotic
 ```
 Generate a few (5) example molecules, to be used as input. Molecules are typically expressed in SMILES format.
 ```
-1 ersilia example chemprop-antibiotic -n 5 -f my_molecules.csv
+ersilia example chemprop-antibiotic -n 5 -f my_molecules.csv
 ```
 Then, serve your model:
 ```
-1 ersilia serve chemprop-antibiotic
+ersilia serve chemprop-antibiotic
 ```
 And run the prediction API:
 ```
-1 ersilia api -i my_molecules.csv -o my_predictions.csv
+ersilia api -i my_molecules.csv -o my_predictions.csv
 ```
 Finally, close the service when you are done.
 ```
-1 ersilia close
+ersilia close
 ```
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
 
 ## Close model
 Once you are done with predictions, it is advised to stop the model server:
 ```
-1 #close model
-2 ersilia close
+#close model
+ersilia close
 ```
 ## Delete model
 If you are sure you don't want to use a model anymore, you may want to remove it from your computer. This includes deleting all model files and specific dependencies:
 ```
-1 #delete model
-2 ersilia delete chemprop-antibiotic
+#delete model
+ersilia delete chemprop-antibiotic
 ```
 <p align="right">(<a href="#top">back to top</a>)</p>
-# How To Use Ersilia App
+
+# How to Use Ersilia App
 **The Ersilia app has one of the best user friendly environment for its users, scientist need no coding experience to find models that fit their works.
 User can easily browse through the available models and pick their choice.**
+
+<br/>
+
 ![Screenshot (35)](https://user-images.githubusercontent.com/95097508/160711451-498e3ae4-f526-42f3-a526-7e8802984a75.png)
 
+<br/>
 
 ### Input the intended molecules. See image below 
 ![Screenshot (31)](https://user-images.githubusercontent.com/95097508/160709374-5c677aed-c7ba-499f-b771-352b80e0e1a5.png)
 
 **If it is an active molecule, it will display active, else it will display inactive.**
+
 <p align="right">(<a href="#top">back to top</a>)</p>
+
 # Contribute
 
 The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! There are several ways in which you can contribute to the project:
@@ -242,6 +241,7 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 - If there is a third-party model you have identified and would like to see it in the Hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # Roadmap
@@ -251,14 +251,19 @@ Here a detail of the next features to come, stay tuned!
 1. Deployment for Windows System (expected: February 2022)
 2. Automated third-party model contributions (expected: March 2022)
 3. Possibility to run lite models online (expected: May 2022)
+ 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
 # License and Citation
 This repository is open-sourced under the MIT License. Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
+
 # About Us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
 You can support us via [Open Collective](https://github.com/opencollective.com/ersilia).
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
