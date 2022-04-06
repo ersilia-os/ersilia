@@ -60,7 +60,7 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
 
 # Roadmap
-We are working to grow the Hub organically and responding to our users needs. Here a detail of the next features to come, stay tuned!
+We are working to grow the Hub organically and responding to our users needs. Here are details of the next features to come, stay tuned!
 1. Deployment for Windows System (expected: February 2022)
 2. Automated third-party model contributions (expected: March 2022)
 3. Possibility to run lite models online (expected: May 2022)
