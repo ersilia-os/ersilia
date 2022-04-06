@@ -5,11 +5,11 @@ The Ersilia model cannot be installed on windows. It can only be installed in a 
 
 They steps below shows how to install Ubuntu on windows which will enable us install the Ersilia model.
 
-### Installation of Oracle virtual box
+## Installation of Oracle virtual box
 
 Download and install the [Oracle Virtualbox](https://www.virtualbox.org/wiki/Downloads).
 
-### Installation of Ubuntu
+## Installation of Ubuntu
 
 1 Download a Linux distribution for example [Ubuntu](https://ubuntu.com/download/desktop) to enable you use the Linux operating system in Windows. Don’t install yet.
 
@@ -77,7 +77,7 @@ Click on your profile to enter your details and open the Ubuntu OS. There you ha
 
 
 
-### Installation of dependencies
+## Installation of dependencies
 
 Dependencies are software packages or programs that’s essential for a particular code or command to work. You will need to install the following dependencies in your Ubuntu OS so that our Ersilia model could work. It doesn't matter if you already have the dependencies installed in windows, you need to install them again in the Ubuntu OS.
 
@@ -97,7 +97,7 @@ Install the version control tool [Git](https://git-scm.com/download/linux) to be
 
 Install [Docker]( https://runnable.com/docker/install-docker-on-linux) on Ubuntu. Docker helps all AI/ML programs to run efficiently.
 
-### Installation of Ersilia
+## Installation of Ersilia
 
 After you are done installing the dependencies, proceed to install Ersilia. Navigate to the Ubuntu terminal and run the following commands:
 1. Create and activate Ersilia environment
