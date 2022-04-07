@@ -1,4 +1,4 @@
-<div align="center">
+<div id="top" align="center">
 
    <a href="https://ersilia.io/" target="_blank"><img src="https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png" alt="Ersilia logo"></a>
     <br />
@@ -19,14 +19,18 @@
 </div>
 <br>
 
-## Now the big question is , What is Ersilla Model Hub 🤔 and how is it realated to The Ersilia Open Source ? 
+# Now the big question is , What is Ersilla Model Hub 🤔 and how is it realated to The Ersilia Open Source ? 
 
-Let's firstly understand about **Ersilla Model Hub**, So Ersilia Model Hub is a free, online, open-source platform where scientists can browse through a catalogue of
+<h4>
+   Let's firstly understand about **Ersilla Model Hub**, So Ersilia Model Hub is a free, online, open-source platform where scientists can browse through a catalogue of
 AI/ML models, select the ones that are relevant to their research and run online predictions without the need to write a single line of code. We are gathering, 
-in a single resource, two classes of models.
-
-***It is one of the largest repository of AI/ML models for Global Health.Our platform is aimed at helping researchers identify
-drug candidates for orphan and neglected diseases, design molecules de novo, understand mechanisms of action or anticipate adverse side effects.***
+in a single resource, two classes of models. 
+   
+  <br>
+   
+It is one of the largest repository of AI/ML models for Global Health.Our platform is aimed at helping researchers identify
+drug candidates for orphan and neglected diseases, design molecules de novo, understand mechanisms of action or anticipate adverse side effects.
+</h4>
 <br> 
 
 ![image](https://user-images.githubusercontent.com/79797000/162241886-6d3d73bf-b892-4820-b4f3-f2f9250295a3.png)
@@ -61,7 +65,12 @@ Find out more at: [https://ersilia.io/](https://ersilia.io/)
     - [Conda package manager](#conda-package-manager)
     - [GitHub CLI](#gitHub-CLI)
     - [Git LFS](#git-LFS)
+ - [Types of Models](#types-of-Models)
  - [Model Generation](#model-Generation)
+ - [Contributing](#contributing)
+ - [Roadmap](#roadmap)
+ - [License and citation](#license-and-citation)
+ - [Contact](#contact)
   
    
 
@@ -236,7 +245,17 @@ git-lfs install
 
 **You can also follow the **installation instructions** from the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).**
 
-Now moving to Next Section
+Now moving to Next Section : Models
+
+### Types of Models
+
+The Ersilia Model Hub contains the following AI/ML model categories, sorted by increasing complexity:
+1. Pre-trained literature models
+2. Re-trained literature models
+3. In-house models trained on relevant datasets
+4. Models built in collaboration
+
+To know more about them, visit [this](https://ersilia.gitbook.io/ersilia-book/#types-of-models)
 
 #### Model Generation
 
@@ -264,16 +283,51 @@ ersilia close
 ```
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
+
+Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP) which are over 40+ 
+
 <p align="right"><a href="#top">Back to top</a></p>
 
+## Contributing
+
+We would ❤️ for you to contribute to Ersilla and help make it better! We want contributions to be fun, enjoyable, and educational for anyone and everyone. All contributions are welcome, including issues, new docs as well as updates , blog posts etc.
+
+There are several ways in which you can contribute to the project:
+
+1. If you are a developer, check the [issues](https://github.com/ersilia-os/ersilia/issues) and help us to improve the tool
+2. If you have developed a model and would like to include it in the Hub to increase its visibility and usability, please [contact us](https://www.ersilia.io/) or open an [issue](https://github.com/ersilia-os/ersilia/issues). We are currently working on an automated contribution tool to facilitate the process.
+3. If you are a scientist with a cool dataset, also [contact us](https://www.ersilia.io/) or open an [issue](https://github.com/ersilia-os/ersilia/issues) as we might be interested in developing a model based on the data!
+4. If there is a third-party model you have identified and would like to see it in the Hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
+5. If you are newbie , then also you can contribute by learning about Ersilla. We are here to help you out 🙂
+6. Submitting New Ideas, If you have a idea related to Ersilla Hub ,then please open an issue on our GitHub repository, stating as much information as you can think about your new idea and it's implications. We would love to hear about it and implement it if possible.
+7. Improving Documentation, Submitting documentation updates, enhancements, designs, or bug fixes. Spelling or grammar fixes will be very much appreciated.
 
 
+The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
 
 
+<p align="right">(<a href="#top">back to top</a>)</p>
 
+## Roadmap
 
+We are working to grow the Hub organically and responding to our users needs. Here are the details of the next features to come, stay tuned 👀
 
-## Our Vision 
-A world with egalitarian access to healthcare
+1. Deployment for Windows System (expected: February 2022)
+2. Automated third-party model contributions (expected: March 2022)
+3. Possibility to run lite models online (expected: May 2022)
+4. 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## License and citation
+
+This repository is open-sourced under the MIT License.
+Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Contact Us
+
+Join our growing community around the world. Support us [Open Collective](https://github.com/opencollective.com/ersilia). Follow us on [Twitter](https://twitter.com/ersiliaio), [LinkedIn](https://www.linkedin.com/company/ersiliaio/), [Medium](https://medium.com/ersiliaio) or contact us at hello@ersilia.io
+for more help, ideas, and discussions. We would be glad to help you ❤️
+
 
 
