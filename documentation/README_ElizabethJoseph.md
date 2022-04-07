@@ -29,7 +29,7 @@ The platform is aimed at helping researchers identify drug candidates for orphan
 The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors. All assets are open source, but please do check the Licenses of each model before using them.
 ### A schematic view of the Ersilia Model Hub.
 
-![Ersilia Model Hub Image](https://2591732297-files.gitbook.io/~/files/v0/b/gitbook-legacy-files/o/assets%2F-Mj44wxA7bU1hQH19m8I%2F-MjPA_JIOzuKGPtPDw1U%2F-MjPDmAAJkYPLJmKKSD1%2FErsilia_Hub-02.png?alt=media&token=8a876edc-c02e-400c-80c5-b6f3c4060c21)
+![Ersilia capture original](https://user-images.githubusercontent.com/102416858/162177761-fc5da410-3906-4433-8f0d-c4aa20eb1c35.png)
 
 * Read more about the project better at the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
@@ -137,11 +137,11 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 * If you have any questions or concerns about this Model, kindly [Contact us](https://ersilia.io/)
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
 
-
-Many thanks to these contributors for their work.
-[![](https://github.com/GemmaTuron.png?size=50)](https://github.com/GemmaTuron) **Gemma Turon**
-[![](https://github.com/miquelduranfrigola.png?size=50)](https://github.com/miquelduranfrigola) **Miquel Duranfrigola**
-
+Many thanks to these contributors for their work.  
+[![](https://github.com/GemmaTuron.png?size=50)](https://github.com/GemmaTuron)  
+**Gemma Turon**  
+[![](https://github.com/miquelduranfrigola.png?size=50)](https://github.com/miquelduranfrigola)  
+**Miquel Duranfrigola**
 
 *Contributions of any kind are welcomed.*
 # Language
@@ -155,11 +155,12 @@ We are working to grow the Hub organically and responding to our users needs. He
 2. Automated third-party model contributions (expected: March 2022)
 3. Possibility to run lite models online (expected: May 2022)
 # License and Certification
-This repository is open-sourced under the MIT License. Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+This repository is licensed under the [GNU Affero General Public License v3.0](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 # About us
 The [Ersilia Open Source Initiative](https://ersilia.io/) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
 You can support us via [Open Collective](https://github.com/opencollective.com/ersilia).
 # Follow us
-* Join the Ersilia [Slack Workspace](https://ersilia-workspace.slack.com/)  
+* Follow us on [Twitter](https://twitter.com/ersiliaio)  
+* Follow us on [Linkedin](https://www.linkedin.com/company/ersiliaio/)
 * Subscribe to our [mailing list](https://twitter.com/ersiliaio)
