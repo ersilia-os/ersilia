@@ -8,6 +8,12 @@ from rdkit.Chem import Draw
 
 import streamlit as st
 
+def show_output(obj):
+    obj = list(obj) 
+    d = dict(obj[0])
+    d = d['output']
+    pair = next(iter((d.items())) )
+    st.write(pair[0], " : ", pair[1])
 
 def app():
     st.header("Ersilia Model Hub")
@@ -19,21 +25,33 @@ def app():
 
     compound_smiles = st.text_input("Enter the chemical structure", "")
     m = Chem.MolFromSmiles(compound_smiles)
-    im=Draw.MolToImage(m)
-
+    im=Draw.MolToImage(m,size=(200,200))
     st.image(im)
 
-    opt = st.radio("Select API", ('Predict','Calculate'))
-    if opt=='Predict':
-        obj = model.predict(compound_smiles)
-        obj = list(obj) 
-        json_response = obj[0]
-        st.write(json_response)
+    apis = tuple(model.get_apis())
+
+    #if only one api available, no need to create radio buttons
+    if len(apis) == 1:
+        opt = apis[0]
+        if opt=='predict':
+            if(st.button("Predict")):
+                output_obj = model.predict(compound_smiles)
+                show_output(output_obj)
+        elif opt=='calculate':
+            if(st.button("Calculate")):
+                output_obj = model.calculate(compound_smiles)
+                show_output(output_obj)
+    # if model supports more than one api, create 
     else:
-        obj = model.calculate(compound_smiles)
-        obj = list(obj) 
-        json_response = obj[0]
-        st.write(json_response)
+        opt = st.radio("Select API", apis)
+        if opt=='predict':
+            output_obj = model.predict(compound_smiles)
+            show_output(output_obj)
+        elif opt=='calculate':
+            output_obj = model.calculate(compound_smiles)
+            show_output(output_obj)
+            
+    
 
 
 
