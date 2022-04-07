@@ -78,9 +78,9 @@ on a CLI interface
 
 ## Getting Started
 
-### Prerequisites 🔖
+### Prerequisites
 
-Let us peep and set up the Prerequisites
+Let us peep and set up the Prerequisites 🔖
 
 1.	[x] [Python 3.7 and above](https://www.python.org/)
 2.	[x] [Docker](https://www.docker.com/)
@@ -90,9 +90,10 @@ Let us peep and set up the Prerequisites
 
 After completing the Prerequisites let's move towards our next step ; Installation
 
-### Installation
+### Installation 
 
 <hr>
+
 
 #### Linux and MacOSX
 
