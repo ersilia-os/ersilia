@@ -51,7 +51,7 @@ Find out more at: [https://ersilia.io/](https://ersilia.io/)
 <summary>Table of Contents</summary>
 
 - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
+  - [Prerequisites](#Prerequisites)
   - [Installation](#installation)
     - [Linux and MacOSX](#linux-and-macosx)
     - [The Isaura data lake](#the-isaura-data-lake)
@@ -59,8 +59,8 @@ Find out more at: [https://ersilia.io/](https://ersilia.io/)
     - [Ubuntu](#ubuntu)
     - [Gcc compiler](#gcc-compiler)
     - [Conda package manager](#conda-package-manager)
-    - [GitHub CLI](#gitHub-cli)
-    - [GitHub LFS](#gitHub-lfs)
+    - [GitHub CLI](#gitHub-CLI)
+    - [GitHub LFS](#gitHub-LFS)
 
 
 </details>
