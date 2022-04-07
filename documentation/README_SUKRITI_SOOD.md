@@ -2,7 +2,7 @@
 
 # Welcome to the **Ersilia Model Hub**!
 <br></br>
-![logo](../assets/Ersilia_Plum.png)
+![logo](https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png)
 <br></br>
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -12,24 +12,23 @@
 <br></br>
 
 ## Table of Contetns:
-- [Welcome to the **Ersilia Model Hub**!](#welcome-to-the-ersilia-model-hub)
-  - [Table of Contetns:](#table-of-contetns)
-  - [Abouts Us](#abouts-us)
-  - [Project Description](#project-description)
-  - [Overview](#overview)
-  - [Features](#features)
-  - [Technology](#technology)
-  - [Prerequisites](#prerequisites)
-  - [Getting started](#getting-started)
-  - [Contribution Guidelines](#contribution-guidelines)
-  - [Roadmap](#roadmap)
-  - [Operations](#operations)
-  - [License](#license)
-  - [Vision](#vision)
-  - [Future Scope](#future-scope)
-  - [Attributes](#attributes)
-  - [Credit](#credit)
-  - [Contact](#contact)
+
+- [Abouts Us](#abouts-us)
+- [Project Description](#project-description)
+- [Overview](#overview)
+- [Features](#features)
+- [Technology](#technology)
+- [Prerequisites](#prerequisites)
+- [Getting started](#getting-started)
+- [Contribution Guidelines](#contribution-guidelines)
+- [Roadmap](#roadmap)
+- [Operations](#operations)
+- [License](#license)
+- [Vision](#vision)
+- [Future Scope](#future-scope)
+- [Attributes](#attributes)
+- [Credit](#credit)
+- [Contact](#contact)
 
 <br></br>
 
