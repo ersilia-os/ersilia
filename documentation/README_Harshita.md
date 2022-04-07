@@ -57,10 +57,10 @@ Find out more at: [https://ersilia.io/](https://ersilia.io/)
     - [The Isaura data lake](#the-isaura-data-lake)
     - [Windows](#windows)
     - [Ubuntu](#ubuntu)
-    - [Gcc compiler](#gcc-compiler)
+    - [Gcc compiler](#gcc-Compiler)
     - [Conda package manager](#conda-package-manager)
     - [GitHub CLI](#gitHub-CLI)
-    - [GitHub LFS](#gitHub-LFS)
+    - [Git LFS](#gitHub-LFS)
 
 
 </details>
