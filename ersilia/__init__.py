@@ -1,4 +1,5 @@
 # Version
+from lib2to3.pgen2.token import LEFTSHIFT
 from ._version import __version__
 
 del _version
@@ -67,3 +68,17 @@ INSTALL_STATUS = check_install_status()["status"]
 
 
 __all__ = ["__version__"]
+
+# Checking for git-lfs
+import subprocess
+
+if any('CONDA' in variable for variable in os.environ):
+    conda_list  = subprocess.run(['conda', 'list' , 'git-lfs'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    if not ('git-lfs' in conda_list):
+        raise ModuleNotFoundError
+
+else:
+    try:
+        import git_lfs
+    except ModuleNotFoundError as error :
+        raise error
