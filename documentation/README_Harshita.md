@@ -61,6 +61,9 @@ Find out more at: [https://ersilia.io/](https://ersilia.io/)
     - [Conda package manager](#conda-package-manager)
     - [GitHub CLI](#gitHub-CLI)
     - [Git LFS](#git-LFS)
+ - [Model Generation](#model-Generation)
+  
+   
 
 
 </details>
@@ -132,6 +135,9 @@ ersilia --help
 ```
 <hr>
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
 #### The Isaura data lake
 We highly recommend installation of the [Isaura](https://github.com/ersilia-os/isaura) data lake. With Isaura, you will be able to cache your model predictions (i.e. store them in your local computer). Isaura is a relatively light Python package:
 
@@ -146,6 +152,8 @@ pip install -e .
 ```
 <hr>
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 #### Windows
 
 *We recommend that you install Ubuntu on your Windows machine. This can be now done very easily with WSL. You will need at least Windows 10.*
@@ -158,6 +166,8 @@ Then simply [install the Ubuntu terminal](https://www.microsoft.com/en-us/p/ubun
 Inside the Ubuntu terminal, you can now follow the installation instructions above.
 <hr>
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 ## Ubuntu
 
 <hr>
@@ -165,6 +175,10 @@ Inside the Ubuntu terminal, you can now follow the installation instructions abo
 Below you can find a few snippets that can help you install dependencies in a Ubuntu terminal.
 
 <hr>
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
 #### Gcc compiler
 
 Probably you have the gcc compiler installed already. Just in case:
@@ -173,6 +187,8 @@ Probably you have the gcc compiler installed already. Just in case:
 sudo apt install build-essential
 ```
 <hr>
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 #### Conda package manager
 If you don't have the Conda package manager yet, we suggest you install Miniconda:
@@ -186,6 +202,8 @@ rm -rf ~/miniconda3/miniconda.sh
 ~/miniconda3/bin/conda init zsh
 ```
 <hr>
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 #### GitHub CLI
 Once Conda is installed (see above), you can use it to install the fantastic GitHub CLI:
@@ -203,6 +221,8 @@ gh auth login
 And then follow the instructions.
 <hr>
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 #### Git LFS
 - Git Large File Storage (LFS) can be installed from Conda as well:
 
@@ -215,6 +235,8 @@ git-lfs install
 ```
 
 **You can also follow the **installation instructions** from the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).**
+
+Now moving to Next Section
 
 #### Model Generation
 
