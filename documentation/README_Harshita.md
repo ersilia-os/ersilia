@@ -55,6 +55,9 @@ Find out more at: [https://ersilia.io/](https://ersilia.io/)
   - [Installation](#installation)
     - [Linux and MacOSX](#Linux-and-MacOSX)
     - [Windows](#windows)
+    - [Ubuntu](#ubuntu)
+    - [The gcc compiler](The-gcc-compiler)
+    - [Conda package manager](Conda-package-manager)
 
 
 </details>
