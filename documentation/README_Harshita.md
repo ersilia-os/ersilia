@@ -53,11 +53,14 @@ Find out more at: [https://ersilia.io/](https://ersilia.io/)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-    - [Linux and MacOSX](#Linux-and-MacOSX)
+    - [Linux and MacOSX](#linux-and-macosx)
+    - [The Isaura data lake](#the-isaura-data-lake)
     - [Windows](#windows)
     - [Ubuntu](#ubuntu)
-    - [The gcc compiler](The-gcc-compiler)
-    - [Conda package manager](Conda-package-manager)
+    - [Gcc compiler](#gcc-compiler)
+    - [Conda package manager](#conda-package-manager)
+    - [GitHub CLI](#gitHub-cli)
+    - [GitHub LFS](#gitHub-lfs)
 
 
 </details>
@@ -142,7 +145,7 @@ pip install -e .
 ```
 <hr>
 
-#### Installation on Windows
+#### Windows
 
 *We recommend that you install Ubuntu on your Windows machine. This can be now done very easily with WSL. You will need at least Windows 10.*
 
@@ -154,14 +157,14 @@ Then simply [install the Ubuntu terminal](https://www.microsoft.com/en-us/p/ubun
 Inside the Ubuntu terminal, you can now follow the installation instructions above.
 <hr>
 
-## Command-line only installation snippets for Ubuntu
+## Ubuntu
 
 <hr>
 
 Below you can find a few snippets that can help you install dependencies in a Ubuntu terminal.
 
 <hr>
-#### The gcc compiler
+#### Gcc compiler
 
 Probably you have the gcc compiler installed already. Just in case:
 
