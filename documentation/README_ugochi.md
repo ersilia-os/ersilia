@@ -184,14 +184,14 @@ We are working to grow the Hub organically and responding to our users needs. He
 - [x] Automated third-party model contributions (expected: March 2022)
 - [ ] Possibility to run lite models online (expected: May 2022)
 ## License and citation
-This repository is open-sourced under the MIT License.
+This repository is open-sourced under the GNU AFFERO GENERAL PUBLIC LICENSE.
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 ## About us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
 ## FAQs
 **Can I modify your code?**  
-Definitely! Our code is released under an MIT license. You can copy, download and modify the code provided you maintain the license notice. Code from third-party authors is licensed according to the original license, in that case, please check carefully the license restrictions.
+Definitely! Our code is released under an GNU AFFERO GENERAL PUBLIC LICENSE. You can copy, download and modify the code provided you maintain the license notice. Code from third-party authors is licensed according to the original license, in that case, please check carefully the license restrictions.
 
 **Is there a subscription fee?**  
 The Ersilia Model Hub is available for everyone to download and run in their computers. You can become a subscriptor and contribute to our mission via Open Collective.
