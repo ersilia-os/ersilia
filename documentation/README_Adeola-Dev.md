@@ -77,9 +77,9 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 
 A special credit goes to;
 
-[![](https://github.com/GemmaTuron.png?size=50)](https://github.com/GemmaTuron) **Gemma Turon** and 
+[Gemma Turon](https://github.com/GemmaTuron)  and 
 
-[![](https://github.com/miquelduranfrigola.png?size=50)](https://github.com/miquelduranfrigola) **Miquel Duranfrigola** for their work.
+[Miquel Duranfrigola](https://github.com/miquelduranfrigola) for their work.
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
 
@@ -91,8 +91,7 @@ We are working to grow the Hub organically and responding to our users needs. He
 3. Possibility to run lite models online (expected: May 2022)
 
 # License and citation
-This repository is open-sourced under the MIT License.
-Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+This repository is open-sourced under the GNU AFFERO GENERAL PUBLIC LICENSE. Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 
 # About us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
