@@ -255,7 +255,7 @@ Here a detail of the next features to come, stay tuned!
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # License and Citation
-This repository is open-sourced under the MIT License. Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+This repository is open-sourced under the GNU AFFERO GENERAL PUBLIC LICENSE. Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
