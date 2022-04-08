@@ -72,7 +72,7 @@ We are working to grow the Hub organically and responding to our users needs. He
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # License and citation
-This repository is open-sourced under the MIT License.
+This repository is open-sourced under the GNU AFFERO GENERAL PUBLIC LICENSE.
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
