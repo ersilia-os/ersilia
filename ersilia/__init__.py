@@ -1,5 +1,4 @@
 # Version
-from lib2to3.pgen2.token import LEFTSHIFT
 from ._version import __version__
 
 del _version
@@ -84,3 +83,4 @@ else:
         import git_lfs
     except ModuleNotFoundError as error :
         raise error
+    
