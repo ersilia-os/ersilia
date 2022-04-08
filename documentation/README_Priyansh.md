@@ -199,7 +199,7 @@ We are working to grow the Hub organically and responding to our users needs. He
 3. Possibility to run lite models online (expected: May 2022)
 
 # License and citation
-This repository is open-sourced under the MIT License.
+This repository is open-sourced under the GNU AFFERO GENERAL PUBLIC LICENSE.
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 
 # About us
