@@ -93,12 +93,14 @@
     <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">dockerize</span><span class="p">):</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">.git/info/lfs&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;echo &quot;</span> <span class="o">+</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;| perl -ne &#39;print $1 if m!([^/]+/[^/]+?)(?:\.git)?$!&#39; | xargs -I</span><span class="si">{}</span><span class="s2"> curl -s -k https://api.github.com/repos/&#39;</span><span class="si">{}</span><span class="s2">&#39; | grep size&quot;</span>
         <span class="n">echo</span><span class="p">(</span>
             <span class="s2">&quot;The disk storage of this model in KB is&quot;</span>
         <span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> 
+        <span class="nb">print</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> 
+        <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span>
             <span class="s2">&quot;:down_arrow:  Fetching model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
