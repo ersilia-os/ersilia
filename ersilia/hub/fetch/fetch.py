@@ -2,6 +2,9 @@
 
 import json
 import os
+import time
+
+from numpy import subtract
 
 from ... import ErsiliaBase
 from ... import logger
@@ -37,6 +40,7 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("When packing mode is docker, dockerization is mandatory")
             dockerize = True
         self.do_docker = dockerize
+        self.progress = {}
 
     def _prepare(self):
         mp = ModelPreparer(
@@ -82,12 +86,49 @@ class ModelFetcher(ErsiliaBase):
 
     def fetch(self, model_id):
         self.model_id = model_id
+
+        self.progress["step0_seconds"] = time.time()
         self._prepare()
+        # step1_seconds = time.time() - start_seconds
+        self.progress["step1_seconds"] = time.time()
+        print("step 1 done")
+
+        # step2_seconds = time.time() - step1_seconds
         self._get()
+        print("step 2 done")
+        self.progress["step2_seconds"] = time.time()
+
+        # step3_seconds = time.time() - step2_seconds
         self._pack()
+        print("step 3 done")
+        self.progress["step3_seconds"] = time.time()
+
+        # step4_seconds = time.time() - step3_seconds
         self._toolize()
+        print("step 4 done")
+        self.progress["step4_seconds"] = time.time()
+
+        # step5_seconds = time.time() - step4_seconds
         self._content()
+        print("step 5 done")
+        self.progress["step5_seconds"] = time.time()
+
+        # step6_seconds = time.time() - step5_seconds
         self._check()
+        print("step 6 done")
+        self.progress["step6_seconds"] = time.time()
+
+        # step7_seconds = time.time() - step6_seconds
         self._sniff()
+        print("step 7 done")
+        # final_seconds = time.time() - step7_seconds
+        self.progress["step7_seconds"] = time.time()
+
         self._success()
-        logger.info("Fetching {0} done successfully".format(model_id))
+        print("Fetching {0} done in time: {1}s".format(model_id, abs(self.progress["step7_seconds"]-self.progress["step0_seconds"])))
+        for i in reversed(range(1, len(self.progress))):
+            self.progress["step{0}_seconds".format(i)] -= self.progress["step{0}_seconds".format(i-1)]
+
+        with open("{0}_progress.json".format(model_id), "w") as outfile:
+            json.dump(self.progress, outfile)
+        print("Progress times for each step in seconds", self.progress)
