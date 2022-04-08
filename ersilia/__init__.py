@@ -5,6 +5,7 @@ del _version
 
 # External imports
 import os
+import subprocess
 
 # Disable GPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -69,18 +70,13 @@ INSTALL_STATUS = check_install_status()["status"]
 __all__ = ["__version__"]
 
 # Checking for git-lfs
-import subprocess
-# Incase of having a conda environment
 if any('CONDA' in variable for variable in os.environ):
-    print(os.environ)
     conda_list  = subprocess.run(['conda', 'list' , 'git-lfs'], stdout=subprocess.PIPE).stdout.decode('utf-8')
     if not ('git-lfs' in conda_list):
         raise ModuleNotFoundError
 # No conda environment
 else:
     try:
-
         import git_lfs
     except ModuleNotFoundError as error :
         raise error
-    
