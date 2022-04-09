@@ -6,12 +6,11 @@
 
 ### Table of Contents:
 1. [Project Description](#project-description)
-2. [Overview](#overview)
-3. [Installation](#installation)
-4. [Contribution-guidelines](#contribution-guidelines)
-5. [Roadmap](#roadmap)
-6. [About us](#about-us)
-7. [Acknowledgments](#acknowledgements)
+2. [Installation](#installation)
+3. [Contribution-guidelines](#contribution-guidelines)
+4. [Roadmap](#roadmap)
+5. [About us](#about-us)
+6. [License](#license)
 
 ## Project Description
 
@@ -20,9 +19,6 @@ The Ersilia Model Hub provides pre-trained Artificial Intelligence models to sci
 
 
 This project is inspired by the participation of the Ersilia Open Source Initiative in three programs this year: The [Digital Infrastructure Incubator](https://github.com/matiassingers/awesome-readme), focused on FOSS community and governance, the [Open Life Sciences](https://openlifesci.org/), , for implementing Open Science practices at all levels and the [Software Sustainability Fellowship](https://www.software.ac.uk/programmes-and-events/fellowship-programme), oriented towards the sustainability of research software tools. The intern will gain access to all documentation and lessons learned during these programs and help implement them.
-
-## Overview
-![.](https://user-images.githubusercontent.com/63330165/160850205-9d269457-06ad-46b7-9aaa-7a934c2fb47c.png)
 
 ## Installation
 
@@ -184,5 +180,6 @@ We are working to grow the Hub organically and responding to our users needs. He
 ## About Us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
-##  Acknowledgements
-I would like to thank the Outreachy team for allowing me to work on such an amazing project. I also want to thank team Ersilia and Gemma Turon who gave me this opportunity to contribute to this project. I am sure that I will learn a lot of things while working on this project. Looking forward to learning and working together.
+##  License
+This repository is open-sourced under the MIT License.
+Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
