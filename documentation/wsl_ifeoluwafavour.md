@@ -13,6 +13,8 @@ You can also use [Visual studio code](https://code.visualstudio.com/docs/remote/
 
 - Or you can download a Virtual Machine for Windows hosts ([Oracle Virtualbox](https://www.virtualbox.org/wiki/Downloads) or [VMWare Workstation Player](https://www.vmware.com/products/workstation-player.html)) and download a Linux distribution (for example [Ubuntu](https://ubuntu.com/download/desktop)) to enable you use the Linux operating system in Windows.
 
+**Note: You will still need to download Conda, Python and Git for Linux even if you have downloaded the same applications for Windows. This is because using a virtual machine enables you to work in an operating system (Linux in this case), different from your default operating system (Windows in this case).**
+
 **Conda**
 
 Install [Conda for Linux](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html) to be able to work in a conda environment to install Ersilia. 

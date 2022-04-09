@@ -1,3 +1,4 @@
+<div id="top" align="center">
 # Welcome to Ersillia Model Hub!
 
 
@@ -20,41 +21,41 @@
 [![macOS](https://svgshare.com/i/ZjP.svg)]()
 [![](https://svgshare.com/i/ZhY.svg)]()
 
-
-
+![logo](https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png)
+</div>
 
 ## Table Of Content
 
-1.	Project Description
-2.  Overview
-3.	Technologies
-4.	Contribution Guidelines 
-5.	Prerequisites
-6.	Features
-7.	Installation Instructions
-8. RoadMap
-9.	Requirements
-10.	Operation 
-11.	License
-12.	Vision
-13.	Future Scope 
-14.	Attributes
-15.	Acknowledgements
-16.	Credits/Contacts
-17.	About Us
+1.	[Project Description](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#project-description)
+2.  [Overview](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#overview)
+3.	[Contribution Guidelines](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#contribution-guidelines)
+4.	[Prerequisites](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#prerequisites)
+5.	[Features](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#features)
+6.	[Installation Instructions](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#installation-instruction)
+7.  [RoadMap](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#roadmap)
+8.	[Requirements](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#requirements)
+9.	[License](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#license)
+10.	[Future Scope](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#future-scope)
+12.	[Acknowledgements](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#acknowledgements)
+13.	[Credits](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#credit)
+14.	[About Us](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#about-us)
 
 ## Project Description
 
-The Ersilia Model Hub is a platform which provide you a pre trained Artificial Intelligence model for scientists so that the can integrate it in daily tasks. Ersilia Open Source Initiative is a part of the Ersilia Model Hub. It is creating a software known as FOSS software and this software should be accompanied by a good documentation, usage, contribution, instruction of how to install and to use and many more about it. FOSS software which basically focuses to create a platform on AI and ML models for finding assets relevant to their research and can try them without coding expertise. 
+The Ersilia Model Hub is a platform which provide you a pre trained Artificial Intelligence model for scientists so that the can integrate it in daily tasks.FOSS software which basically focuses to create a platform on AI and ML models for finding assets relevant to their research and can try them without coding expertise.
 
-This project is inspired by the participation of the Ersilia Open Source Initiative in three programs this year: The [Digital Infrastructure Incubator](https://github.com/matiassingers/awesome-readme), focused on FOSS community and governance, the [Open Life Sciences](https://openlifesci.org/), , for implementing Open Science practices at all levels and the [Software Sustainability Fellowship](https://www.software.ac.uk/programmes-and-events/fellowship-programme), oriented towards the sustainability of research software tools. The intern will gain access to all documentation and lessons learned during these programs and help implement them.
+The Ersilia Open Source Initiative is a UK-based charity focused on strengthening the research capacity for infectious and neglected diseases by developing and implementing novel artificial intelligence and machine learning tools. ML is advancing at incredible speed, holding the promise to revolutionize biomedical practice by leveraging large amounts of data and decreasing the number and cost of laboratory experiments. Unfortunately, in practice, many of ML benefits are only accessible to experienced data scientists, without real adoption of the technology in day-to-day research in laboratories and hospitals.
+
+Ersilia Model Hub aims to fulfill the ultimate goal of Ersilia, which is to lower the barrier to drug discovery, encouraging academic groups and companies to pursue the development of new medicines following the principles of Open Science. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
+
+This project is inspired by the participation of the Ersilia Open Source Initiative in three programs this year: The [Digital Infrastructure Incubator](https://github.com/matiassingers/awesome-readme), focused on FOSS community and governance, the [Open Life Sciences](https://openlifesci.org/), , for implementing Open Science practices at all levels and the [Software Sustainability Fellowship](https://www.software.ac.uk/programmes-and-events/fellowship-programme), oriented towards the sustainability of research software tools. The intern will gain access to all documentation and lessons learned during these programs and help implement them.<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Overview
 
-![.](https://user-images.githubusercontent.com/63330165/160850205-9d269457-06ad-46b7-9aaa-7a934c2fb47c.png)
+![Screenshot (26)](https://user-images.githubusercontent.com/95097508/160673091-3e4e0102-9c71-4f4e-90f0-76c09ee9e523.png)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
-## Technologies
 ## Contribution Guidelines
 
 The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! There are several ways in which you can contribute to the project:
@@ -65,6 +66,7 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 4. If there is a third-party model you have identified and would like to see it in the Hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Prerequisites
 
@@ -73,6 +75,7 @@ Please make sure you have the installation of below libraries on your machine.
 2.	[Docker](https://www.docker.com/)
 3.	[Conda](https://www.docker.com/) / [Anaconda](https://docs.anaconda.com/anaconda/install/index.html) / [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 4.	[Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Git LFS](https://git-lfs.github.com/)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Features
 
@@ -81,7 +84,11 @@ Please make sure you have the installation of below libraries on your machine.
 | Bioactivity signatures | Tools are designed to facilitate the use of AI/ML tools. Anyone even from non-coding background can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing even a single line of code. |
 | Data driven | Ersilia technology achieves state-of-the-art performance thanks to the integration of chemical, genomic and biomedical text data.|
 | User friendly platform | Our tools are designed to facilitate the use of AI/ML tools and platform is user friendly, it is beginners-friendly as well. |
-| Open source | All our assets are released under the MIT license. This means the anyone in ersilia community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system. |
+| Open source | All our assets are released under the GNU Affero General Public License. This means the anyone in ersilia community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system. 
+
+
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 ##  Installation Instruction
@@ -122,7 +129,7 @@ We recommend that you install Ubuntu on your Windows. This can be now done very 
 2.	  ersilia --help
 
 ```
-
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ### For MacOSX and Linux
 
@@ -153,6 +160,7 @@ We recommend that you install Ubuntu on your Windows. This can be now done very 
 2.	  ersilia --help
 
 ```
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## RoadMap
 
@@ -163,96 +171,37 @@ We are working to grow the Hub organically and responding to our users needs.
 3.	Possible to run lite models online (expected: May 2022)
 
 For more clarification visit: https://ersilia.gitbook.io/ersilia-book/quick-start/installation
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Requirements
-Note – Do check the licenses of every model before use 
-
-bentoml==0.11.0
-
-PyGitHub
-
-streamlit
-
-pygit2
-
-osfclient
-
-joblib
-
-hashids
-
-bioservices
-
-biopython
-
-markdown
-
-pycrypto
-
-python-dateutil<2.8.1,>=2.1
-
-urllib3
-
-requests<=2.24
-
-dockerfile-parse
-
-pytest==3.10.0
-
-sphinx
-
-boto3
-
-PyYAML
-
-emoji
-
-loguru
-
-virtualenv
-
-pyairtable
-
-PyDrive2
-
-h5py
-
-inputimeout
-
-## Operations
-
-The Ersilia Open Source Initiative is a UK-based charity focused on strengthening the research capacity for infectious and neglected diseases by developing and implementing novel artificial intelligence and machine learning tools.
-ML is advancing at incredible speed, holding the promise to revolutionize biomedical practice by leveraging large amounts of data and decreasing the number and cost of laboratory experiments. Unfortunately, in practice, many of ML benefits are only accessible to experienced data scientists, without real adoption of the technology in day-to-day research in laboratories and hospitals.
+[Here the list](https://github.com/ersilia-os/ersilia/blob/master/requirements.txt)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## License
 
-This repository is open-sourced under [MIT License](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff). Please check the link bellow before using it.
-
-## Vision
-
-The project is focused on strengthening the community guidelines, working on materials for and dissemination like blogposts, scientific publications etc. The mission is to again maintain the balance between countries by supporting research in unfunded settings and remove the gap created.
+This repository is open-sourced under [GNU Affero General Public License ](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). Please check the link bellow before using it.<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Future Scope
+The tool developed worldwide are still untouched who doesn’t have the expertise even after they are fully published on open source. Due to these untouched tools a huge gap has been created specially in low and middle income countries. Through this access to bioinformatic facilities or data science experts are scarce. So to heal this problem we have created FOSS software to ease the access to expertise and support research into neglected infectious diseases.
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-It will help you to create an effective documentation. The tool developed worldwide are still untouched who doesn’t have the expertise even after they are fully published on open source. Due to these untouched tools a huge gap has been created specially in low and middle income countries. Through this access to bioinformatic facilities or data science experts are scarce.  So to heal this problem we have created FOSS software to ease the access to expertise and support research into neglected infectious diseases.
-This Code of Conduct applies within all community spaces, and also applies when an individual is officially representing the community in public spaces. Examples of representing our community include using an official e-mail address, posting via an official social media account, or acting as an appointed representative at an online or offline event.
-## Attributes
-
-This Code of Conduct is adapted from the Contributor Covenant, version 2.0, available at https://www.contributor-covenant.org/version/2/0/code_of_conduct.html.
-Community Impact Guidelines were inspired by Mozilla's code of conduct enforcement ladder.
-For answers to common questions about this code of conduct, see the FAQ at https://www.contributor-covenant.org/faq. Translations are available at https://www.contributor-covenant.org/translations.
 ## Acknowledgements
 
 I would like to express my special thanks of gratitude to whole team of outreachy as well as the team of Ersilia and Gemma Turon who gave me this golden opportunity to do this wonderful project based on documentary on behalf of outreachy, which also helped me in learning lot more new things.
 Secondly, I would also like a thank my whole team and friends who helped me a lot in creating it.
 It helped me increase my knowledge and skills.
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 ## Credit
+If you use this software, please cite it as below.[CiteUs](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-The credit of this goes to the [Digital Infrastructure Incubator](https://github.com/matiassingers/awesome-readme), focused on FOSS community and governance, the [Open Life Sciences](https://openlifesci.org/), for implementing Open Science practices at all levels and the [Software Sustainability Fellowship](https://www.software.ac.uk/programmes-and-events/fellowship-programme)
+
 
 ## About Us
 
 The [Ersilia Open Source Initiative](https://www.ersilia.io/) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
-You can support us via Open Collective.
+You can support us via Open Collective.The project is focused on strengthening the community guidelines, working on materials for and dissemination like blogposts, scientific publications etc. The mission is to again maintain the balance between countries by supporting research in unfunded settings and remove the gap created.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
