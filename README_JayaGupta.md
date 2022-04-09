@@ -1,3 +1,5 @@
+<div id="top" align="center">
+  
 # Welcome to the **Ersilia Model Hub**!
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -18,6 +20,7 @@
 7. [About us](https://github.com/ersilia-os/ersilia#about-us)
 8. [Follow us](https://github.com/ersilia-os/ersilia#Follow-us)  
 
+
 # Project Description
 
 The Ersilia Model Hub is the main project of the [Ersilia Open Source Initiative](https://ersilia.io). The Ersilia Model Hub's objective is to provide a platform for a user-friendly deployment of Artificial Intelligence and Machine Learning (AI/ML) models for drug discovery, where scientists can browse through the assets, identify those which is relevant to their research and obtain predictions without the need of coding expertise. We are building the Ersilia Model Hub, a free, open-source repository of Artificial Intelligence and Machine Learning (AI/ML) models for drug discovery. Our platform is aimed at helping researchers identify drug candidates for orphan and neglected diseases, design molecules de novo, understand mechanisms of action or anticipate adverse side effects.
@@ -30,15 +33,17 @@ The models embedded in the hub include both models published in the literature (
 
 <img width="50%" src ="https://github.com/Jaya3112/ersilia/blob/5a06477b27692afc8901db590313f87d8ce0f892/assets/Ersilia%20goal%20img.png">
 
+
 # Features
 
 | Feature | Description |
 | --- | --- |
-| Data driven | Ersilia technology achieves state-of-the-art performance thanks to the integration of chemical, genomic and biomedical text data. Our AI tools are trained on millions of data points collected from the scientific literature and are available at no cost. [Click here](https://www.ersilia.io/publications).|
-| Bioactivity signatures | Our tools are designed to facilitate the use of AI/ML tools. Scientists can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing a single line of code. [Click here](https://bioactivitysignatures.org/). |
-| User friendly platform | Our tools are designed to facilitate the use of AI/ML tools. Scientists can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing a single line of code. [Click here](https://www.ersilia.io/coming-soon) |
-| Open source | All our assets are released under a permissive open source license. This means the scientific community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system.  [Click here](https://github.com/ersilia-os) |
+| Data driven | Ersilia technology achieves state-of-the-art performance thanks to the integration of chemical, genomic and biomedical text data. Our AI tools are trained on millions of data points collected from the scientific literature and are available at no cost. [Click here](https://www.ersilia.io/publications)|
+| Bioactivity signatures | Unlike conventional methods, we build upon bioactivity signatures,a richer representation of molecules. These embed all the experimental data for each compound, incluiding targets and side-effects profiles, and are thus more powerfuland clinically relevant predictors. [Click here](https://bioactivitysignatures.org/)|
+| User friendly platform | Our tools are designed to facilitate the use of AI/ML tools. Scientists can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing a single line of code. [Click here](https://www.ersilia.io/coming-soon)|
+| Open source | All our assets are released under a permissive open source license. This means the scientific community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system.  [Click here](https://github.com/ersilia-os)|
 <p align="right">(<a href="#top">back to top</a>)</p>
+
 
 # Getting Started
 
@@ -96,7 +101,8 @@ Inside the Ubuntu terminal, you can now follow the installation instructions [ab
 
 For better installation guide of the Ersilia API Model, follow the detailed steps on the [ Ersilia Model Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation/).
 
-# Contributions
+
+# Contribution
 The Ersilia Model Hub is developed and maintained by a small team of Ersilia employees and volunteers, and any contribution is highly valued! Below are the ways in which you can contribute to the development of this project:
 * To improve our tool as a developer, check out the [Issues](https://github.com/ersilia-os/ersilia/issues)
 * To include a Model you developed in the Hub, kindly [Contact us](https://ersilia.io/) or open an [Issue](https://github.com/ersilia-os/ersilia/issues)
@@ -105,13 +111,7 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 * If you have any questions or concerns about this Model, kindly [Contact us](https://ersilia.io/)
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) guidelines.
 
-
-Many thanks to these contributors for their work.
-[![](https://github.com/GemmaTuron.png?size=50)](https://github.com/GemmaTuron) **Gemma Turon**
-[![](https://github.com/miquelduranfrigola.png?size=50)](https://github.com/miquelduranfrigola) **Miquel Duranfrigola**
-
-
-*Contributions of any kind are welcomed.*
+*Contributions of any kind are Welcomed!!*
 
 
 # Roadmap
@@ -130,3 +130,5 @@ You can support us via [Open Collective](https://github.com/opencollective.com/e
 
 # Follow us
 * Subscribe to our [mailing list](https://twitter.com/ersiliaio)
+* Twitter profile of [Gemma Turon](https://twitter.com/ersiliaio)
+* Twitter profile of [Miquel Duran-Frigola](https://twitter.com/mduranfrigola) 
