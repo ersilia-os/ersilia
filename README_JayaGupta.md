@@ -10,7 +10,7 @@
 
 ## Table of content
 1. [Project Description](https://github.com/ersilia-os/ersilia#project-description)
-2. [Features](https://github.com/ersilia-os/ersilia#features
+2. [Features](https://github.com/ersilia-os/ersilia#features)
 3. [Getting started](https://github.com/ersilia-os/ersilia#getting-started)
 4. [Contribution](https://github.com/ersilia-os/ersilia#contribution)
 5. [Roadmap](https://github.com/ersilia-os/ersilia#roadmap)
@@ -27,6 +27,8 @@ The ultimate goal of Ersilia is to lower the barrier to drug discovery, encourag
 The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors. All assets are open source, but please do check the Licenses of each model before using them.
 * Read more about the project better at the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
+
+<img width="50%" src ="https://github.com/Jaya3112/ersilia/blob/5a06477b27692afc8901db590313f87d8ce0f892/assets/Ersilia%20goal%20img.png">
 
 # Features
 
