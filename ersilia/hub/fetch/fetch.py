@@ -89,46 +89,39 @@ class ModelFetcher(ErsiliaBase):
 
         self.progress["step0_seconds"] = time.time()
         self._prepare()
-        # step1_seconds = time.time() - start_seconds
+
         self.progress["step1_seconds"] = time.time()
-        print("step 1 done")
+        print("step 1 done: {}s".format(self.progress["step1_seconds"] - self.progress["step0_seconds"]))
 
-        # step2_seconds = time.time() - step1_seconds
         self._get()
-        print("step 2 done")
         self.progress["step2_seconds"] = time.time()
+        print("step 2 done: {}s".format(self.progress["step2_seconds"] - self.progress["step1_seconds"]))
 
-        # step3_seconds = time.time() - step2_seconds
         self._pack()
-        print("step 3 done")
         self.progress["step3_seconds"] = time.time()
+        print("step 3 done: {}s".format(self.progress["step3_seconds"]-self.progress["step2_seconds"]))
 
-        # step4_seconds = time.time() - step3_seconds
         self._toolize()
-        print("step 4 done")
         self.progress["step4_seconds"] = time.time()
-
-        # step5_seconds = time.time() - step4_seconds
+        print("step 4 done: {}s".format(self.progress["step4_seconds"] - self.progress["step3_seconds"]))
+        
         self._content()
-        print("step 5 done")
         self.progress["step5_seconds"] = time.time()
+        print("step 5 done: {}s".format(self.progress["step5_seconds"] - self.progress["step4_seconds"]))
 
-        # step6_seconds = time.time() - step5_seconds
         self._check()
-        print("step 6 done")
         self.progress["step6_seconds"] = time.time()
-
-        # step7_seconds = time.time() - step6_seconds
+        print("step 6 done: {}s".format(self.progress["step6_seconds"] - self.progress["step5_seconds"]))
+        
         self._sniff()
-        print("step 7 done")
-        # final_seconds = time.time() - step7_seconds
         self.progress["step7_seconds"] = time.time()
+        print("step 7 done: {}s".format(self.progress["step7_seconds"] - self.progress["step6_seconds"]))
 
         self._success()
         print("Fetching {0} done in time: {1}s".format(model_id, abs(self.progress["step7_seconds"]-self.progress["step0_seconds"])))
         for i in reversed(range(1, len(self.progress))):
             self.progress["step{0}_seconds".format(i)] -= self.progress["step{0}_seconds".format(i-1)]
 
-        with open("{0}_progress.json".format(model_id), "w") as outfile:
-            json.dump(self.progress, outfile)
-        print("Progress times for each step in seconds", self.progress)
+        with open("METADATA.json", "w") as outfile:
+            json.dump({model_id: {"progress": self.progress}}, outfile)
+        # print("Progress times for each step in seconds", self.progress)
