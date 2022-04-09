@@ -69,14 +69,11 @@ INSTALL_STATUS = check_install_status()["status"]
 
 __all__ = ["__version__"]
 
-# Checking for git-lfs
-if any('CONDA' in variable for variable in os.environ):
-    conda_list  = subprocess.run(['conda', 'list' , 'git-lfs'], stdout=subprocess.PIPE).stdout.decode('utf-8')
-    if not ('git-lfs' in conda_list):
-        raise ModuleNotFoundError
-# No conda environment
-else:
-    try:
-        import git_lfs
-    except ModuleNotFoundError as error :
-        raise error
+# Check if git-lfs is correctly installed
+def check_git_lfs():
+    command_output = subprocess.run(['git' , 'lfs' , 'install'] , stdout=subprocess.PIPE).stdout.decode('utf-8')
+    if "Git LFS initialized" not in command_output :
+        raise ModuleNotFoundError("git-lfs is not installed")
+    return True
+
+git_lfs_installation = check_git_lfs()
