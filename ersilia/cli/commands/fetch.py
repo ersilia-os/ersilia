@@ -48,6 +48,7 @@ def fetch_cmd():
 
         # write model_name and timestamp to file whenever a new model gets fetched
         with open("fetched_models.txt","a") as file:
+
             file.write(model_id)
             file.write(',')
             file.write(str(ts))

@@ -9,6 +9,7 @@ import json
 import csv
 import time
 
+
 # in days :
 model_usage_lim   = 30 
 model_cleanup_lim = 7
@@ -61,3 +62,6 @@ def ersilia_cli(verbose, silent):
                 for m_name in fetched_models: 
                     if (seconds_to_days(current_ts-float(fetched_models[m_name])))>model_usage_lim:
                         cron.del_unused_model(model_id=m_name)
+
+
+
