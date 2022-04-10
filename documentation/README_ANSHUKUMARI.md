@@ -26,19 +26,19 @@
 
 ## Table Of Content
 
-1.	[Project Description](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#project-description)
-2.  [Overview](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#overview)
-3.	[Contribution Guidelines](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#contribution-guidelines)
-4.	[Prerequisites](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#prerequisites)
-5.	[Features](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#features)
-6.	[Installation Instructions](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#installation-instruction)
-7.  [RoadMap](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#roadmap)
-8.	[Requirements](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#requirements)
-9.	[License](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#license)
-10.	[Future Scope](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#future-scope)
-12.	[Acknowledgements](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#acknowledgements)
-13.	[Credits](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#credit)
-14.	[About Us](https://github.com/ersilia-os/ersilia/edit/master/documentation/README_ANSHUKUMARI.md#about-us)
+1.	[Project Description](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#project-description)
+2.  [Overview](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#overview)
+3.	[Contribution Guidelines](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#contribution-guidelines)
+4.	[Prerequisites](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#prerequisites)
+5.	[Features](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#features)
+6.	[Installation Instructions](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#installation-instruction)
+7.  [RoadMap](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#roadmap)
+8.	[Requirements](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#requirements)
+9.	[License](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#license)
+10.	[Future Scope](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#future-scope)
+12.	[Acknowledgements](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#acknowledgements)
+13.	[Credits](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#credit)
+14.	[About Us](https://github.com/ersilia-os/ersilia/blob/master/documentation/README_ANSHUKUMARI.md#about-us)
 
 ## Project Description
 
@@ -84,7 +84,10 @@ Please make sure you have the installation of below libraries on your machine.
 | Bioactivity signatures | Tools are designed to facilitate the use of AI/ML tools. Anyone even from non-coding background can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing even a single line of code. |
 | Data driven | Ersilia technology achieves state-of-the-art performance thanks to the integration of chemical, genomic and biomedical text data.|
 | User friendly platform | Our tools are designed to facilitate the use of AI/ML tools and platform is user friendly, it is beginners-friendly as well. |
-| Open source | All our assets are released under the GNU Affero General Public License v3.0. This means the anyone in ersilia community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system. 
+| Open source | All our assets are released under the GNU Affero General Public License. This means the anyone in ersilia community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system. 
+
+
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -176,7 +179,7 @@ For more clarification visit: https://ersilia.gitbook.io/ersilia-book/quick-star
 
 ## License
 
-This repository is open-sourced under [GNU Affero General Public License v3.0e](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). Please check the link bellow before using it.<p align="right">(<a href="#top">back to top</a>)</p>
+This repository is open-sourced under [GNU Affero General Public License ](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). Please check the link bellow before using it.<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Future Scope
 The tool developed worldwide are still untouched who doesn’t have the expertise even after they are fully published on open source. Due to these untouched tools a huge gap has been created specially in low and middle income countries. Through this access to bioinformatic facilities or data science experts are scarce. So to heal this problem we have created FOSS software to ease the access to expertise and support research into neglected infectious diseases.
