@@ -47,8 +47,11 @@ def serve_cmd():
         with open("fetched_models.txt") as infile:
             models = dict(csv.reader(infile))
         infile.close()
-        if mdl.slug in models.keys():
-            models[mdl.slug] = ts_str
+
+        print(mdl.model_id, models.keys())
+        if mdl.model_id in models.keys():
+            models[mdl.model_id] = ts_str
+
         with open('fetched_models.txt', 'w') as f:
             for key, values in models.items():
                 f.write(f"{key},{values}\n")

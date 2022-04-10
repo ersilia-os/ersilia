@@ -3,10 +3,12 @@ from bentoml.cli.click_utils import BentoMLCommandGroup
 from ... import __version__
 from ... import logger
 from ..echo import Silencer
-
+from pathlib import Path
+from ...utils import cron
 import json
 import csv
 import time
+
 
 # in days :
 model_usage_lim   = 30 
@@ -45,7 +47,7 @@ def ersilia_cli(verbose, silent):
         silencer.silence()
     
     ts_dict = {}
-    if not exists('last_cleaned.json'):
+    if not Path('last_cleaned.json').exists():
         ts_dict['timestamp'] = str(time.time())
         with open('last_cleaned.json', 'w') as outfile:
             json.dump(ts_dict, outfile)
@@ -59,5 +61,7 @@ def ersilia_cli(verbose, silent):
                     fetched_models = dict(csv.reader(infile))
                 for m_name in fetched_models: 
                     if (seconds_to_days(current_ts-float(fetched_models[m_name])))>model_usage_lim:
-                        del_cmd = 'ersilia delete ' + m_name
-                        test_op = os.system(del_cmd)
+                        cron.del_unused_model(model_id=m_name)
+
+
+
