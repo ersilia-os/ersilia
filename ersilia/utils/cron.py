@@ -15,9 +15,7 @@ def seconds_to_days(s):
     return s / (24 * 3600) 
 
 def model_cleanup():
-    print(1)
     ts_dict = {}
-    print(2)
     my_file = Path("last_cleaned.json")
     if not my_file.is_file():
         ts_dict['timestamp'] = str(time.time())
@@ -28,7 +26,7 @@ def model_cleanup():
         with open('last_cleaned.json') as json_file:
             ts_dict = json.load(json_file)
             ts = float(ts_dict['timestamp'])
-            if (seconds_to_days(current_ts - ts))>=model_cleanup_lim: 
+            if (seconds_to_days(current_ts - ts))>model_cleanup_lim: 
                 with open("fetched_models.txt") as infile:
                     fetched_models = dict(csv.reader(infile))
                 for model_id in fetched_models: 
