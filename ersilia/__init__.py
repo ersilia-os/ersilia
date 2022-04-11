@@ -68,12 +68,3 @@ INSTALL_STATUS = check_install_status()["status"]
 
 
 __all__ = ["__version__"]
-
-# Check if git-lfs is correctly installed
-def check_git_lfs():
-    command_output = subprocess.run(['git' , 'lfs' , 'install'] , stdout=subprocess.PIPE).stdout.decode('utf-8')
-    if "Git LFS initialized" not in command_output :
-        raise ModuleNotFoundError("git-lfs is not installed")
-    return True
-
-git_lfs_installation = check_git_lfs()
