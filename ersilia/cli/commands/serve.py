@@ -1,8 +1,5 @@
 import click
 import os
-import time
-import csv
-
 from ...utils import tmp_pid_file
 from . import ersilia_cli
 from .. import echo
@@ -41,14 +38,3 @@ def serve_cmd():
         apis = mdl.get_apis()
         for api in apis:
             echo("   - {0}".format(api), fg="blue")
-            
-        # update last usage time of model in fetched_models.txt, every time it 'serves' 
-        ts_str = str(time.time())
-        with open("fetched_models.txt") as infile:
-            models = dict(csv.reader(infile))
-        infile.close()
-        if mdl.slug in models.keys():
-            models[mdl.slug] = ts_str
-        with open('fetched_models.txt', 'w') as f:
-            for key, values in models.items():
-                f.write(f"{key},{values}\n")
