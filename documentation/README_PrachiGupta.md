@@ -30,7 +30,7 @@ The models embedded in the hub include both models published in the literature (
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## Overview 📑
+## Overview 
 
 We collect models developed by third parties and available in scientific publications. On the other hand, we develop models in-house and/or in 
 collaboration with research groups in LMICs. In other words, part of our philanthropic mission is to increase visibility and facilitate access to AI/ML research 
