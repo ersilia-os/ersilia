@@ -143,7 +143,7 @@ ML is advancing at incredible speed, holding the promise to revolutionize biomed
 
 ## License
 
-This repository is open-sourced under [MIT License](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff). Please check the link bellow before using it.
+This repository is open-sourced under [GNU AFFERO GENERAL PUBLIC LICENSE](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). Please check the link bellow before using it.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
