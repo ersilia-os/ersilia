@@ -1,6 +1,5 @@
 import click
 import os
-
 from ...utils import tmp_pid_file
 from . import ersilia_cli
 from .. import echo
