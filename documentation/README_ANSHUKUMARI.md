@@ -1,26 +1,10 @@
 <div id="top" align="center">
-# Welcome to Ersillia Model Hub!
 
+# Welcome to the **Ersilia Model Hub**!
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
-
-
-
-[![PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012)
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
-[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
-[![Contributor](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](https://github.com/ersilia-os/ersilia/blob/master/documentation/code_of_conduct.md)
-[![Passed](https://circleci.com/gh/ersilia-os/ersilia.svg?style=svg)](https://circleci.com/gh/ersilia-os/ersilia)
-[![pypipackage](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/)
-[![python](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
-[![Gitpod](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
-[![Maintained](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/Naereen/StrapDown.js/graphs/commit-activity)
-[![linux](https://svgshare.com/i/Zhy.svg)]()
-[![macOS](https://svgshare.com/i/ZjP.svg)]()
-[![](https://svgshare.com/i/ZhY.svg)]()
-
+[![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/) [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
 ![logo](https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png)
 </div>
 
@@ -179,7 +163,8 @@ For more clarification visit: https://ersilia.gitbook.io/ersilia-book/quick-star
 
 ## License
 
-This repository is open-sourced under [GNU Affero General Public License ](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). Please check the link bellow before using it.<p align="right">(<a href="#top">back to top</a>)</p>
+This repository is open-sourced under [GNU Affero General Public License ](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). 
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Future Scope
 The tool developed worldwide are still untouched who doesn’t have the expertise even after they are fully published on open source. Due to these untouched tools a huge gap has been created specially in low and middle income countries. Through this access to bioinformatic facilities or data science experts are scarce. So to heal this problem we have created FOSS software to ease the access to expertise and support research into neglected infectious diseases.
@@ -194,7 +179,7 @@ It helped me increase my knowledge and skills.
 
 
 ## Credit
-If you use this software, please cite it as below.[CiteUs](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)
+If you use this software.[CiteUs](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
