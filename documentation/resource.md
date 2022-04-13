@@ -1,7 +1,7 @@
-#Resources:
-#Git commands for beginners:
+# Resources:
+# Git commands for beginners:
 https://www.atlassian.com/git/tutorials/syncing
-#Git cheat sheet:
+# Git cheat sheet:
 https://education.github.com/git-cheat-sheet-education.pdf
 https://neuroplausible.com/github
 #10 ways to contribute to an open-source community:

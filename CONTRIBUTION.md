@@ -1,60 +1,51 @@
-# Code Of Conduct
-Participation in the Ersilia community is governed by the [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/CODE_OF_CONDUCT.md).
+# Contribution Guide
+We aspire to create a welcoming environment for collaboration on this project and ask all contributors to do the same. For more details, see our [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/CODE_OF_CONDUCT.md).
 
-# Contribute
+All contributions to this project will be released usnder open source license as described [here](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). By submitting a pull request (PR), you are agreeing to release the PR contents under the license.
 
-Ersilia is a open-source, community-maintained project hosted at [Github](https://github.com/ersilia-os/ersilia). The project actively encourages aspiring and experienced users to dive in and add their best contribution to the project. There  are a number of ways you may help with the project: 
+## Communication
+Anyone interested in contributing should join the [slack](https://app.slack.com/client/T038M82LJES/C038TTEGPD0).
 
-1 Create a GitHub account (if you don't have one).
+We also suggest contributors to navigate to our [website](https://www.ersilia.io/) and [twitter](https://twitter.com/ersiliaio). This will help to get a sense of our current materials and docs, and open an issue with suggestions of things we should consider doing.
 
-2 Go through documentation on basic knowledge on how to use, write and contribute on GitHub , especially how to make a pull request and how to commit changes. You can find the video link below very helpful.
-https://youtu.be/PQsJR8ci3J0.
+## GitHub pull requests and issues
+If you are new to the group, reviewing a pull request and commenting on issues is a great way to get involved!
 
-3 Go through the Ersilia's  [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/CODE_OF_CONDUCT.md)  and familiarize yourself with it. Please do ensure you adhere to the code of conduct during your contribution phase.
+### Creating a new issue
 
-4  When contributing to a project, the first step is to go to the project site and pick an issue that you'd want to work on and that fits your skill set. Before tackling larger, more difficult issues, as a first-time contributor, you should try to find something modest and reasonably simple to utilize as a pleasant entry into the project. On your first few contributions, don't try to go too deep!
+If you find some problem with the docs, [search if an issue already exists](https://docs.github.com/en/github/searching-for-information-on-github/searching-on-github/searching-issues-and-pull-requests#search-by-the-title-body-or-comments). If a related issue doesn't exist then you can open a new issue.
 
-5 If you see an issue you are interested in tackling, you can indicate interest in the comment section to be assigned that issue. You can also open issues you feel should be added.
+<img src ="assets\new_issue_image.png" alt ="">
 
-6  After making a contribution ensure you record your contribution on the outreachy website. https://www.outreachy.org/apply/project-selection/
-
-7  If you have developed a model and would like to include it in the Hub to increase its visibility and usability, please  [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues). We are currently working on an automated contribution tool to facilitate the process.
-
-8 If you are a scientist with a cool dataset, also  [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues) as we  might be interested in developing a model based on the data!
-
-9  If there is a third-party model you have identified and would like to see it in the Hub, open an issue with the relevant information and we will get back to you as soon as possible.
-
-## How to Contribute 
-
-1. Fork this repo, and then clone it:
-```bash
-$ git clone github.com:your-username/ersilia.git
-$ cd ersilia/
-```
-
-2. Create a new branch
-```bash
-$ git checkout -b my-new-branch
-```
-3. Make your change(s).
-
-4. Commit the change(s) and push to your fork
-```bash
-$ git add .
-$ git commit -m "This is my first contribution"
-$ git push -u origin my-new-branch
-```
-5. Then, submit a pull request.
-
-
-
-# Writing Pull Requests
-To contribute, first read, How to write the perfect pull request [here](http://blog.jaraco.com/how-to-write-perfect-pull-request/) and file your contribution with the Ersilia Project page.
-
-# Filling Bug Reports
+### Filling Bug Reports
 If you find a bug, an issue where the result is not as you have expected, you may file a bug report at the project [issues](https://github.com/ersilia-os/ersilia/issues) page. Make sure to include what your expectation was, what happened instead, and steps that someone else could take to replicate your issue. The more detailed and exact your description, it could happen that one of the volunteers on the project may be able to help resolve your issue.
 
-# Fixing Bugs
+### Fixing Bugs
 Ersilia has a number of open, reported [issues](https://github.com/ersilia-os/ersilia/issues). Some of them are complicated and difficult, but others are more straightforward and beginner-friendly. Feel free to find one that you think you can solve and submit PR.
 
 As you work through the issue and commit changes to your clone of the repository, be sure to add issue references to your changes (like "Fixes #100", "issue #100" or "Ref #100") so your changes link to the issue and vice-versa.
+
+
+
+# For first time contributors
+We happily welcome our new contributors to this community. If you are contributing to Ersilia for the first time it is okay if you feel overwhelmed. We, as a community, are always there to help with any problems you are facing.
+
+## Getting Started
+As a new contributor, you might find difficulties in understanding where to start. Don't worry! We got you.
+
+In the interest of getting more new people involved we have issues marked as [good-first-issues](https://github.com/ersilia-os/ersilia/labels/good%20first%20issue). These are the issues that have a smaller scope, and are great in order to get started with.
+
+<img src ="assets\good first issue.png" alt="">
+
+The good-first-issues should also provide you details on how to get things resolved or how to proceed. If you find it is missing or incomplete please tag the person who created the issue and let them know.
+
+## Before your first PR
+Before you make your first PR. we would like you to go through the below resorces for your understanding:
+- [How to submit contributions](https://opensource.guide/how-to-contribute/#how-to-submit-a-contribution)
+- [Collaborating with pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests)
+
+Before starting with the contribution, please go through our contribution guidelines for other prerequisites before making a PR.
+If you have additional questions or doubts about a certain issue, please reach out and we will be happy to discuss.
+
+
+We strongly encourage and support everyone to participate in anyway they can. We strive to make our processes friendly for people to be active contributors through asynchronous communication and contributions to our documentation in this repository.

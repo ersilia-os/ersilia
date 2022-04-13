@@ -1,4 +1,5 @@
 import click
+import time
 
 import os
 from . import ersilia_cli

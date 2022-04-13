@@ -5,6 +5,7 @@ del _version
 
 # External imports
 import os
+import subprocess
 
 # Disable GPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
