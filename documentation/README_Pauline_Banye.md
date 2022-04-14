@@ -82,6 +82,28 @@ $ conda activate ersilia
 Detailed instructions for setting up the conda environment can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
 
 - Install [Docker](https://www.docker.com/). This  ensures that all the AI/ML models will work seamlessly on your local device.
+```
+# Install Docker
+$ sudo apt install docker.io
+
+# Install dependencies
+$ sudo snap install docker
+
+# Check the version to confirm Docker was installed
+$ docker --version
+```
+
+- Install [GitHub CLI](https://cli.github.com/manual/installation), a free and open source tool that brings GitHub to your terminal. 
+```
+# Add the official Personal Package Archive for GitHub CLI and update your system packages with the following commands.
+$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+$ sudo apt-add-repository https://cli.github.com/packages
+$ sudo apt update
+
+# To install the Git CLI
+$ sudo apt install gh
+```
+- Some models with with large parameters require [Git Large File Storage](https://git-lfs.github.com/) (Git LFS) to function properly. Install Git LFS by running the `sudo apt install git-lfs` command in your linux terminal.
 
 #
 > ## Installation on Windows
@@ -116,7 +138,7 @@ bash Anaconda3-5.3.1-Linux-x86_64.sh
 
 Confirm that Anaconda and Python were installed by running `'which python'` in the terminal, you should see a path to your installation i.e. `/home/pauline/anaconda3/bin/python`.
 
-Once Anaconda is successfully installed, proceed with the steps to activate the ersilia conda environment.
+Once Anaconda is successfully installed, proceed with the steps to activate the ersilia conda environment. 
 
 ```
 $ conda create -n ersilia python=3.7
@@ -124,6 +146,7 @@ $ conda create -n ersilia python=3.7
 # to activate the environment
 $ conda activate ersilia
 ```
+Then follow all the remaining  steps outlined in the [Installation on MacOSX or Linux](#installation-on-macosx-or-linux) section
 #
 
 
@@ -155,6 +178,13 @@ OR
 # install from .txt file
 $ pip install -r requirements.txt
 ```
+
+And Ersilia should be successfully installed on your local system. To confirm, run the `ersilia --help` command.
+
+<p align="center" width="100%">
+  <img src="https://drive.google.com/uc?export=view&id=1BeowlKUsTXeCmFu7kRO3JSUHC_QuSUnB" alt="ersilia help"/>
+</p>
+
 #
 > ## Clone the [Isaura data lake](https://github.com/ersilia-os/isaura.git) repo.
 
