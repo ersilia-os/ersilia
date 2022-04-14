@@ -98,7 +98,9 @@ $ wsl --install -d Ubuntu
 
 - Next download anaconda or miniconda. 
 
-`Note* The installation steps outlined below were performed with Anaconda v5.3.1`
+`Note*`
+
+The installation steps outlined below were performed with Anaconda v5.3.1
 
 ```
 wget https://repo.continuum.io/archive/Anaconda3-5.3.1-Linux-x86_64.sh
@@ -110,7 +112,7 @@ bash Anaconda3-5.3.1-Linux-x86_64.sh
 ```
 - Follow the prompts and accept the license agreement.
 
-Note* 
+`Note*` 
 
 Confirm that Anaconda and Python were installed by running `'which python'` in the terminal, you should see a path to your installation i.e. `/home/pauline/anaconda3/bin/python`.
 
@@ -139,13 +141,19 @@ This enables you to create a local copy of the Ersilia repo on your computer.
 ```
 $ git clone https://github.com/ersilia-os/ersilia.git
 ```
-- Change directory into the Ersilia folder
+- Change directory into the Ersilia folder 
 ```
 $ cd ersilia
-```   
-- Install with pip (use -e for developer mode)
+```      
+- Install dependencies
 ```
-$ pip install -e
+# Use -e . to install from setup.py using developer mode
+$ pip install -e .
+
+OR
+
+# install from .txt file
+$ pip install -r requirements.txt
 ```
 #
 > ## Clone the [Isaura data lake](https://github.com/ersilia-os/isaura.git) repo.
@@ -159,15 +167,25 @@ $ git clone https://github.com/ersilia-os/isaura.git
 ```
 $ cd isaura
 ```      
-- Install with pip (use -e for developer mode)
+- Install dependencies
 ```
-$ pip install -e
+# Use -e . to install from setup.py using developer mode
+$ pip install -e .
+
+OR
+
+# install from .txt file
+$ pip install -r requirements.txt
 ```
 
 
 #
 > # Getting Started
 Once Ersilia is successfully installed, you can search for your AI/ML models of interest in the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg). All available models are accessible through the [Ersilia Python package](https://github.com/ersilia-os/ersilia). 
+
+`Note*`
+
+You need to use your linux terminal with the activated ersilia environment to run these commands.
 
 > ## Usage Steps
 - First fetch the model of interest:
