@@ -244,5 +244,5 @@ class ModelFullDeleter(ErsiliaBase):
         ModelLakeDeleter(self.config_json).delete(model_id)
         ModelPipDeleter(self.config_json).delete(model_id)
         ModelDockerDeleter(self.config_json).delete(model_id)
-        self.delete_model_entry(model_id)
+        # self.delete_model_entry(model_id) #TODO it fails if model does not exist.
         self.logger.success("Model {0} deleted successfully".format(model_id))
