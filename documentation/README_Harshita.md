@@ -26,14 +26,12 @@
 AI/ML models, select the ones that are relevant to their research and run online predictions without the need to write a single line of code. We are gathering, 
 in a single resource, two classes of models. 
    
-  <br>
    
 It is one of the largest repository of AI/ML models for Global Health.Our platform is aimed at helping researchers identify
 drug candidates for orphan and neglected diseases, design molecules de novo, understand mechanisms of action or anticipate adverse side effects.
 </h4>
 <br> 
 
-![image](https://user-images.githubusercontent.com/79797000/162241886-6d3d73bf-b892-4820-b4f3-f2f9250295a3.png)
 
 <br>
 
@@ -81,10 +79,7 @@ Find out more at: [https://ersilia.io/](https://ersilia.io/)
 
 We collect models developed by third parties and available in scientific publications. On the other hand, we develop models in-house and/or in 
 collaboration with research groups in LMICs. In other words, part of our philanthropic mission is to increase visibility and facilitate access to AI/ML research 
-developed by the community, and part is to contribute AI/ML tools ourselves in order to fulfill unmet global health needs.  The Ersilia Model Hub currently works 
-on a CLI interface
-
-![image](https://user-images.githubusercontent.com/79797000/162250521-919c17ef-78a7-4f6d-bd30-dc17bbac2942.png)
+developed by the community, and part is to contribute AI/ML tools ourselves in order to fulfill unmet global health needs.  
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -102,19 +97,16 @@ Let us peep and set up the Prerequisites 🔖
 
 After completing the Prerequisites let's move towards our next step ; Installation
 
-### Installation 
-
-<hr>
-
+## Installation 
 
 #### Linux and MacOSX
 
 <hr>
 
 **Open a terminal. The best is to set up a Conda environment.**
-
-- Create a conda environment
 ```
+- Create a conda environment
+
 conda create -n ersilia python=3.7
 ```
 
@@ -178,15 +170,7 @@ Inside the Ubuntu terminal, you can now follow the installation instructions abo
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Ubuntu
-
-<hr>
-
 Below you can find a few snippets that can help you install dependencies in a Ubuntu terminal.
-
-<hr>
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 
 #### Gcc compiler
 
@@ -247,7 +231,7 @@ git-lfs install
 
 Now moving to Next Section : Models
 
-### Types of Models
+## Types of Models
 
 The Ersilia Model Hub contains the following AI/ML model categories, sorted by increasing complexity:
 1. Pre-trained literature models
@@ -282,9 +266,11 @@ Finally, **close** the service when you are done.
 ersilia close
 ```
 
-Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
-
-Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP) which are over 40+ 
+<h3> 
+   
+   - Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
+   
+   - Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP) which are over 40+  </h3>
 
 <p align="right"><a href="#top">Back to top</a></p>
 
@@ -312,10 +298,10 @@ The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https:/
 
 We are working to grow the Hub organically and responding to our users needs. Here are the details of the next features to come, stay tuned 👀
 
-1. Deployment for Windows System (expected: February 2022)
-2. Automated third-party model contributions (expected: March 2022)
+1. Deployment for Windows System (expected: February 2022) ☑️
+2. Automated third-party model contributions (expected: March 2022) ☑️
 3. Possibility to run lite models online (expected: May 2022)
-4. 
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## License and citation
