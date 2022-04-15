@@ -13,19 +13,17 @@
 
 ## Table of Contetns:
 
-- [Welcome to the **Ersilia Model Hub**!](#welcome-to-the-ersilia-model-hub)
-  - [Table of Contetns:](#table-of-contetns)
-  - [Abouts Us](#abouts-us)
-  - [Project Description](#project-description)
-  - [Features](#features)
-  - [Technology](#technology)
-  - [Prerequisites](#prerequisites)
-  - [Getting started](#getting-started)
-  - [Contribution Guidelines](#contribution-guidelines)
-  - [Roadmap](#roadmap)
-  - [License and citation](#license-and-citation)
-  - [Credit](#credit)
-  - [Contact](#contact)
+- [Abouts Us](#abouts-us)
+- [Project Description](#project-description)
+- [Features](#features)
+- [Technology](#technology)
+- [Prerequisites](#prerequisites)
+- [Getting started](#getting-started)
+- [Contribution Guidelines](#contribution-guidelines)
+- [Roadmap](#roadmap)
+- [License and citation](#license-and-citation)
+- [Credit](#credit)
+- [Contact](#contact)
 
 <br></br>
 
