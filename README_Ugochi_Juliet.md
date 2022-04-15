@@ -4,8 +4,8 @@
 
 [![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/) [![EOSI](https://circleci.com/gh/ersilia-os/ersilia.svg?style=svg)](https://circleci.com/gh/ersilia-os/ersilia) [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black) [![Github All Releases](https://img.shields.io/github/downloads/ersilia-os/ersilia/total.svg)](./) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
 
-![logo](<img src="blob:chrome-untrusted://media-app/fe20532e-81eb-4f4e-bff7-1179fef29c80" alt="elogo.png"/>![image](https://user-images.githubusercontent.com/97044743/163495771-347fdb83-04f0-4b0e-8a7d-8081a471dba1.png)
-)
+![logo][image](https://user-images.githubusercontent.com/97044743/163495771-347fdb83-04f0-4b0e-8a7d-8081a471dba1.png)
+
 
 ### Table of Contents:
 1. [Project Description](https://github.com/ersilia-os/ersilia#project-description)
@@ -19,7 +19,7 @@
 With just some compound inputs and pretrained AI tools, scientists can now have access to millions of data for research. The Ersilia Model Hub, a [project](https://ersilia.gitbook.io/ersilia-book/) of the Ersilia Open Source Initiative made this possible. It embeds the experimental data for each compound, plus targets and side-effects profiles, thus making it a more powerful and clinically relevant predictor. You can see the available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 
 
-##Key Features
+## Key Features
 * GitHub Flavored Markdown
 * Models for infectious and neglected diseases 
 * Large scale datasets
@@ -81,7 +81,7 @@ The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organiz
 You can support us via [Open Collective](https:/opencollective.com/ersilia).
 
 # Links
-[Website](https://ersilia.io)
-[Documentation](https://github.com/ersilia-os/ersilia/tree/master/documentation)
-[Issue tracker](https://github.com/ersilia-os/ersilia/issues)
+* [Website](https://ersilia.io)
+* [Documentation](https://github.com/ersilia-os/ersilia/tree/master/documentation)
+* [Issue tracker](https://github.com/ersilia-os/ersilia/issues)
 
