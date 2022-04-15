@@ -324,7 +324,7 @@ class ErsiliaModel(ErsiliaBase):
             # Result is a dict, a numpy array, a dataframe...
             return result
     
-    def update_model_usage_time(model_id):
+    def update_model_usage_time(self, model_id):
 
         ts_str = str(time.time())
         with open("fetched_models.txt") as infile:
@@ -345,7 +345,7 @@ class ErsiliaModel(ErsiliaBase):
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
-        self.update_model_usage_time(self.model_id)
+        # self.update_model_usage_time(self.model_id) TODO: Check and reactivate
 
     def close(self):
         self.autoservice.close()
