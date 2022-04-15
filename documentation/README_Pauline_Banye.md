@@ -95,15 +95,20 @@ $ docker --version
 
 - Install [GitHub CLI](https://cli.github.com/manual/installation), a free and open source tool that brings GitHub to your terminal. 
 ```
-# Add the official Personal Package Archive for GitHub CLI and update your system packages with the following commands.
-$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-$ sudo apt-add-repository https://cli.github.com/packages
-$ sudo apt update
-
 # To install the Git CLI
-$ sudo apt install gh
+$ conda install gh -c conda-forge
+
+# Log in to GitHub and follow the required steps
+$ gh auth login
 ```
-- Some models with with large parameters require [Git Large File Storage](https://git-lfs.github.com/) (Git LFS) to function properly. Install Git LFS by running the `sudo apt install git-lfs` command in your linux terminal.
+- Some models with with large parameters require [Git Large File Storage](https://git-lfs.github.com/) (Git LFS) to function properly.
+```
+# Install Git LFS
+$ conda install git-lfs -c conda-forge
+
+# Activate Git LFS
+$ git-lfs install
+``` 
 
 #
 > ## Installation on Windows
@@ -220,12 +225,19 @@ You need to use your linux terminal with the activated ersilia environment to ru
 > ## Usage Steps
 - First fetch the model of interest:
 ```
-$ ersilia fetch <name-of-model>
+# fetch model
+$ ersilia fetch -v <name-of-model>
+
+or
+
+# fetch model using the verbose mode for debugging
+$ ersilia fetch -v <name-of-model>
 ```
 - Generate some example molecules, to be used as input:
 ```
 $ ersilia example <name-of-model> -n 5 -f my_molecules.csv
 ```
+
 - Serve your model:
 ```
 $ ersilia serve <name-of-model>
@@ -241,6 +253,7 @@ $ ersilia close
 More detailed instructions and examples can be found in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/).
 
 #
+
 ># Future development
 We are still undergoing processes in order to expand the hub, taking into account the needs from our end users. Some of the features we intend to implement in the future include:
 - Deployment for Windows based Systems (expected: February 2022)
