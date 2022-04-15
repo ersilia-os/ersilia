@@ -13,48 +13,36 @@
 
 ## Table of Contetns:
 
-- [Abouts Us](#abouts-us)
-- [Project Description](#project-description)
-- [Overview](#overview)
-- [Features](#features)
-- [Technology](#technology)
-- [Prerequisites](#prerequisites)
-- [Getting started](#getting-started)
-- [Contribution Guidelines](#contribution-guidelines)
-- [Roadmap](#roadmap)
-- [Operations](#operations)
-- [License](#license)
-- [Vision](#vision)
-- [Future Scope](#future-scope)
-- [Attributes](#attributes)
-- [Credit](#credit)
-- [Contact](#contact)
+- [Welcome to the **Ersilia Model Hub**!](#welcome-to-the-ersilia-model-hub)
+  - [Table of Contetns:](#table-of-contetns)
+  - [Abouts Us](#abouts-us)
+  - [Project Description](#project-description)
+  - [Features](#features)
+  - [Technology](#technology)
+  - [Prerequisites](#prerequisites)
+  - [Getting started](#getting-started)
+  - [Contribution Guidelines](#contribution-guidelines)
+  - [Roadmap](#roadmap)
+  - [License and citation](#license-and-citation)
+  - [Credit](#credit)
+  - [Contact](#contact)
 
 <br></br>
 
 ## Abouts Us
 
-The [Ersilia Open Source Initiative](https://www.ersilia.io/) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
-You can support us via Open Collective.
+The [Ersilia Open Source Initiative](https://www.ersilia.io/) is a Non Profit Organization registered with the Charity Commission for England and Wales (no. 1192266). It is our mission to reduce the gap between the productivity of biomedical research between countries by promoting research in underfunded settings and making scientific advances accessible to everyone. You can support us through [Open Collective](https://opencollective.com/ersilia#category-CONTRIBUTE).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Project Description
 
-The Ersilia Model Hub is a platform which provide you a pre trained Artificial Intelligence model for scientists so that the can integrate it in daily tasks. Ersilia Open Source Initiative is a part of the Ersilia Model Hub. It is creating a software known as FOSS software and this software should be accompanied by a good documentation, usage, contribution, instruction of how to install and to use and many more about it. FOSS software which basically focuses to create a platform on AI and ML models for finding assets relevant to their research and can try them without coding expertise. 
+The Ersilia Model Hub is the main project of the [Ersilia Open Source Initiative](https://www.ersilia.io/). It is an open-source repository of Artificial Intelligence and Machine Learning (AI/ML) models for drug discovery. The goal is to provide platforms for the deployment of AI/ML models that scientists can browse through, identify relevant assets and generate predictions without requiring coding expertise. A large majority of the scientific community does not possess the required expertise to use most of the tools developed, even when they are fully open-sourced and published. The gap is even more pronounced in institutions in Low and Middle Income Countries where bioinformatics facilities and data science experts are scarce. Through this project, we aim to democratize access to this expertise and promote research into neglected and infectious diseases.
 
-This project is inspired by the participation of the Ersilia Open Source Initiative in three programs this year: The [Digital Infrastructure Incubator](https://github.com/matiassingers/awesome-readme), focused on FOSS community and governance, the [Open Life Sciences](https://openlifesci.org/), , for implementing Open Science practices at all levels and the [Software Sustainability Fellowship](https://www.software.ac.uk/programmes-and-events/fellowship-programme), oriented towards the sustainability of research software tools. The intern will gain access to all documentation and lessons learned during these programs and help implement them.
+The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors. All assets are open source, but please do check the Licenses of each model before using them.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-## Overview
-
-<div align="center">
-
-![.](https://user-images.githubusercontent.com/63330165/160850205-9d269457-06ad-46b7-9aaa-7a934c2fb47c.png)
-
-</div>
-
+* Read more about the project better at the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
+* Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Features
@@ -64,7 +52,7 @@ This project is inspired by the participation of the Ersilia Open Source Initiat
 | Bioactivity signatures | Tools are designed to facilitate the use of AI/ML tools. Anyone even from non-coding background can browse a collection of models, choose the ones relevant to their research interests and run predictions without writing even a single line of code. |
 | Data driven | Ersilia technology achieves state-of-the-art performance thanks to the integration of chemical, genomic and biomedical text data.|
 | User friendly platform | Our tools are designed to facilitate the use of AI/ML tools and platform is user friendly, it is beginners-friendly as well. |
-| Open source | All our assets are released under the MIT license. This means the anyone in ersilia community can review, contribute and improve our code, resulting in tools validated more extensively than in the traditional peer-review system. |
+| Open source | All our assets are released under the GPLv3 license. This means the anyone in ersilia community can review, contribute and improve our code and can distribute their own versions. |
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -134,47 +122,15 @@ We are working to grow the Hub organically and responding to our users needs. He
    
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-## Operations
+## License and citation
 
-The Ersilia Open Source Initiative is a UK-based charity focused on strengthening the research capacity for infectious and neglected diseases by developing and implementing novel artificial intelligence and machine learning tools.
-ML is advancing at incredible speed, holding the promise to revolutionize biomedical practice by leveraging large amounts of data and decreasing the number and cost of laboratory experiments. Unfortunately, in practice, many of ML benefits are only accessible to experienced data scientists, without real adoption of the technology in day-to-day research in laboratories and hospitals.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-## License
-
-This repository is open-sourced under [GNU AFFERO GENERAL PUBLIC LICENSE](https://github.com/ersilia-os/ersilia/blob/master/LICENSE). Please check the link bellow before using it.
+This repository is open-sourced under GNU General Public License v3.0 or later. See [LICENSE](https://github.com/ersilia-os/ersilia/blob/master/LICENSE) to see the full text. Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff), if you use it.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-
-## Vision
-
-The project is focused on strengthening the community guidelines, working on materials for and dissemination like blogposts, scientific publications etc. The mission is to again maintain the balance between countries by supporting research in unfunded settings and remove the gap created.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-## Future Scope
-
-It will help you to create an effective documentation. The tool developed worldwide are still untouched who doesn’t have the expertise even after they are fully published on open source. Due to these untouched tools a huge gap has been created specially in low and middle income countries. Through this access to bioinformatic facilities or data science experts are scarce.  So to heal this problem we have created FOSS software to ease the access to expertise and support research into neglected infectious diseases.
-This Code of Conduct applies within all community spaces, and also applies when an individual is officially representing the community in public spaces. Examples of representing our community include using an official e-mail address, posting via an official social media account, or acting as an appointed representative at an online or offline event.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-## Attributes
-
-This Code of Conduct is adapted from the Contributor Covenant, version 2.0, available [here](https://www.contributor-covenant.org/version/2/0/code_of_conduct.html).
-Community Impact Guidelines were inspired by Mozilla's code of conduct enforcement ladder.
-For answers to common questions about this code of conduct, see the [FAQ](https://www.contributor-covenant.org/faq). Translations are available [here](https://www.contributor-covenant.org/translations).
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 
 ## Credit
 
-The credit of this goes to the [Digital Infrastructure Incubator](https://github.com/matiassingers/awesome-readme), focused on FOSS community and governance, the [Open Life Sciences](https://openlifesci.org/), for implementing Open Science practices at all levels and the [Software Sustainability Fellowship](https://www.software.ac.uk/programmes-and-events/fellowship-programme)
+This project is inspired by the participation of the Ersilia Open Source Initiative in three programs this year: The [Digital Infrastructure Incubator](https://github.com/matiassingers/awesome-readme), focused on FOSS community and governance, the [Open Life Sciences](https://openlifesci.org/), for implementing Open Science practices at all levels and the [Software Sustainability Fellowship](https://www.software.ac.uk/programmes-and-events/fellowship-programme), oriented towards the sustainability of research software tools.
 
 ## Contact
 
