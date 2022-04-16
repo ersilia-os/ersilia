@@ -14,6 +14,7 @@
 - [Getting started](#installation-guide)
 - [Contribution Guidelines](#contribution-guidelines)
 - [Future Scope](#future-scope)
+- [License and Citation](#license-and-citation)
 - [Contact](#contact-us)
 
 
@@ -24,7 +25,7 @@ The [Ersilia Open Source Initiative](https://ersilia.io)  is a non-profit organi
 
 A free, **open-source** repository of Artificial Intelligence and Machine Learning (**AI/ML**) models for **drug discovery**. Our platform is aimed at helping researchers identify drug candidates for orphan and neglected diseases, design molecules de novo, understand mechanisms of action or anticipate adverse side effects. The ultimate goal of Ersilia is to lower the barrier to drug discovery, encouraging academic groups and companies to pursue the development of new medicines following the principles of **Open Science**. Ersilia disseminates AI/ML models existing in the literature, as well as an in-house collection of models focused on **diseases** that are currently **neglected** by the pharmaceutical industry due to estimated low return on investment. Endemic diseases of low- and middle-income countries (LMIC) belong to this category.
 
-Scientists can use the Ersilia Model Hub to get pre-trained Artificial Intelligence models so they can incorporate these new technologies into their daily experiments.
+Scientists can use the [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP) to get pre-trained Artificial Intelligence models so they can incorporate these new technologies into their daily experiments.
 
 
 # Installation Guide
@@ -91,6 +92,8 @@ The Ersilia Model Hub is developed and maintained by a small team of Ersilia emp
 - If you are a scientist with a cool dataset, also [contact us](https://ersilia.io) or open an [issue](https://github.com/ersilia-os/ersilia/issues) as we might be interested in developing a model based on the data!
 - If there is a third-party model you have identified and would like to see it in the Hub, open an [issue](https://github.com/ersilia-os/ersilia/issues) with the relevant information and we will get back to you as soon as possible.
 
+The [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) is followed by the Ersilia Open Source Initiative.
+
 
 # Future Scope
 We are still in the process of expanding the hub to meet the needs of our end users. The following are some of the features we plan to incorporate in the future:
@@ -105,7 +108,12 @@ We are still in the process of expanding the hub to meet the needs of our end us
 
 3. Online running of lite models is possible (expected: May 2022)
 
+# License and Citation
+The *MIT License* is used to open-source this repository. If you use it, please [cite](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) us.
+
 # Contact us
 
 You can support us via [Open Collective](https:/opencollective.com/ersilia).
-- [Twitter](https://twitter.com/ersiliaio) - [LinkedIn](https://www.linkedin.com/company/ersiliaio/) - [Medium](https://medium.com/ersiliaio)
+- [Twitter](https://twitter.com/ersiliaio) 
+- [LinkedIn](https://www.linkedin.com/company/ersiliaio/) 
+- [Medium](https://medium.com/ersiliaio)

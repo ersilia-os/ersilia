@@ -2,6 +2,7 @@
 
 import json
 import os
+import time
 
 from ... import ErsiliaBase
 from ... import logger
@@ -80,6 +81,14 @@ class ModelFetcher(ErsiliaBase):
         with open(status_file, "w") as f:
             json.dump(done, f, indent=4)
 
+    def _fetchtime(self):
+        ts = time.time()
+        with open("fetched_models.txt","a") as file:
+            file.write(self.model_id)
+            file.write(',')
+            file.write(str(ts))
+            file.write('\n')
+
     def fetch(self, model_id):
         self.model_id = model_id
         self._prepare()
@@ -90,4 +99,5 @@ class ModelFetcher(ErsiliaBase):
         self._check()
         self._sniff()
         self._success()
+        # self._fetchtime()
         logger.info("Fetching {0} done successfully".format(model_id))

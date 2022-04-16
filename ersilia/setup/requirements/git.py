@@ -9,3 +9,11 @@ class GithubCliRequirement(object):
 
     def install(self):
         pass
+
+
+class GitLfsRequirement(object):
+    def __init__(self):
+        pass
+
+    def is_installed(self):
+        pass
