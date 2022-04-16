@@ -30,12 +30,13 @@ class CatalogTable(object):
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
+      
 
     def as_table(self):
         if not tabulate:
             return None
         else:
-            return tabulate(self.data, headers=self.columns)
+            return tabulate(self.data, headers=self.columns, tablefmt = "fancy_grid", colalign = ("center", "center", "center",))
 
     def __str__(self):
         return self.as_table()
