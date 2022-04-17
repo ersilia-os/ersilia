@@ -16,13 +16,17 @@ def catalog_cmd():
         default=False,
         help="Show catalog of models available in the local computer",
     )
-    @click.option("-s", "--search", default=None, type=click.STRING)
-    def catalog(local=False, search=None):
+    
+    @click.option("-t", "--text", default = None, type=click.STRING, help ="Shows the  model related to input keyword")
+    @click.option("-m", "--mode", default = None, type=click.STRING, help = "Shows the  model trained via input mode")
+    def catalog(local=False, search=None, text=None , mode=None):
         mc = ModelCatalog()
         if not local:
             catalog = mc.hub()
         else:
             catalog = mc.local()
-        if search:
-            catalog = ModelSearcher(catalog).search(search)
+        if text:
+            catalog = ModelSearcher(catalog).search(text)
+        if mode:
+            catalog = ModelSearcher(catalog).search(mode)
         click.echo(catalog)

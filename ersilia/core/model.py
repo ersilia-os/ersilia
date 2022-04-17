@@ -5,6 +5,8 @@ import types
 import collections
 import importlib
 import __main__ as main
+import time
+import csv
 
 from .. import logger
 from .base import ErsiliaBase
@@ -321,6 +323,19 @@ class ErsiliaModel(ErsiliaBase):
         else:
             # Result is a dict, a numpy array, a dataframe...
             return result
+    
+    def update_model_usage_time(self, model_id):
+
+        ts_str = str(time.time())
+        with open("fetched_models.txt") as infile:
+            models = dict(csv.reader(infile))
+        infile.close()
+        if model_id in models.keys():
+            models[model_id] = ts_str
+
+        with open('fetched_models.txt', 'w') as f:
+            for key, values in models.items():
+                f.write(f"{key},{values}\n")
 
     def serve(self):
         self.close()
@@ -330,6 +345,7 @@ class ErsiliaModel(ErsiliaBase):
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
+        # self.update_model_usage_time(self.model_id) TODO: Check and reactivate
 
     def close(self):
         self.autoservice.close()

@@ -1,10 +1,14 @@
-<div id="top"></div>
+<div align="center">
 
-# Welcome to the Ersilia Model Hub!
+# Welcome to the **Ersilia Model Hub**!
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](code_of_conduct.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 
 [![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/) [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
+
+</div>
 
 ![logo](https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png)
 
@@ -15,6 +19,7 @@
 4. [Roadmap](https://github.com/ersilia-os/ersilia#roadmap)
 5. [License and citation](https://github.com/ersilia-os/ersilia#license-and-citation)
 6. [About us](https://github.com/ersilia-os/ersilia#about-us)
+7. [Contact us](https://github.com/ersilia-os/ersilia#contact)
 
 # Project Description
 The Ersilia Model Hub is the main project of the [Ersilia Open Source Initiative](https://ersilia.io). The aim is to provide a platform for a user-friendly deployment of AI/ML models, where scientists can browse through the assets, identify those which is relevant to their research and obtain predictions without the need of coding expertise. Currently, most of the tools developed, even when published and fully open-sourced, remain unusable by a large majority of the scientific community who does not have the necessary expertise. This gap becomes even larger in Low and Middle Income Country institutions where access to bioinformatic facilities or data science experts are scarce. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
@@ -25,7 +30,19 @@ The models embedded in the hub include both models published in the literature (
 * Available models can be checked at [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+## Overview 
+
+We collect models developed by third parties and available in scientific publications. On the other hand, we develop models in-house and/or in 
+collaboration with research groups in LMICs. In other words, part of our philanthropic mission is to increase visibility and facilitate access to AI/ML research 
+developed by the community, and part is to contribute AI/ML tools ourselves in order to fulfill unmet global health needs.  The Ersilia Model Hub currently works 
+on a CLI interface
+
+![image](https://user-images.githubusercontent.com/79797000/162250521-919c17ef-78a7-4f6d-bd30-dc17bbac2942.png)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 # Getting started
+
 Follow the **installation instructions** from the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).
 
 Once Ersilia is installed, you can **browse models** in the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg).
@@ -81,3 +98,11 @@ The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organiz
 
 You can support us via [Open Collective](https:/opencollective.com/ersilia).
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+# Contact Us
+
+- Follow us on  [Twitter](https://twitter.com/ersiliaio) - [LinkedIn](https://www.linkedin.com/company/ersiliaio/) - [Medium](https://medium.com/ersiliaio)
+- Or contact us at hello@ersilia.io
+- Connect for help, ideas, and discussions. We would be glad to help you ❤️.
+<p align="right">(<a href="#top">back to top</a>)</p>
+
