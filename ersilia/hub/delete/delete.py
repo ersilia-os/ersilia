@@ -1,6 +1,9 @@
+
 import os
 import shutil
-
+import csv
+from pathlib import Path
+import os.path 
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
@@ -218,6 +221,17 @@ class ModelFullDeleter(ErsiliaBase):
             if v:
                 return True
         return False
+    def delete_model_entry(self,model_id):
+        # Remove deleted model's entry from fetched_models.txt
+        if (os.path.exists("fetched_models.txt")):
+            with open("fetched_models.txt") as infile:
+                models = dict(csv.reader(infile))
+            infile.close()
+            del models[model_id]
+            with open('fetched_models.txt', 'w') as f:
+                for key, values in models.items():
+                    f.write(f"{key},{values}\n")
+            print("Model Entry deleted")
 
     def delete(self, model_id):
         self.logger.info("Starting delete of model {0}".format(model_id))
@@ -230,4 +244,5 @@ class ModelFullDeleter(ErsiliaBase):
         ModelLakeDeleter(self.config_json).delete(model_id)
         ModelPipDeleter(self.config_json).delete(model_id)
         ModelDockerDeleter(self.config_json).delete(model_id)
+        # self.delete_model_entry(model_id) #TODO it fails if model does not exist.
         self.logger.success("Model {0} deleted successfully".format(model_id))

@@ -60,7 +60,7 @@ class ReadmeCard(ErsiliaBase):
         return text.split("# ")[1].split("\n")[1].split("#")[0].strip()
     
     def _mode(self, lines):
-        mode = "\n".join(lines)
+        text = "\n".join(lines)
         return text.split("# ")[1].split("\n")[1].split("#")[0].strip()
 
     def _model_github_url(self, model_id):
