@@ -3,7 +3,8 @@
 import json
 import os
 import time
-
+import base64
+# from riya import 
 from numpy import subtract
 
 from ... import ErsiliaBase
@@ -16,6 +17,9 @@ from .actions.toolize import ModelToolizer
 from .actions.content import CardGetter
 from .actions.check import ModelChecker
 from .actions.sniff import ModelSniffer
+
+from ...utils.terminal import run_command
+from ...utils.config import Secrets
 
 from . import STATUS_FILE, DONE_TAG
 
@@ -124,4 +128,11 @@ class ModelFetcher(ErsiliaBase):
 
         with open("METADATA.json", "w") as outfile:
             json.dump({model_id: {"progress": self.progress}}, outfile)
+
+        content = base64.b64encode(json.dumps(self.progress).encode('utf-8'))
+        data = json.dumps({"message":"[update] METADATA from Ersilia","content": str(content)})
+        token = "GITHUB_ACCESS_TOKEN"
+        cmd = 'curl -X PUT -H "Accept: application/vnd.github.v3+json" -H "Authorization: token {0}" https://api.github.com/repos/ersilia-os/{1}/contents/METADATA.json -d {2}'.format(token, self.model_id, data)
+        run_command(cmd)
+
         # print("Progress times for each step in seconds", self.progress)
