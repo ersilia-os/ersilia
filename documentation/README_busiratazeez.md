@@ -16,10 +16,9 @@
 5. [Roadmap](https://github.com/ersilia-os/ersilia#roadmap)
 6. [License and citation](https://github.com/ersilia-os/ersilia#license-and-citation)
 7. [About us](https://github.com/ersilia-os/ersilia#about-us)
-8. [Contact](https://github.com/ersilia-os/ersilia#contact)
 
 # Project Description
-The Ersilia Model Hub is the main project of the [Ersilia Open Source Initiative] (https://ersilia.io). The aim is to provide a platform for a user-friendly deployment of AI/ML models, where scientists can browse through the assets, identify those which are relevant to their research and obtain predictions without the need of coding expertise. Currently, most of the tools developed, even when published and fully open-sourced, remain unusable by a large majority of the scientific community who do not have the necessary expertise. This gap becomes enormous in Low and Middle Income Country institutions where access to bioinformatic facilities or data science experts are scarce. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
+The Ersilia Model Hub is the main project of the [Ersilia Open Source Initiative] (https://ersilia.io). The aim is to provide a platform for a user-friendly deployment of AI/ML models, where scientists can browse through the assets, identify those which are relevant to their research and obtain predictions without the need of coding expertise. Currently, most of the tools developed, even when published and fully open-sourced, remain unusable by a large majority of the scientific community who do not have the necessary expertise. This gap becomes even larger in Low and Middle Income Country institutions where access to bioinformatic facilities or data science experts are scarce. With this project, we hope to democratize access to this expertise and support research into neglected and infectious diseases.
 
 The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgment) and models developed by the Ersilia team or contributors. All assets are open source, but please do check the Licenses of each model before using them.
 
@@ -28,12 +27,13 @@ The models embedded in the hub include both models published in the literature (
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # Getting started
-**Requirements**<br>
-Python 3.7 and above<br>
-MacOS or Linux or Windows 10
+** Requirements**
+*Python 3.7 and above
+*MacOS or Linux or Windows 10
 
-**Installation Instructions For Linux and MacOS**
- - Set up Conda environment
+**Installation Instructions**
+*For Linux and MacOS
+- Set up Conda environment
 ```
 conda create -n ersilia python=3.7
 
@@ -66,7 +66,7 @@ ersilia --help
 
 ```
 
-**Install Dependency ([Isaura](https://github.com/ersilia-os/isaura) data lake is highly recommended)**
+* Install Dependency [Isaura data lake is highly recommended]
 
 - Clone from Github
 ```
@@ -83,12 +83,17 @@ cd isaura
 pip install -e .
 
 ```
-**Installation Instructions For Windows 10 and above (
-We recommend [Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6#activetab=pivot:overviewtab) using WSL)**
+*For Windows 10 and above
+We recommend [Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6#activetab=pivot:overviewtab) using WSL
+
+Open a Powershell with Admin permissions and type:
 ```
 wsl --install
 
 ```
+Now, install the [Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6#activetab=pivot:overviewtab) terminal on Windows.
+Inside the Ubuntu terminal, you can now follow the installation instructions [above](https://github.com/ersilia-os/ersilia###Install-on-Linux-and-MacOSX)
+
 - Install dependency
 ```
 sudo apt install build-essential
@@ -115,7 +120,7 @@ conda install gh -c conda-forge
 gh auth login
 
 ```
-Then follow the instructions.
+Then follow the instructions
 - Install GitHub LFS
 ```
 conda install git-lfs -c conda-forge
@@ -173,16 +178,13 @@ We are working to grow the Hub organically and responding to our users' needs. H
 [ ] Possibility to run lite models online (expected: May 2022)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-# License and citation
-This repository is open-sourced under the MIT License.
-Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+# License and Citation
+Ersilia is an open-sourced under the GNU Affero General Public License v3.0
+<br>Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # About us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
-<p align="right">(<a href="#top">back to top</a>)</p>
 
-# Contact
 You can support us via [Open Collective](https:/opencollective.com/ersilia).
-- [Twitter](https://twitter.com/ersiliaio) - [LinkedIn](https://www.linkedin.com/company/ersiliaio/) - [Medium](https://medium.com/ersiliaio)
 <p align="right">(<a href="#top">back to top</a>)</p>
