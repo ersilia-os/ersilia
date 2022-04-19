@@ -7,17 +7,6 @@ from ...hub.content.catalog import ModelCatalog
 from ...hub.content.search import ModelSearcher
 from ...hub.content.table_update import table
 
-# define storage file path based on script path (__file__)
-import os
-counter_path = os.path.join(os.path.dirname(__file__), 'my_counter')
-# start of script - read or initialise counter 
-try:
-    with open(counter_path, 'r') as count_in:
-        counter = int(count_in.read())
-             
-except FileNotFoundError:
-    counter = 0
-
 
 def catalog_cmd():
     """Creates catalog command"""
@@ -39,28 +28,19 @@ def catalog_cmd():
 
         mc = ModelCatalog()
         if not local:
-            if not (next and previous):
+            if not (next or previous) :
                 catalog = mc.hub()
-                catalog = table(catalog, 0).initialise()
-                with open(counter_path, 'w') as count_in:
-                       count_in.write(str(1))
+                catalog = table(catalog).initialise()
+                
             if next:
                 catalog = mc.hub()
-                catalog = table(catalog, counter).next_table()
-                with open(counter_path, 'w') as count_out:
-                     count_out.write(str(counter+1))
+                catalog = table(catalog).next_table()
+                
             
             if previous:
                 catalog = mc.hub()
-                catalog = table(catalog, counter).prev_table()
-                with open(counter_path, 'w') as count_out:
-                     count_out.write(str(counter-1))
-                if counter < 1:
-                    with open(counter_path, 'w') as count_out:
-                        count_out.write(str(1))
-                     
-
-
+                catalog = table(catalog).prev_table()
+                
         else:
             catalog = mc.local()
         
