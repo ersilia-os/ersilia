@@ -6,7 +6,7 @@
 
 [![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/) [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
 
-<img src="https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png" height="100">
+<img src="https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png" height="70">
 
 ![logo](https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png)
 
