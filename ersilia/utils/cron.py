@@ -1,5 +1,4 @@
 from ersilia.hub.delete.delete import ModelFullDeleter
-import os
 from pathlib import Path
 from ersilia.cli import echo
 import json

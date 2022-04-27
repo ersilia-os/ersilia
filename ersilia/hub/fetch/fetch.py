@@ -99,5 +99,5 @@ class ModelFetcher(ErsiliaBase):
         self._check()
         self._sniff()
         self._success()
-        self._fetchtime()
+        # self._fetchtime()
         logger.info("Fetching {0} done successfully".format(model_id))
