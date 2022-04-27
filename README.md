@@ -28,6 +28,8 @@ The models embedded in the hub include both models published in the literature (
 # Getting started
 Follow the **installation instructions** from the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/quick-start/installation).
 
+NOTE: While installation, make sure to install dependencies(GitHub CLI and Git LFS) before running "pip install -e" command.
+
 Once Ersilia is installed, you can **browse models** in the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg).
 
 Select one model. For example `chemprop-antibiotic`. You can **fetch** your model with the Ersilia CLI:
