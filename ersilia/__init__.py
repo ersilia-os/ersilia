@@ -5,7 +5,6 @@ del _version
 
 # External imports
 import os
-import subprocess
 
 # Disable GPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -65,6 +64,5 @@ def check_install_status():
 
 
 INSTALL_STATUS = check_install_status()["status"]
-
 
 __all__ = ["__version__"]
