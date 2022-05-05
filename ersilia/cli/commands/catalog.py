@@ -27,27 +27,27 @@ def catalog_cmd():
     def catalog(local=False, search=None, text=None , mode=None, next = False, previous = False):
 
         mc = ModelCatalog()
-        if not local:
+        if not (local or text or mode):
+            catalog = mc.hub()
             if not (next or previous) :
-                catalog = mc.hub()
                 catalog = table(catalog).initialise()
                 
             if next:
-                catalog = mc.hub()
                 catalog = table(catalog).next_table()
                 
             
             if previous:
-                catalog = mc.hub()
                 catalog = table(catalog).prev_table()
-                
-        else:
+            
+        if local:
             catalog = mc.local()
         
         if text:
-            catalog = ModelSearcher(catalog).search(text)
+            catalog = mc.hub()
+            catalog = ModelSearcher(catalog).search_text(text)
         if mode:
-            catalog = ModelSearcher(catalog).search(mode)
+            catalog = mc.hub()
+            catalog = ModelSearcher(catalog).search_mode(mode)
         click.echo(catalog)
 
 
