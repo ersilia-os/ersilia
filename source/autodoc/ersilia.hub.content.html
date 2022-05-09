@@ -234,10 +234,25 @@
 <dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.search.</span></span><span class="sig-name descname"><span class="pre">ModelSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class is used for searching through the catalog table</p>
+<p>Attributes:
+catalog : list and description of model on the hub or in local</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher.search">
-<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.search" title="Permalink to this definition"></a></dt>
-<dd><p>Search models based on a string. At the moment, this functionality is very simple.</p>
+<dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher.levenshtein_ratio_and_distance">
+<span class="sig-name descname"><span class="pre">levenshtein_ratio_and_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.levenshtein_ratio_and_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.levenshtein_ratio_and_distance" title="Permalink to this definition"></a></dt>
+<dd><p>Algorithm to fuzzy match strings</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher.search_mode">
+<span class="sig-name descname"><span class="pre">search_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.search_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.search_mode" title="Permalink to this definition"></a></dt>
+<dd><p>searches the mode of training</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher.search_text">
+<span class="sig-name descname"><span class="pre">search_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.search_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.search_text" title="Permalink to this definition"></a></dt>
+<dd><p>Search using text and return the closest matching string</p>
 </dd></dl>
 
 </dd></dl>
