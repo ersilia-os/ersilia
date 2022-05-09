@@ -15,7 +15,7 @@
 5. [About us](https://github.com/ersilia-os/ersilia#about-us)
 
 # Project Description
-The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infectious and neglected disease research. The end goal is to provide an open-source, no-code solution to access AI/ML models to acceletare drug discovery. The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors.
+The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infectious and neglected disease research. The end goal is to provide an open-source, no-code solution to access AI/ML models to accelerate drug discovery. The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors.
 
 * Read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Browse available models in the [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
@@ -24,12 +24,12 @@ The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infe
 # Installation
 Check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). The next steps are a quickstart guide to installing Ersilia.
 
-1. Create a conda environment and activate it
+1. Create a conda environment and activate it.
 ```
 conda create -n ersilia python=3.7
 conda activate ersilia
 ```
-2. Clone this repository and install with pip
+2. Clone this repository and install it with pip.
 ```
 git clone https://github.com/ersilia-os/ersilia.git
 cd ersilia
@@ -60,11 +60,11 @@ Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # Contribute
-The Ersilia Model Hub is a Free, Open Source Software and we highly value new contributors. There are several ways in which you can contribute to the project:
+The Ersilia Model Hub is a Free and open-source software and we highly value new contributors. There are several ways in which you can contribute to the project:
 * A good place to start is checking open [issues](https://github.com/ersilia-os/ersilia/issues). 
 * If you have identified a bug in the code, please open a new issue using the bug template.
 * If you want to incorporate a new model in the platform, open a new issue using the model request template or contact us using the following [form](https://www.ersilia.io/request-model)
-* Share any feedback with the community using [GitHub Discussions](https://github.com/ersilia-os/ersilia/discussions) for the project
+* Share any feedback with the community using [GitHub Discussions](https://github.com/ersilia-os/ersilia/discussions) for the project.
 * Check our [Contributing Guide](https://github.com/ersilia-os/ersilia/blob/master/CONTRIBUTING.md) for more details
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) code of conduct.
@@ -76,7 +76,7 @@ Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # About us
-The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
+The [Ersilia Open Source Initiative](https://ersilia.io) is a non-profit organization incorporated with the Charity Commission for England and Wales (number 1192266). Our mission is to reduce the imbalance in biomedical research productivity between countries by supporting research in underfunded settings.
 
 You can support us via [Open Collective](https:/opencollective.com/ersilia).
 <p align="right">(<a href="#top">back to top</a>)</p>
