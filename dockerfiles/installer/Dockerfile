@@ -10,4 +10,7 @@ conda create -y -n ersilia python=3.7 &&\
 conda activate ersilia
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
 RUN git clone https://github.com/ersilia-os/ersilia.git
+RUN eval "$(/root/miniconda3/bin/conda shell.bash hook)" &&\
+conda activate ersilia &&\
+python -m pip install -e ersilia/.
 ENV PATH "$PATH:$PATH:/root/miniconda3/envs/ersilia/bin"
