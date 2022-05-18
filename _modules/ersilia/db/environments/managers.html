@@ -74,7 +74,7 @@
 <span class="kn">from</span> <span class="nn">...setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
 <span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">Paths</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
+<span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">is_inside_docker</span>
 <span class="kn">from</span> <span class="nn">...utils.identifiers.short</span> <span class="kn">import</span> <span class="n">ShortIdentifier</span>
 <span class="kn">from</span> <span class="nn">...utils.ports</span> <span class="kn">import</span> <span class="n">find_free_port</span>
 <span class="kn">from</span> <span class="nn">.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
@@ -89,9 +89,13 @@
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_eos_regex</span> <span class="o">=</span> <span class="n">Paths</span><span class="p">()</span><span class="o">.</span><span class="n">_eos_regex</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_org_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inside_docker</span> <span class="o">=</span> <span class="n">is_inside_docker</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
+
+<div class="viewcode-block" id="DockerManager.is_inside_docker"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_inside_docker">[docs]</a>    <span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inside_docker</span></div>
 
 <div class="viewcode-block" id="DockerManager.is_installed"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
@@ -225,6 +229,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DockerManager.remove_stopped_containers"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.remove_stopped_containers">[docs]</a>    <span class="k">def</span> <span class="nf">remove_stopped_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
+            <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker container prune -f&quot;</span>
@@ -232,6 +238,8 @@
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_stop_containers_with_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
+            <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
@@ -254,6 +262,8 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_stop_containers_with_entrypoint_sh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">:</span>
+            <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
@@ -276,6 +286,8 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DockerManager.stop_containers"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.stop_containers">[docs]</a>    <span class="k">def</span> <span class="nf">stop_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">:</span>
+            <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop_containers_with_model_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -301,6 +313,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_stopped_containers</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DockerManager.delete_images"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.delete_images">[docs]</a>    <span class="k">def</span> <span class="nf">delete_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">purge_unnamed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
+            <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_containers</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>

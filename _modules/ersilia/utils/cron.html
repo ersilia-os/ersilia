@@ -66,20 +66,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.utils.cron</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">ersilia.hub.delete.delete</span> <span class="kn">import</span> <span class="n">ModelFullDeleter</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">ersilia.cli</span> <span class="kn">import</span> <span class="n">echo</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
+<span class="kn">from</span> <span class="nn">..hub.delete.delete</span> <span class="kn">import</span> <span class="n">ModelFullDeleter</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
 
 <span class="c1"># in days :</span>
-<span class="n">model_usage_lim</span>   <span class="o">=</span> <span class="mi">30</span>
+<span class="n">model_usage_lim</span> <span class="o">=</span> <span class="mi">30</span>
 <span class="n">model_cleanup_lim</span> <span class="o">=</span> <span class="mi">7</span>
 
 <div class="viewcode-block" id="seconds_to_days"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cron.seconds_to_days">[docs]</a><span class="k">def</span> <span class="nf">seconds_to_days</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">)</span> </div>
+
 
 <div class="viewcode-block" id="model_cleanup"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cron.model_cleanup">[docs]</a><span class="k">def</span> <span class="nf">model_cleanup</span><span class="p">():</span>
     <span class="n">ts_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -100,12 +101,13 @@
                     <span class="k">if</span> <span class="p">(</span><span class="n">seconds_to_days</span><span class="p">(</span><span class="n">current_ts</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">fetched_models</span><span class="p">[</span><span class="n">model_id</span><span class="p">])))</span><span class="o">&gt;</span><span class="n">model_usage_lim</span><span class="p">:</span>
                         <span class="n">del_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="del_model"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cron.del_model">[docs]</a><span class="k">def</span> <span class="nf">del_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-        <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">md</span><span class="o">.</span><span class="n">needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Deleting model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
-            <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model &quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot; deleted successfully!&quot;</span><span class="p">)</span>          </div>
+    <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">md</span><span class="o">.</span><span class="n">needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Deleting model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model &quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot; deleted successfully!&quot;</span><span class="p">)</span>          </div>
 
 </pre></div>
 

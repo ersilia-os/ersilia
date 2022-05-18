@@ -294,6 +294,8 @@
 <div class="viewcode-block" id="AutoService.clean_docker_containers"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_docker_containers">[docs]</a>    <span class="k">def</span> <span class="nf">clean_docker_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Silencing docker containers if necessary&quot;</span><span class="p">)</span>
         <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
+            <span class="k">return</span>
         <span class="k">if</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="n">dm</span><span class="o">.</span><span class="n">stop_containers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 

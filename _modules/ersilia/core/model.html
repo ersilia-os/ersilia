@@ -85,12 +85,13 @@
 <span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span><span class="p">,</span> <span class="n">BaseIOGetter</span>
 <span class="kn">from</span> <span class="nn">..io.output</span> <span class="kn">import</span> <span class="n">TabularOutputStacker</span>
 <span class="kn">from</span> <span class="nn">..io.readers.file</span> <span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span> <span class="n">CARD_FILE</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_BATCH_SIZE</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
 <span class="kn">from</span> <span class="nn">..utils.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
 <span class="kn">from</span> <span class="nn">..lake.base</span> <span class="kn">import</span> <span class="n">LakeBase</span>
+
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">FETCHED_MODELS_FILENAME</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span> <span class="n">CARD_FILE</span><span class="p">,</span> <span class="n">EOS</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_BATCH_SIZE</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -392,15 +393,15 @@
             <span class="k">return</span> <span class="n">result</span></div>
     
 <div class="viewcode-block" id="ErsiliaModel.update_model_usage_time"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.update_model_usage_time">[docs]</a>    <span class="k">def</span> <span class="nf">update_model_usage_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">FETCHED_MODELS_FILENAME</span><span class="p">)</span>
         <span class="n">ts_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;fetched_models.txt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
             <span class="n">models</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
         <span class="n">infile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">models</span><span class="p">[</span><span class="n">model_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_str</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;fetched_models.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">values</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
