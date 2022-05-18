@@ -7,7 +7,7 @@ from ...core.base import ErsiliaBase
 from ...setup.requirements.docker import DockerRequirement
 from ...utils.paths import Paths
 from ...utils.terminal import run_command
-from ...utils.docker import SimpleDocker
+from ...utils.docker import SimpleDocker, is_inside_docker
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
 from .localdb import EnvironmentDb
@@ -22,9 +22,13 @@ class DockerManager(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self._eos_regex = Paths()._eos_regex()
         self._org_regex = re.compile(DOCKERHUB_ORG)
+        self.inside_docker = is_inside_docker()
         self.docker = SimpleDocker()
         self.db = EnvironmentDb()
         self.db.table = "docker"
+
+    def is_inside_docker(self):
+        return self.inside_docker
 
     def is_installed(self):
         return DockerRequirement().is_installed()
@@ -158,6 +162,8 @@ class DockerManager(ErsiliaBase):
         self.remove(model_id)
 
     def remove_stopped_containers(self):
+        if self.is_inside_docker():
+            return
         if not self.is_installed():
             return
         cmd = "docker container prune -f"
@@ -165,6 +171,8 @@ class DockerManager(ErsiliaBase):
         run_command(cmd)
 
     def _stop_containers_with_model_id(self, model_id):
+        if self.is_inside_docker():
+            return
         if not self.is_installed():
             return
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
@@ -187,6 +195,8 @@ class DockerManager(ErsiliaBase):
         shutil.rmtree(tmp_folder)
 
     def _stop_containers_with_entrypoint_sh(self):
+        if self.is_inside_docker:
+            return
         if not self.is_installed():
             return
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
@@ -209,6 +219,8 @@ class DockerManager(ErsiliaBase):
         shutil.rmtree(tmp_folder)
 
     def stop_containers(self, model_id):
+        if self.is_inside_docker:
+            return
         if not self.is_installed():
             return
         self._stop_containers_with_model_id(model_id)
@@ -234,6 +246,8 @@ class DockerManager(ErsiliaBase):
         self.remove_stopped_containers()
 
     def delete_images(self, model_id, purge_unnamed=True):
+        if self.is_inside_docker():
+            return
         if not self.is_installed():
             return
         self.stop_containers(model_id)

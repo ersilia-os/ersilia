@@ -1,9 +1,13 @@
 from ...utils.terminal import run_command_check_output, run_command
+from ...utils.docker import is_inside_docker
 
 
 class DockerRequirement(object):
     def __init__(self):
         self.name = "docker"
+
+    def is_inside_docker(self):
+        return is_inside_docker()
 
     def is_installed(self):
         cmd = "docker run hello-world"

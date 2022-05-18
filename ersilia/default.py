@@ -28,6 +28,7 @@ VERBOSE_FILE = ".verbose.json"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
+FETCHED_MODELS_FILENAME = "fetched_models.txt"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"
@@ -48,7 +49,7 @@ AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 
 # URLS
 ERSILIA_WEB_URL = "https://ersilia.io"
-ERSILIA_MODEL_HUB_URL = "https://airtable.com/shrUcrUnd7jB9ChZV"
+ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

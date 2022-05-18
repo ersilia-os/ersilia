@@ -2,16 +2,17 @@
 import os
 import shutil
 import csv
-from pathlib import Path
 import os.path 
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
 from ...utils.conda import SimpleConda
+from ...utils.docker import is_inside_docker
 from ..content.catalog import ModelCatalog
 from ...db.environments.localdb import EnvironmentDb
 from ...db.hubdata.localslugs import SlugDb
 from ...db.environments.managers import DockerManager
+from ...db.disk.fetched import FetchedModelsManager
 from ..bundle.status import ModelStatus
 
 from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
@@ -193,6 +194,8 @@ class ModelDockerDeleter(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
     def delete(self, model_id):
+        if is_inside_docker():
+            return
         self.logger.info(
             "Removing docker images and stopping containers related to {0}".format(
                 model_id
@@ -200,6 +203,15 @@ class ModelDockerDeleter(ErsiliaBase):
         )
         dm = DockerManager(config_json=self.config_json)
         dm.delete_images(model_id)
+
+
+class ModelFetchedEntryDeleter(ErsiliaBase):
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.fmm = FetchedModelsManager(config_json=config_json)
+
+    def delete(self, model_id):
+        self.fmm.delete(model_id)
 
 
 class TmpCleaner(ErsiliaBase):
@@ -221,18 +233,7 @@ class ModelFullDeleter(ErsiliaBase):
             if v:
                 return True
         return False
-    def delete_model_entry(self,model_id):
-        # Remove deleted model's entry from fetched_models.txt
-        if (os.path.exists("fetched_models.txt")):
-            with open("fetched_models.txt") as infile:
-                models = dict(csv.reader(infile))
-            infile.close()
-            del models[model_id]
-            with open('fetched_models.txt', 'w') as f:
-                for key, values in models.items():
-                    f.write(f"{key},{values}\n")
-            print("Model Entry deleted")
-
+    
     def delete(self, model_id):
         self.logger.info("Starting delete of model {0}".format(model_id))
         ModelEosDeleter(self.config_json).delete(model_id)
@@ -244,5 +245,5 @@ class ModelFullDeleter(ErsiliaBase):
         ModelLakeDeleter(self.config_json).delete(model_id)
         ModelPipDeleter(self.config_json).delete(model_id)
         ModelDockerDeleter(self.config_json).delete(model_id)
-        # self.delete_model_entry(model_id) #TODO it fails if model does not exist.
+        ModelFetchedEntryDeleter(self.config_json).delete(model_id)
         self.logger.success("Model {0} deleted successfully".format(model_id))

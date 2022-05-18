@@ -18,12 +18,13 @@ from ..serve.api import Api
 from ..io.input import ExampleGenerator, BaseIOGetter
 from ..io.output import TabularOutputStacker
 from ..io.readers.file import FileTyper, TabularFileReader
-from ..default import MODEL_SIZE_FILE, CARD_FILE
-from ..default import DEFAULT_BATCH_SIZE
 from ..utils import tmp_pid_file
 from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.terminal import yes_no_input
 from ..lake.base import LakeBase
+
+from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
+from ..default import DEFAULT_BATCH_SIZE
 
 try:
     import pandas as pd
@@ -325,15 +326,15 @@ class ErsiliaModel(ErsiliaBase):
             return result
     
     def update_model_usage_time(self, model_id):
-
+        file_name = os.path.join(EOS, FETCHED_MODELS_FILENAME)
         ts_str = str(time.time())
-        with open("fetched_models.txt") as infile:
+        with open(file_name, 'r') as infile:
             models = dict(csv.reader(infile))
         infile.close()
         if model_id in models.keys():
             models[model_id] = ts_str
 
-        with open('fetched_models.txt', 'w') as f:
+        with open(file_name, 'w') as f:
             for key, values in models.items():
                 f.write(f"{key},{values}\n")
 

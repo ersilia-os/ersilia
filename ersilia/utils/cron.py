@@ -1,17 +1,18 @@
-from ersilia.hub.delete.delete import ModelFullDeleter
-from pathlib import Path
-from ersilia.cli import echo
 import json
 import csv
 import time
 
+from ..hub.delete.delete import ModelFullDeleter
+from pathlib import Path
+
 
 # in days :
-model_usage_lim   = 30
+model_usage_lim = 30
 model_cleanup_lim = 7
 
 def seconds_to_days(s):
     return s / (24 * 3600) 
+
 
 def model_cleanup():
     ts_dict = {}
@@ -32,10 +33,11 @@ def model_cleanup():
                     if (seconds_to_days(current_ts-float(fetched_models[model_id])))>model_usage_lim:
                         del_model(model_id)
 
+
 def del_model(model_id):
-        md = ModelFullDeleter()
-        if md.needs_delete(model_id):
-            print("Deleting model {0}".format(model_id))
-            md.delete(model_id)
-            print("Model ", model_id, " deleted successfully!")          
+    md = ModelFullDeleter()
+    if md.needs_delete(model_id):
+        print("Deleting model {0}".format(model_id))
+        md.delete(model_id)
+        print("Model ", model_id, " deleted successfully!")          
 

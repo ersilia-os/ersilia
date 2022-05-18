@@ -227,6 +227,8 @@ class AutoService(ErsiliaBase):
     def clean_docker_containers(self):
         self.logger.debug("Silencing docker containers if necessary")
         dm = DockerManager(config_json=self.config_json)
+        if dm.is_inside_docker():
+            return
         if dm.is_installed():
             dm.stop_containers(self.model_id)
 
