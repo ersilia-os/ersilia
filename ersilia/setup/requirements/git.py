@@ -1,6 +1,7 @@
 import sys
 import subprocess as s
 
+
 class GithubCliRequirement(object):
     def __ini__(self):
         self.name = "gh"

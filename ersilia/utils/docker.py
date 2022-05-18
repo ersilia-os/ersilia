@@ -5,6 +5,13 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 
+def is_inside_docker():
+    if os.path.isfile("/.dockerenv"):
+        return True
+    else:
+        return False
+
+
 class SimpleDocker(object):
     def __init__(self):
         self.identifier = LongIdentifier()
