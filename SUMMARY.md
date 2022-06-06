@@ -10,8 +10,8 @@
 
 ## 🙌 Contributors
 
-* [Page 1](contributors/page-1.md)
+* [Add models to the hub](contributors/page-1.md)
 
 ## 🔓 Privacy Preserving AI
 
-* [Model encryption](privacy-preserving-ai/model-encryption.md)
+* [Model encryption](privacy-preserving-ai/page-2.md)
