@@ -11,3 +11,7 @@
 ## 🙌 Contributors
 
 * [Page 1](contributors/page-1.md)
+
+## 🔓 Privacy Preserving AI
+
+* [Page 2](privacy-preserving-ai/page-2.md)
