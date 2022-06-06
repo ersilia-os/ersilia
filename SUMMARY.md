@@ -14,4 +14,4 @@
 
 ## 🔓 Privacy Preserving AI
 
-* [Page 2](privacy-preserving-ai/page-2.md)
+* [Model encryption](privacy-preserving-ai/model-encryption.md)
