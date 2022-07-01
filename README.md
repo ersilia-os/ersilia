@@ -71,7 +71,7 @@ The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https:/
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # License and citation
-This repository is open-sourced under the [AGPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
+This repository is open-sourced under the [GPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
