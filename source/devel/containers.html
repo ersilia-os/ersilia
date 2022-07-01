@@ -14,6 +14,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -81,19 +82,19 @@
            <div itemprop="articleBody">
              
   <section id="containers">
-<h1>Containers<a class="headerlink" href="#containers" title="Permalink to this headline"></a></h1>
+<h1>Containers<a class="headerlink" href="#containers" title="Permalink to this heading"></a></h1>
 <p>Ersilia relies on Docker containers.
 Ersilia stores containers at <a class="reference external" href="https://hub.docker.com/orgs/ersiliaos">Docker Hub</a>.</p>
 <section id="upload-image-to-the-ersilia-hub">
-<h2>Upload image to the Ersilia Hub<a class="headerlink" href="#upload-image-to-the-ersilia-hub" title="Permalink to this headline"></a></h2>
+<h2>Upload image to the Ersilia Hub<a class="headerlink" href="#upload-image-to-the-ersilia-hub" title="Permalink to this heading"></a></h2>
 <section id="prepare-machine">
-<h3>Prepare machine<a class="headerlink" href="#prepare-machine" title="Permalink to this headline"></a></h3>
+<h3>Prepare machine<a class="headerlink" href="#prepare-machine" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker login --username=$USER --password=$PWD
 </pre></div>
 </div>
 </section>
 <section id="write-dockerfile">
-<h3>Write dockerfile<a class="headerlink" href="#write-dockerfile" title="Permalink to this headline"></a></h3>
+<h3>Write dockerfile<a class="headerlink" href="#write-dockerfile" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FROM</span> <span class="n">ersilia</span><span class="o">/</span><span class="n">basic</span>
 
 <span class="n">WORKDIR</span> <span class="o">/</span><span class="n">app</span>
@@ -103,13 +104,13 @@ Ersilia stores containers at <a class="reference external" href="https://hub.doc
 </div>
 </section>
 <section id="build-image">
-<h3>Build image<a class="headerlink" href="#build-image" title="Permalink to this headline"></a></h3>
+<h3>Build image<a class="headerlink" href="#build-image" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker build -t $DOCKER_ACC/$DOCKER_REPO:$IMG_TAG .
 </pre></div>
 </div>
 </section>
 <section id="push-image">
-<h3>Push image<a class="headerlink" href="#push-image" title="Permalink to this headline"></a></h3>
+<h3>Push image<a class="headerlink" href="#push-image" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker push $DOCKER_ACC/$DOCKER_REPO:$IMG_TAG
 </pre></div>
 </div>
