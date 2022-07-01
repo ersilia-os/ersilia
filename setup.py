@@ -47,6 +47,7 @@ slim = [
     "h5py",
     "PyDrive2",
     "inputimeout",
+    "protobuf"
 ]
 slim_requires = _filter_requires(slim, install_requires)
 
