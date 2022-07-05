@@ -21,7 +21,7 @@ The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infe
 * Browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-# Quick start guid
+# Quick start guide
 Please check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). The next steps are a quickstart guide to installing Ersilia.
 
 1. Create a conda environment and activate it
