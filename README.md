@@ -18,11 +18,11 @@
 The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infectious and neglected disease research. The end goal is to provide an open-source, no-code solution to access AI/ML models to accelerate drug discovery. The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors.
 
 * Read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
-* Browse available models in the [Ersilia Model Hub](https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP)
+* Browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-# Installation
-Check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). The next steps are a quickstart guide to installing Ersilia.
+# Quick start guid
+Please check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). The next steps are a quickstart guide to installing Ersilia.
 
 1. Create a conda environment and activate it
 ```
@@ -35,7 +35,7 @@ git clone https://github.com/ersilia-os/ersilia.git
 cd ersilia
 pip install -e .
 ``` 
-3. Once the Ersilia Model Hub is installed, you can use the CLI to run predictions. First, select a model from the [Ersilia Model Hub](https://airtable.com/shrXfZ8pqro0jjcsG/tblZGe2a2XeBxrEHP/viwd5XJVLslkE11Tg) and **fetch** it:
+3. Once the Ersilia Model Hub is installed, you can use the CLI to run predictions. First, select a model from the [Ersilia Model Hub](https://ersilia.io/model-hub/) and **fetch** it:
 ```
 ersilia fetch chemprop-antibiotic
 ```
