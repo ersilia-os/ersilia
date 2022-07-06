@@ -53,12 +53,12 @@ The current generation of FHE libraries suffers from severe performance issues. 
 
 **Poor integration of current FHE libraries with popular ML frameworks**
 
-TenSeal tensors are not interoperable with Pytorch tensors\
+FHE libraries are not well integrated with the rest of the machine learning ecosystem. For example, TenSeal tensors are not interoperable with Pytorch tensors.\
 
 
 **Poor support for hardware accelerator backends in FHE libraries to speed up the computation**
 
-None of the major FHE libraries implements a CUDA backend for computation.\
+None of the major FHE libraries implements a CUDA backend for computation. So, GPUs cannot be used to speed up computations.\
 
 
 **Poor community support**
