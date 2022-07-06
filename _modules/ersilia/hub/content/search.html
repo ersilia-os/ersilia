@@ -72,51 +72,51 @@
 <span class="kn">import</span> <span class="nn">re</span>
 
 
-
 <div class="viewcode-block" id="ModelSearcher"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher">[docs]</a><span class="k">class</span> <span class="nc">ModelSearcher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class is used for searching through the catalog table</span>
-<span class="sd">       </span>
-<span class="sd">       Attributes:</span>
-<span class="sd">       catalog : list and description of model on the hub or in local </span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    catalog : list and description of model on the hub or in local</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">catalog</span>
 
-    
 <div class="viewcode-block" id="ModelSearcher.levenshtein_ratio_and_distance"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.levenshtein_ratio_and_distance">[docs]</a>    <span class="k">def</span> <span class="nf">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Algorithm to fuzzy match strings&quot;&quot;&quot;</span>
-    <span class="c1"># Initialize matrix of zeros</span>
+        <span class="c1"># Initialize matrix of zeros</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
         <span class="n">t</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="n">rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
-        <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span><span class="n">cols</span><span class="p">),</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
-    <span class="c1"># Populate matrix of zeros with the indeces of each character of both strings</span>
+        <span class="c1"># Populate matrix of zeros with the indeces of each character of both strings</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">cols</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
                 <span class="n">distance</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="n">distance</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
 
-    <span class="c1"># Iterate over the matrix to compute the cost of deletions,insertions and/or substitutions    </span>
+        <span class="c1"># Iterate over the matrix to compute the cost of deletions,insertions and/or substitutions</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="n">row</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">t</span><span class="p">[</span><span class="n">col</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-                    <span class="n">cost</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># If the characters are the same in the two strings in a given position [i,j] then the cost is 0</span>
+                <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">t</span><span class="p">[</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">cost</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># If the characters are the same in the two strings in a given position [i,j] then the cost is 0</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">cost</span> <span class="o">=</span> <span class="mi">2</span>
-                
-                <span class="n">distance</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">distance</span><span class="p">[</span><span class="n">row</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>      <span class="c1"># Cost of deletions</span>
-                                 <span class="n">distance</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>          <span class="c1"># Cost of insertions</span>
-                                 <span class="n">distance</span><span class="p">[</span><span class="n">row</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">cost</span><span class="p">)</span>     <span class="c1"># Cost of substitutions</span>
-    
+
+                <span class="n">distance</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+                    <span class="n">distance</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Cost of deletions</span>
+                    <span class="n">distance</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Cost of insertions</span>
+                    <span class="n">distance</span><span class="p">[</span><span class="n">row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">col</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">cost</span><span class="p">,</span>
+                <span class="p">)</span>  <span class="c1"># Cost of substitutions</span>
+
         <span class="c1"># Computation of the Levenshtein Distance Ratio</span>
-        <span class="n">Ratio</span> <span class="o">=</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">-</span> <span class="n">distance</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="n">Ratio</span> <span class="o">=</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">-</span> <span class="n">distance</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">col</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">Ratio</span></div>
 
-    
 <div class="viewcode-block" id="ModelSearcher.search_text"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.search_text">[docs]</a>    <span class="k">def</span> <span class="nf">search_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Search using text and return the closest matching string&quot;&quot;&quot;</span>
         <span class="n">idxs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -134,21 +134,21 @@
                 <span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r1</span><span class="p">)</span>
                 <span class="n">string_ratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
             <span class="n">ratio</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">string_ratio</span><span class="p">)</span>
-            <span class="n">ratio_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> 
-        <span class="k">if</span> <span class="p">(</span><span class="mf">1.0</span> <span class="ow">in</span> <span class="n">ratio_list</span><span class="p">):</span>
+            <span class="n">ratio_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mf">1.0</span> <span class="ow">in</span> <span class="n">ratio_list</span><span class="p">:</span>
             <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ratio_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ratio_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mf">0.7</span><span class="p">]</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">s</span> <span class="p">,</span> <span class="s2">&quot;not found. Here&#39;s a close match:&quot;</span><span class="p">)</span>   
+            <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;not found. Here&#39;s a close match:&quot;</span><span class="p">)</span>
 
-        <span class="n">isEmpty</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">isEmpty</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">isEmpty</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;No such element present. Please look through the catalog table.&quot;</span>
         <span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
-        
+
         <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelSearcher.search_mode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.search_mode">[docs]</a>    <span class="k">def</span> <span class="nf">search_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelSearcher.search_mode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.search_mode">[docs]</a>    <span class="k">def</span> <span class="nf">search_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;searches the mode of training&quot;&quot;&quot;</span>
         <span class="n">idxs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -157,13 +157,12 @@
             <span class="n">r_</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">r_</span><span class="p">:</span>
                 <span class="n">idxs</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="n">i</span><span class="p">])</span>
-        <span class="n">isEmpty</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">isEmpty</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">isEmpty</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;No such element present. Look through the catalog table.&quot;</span>
 
         <span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
 
-        
         <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div></div>
 </pre></div>
 
