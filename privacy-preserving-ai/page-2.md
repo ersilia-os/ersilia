@@ -1,3 +1,9 @@
+---
+description: >-
+  This page describes our ChemXOR library, a tool to build privacy-preserving
+  models for drug discovery
+---
+
 # Fully homomorphic encryption for AI/ML models
 
 ### FHE crash course
