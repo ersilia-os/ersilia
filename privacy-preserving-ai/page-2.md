@@ -109,7 +109,7 @@ from chemxor.data_modules.enc_dataset import EncDataset
 enc_pytorch_dataset = EncDataset(context, pytorch_dataset)
 
 # The encrypted datasets can also be used to create dataloaders
-DataLoader(enc_osm_train, batch_size=None)
+DataLoader(enc_pytorch_dataset, batch_size=None)
 ```
 
 `EncDataset` class is a wrapper that modifies that **`__getitem__`** method of the `Dataset` class from Pytorch. It encrypts the items using the provided `context` before returning the items.
