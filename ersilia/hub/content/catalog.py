@@ -30,13 +30,21 @@ class CatalogTable(object):
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
-      
 
     def as_table(self):
         if not tabulate:
             return None
         else:
-            return tabulate(self.data, headers=self.columns, tablefmt = "fancy_grid", colalign = ("center", "center", "center",))
+            return tabulate(
+                self.data,
+                headers=self.columns,
+                tablefmt="fancy_grid",
+                colalign=(
+                    "center",
+                    "center",
+                    "center",
+                ),
+            )
 
     def __str__(self):
         return self.as_table()
@@ -70,7 +78,6 @@ class ModelCatalog(ErsiliaBase):
         if "Slug" in card:
             return card["Slug"]
         return None
-    
 
     def _get_mode(self, card):
         if "mode" in card:
@@ -118,7 +125,7 @@ class ModelCatalog(ErsiliaBase):
                 models += [repo]
         logger.info("Found {0} models".format(len(models)))
         return models
-     
+
     def hub(self):
         """List models available in Ersilia model hub repository"""
         mc = ModelCard()
@@ -131,7 +138,7 @@ class ModelCatalog(ErsiliaBase):
             slug = self._get_slug(card)
             title = self._get_title(card)
             mode = self._get_mode(card)
-            R += [[model_id, slug, title,mode]]
+            R += [[model_id, slug, title, mode]]
         return CatalogTable(R, columns=["MODEL_ID", "SLUG", "TITLE", "MODE"])
 
     def local(self):

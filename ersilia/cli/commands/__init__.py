@@ -4,6 +4,7 @@ from ... import __version__
 from ... import logger
 from ..echo import Silencer
 
+
 @click.group(cls=BentoMLCommandGroup)
 @click.version_option(version=__version__)
 @click.option(

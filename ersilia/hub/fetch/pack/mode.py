@@ -13,6 +13,14 @@ class PackModeDecision(ErsiliaBase):
         self.model_id = model_id
         self.versioner = Versioner(config_json=config_json)
 
+    def _correct_protobuf(self, version, dockerfile):
+        if "0.11" in version["version"]:
+            dockerfile.append_run_command("pip install protobuf==3.19.0")
+            self.logger.info(
+                "Since BentoML is version 0.11, protobuf will been downgraded to 3.19.0"
+            )
+        return dockerfile
+
     def decide(self):
         folder = self._model_path(self.model_id)
         self.logger.debug(
@@ -21,6 +29,8 @@ class PackModeDecision(ErsiliaBase):
         dockerfile = DockerfileFile(folder)
         self.logger.debug("Check bentoml and python version")
         version = dockerfile.get_bentoml_version()
+        self.logger.info("BentoML version {0}".format(version))
+        dockerfile = self._correct_protobuf(version, dockerfile)
         if not dockerfile.has_runs():
             same_python = version["python"] == self.versioner.python_version(
                 py_format=True

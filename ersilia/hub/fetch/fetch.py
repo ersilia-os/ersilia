@@ -83,11 +83,11 @@ class ModelFetcher(ErsiliaBase):
 
     def _fetchtime(self):
         ts = time.time()
-        with open("fetched_models.txt","a") as file:
+        with open("fetched_models.txt", "a") as file:
             file.write(self.model_id)
-            file.write(',')
+            file.write(",")
             file.write(str(ts))
-            file.write('\n')
+            file.write("\n")
 
     def fetch(self, model_id):
         self.model_id = model_id

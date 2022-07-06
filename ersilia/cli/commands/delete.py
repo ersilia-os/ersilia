@@ -29,7 +29,7 @@ def delete_cmd():
             echo(
                 ":collision: Model {0} deleted successfully!".format(model_id),
                 fg="green",
-            )  
+            )
         else:
             echo(
                 ":person_tipping_hand: Model {0} is not available locally. No delete is necessary".format(

@@ -33,8 +33,10 @@ class ReadmeCard(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
-        url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
-            model_id
+        url = (
+            "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
+                model_id
+            )
         )
         return url
 
@@ -58,7 +60,7 @@ class ReadmeCard(ErsiliaBase):
         """Description is what comes after the title and before the next header"""
         text = "\n".join(lines)
         return text.split("# ")[1].split("\n")[1].split("#")[0].strip()
-    
+
     def _mode(self, lines):
         text = "\n".join(lines)
         return text.split("# ")[1].split("\n")[1].split("#")[0].strip()

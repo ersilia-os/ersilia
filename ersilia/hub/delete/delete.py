@@ -1,8 +1,7 @@
-
 import os
 import shutil
 import csv
-import os.path 
+import os.path
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
@@ -233,7 +232,7 @@ class ModelFullDeleter(ErsiliaBase):
             if v:
                 return True
         return False
-    
+
     def delete(self, model_id):
         self.logger.info("Starting delete of model {0}".format(model_id))
         ModelEosDeleter(self.config_json).delete(model_id)

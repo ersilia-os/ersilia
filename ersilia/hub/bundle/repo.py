@@ -1,5 +1,6 @@
 import os
 import json
+from re import I
 from ... import ErsiliaBase
 from ...utils.paths import Paths
 from ...utils.docker import SimpleDockerfileParser
@@ -174,6 +175,35 @@ class DockerfileFile(object):
                 needs_conda = True
         result = {"conda": needs_conda, "commands": runs}
         return result
+
+    def append_run_command(self, cmd):
+        fn = self.get_file()
+        if fn is None:
+            return None
+        R = []
+        with open(fn, "r") as f:
+            for l in f:
+                R += [l]
+        i_last = 0
+        for i, r in enumerate(R):
+            if r.startswith("RUN"):
+                i_last = i
+        j_add = 0
+        for j, r in enumerate(R[(i_last + 1) :]):
+            if r.startswith(" "):
+                j_add = j + 1
+            else:
+                break
+        i_last = i_last + j_add
+        R = (
+            R[: (i_last + 1)]
+            + ["RUN {0}{1}".format(cmd, os.linesep)]
+            + R[(i_last + 1) :]
+        )
+        with open(fn, "w") as f:
+            for r in R:
+                f.write(r)
+        self.parser = SimpleDockerfileParser(self.path)
 
     def check(self):
         return True

@@ -10,7 +10,7 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # Default variables
-from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE, LOGGING_FILE
+from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE
 
 if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
     from .utils.config import Checker

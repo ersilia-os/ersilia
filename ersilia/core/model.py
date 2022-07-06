@@ -324,17 +324,17 @@ class ErsiliaModel(ErsiliaBase):
         else:
             # Result is a dict, a numpy array, a dataframe...
             return result
-    
+
     def update_model_usage_time(self, model_id):
         file_name = os.path.join(EOS, FETCHED_MODELS_FILENAME)
         ts_str = str(time.time())
-        with open(file_name, 'r') as infile:
+        with open(file_name, "r") as infile:
             models = dict(csv.reader(infile))
         infile.close()
         if model_id in models.keys():
             models[model_id] = ts_str
 
-        with open(file_name, 'w') as f:
+        with open(file_name, "w") as f:
             for key, values in models.items():
                 f.write(f"{key},{values}\n")
 
