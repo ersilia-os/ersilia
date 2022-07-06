@@ -167,6 +167,95 @@ ChemXor first converts the Pytorch model to an ONNX model. This ONNX model is th
 
 It is also possible to manually wrap an existing Pytorch model class to make it compatible with encrypted inputs. This is the recommended approach for now as the automatic conversion is not mature yet. There are several models with their encrypted wrappers in ChemXor that can be used as examples.
 
+```python
+# Pytorch lightning model
+# Adapted from https://github.dev/OpenMined/TenSEAL/blob/6516f215a0171fd9ad70f60f2f9b3d0c83d0d7c4/tutorials/Tutorial%204%20-%20Encrypted%20Convolution%20on%20MNIST.ipynb
+class ConvNet(pl.LightningModule):
+    """Cryptic Sage."""
+
+    def __init__(self: "ConvNet", hidden: int = 64, output: int = 10) -> None:
+        """Init."""
+        super().__init__()
+        self.hidden = hidden
+        self.output = output
+        self.conv1 = nn.Conv2d(1, 4, kernel_size=7, padding=0, stride=3)
+        self.fc1 = nn.Linear(256, hidden)
+        self.fc2 = nn.Linear(hidden, output)
+
+    def forward(self: "ConvNet", x: Any) -> Any:
+        """Forward function.
+
+        Args:
+            x (Any): model input
+
+        Returns:
+            Any: model output
+        """
+        x = self.conv1(x)
+        # the model uses the square activation function
+        x = x * x
+        # flattening while keeping the batch axis
+        x = x.view(-1, 256)
+        x = self.fc1(x)
+        x = x * x
+        x = self.fc2(x)
+        return x
+
+# Encrypted wrapper
+# Adapted from https://github.dev/OpenMined/TenSEAL/blob/6516f215a0171fd9ad70f60f2f9b3d0c83d0d7c4/tutorials/Tutorial%204%20-%20Encrypted%20Convolution%20on%20MNIST.ipynb
+class EncryptedConvNet(pl.LightningModule):
+    """Encrypted ConvNet."""
+
+    def __init__(self: "EncryptedConvNet", model: ConvNet) -> None:
+        """Init."""
+        super().__init__()
+
+        self.conv1_weight = model.conv1.weight.data.view(
+            model.conv1.out_channels,
+            model.conv1.kernel_size[0],
+            model.conv1.kernel_size[1],
+        ).tolist()
+        self.conv1_bias = model.conv1.bias.data.tolist()
+
+        self.fc1_weight = model.fc1.weight.T.data.tolist()
+        self.fc1_bias = model.fc1.bias.data.tolist()
+
+        self.fc2_weight = model.fc2.weight.T.data.tolist()
+        self.fc2_bias = model.fc2.bias.data.tolist()
+
+    def forward(self: "EncryptedConvNet", x: Any, windows_nb: int) -> Any:
+        """Forward function.
+
+        Args:
+            x (Any): model input
+            windows_nb (int): window size.
+
+        Returns:
+            Any: model output
+        """
+        # conv layer
+        enc_channels = []
+        for kernel, bias in zip(self.conv1_weight, self.conv1_bias):
+            y = x.conv2d_im2col(kernel, windows_nb) + bias
+            enc_channels.append(y)
+        # pack all channels into a single flattened vector
+        enc_x = ts.CKKSVector.pack_vectors(enc_channels)
+        # square activation
+        enc_x.square_()
+        # fc1 layer
+        enc_x = enc_x.mm(self.fc1_weight) + self.fc1_bias
+        # square activation
+        enc_x.square_()
+        # fc2 layer
+        enc_x = enc_x.mm(self.fc2_weight) + self.fc2_bias
+        return enc_x
+```
+
+A few things to note here:
+
+* We converted Pytorch tensors to a list in the encrypted wrapper. This is required as Pytorch tensors are not compatible with TenSeal encrypted tensors.
+* We are not using the standard ReLU activation. CKKS encryption scheme cannot evaluate non-linear piecewise functions. So, either alternative activation functions can be used or polynomial approximations of non-linear activation functions can be used.
+
 #### Serve models
 
 ```python
