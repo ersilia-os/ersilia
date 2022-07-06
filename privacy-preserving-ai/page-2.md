@@ -23,17 +23,15 @@ Brakerski/Fan-Vercauteren scheme (BFV) is a Ring-Learning with Errors (RLWE)-bas
 
 **BGV**
 
-
+Brakerski-Gentry-Vaikuntanathan (BGV) scheme is also a Ring-Learning with Errors (RLWE)-based cryptosystem and offers capabilities similar to the BFV scheme.
 
 **CKKS**
 
-It supports addition and multiplication over real numbers but yields only approximate results. It is best suited for application in machine learning.
+Cheon-Kim-Kim-Song (CKKS) scheme supports addition and multiplication over real numbers but yields only approximate results. It is best suited for application in machine learning.
 
 **TFHE**
 
-\
-
-
+THFE is a fast fully homomorphic encryption scheme over the torus. It is based on GSW and its ring variants. It supports arithmetic over integers. More information can be found [here](https://tfhe.github.io/tfhe/).\
 \
 
 
@@ -45,12 +43,12 @@ However, the adoption of FHE in AI/ML applications is still low despite its enor
 
 **The selection of encryption parameters is not trivial**
 
-Need for EVA: Compiler for CKKS programs\
+Selecting encryption parameters depends on the computation being performed. So, it takes some trial and error in each case. There are some projects trying to solve this problem by using a compiler approach. Look [here](https://github.com/microsoft/EVA) for more details.\
 
 
 **The time complexity of computation scales poorly with input size**
 
-Limitation on the size of input matrices to an ML model\
+The current generation of FHE libraries suffers from severe performance issues. As the input size increases, the evaluation time quickly becomes infeasibly large. This limits the size of input matrices to an ML model.\
 
 
 **Poor integration of current FHE libraries with popular ML frameworks**
@@ -65,7 +63,7 @@ None of the major FHE libraries implements a CUDA backend for computation.\
 
 **Poor community support**
 
-FHE community is still small which results in poor documentation and limited worked out examples.\
+FHE community is still small which results in poor documentation and limited worked-out examples.\
 
 
 ### Our Work
