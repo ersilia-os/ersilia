@@ -82,22 +82,20 @@ In the Slack `#internships` channel, one person (for example **@Miquel**), will 
 
 ****:calendar: **@channel** This is the topic of the week!\
 :robot: Topic: Antimalarial activity prediction\
-:thinking: Why? \
+:thinking: Why? We are currently working with [Medicines for Malaria Venture](https://mmv.org) and they have asked for predictions.\
 :track\_next: Next: **@Gemma**
 
-In this case, **@Miquel** should pin :pushpin: the message so that everybody can see it during the week.
+In this case, **@Miquel** should pin :pushpin: the message so that everybody can find it easily during the week.
 
 It would be great if the rest of the **@channel** can make comments, ask questions, or give feedback about the topic choice. Or even just confirm that you've read the message (:raised\_hands:,:thumbsup:,:heart:,...)
 
+{% hint style="warning" %}
+Note that **@Miquel** has nominated **@Gemma**. So **@Gemma** will be responsible for selecting a model in the next week. If you are eager to suggest a topic, simply contact the current responsible present so that they can nominate you :wink:.
+{% endhint %}
 
-
-
-
-\
-
-
-\
-
+{% hint style="info" %}
+The :thinking: **Why?** bullet point should be short, and can be anything, really. "_I haven't found any model of this kind in the hub"_ is a perfectly valid statement, as is _"I want to learn about this type of models",_ or _"I've read somewhere that there is no drug against this pathogen"_...
+{% endhint %}
 
 \
 
