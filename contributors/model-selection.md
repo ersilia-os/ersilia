@@ -76,6 +76,10 @@ By algorithmic relevance:
 * Reinforcement learning methods
 * Chemistry language transformer models
 
+{% hint style="danger" %}
+Please note that topics of the week should be taken as a **soft guideline**. Discovery and selection of model **should not be blocked** by the existence of the topic of the week. If you find a model that is interesting but it is unrelated to the topic of the week, feel free to select it and work on it. It is still a valid model choice! The topic of the week is just here to help you in case you are lost in your research.
+{% endhint %}
+
 #### Announcing the topic of the week
 
 In the Slack `#internships` channel, one person (for example **@Miquel**), will write a message like this:
@@ -97,10 +101,7 @@ Note that **@Miquel** has nominated **@Gemma**. So **@Gemma** will be responsibl
 The :thinking: **Why?** bullet point should be short, and can be anything, really. "_I haven't found any model of this kind in the hub"_ is a perfectly valid statement, as is _"I want to learn about this type of models",_ or _"I've read somewhere that there is no drug against this pathogen"_...
 {% endhint %}
 
-\
 
-
-How to choose models?
 
 ## Protocol
 
