@@ -45,9 +45,6 @@ In other words, we can categorize models
 
 We estimate that, only in Phase 1.A, we will be able to include at least 200 SOTA models. At the end of Phase 1.A, we will write a scientific publication and submit it for peer review.
 
-\
-
-
 ### Where to find models?
 
 * Scientific literature ([Google Scholar](https://scholar.google.com))
@@ -101,11 +98,31 @@ Note that **@Miquel** has nominated **@Gemma**. So **@Gemma** will be responsibl
 The :thinking: **Why?** bullet point should be short, and can be anything, really. "_I haven't found any model of this kind in the hub"_ is a perfectly valid statement, as is _"I want to learn about this type of models",_ or _"I've read somewhere that there is no drug against this pathogen"_...
 {% endhint %}
 
+### How to keep track of models?
 
+The lifecycle of a selected model will follow these three steps:
+
+#### Ersilia Slack `#literature`channel
+
+First, write a quick note in the **Ersilia Slack** `#literature` channel. Simply copy the link to the publication as soon as you discover it, or even a link to a Tweet. Before the link, add the :robot: emoji so that we know it is about a model. For example: :robot: Compound price prediction with deep learning! [\[link\]](https://chemrxiv.org/engage/chemrxiv/article-details/621cf4bace899be245a72621)
+
+#### Ersilia Model Hub Spreadsheet
+
+Then, read about the model in more detail and try to figure out if code is available for it. Then, add the model in a new row in the [**Ersilia Model Hub Spreadsheet**](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing). Please **request edit rights** to **@Gemma** if you don't have them.
+
+In the Spreadsheet, you will find many field. No need to fill all of them! But make sure you provide enough information for others to understand what the model is about and have access to relevant links.
+
+Please write _To do_ in the _Status_ column. Try to provide a _Title_ and a _Description_, and perhaps suggest a _Slug._
+
+#### Ersilia Model Hub AirTable
+
+As soon as we agree to work on a model, we will copy its information from the Spreadsheet to an [AirTable Base](https://airtable.com/shrUcrUnd7jB9ChZV). This Base is accessed programmatically by the [Ersilia CLI](https://github.com/ersilia-os) and our (provisional) [hub interface](https://ersilia.io/model-hub).
+
+{% hint style="success" %}
+**You don't have to worry** about the AirTable base for now. As soon as a model is advanced enough, **@Miquel** will add it to the AirTable base.
+{% endhint %}
 
 ## Protocol
-
-### Topic of the week
 
 
 
