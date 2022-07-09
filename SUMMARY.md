@@ -12,7 +12,7 @@
 
 * [Fully homomorphic encryption for AI/ML models](privacy-preserving-ai/page-2.md)
 
-***
+## 🙌 Contributors
 
-* [🙌 CONTRIBUTORS](contributors/README.md)
-  * [Add models to the hub](contributors/add-models-to-the-hub.md)
+* [Model selection](contributors/model-selection.md)
+* [Add models to the hub](contributors/add-models-to-the-hub.md)
