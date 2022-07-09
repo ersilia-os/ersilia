@@ -8,7 +8,7 @@ description: >-
 
 ## Selecting models for the Ersilia Model Hub
 
-### Roadmap of the Ersilia Model Hub
+### Roadmap
 
 The goal of Ersilia is to create the reference resource of AI/ML models for biomedical research, with a focus on drug discovery for infectious and neglected tropical diseases that affect the Global South.
 
@@ -43,6 +43,70 @@ In other words, we can categorize models
   * XX
   * XX
 
-## FAQ
+We estimate that, only in Phase 1.A, we will be able to include at least 200 SOTA models. At the end of Phase 1.A, we will write a scientific publication and submit it for peer review.
 
-XX
+\
+
+
+### Where to find models?
+
+* Scientific literature ([Google Scholar](https://scholar.google.com))
+* Code repositories (mainly [GitHub](https://github.com))
+* Other model hubs such as [Hugging Face](https://huggingface.co), [TensorFlow Hub](https://tensorflow.org/hub), [PyTorch Hub](https://pytorch.org/hub), etc.
+* [Papers With Code](https://paperswithcode.com/)
+* Benchmarks, competitions and leaderboards: [Kaggle](https://www.kaggle.com/), [DREAM Challenges](https://dreamchallenges.org/), [Therapeutic Data Commons](https://tdcommons.ai/), etc.
+* Twitter: [@KevinKaichuang](https://twitter.com/KevinKaichuang), [@andrewwhite01](https://twitter.com/andrewwhite01)
+* Ersilia Slack workspace: the `#literature` channel
+* Ersilia models backlog spreadsheet
+
+### Topic of the week
+
+Every **Monday by 2pm CET**, one person of the team will suggest one topic and the rest of us will prioritize model search about this topic during the week. Topics can be related to a task of biomedical relevance, or to a particular family of algorithms. Valid topics could be:
+
+By biomedical relevance:
+
+* Antimalarial activity prediction
+* Broad spectrum antibiotic activity prediction
+* Drug toxicity prediction
+* Synthetic accessibility of compounds
+
+By algorithmic relevance:
+
+* Graph neural networks
+* Reinforcement learning methods
+* Chemistry language transformer models
+
+#### Announcing the topic of the week
+
+In the Slack `#internships` channel, one person (for example **@Miquel**), will write a message like this:
+
+****:calendar: **@channel** This is the topic of the week!\
+:robot: Topic: Antimalarial activity prediction\
+:thinking: Why? \
+:track\_next: Next: **@Gemma**
+
+In this case, **@Miquel** should pin :pushpin: the message so that everybody can see it during the week.
+
+It would be great if the rest of the **@channel** can make comments, ask questions, or give feedback about the topic choice. Or even just confirm that you've read the message (:raised\_hands:,:thumbsup:,:heart:,...)
+
+
+
+
+
+\
+
+
+\
+
+
+\
+
+
+How to choose models?
+
+## Protocol
+
+### Topic of the week
+
+
+
