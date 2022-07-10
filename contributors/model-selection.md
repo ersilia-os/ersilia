@@ -144,23 +144,35 @@ Try to provide a _Title_ and a _Description_, and perhaps suggest a _Slug._ The 
 {% endhint %}
 
 {% hint style="success" %}
-The goal of the _Contributor_ colum is, simply, to know who is the person of reference for each of the models. Some models are more difficult to add than others, so **you should not be stressed** about the number of models that you contribute. Ersilia is a safe and collaborative space, we do not monitor this kind of metrics :hugging:.
+The goal of the _Contributor_ colum is, simply, to know who is the person of reference for each model. Some models are more difficult to add than others, so **you should not be stressed** about the number of models that you contribute. Ersilia is a safe and collaborative space, we do not monitor this kind of metrics :hugging:.
 {% endhint %}
 
 #### Ersilia Model Hub AirTable
 
-For now, **@Miquel** will be responsible for **curating** the models listed in the Spreadsheet. He will reach out to you if he has questions or needs more information about the model.
-
-Finally, he will copy its information from the Spreadsheet to an [AirTable Base](https://airtable.com/shrUcrUnd7jB9ChZV). This Base is accessed programmatically by the [Ersilia CLI](https://github.com/ersilia-os) and our (provisional) [hub interface](https://ersilia.io/model-hub).
+For now, **@Miquel** will be responsible for **curating** the models listed in the Spreadsheet. He will reach out to you if he has questions or needs more information about the model. He will copy the information from the Spreadsheet to an [AirTable Base](https://airtable.com/shrUcrUnd7jB9ChZV). This Base is accessed programmatically by the [Ersilia CLI](https://github.com/ersilia-os) and our (provisional) [hub interface](https://ersilia.io/model-hub).
 
 {% hint style="success" %}
 **You don't have to worry** about the AirTable base for now. This database is fully managed by **@Miquel**.
 {% endhint %}
 
-### Pick a model and start work on it :rocket:
+### Start coding! :rocket:
 
-You are always welcome to pick a model from our backlog and incorporate it the Ersilia Model Hub:
+As soon as you feel ready to start coding, you should change the _Status_ in the Spreadsheet Hub sheet from _To do_ to _In progress_. Please go to the next page to learn more about how to [Add models to the hub](add-models-to-the-hub.md).
 
-1. Go to the [Model Raw List](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit#gid=1768361908) and choose a **selected** model.
-2. Add it to the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing) **in progress**.
-3. Start coding! Follow the steps on the next page ([Add models to the hub](add-models-to-the-hub.md)).
+{% content-ref url="add-models-to-the-hub.md" %}
+[add-models-to-the-hub.md](add-models-to-the-hub.md)
+{% endcontent-ref %}
+
+## TL;DR
+
+In brief, this is a suggested routine that you can follow:
+
+1. Check the [Topic of the Week](model-selection.md#follow-the-topic-of-the-week).
+2. [Search models](model-selection.md#know-where-to-find-models-and-get-inspiration) related to the topic.
+3. [Post your findings](model-selection.md#ersilia-slack-literaturechannel) in the `#literature` channel.
+4. Choose one or few models and [add them in the backlog](model-selection.md#ersilia-model-hub-spreadsheet) (**Raw List** sheet of the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing)).
+5. Wait for approval.
+6. Select an approved model.
+7. Move to the **Hub** sheet of the Spreadsheet and [fill in as much information as you can](model-selection.md#ersilia-model-hub-spreadsheet). For now, set the _Status_ to _To do_.
+8. When you are ready to [start coding](add-models-to-the-hub.md), change the _Status_ to _In progress_.
+9. When the model is successfully added, change the _Status_ to _Done_! __ :tada:__
