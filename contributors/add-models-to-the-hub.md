@@ -1,4 +1,4 @@
-# OPEN SOURCE LICENSES
+# Add models to the hub
 
 **MODEL INCORPORATION GUIDELINES**
 
@@ -12,19 +12,19 @@ In summary:
 
 Information on a model is required to understand how it works and to get a backstory on it. Please follow the guide to know the information to provide and how to structure it. The example model used here is the Avalon model.
 
-1. Model title: the title of the model will be the heading of the README file. The format to write a heading in Github is “# Avalon fingerprints” and it will look as so:
+Model title: the title of the model will be the heading of the README file. The format to write a heading in Github is “# Avalon fingerprints” and it will look as so:![](<../.gitbook/assets/Model title.png>)
 
-![](../.gitbook/assets/0)
-
-1. Model identifiers: this is the section to include information that identifies the model. It is a subheading and will be written in the format “## Model identifiers”. The fields needed include,
+Model identifiers: this is the section to include information that identifies the model. It is a subheading and will be written in the format “## Model identifiers”. The fields needed include,
 
 * Slug: It is a one-word reference to the model
 * Ersilia ID: a generated unique model identifier
 * Tags: a few words that help to further identify the model.
 
-The result should look as so:![](../.gitbook/assets/1)
+The result should look as so:
 
-1. Model description: this section includes information that describes the model. It is a subheading and has the following fields
+![](<../.gitbook/assets/Model identifiers.png>)
+
+Model description: this section includes information that describes the model. It is a subheading and has the following fields
 
 * Input: an example is SMILES
 * Output: {unit and description of output)
@@ -32,9 +32,9 @@ The result should look as so:![](../.gitbook/assets/1)
 * Training set: (number of compounds and link to the training data)
 * Mode of training: (is it pretrained? that is, were the checkpoints downloaded and used to train the model? or is it retrained? that is, was it trained from scratch with updated data)
 
-![](../.gitbook/assets/2)
+![](<../.gitbook/assets/Model description.png>)
 
-1. Source code: this is the fourth subheading and contains information on the new model's source publication and source code
+Source code: this is the fourth subheading and contains information on the new model's source publication and source code:&#x20;
 
 * Cite the source publication.
 * Code: include the link to the source code
@@ -42,15 +42,13 @@ The result should look as so:![](../.gitbook/assets/1)
 
 It will look like this:
 
-![](../.gitbook/assets/3)
+![](<../.gitbook/assets/Source code.png>)
 
-1. License and copyright notice: In this section, state the licences used which are the GPL v3 license used by Ersilia and the license used by the source code, if any exists. Use this guide to license new models in Ersilia's model hub. The result should look like this:
+License: In this section, state the licences used which are the GPL v3 license used by Ersilia and the license used by the source code, if any exists. Use this guide to license new models in Ersilia's model hub. The result should look like this:
 
-![](../.gitbook/assets/4)
+![](<../.gitbook/assets/License & History.png>)
 
-1. History: here, state the date when the model was downloaded and incorporated into Ersilia. This is how it should look’
-
-![](../.gitbook/assets/5)
+* History: here, state the date when the model was downloaded and incorporated into Ersilia.&#x20;
 
 **How to deal with the different Open Source Licences when incorporating code developed by third parties in the Ersilia Model Hub.**
 
@@ -106,7 +104,8 @@ Ersilia guidelines:
 
 * The AGPL should be maintained
 * Modified files should carry the notice that they have been modified
-* **GNU Lesser General Public Licence (LGPL)** [\[8\]](https://opensource.org/licenses/LGPL-3.0) permits users to copy and distribute verbatim copies of the licensed source code but users should not change the source code.
+
+**GNU Lesser General Public Licence (LGPL)** [\[8\]](https://opensource.org/licenses/LGPL-3.0) permits users to copy and distribute verbatim copies of the licensed source code but users should not change the source code.
 
 Ersilia guidelines:
 
@@ -123,22 +122,29 @@ Ersilia guidelines:
 1. Check the licence in the source code to know its permissions
 2. In the model’s repository on Ersilia’s Github page, include the source code’s licence in the folder that has the source code of the model first.
 3. Then include the GPL v3 licence in the main folder of the model by following these steps:
-   1. In the main repository, click on create “Add file” then “Create New file” ![](../.gitbook/assets/6)
-   2. Type in “LICENSE” as the name of the file
 
-![](../.gitbook/assets/7)
+* In the main repository, click on create “Add file” then “Create New file”&#x20;
 
-*
-  1. On the right side of the page, you should see “Choose a license template”. Click on it.
-  2. Select “GNU General Public License v3.0”![](../.gitbook/assets/8)
-  3. Click on “Review and submit”
+![](<../.gitbook/assets/Create new file.png>)
 
-![](../.gitbook/assets/9)
+* Type in “LICENSE” as the name of the file
 
-*
-  1. Click on “Commit new file” at the bottom of the page that will be loaded![](../.gitbook/assets/10)
+![](<../.gitbook/assets/License & choose template.png>)
 
-1. On the model’s README, include the License and copyright notice of both the GPL v3 licence and the source code’s licence.
+* On the right side of the page, you should see “Choose a license template”. Click on it.
+* Select “GNU General Public License v3.0”
+
+![](<../.gitbook/assets/GNU template.png>)
+
+* Click on “Review and submit”
+
+![](<../.gitbook/assets/Review & submit.png>)
+
+* Click on “Commit new file” at the bottom of the page that will be loaded
+
+![](<../.gitbook/assets/comit changes.png>)
+
+4\. On the model’s README, include the License and copyright notice of both the GPL v3 licence and the source code’s licence.
 
 If the licence you are dealing with is not described here please refer to the sources used to write these guidelines and contact the Ersilia Team ([hello@ersilia.io](mailto:hello@ersilia.io)):
 
