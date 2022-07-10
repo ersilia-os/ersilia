@@ -38,7 +38,7 @@ Results interpretation: provide a brief description of how to interpret the mode
 
 **Source Code:** this section must contain ALL relevant information about the model original authors, including a link to the publication if the model has been published in a peer reviewed journal or is in a preprint repositories, a link to the source code (typically, GitHub or GitLab) and a link to the model checkpoints directly, when available.
 
-**License:** in addition to the LICENSE.md file, it is good practice to specify the Licenses in the README.md. All models in the Ersilia Model Hub are licensed under an open source license. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code. You can read more about how we deal with OS Licenses here.
+**License:** in addition to the LICENSE.md file, it is good practice to specify the Licenses in the README.md. All models in the Ersilia Model Hub are licensed under an open source license. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code. You can read more about how we deal with OS Licenses [here](https://ersilia.gitbook.io/ersilia-book/contributors/open-source-licences).
 
 **History:** a short, numbered explanation of the modifications made in the source code, including the date of download and any steps taken to embed the model within the Ersilia Model Hub infrastructure.&#x20;
 
