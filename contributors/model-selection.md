@@ -120,9 +120,11 @@ The Slack `#literature` channel contains models :robot: and much more. We encour
 
 Once you've posted the model in the `#literature` channel, read about it in more detail and try to figure out if code is available. Then, add the model in a new row in the [**Ersilia Model Hub Spreadsheet**](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing). Please **request edit rights** to **@Gemma** if you don't have them.
 
-In the Spreadsheet, you will find many fields. No need to fill all of them! But make sure you provide relevant links and enough information for others to understand what the model is about.
+In the Spreadsheet, you will find two sheets. In the [Raw List](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit#gid=1768361908) you can add all the models you find that could be incorporated in the Hub (relevant to the topic of the week or not). Once we select models for incorporation, we will mark them as "Selected" in the corresponding column. @Miquel is responsible for curating this list and selecting the models, he will use the Slack channel to ask questions or discuss the relevance of the model before selecting them.
 
-Please write _To do_ in the _Status_ column. Try to provide a _Title_ and a _Description_, and perhaps suggest a _Slug._&#x20;
+When a model is Selected, we can start filling in all the relevant information in the Ersilia Model Hub Spreadsheet. Fill in as much information as possible, and if something is missing make sure you provide relevant links and enough information for others to understand what the model is about.
+
+Please write _To do_ or _In progress_ (if you are already working on it or not) in the _Status_ column. Try to provide a _Title_ and a _Description_, and perhaps suggest a _Slug._&#x20;
 
 {% hint style="info" %}
 **@Gemma** and **@Ife** are the maintainers of the Spreadsheet. Please reach out to them if you have questions or suggestions.
@@ -131,8 +133,6 @@ Please write _To do_ in the _Status_ column. Try to provide a _Title_ and a _Des
 #### Ersilia Model Hub AirTable
 
 For now, **@Miquel** will be responsible for **curating** the models listed in the Spreadsheet. He will reach out to you if he has questions or needs more information about the model.
-
-He will then notify everyone in Slack and, as soon as we all agree on the quality and interest of the model, he will **mark the model as approved** in the Spreadsheet.
 
 Finally, he will copy its information from the Spreadsheet to an [AirTable Base](https://airtable.com/shrUcrUnd7jB9ChZV). This Base is accessed programmatically by the [Ersilia CLI](https://github.com/ersilia-os) and our (provisional) [hub interface](https://ersilia.io/model-hub).
 
@@ -144,6 +144,6 @@ Finally, he will copy its information from the Spreadsheet to an [AirTable Base]
 
 You are always welcome to pick a model from our backlog and incorporate it the Ersilia Model Hub:
 
-1. Go to the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing) and choose an **approved** model with a **to do** status.
-2. Change the status to **in progress**.
+1. Go to the [Model Raw List](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit#gid=1768361908) and choose a **selected** model.
+2. Add it to the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing) **in progress**.
 3. Start coding! Follow the steps on the next page ([Add models to the hub](add-models-to-the-hub.md)).

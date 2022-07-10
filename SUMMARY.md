@@ -10,7 +10,7 @@
 
 ## 🔓 Privacy Preserving AI
 
-* [Fully homomorphic encryption for AI/ML models](privacy-preserving-ai/page-2.md)
+* [Encryption of AI/ML models](privacy-preserving-ai/encryption-of-ai-ml-models.md)
 
 ## 🙌 Contributors
 
