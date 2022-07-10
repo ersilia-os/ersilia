@@ -20,21 +20,12 @@ The result of the computation can only be decrypted by the party that holds the 
 
 Fully homomorphic encryption is still a nascent area of research in the field of cryptography compared to other established cryptographic techniques. It was theorised back in the 70s but the first practical breakthrough happened in 2009 with the seminal thesis of Craig Gentry on this topic. Since then, various new schemes have been proposed to improve usability and performance. Some of the major schemes used in practice are discussed below.
 
-#### **BFV**
-
-Brakerski/Fan-Vercauteren scheme (BFV) is a Ring-Learning with Errors (RLWE)-based cryptosystem. It supports arithmetic over integers.
-
-#### **BGV**
-
-Brakerski-Gentry-Vaikuntanathan (BGV) scheme is also a Ring-Learning with Errors (RLWE)-based cryptosystem and offers capabilities similar to the BFV scheme.
-
-#### **CKKS**
-
-Cheon-Kim-Kim-Song (CKKS) scheme supports addition and multiplication over real numbers but yields only approximate results. It is best suited for application in machine learning.
-
-#### **TFHE**
-
-THFE is a fast fully homomorphic encryption scheme over the torus. It is based on GSW and its ring variants. It supports arithmetic over integers. More information can be found [here](https://tfhe.github.io/tfhe/).
+| Scheme | Description                                                                                                                                                                                                            |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BFV    | Brakerski/Fan-Vercauteren scheme (BFV) is a Ring-Learning with Errors (RLWE)-based cryptosystem. It supports arithmetic over integers.                                                                                 |
+| BGV    | Brakerski-Gentry-Vaikuntanathan (BGV) scheme is also a Ring-Learning with Errors (RLWE)-based cryptosystem and offers capabilities similar to the BFV scheme.                                                          |
+| CKKS   | Cheon-Kim-Kim-Song (CKKS) scheme supports addition and multiplication over real numbers but yields only approximate results. It is best suited for application in machine learning.                                    |
+| TFHE   | THFE is a fast fully homomorphic encryption scheme over the torus. It is based on GSW and its ring variants. It supports arithmetic over integers. More information can be found [here](https://tfhe.github.io/tfhe/). |
 
 ### **Application of FHE in AI/ML**
 

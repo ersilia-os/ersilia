@@ -10,7 +10,7 @@
 
 ## 🔓 Privacy Preserving AI
 
-* [Encryption of AI/ML models](privacy-preserving-ai/encryption-of-ai-ml-models.md)
+* [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
 
 ## 🙌 Contributors
 
