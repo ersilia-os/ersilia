@@ -10,14 +10,14 @@ In the open-source community, while open-source software is available to all, th
 
 This article is a guide to licence third-party code to be incorporated into the Ersilia Model Hub.
 
-**Terms:**
+### **Terms**
 
 * Licence: grant by the holder of a copyright or patent to another of any of the rights embodied in the copyright or patent short of an assignment of all rights ([Merriam Webster](https://www.merriam-webster.com/dictionary/licence))
 * Open Source (OS) Licence: type of licence for computer software and other products that allows the source code, blueprint, or design to be  freely used, modified, and shared ([Open Source Initiative](https://opensource.org/licenses))
 * Source Code: version of software as it is originally written (i.e., typed into a computer) by a human in plain text (i.e., human-readable alphanumeric characters) ([Linux Information Project](http://www.linfo.org/source\_code.html)).
 * Copyright: exclusive legal right to reproduce, publish, sell, or distribute the matter and form of something ([Merriam Webster](https://www.merriam-webster.com/dictionary/copyright)).
 
-**Types of Open Source Licences**
+### **Types of Open Source Licences**
 
 OS licences fall under two types: Permissive licence and Copyleft licence.
 
