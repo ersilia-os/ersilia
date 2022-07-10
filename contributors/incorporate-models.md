@@ -70,7 +70,9 @@ WORKDIR /repo
 COPY ./repo
 ```
 
+In this case, a Conda environment will be preferentially used to isolate the model. The first line of the `Dockerfile` indicates that this Conda environment will have **BentoML 0.11.0** installed on **Python 3.7**.
 
+The Dockerfile can contain as many `RUN` commands as necessary, between the `MAINTAINER` and the `WORKDIR` lines.
 
 ### The [`model`](https://github.com/ersilia-os/eos-template/tree/main/model) folder
 
@@ -78,7 +80,16 @@ XX
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
 
-XX
+We use Git LFS to store large files, typically corresponding to model parameters. Files to be stored in Git LFS should be specified in the `.gitattributes` file. The current file will store in Git LFS all files in `csv`, `h5`, `joblib`, `pkl`, `pt` and `tsv` format.
+
+```
+*.csv filter=lfs diff=lfs merge=lfs -text
+*.h5 filter=lfs diff=lfs merge=lfs -text
+*.joblib filter=lfs diff=lfs merge=lfs -text
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.tsv filter=lfs diff=lfs merge=lfs -text
+```
 
 ### The [`service`](https://github.com/ersilia-os/eos-template/blob/main/src/service.py) file
 
