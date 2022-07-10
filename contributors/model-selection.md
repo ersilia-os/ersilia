@@ -106,6 +106,10 @@ The lifecycle of a selected model will follow these three steps:
 
 First, write a quick note in the **Ersilia Slack** `#literature` channel. Simply copy the link to the publication as soon as you discover it, or even a link to a Tweet. Before the link, add the :robot: emoji so that we know it is about a model. For example: :robot: Compound price prediction with deep learning! [\[link\]](https://chemrxiv.org/engage/chemrxiv/article-details/621cf4bace899be245a72621)
 
+{% hint style="info" %}
+The Slack `#literature` channel contains models :robot: and much more. We encourage you to check this channel regularly and be active in it! This is the best way to share our collective knowledge, avoid duplication of efforts, etc. Naturally, this channel will not be very structured, and we feel it shouldn't be! It should be a space to quickly share findings and find inspiration in your research.
+{% endhint %}
+
 #### Ersilia Model Hub Spreadsheet
 
 Then, read about the model in more detail and try to figure out if code is available for it. Then, add the model in a new row in the [**Ersilia Model Hub Spreadsheet**](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing). Please **request edit rights** to **@Gemma** if you don't have them.
@@ -113,6 +117,10 @@ Then, read about the model in more detail and try to figure out if code is avail
 In the Spreadsheet, you will find many field. No need to fill all of them! But make sure you provide enough information for others to understand what the model is about and have access to relevant links.
 
 Please write _To do_ in the _Status_ column. Try to provide a _Title_ and a _Description_, and perhaps suggest a _Slug._
+
+{% hint style="info" %}
+**@Gemma** and **@Ife** are the maintainers of the Spreadsheet. Please reach out to them if you have questions or suggestions!
+{% endhint %}
 
 #### Ersilia Model Hub AirTable
 
