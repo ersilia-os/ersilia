@@ -80,7 +80,7 @@ XX
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
 
-We use Git LFS to store large files, typically corresponding to model parameters. Files to be stored in Git LFS should be specified in the `.gitattributes` file. The current file will store in Git LFS all files in `csv`, `h5`, `joblib`, `pkl`, `pt` and `tsv` format.
+We use Git LFS to store large files (over 100 MB), typically corresponding to model parameters. Files to be stored in Git LFS should be specified in the `.gitattributes` file. The current file will store in Git LFS all files in `csv`, `h5`, `joblib`, `pkl`, `pt` and `tsv` format.
 
 ```
 *.csv filter=lfs diff=lfs merge=lfs -text
@@ -92,6 +92,20 @@ We use Git LFS to store large files, typically corresponding to model parameters
 ```
 
 ### The [`service`](https://github.com/ersilia-os/eos-template/blob/main/src/service.py) file
+
+The service file is located in `src/service.py`. It contains the necessry code to facilitate model bundling with BentoML.
+
+There are three main classes in the `service` file, namely `Model`, `Artifact` and `Service`.
+
+#### The `Model` class
+
+This class is simply a wrapper for the AI/ML model. The most important method of the `Model` class is the `predict` method.&#x20;
+
+#### The `Artifact` class
+
+XX
+
+#### The `Service` class
 
 XX
 
