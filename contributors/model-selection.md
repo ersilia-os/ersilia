@@ -107,7 +107,7 @@ The lifecycle of a selected model will follow these three steps:
 First, write a quick note in the **Ersilia Slack** `#literature` channel. Simply copy the link to the publication as soon as you discover it, or even a link to a Tweet. Before the link, add the :robot: emoji so that we know it is about a model. For example: :robot: Compound price prediction with deep learning! [\[link\]](https://chemrxiv.org/engage/chemrxiv/article-details/621cf4bace899be245a72621)
 
 {% hint style="info" %}
-The Slack `#literature` channel contains models :robot: and much more. We encourage you to check this channel regularly and be active in it! This is the best way to share our collective knowledge, avoid duplication of efforts, etc. Naturally, this channel will not be very structured, and we feel it shouldn't be! It should be a space to quickly share findings and find inspiration in your research.
+The Slack `#literature` channel contains models :robot: and much more. We encourage you to check this channel regularly and be active in it! This is the best way to share our collective knowledge, avoid duplication of efforts, etc. Naturally, this channel will not be very structured, and we feel it shouldn't be! It should be a space to quickly share findings and find inspiration for your research.
 {% endhint %}
 
 #### Ersilia Model Hub Spreadsheet
