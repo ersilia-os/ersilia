@@ -140,9 +140,10 @@ Finally, he will copy its information from the Spreadsheet to an [AirTable Base]
 **You don't have to worry** about the AirTable base for now. This database is fully managed by **@Miquel**.
 {% endhint %}
 
-### Pick a model and work on it!
+### Pick a model and start work on it :rocket:
 
-I
+You are always welcome to pick a model from our backlog and incorporate it the Ersilia Model Hub:
 
-
-
+1. Go to the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing) and choose an **approved** model with a **to do** status.
+2. Change the status to **in progress**.
+3. Start coding! Follow the steps on the next page ([Add models to the hub](add-models-to-the-hub.md)).
