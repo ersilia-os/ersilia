@@ -118,16 +118,33 @@ The Slack `#literature` channel contains models :robot: and much more. We encour
 
 #### Ersilia Model Hub Spreadsheet
 
-Once you've posted the model in the `#literature` channel, read about it in more detail and try to figure out if code is available. Then, add the model in a new row in the [**Ersilia Model Hub Spreadsheet**](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing). Please **request edit rights** to **@Gemma** if you don't have them.
+Once you've posted the model in the `#literature` channel, read about it in more detail and try to figure out if code is available. Then, add the model as a new entry in the [**Ersilia Model Hub Spreadsheet**](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing). Please **request edit rights** to **@Gemma** if you don't have them.
 
-In the Spreadsheet, you will find two sheets. In the [Raw List](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit#gid=1768361908) you can add all the models you find that could be incorporated in the Hub (relevant to the topic of the week or not). Once we select models for incorporation, we will mark them as "Selected" in the corresponding column. @Miquel is responsible for curating this list and selecting the models, he will use the Slack channel to ask questions or discuss the relevance of the model before selecting them.
+In the Spreadsheet, you will find two sheets:
 
-When a model is Selected, we can start filling in all the relevant information in the Ersilia Model Hub Spreadsheet. Fill in as much information as possible, and if something is missing make sure you provide relevant links and enough information for others to understand what the model is about.
+* **Hub:** Contains complete documentation about the models, including an Ersilia Open Source identifier (e.g. `eos4e40`), a slug (e.g. `chemprop-antibiotic`) and a status (e.g. _Done_).
+* **Raw List:** Contains a backlog of models that could be of interest to Ersilia. This sheet contains minimal information about the models. There is an _Approved_ and a _Selected_ tickbox. _Approved_ means that Ersilia is willing to incorporate this model. _Selected_ means that someone is already working on the model or the model has been successfully incorporated in the Ersilia Model Hub.
 
-Please write _To do_ or _In progress_ (if you are already working on it or not) in the _Status_ column. Try to provide a _Title_ and a _Description_, and perhaps suggest a _Slug._&#x20;
+You should **start by the Raw List sheet**. You are always free to add models there (relevant to the [Topic of the Week](model-selection.md#follow-the-topic-of-the-week) or not). **@Miquel** is responsible for curating this list and approving the models, he will use the Slack `#internships` channel to ask questions or discuss the relevance of the model before approving them.
+
+Start by adding your model in the Raw List sheet and wait for approval. As soon as the model has been approved, you are ready to move forward. **Please tick the **_**Selected**_** column** so that nobody else picks your model of interest.
+
+Now you are ready to start **filling the Hub sheet**. Fill in as much information as possible, and if something is missing make sure you provide relevant links and enough information for others to understand what the model is about.
+
+Please write _To do_, _In progress_ or _Done_ in the _Status_ column:
+
+* _To do_ means that you have filled the information but you have not started the model incorporation per se. In other words, you have not started to work on the coding part yet.
+* _In progress_ means that you are already working on the code.
+* _Done_ means that the model has been successfully incorporated in the Ersilia Model Hub.
+
+Try to provide a _Title_ and a _Description_, and perhaps suggest a _Slug._ The Ersilia Open Source identifiers are already predefined, so no need to worry about it. Don't forget to write your name in the _Contributor_ column.
 
 {% hint style="info" %}
 **@Gemma** and **@Ife** are the maintainers of the Spreadsheet. Please reach out to them if you have questions or suggestions.
+{% endhint %}
+
+{% hint style="success" %}
+The goal of the _Contributor_ colum is, simply, to know who is the person of reference for each of the models. Some models are more difficult to add than others, so **you should not be stressed** about the number of models that you contribute. Ersilia is a safe and collaborative space, we do not monitor this kind of metrics :hugging:.
 {% endhint %}
 
 #### Ersilia Model Hub AirTable
