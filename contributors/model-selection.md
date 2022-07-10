@@ -64,7 +64,7 @@ Unfortunately, there is no centralized resource to find AI/ML models for drug di
 
 ### Follow the Topic of the Week
 
-Every **Monday by 2pm CET**, one person of the team will suggest one topic and the rest of us will prioritize model search about this topic during the week. Topics can be related to a task of biomedical relevance, or to a particular family of algorithms. Valid topics could be:
+Every **Monday by 9 pm CET**, one person of the team will suggest one topic and the rest of us will prioritize model search about this topic during the week. Topics can be related to a task of biomedical relevance, or to a particular family of algorithms. Valid topics could be:
 
 By biomedical relevance:
 
