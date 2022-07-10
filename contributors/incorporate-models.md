@@ -107,6 +107,10 @@ This class is simply a wrapper for the AI/ML model. The most important method of
 You will have to rename the `predict` method into something else if your model does not predict. For example, for many models the method can be renamed as `calculate.`&#x20;
 {% endhint %}
 
+{% hint style="success" %}
+Multiple methods are allowed. For example, a model may have a `predict` and an e`xplain` method.
+{% endhint %}
+
 #### The `Artifact` class
 
 XX
