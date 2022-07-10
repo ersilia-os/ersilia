@@ -16,13 +16,13 @@ Below, we describe the template files in detail. Note that we only explain the f
 
 ### The [`README`](https://github.com/ersilia-os/eos-template/blob/main/README.md) file
 
-The README.md file is where the basic documentation about the model is provided. It must include the following fields:
+The `README.md` file is where the basic documentation about the model is provided. It must include the following fields:
 
-**Title:** a self-descriptive model title (less than 70 chars)
+**Title:** a self-descriptive model title (less than 70 characters)
 
 **Model Identifiers:** a set of codes that identify the model in the Ersilia CLI:
 
-* Ersilia Identifier (EOS ID): an automatically generated code (`eos` +  random set of 4 numers/letters). Use the assigned number in the Ersilia Model Hub excel.
+* Ersilia Identifier (EOS ID): an automatically generated code (`eos` +  4 alphanumeric characters). Use the assigned identifier in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing).
 * Slug: a one-word or two-word (linked by a hypen) reference that acts as substitute to the EOSID
 * Tags: labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.Falciparum_ as tag. Select three relevant ones.
 
@@ -36,23 +36,41 @@ The README.md file is where the basic documentation about the model is provided.
 
 Results interpretation: provide a brief description of how to interpret the model results. _For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification._
 
-**Source Code:** this section must contain ALL relevant information about the model original authors, including a link to the publication if the model has been published in a peer reviewed journal or is in a preprint repositories, a link to the source code (typically, GitHub or GitLab) and a link to the model checkpoints directly, when available.
+**Source Code:** this section must contain **all** relevant information about the model original authors, including a link to the publication if the model has been published in a peer reviewed journal or is in a preprint repositories, a link to the source code (typically, GitHub or GitLab) and a link to the model checkpoints directly, when available.
 
-**License:** in addition to the LICENSE.md file, it is good practice to specify the Licenses in the README.md. All models in the Ersilia Model Hub are licensed under an open source license. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code. You can read more about how we deal with OS Licenses [here](https://ersilia.gitbook.io/ersilia-book/contributors/open-source-licences).
+**License:** in addition to the `LICENSE.md` file, it is good practice to specify the Licenses in the README.md. All models in the Ersilia Model Hub are licensed under an open source license. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code. You can read more about how we deal with OS Licenses [here](https://ersilia.gitbook.io/ersilia-book/contributors/open-source-licences).
 
 **History:** a short, numbered explanation of the modifications made in the source code, including the date of download and any steps taken to embed the model within the Ersilia Model Hub infrastructure.&#x20;
 
-**About us:** all Ersilia repositories contain a final "about" section, please keep the predefined version.
+**About us:** all Ersilia repositories contain a final _About_ section, please keep the predefined version.
 
 ### The [`LICENSE`](https://github.com/ersilia-os/eos-template/blob/main/LICENSE) file
 
 All original code written in contribution to Ersilia should be licensed under a GPLv3 License. The main License file of the repository, therefore, will be a GPLv3 as specified by [GitHub.](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository)
 
-In addition, the license notices for code developed by third parties must be kept in the respective folders where the third-party code is found. Include an explanation in the README file, for example:  _The GPL-v3 license applies to all parts of the repository that are not externally maintained libraries. This repository uses the externally maintained library "Chemprop", located at /model and licensed under an_ [_MIT License_](https://github.com/ersilia-os/eos4e40/blob/main/model/LICENSE.md)_._
+In addition, the license notices for code developed by third parties must be kept in the respective folders where the third-party code is found. Include an explanation in the `README` file, for example:  _The GPL-v3 license applies to all parts of the repository that are not externally maintained libraries. This repository uses the externally maintained library "Chemprop", located at /model and licensed under an_ [_MIT License_](https://github.com/ersilia-os/eos4e40/blob/main/model/LICENSE.md)_._
 
 ### The [`Dockerfile`](https://github.com/ersilia-os/eos-template/blob/main/Dockerfile) file
 
-XX
+This file contains the installation instructions to install the model. Ersilia uses a `Dockerfile` to specify installation instructions since Docker contains the maximum level of isolation for the model. However, in most practical scenarios, a Docker image will not be necessary and a Conda environment, or even a Virtualenv environment, will suffice. The Ersilia CLI will decide which isolation level to provide depending on the content of the `Dockerfile`:
+
+* If only `pip install` commands are specified, Virtualenv will be used.
+* If only `pip install` and `conda install` commands are specified, Conda will be used.
+* If other commands are specified (e.g. `sudo apt-get`), Docker will be used.
+
+The `Dockerfile` available in the Ersilia Model Template is as follows:
+
+```docker
+FROM bentoml/model-server:0.11.0-py37
+MAINTAINER ersilia
+
+RUN conda install -c conda-forge rdkit=2020.03
+
+WORKDIR /repo
+COPY ./repo
+```
+
+
 
 ### The [`model`](https://github.com/ersilia-os/eos-template/tree/main/model) folder
 
