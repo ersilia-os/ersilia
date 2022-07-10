@@ -121,7 +121,19 @@ XX
 
 ## Steps for model incorporation
 
-In this tutorial, we will follow the example of...
+In this tutorial, we will follow the example of a very simple model, related synthetic accessibility scoring.
+
+#### Find model code and parameters
+
+XX
+
+#### Run the code _outside_ Ersilia
+
+XX
+
+
+
+
 
 
 
