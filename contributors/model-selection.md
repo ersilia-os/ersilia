@@ -14,7 +14,7 @@ The goal of Ersilia is to create the reference resource of AI/ML models for biom
 
 We have planned the growth of the [Ersilia Model Hub](https://ersilia.io/model-hub) as follows:
 
-* **Phase 1:** Chemistry centered models.
+* **Phase 1:** Chemistry-centered models.
 * **Phase 2:** Protein-centered models.
 * **Phase 3:** Protein-chemical interaction models.
 * **Phase 4:** Cell- and pathogen-based models.
@@ -27,25 +27,22 @@ Within each face, we find models of three types:
 * **Type C:** Models developed by Ersilia based on data from collaborators.
 
 {% hint style="info" %}
-Ersilia does not follow this roadmap strictly. Since we are already involved in [several projects and collaborations](https://ersilia.io/projects), the Ersilia Model Hub grows in an organic way, necessarily. For example, while we are mainly focused on Phase 1, Type A models at the moment, we spend a lot of time on Phase 1, Type C models, for example as a result of our collaboration with H3D at the University of Cape Town.
+Ersilia does not follow this roadmap strictly. Since we are already involved in [several projects and collaborations](https://ersilia.io/projects), the Ersilia Model Hub grows in an organic way, necessarily. For example, while we are currently mainly focused on Phase 1, Type A (**1.A**) models, we spend a lot of time on Phase 1, Type C (**1.C**) models, as a result of our collaboration with key partners like [H3D](http://www.h3d.uct.ac.za/) at the University of Cape Town.
 {% endhint %}
 
-### Types of models
+We estimate that we will be able to include at least 200 AI/ML models in **1.A**. At the end of this process, we will write a **scientific publication**.
 
-In other words, we can categorize models
+### Phase 1, Type A models: Chemistry models trained by others
 
-* By input:
-  * XX
-  * XX
-  * XX
-* By source
-  * XX
-  * XX
-  * XX
+The current document focuses on **1.A**, i.e. models developed by third parties having chemical information as input.
 
-We estimate that, only in Phase 1.A, we will be able to include at least 200 SOTA models. At the end of Phase 1.A, we will write a scientific publication and submit it for peer review.
+Drug discovery, and especially antimicrobial drug discovery, relies heavily on small molecule compounds. Type A models can play an important role in the drug discovery pipeline by helping increase the hit rate of pre-clinical experiments, anticipating toxicity outcomes in clinical trials, or even suggesting new drug candidates _de novo_.
 
-### Where to find models?
+
+
+### Where to find models or get inspiration?
+
+
 
 * Scientific literature ([Google Scholar](https://scholar.google.com))
 * Code repositories (mainly [GitHub](https://github.com))
@@ -54,7 +51,7 @@ We estimate that, only in Phase 1.A, we will be able to include at least 200 SOT
 * Benchmarks, competitions and leaderboards: [Kaggle](https://www.kaggle.com/), [DREAM Challenges](https://dreamchallenges.org/), [Therapeutic Data Commons](https://tdcommons.ai/), etc.
 * Twitter: [@KevinKaichuang](https://twitter.com/KevinKaichuang), [@andrewwhite01](https://twitter.com/andrewwhite01)
 * Ersilia Slack workspace: the `#literature` channel
-* Ersilia models backlog spreadsheet
+* Models backlog: the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing)
 
 ### Topic of the week
 
