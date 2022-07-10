@@ -91,6 +91,8 @@ We use Git LFS to store large files (over 100 MB), typically corresponding to mo
 *.tsv filter=lfs diff=lfs merge=lfs -text
 ```
 
+You have to edit the `.gitattributes` file to ensure that all large files in your model are stored in Git LFS.
+
 ### The [`service`](https://github.com/ersilia-os/eos-template/blob/main/src/service.py) file
 
 The service file is located in `src/service.py`. It contains the necessary code to facilitate model bundling with BentoML.
