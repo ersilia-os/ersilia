@@ -93,13 +93,17 @@ We use Git LFS to store large files (over 100 MB), typically corresponding to mo
 
 ### The [`service`](https://github.com/ersilia-os/eos-template/blob/main/src/service.py) file
 
-The service file is located in `src/service.py`. It contains the necessry code to facilitate model bundling with BentoML.
+The service file is located in `src/service.py`. It contains the necessary code to facilitate model bundling with BentoML.
 
 There are three main classes in the `service` file, namely `Model`, `Artifact` and `Service`.
 
 #### The `Model` class
 
-This class is simply a wrapper for the AI/ML model. The most important method of the `Model` class is the `predict` method.&#x20;
+This class is simply a wrapper for the AI/ML model. The most important method of the `Model` class is the `predict` method.
+
+{% hint style="info" %}
+You will have to rename the `predict` method into something else if your model does not predict. For example, for many models the method can be renamed as `calculate.`&#x20;
+{% endhint %}
 
 #### The `Artifact` class
 
