@@ -10,6 +10,7 @@
 
 ## 🔓 Privacy Preserving AI
 
+* [Motivation](privacy-preserving-ai/motivation.md)
 * [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
 
 ## 🙌 Contributors
