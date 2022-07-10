@@ -171,7 +171,7 @@ To **close** the model:
 mdl.close()
 ```
 
-### Using the 'with' statement
+### Using the `with` statement
 
 A more concise way to run prediction would be to use the `with` clause:
 
