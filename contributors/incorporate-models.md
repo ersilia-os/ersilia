@@ -70,7 +70,9 @@ In addition, the license notices for code developed by third parties must be kep
 
 ### The [`Dockerfile`](https://github.com/ersilia-os/eos-template/blob/main/Dockerfile) file
 
-This file contains the installation instructions to install the model. Ersilia uses a `Dockerfile` to specify installation instructions since Docker contains the maximum level of isolation for the model. However, in most practical scenarios, a Docker image will not be necessary and a Conda environment, or even a Virtualenv environment, will suffice. The Ersilia CLI will decide which isolation level to provide depending on the content of the `Dockerfile`:
+This file contains the installation instructions of the model. Therefore, the content of this file can be very variable, since each model will have its own dependencies.
+
+Ersilia uses a `Dockerfile` to specify installation instructions. The reason for this is that Docker provides the maximum level of isolation possible (i.e. a container), which may be needed to run models in some systems. However, in most practical scenarios, a Docker container will not be necessary and a Conda environment, or even a Virtualenv environment, will suffice. The Ersilia CLI will decide which isolation level to provide depending on the content of the `Dockerfile`:
 
 * If only `pip install` commands are specified, Virtualenv will be used.
 * If only `pip install` and `conda install` commands are specified, Conda will be used.
