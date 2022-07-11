@@ -10,9 +10,27 @@ This page is **work in progress**!
 
 ## Anatomy of the Ersilia Model Template
 
-Each model in the Ersilia ModelHub is contained within an individual GitHub repository. The **Ersilia Model Template** in the [eos-template](https://github.com/ersilia-os/eos-template) repository is stored as a GitHub Template, so you can [create a new repository based on this template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+Each model in the Ersilia Model Hub is contained within an individual GitHub repository. The **Ersilia Model Template** in the [eos-template](https://github.com/ersilia-os/eos-template) repository is stored as a GitHub Template, so you can [create a new repository based on this template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
 
 Below, we describe the template files in detail. Note that we only explain the files that you need to modify; other files, like `pack.py`, do not need any modification from the model contributor.
+
+### The `eos` identifier
+
+Each model in the Ersilia Model Hub has an Ersilia Open Source (EOS) identifier. This identifier determines the name of the GitHub repository containing the model:
+
+```
+https://github.com/ersilia-os/[EOS_IDENTIFIER]
+```
+
+The `eos` identifier follows this regular expression: `"eos[1-9][a-z0-9]{3}"`. That is:
+
+* The `eos` prefix, plus...
+* one digit  (`1-9`) (the `0` is reserved for test models), plus...
+* three alphanumeric (`a-z` and `0-9`) characters.
+
+{% hint style="success" %}
+A list of `eos` identifiers needs is provided in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=drive\_web\&ouid=114775674178390159004). You can read about this Spreadsheet [here](model-selection.md).
+{% endhint %}
 
 ### The [`README`](https://github.com/ersilia-os/eos-template/blob/main/README.md) file
 
