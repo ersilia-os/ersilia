@@ -22,7 +22,7 @@ Each model in the Ersilia Model Hub has an Ersilia Open Source (EOS) identifier.
 https://github.com/ersilia-os/[EOS_IDENTIFIER]
 ```
 
-The `eos` identifier follows this regular expression: `"eos[1-9][a-z0-9]{3}"`. That is:
+The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. That is:
 
 * The `eos` prefix, plus...
 * one digit  (`1-9`) (the `0` is reserved for test models), plus...
@@ -34,7 +34,7 @@ A list of `eos` identifiers needs is provided in the [Ersilia Model Hub Spreadsh
 
 ### The [`README`](https://github.com/ersilia-os/eos-template/blob/main/README.md) file
 
-The `README.md` file is where the basic documentation about the model is provided. It must include the following fields:
+The `README.md` file is where the basic information about the model is provided. It must include the following fields:
 
 **Title:** a self-descriptive model title (less than 70 characters)
 
@@ -46,7 +46,7 @@ The `README.md` file is where the basic documentation about the model is provide
 
 **Description**: minimum information about model type, results and the training dataset.
 
-* Input: data format required by the model. Most chemistry related models, for example, will require molecules in SMILES format. If other input types, such as InChIKeys or peptide sequences are accepted, specify them.
+* Input: data format required by the model. Most chemistry related models, for example, will require molecules in SMILES format. If other input types, such as InChIKeys or protein sequences are accepted, specify them.
 * Output: unit and description of the model result. It is essential to specify if the model gives back a probability or a specific measure. F_or example, IC50_
 * Model type: regression or classification
 * Training set: number of compounds and link to the training dataset if available
