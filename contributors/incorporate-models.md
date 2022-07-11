@@ -123,6 +123,18 @@ The `framework` subfolder contains at least one Bash file, named `run_[API_NAME]
 bash run_predict.sh [DATA_FILE] [OUTPUT_FILE]
 ```
 
+Unless strictly necessary, the `run_predict.sh` file should accept two and only two arguments, namely `DATA_FILE` and `OUTPUT_FILE`. In the current template we provide a simple example:
+
+{% code title="bash_predict.sh" %}
+```bash
+FRAMEWORK_PATH = $(dirname -- "$(readlink -f "${BASH_SOURCE}")")
+
+python {$FRAMEWORK_PATH}/src/main.py -i $1 -o $2
+```
+{% endcode %}
+
+In this case, a Python script is run having as main commands
+
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
 
 We use Git LFS to store large files (over 100 MB), typically corresponding to model parameters. Files to be stored in Git LFS should be specified in the `.gitattributes` file. The current file will store in Git LFS all files in `csv`, `h5`, `joblib`, `pkl`, `pt` and `tsv` format.
