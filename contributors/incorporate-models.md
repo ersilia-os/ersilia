@@ -104,7 +104,24 @@ The `Dockerfile` contains the installation instructions of the model. Therefore,
 
 ### The [`model`](https://github.com/ersilia-os/eos-template/tree/main/model) folder
 
-XX
+The `model` folder is the most important one. It contains two subfolders:
+
+* `framework`: In this folder, we keep all the necessary code to run the AI/ML model (assuming dependencies are already installed).
+* `checkpoints`: In this folder, we store the model data (pre-trained model parameters, scaling data, etc).
+
+{% hint style="danger" %}
+The `model` folder **should not** contain anything other than the `framework` and `checkpoints` subfolder. When the Ersilia CLI eventually fetches the model, it does a reorganization of the code and the only subfolders it keeps are these two. Any other file or folder at the `model/` directory level will be overlooked.
+{% endhint %}
+
+{% hint style="info" %}
+Often, the separation between `framework` and `checkpoints` is not easy to determine. Sometimes, models provided from third-parties have model data embedded within the code or as part of the repository. In these cases, it is perfectly fine to keep model data in the `framework` subfolder, and leave the `checkpoints` subfolder empty.
+{% endhint %}
+
+The `framework` subfolder contains at least one Bash file, named `run_[API_NAME].sh`. Many models will have an API called `predict`, so `run_predict.sh`is frequently used. This file will run as follows:
+
+```bash
+bash run_predict.sh [DATA_FILE] [OUTPUT_FILE]
+```
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
 
