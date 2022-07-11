@@ -72,7 +72,7 @@ By default, all code written in contribution to Ersilia should be licensed under
 
 However, the license notices for code developed by **third parties** must be kept in the respective folders where the third-party code is found. Include an explanation in the `README` file, for example:
 
-> The GPLv3 license applies to all parts of the repository that are not externally maintained libraries. This repository uses the externally maintained library ChemProp library, located at ./model and licensed under an [MIT License](https://github.com/ersilia-os/eos4e40/blob/main/model/LICENSE.md).
+> The GPLv3 license applies to all parts of the repository that are not externally maintained libraries. This repository uses the externally maintained library ChemProp library, located at `./model` and licensed under an [MIT License](https://github.com/ersilia-os/eos4e40/blob/main/model/LICENSE.md).
 
 ### The [`Dockerfile`](https://github.com/ersilia-os/eos-template/blob/main/Dockerfile) file
 
@@ -129,15 +129,61 @@ There are three main classes in the `service` file, namely `Model`, `Artifact` a
 
 #### The `Model` class
 
-This class is simply a wrapper for the AI/ML model. The most important method of the `Model` class is the `predict` method.
+This class is simply a wrapper for the AI/ML model. Typically, the central method of the `Model` class is the `predict` method.
 
 {% hint style="info" %}
-You will have to rename the `predict` method to something else if your model does not do predictions, strictly. For example, for many models the method can be renamed as `calculate.`&#x20;
+You can always rename the `predict` method to something else if your model does not do predictions, strictly. For example, for some models it is more appropriate to rename to `calculate`.
 {% endhint %}
 
 {% hint style="success" %}
-Multiple methods are allowed. For example, a model may have a `predict` and an e`xplain` method.
+Multiple methods are allowed. For example, a model may have a `predict` and an `explain`method.
 {% endhint %}
+
+In its simplest form, the `Model` class just points Ersilia to the `model` directory and then creates a bash file to execute the necessary commands to run the model.
+
+```python
+class Model(object):
+    ...
+    
+    def predict(self, smiles_list):
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        data_file = os.path.join(tmp_folder, self.DATA_FILE)
+        pred_file = os.path.join(tmp_folder, self.PRED_FILE)
+        log_file = os.path.join(tmp_folder, self.LOG_FILE)
+        with open(data_file, "w") as f:
+            f.write("smiles"+os.linesep)
+            for smiles in smiles_list:
+                f.write(smiles + os.linesep)
+        run_file = os.path.join(tmp_folder, self.RUN_FILE)
+        with open(run_file, "w") as f:
+            lines = [
+                "bash {0}/run.sh {1} {2}".format(
+                    self.framework_dir,
+                    data_file,
+                    pred_file
+                )
+            ]
+            f.write(os.linesep.join(lines))
+        cmd = "bash {0}".format(run_file)
+        with open(log_file, "w") as fp:
+            subprocess.Popen(
+                cmd, stdout=fp, stderr=fp, shell=True, env=os.environ
+            ).wait()
+        with open(pred_file, "r") as f:
+            reader = csv.reader(f)
+            h = next(reader)
+            R = []
+            for r in reader:
+                R += [{"outcome": [Float(x) for x in r]}]
+        meta = {
+            "outcome": h
+        }
+        result = {
+            "result": R,
+            "meta": meta
+        }
+        return result
+```
 
 #### The `Artifact` class
 
