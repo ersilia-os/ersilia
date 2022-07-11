@@ -202,13 +202,34 @@ class Model(object):
         ...
 ```
 
-The last step is to read from the output and&#x20;
+The last step is to read from the output in the temporary directory and return it in a JSON-serializable format. The output in the example is a `csv` table, with one or multiple columns, containing numeric data. The table has a header, which is read and saved as metadata.
 
+```python
+class Model(object):
+    ...
+    def predict(self, smiles_list):
+        ...
+        with open(output_file, "r") as f:
+            reader = csv.reader(f)
+            h = next(reader)
+            R = []
+            for r in reader:
+                R += [{"outcome": [Float(x) for x in r]}]
+        meta = {
+            "outcome": h
+        }
+        result = {
+            "result": R,
+            "meta": meta
+        }
+        return result
+```
 
+You will see that, in the template, pointers to potential edits are highlighted with the tag `# EDIT` .&#x20;
 
 #### The `Artifact` class
 
-This class mirrors BentoML artifacts. It simply contains load and save functionalities. You **should not modify** this class.
+This class mirrors BentoML artifacts. It simply contains `load`, `save` and `pack` functionalities. You **should not modify** this class.
 
 #### The `Service` class
 
