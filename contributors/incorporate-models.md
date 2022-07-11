@@ -133,7 +133,22 @@ python {$FRAMEWORK_PATH}/src/main.py -i $1 -o $2
 ```
 {% endcode %}
 
-In this case, a Python script is run having as main commands
+In this case, a Python script is run having as arguments an input (`-i`) and output (`-o`) files. Note that a `FRAMEWORK_PATH` variable is defined. This is used to store the directory name of the current script. The current template proposes the following script:
+
+{% code title="src/main.py" %}
+```python
+import os
+
+# current file directory
+root = os.path.dirname(os.path.abspath(__file__))
+
+# checkpoints directory
+checkpoints_dir = os.path.abspath(os.path.join(root, "..", "..", "checkpoints"))
+
+# read checkpoints
+joblib.load(
+```
+{% endcode %}
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
 
