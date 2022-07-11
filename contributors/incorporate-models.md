@@ -10,7 +10,7 @@ This page is **work in progress**!
 
 ## Anatomy of the Ersilia Model Template
 
-Each model in the Ersilia Model Hub is contained within an individual GitHub repository. The **Ersilia Model Template** in the [eos-template](https://github.com/ersilia-os/eos-template) repository is stored as a GitHub Template, so you can [create a new repository based on this template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+Each model in the Ersilia Model Hub is contained within an individual GitHub repository. The [**Ersilia Model Template**](https://github.com/ersilia-os/eos-template) repository is stored as a GitHub Template, so you can [create a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) based on it.
 
 Below, we describe the template files in detail. Note that we only explain the files that you need to modify; other files, like `pack.py`, do not need any modification from the model contributor.
 
