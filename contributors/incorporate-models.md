@@ -138,6 +138,8 @@ In this case, a Python script is run having as arguments an input (`-i`) and out
 {% code title="src/main.py" %}
 ```python
 import os
+import csv
+import os
 
 # current file directory
 root = os.path.dirname(os.path.abspath(__file__))
@@ -145,8 +147,28 @@ root = os.path.dirname(os.path.abspath(__file__))
 # checkpoints directory
 checkpoints_dir = os.path.abspath(os.path.join(root, "..", "..", "checkpoints"))
 
-# read checkpoints
-joblib.load(
+# read checkpoints (here, simply an integer number)
+ckpt = joblib.load(os.path.join(checkpoints_dir, "checkpoints.joblib"))
+
+# model to be run (here, calculate the SMILES length and add ckpt to it)
+def my_model(smiles_list, ckpt):
+    return [len(smi)+ckpt for smi in smiles_list]
+    
+# read SMILES from .csv file, assuming one column with header
+with open(input_file, "r") as f:
+    reader = csv.reader(f)
+    next(reader) # skip header
+    smiles_list = [r[0] for r in reader]
+    
+# run model
+outputs = my_model(smiles_list, ckpt)
+
+# write output in a .csv file
+with open(output_file, "r") as f:
+    writer = csv.writer(f)
+    writer.writerow(["counts"]) # header
+    for o in outputs:
+        writer.writerow([o])
 ```
 {% endcode %}
 
