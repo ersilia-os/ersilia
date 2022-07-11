@@ -194,7 +194,7 @@ To summarize, in the template, we provide the a structure that follows this logi
    * Writes an output file containing one column, i.e. the output value (with header)
 
 {% hint style="info" %}
-In the template, a very simple example is provided where:
+In the template, the example provided is very simple. Depending on the model being incorporated, the logic may be different. For example, many third party models already contain a command-line option, with a specific syntax. In these cases, you may want to write scripts to adapt the input and the output, and execute the model as-is.
 {% endhint %}
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
