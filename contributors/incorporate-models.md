@@ -372,9 +372,22 @@ XX
 
 XX
 
+## TL;DR
 
+In summary, the steps to incorporate a model to the Ersilia Model Hub are the following. We are assuming that the model can be installed in a Conda environment.
 
-
+1. Download the model from a third party repository to your local machine.
+2. Install the model in a dedicated Conda environment and make sure you can run it.
+3. Create a new GitHub repository from the `eos-template`. Name this repository with the EOS ID.
+4. Clone the new repository.
+5. Place model code in `model/framework` and model parameters in `model/checkpoints`.
+6. Write the necessary code to provide a `run_predict.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
+7. Edit the `Dockerfile` file to reflect the installation steps followed in 2.
+8. Edit the `service.py` file as needed.
+9. Make sure that `.gitattributes` specifies the format of your model parameters.
+10. Push changes to the model repository.
+11. Activate the Ersilia CLI and fetch the model (in verbose mode).
+12. Serve and run the model.
 
 
 
