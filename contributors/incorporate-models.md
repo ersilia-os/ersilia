@@ -183,8 +183,18 @@ The important steps of the script are:
 
 Most of the work of the model contributor will be working on this script. In the template, we provide a dummy model, which can be already defined within the script. Often, the model will be loaded from a third party Python library, or from a (cloned) repository placed in the same directory.
 
+To summarize, in the template, we provide the a structure that follows this logic:
+
+1. A `run_predict.sh` script executes a Python `main.py` script.
+2. The `main.py` script:
+   * Defines the model code.
+   * Loads parameters from `checkpoints`.
+   * Reads an input file containing SMILES (with header).
+   * Runs a model that counts SMILES length and adds an integer defined by the parameters.
+   * Writes an output file containing one column, i.e. the output value (with header)
+
 {% hint style="info" %}
-While&#x20;
+In the template, a very simple example is provided where:
 {% endhint %}
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
