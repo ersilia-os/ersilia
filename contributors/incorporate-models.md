@@ -172,6 +172,21 @@ with open(output_file, "r") as f:
 ```
 {% endcode %}
 
+In this case, the model simply counts the number of characters in a SMILES string and adds a number to it.
+
+The important steps of the script are:
+
+1. Load model parameters.
+2. Read input file.
+3. Run predictions using the input file and the model parameters.or&#x20;
+4. Write the output.
+
+Most of the work of the model contributor will be working on this script. In the template, we provide a dummy model, which can be already defined within the script. Often, the model will be loaded from a third party Python library, or from a (cloned) repository placed in the same directory.
+
+{% hint style="info" %}
+While&#x20;
+{% endhint %}
+
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
 
 We use Git LFS to store large files (over 100 MB), typically corresponding to model parameters. Files to be stored in Git LFS should be specified in the `.gitattributes` file. The current file will store in Git LFS all files in `csv`, `h5`, `joblib`, `pkl`, `pt` and `tsv` format.
