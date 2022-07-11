@@ -225,15 +225,49 @@ class Model(object):
         return result
 ```
 
-You will see that, in the template, pointers to potential edits are highlighted with the tag `# EDIT` .&#x20;
+You will see that, in the template, pointers to potential edits are highlighted with the tag `# EDIT` . Necessary edits relate to the appropriate naming of the API, the format of the input data, or the serialization to JSON format from the output data.
+
+{% hint style="info" %}
+Advanced contributors may want to modify the `Model` class to load a model in-place (for example, a Scikit-Learn model) instead of executing a bash command in the `model/framework/` directory.
+{% endhint %}
 
 #### The `Artifact` class
 
-This class mirrors BentoML artifacts. It simply contains `load`, `save` and `pack` functionalities. You **should not modify** this class.
+This class mirrors BentoML artifacts. It simply contains `load`, `save`, `get and pack` functionalities:
+
+```python
+class Artifact(BentoServiceArtifact):
+    ...
+    def pack(self, model):
+        ...
+    def load(self, path):
+        ...
+    def get(self):
+        ...
+    def save(self, dst):
+        ...
+```
+
+You **don't have to modify** this class.
 
 #### The `Service` class
 
-This class is used to create the service. The service typically contains one API, typically `predict`
+This class is used to create the service. The service at least one API, typically `predict`:&#x20;
+
+```python
+@artifacts([Artifact("model")])
+class Service(BentoService):
+    @api(input=JsonInput(), batch=True)
+    def predict(self, input: List[JsonSerializable]):
+        input = input[0]
+        smiles_list = [inp["input"] for inp in input]
+        output = self.artifacts.model.predict(smiles_list)
+        return [output]
+```
+
+The `Service`class can have multiple APIs, each of them specified with the `@api` decorator. By default, Ersilia works with JSON inputs, which are deserialized as a SMILES list inside the API.
+
+You can **rename the API** (for example, to `calculate`), following the `# EDIT` tags in the template.
 
 ## Steps for model incorporation
 
