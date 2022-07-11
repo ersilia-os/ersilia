@@ -131,6 +131,15 @@ There are three main classes in the `service` file, namely `Model`, `Artifact` a
 
 This class is simply a wrapper for the AI/ML model. Typically, the central method of the `Model` class is the `predict` method.
 
+```python
+class Model (object):
+    ...
+    def predict(self, smiles_list):
+        ...
+```
+
+In this case, the model takes as input a list of molecules represented as SMILES strings. This is the standard input type for [Type A](model-selection.md) models, focussed on chemistry data as input.
+
 {% hint style="info" %}
 You can always rename the `predict` method to something else if your model does not do predictions, strictly. For example, for some models it is more appropriate to rename to `calculate`.
 {% endhint %}
@@ -139,28 +148,49 @@ You can always rename the `predict` method to something else if your model does 
 Multiple methods are allowed. For example, a model may have a `predict` and an `explain`method.
 {% endhint %}
 
-In its simplest form, the `Model` class just points Ersilia to the `model` directory and then creates a bash file to execute the necessary commands to run the model.
+In its simplest form, the `Model` class just points Ersilia to the `model` directory and then creates a bash file to execute the necessary commands to run the model. So it is actually a very simple class, although it may look overwhelming at first. We break it down below:
+
+First, a temporary directory is created:
+
+```python
+ class Model(object):
+    ...
+    def predict(self, smiles_list):
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        data_file = os.path.join(tmp_folder, self.DATA_FILE)
+        output_file = os.path.join(tmp_folder, self.OUTPUT_FILE)
+        log_file = os.path.join(tmp_folder, self.LOG_FILE)
+        ...
+```
+
+Then, a data file is created in the temporary directory. In this example, it is simply a one-column `csv` file having a header (`smiles`) and a list of molecules in SMILES format (one per row):
 
 ```python
 class Model(object):
     ...
-    
     def predict(self, smiles_list):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
-        data_file = os.path.join(tmp_folder, self.DATA_FILE)
-        pred_file = os.path.join(tmp_folder, self.PRED_FILE)
-        log_file = os.path.join(tmp_folder, self.LOG_FILE)
+        ...
         with open(data_file, "w") as f:
             f.write("smiles"+os.linesep)
             for smiles in smiles_list:
-                f.write(smiles + os.linesep)
+                f.write(smiles+os.linesep)
+        ...
+```
+
+Now we already have the input file ready to submit to the corresponding `run_predict.sh`file in the `model/framework/` directory, as specified above. The following creates a dummy bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too.
+
+```python
+class Model(object):
+    ...
+    def predict(self, smiles_list):
+        ...
         run_file = os.path.join(tmp_folder, self.RUN_FILE)
         with open(run_file, "w") as f:
             lines = [
-                "bash {0}/run.sh {1} {2}".format(
+                "bash {0}/run_predict.sh {1} {2}".format( # <-- EDIT: match method name (run_predict.sh, run_calculate.sh, etc.)
                     self.framework_dir,
                     data_file,
-                    pred_file
+                    output_file
                 )
             ]
             f.write(os.linesep.join(lines))
@@ -169,21 +199,12 @@ class Model(object):
             subprocess.Popen(
                 cmd, stdout=fp, stderr=fp, shell=True, env=os.environ
             ).wait()
-        with open(pred_file, "r") as f:
-            reader = csv.reader(f)
-            h = next(reader)
-            R = []
-            for r in reader:
-                R += [{"outcome": [Float(x) for x in r]}]
-        meta = {
-            "outcome": h
-        }
-        result = {
-            "result": R,
-            "meta": meta
-        }
-        return result
+        ...
 ```
+
+The last step is to read from the output and&#x20;
+
+
 
 #### The `Artifact` class
 
