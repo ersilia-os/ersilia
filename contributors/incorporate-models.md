@@ -40,8 +40,8 @@ The `README.md` file is where the basic information about the model is provided.
 
 **Model Identifiers:** a set of codes that identify the model in the Ersilia CLI:
 
-* Ersilia Identifier (EOS ID): an automatically generated code (`eos` +  4 alphanumeric characters). Use the assigned identifier in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing).
-* Slug: a one-word or two-word (linked by a hypen) reference that acts as substitute to the EOSID
+* Ersilia identifier (EOS ID): the `eos` identifier described above. Use the assigned identifier in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing).
+* Slug: a one-word or multi-word (linked by a hypen) human-readable identifier to be used as analternative to the EOS ID.
 * Tags: labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.Falciparum_ as tag. Select three relevant ones.
 
 **Description**: minimum information about model type, results and the training dataset.
