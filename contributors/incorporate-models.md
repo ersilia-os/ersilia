@@ -518,13 +518,13 @@ cp SA_Score/sascorer.py eos9ei3/model/framework/code/.
 cp SA_Score/fpscores.pkl.gz eos9ei3/model/checkpoints/.
 ```
 
+{% hint style="danger" %}
+Note that here we are migrating code and parameters to different folders. This may yield to critical errors if code expects to find parameters at a certain relative location. For this reason, it is perfectly fine to move both code and parameters to the `framework` folder, and leave the `checkpoints` empty.
+{% endhint %}
+
 ### Write framework code
 
 Now it is time to write some code. Here we will follow the description of the `model` folder [provided above](incorporate-models.md#the-model-folder).
-
-#### The `run_predict.sh` file
-
-The provided file in the template expects a `main.py` Python file. Let's not modify the `run_predict.sh` script and focus on the `main.py` file instead.
 
 #### Write input and output adapters
 
@@ -551,7 +551,7 @@ with open(input_file, "r") as f:
     for r in reader:
         smiles_list += [r[0]]
 
-with open("tmp_file.smi", "w") as f:
+with open("tmp_input.smi", "w") as f:
     writer = csv.writer(f, delimiter=" ")
     writer.writerow(["smiles", "identifier"]) # header
     for i, smi in enumerate(smiles_list):
@@ -559,9 +559,59 @@ with open("tmp_file.smi", "w") as f:
 ```
 {% endcode %}
 
-Likewise, the output is expected to be, in this case, just one column containing the SA score. The output provided by `sascorer.py` has three columns (tab-separated),&#x20;
+Likewise, the output is expected to be, in this case, just one column containing the SA score. The output provided by `sascorer.py` has three columns (tab-separated), so we need to adapt it.
+
+{% code title="code/output_adapter.py" %}
+```python
+import sys
+import csv
+
+output_file = sys.argv[1]
+
+sascores = []
+with open("tmp_output.csv", "r") as f:
+    reader = csv.reader(f, delimiter="\t")
+    next(reader) # skip header
+    for r in reader:
+        sascores += [r[0]]
+
+with open(output_file, "w") as f:
+    writer = csv.writer(f)
+    writer.writerow(["sa_score"]) # header
+    for sa in sascores:
+        writer.writerow([sa])
+```
+{% endcode %}
+
+#### Make sure that parameters are read
+
+So far, we haven't pointed to the model parameters. When [migrating code and parameters](incorporate-models.md#migrate-code-and-parameters), we separated the `sascore.py` file from the `fpscores.pkl.gz` file.
+
+Let's inspect `sascore.py` to understand how parameters are read. There is a `readFragmentScore` function that does the job. We need to modify it to point to the `checkpoints` folder:
 
 ```python
+def readFragmentScores(name='fpscores'):
+    import gzip
+    global _fscores
+    # generate the full path filename:
+    if name == "fpscores":
+        name = op.join(op.join(op.dirname(__file__), "..", "..", "checkpoints"), name)
+    data = pickle.load(gzip.open('%s.pkl.gz' % name))
+    outDict = {}
+    for i in data:
+        for j in range(1, len(i)):
+            outDict[i[j]] = float(i[0])
+    _fscores = outDict
+```
+
+#### Write the `run_predict.sh` file
+
+We now have the input adapter, the model code and the output adapter. Let's simply write this pipeline in the `run_predict.sh` file:
+
+```bash
+python $1/code/input_adapter.py $2
+python $1/code/sascorer.py input_tmp.smi > output_tmp.smi
+python $1/code/output_adapter.py $3
 ```
 
 ## TL;DR
