@@ -120,32 +120,20 @@ Often, the separation between `framework` and `checkpoints` is not easy to deter
 The `framework` subfolder contains at least one Bash file, named `run_[API_NAME].sh`. Many models will have an API called `predict`, so `run_predict.sh`is frequently used. This file will run as follows:
 
 ```bash
-bash run_predict.sh [DATA_FILE] [OUTPUT_FILE]
+bash run_predict.sh [FRAMEWORK_DIR] [DATA_FILE] [OUTPUT_FILE]
 ```
 
-Unless strictly necessary, the `run_predict.sh` file should accept two and only two arguments, `DATA_FILE` and `OUTPUT_FILE`. In the current template, we provide the following example:
+Unless strictly necessary, the `run_predict.sh` file should accept three and only three arguments, namely `FRAMEWORK_DIR`, `DATA_FILE` and `OUTPUT_FILE`. In the current template, we provide the following example:
 
 {% code title="run_predict.sh" %}
 ```bash
-python src/main.py -i $1 -o $2
+python $1/src/main.py -i $2 -o $3
 ```
 {% endcode %}
 
-In this case, a Python file is executed, taking as input (`-i`) the `DATA_FILE` and giving as output (`-o`) the `OUTPUT_FILE`.
+In this case, a Python file located in the `[FRAMEWORK_DIR]/src` folder is executed, taking as input (`-i`) the `DATA_FILE` and giving as output (`-o`) the `OUTPUT_FILE`.
 
-We now need to inspect the `main.py`file in more detail, since in this&#x20;
-
-Unless strictly necessary, the `run_predict.sh` file should accept two and only two arguments, namely `DATA_FILE` and `OUTPUT_FILE`. In the current template we provide a simple example:
-
-{% code title="bash_predict.sh" %}
-```bash
-FRAMEWORK_PATH = $(dirname -- "$(readlink -f "${BASH_SOURCE}")")
-
-python {$FRAMEWORK_PATH}/src/main.py -i $1 -o $2
-```
-{% endcode %}
-
-In this case, a Python script is run having as arguments an input (`-i`) and output (`-o`) files. Note that a `FRAMEWORK_PATH` variable is defined. This is used to store the directory name of the current script. The current template proposes the following script:
+We now need to inspect the `main.py`file in more detail. The current template proposes the following script:&#x20;
 
 {% code title="src/main.py" %}
 ```python
