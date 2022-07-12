@@ -374,15 +374,195 @@ You can **rename the API** (for example, to `calculate`), following the `# EDIT`
 
 ## Steps for model incorporation
 
-In this tutorial, we will follow the example of a very simple model, related synthetic accessibility scoring.
+In this tutorial, we will follow the example of a very simple but well used model to calculate the **synthetic accessibility** of small molecule compounds. Synthetic accessibility measures the feasibility of synthesizing a molecule in the laboratory. In [2009, Peter Ertl presented the synthetic accessiblity (SA) score](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), based on measures of molecular complexity and occurrence of certain fragments in the small molecule structure. High (greater than 6) SA scores denote difficult-to-synthesize molecules, and low (lower than 3) SA scores suggest that the molecule will be easy to synthesize.
+
+### Include the model to the Ersilia Model Hub AirTable
+
+The [Ersilia CLI](https://github.com/ersilia-os/ersilia) accesses data contained in the [Ersilia Model Hub AirTable](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP) database. Thus, the first step is to include the model entry in the database. You can follow the instruction in the [model selection](model-selection.md) page. You will see that, in the Ersilia Model Hub, the current model has the EOS identifier `eos-9ei3` and the slug `sa-score`.&#x20;
+
+#### Read the publication
+
+It is important that you read the original publication, in order to understand the training data, the limitations of the model, the validation performed, and the algorithm, among other details. In [this case](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), this is a classic (old) publication from a Novartis team. They analyzed small fragments in the PubChem database and devised a molecular complexity score that takes into account molecule size, presence of non-standard structural features, presence of large rings, etc. The authors validated the model by comparing their SA score with synthetic feasibility as estimated by medicinal chemists for a set of 40 molecules.
 
 #### Find model code and parameters
 
-XX
+Code to calculate the SA score does not seem to be available from the publication. Fortunately, though, the RDKit library, in its contributions module, contains an implementation of the SA score. The code can be found [here](https://github.com/rdkit/rdkit/tree/master/Contrib/SA\_Score). This RDKit-based implementation was developed in 2013 by Peter Ertl and Greg Laundrum.
 
-#### Run the code _outside_ Ersilia
+{% hint style="success" %}
+Both the link to the code and to the original publication are included in the Ersilia Model Hub AirTable database.
+{% endhint %}
 
-XX
+### Run the code outside Ersilia
+
+Before incorporating the `sa-score` model to the Ersilia Model Hub, we need to make sure that we can actually run the code provided by the third party. [In this case](https://github.com/rdkit/rdkit/tree/master/Contrib/SA\_Score), upon quick inspection, two elements seem to be central in the repository:
+
+* The `sascorer.py`, containing the main code. We can consider this file to be the **model code**.
+* The `fpscores.pkl.gz`, containing pre-calculated fragment scores. In this simple case, we can consider this file to be the **model parameters**.
+
+#### Create a conda environment
+
+No installation instructions are provided for this model. However, the `sascorer.py` file imports indicate that, at least, `rdkit` is necessary. We can create a Conda environment and install the `rdkit` as follows:
+
+```bash
+conda create -n sa-score python=3.7
+conda activate sa-score
+conda install -c conda-forge rdkit=2021.03
+```
+
+#### Download code and parameters
+
+We can download code and parameters of the SA scorer directly from the GitHub repository. Here, we store these data in a `SA_Score` folder in the `~/Desktop`.
+
+```bash
+cd ~/Desktop
+mkdir SA_Score
+cd SA_Score
+wget https://raw.githubusercontent.com/rdkit/rdkit/master/Contrib/SA_Score/sascorer.py
+wget https://raw.githubusercontent.com/rdkit/rdkit/master/Contrib/SA_Score/fpscores.pkl.gz
+```
+
+{% hint style="info" %}
+Often, the model will be stored as a full GitHub repository. In this case, you can simply clone the repository.
+{% endhint %}
+
+#### Test the model
+
+Inspectin of the `sascorer.py` file indicates that we can run this script from the terminal:
+
+{% code title="sascorer.py" %}
+```python
+...
+if __name__ == '__main__':
+    import sys
+    import time
+
+    t1 = time.time()
+    readFragmentScores("fpscores")
+    t2 = time.time()
+
+    suppl = Chem.SmilesMolSupplier(sys.argv[1])
+    t3 = time.time()
+    processMols(suppl)
+    t4 = time.time()
+
+    print('Reading took %.2f seconds. Calculating took %.2f seconds' % ((t2 - t1), (t4 - t3)),
+          file=sys.stderr)
+```
+{% endcode %}
+
+The `Chem.SmilesMolSupplier` takes a file containing SMILES strings and identifiers, separated by a space character. The file expects a header. Let's create an file with a few molecules. We looked for a few drugs in [DrugBank](https://go.drugbank.com/):
+
+{% code title="molecules.smi" %}
+```
+smiles identifier
+CC(=O)NC1=CC=C(O)C=C1 mol1
+CN(C)CCC1=CNC2=C1C=C(CS(=O)(=O)N1CCCC1)C=C2 mol2
+CCN(CC)CC1=C(O)C=CC(NC2=C3C=CC(Cl)=CC3=NC=C2)=C1 mol3
+```
+{% endcode %}
+
+Now let's see if the model works as expected:
+
+```bash
+python sascorer.py molecules.smi
+```
+
+It does work! The output in the terminal looks like this:
+
+```
+smiles	Name	sa_score
+CC(=O)Nc1ccc(O)cc1	mol1	1.407299
+CN(C)CCc1c[nH]c2ccc(CS(=O)(=O)N3CCCC3)cc12	mol2	2.319770
+CCN(CC)Cc1cc(Nc2ccnc3cc(Cl)ccc23)ccc1O	mol3	2.249844
+Reading took 0.21 seconds. Calculating took 0.00 seconds
+```
+
+{% hint style="info" %}
+Many repositories provide a clear description of the expected input format. In this case, the expected input was not clearly specified, and previous knowledge of the `Chem.SmilesMolSupplier` method was necessary.
+{% endhint %}
+
+### Create the model repository from the Ersilia Model Template
+
+Now that we know that the code can run in our local machine, we can create the corresponding respository in the Ersilia GitHub organization.
+
+#### Use the eos-template
+
+The easiest way to create the repository is to visit the `eos-template` [GitHub repository page](https://github.com/ersilia-os/eos-template). In green (top-right), you will find the **Use this template** button.
+
+A page to create a new repository from `eos-template` will open:
+
+* Set the **Owner** to `ersilia-os`.
+* In the **Repository name**, enter the EOS identifier. In this case, `eos9ei3`.
+* Use the **Description** provided in the [Ersilia Model Hub AirTable](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP).
+* Keep the repository **Public**.
+
+Click **Create repository from template**.
+
+#### Clone the new repository
+
+We can now clone the repository in our local machine. Let's do it in the `~/Desktop`:
+
+```bash
+cd ~/Desktop
+git clone https://github.com/ersilia-os/eos9ei3.git
+cd eos9ei3
+```
+
+### Migrate code and parameters
+
+Let's now place the code and the parameters to the `model` folder, in the `framework` and `checkpoints` subfolders, respectively:
+
+```bash
+cd ~/Desktop
+cp SA_Score/sascorer.py eos9ei3/model/framework/code/.
+cp SA_Score/fpscores.pkl.gz eos9ei3/model/checkpoints/.
+```
+
+### Write framework code
+
+Now it is time to write some code. Here we will follow the description of the `model` folder [provided above](incorporate-models.md#the-model-folder).
+
+#### The `run_predict.sh` file
+
+The provided file in the template expects a `main.py` Python file. Let's not modify the `run_predict.sh` script and focus on the `main.py` file instead.
+
+#### Write input and output adapters
+
+The template provides an exemplary `main.py` that is not useful here. Let's remove this file. And let's remove the template parameters, too.
+
+```bash
+cd model
+rm framework/code/main.py
+rm checkpoints/checkpoints.joblib
+```
+
+By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](incorporate-models.md#the-service-file)). However, the `sascorer.py` expects a two-column file, as explained above. Let's write an input adapter:
+
+{% code title="code/input_adapter.py" %}
+```python
+import sys
+import csv
+
+input_file = sys.argv[1]
+smiles_list = []
+with open(input_file, "r") as f:
+    reader = csv.reader(f)
+    next(reader) # skip header
+    for r in reader:
+        smiles_list += [r[0]]
+
+with open("tmp_file.smi", "w") as f:
+    writer = csv.writer(f, delimiter=" ")
+    writer.writerow(["smiles", "identifier"]) # header
+    for i, smi in enumerate(smiles_list):
+        writer.writerow([smi, "mol{0}".format(i)])
+```
+{% endcode %}
+
+Likewise, the output is expected to be, in this case, just one column containing the SA score. The output provided by `sascorer.py` has three columns (tab-separated),&#x20;
+
+```python
+```
 
 ## TL;DR
 
@@ -396,7 +576,7 @@ In summary, the steps to incorporate a model to the Ersilia Model Hub are the fo
 6. Write the necessary code to provide a `run_predict.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
 7. Edit the `Dockerfile` file to reflect the installation steps followed in 2.
 8. Edit the `service.py` file as needed.
-9. Make sure that `.gitattributes` specifies the format of your model parameters.
+9. Make sure that `.gitattributes` captures your model parameters.
 10. Push changes to the model repository.
 11. Activate the Ersilia CLI and fetch the model (in verbose mode).
 12. Serve and run the model.
