@@ -89,12 +89,15 @@ FROM bentoml/model-server:0.11.0-py37
 MAINTAINER ersilia
 
 RUN conda install -c conda-forge rdkit=2020.03
+RUN pip install joblib==1.1.0
 
 WORKDIR /repo
-COPY ./repo
+COPY . /repo
 ```
 
 In this case, a Conda environment will be preferentially used to isolate the model. The first line of the `Dockerfile` indicates that this Conda environment will have **BentoML 0.11.0** installed on **Python 3.7**.
+
+In this example, the `rdkit` library will be installed using `conda`, and `joblib` will be installed using `pip`.
 
 The `Dockerfile` can contain as many `RUN` commands as necessary, between the `MAINTAINER` and the `WORKDIR` lines.
 
@@ -127,7 +130,7 @@ Unless strictly necessary, the `run_predict.sh` file should accept three and onl
 
 {% code title="run_predict.sh" %}
 ```bash
-python $1/src/main.py -i $2 -o $3
+python $1/code/main.py -i $2 -o $3
 ```
 {% endcode %}
 
@@ -135,11 +138,19 @@ In this case, a Python file located in the `[FRAMEWORK_DIR]/src` folder is execu
 
 We now need to inspect the `main.py`file in more detail. The current template proposes the following script:&#x20;
 
-{% code title="src/main.py" %}
+{% code title="code/main.py" %}
 ```python
+# imports
 import os
 import csv
-import os
+import joblib
+import sys
+from rdkit import Chem
+from rdkit.Chem.Descriptors import MolWt
+
+# parse arguments
+input_file = sys.argv[1]
+output_file = sys.argv[2]
 
 # current file directory
 root = os.path.dirname(os.path.abspath(__file__))
@@ -147,12 +158,12 @@ root = os.path.dirname(os.path.abspath(__file__))
 # checkpoints directory
 checkpoints_dir = os.path.abspath(os.path.join(root, "..", "..", "checkpoints"))
 
-# read checkpoints (here, simply an integer number)
+# read checkpoints (here, simply an integer number: 42)
 ckpt = joblib.load(os.path.join(checkpoints_dir, "checkpoints.joblib"))
 
-# model to be run (here, calculate the SMILES length and add ckpt to it)
+# model to be run (here, calculate the Molecular Weight and add ckpt (42) to it)
 def my_model(smiles_list, ckpt):
-    return [len(smi)+ckpt for smi in smiles_list]
+    return [MolWt(Chem.MolFromSmiles(smi))+ckpt for smi in smiles_list]
     
 # read SMILES from .csv file, assuming one column with header
 with open(input_file, "r") as f:
@@ -164,26 +175,26 @@ with open(input_file, "r") as f:
 outputs = my_model(smiles_list, ckpt)
 
 # write output in a .csv file
-with open(output_file, "r") as f:
+with open(output_file, "w") as f:
     writer = csv.writer(f)
-    writer.writerow(["counts"]) # header
+    writer.writerow(["value"]) # header
     for o in outputs:
         writer.writerow([o])
 ```
 {% endcode %}
 
-In this case, the model simply counts the number of characters in a SMILES string and adds a number to it.
+In this case, the model simply calculates the molecular weight and adds a number to it.
 
 The important steps of the script are:
 
 1. Load model parameters.
 2. Read input file.
-3. Run predictions using the input file and the model parameters.or&#x20;
+3. Run predictions using the input file and the model parameters.
 4. Write the output.
 
-Most of the work of the model contributor will be working on this script. In the template, we provide a dummy model, which can be already defined within the script. Often, the model will be loaded from a third party Python library, or from a (cloned) repository placed in the same directory.
+Most of the work of the model contributor will be to work on this script. In the template, we provide a dummy model (i.e. add a number to molecular weight), which can be already defined within the script. Often, the model will be loaded from a third party Python library, or from a (cloned) repository placed in the same directory.
 
-To summarize, in the template, we provide the a structure that follows this logic:
+To summarize, in the template, we provide a structure that follows this logic:
 
 1. A `run_predict.sh` script executes a Python `main.py` script.
 2. The `main.py` script:
@@ -247,7 +258,7 @@ First, a temporary directory is created:
  class Model(object):
     ...
     def predict(self, smiles_list):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = tempfile.mkdtemp(prefix="eos-")
         data_file = os.path.join(tmp_folder, self.DATA_FILE)
         output_file = os.path.join(tmp_folder, self.OUTPUT_FILE)
         log_file = os.path.join(tmp_folder, self.LOG_FILE)
@@ -313,6 +324,7 @@ class Model(object):
             "result": R,
             "meta": meta
         }
+        shutil.rmtree(tmp_folder)
         return result
 ```
 
