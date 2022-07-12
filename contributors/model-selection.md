@@ -58,7 +58,7 @@ Unfortunately, there is no centralized resource to find AI/ML models for drug di
 * Browse other model hubs such as [Hugging Face](https://huggingface.co), [TensorFlow Hub](https://tensorflow.org/hub), [PyTorch Hub](https://pytorch.org/hub), etc.
 * Expore [Papers With Code](https://paperswithcode.com/). It is a fantastic resource.
 * Follow benchmarks, competitions and leaderboards: [Kaggle](https://www.kaggle.com/), [DREAM Challenges](https://dreamchallenges.org/), [Therapeutic Data Commons](https://tdcommons.ai/), etc.
-* Use Twitter: follow accounts like [@KevinKaichuang](https://twitter.com/KevinKaichuang) and [@andrewwhite01](https://twitter.com/andrewwhite01). From Ersilia ([@ersiliaio](https://twitter.com/ersiliaio), [@mduranfrigola](https://twitter.com/mduranfrigola), [@TuronGemma](https://twitter.com/TuronGemma)) we tend to retweet relevant literature.
+* Use Twitter: follow accounts like [@KevinKaichuang](https://twitter.com/KevinKaichuang), [@andrewwhite01](https://twitter.com/andrewwhite01), [@EricTopol](https://twitter.com/erictopol) and [@janjensen](https://twitter.com/janjensen). From Ersilia ([@ersiliaio](https://twitter.com/ersiliaio), [@mduranfrigola](https://twitter.com/mduranfrigola), [@TuronGemma](https://twitter.com/TuronGemma)) we tend to retweet relevant literature.
 * Use the `#literature` channel in the Ersilia Slack workspace to get inspiration.
 * Check the models backlog in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing) to avoid duplications and get inspiration too.
 

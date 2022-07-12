@@ -123,6 +123,18 @@ The `framework` subfolder contains at least one Bash file, named `run_[API_NAME]
 bash run_predict.sh [DATA_FILE] [OUTPUT_FILE]
 ```
 
+Unless strictly necessary, the `run_predict.sh` file should accept two and only two arguments, `DATA_FILE` and `OUTPUT_FILE`. In the current template, we provide the following example:
+
+{% code title="run_predict.sh" %}
+```bash
+python src/main.py -i $1 -o $2
+```
+{% endcode %}
+
+In this case, a Python file is executed, taking as input (`-i`) the `DATA_FILE` and giving as output (`-o`) the `OUTPUT_FILE`.
+
+We now need to inspect the `main.py`file in more detail, since in this&#x20;
+
 Unless strictly necessary, the `run_predict.sh` file should accept two and only two arguments, namely `DATA_FILE` and `OUTPUT_FILE`. In the current template we provide a simple example:
 
 {% code title="bash_predict.sh" %}
