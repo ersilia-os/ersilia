@@ -268,7 +268,7 @@ class Model(object):
         ...
 ```
 
-Now we already have the input file ready to submit to the corresponding `run_predict.sh`file in the `model/framework/` directory, as specified above. The following creates a dummy bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too.
+Now we already have the input file of the `run_predict.sh`script, located in the `model/framework/` directory, as specified [above](incorporate-models.md#the-model-folder). The following creates a dummy bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](incorporate-models.md#the-model-folder) that the `run_predict.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
 
 ```python
 class Model(object):
@@ -278,7 +278,7 @@ class Model(object):
         run_file = os.path.join(tmp_folder, self.RUN_FILE)
         with open(run_file, "w") as f:
             lines = [
-                "bash {0}/run_predict.sh {1} {2}".format( # <-- EDIT: match method name (run_predict.sh, run_calculate.sh, etc.)
+                "bash {0}/run_predict.sh {0} {1} {2}".format(
                     self.framework_dir,
                     data_file,
                     output_file
