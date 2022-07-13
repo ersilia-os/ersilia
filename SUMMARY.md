@@ -17,5 +17,4 @@
 
 * [Model selection](contributors/model-selection.md)
 * [Incorporate models](contributors/incorporate-models.md)
-* [Add models to the hub](contributors/add-models-to-the-hub.md)
 * [Open Source Licences](contributors/open-source-licences.md)
