@@ -559,6 +559,8 @@ with open("tmp_input.smi", "w") as f:
 ```
 {% endcode %}
 
+The script writes an intermediate `tmp_input.smi` that can be used as input for `sascorer.py`.
+
 Likewise, the output is expected to be, in this case, just one column containing the SA score. The output provided by `sascorer.py` has three columns (tab-separated), so we need to adapt it.
 
 {% code title="code/output_adapter.py" %}
@@ -573,7 +575,7 @@ with open("tmp_output.csv", "r") as f:
     reader = csv.reader(f, delimiter="\t")
     next(reader) # skip header
     for r in reader:
-        sascores += [r[0]]
+        sascores += [r[-1]]
 
 with open(output_file, "w") as f:
     writer = csv.writer(f)
@@ -583,13 +585,17 @@ with open(output_file, "w") as f:
 ```
 {% endcode %}
 
+Note that we are reading from a `tmp_output.csv`. We then write a one-column output.
+
 #### Make sure that parameters are read
 
 So far, we haven't pointed to the model parameters. When [migrating code and parameters](incorporate-models.md#migrate-code-and-parameters), we separated the `sascore.py` file from the `fpscores.pkl.gz` file.
 
 Let's inspect `sascore.py` to understand how parameters are read. There is a `readFragmentScore` function that does the job. We need to modify it to point to the `checkpoints` folder:
 
+{% code title="code/sascorer.py" %}
 ```python
+...
 def readFragmentScores(name='fpscores'):
     import gzip
     global _fscores
@@ -602,17 +608,114 @@ def readFragmentScores(name='fpscores'):
         for j in range(1, len(i)):
             outDict[i[j]] = float(i[0])
     _fscores = outDict
+...
 ```
+{% endcode %}
 
 #### Write the `run_predict.sh` file
 
 We now have the input adapter, the model code and the output adapter. Let's simply write this pipeline in the `run_predict.sh` file:
 
+{% code title="run_predict.sh" %}
 ```bash
 python $1/code/input_adapter.py $2
-python $1/code/sascorer.py input_tmp.smi > output_tmp.smi
+python $1/code/sascorer.py tmp_input.smi > tmp_output.csv
 python $1/code/output_adapter.py $3
+rm tmp_input.smi tmp_output.csv
 ```
+{% endcode %}
+
+### Run predictions
+
+Let's check now that the scripts run as expected. Eventually, Ersilia will run this scripts from an arbitrary location, so it is best outside the `framework` folder for the test. We can create an input file in the `~/Desktop`.
+
+{% code title="molecules.csv" %}
+```
+smiles
+[H][C@]12SC(C)(C)[C@@H](N1C(=O)[C@H]2NC(=O)[C@H](N)C1=CC=CC=C1)C(O)=O
+NC1=CC(=CNC1=O)C1=CC=NC=C1
+ClC1=CC=C2N=C3NC(=O)CN3CC2=C1Cl
+COC1=CC=C(C=C1)C1=CC(=S)SS1
+COC1=CC=C(C=C1)C(=O)CC(=O)C1=CC=C(C=C1)C(C)(C)C
+```
+{% endcode %}
+
+To test the model, we simply have to execute the `run_predict.sh` script.
+
+```
+cd ~/Desktop
+FRAMEWORK_PATH="eos9ei3/model/framework/"
+bash $FRAMEWORK_PATH/run_predict.sh $FRAMEWORK_PATH molecules.csv output.csv
+```
+
+You should get the `output.csv` file in your `~/Desktop`. The output contains five predictions, corresponding to the five molecules in the `molecules.csv` file.
+
+{% code title="output.csv" %}
+```
+sa_score
+3.527006
+2.344611
+2.957539
+2.535359
+1.798579
+```
+{% endcode %}
+
+### Edit the `service.py` file, if necessary
+
+The `service.py` file provided by default in the template manages chemistry inputs and expects tabular outputs. Therefore, in principle, you do not have to modify this file.
+
+{% hint style="info" %}
+Modifying the `service.py` file is intended for advanced users. Please use the Slack `#internships` channel if you think your model of interest requires modification of this file.
+{% endhint %}
+
+### Edit the `Dockerfile` file
+
+The `Dockerfile` file should include all the installation steps that you run after creating the working Conda environment. In this case (`sa-score`), you only installed RDKit:
+
+{% code title="Dockerfile" %}
+```docker
+FROM bentoml/model-server:0.11.0-py37
+MAINTAINER ersilia
+
+RUN conda install -c conda-forge rdkit=2021.03.4
+
+WORKDIR /repo
+COPY . /repo
+```
+{% endcode %}
+
+### Write the `README` file
+
+Follow the [instructions to write the `README` file](incorporate-models.md#the-readme-file). Feel free to ask for help in the Slack `#internships` channel.
+
+### Commit changes to the repository
+
+We are ready to commit changes and push them to the Ersilia Model Hub.
+
+#### Check the `.gitattributes` file
+
+If you have large files, you will have to track them with Git LFS. The template already provides a collection of common extensions to track with Git LFS (see `.gitattributes` file). However, it is possible that your parameters do not have any of these extensions.
+
+Let's track our parameters, even if the file is not particularly big:
+
+```bash
+cd ~/Desktop/eos9ei3
+git lfs track "*.pkl.gz"
+git add .gitattributes
+git commit -m "git lfs track"
+git push
+```
+
+Now commit the bulk of your work:
+
+```bash
+git add .
+git commit -m "first major commit"
+git push
+```
+
+You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-os/eos9ei3) and see that your work is publicly available.
 
 ## TL;DR
 
@@ -624,12 +727,13 @@ In summary, the steps to incorporate a model to the Ersilia Model Hub are the fo
 4. Clone the new repository.
 5. Place model code in `model/framework` and model parameters in `model/checkpoints`.
 6. Write the necessary code to provide a `run_predict.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
-7. Edit the `Dockerfile` file to reflect the installation steps followed in 2.
-8. Edit the `service.py` file as needed.
-9. Make sure that `.gitattributes` captures your model parameters.
-10. Push changes to the model repository.
-11. Activate the Ersilia CLI and fetch the model (in verbose mode).
-12. Serve and run the model.
+7. Edit the `service.py` file, if necessary.
+8. Edit the `Dockerfile` file to reflect the installation steps followed in 2.
+9. Write the `README` file.
+10. Make sure that `.gitattributes` tracks your model parameters.
+11. Push changes to the model repository.
+12. Activate the Ersilia CLI and fetch the model.
+13. Serve and run the model.
 
 
 
