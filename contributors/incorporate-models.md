@@ -4,15 +4,19 @@ description: This tutorial explains how to incorporate models in the Ersilia Mod
 
 # Incorporate models
 
-{% hint style="danger" %}
-This page is **work in progress**!
-{% endhint %}
+This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](model-selection.md), models can be of three types, namely:
+
+1. Models developed by third parties.
+2. Models developed by Ersilia based on publicly available data.
+3. Models developed by Ersilia based on data from collaborators.
+
+In this page, we focus on the first type of models, i.e. models developed by **third parties**. These third party models come with source code and parameters (or data to train them). We show how to to use the Ersilia Model Template to adapt the assets provided by third parties and incorporate them into the Ersilia Model Hub.
 
 ## Anatomy of the Ersilia Model Template
 
 Each model in the Ersilia Model Hub is contained within an individual GitHub repository. The [**Ersilia Model Template**](https://github.com/ersilia-os/eos-template) repository is stored as a GitHub Template, so you can [create a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) based on it.
 
-Below, we describe the template files in detail. Note that we only explain the files that you need to modify; other files, like `pack.py`, do not need any modification from the model contributor.
+Below, we describe the template files in detail. Note that we only explain the files that you need to modify; other files, like `pack.py`, do not need modification from the model contributor.
 
 ### The `eos` identifier
 
@@ -29,41 +33,41 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 * three alphanumeric (`a-z` and `0-9`) characters.
 
 {% hint style="success" %}
-A list of `eos` identifiers needs is provided in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=drive\_web\&ouid=114775674178390159004). You can read about this Spreadsheet [here](model-selection.md).
+A list of `eos` identifiers is provided in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=drive\_web\&ouid=114775674178390159004). You can read about this Spreadsheet [here](model-selection.md).
 {% endhint %}
 
 ### The [`README`](https://github.com/ersilia-os/eos-template/blob/main/README.md) file
 
-The `README.md` file is where the basic information about the model is provided. It must include the following fields:
+The `README.md` file is where we give basic information about the model. It must include the following fields:
 
 **Title:** a self-descriptive model title (less than 70 characters)
 
-**Model Identifiers:** a set of codes that identify the model in the Ersilia CLI:
+**Model Identifiers:** a set of codes that identify the model
 
 * Ersilia identifier (EOS ID): the `eos` identifier described above. Use the assigned identifier in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing).
-* Slug: a one-word or multi-word (linked by a hypen) human-readable identifier to be used as analternative to the EOS ID.
-* Tags: labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.Falciparum_ as tag. Select three relevant ones.
+* Slug: a one-word or multi-word (linked by a hypen) human-readable identifier to be used as an alternative to the EOS ID.
+* Tags: labels to facilitate model search. For example, a model that predicts activity against malaria could have _Plasmodium falciparum_ as tag. Select three relevant tags.
 
 **Description**: minimum information about model type, results and the training dataset.
 
-* Input: data format required by the model. Most chemistry related models, for example, will require molecules in SMILES format. If other input types, such as InChIKeys or protein sequences are accepted, specify them.
-* Output: unit and description of the model result. It is essential to specify if the model gives back a probability or a specific measure. _For example, IC50_
-* Model type: regression or classification
-* Training set: number of compounds and link to the training dataset if available
-* Mode of training: pretrained (the checkpoints where downloaded directly from a third party) retrained (the model was trained again using the same or a new dataset (please specify)) new model (if the model has been developed from scratch by Ersilia's contributors)
+* Input: data format required by the model. Most chemistry related models, for example, will require molecules in SMILES format. If special input types are required, please specify them.
+* Output: description of the model result. It is important to be precise in this description. Is the model providing a probability? Is it a score? Is it single-output or multi-output? etc.
+* Model type: regression, classification, embedding...
+* Training set: number of compounds and link to the training dataset, if available
+* Mode of training: pretrained (the checkpoints where downloaded directly from a third party) retrained (the model was trained again using the same or a new dataset), new (if the model has been developed from scratch by Ersilia's contributors)
 
-Results interpretation: provide a brief description of how to interpret the model results. _For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification._
+**Results interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification.
 
-**Source Code:** this section must contain **all** relevant information about the model original authors, including a link to the publication if the model has been published in a peer reviewed journal or is in a preprint repositories, a link to the source code (typically, GitHub, GitLab or BitBucket) and a link to the model checkpoints directly, when available.
+**Source code:** this section must contain **all** relevant information about the original authors of the model, including a link to the publication if the model has been published in a peer reviewed journal or is in a preprint repository, a link to the source code (typically, GitHub, GitLab or BitBucket) and a link to the model checkpoints directly, when available.
 
-**License:** in addition to the `LICENSE` file, it is good practice to specify the Licenses in the README.md. All models in the Ersilia Model Hub are licensed under an open source license. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code. You can read more about how we deal with Open Source Licenses [here](https://ersilia.gitbook.io/ersilia-book/contributors/open-source-licences).
+**License:** in addition to the `LICENSE` file, it is good practice to specify the licenses in the `README` file. All models in the Ersilia Model Hub are licensed under an open source license. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code. You can read more about how we deal with Open Source Licenses [here](https://ersilia.gitbook.io/ersilia-book/contributors/open-source-licences).
 
 **History:** a short, numbered explanation of the modifications made in the source code, including the date of download and any steps taken to embed the model within the Ersilia Model Hub infrastructure.&#x20;
 
 **About us:** all Ersilia repositories contain a final _About_ section, please keep the predefined version.
 
 {% hint style="info" %}
-The `README.md` file is written in [Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) language. Please respect the hierarchy of headings provided in the template. Headings are specified with one or multiple `#` characters.
+The `README` file is written in [Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) language. Please respect the hierarchy of headings provided in the template. Headings are specified with one or multiple `#` characters.
 {% endhint %}
 
 ### The [`LICENSE`](https://github.com/ersilia-os/eos-template/blob/main/LICENSE) file
@@ -76,14 +80,15 @@ However, the license notices for code developed by **third parties** must be kep
 
 ### The [`Dockerfile`](https://github.com/ersilia-os/eos-template/blob/main/Dockerfile) file
 
-Ersilia uses a `Dockerfile` to specify installation instructions. The reason for this is that Docker provides the maximum level of isolation possible (i.e. a container), which may be needed to run models in some systems. However, in most practical scenarios, a Docker container will not be necessary and a Conda environment, or even a Virtualenv environment, will suffice. The Ersilia CLI will decide which isolation level to provide depending on the content of the `Dockerfile`:
+Ersilia uses a `Dockerfile` file to specify installation instructions. The reason for this is that Docker provides the maximum level of isolation possible (i.e. a container), which may be needed to run models in some systems. However, in most practical scenarios, a Docker container will not be necessary and a Conda environment, or even a Virtualenv environment, will suffice. The Ersilia CLI will decide which isolation level to provide depending on the content of the `Dockerfile`:
 
 * If only `pip install` commands are specified, Virtualenv will be used.
 * If only `pip install` and `conda install` commands are specified, Conda will be used.
 * If other commands are specified (e.g. `sudo apt-get`), Docker will be used.
 
-The `Dockerfile` available in the Ersilia Model Template is as follows:
+The `Dockerfile` available in the Ersilia Model Template is the following:
 
+{% code title="Dockerfile" %}
 ```docker
 FROM bentoml/model-server:0.11.0-py37
 MAINTAINER ersilia
@@ -94,6 +99,7 @@ RUN pip install joblib==1.1.0
 WORKDIR /repo
 COPY . /repo
 ```
+{% endcode %}
 
 In this case, a Conda environment will be preferentially used to isolate the model. The first line of the `Dockerfile` indicates that this Conda environment will have **BentoML 0.11.0** installed on **Python 3.7**.
 
@@ -101,7 +107,7 @@ In this example, the `rdkit` library will be installed using `conda`, and `jobli
 
 The `Dockerfile` can contain as many `RUN` commands as necessary, between the `MAINTAINER` and the `WORKDIR` lines.
 
-{% hint style="info" %}
+{% hint style="warning" %}
 The `Dockerfile` contains the installation instructions of the model. Therefore, the content of this file can be very variable, since each model will have its own dependencies.
 {% endhint %}
 
@@ -109,15 +115,15 @@ The `Dockerfile` contains the installation instructions of the model. Therefore,
 
 The `model` folder is the most important one. It contains two subfolders:
 
-* `framework`: In this folder, we keep all the necessary code to run the AI/ML model (assuming dependencies are already installed).
-* `checkpoints`: In this folder, we store the model data (pre-trained model parameters, scaling data, etc).
+* `framework`: In this folder, we keep all the necessary code to run the model (assuming dependencies are already installed).
+* `checkpoints`: In this folder, we store the model data (pretrained model parameters, scaling data, etc).
 
 {% hint style="danger" %}
 The `model` folder **should not** contain anything other than the `framework` and `checkpoints` subfolder. When the Ersilia CLI eventually fetches the model, it does a reorganization of the code and the only subfolders it keeps are these two. Any other file or folder at the `model/` directory level will be overlooked.
 {% endhint %}
 
 {% hint style="info" %}
-Often, the separation between `framework` and `checkpoints` is not easy to determine. Sometimes, models provided from third-parties have model data embedded within the code or as part of the repository. In these cases, it is perfectly fine to keep model data in the `framework` subfolder, and leave the `checkpoints` subfolder empty.
+Often, the separation between `framework` and `checkpoints` is not easy to determine. Sometimes, models obtained from third parties have model data embedded within the code or as part of the repository. In these cases, it is perfectly fine to keep model data in the `framework` subfolder, and leave the `checkpoints` subfolder empty.
 {% endhint %}
 
 The `framework` subfolder contains at least one Bash file, named `run_[API_NAME].sh`. Many models will have an API called `predict`, so `run_predict.sh`is frequently used. This file will run as follows:
@@ -136,7 +142,7 @@ python $1/code/main.py -i $2 -o $3
 
 In this case, a Python file located in the `[FRAMEWORK_DIR]/src` folder is executed, taking as input (`-i`) the `DATA_FILE` and giving as output (`-o`) the `OUTPUT_FILE`.
 
-We now need to inspect the `main.py`file in more detail. The current template proposes the following script:&#x20;
+To understand this further, we now need to inspect the `main.py`file in more detail. The current template proposes the following script:&#x20;
 
 {% code title="code/main.py" %}
 ```python
@@ -192,25 +198,25 @@ The important steps of the script are:
 3. Run predictions using the input file and the model parameters.
 4. Write the output.
 
-Most of the work of the model contributor will be to work on this script. In the template, we provide a dummy model (i.e. add a number to molecular weight), which can be already defined within the script. Often, the model will be loaded from a third party Python library, or from a (cloned) repository placed in the same directory.
+Most of the work of the model contributor will be to work on this or similar scripts. In the template, we provide a dummy model (i.e. add a fixed value to the molecular weight). This dummy model can can be already defined within the script (`my_model`). However, in real world cases, the model will most likely be loaded from a third party Python library, or from a (cloned) repository placed in the same directory.
 
 To summarize, in the template, we provide a structure that follows this logic:
 
-1. A `run_predict.sh` script executes a Python `main.py` script.
+1. The `run_predict.sh` script executes the Python `main.py` script.
 2. The `main.py` script:
    * Defines the model code.
    * Loads parameters from `checkpoints`.
    * Reads an input file containing SMILES (with header).
-   * Runs a model that counts SMILES length and adds an integer defined by the parameters.
-   * Writes an output file containing one column, i.e. the output value (with header)
+   * Runs a model that calculates molecular weight and adds an integer defined by the parameters.
+   * Writes an output file containing one column corresponding to the output value (with a header).
 
 {% hint style="info" %}
-In the template, the example provided is very simple. Depending on the model being incorporated, the logic may be different. For example, many third party models already contain a command-line option, with a specific syntax. In these cases, you may want to write scripts to adapt the input and the output, and execute the model as-is.
+In the template, the example provided is very simple. Depending on the model being incorporated, the logic may be different. For example, many third party models already contain a command-line option, with a specific syntax. In these cases, you may want to write scripts to adapt the input and the output, and then execute the model as-is.
 {% endhint %}
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
 
-We use Git LFS to store large files (over 100 MB), typically corresponding to model parameters. Files to be stored in Git LFS should be specified in the `.gitattributes` file. The current file will store in Git LFS all files in `csv`, `h5`, `joblib`, `pkl`, `pt` and `tsv` format.
+We use Git LFS to store large files (over 100 MB). Typically, these files are model parameters. Files to be stored in Git LFS should be specified in the `.gitattributes` file. The current file will store in Git LFS all files in `csv`, `h5`, `joblib`, `pkl`, `pt` and `tsv` format.
 
 ```
 *.csv filter=lfs diff=lfs merge=lfs -text
@@ -221,7 +227,7 @@ We use Git LFS to store large files (over 100 MB), typically corresponding to mo
 *.tsv filter=lfs diff=lfs merge=lfs -text
 ```
 
-You have to edit the `.gitattributes` file to ensure that all large files in your model are stored in Git LFS.
+You have to edit the `.gitattributes` file to ensure that all large files in your model are stored in Git LFS. The `git lfs track` command automatically updates this file.
 
 ### The [`service`](https://github.com/ersilia-os/eos-template/blob/main/src/service.py) file
 
@@ -243,14 +249,14 @@ class Model (object):
 In this case, the model takes as input a list of molecules represented as SMILES strings. This is the standard input type for [Type A](model-selection.md) models, focussed on chemistry data as input.
 
 {% hint style="info" %}
-You can always rename the `predict` method to something else if your model does not do predictions, strictly. For example, for some models it is more appropriate to rename to `calculate`.
+You can always rename the `predict` method to something else if your model does not do predictions, strictly. For example, for some models it is more appropriate to rename this method to `calculate`.
 {% endhint %}
 
 {% hint style="success" %}
 Multiple methods are allowed. For example, a model may have a `predict` and an `explain`method.
 {% endhint %}
 
-In its simplest form, the `Model` class just points Ersilia to the `model` directory and then creates a bash file to execute the necessary commands to run the model. So it is actually a very simple class, although it may look overwhelming at first. We break it down below:
+In its simplest form, the `Model` class just points Ersilia to the `model` directory and then creates a Bash file to execute the necessary commands to run the model. It is actually a very simple class, although it may look overwhelming at first. We break it down below:
 
 First, a temporary directory is created:
 
@@ -279,7 +285,7 @@ class Model(object):
         ...
 ```
 
-Now we already have the input file of the `run_predict.sh`script, located in the `model/framework/` directory, as specified [above](incorporate-models.md#the-model-folder). The following creates a dummy bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](incorporate-models.md#the-model-folder) that the `run_predict.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
+Now we already have the input file of the `run_predict.sh`script, located in the `model/framework/` directory, as specified [above](incorporate-models.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](incorporate-models.md#the-model-folder) that the `run_predict.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
 
 ```python
 class Model(object):
@@ -331,12 +337,12 @@ class Model(object):
 You will see that, in the template, pointers to potential edits are highlighted with the tag `# EDIT` . Necessary edits relate to the appropriate naming of the API, the format of the input data, or the serialization to JSON format from the output data.
 
 {% hint style="info" %}
-Advanced contributors may want to modify the `Model` class to load a model in-place (for example, a Scikit-Learn model) instead of executing a bash command in the `model/framework/` directory.
+Advanced contributors may want to modify the `Model` class to load a model in-place (for example, a Scikit-Learn model) instead of executing a Bash command in the `model/framework/` directory.
 {% endhint %}
 
 #### The `Artifact` class
 
-This class mirrors BentoML artifacts. It simply contains `load`, `save`, `get and pack` functionalities:
+This class mirrors [BentoML artifacts](https://docs.bentoml.org/en/0.13-lts/api/index.html). It simply contains `load`, `save`, `get and pack` functionalities:
 
 ```python
 class Artifact(BentoServiceArtifact):
@@ -355,7 +361,7 @@ You **don't have to modify** this class.
 
 #### The `Service` class
 
-This class is used to create the service. The service at least one API, typically `predict`:&#x20;
+This class is used to create the service. The service exposes at least one API, typically `predict`:&#x20;
 
 ```python
 @artifacts([Artifact("model")])
@@ -368,40 +374,44 @@ class Service(BentoService):
         return [output]
 ```
 
-The `Service`class can have multiple APIs, each of them specified with the `@api` decorator. By default, Ersilia works with JSON inputs, which are deserialized as a SMILES list inside the API.
+The `Service`class can have multiple APIs, each of them specified with the `@api` decorator. By default, Ersilia works with JSON inputs, which are deserialized as a SMILES list inside the API, in this case.
 
 You can **rename the API** (for example, to `calculate`), following the `# EDIT` tags in the template.
 
 ## Steps for model incorporation
 
-In this tutorial, we will follow the example of a very simple but well used model to calculate the **synthetic accessibility** of small molecule compounds. Synthetic accessibility measures the feasibility of synthesizing a molecule in the laboratory. In [2009, Peter Ertl presented the synthetic accessiblity (SA) score](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), based on measures of molecular complexity and occurrence of certain fragments in the small molecule structure. High (greater than 6) SA scores denote difficult-to-synthesize molecules, and low (lower than 3) SA scores suggest that the molecule will be easy to synthesize.
+Now that we have an idea of the contents of the [Ersilia Model Template](https://github.com/ersilia-os/eos-template), we will follow the example of a simple but widely used model to calculate the **synthetic accessibility** of small molecule compounds. Synthetic accessibility measures the feasibility of synthesizing a molecule in the laboratory. In [2009, Peter Ertl presented the synthetic accessiblity (SA) score](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), based on measures of molecular complexity and occurrence of certain fragments in the small molecule structure. High (greater than 6) SA scores denote difficult-to-synthesize molecules, and low (lower than 3) SA scores suggest that the molecule will be easy to synthesize.
 
 ### Include the model to the Ersilia Model Hub AirTable
 
-The [Ersilia CLI](https://github.com/ersilia-os/ersilia) accesses data contained in the [Ersilia Model Hub AirTable](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP) database. Thus, the first step is to include the model entry in the database. You can follow the instruction in the [model selection](model-selection.md) page. You will see that, in the Ersilia Model Hub, the current model has the EOS identifier `eos-9ei3` and the slug `sa-score`.&#x20;
+The [Ersilia CLI](https://github.com/ersilia-os/ersilia) accesses data contained in the [Ersilia Model Hub AirTable](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP) database. Thus, the first step is to include the model entry in the database. You can follow the instruction in the [model selection](model-selection.md) page. You will see that, in the Ersilia Model Hub, the current model has the EOS identifier `eos-9ei3` and the slug `sa-score`.
+
+{% hint style="info" %}
+Please contact **@Miquel** if your model is not included in the AirTable database.
+{% endhint %}
 
 #### Read the publication
 
-It is important that you read the original publication, in order to understand the training data, the limitations of the model, the validation performed, and the algorithm, among other details. In [this case](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), this is a classic (old) publication from a Novartis team. They analyzed small fragments in the PubChem database and devised a molecular complexity score that takes into account molecule size, presence of non-standard structural features, presence of large rings, etc. The authors validated the model by comparing their SA score with synthetic feasibility as estimated by medicinal chemists for a set of 40 molecules.
+It is important that you read the original publication in order to understand the training data, the limitations of the model, the validation performed and the characteristic of the algorithm, among other details. In [this case](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), this is a classic (old) publication from a Novartis team. They analyzed small fragments in the PubChem database and devised a molecular complexity score that takes into account molecule size, presence of non-standard structural features, presence of large rings, etc. The authors validated the model by comparing their SA score with synthetic feasibility as estimated by medicinal chemists for a set of 40 molecules.
 
 #### Find model code and parameters
 
 Code to calculate the SA score does not seem to be available from the publication. Fortunately, though, the RDKit library, in its contributions module, contains an implementation of the SA score. The code can be found [here](https://github.com/rdkit/rdkit/tree/master/Contrib/SA\_Score). This RDKit-based implementation was developed in 2013 by Peter Ertl and Greg Laundrum.
 
 {% hint style="success" %}
-Both the link to the code and to the original publication are included in the Ersilia Model Hub AirTable database.
+Both the link to the code and to the original publication are accessible from the Ersilia Model Hub AirTable database.
 {% endhint %}
 
 ### Run the code outside Ersilia
 
 Before incorporating the `sa-score` model to the Ersilia Model Hub, we need to make sure that we can actually run the code provided by the third party. [In this case](https://github.com/rdkit/rdkit/tree/master/Contrib/SA\_Score), upon quick inspection, two elements seem to be central in the repository:
 
-* The `sascorer.py`, containing the main code. We can consider this file to be the **model code**.
-* The `fpscores.pkl.gz`, containing pre-calculated fragment scores. In this simple case, we can consider this file to be the **model parameters**.
+* The `sascorer.py` script, containing the main code. We can consider this file to be the **model code**.
+* The `fpscores.pkl.gz` compressed file, containing pre-calculated fragment scores. In this simple case, we can consider this file to be the **model parameters**.
 
 #### Create a conda environment
 
-No installation instructions are provided for this model. However, the `sascorer.py` file imports indicate that, at least, `rdkit` is necessary. We can create a Conda environment and install the `rdkit` as follows:
+No installation instructions are provided for this model. However, the `sascorer.py` file `import` statements indicate that, at least, `rdkit` is necessary. We can create a Conda environment and install the `rdkit` as follows:
 
 ```bash
 conda create -n sa-score python=3.7
@@ -411,7 +421,7 @@ conda install -c conda-forge rdkit=2021.03
 
 #### Download code and parameters
 
-We can download code and parameters of the SA scorer directly from the GitHub repository. Here, we store these data in a `SA_Score` folder in the `~/Desktop`.
+We can download code and parameters of the directly from the RDKit contributions repository. Here, we store these data in a folder named `SA_Score` located in the `~/Desktop`.
 
 ```bash
 cd ~/Desktop
@@ -422,12 +432,12 @@ wget https://raw.githubusercontent.com/rdkit/rdkit/master/Contrib/SA_Score/fpsco
 ```
 
 {% hint style="info" %}
-Often, the model will be stored as a full GitHub repository. In this case, you can simply clone the repository.
+Often, the model will be available as a full GitHub repository. In these cases, you can simply clone the repository.
 {% endhint %}
 
 #### Test the model
 
-Inspectin of the `sascorer.py` file indicates that we can run this script from the terminal:
+Inspection of the `sascorer.py` file indicates that we can run this script from the terminal:
 
 {% code title="sascorer.py" %}
 ```python
@@ -450,7 +460,7 @@ if __name__ == '__main__':
 ```
 {% endcode %}
 
-The `Chem.SmilesMolSupplier` takes a file containing SMILES strings and identifiers, separated by a space character. The file expects a header. Let's create an file with a few molecules. We looked for a few drugs in [DrugBank](https://go.drugbank.com/):
+The `Chem.SmilesMolSupplier` takes a file containing SMILES strings and identifiers, separated by a space character. The file expects a header. Let's create a file with a few molecules. We looked for examples in [DrugBank](https://go.drugbank.com/):
 
 {% code title="molecules.smi" %}
 ```
@@ -478,7 +488,7 @@ Reading took 0.21 seconds. Calculating took 0.00 seconds
 ```
 
 {% hint style="info" %}
-Many repositories provide a clear description of the expected input format. In this case, the expected input was not clearly specified, and previous knowledge of the `Chem.SmilesMolSupplier` method was necessary.
+Many repositories give a clear description of the expected input format. For the SA scorer, the expected input was not clearly specified, and previous knowledge of the `Chem.SmilesMolSupplier` method was necessary.
 {% endhint %}
 
 ### Create the model repository from the Ersilia Model Template
@@ -510,7 +520,7 @@ cd eos9ei3
 
 ### Migrate code and parameters
 
-Let's now place the code and the parameters to the `model` folder, in the `framework` and `checkpoints` subfolders, respectively:
+Let's now place the code and the parameters in the `model` folder (in the `framework` and `checkpoints` subfolders, respectively):
 
 ```bash
 cd ~/Desktop
@@ -519,16 +529,16 @@ cp SA_Score/fpscores.pkl.gz eos9ei3/model/checkpoints/.
 ```
 
 {% hint style="danger" %}
-Note that here we are migrating code and parameters to different folders. This may yield to critical errors if code expects to find parameters at a certain relative location. For this reason, it is perfectly fine to move both code and parameters to the `framework` folder, and leave the `checkpoints` empty.
+Note that here we are migrating code and parameters to different folders. This may cause critical errors if code expects to find parameters at a certain relative location. For this reason, it is perfectly acceptable to move both code and parameters to the `framework` folder, and leave the `checkpoints` folder empty.
 {% endhint %}
 
 ### Write framework code
 
-Now it is time to write some code. Here we will follow the description of the `model` folder [provided above](incorporate-models.md#the-model-folder).
+Now it is time to write some code. Here we will follow the description of the `model` folder [given above](incorporate-models.md#the-model-folder).
 
 #### Write input and output adapters
 
-The template provides an exemplary `main.py` that is not useful here. Let's remove this file. And let's remove the template parameters, too.
+The `eos-template` provides an exemplary `main.py` that is not useful here. Let's remove this file. And let's remove the template parameters, too.
 
 ```bash
 cd model
@@ -536,7 +546,7 @@ rm framework/code/main.py
 rm checkpoints/checkpoints.joblib
 ```
 
-By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](incorporate-models.md#the-service-file)). However, the `sascorer.py` expects a two-column file, as explained above. Let's write an input adapter:
+By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](incorporate-models.md#the-service-file)). However, the `sascorer.py` [expects](incorporate-models.md#test-the-model) a two-column file. Let's write an **input** adapter:
 
 {% code title="code/input_adapter.py" %}
 ```python
@@ -559,9 +569,9 @@ with open("tmp_input.smi", "w") as f:
 ```
 {% endcode %}
 
-The script writes an intermediate `tmp_input.smi` that can be used as input for `sascorer.py`.
+The script creates an intermediate `tmp_input.smi` file that can be used as input for `sascorer.py`.
 
-Likewise, the output is expected to be, in this case, just one column containing the SA score. The output provided by `sascorer.py` has three columns (tab-separated), so we need to adapt it.
+Likewise, the **output** is expected to be just one column containing the SA score, in this case. The output provided by `sascorer.py` has three columns (tab-separated), so we need to adapt it.
 
 {% code title="code/output_adapter.py" %}
 ```python
@@ -589,9 +599,9 @@ Note that we are reading from a `tmp_output.csv`. We then write a one-column out
 
 #### Make sure that parameters are read
 
-So far, we haven't pointed to the model parameters. When [migrating code and parameters](incorporate-models.md#migrate-code-and-parameters), we separated the `sascore.py` file from the `fpscores.pkl.gz` file.
+So far, we haven't pointed to the model parameters. When [migrating code and parameters](incorporate-models.md#migrate-code-and-parameters), we separated the `sascore.py` file and the `fpscores.pkl.gz` file.
 
-Let's inspect `sascore.py` to understand how parameters are read. There is a `readFragmentScore` function that does the job. We need to modify it to point to the `checkpoints` folder:
+Let's inspect `sascore.py` to understand how parameters are read. There is a `readFragmentScore` function that does this job. We need to modify it to point to the `checkpoints` folder:
 
 {% code title="code/sascorer.py" %}
 ```python
@@ -614,7 +624,7 @@ def readFragmentScores(name='fpscores'):
 
 #### Write the `run_predict.sh` file
 
-We now have the input adapter, the model code and the output adapter. Let's simply write this pipeline in the `run_predict.sh` file:
+We now have the input adapter, the model code and parameters, and the output adapter. Let's simply write this pipeline in the `run_predict.sh` file:
 
 {% code title="run_predict.sh" %}
 ```bash
@@ -627,7 +637,7 @@ rm tmp_input.smi tmp_output.csv
 
 ### Run predictions
 
-Let's check now that the scripts run as expected. Eventually, Ersilia will run this scripts from an arbitrary location, so it is best outside the `framework` folder for the test. We can create an input file in the `~/Desktop`.
+Let's now check that the scripts run as expected. Eventually, Ersilia will run this code from an arbitrary location, so it is best to test it outside the `framework` folder. We can create an input file in the `~/Desktop`.
 
 {% code title="molecules.csv" %}
 ```
@@ -666,12 +676,12 @@ sa_score
 The `service.py` file provided by default in the template manages chemistry inputs and expects tabular outputs. Therefore, in principle, you do not have to modify this file.
 
 {% hint style="info" %}
-Modifying the `service.py` file is intended for advanced users. Please use the Slack `#internships` channel if you think your model of interest requires modification of this file.
+Modifying the `service.py` file is intended for advanced users only. Please use the Slack `#internships` channel if you think your model of interest requires modification of this file.
 {% endhint %}
 
 ### Edit the `Dockerfile` file
 
-The `Dockerfile` file should include all the installation steps that you run after creating the working Conda environment. In this case (`sa-score`), you only installed RDKit:
+The `Dockerfile` file should include all the installation steps that you run after creating the working Conda environment. In the case of `sa-score`, we only installed RDKit:
 
 {% code title="Dockerfile" %}
 ```docker
@@ -687,7 +697,7 @@ COPY . /repo
 
 ### Write the `README` file
 
-Follow the [instructions to write the `README` file](incorporate-models.md#the-readme-file). Feel free to ask for help in the Slack `#internships` channel.
+Don't forget document the model. Read the [instructions to write the `README` file](incorporate-models.md#the-readme-file) page. Feel free to ask for help in the Slack `#internships` channel.
 
 ### Commit changes to the repository
 
@@ -715,7 +725,38 @@ git commit -m "first major commit"
 git push
 ```
 
-You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-os/eos9ei3) and see that your work is publicly available.
+You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-os/eos9ei3) and check that your work is publicly available.
+
+### Fetch and serve the model with Ersilia
+
+We are ready to test the model in the context of the Ersilia CLI. To run the model on Caffeine, simply run:
+
+```bash
+ersilia fetch eos9ei3
+ersilia serve eos9ei3
+serilia api -i "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
+```
+
+The input output should lool like this:
+
+```json
+{
+    "input": {
+        "key": "RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+        "input": "Cn1cnc2n(C)c(=O)n(C)c(=O)c12",
+        "text": "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
+    },
+    "output": {
+        "outcome": [
+            2.297982
+        ]
+    }
+}
+```
+
+{% hint style="danger" %}
+Debugging the `fetch` and the `api` commands of Ersilia can be very complicated. Please reach out to **@Miquel** directly if you find problems at this step.
+{% endhint %}
 
 ## TL;DR
 
@@ -723,17 +764,17 @@ In summary, the steps to incorporate a model to the Ersilia Model Hub are the fo
 
 1. Download the model from a third party repository to your local machine.
 2. Install the model in a dedicated Conda environment and make sure you can run it.
-3. Create a new GitHub repository from the `eos-template`. Name this repository with the EOS ID.
+3. Create a new GitHub repository from the `eos-template`. Name this repository with the EOS ID available from the AirTable.
 4. Clone the new repository.
 5. Place model code in `model/framework` and model parameters in `model/checkpoints`.
-6. Write the necessary code to provide a `run_predict.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
+6. Write the necessary code to obtain a `run_predict.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
 7. Edit the `service.py` file, if necessary.
 8. Edit the `Dockerfile` file to reflect the installation steps followed in 2.
 9. Write the `README` file.
 10. Make sure that `.gitattributes` tracks your model parameters.
-11. Push changes to the model repository.
+11. Add, commit and push changes to the model repository.
 12. Activate the Ersilia CLI and fetch the model.
-13. Serve and run the model.
+13. Serve the model and run the default API.
 
 
 
