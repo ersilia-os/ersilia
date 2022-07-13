@@ -237,7 +237,9 @@ There are three main classes in the `service` file, namely `Model`, `Artifact` a
 
 #### The `Model` class
 
-This class is simply a wrapper for the AI/ML model. Typically, the central method of the `Model` class is the `predict` method.
+This class is simply a wrapper for the AI/ML model. Typically, when incorporating **external** (type 1) models, the `run_predict.sh` script will already capture the logic within the `Model` class, in which case the `Model` class is simply redundant. However, when incorporating **internally developed** (types 2 and 3) models into the hub, we can make use of the artifacts for standard modeling frameworks (e.g. sklearn, PyTorch, and Keras) provided by BentoML, and the `Model` class becomes necessary for BentoML compatibility. Hence, the `Model` class enables generalization between these types of model additions.
+
+Typically, the central method of the `Model` class is the `predict` method.
 
 ```python
 class Model (object):
@@ -734,7 +736,7 @@ We are ready to test the model in the context of the Ersilia CLI. To run the mod
 ```bash
 ersilia fetch eos9ei3
 ersilia serve eos9ei3
-serilia api -i "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
+ersilia api -i "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
 ```
 
 The input output should lool like this:
