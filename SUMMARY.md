@@ -16,7 +16,7 @@
 
 * [Automated predictive modeling](chemistry-tools/automated-predictive-modeling.md)
 * [Sampling the chemical space](chemistry-tools/sampling-the-chemical-space.md)
-* [Encryption of AI/ML models](chemistry-tools/encryption-of-ai-ml-models.md)
+* [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
 
 ## 🙌 Contributors
 
