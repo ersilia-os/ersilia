@@ -8,10 +8,6 @@
 * [Molecular weight](quick-start/molecular-weight.md)
 * [Antibiotic activity prediction](quick-start/antibiotic-activity-prediction.md)
 
-## 🔓 Privacy Preserving AI
-
-* [Motivation](privacy-preserving-ai/motivation.md)
-
 ## 💊 Chemistry tools
 
 * [Automated predictive modeling](chemistry-tools/automated-predictive-modeling.md)
