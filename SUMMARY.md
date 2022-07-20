@@ -22,5 +22,6 @@
 
 ## 🌍 About Us
 
+* [Diversity and Inclusion Statement](about-us/diversity-and-inclusion-statement.md)
 * [Code of Conduct](about-us/code-of-conduct.md)
 * [Ersilia, the Invisible City](about-us/ersilia-the-invisible-city.md)
