@@ -13,6 +13,10 @@
 * [Motivation](privacy-preserving-ai/motivation.md)
 * [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
 
+## 💊 Chemistry tools
+
+* [Automated predictive modeling](chemistry-tools/automated-predictive-modeling.md)
+
 ## 🙌 Contributors
 
 * [Model selection](contributors/model-selection.md)
