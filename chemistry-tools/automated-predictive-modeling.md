@@ -4,7 +4,11 @@ description: Ersilia has developed two AutoML tools that take small molecules as
 
 # Automated predictive modeling
 
-## Fast AutoML with LazyQSAR
+{% hint style="danger" %}
+This page is :construction\_worker:**work in progress** :construction\_worker:!
+{% endhint %}
+
+## Fast predictive modeling with LazyQSAR
 
 ### Installation
 
@@ -17,3 +21,12 @@ git clone https://github.com/ersilia-os/lazy-qsar.git
 cd lazy-qsar
 python -m pip install .
 ```
+
+### Quick start
+
+
+
+## Accurate models with ZairaChem
+
+### Installation
+
