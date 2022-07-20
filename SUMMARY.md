@@ -19,3 +19,7 @@
 * [Incorporate models](contributors/incorporate-models.md)
 * [Open Source Licences](contributors/open-source-licences.md)
 * [Topics of interest](contributors/topics-of-interest.md)
+
+## 🌍 About Us
+
+* [Ersilia, the Invisible City](about-us/ersilia-the-invisible-city.md)
