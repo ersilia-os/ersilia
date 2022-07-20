@@ -1,5 +1,5 @@
 ---
-description: Contributor covenant
+description: Contributor covenant of the Ersilia Open Source Initiative
 ---
 
 # Code of Conduct
