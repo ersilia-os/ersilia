@@ -26,3 +26,4 @@
 * [Diversity and Inclusion Statement](about-us/diversity-and-inclusion-statement.md)
 * [Code of Conduct](about-us/code-of-conduct.md)
 * [Ersilia, the Invisible City](about-us/ersilia-the-invisible-city.md)
+* [Strategic Plan 2021-2023](about-us/strategic-plan-2021-2023.md)
