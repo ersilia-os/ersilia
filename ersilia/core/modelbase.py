@@ -31,7 +31,7 @@ class ModelBase(ErsiliaBase):
             sys.exit()
         finally:
             pass
-        
+
     def is_valid(self):
         if self.model_id is None or self.slug is None:
             return False
