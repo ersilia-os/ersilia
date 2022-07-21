@@ -1,0 +1,75 @@
+{
+    "type": "mol",
+    "hide": false,
+    "smiles": "Cc1cccc(C)c1N(CC(=O)Nc1ccc(-c2ncon2)cc1)C(=O)C1CCS(=O)(=O)CC1",
+    "is_chemical": true,
+    "in_stock": false,
+    "children": [
+      {
+        "type": "reaction",
+        "hide": false,
+        "smiles": "[C:1]([CH3:2])(=[O:3])[N:5]([CH3:4])[cH3:6]>>O[C:1]([CH3:2])=[O:3].[CH3:4][N:5][cH3:6]",
+        "is_reaction": true,
+        "metadata": {
+          "template_hash": "9f65e9f03c32138c4949e2b984805fc94a3fa1cd3948d70a493085fe",
+          "classification": "N-acylation to amide",
+          "library_occurence": 336,
+          "policy_probability": 0.0006000000284984708,
+          "policy_probability_rank": 14,
+          "policy_name": "uspto",
+          "template_code": 29150,
+          "template": "([C:4]-[N;H0;D3;+0:5](-[c:6])-[C;H0;D3;+0:1](-[C:2])=[O;D1;H0:3])>>(O-[C;H0;D3;+0:1](-[C:2])=[O;D1;H0:3]).([C:4]-[NH;D2;+0:5]-[c:6])"
+        },
+        "children": [
+          {
+            "type": "mol",
+            "hide": false,
+            "smiles": "O=C(O)C1CCS(=O)(=O)CC1",
+            "is_chemical": true,
+            "in_stock": true
+          },
+          {
+            "type": "mol",
+            "hide": false,
+            "smiles": "Cc1cccc(C)c1NCC(=O)Nc1ccc(-c2ncon2)cc1",
+            "is_chemical": true,
+            "in_stock": false,
+            "children": [
+              {
+                "type": "reaction",
+                "hide": false,
+                "smiles": "[C:1]([CH3:2])(=[O:3])[N:4][cH3:5]>>O[C:1]([CH3:2])=[O:3].[N:4][cH3:5]",
+                "is_reaction": true,
+                "metadata": {
+                  "template_hash": "993a80a34f6acdc22e1630fbdadc440460d93877c75dd17e7db680f0",
+                  "classification": "N-acylation to amide",
+                  "library_occurence": 2677,
+                  "policy_probability": 0.7430999875068665,
+                  "policy_probability_rank": 0,
+                  "policy_name": "uspto",
+                  "template_code": 28049,
+                  "template": "([C:2]-[C;H0;D3;+0:1](=[O;D1;H0:3])-[NH;D2;+0:4]-[c:5])>>(O-[C;H0;D3;+0:1](-[C:2])=[O;D1;H0:3]).([NH2;D1;+0:4]-[c:5])"
+                },
+                "children": [
+                  {
+                    "type": "mol",
+                    "hide": false,
+                    "smiles": "Nc1ccc(-c2ncon2)cc1",
+                    "is_chemical": true,
+                    "in_stock": true
+                  },
+                  {
+                    "type": "mol",
+                    "hide": false,
+                    "smiles": "Cc1cccc(C)c1NCC(=O)O",
+                    "is_chemical": true,
+                    "in_stock": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

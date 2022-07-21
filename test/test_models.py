@@ -40,7 +40,7 @@ def test_model_2():
 
 def test_model_3():
     MODEL_ID = MODELS[3]
-    INPUTS = ["CCCCN", "CCCOCC"]
+    INPUT = ["CCCCN", "CCCOCC"]
     ModelFetcher().fetch(MODEL_ID)
     em = ErsiliaModel(MODEL_ID)
     em.serve()
