@@ -1,9 +1,12 @@
 import os
+import sys
 import json
 
 from .. import ErsiliaBase
 from ..hub.content.slug import Slug
 from ..hub.fetch import STATUS_FILE, DONE_TAG
+
+from ..utils.exceptions import InvalidModelIdentifierError
 
 
 class ModelBase(ErsiliaBase):
@@ -13,13 +16,22 @@ class ModelBase(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.text = model_id_or_slug
         slugger = Slug()
-        if slugger.is_slug(model_id_or_slug):
-            self.slug = model_id_or_slug
-            self.model_id = slugger.encode(self.slug)
-        else:
-            self.model_id = model_id_or_slug
-            self.slug = slugger.decode(self.model_id)
-
+        try:
+            if slugger.is_slug(model_id_or_slug):
+                self.slug = model_id_or_slug
+                self.model_id = slugger.encode(self.slug)
+            else:
+                self.model_id = model_id_or_slug
+                self.slug = slugger.decode(self.model_id)
+            if not self.is_valid():
+                raise InvalidModelIdentifierError(model=self.text)
+        except InvalidModelIdentifierError as err:
+            self.logger.error("Invalid model identifier!")
+            print(err)
+            sys.exit()
+        finally:
+            pass
+        
     def is_valid(self):
         if self.model_id is None or self.slug is None:
             return False

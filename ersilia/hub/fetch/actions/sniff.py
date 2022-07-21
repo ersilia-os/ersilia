@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import collections
 from pathlib import Path
@@ -8,6 +9,8 @@ from .... import ErsiliaModel
 from ....io.input import ExampleGenerator
 from ....io.pure import PureDataTyper
 from ....default import API_SCHEMA_FILE, MODEL_SIZE_FILE
+from ....utils.exceptions import EmptyOutputError
+
 
 N = 3
 
@@ -99,6 +102,13 @@ class ModelSniffer(BaseAction):
             results = [
                 result for result in self.model.autoservice.api(api_name, self.inputs)
             ]
+            try:
+                for r in results:
+                    if not r["output"]:
+                        raise EmptyOutputError
+            except EmptyOutputError as err:
+                print(err)
+                sys.exit()
             schema = self._get_schema(results)
             self.logger.debug(schema)
             all_schemas[api_name] = schema

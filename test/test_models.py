@@ -1,13 +1,13 @@
 from ersilia.hub.fetch.fetch import ModelFetcher
 from ersilia import ErsiliaModel
 
-MODELS = ["eos0t01", "eos0t02", "eos0t03"]
+MODELS = ["eos0t01", "eos0t02", "eos0t03", "eos0t04"]
 
 
 def test_model_0():
     MODEL_ID = MODELS[0]
     INPUT = ""
-    mf = ModelFetcher().fetch(MODEL_ID)
+    ModelFetcher().fetch(MODEL_ID)
     em = ErsiliaModel(MODEL_ID)
     em.serve()
     em.invert(INPUT)
@@ -19,10 +19,10 @@ def test_model_0():
 def test_model_1():
     MODEL_ID = MODELS[1]
     INPUT = "CCCC"
-    mf = ModelFetcher().fetch(MODEL_ID)
+    ModelFetcher().fetch(MODEL_ID)
     em = ErsiliaModel(MODEL_ID)
     em.serve()
-    pred = em.predict(INPUT)
+    em.predict(INPUT)
     em.close()
     assert 1 == 1
 
@@ -30,9 +30,20 @@ def test_model_1():
 def test_model_2():
     MODEL_ID = MODELS[2]
     INPUT = "CCCNC"
-    mf = ModelFetcher().fetch(MODEL_ID)
+    ModelFetcher().fetch(MODEL_ID)
     em = ErsiliaModel(MODEL_ID)
     em.serve()
     em.predict(INPUT)
+    em.close()
+    assert 1 == 1
+
+
+def test_model_3():
+    MODEL_ID = MODELS[3]
+    INPUTS = ["CCCCN", "CCCOCC"]
+    ModelFetcher().fetch(MODEL_ID)
+    em = ErsiliaModel(MODEL_ID)
+    em.serve()
+    em.calculate(INPUT)
     em.close()
     assert 1 == 1
