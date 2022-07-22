@@ -62,7 +62,7 @@ class Model(object):
     def set_framework_dir(self, dest):
         self.framework_dir = os.path.abspath(dest)
 
-    def predict(
+    def calculate(
         self, smiles_list
     ):  # <-- EDIT: rename if model does not do predictions (e.g. it does calculations)
         tmp_folder = tempfile.mkdtemp(prefix="eos-")
@@ -76,7 +76,7 @@ class Model(object):
         run_file = os.path.join(tmp_folder, self.RUN_FILE)
         with open(run_file, "w") as f:
             lines = [
-                "bash {0}/run_predict.sh {0} {1} {2}".format(  # <-- EDIT: match method name (run_predict.sh, run_calculate.sh, etc.)
+                "bash {0}/run_calculate.sh {0} {1} {2}".format(  # <-- EDIT: match method name (run_predict.sh, run_calculate.sh, etc.)
                     self.framework_dir, data_file, output_file
                 )
             ]
@@ -144,10 +144,10 @@ class Artifact(BentoServiceArtifact):
 @artifacts([Artifact("model")])
 class Service(BentoService):
     @api(input=JsonInput(), batch=True)
-    def predict(self, input: List[JsonSerializable]):  # <-- EDIT: rename if necessary
+    def calculate(self, input: List[JsonSerializable]):  # <-- EDIT: rename if necessary
         input = input[0]
         smiles_list = [inp["input"] for inp in input]
-        output = self.artifacts.model.predict(
+        output = self.artifacts.model.calculate(
             smiles_list
         )  # <-- EDIT: rename if necessary
         return [output]

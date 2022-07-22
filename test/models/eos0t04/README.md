@@ -1,6 +1,4 @@
 # Test model
-This is a test
 
-## Summary
-- Item 1
-- Item 2
+This model is used to test JSON format outputs.
+It always outputs a the same JSON string, stored here as a checkpoint.

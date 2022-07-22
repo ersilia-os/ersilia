@@ -18,9 +18,9 @@ checkpoints_dir = os.path.abspath(os.path.join(root, "..", "..", "checkpoints"))
 with open(os.path.join(checkpoints_dir, "data.json"), "r") as f:
     ckpt = json.load(f)
 
-# model to be run (here, calculate the Molecular Weight and add ckpt (42) to it)
+# model to be run (repetition of the same JSON output)
 def my_model(smiles_list, ckpt):
-    return [ckpt for smi in smiles_list]
+    return [ckpt for _ in smiles_list]
 
 
 # read SMILES from .csv file, assuming one column with header
@@ -32,6 +32,6 @@ with open(input_file, "r") as f:
 # run model
 outputs = my_model(smiles_list, ckpt)
 
-# write output in a .csv file
+# write output in a .json file
 with open(output_file, "w") as f:
     json.dump(outputs, f, indent=4)
