@@ -41,7 +41,7 @@ If the licence you are dealing with is not described here please refer to the so
 
 1. Mahak Bandi. All About Open Source Licenses. _FOSSA_ [https://fossa.com/blog/what-do-open-source-licenses-even-mean/](https://fossa.com/blog/what-do-open-source-licenses-even-mean/)
 2. Mahak Bandi. All About Open Source Licenses. _FOSSA_ [https://fossa.com/blog/what-do-open-source-licenses-even-mean/](https://fossa.com/blog/what-do-open-source-licenses-even-mean/)
-3. [The MIT License](https://opensource.org/licenses/MIT). _Open Source Initiative._ Accessed June 2022
+3. The MIT License _Open Source Initiative_ [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
 4. Apache License, Version 2.0. _Open Source Initiative_ [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
 5. The 3-Clause BSD License _Open Source Initiative_ [https://opensource.org/licenses/BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
 6. GNU General Public License _Open Source Initiative_ [https://opensource.org/licenses/GPL-3.0](https://opensource.org/licenses/GPL-3.0)

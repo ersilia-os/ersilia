@@ -13,6 +13,7 @@
 
 ## 🙌 Contributors
 
+* [Communication](contributors/communication.md)
 * [Summer22 internship](contributors/summer22-internship.md)
 
 ## 💊 Chemistry tools
