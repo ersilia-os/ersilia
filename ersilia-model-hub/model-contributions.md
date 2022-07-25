@@ -2,9 +2,9 @@
 description: This tutorial explains how to incorporate models in the Ersilia Model Hub
 ---
 
-# Incorporate models
+# Model contributions
 
-This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](model-selection.md), models can be of three types, namely:
+This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](introduction.md), models can be of three types, namely:
 
 1. Models developed by third parties.
 2. Models developed by Ersilia based on publicly available data.
@@ -287,7 +287,7 @@ class Model(object):
         ...
 ```
 
-Now we already have the input file of the `run_predict.sh`script, located in the `model/framework/` directory, as specified [above](incorporate-models.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](incorporate-models.md#the-model-folder) that the `run_predict.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
+Now we already have the input file of the `run_predict.sh`script, located in the `model/framework/` directory, as specified [above](model-contributions.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](model-contributions.md#the-model-folder) that the `run_predict.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
 
 ```python
 class Model(object):
@@ -536,7 +536,7 @@ Note that here we are migrating code and parameters to different folders. This m
 
 ### Write framework code
 
-Now it is time to write some code. Here we will follow the description of the `model` folder [given above](incorporate-models.md#the-model-folder).
+Now it is time to write some code. Here we will follow the description of the `model` folder [given above](model-contributions.md#the-model-folder).
 
 #### Write input and output adapters
 
@@ -548,7 +548,7 @@ rm framework/code/main.py
 rm checkpoints/checkpoints.joblib
 ```
 
-By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](incorporate-models.md#the-service-file)). However, the `sascorer.py` [expects](incorporate-models.md#test-the-model) a two-column file. Let's write an **input** adapter:
+By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](model-contributions.md#the-service-file)). However, the `sascorer.py` [expects](model-contributions.md#test-the-model) a two-column file. Let's write an **input** adapter:
 
 {% code title="code/input_adapter.py" %}
 ```python
@@ -601,7 +601,7 @@ Note that we are reading from a `tmp_output.csv`. We then write a one-column out
 
 #### Make sure that parameters are read
 
-So far, we haven't pointed to the model parameters. When [migrating code and parameters](incorporate-models.md#migrate-code-and-parameters), we separated the `sascore.py` file and the `fpscores.pkl.gz` file.
+So far, we haven't pointed to the model parameters. When [migrating code and parameters](model-contributions.md#migrate-code-and-parameters), we separated the `sascore.py` file and the `fpscores.pkl.gz` file.
 
 Let's inspect `sascore.py` to understand how parameters are read. There is a `readFragmentScore` function that does this job. We need to modify it to point to the `checkpoints` folder:
 
@@ -699,7 +699,7 @@ COPY . /repo
 
 ### Write the `README` file
 
-Don't forget document the model. Read the [instructions to write the `README` file](incorporate-models.md#the-readme-file) page. Feel free to ask for help in the Slack `#internships` channel.
+Don't forget document the model. Read the [instructions to write the `README` file](model-contributions.md#the-readme-file) page. Feel free to ask for help in the Slack `#internships` channel.
 
 ### Commit changes to the repository
 

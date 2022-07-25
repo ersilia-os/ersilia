@@ -1,4 +1,22 @@
-# Antibiotic activity prediction
+---
+description: >-
+  This section shows how to download models and run predictions using the
+  Ersilia Model Hub
+---
+
+# Model usage
+
+You can explore the available models through our website or by running the following command in the CLI:
+
+```
+# display ready to use models
+ersilia catalog
+```
+
+Each model is identified by:
+
+* EOS-ID: `eos[1-9][a-z0-9]{3}`
+* Slug: 1-3 word reference for the model
 
 In this case example, we show how to run predictions based on the AI/ML model developed in the paper _A Deep Learning Approach to Antibiotic Drug Discovery_, by [Stokes et al. Cell (2020)](https://www.cell.com/cell/fulltext/S0092-8674\(20\)30102-1?\_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867420301021%3Fshowall%3Dtrue). In this study, a deep learning model was trained using the excellent [Chemprop](https://github.com/chemprop/chemprop) tool. Halicin, a drug originally researched for the treatment of diabetes, was predicted to have broad antibacterial activity.
 

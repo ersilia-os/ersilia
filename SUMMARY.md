@@ -2,24 +2,24 @@
 
 * [🤗 Welcome to Ersilia!](README.md)
 
-## 🚀 Quick Start
+## 🚀 Ersilia Model Hub
 
-* [Installation](quick-start/installation.md)
-* [Molecular weight](quick-start/molecular-weight.md)
-* [Antibiotic activity prediction](quick-start/antibiotic-activity-prediction.md)
+* [Introduction](ersilia-model-hub/introduction.md)
+* [Installation](ersilia-model-hub/installation.md)
+* [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
+* [Model contributions](ersilia-model-hub/model-contributions.md)
+* [Model selection](ersilia-model-hub/model-selection.md)
+* [Open Source Licences](ersilia-model-hub/open-source-licences.md)
+
+## 🙌 Contributors
+
+* [Summer22 internship](contributors/summer22-internship.md)
 
 ## 💊 Chemistry tools
 
 * [Automated predictive modeling](chemistry-tools/automated-predictive-modeling.md)
 * [Sampling the chemical space](chemistry-tools/sampling-the-chemical-space.md)
 * [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
-
-## 🙌 Contributors
-
-* [Model selection](contributors/model-selection.md)
-* [Incorporate models](contributors/incorporate-models.md)
-* [Open Source Licences](contributors/open-source-licences.md)
-* [Topics of interest](contributors/topics-of-interest.md)
 
 ## 🌍 About Us
 
