@@ -2,27 +2,9 @@
 
 In this case example, we show how to run predictions based on the AI/ML model developed in the paper _A Deep Learning Approach to Antibiotic Drug Discovery_, by [Stokes et al. Cell (2020)](https://www.cell.com/cell/fulltext/S0092-8674\(20\)30102-1?\_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867420301021%3Fshowall%3Dtrue). In this study, a deep learning model was trained using the excellent [Chemprop](https://github.com/chemprop/chemprop) tool. Halicin, a drug originally researched for the treatment of diabetes, was predicted to have broad antibacterial activity.
 
-## Command-line interface
+## Use model through CLI
 
-We provide a command-line interface (CLI) to interact with the Ersilia Model Hub. To check the available commands, simply type:
-
-```bash
-# list available commands
-ersilia --help
-```
-
-### Browse the model catalog
-
-You can explore our catalog of models. The following will return a list of models currently available in our remote repositories.
-
-```bash
-# catalog of models
-ersilia catalog
-```
-
-{% hint style="info" %}
-The Ersilia Model Hub is growing continuously to fulfil the needs of the community. Please do not hesitate to request new models! Just reach out to us, we will be happy to assist: [hello@ersilia.io](mailto:hello@ersilia.io)
-{% endhint %}
+### Get model information
 
 In the Ersilia Model Hub, the antibiotic activity prediction model has the **identifier** `eos4e40`  and the **slug** `chemprop-antibiotic`. You can use either one to refer to this model all of the commands below. For example, you can get more information through the model card:
 

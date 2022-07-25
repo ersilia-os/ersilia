@@ -6,7 +6,7 @@ We are creating the Ersilia Model Hub, a free, **open-source** repository of Art
 
 ## Technology
 
-You can [browse the Ersilia Model Hub](https://airtable.com/shrUcrUnd7jB9ChZV) in search of your AI/ML models of interest. All models available in the catalog are accessible through the [Ersilia Python package](https://github.com/ersilia-os/ersilia). At the moment, Ersilia is largely centered on **small molecules**, although we have plans to expand the repository to areas of biomedicine, including genomics and epidemiology.
+You can [browse the Ersilia Model Hub](https://ersilia.io/model-hub) in search of your AI/ML models of interest. All models available in the catalog are accessible through the [Ersilia Python package](https://github.com/ersilia-os/ersilia). At the moment, Ersilia is largely centered on **small molecules**, although we have plans to expand the repository to other areas of biomedical sciences, including genomics, proteomics and epidemiology.
 
 ### **Types of models**
 
@@ -17,7 +17,7 @@ The Ersilia Model Hub contains the following AI/ML model categories, sorted by i
 3. **In-house models trained on relevant datasets**. We are performing an exhaustive literature search effort to **identify drug screening campaigns** relevant to infectious and neglected diseases, like the one reported in [Antonova-Koch et al. (2018)](https://www.science.org/doi/10.1126/science.aat9446), related to a massive screening campaign against the blood-stage malaria parasite. With this data, we develop AI/ML models _de novo_, thanks to our AutoML protocol.
 4. **Models built in collaboration**. We partner with experimental scientists who are aligned with our mission and, together, design and develop models **tailored** to answer their specific research questions. One example would be the antimalarial activity predictor that we are developing in the context of the [Open Source Malaria](http://opensourcemalaria.org) project. This predictor is trained on an **experimental dataset provided by the collaborator**, and we are developing a reinforcement learning tool to generate new antimalarial drug candidates and visualize them in the chemical space.
 
-All models developed will be available in our [GitHub repositories](https://github.com/ersilia-os/) under a permissive open source license, typically MIT or CC-BY-4.0. Models developed by third parties will include proper **attribution to the original authors**, a link to the source code and a license notice according to the original release.
+All models developed will be available in our [GitHub repositories](https://github.com/ersilia-os/) under a GPLv3 open source license. Models developed by third parties will include proper **attribution to the original authors**, a link to the source code and a license notice according to the original release.
 
 ### Automated model training
 

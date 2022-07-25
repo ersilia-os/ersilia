@@ -1,3 +1,7 @@
+---
+description: Example of how to use the Ersilia Model Hub
+---
+
 # Molecular weight
 
 If you explore the [Ersilia Model Hub](https://airtable.com/shrUcrUnd7jB9ChZV), you will find a list of computational assets that you can use, for instance, to calculate or predict properties for your molecules of interest. A simple example of this would be the calculation of **molecular weight**. Let's use this as a toy example to quickly test the tool.
@@ -28,6 +32,13 @@ Now that we are done, we can **close** the service.
 ```
 # close service
 ersilia close
+```
+
+Finally, if this is a model you will not use again, you can delete it from your system (we recommend only deleting models that are not frequently used)
+
+```
+#delete model
+ersilia delete molecular-weight
 ```
 
 This is it! Of course, in real life you don't need a repository like the Ersilia Model Hub to calculate molecular weight. This is overkill - [RDKit ](https://www.rdkit.org)or any other chemoinformatics tool has built-in functions for this. But we hope that this example illustrates how Ersilia can be used. For a more detailed and realistic example, please refer to the **Antibiotic activity prediction** tutorial in the next page.

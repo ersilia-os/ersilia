@@ -1,3 +1,7 @@
+---
+description: Ersilia Model Hub installation instructions
+---
+
 # Installation
 
 ## Before you start
@@ -22,7 +26,7 @@ Some pre-trained models, especially the ones that contain many parameters, requi
 
 ## Install on Linux and MacOSX
 
-Open a terminal. The best is to set up a [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) environment.
+Open a terminal and set up a [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) environment.
 
 ```bash
 # create a conda environment
@@ -41,18 +45,29 @@ cd ersilia
 pip install -e .
 ```
 
-You should be done! Quickly check that the CLI works on your terminal.
+You should be done! Check that the CLI works on your terminal, and explore the available commands
 
 ```bash
 # see ersilia CLI options
 ersilia --help
+
+#see ersilia's model catalog
+ersilia catalog
 ```
+
+{% hint style="info" %}
+The Ersilia Model Hub is growing continuously to fulfill the needs of the community. Please do not hesitate to [request new models](https://www.ersilia.io/request-model)!
+{% endhint %}
+
+
 
 ### The Isaura data lake
 
 We highly recommend installation of the [Isaura](https://github.com/ersilia-os/isaura) data lake. With Isaura, you will be able to cache your model predictions (i.e. store them in your local computer). Isaura is a relatively light Python package:
 
 ```
+#activate ersilia's conda environment
+conda activate ersilia
 # clone from github
 git clone https://github.com/ersilia-os/isaura.git
 cd isaura
