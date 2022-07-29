@@ -4,7 +4,7 @@ description: >-
   2022)
 ---
 
-# Summer22 internship
+# Summer-22 internship
 
 ### Follow the Topic of the Week
 
@@ -69,7 +69,7 @@ In the Spreadsheet, you will find two sheets:
 * **Hub:** Contains complete documentation about the models, including an Ersilia Open Source identifier (e.g. `eos4e40`), a slug (e.g. `chemprop-antibiotic`) and a status (e.g. _Done_).
 * **Raw List:** Contains a backlog of models that could be of interest to Ersilia. This sheet contains minimal information about the models. There is an _Approved_ and a _Selected_ tickbox. _Approved_ means that Ersilia is willing to incorporate this model. _Selected_ means that someone is already working on the model or the model has been successfully incorporated in the Ersilia Model Hub.
 
-You should **start by the Raw List sheet**. You are always free to add models there (relevant to the [Topic of the Week](summer22-internship.md#follow-the-topic-of-the-week) or not). **@Miquel** is responsible for curating this list and approving the models, he will use the Slack `#internships` channel to ask questions or discuss the relevance of the model before approving them.
+You should **start by the Raw List sheet**. You are always free to add models there (relevant to the [Topic of the Week](summer-22-internship.md#follow-the-topic-of-the-week) or not). **@Miquel** is responsible for curating this list and approving the models, he will use the Slack `#internships` channel to ask questions or discuss the relevance of the model before approving them.
 
 Start by adding your model in the Raw List sheet and wait for approval. As soon as the model has been approved, you are ready to move forward. **Please tick the **_**Selected**_** column** so that nobody else picks your model of interest.
 
@@ -111,12 +111,12 @@ As soon as you feel ready to start coding, you should change the _Status_ in the
 
 In brief, this is a suggested routine that you can follow:
 
-1. Check the [Topic of the Week](summer22-internship.md#follow-the-topic-of-the-week).
-2. [Search models](summer22-internship.md#know-where-to-find-models-and-get-inspiration) related to the topic.
-3. [Post your findings](summer22-internship.md#ersilia-slack-literaturechannel) in the `#literature` channel.
-4. Choose one or few models and [add them in the backlog](summer22-internship.md#ersilia-model-hub-spreadsheet) (**Raw List** sheet of the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing)).
+1. Check the [Topic of the Week](summer-22-internship.md#follow-the-topic-of-the-week).
+2. [Search models](summer-22-internship.md#know-where-to-find-models-and-get-inspiration) related to the topic.
+3. [Post your findings](summer-22-internship.md#ersilia-slack-literaturechannel) in the `#literature` channel.
+4. Choose one or few models and [add them in the backlog](summer-22-internship.md#ersilia-model-hub-spreadsheet) (**Raw List** sheet of the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=sharing)).
 5. Wait for approval.
 6. Select an approved model.
-7. Move to the **Hub** sheet of the Spreadsheet and [fill in as much information as you can](summer22-internship.md#ersilia-model-hub-spreadsheet). For now, set the _Status_ to _To do_.
+7. Move to the **Hub** sheet of the Spreadsheet and [fill in as much information as you can](summer-22-internship.md#ersilia-model-hub-spreadsheet). For now, set the _Status_ to _To do_.
 8. When you are ready to [start coding](../ersilia-model-hub/model-incorporation.md), change the _Status_ to _In progress_.
 9. When the model is successfully added, change the _Status_ to _Done_! __ :tada:__
