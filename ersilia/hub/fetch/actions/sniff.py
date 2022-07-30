@@ -1,10 +1,12 @@
 import os
+import csv
 import sys
 import json
 import collections
 from pathlib import Path
 
 from . import BaseAction
+from .... import ErsiliaBase
 from .... import ErsiliaModel
 from ....io.input import ExampleGenerator
 from ....io.pure import PureDataTyper
@@ -13,6 +15,36 @@ from ....utils.exceptions import EmptyOutputError
 
 
 N = 3
+
+BUILTIN_EXAMPLE_FILE_NAME = "example.csv"
+
+
+class BuiltinExampleReader(ErsiliaBase):
+    def __init__(self, model_id, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.model_id = model_id
+        self.example_file = os.path.join(
+            self._get_bundle_location(self.model_id),
+            self.model_id,
+            "artifacts",
+            "framework",
+            BUILTIN_EXAMPLE_FILE_NAME,
+        )
+
+    def has_builtin_example(self):
+        if os.path.exists(self.example_file):
+            return True
+        else:
+            return False
+
+    def example(self, n):
+        data = []
+        with open(self.example_file, "r") as f:
+            reader = csv.reader(f)
+            next(reader)
+            for r in reader:
+                data += [r[0]]
+        return data[:n]
 
 
 class ModelSniffer(BaseAction):
@@ -24,9 +56,16 @@ class ModelSniffer(BaseAction):
         self.model = ErsiliaModel(
             model_id, config_json=config_json, fetch_if_not_available=False
         )
+        self.model_id = model_id
         self.logger.debug("Model successfully initialized in sniffer")
-        eg = ExampleGenerator(model_id, config_json=config_json)
-        self.inputs = eg.example(N, file_name=None, simple=True)
+        er = BuiltinExampleReader(model_id, config_json=config_json)
+        if er.has_builtin_example():
+            self.logger.debug("Built-in example found")
+            self.inputs = er.example(N)
+        else:
+            self.logger.debug("No built-in example available. Generating one.")
+            eg = ExampleGenerator(model_id, config_json=config_json)
+            self.inputs = eg.example(N, file_name=None, simple=True)
         self.logger.debug("Inputs sampled: {0}".format(len(self.inputs)))
 
     @staticmethod
@@ -49,7 +88,7 @@ class ModelSniffer(BaseAction):
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
-        mbytes = size / (1024**2)
+        mbytes = size / (1024 ** 2)
         return mbytes
 
     def _get_schema(self, results):
@@ -106,7 +145,9 @@ class ModelSniffer(BaseAction):
             try:
                 for r in results:
                     if not r["output"]:
-                        raise EmptyOutputError
+                        raise EmptyOutputError(
+                            model_id=self.model_id, api_name=api_name
+                        )
             except EmptyOutputError as err:
                 print(err)
                 sys.exit()

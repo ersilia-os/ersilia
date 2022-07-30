@@ -39,11 +39,7 @@ class CatalogTable(object):
                 self.data,
                 headers=self.columns,
                 tablefmt="fancy_grid",
-                colalign=(
-                    "center",
-                    "center",
-                    "center",
-                ),
+                colalign=("center", "center", "center"),
             )
 
     def __str__(self):
