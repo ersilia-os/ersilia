@@ -1,8 +1,8 @@
 ---
 description: >-
-  This page describes our ChemXOR library, a tool to build privacy-preserving
-  models for drug discovery. Encrypted models hold promise to promote data
-  sharing
+  This page describes our ChemXor library, a tool to build privacy-preserving
+  machine learning models for drug discovery. We believe that encrypted assets
+  can foster collaboration
 ---
 
 # Encryption of AI/ML models
@@ -280,6 +280,6 @@ To overcome the performance limitations of FHE, we used ChemXor to create simple
 Check the [Griddify](https://github.com/ersilia-os/griddify) library to learn how to create image-based representations of small molecules.
 {% endhint %}
 
-### **Future Work**
+### **Future work**
 
-It might be possible to offload the encrypted model evaluation to the client with the help of Re-encryption proxy schemes. It will eliminate the need for hosting models.
+It might be possible to offload the encrypted model evaluation to the client with the help of re-encryption proxy schemes. It will eliminate the need for hosting models.
