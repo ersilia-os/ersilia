@@ -1,6 +1,6 @@
 ---
 description: >-
-  Specific instructions for the summer Ersilia interns(June 2022 - September
+  Specific instructions for the summer Ersilia interns (June 2022 - September
   2022)
 ---
 

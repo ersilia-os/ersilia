@@ -1,5 +1,5 @@
 ---
-description: How to communicate with Ersilia's team members and start working togeter!
+description: How to communicate with Ersilia's team members and start working together!
 ---
 
 # Communication
@@ -14,7 +14,7 @@ Ersilia’s main communication channel is Slack. Our Slack community is composed
 
 ## Tech stack
 
-* GitHub: all our code lives on GitHub. Each project is associated with a repository on our organisation’s page (https://github.com/ersilia-os). We strongly encourage contributors to work as openly as possible, sharing the code daily to facilitate interaction and reproducibility. For code-related issues, bugs, etc., we prefer hosting the conversations on the “issues” section of the relevant GitHub repository, where all the community can see it and provide input. Once you start working with us, we will assign you a member or collaborator role in the organisation. If you are not familiar with working in collaboration via GitHub, we recommend checking some starter guides beforehand, or joining a Carpentries or any other open training program.&#x20;
+* GitHub: all our code lives on GitHub. Each project is associated with a repository on our [GitHub orgainzation page](https://github.com/ersilia-os/). We strongly encourage contributors to work as openly as possible, sharing the code daily to facilitate interaction and reproducibility. For code-related issues, bugs, etc., we prefer hosting the conversations on the “issues” section of the relevant GitHub repository, where all the community can see it and provide input. Once you start working with us, we will assign you a member or collaborator role in the organization. If you are not familiar with working in collaboration via GitHub, we recommend checking some starter guides beforehand, or joining a Carpentries or any other open training program.&#x20;
 * GitBook. We benefit from a pro-bono plan on GitBook, where we develop all documentation related to our tools.&#x20;
 * Microsoft Visual Studio Code: this is our preferred code editor. Most of our software is written in Python and runs in UNIX and MacOS. We recommend installing a Windows Subsystem for Linux on Windows machines to avoid compatibility issues.&#x20;
 * Monday.com: we use Monday.com as project management and task tracker. We would like to the extent that this is possible that our collaborators use this tool to update the team on project progress.&#x20;
@@ -25,4 +25,4 @@ Ersilia’s main communication channel is Slack. Our Slack community is composed
 
 ## Outreach
 
-We use Twitter (@ersiliaio) and [LinkedIn](https://www.linkedin.com/company/ersiliaio/) as our main outreach channels. Both Gemma (@TuronGemma) and Miquel (@mduranfrigola) are active on Twitter.
+We use Twitter ([@ersiliaio](https://twitter.com/ersiliaio)) and [LinkedIn](https://www.linkedin.com/company/ersiliaio/) as our main outreach channels. Both Gemma ([@TuronGemma](https://twitter.com/TuronGemma)) and Miquel ([@mduranfrigola](https://twitter.com/mduranfrigola)) are active on Twitter.
