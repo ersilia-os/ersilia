@@ -1,8 +1,6 @@
----
-description: Welcome to the Ersilia Open Source Initiative
----
-
 # 🤗 Welcome to Ersilia!
+
+![](.gitbook/assets/Ersilia\_Plum.png)
 
 The Ersilia Open Source Initiative is a non-profit organisation incorporated with the Charity Commission for England and Wales (1192266). We are a diverse and international community of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
 
