@@ -1,12 +1,10 @@
 # 🤗 Welcome to Ersilia!
 
-![](.gitbook/assets/Ersilia\_Plum.png)
-
 The Ersilia Open Source Initiative is a non-profit organisation incorporated with the Charity Commission for England and Wales (1192266). We are a diverse and international community of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
 
 Below you can read a bit more about the key organisational priorities and roadmap for the initiative:
 
-## The Organisation
+## The organisation
 
 ### History
 
@@ -63,7 +61,7 @@ As a Charitable Incorporated Organisation, EOSI is governed by the Board of Trus
 * Akash Rungta, MSc&#x20;
 * Miquel Duran-Frigola, PhD
 
-## How to contact us:
+## How to contact us
 
 * Visit our [website](https://ersilia.io)
 * Subscribe to our [newsletter](http://eepurl.com/hkX1sH)
