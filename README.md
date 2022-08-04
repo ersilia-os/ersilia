@@ -18,7 +18,7 @@ To equip laboratories in Low and Middle Income Countries with state of the art A
 
 ### Vision
 
-Egalitarian access to healthcare.
+A world with egalitarian access to healthcare
 
 ### Goals
 
