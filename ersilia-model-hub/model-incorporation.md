@@ -56,9 +56,13 @@ The `README.md` file is where we give basic information about the model. It must
 * Training set: number of compounds and link to the training dataset, if available
 * Mode of training: pretrained (the checkpoints where downloaded directly from a third party) retrained (the model was trained again using the same or a new dataset), new (if the model has been developed from scratch by Ersilia's contributors)
 
+{% hint style="info" %}
+Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based **TL;DR** short description of many indexed papers.&#x20;
+{% endhint %}
+
 **Results interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification.
 
-**Source code:** this section must contain **all** relevant information about the original authors of the model, including a link to the publication if the model has been published in a peer reviewed journal or is in a preprint repository, a link to the source code (typically, GitHub, GitLab or BitBucket) and a link to the model checkpoints directly, when available.
+**Source code:** this section must contain _all_ relevant information about the original authors of the model, including a link to the publication if the model has been published in a peer reviewed journal or is in a preprint repository, a link to the source code (typically, GitHub, GitLab or BitBucket) and a link to the model checkpoints directly, when available.
 
 **License:** in addition to the `LICENSE` file, it is good practice to specify the licenses in the `README` file. All models in the Ersilia Model Hub are licensed under an open source license. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code. You can read more about how we deal with Open Source Licenses [here](https://ersilia.gitbook.io/ersilia-book/contributors/open-source-licences).
 
