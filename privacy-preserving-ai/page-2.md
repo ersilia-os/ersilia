@@ -183,12 +183,12 @@ decrypted_output = evaluate_fhe_model(fhe_model, enc_sample)
 FHE Models can be served in the form of a Flask app as follows:
 
 ```python
-from chemxor import PartitionNetService
+from chemxor.service import PartitionNetServer
 
-fhe_model_service = PartitionNetService(fhe_model)
+fhe_model_server = PartitionNetServer(fhe_model)
 
 if __name__ == "__main__":
-    fhe_model_service.run()
+    fhe_model_server.run()
 ```
 
 #### Query models
