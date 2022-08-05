@@ -109,13 +109,19 @@ The DataModules will take care of converting the `smiles` input to `32 x 32` ima
 
 #### Model training
 
-It is recommended to use Pytorch Lightning trainer to train the models. Although a normal Pytorch training loop can also be used.&#x20;
+It is recommended to use a Pytorch Lightning trainer to train the models. Although a normal Pytorch training loop can also be used.&#x20;
 
 ```python
 import pytorch_lightning as pl
 
-trainer = pl.Trainer()
-
+# Save the best 3 checkpoints based on validation loss
+checkpoint_callback = pl.callbacks.ModelCheckpoint(
+        dirpath="path/to/save/checkpoints",
+        save_top_k=3,
+        monitor="VAL_Loss",
+    )
+trainer = pl.Trainer(callbacks=[checkpoint_callback], accelerator="auto")
+trainer.fit(model=model, datamodule=data_module)
 ```
 
 #### **FHE models**
