@@ -62,7 +62,7 @@ FHE community is still small which results in poor documentation and limited wor
 
 ### Our work
 
-We have created a Python library ([ChemXor](https://github.com/ersilia-os/chemxor)) for training and evaluating PyTorch models on FHE(Fully homomorphic encryption) encrypted inputs with no code changes to the original model. It also provides convenient functions to quickly query and host these models as a service with strong privacy guarantees for the end-user. It is built on top of TenSEAL, Pytorch and ONNX.
+We have created a Python library ([ChemXor](https://github.com/ersilia-os/chemxor)). It provides a set of pre-tuned model architectures for evaluating FHE(Fully homomorphic encryption) encrypted inputs. These models can be trained as normal Pytorch models. It also provides convenient functions to quickly query and host these models as a service with strong privacy guarantees for the end-user. It is built on top of TenSEAL and Pytorch.
 
 #### **Getting started with ChemXor**
 
@@ -72,196 +72,115 @@ ChemXor is available on PyPi and can be installed using pip.
 pip install chemxor
 ```
 
-#### **Encryption context**
+#### Model selection and training
 
-We first need to create an encryption context to begin encrypting models and inputs. The TenSeal library is used to create encryption contexts. In the example below, we are using the CKKS encryption scheme.&#x20;
+At the moment, one can choose from 3 pre-tuned models.
 
-```python
-import tenseal as ts
+* `OlindaNetZero` : Slimmest model with one convolution and 3 linear layers
+* `OlindaNet`: Model with two convolutions and 4 linear layers
+* `OlindaOneNet`: Model with four convolutions and 4 linear layers
 
-# Create a tenseal context
-context = ts.context(
-    ts.SCHEME_TYPE.CKKS,
-    poly_modulus_degree=8192,
-    coeff_mod_bit_sizes=[60, 40, 40, 60]
-)
-context.global_scale = pow(2, 40)
-context.generate_galois_keys()
-```
-
-There are other encryption schemes available with their own strengths and weaknesses. Choosing parameters for encryption schemes is not trivial and requires trial and error. More detailed documentation for available encryption schemes and their parameters is available [here](https://github.com/Microsoft/SEAL#examples) and [here](https://github.com/OpenMined/TenSEAL/tree/main/tutorials). There are other projects ([EVA](https://github.com/Microsoft/EVA) compiler for CKKS) that are trying to automate the selection of parameters for specific encryption schemes. However, this is currently out of scope for ChemXor.
-
-#### **Encrypted datasets**
-
-ChemXor provides functions to easily convert your Pytorch datasets to Encrypted datasets.
+These models accept a `32 x 32` input and can be configured to produce a signle or multiple outputs.&#x20;
 
 ```python
-from torch.utils.data import DataLoader
-from chemxor.data_modules.enc_dataset import EncDataset
+from chemxor.models import OlindaNetZero, OlindaNetOne, OlindaNet
 
-# Use the context that we created earlier
-enc_pytorch_dataset = EncDataset(context, pytorch_dataset)
-
-# The encrypted datasets can also be used to create dataloaders
-DataLoader(enc_pytorch_dataset, batch_size=None)
+# model for binary classification problem
+model = OlindaNetZero(output = 2)
 ```
 
-The `EncDataset` class is a wrapper that modifies that `__getitem__` method of the `Dataset` class from Pytorch. It encrypts the items using the provided `context` before returning the items.
+The model is a normal Pytorch Lightning module which is compatible with Pytorch `NN` module.
 
-ChemXor also provides `EncConvDataset` class, a variant to `EncDataset` class for inputs that undergo convolution operations.
+#### Dataset Preparation
+
+ChemXor provides two generic Pytorch Lightning Datamodules (Regression, Classification) that can be used to train and evaluate the models. These Datamodules expects raw data as CSV files with two columns (SMILES, target).&#x20;
 
 ```python
-from torch.utils.data import DataLoader
-from chemxor.data_modules.enc_conv_dataset import EncConvDataset
+from chemxor.data import OlindaCDataModule, OlindaRDataModule
 
-# Use the context that we created earlier
-enc_pytorch_dataset = EncConvDataset(context, pytorch_dataset, kernel_size, stride)
+dm_regression = OlindaRDataModule(csv_path="path/to/csv")
 
-# The encrypted datasets can also be used to create dataloaders
-DataLoader(enc_osm_train, batch_size=None)
+# Use the threshold value to automatically create categorical classes
+dm_classification = OlindaCDataModule(csv_path="path/to/csv", threshold=[0.5])
+
 ```
 
-It uses image-to-column encoding of inputs to speed up computation. More details on this topic can be found [here](https://github.com/OpenMined/TenSEAL/blob/main/tutorials/Tutorial%204%20-%20Encrypted%20Convolution%20on%20MNIST.ipynb).
+The DataModules will take care of converting the `smiles` input to `32 x 32` images. &#x20;
 
-{% hint style="info" %}
-`EncDataset` and `EncConvDataset` does not encrypt the data on disk. Items are encryted lazily on the fly as needed.
-{% endhint %}
+#### Model training
 
-#### **Encrypted models**
-
-ChemXor can automatically convert Pytorch models to models that can be evaluated on encrypted inputs. However, evaluating any arbitrary converted model on encrypted inputs can take an infeasibly long time. This is a major limitation of FHE at the moment.
+It is recommended to use Pytorch Lightning trainer to train the models. Although a normal Pytorch training loop can also be used.&#x20;
 
 ```python
-import tenseal as ts
-from chemxor.crypt import FHECryptor
-from chemxor.model.cryptic_sage import CrypticSage
+import pytorch_lightning as pl
 
-# Create a tenseal context
-context = ts.context(
-    ts.SCHEME_TYPE.BFV,
-    poly_modulus_degree=4096,
-    plain_modulus=1032193
-)
+trainer = pl.Trainer()
 
-# Initialize the FHECryptor with tenseal context
-fhe_cryptor = FHECryptor(context)
-
-# Use any Pytorch Model
-model = CrypticSage()
-
-# Convert model using the FHECryptor
-converted_model = fhe_cryptor.convert_model(model, dummy_input)
-
-# Converted model is still a Pytorch lightning module
-# So use it as usual for evaluating encrypted inputs
-enc_output = converted_model(enc_input)
 ```
 
-ChemXor first converts the Pytorch model to an ONNX model. This ONNX model is then used to create an equivalent function chain that can process encrypted inputs. The resulting converted model is still a Pytorch model with a modified forward function. We are still working on supporting all the operations in the ONNX spec. But, some of the operations might not be available at the time of release.
+#### **FHE models**
 
-It is also possible to manually wrap an existing Pytorch model class to make it compatible with encrypted inputs. This is the recommended approach for now as the automatic conversion is not mature yet. There are several models with their encrypted wrappers in ChemXor that can be used as examples.
+After training, the models can be wrapped using their specific FHE wrappers to process FHE inputs. FHE wrappers will take care of Tenseal context parameters and keys management.
 
 ```python
-# Pytorch lightning model
-# Adapted from https://github.dev/OpenMined/TenSEAL/blob/6516f215a0171fd9ad70f60f2f9b3d0c83d0d7c4/tutorials/Tutorial%204%20-%20Encrypted%20Convolution%20on%20MNIST.ipynb
-class ConvNet(pl.LightningModule):
-    """Cryptic Sage."""
+from chemxor.models import OlindaNetZero, OlindaNetOne, OlindaNet
+from chemxor.models import FHEOlindaNetZero, FHEOlindaNetOne, FHEOlindaNet
 
-    def __init__(self: "ConvNet", hidden: int = 64, output: int = 10) -> None:
-        """Init."""
-        super().__init__()
-        self.hidden = hidden
-        self.output = output
-        self.conv1 = nn.Conv2d(1, 4, kernel_size=7, padding=0, stride=3)
-        self.fc1 = nn.Linear(256, hidden)
-        self.fc2 = nn.Linear(hidden, output)
-
-    def forward(self: "ConvNet", x: Any) -> Any:
-        """Forward function.
-
-        Args:
-            x (Any): model input
-
-        Returns:
-            Any: model output
-        """
-        x = self.conv1(x)
-        # the model uses the square activation function
-        x = x * x
-        # flattening while keeping the batch axis
-        x = x.view(-1, 256)
-        x = self.fc1(x)
-        x = x * x
-        x = self.fc2(x)
-        return x
-
-# Encrypted wrapper
-# Adapted from https://github.dev/OpenMined/TenSEAL/blob/6516f215a0171fd9ad70f60f2f9b3d0c83d0d7c4/tutorials/Tutorial%204%20-%20Encrypted%20Convolution%20on%20MNIST.ipynb
-class EncryptedConvNet(pl.LightningModule):
-    """Encrypted ConvNet."""
-
-    def __init__(self: "EncryptedConvNet", model: ConvNet) -> None:
-        """Init."""
-        super().__init__()
-
-        self.conv1_weight = model.conv1.weight.data.view(
-            model.conv1.out_channels,
-            model.conv1.kernel_size[0],
-            model.conv1.kernel_size[1],
-        ).tolist()
-        self.conv1_bias = model.conv1.bias.data.tolist()
-
-        self.fc1_weight = model.fc1.weight.T.data.tolist()
-        self.fc1_bias = model.fc1.bias.data.tolist()
-
-        self.fc2_weight = model.fc2.weight.T.data.tolist()
-        self.fc2_bias = model.fc2.bias.data.tolist()
-
-    def forward(self: "EncryptedConvNet", x: Any, windows_nb: int) -> Any:
-        """Forward function.
-
-        Args:
-            x (Any): model input
-            windows_nb (int): window size.
-
-        Returns:
-            Any: model output
-        """
-        # conv layer
-        enc_channels = []
-        for kernel, bias in zip(self.conv1_weight, self.conv1_bias):
-            y = x.conv2d_im2col(kernel, windows_nb) + bias
-            enc_channels.append(y)
-        # pack all channels into a single flattened vector
-        enc_x = ts.CKKSVector.pack_vectors(enc_channels)
-        # square activation
-        enc_x.square_()
-        # fc1 layer
-        enc_x = enc_x.mm(self.fc1_weight) + self.fc1_bias
-        # square activation
-        enc_x.square_()
-        # fc2 layer
-        enc_x = enc_x.mm(self.fc2_weight) + self.fc2_bias
-        return enc_x
+model = OlindaNetZero(output = 2)
+model.load("path/to/checkpoint")
+fhe_model = FHEOlindaNetZero(model=model)
 ```
 
-A few things to note here:
+#### **FHE inputs evaluation**
 
-* We converted Pytorch tensors to a list in the encrypted wrapper. This is required as Pytorch tensors are not compatible with TenSeal encrypted tensors.
-* We are not using the standard ReLU activation. CKKS encryption scheme cannot evaluate non-linear piecewise functions. So, either alternative activation functions can be used or polynomial approximations of non-linear activation functions can be used.
+The Datamodules can generate pytorch datalaoders that produces encrypted inputs for the model.
+
+```python
+from chemxor.data import OlindaCDataModule, OlindaRDataModule
+
+dm_classification = OlindaRDataModule(csv_path="path/to/csv")
+enc_data_loader = dm_classification.enc_dataloader(context=fhe_model.context)
+enc_sample = next(iter(enc_data_loader))
+```
+
+Also, the FHE models are partitioned to control multiplicative depth. So, the forward function is modified to accept a step parameter. For testing, The FHE model can be evaluated locally as follows:
+
+```python
+from chemxor.utils import process_fhe_input
+
+output = enc_sample
+for step in fhe_model.steps:
+    output = fhe_model(output, step)
+    dec_out = output.decrypt().tolist()
+    output = process_fhe_input(
+                    dec_out,
+                    fhe_model.pre_process[step],
+                    fhe_model.context
+                )
+
+# final decryted output
+decrypted_output = output.decrypt().tolist()
+```
+
+This process can automated using a utility function provided by ChemXor
+
+```python
+from chemxor.utils import evaluate_fhe_model
+
+decrypted_output = evaluate_fhe_model(fhe_model, enc_sample)
+```
 
 #### Serve models
 
-Models can ver served in the form of a Flask app as follows:
+FHE Models can be served in the form of a Flask app as follows:
 
 ```python
-from chemxor.service import create_model_server
+from chemxor import PartitionNetService
 
-# `create_model_server` returns a flask app
-flask_app = create_model_server(model, dummy_input)
+fhe_model_service = PartitionNetService(fhe_model)
 
 if __name__ == "__main__":
-    flask_app.run()
+    fhe_model_service.run()
 ```
 
 #### Query models
@@ -271,14 +190,6 @@ We can then query models with this simple command:
 ```bash
 chemxor query -i [INPUT_FILE_PATH] [MODEL_URL]
 ```
-
-### Distilled models
-
-To overcome the performance limitations of FHE, we used ChemXor to create simpler distilled models from larger complex models.  We accept inputs as molecules encoded as 32 x 32 images and predict the properties of these molecules. These models are hosted using AWS lambdas and are available for public use.
-
-{% hint style="info" %}
-Check the [Griddify](https://github.com/ersilia-os/griddify) library to learn how to create image-based representations of small molecules.
-{% endhint %}
 
 ### **Future work**
 
