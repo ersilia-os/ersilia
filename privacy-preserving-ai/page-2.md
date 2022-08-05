@@ -85,8 +85,8 @@ These models accept a `32 x 32` input and can be configured to produce a signle 
 ```python
 from chemxor.models import OlindaNetZero, OlindaNetOne, OlindaNet
 
-# model for binary classification problem
-model = OlindaNetZero(output = 2)
+# model for regression
+model = OlindaNetZero(output = 1)
 ```
 
 The model is a normal Pytorch Lightning module which is compatible with Pytorch `NN` module.
@@ -100,7 +100,8 @@ from chemxor.data import OlindaCDataModule, OlindaRDataModule
 
 dm_regression = OlindaRDataModule(csv_path="path/to/csv")
 
-# Use the threshold value to automatically create categorical classes
+# Use the threshold value to automatically create categorical 
+# classes from the target column of the CSV
 dm_classification = OlindaCDataModule(csv_path="path/to/csv", threshold=[0.5])
 
 ```
@@ -132,19 +133,20 @@ After training, the models can be wrapped using their specific FHE wrappers to p
 from chemxor.models import OlindaNetZero, OlindaNetOne, OlindaNet
 from chemxor.models import FHEOlindaNetZero, FHEOlindaNetOne, FHEOlindaNet
 
-model = OlindaNetZero(output = 2)
+model = OlindaNetZero(output = 1)
 model.load("path/to/checkpoint")
 fhe_model = FHEOlindaNetZero(model=model)
 ```
 
 #### **FHE inputs evaluation**
 
-The Datamodules can generate pytorch datalaoders that produces encrypted inputs for the model.
+The Datamodules can generate Pytorch dataloaders that produce encrypted inputs for the model.
 
 ```python
 from chemxor.data import OlindaCDataModule, OlindaRDataModule
 
-dm_classification = OlindaRDataModule(csv_path="path/to/csv")
+dm_regression = OlindaRDataModule(csv_path="path/to/csv")
+dm_regression.setup("test")
 enc_data_loader = dm_classification.enc_dataloader(context=fhe_model.context)
 enc_sample = next(iter(enc_data_loader))
 ```
