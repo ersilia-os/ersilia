@@ -1,8 +1,12 @@
+import os
+import json
+
 from .... import ErsiliaBase
 from ...bundle.repo import DockerfileFile
 from ....utils.versioning import Versioner
 from ....setup.requirements.conda import CondaRequirement
 from ....setup.requirements.docker import DockerRequirement
+from ....default import MODEL_CONFIG_FILENAME
 
 AVAILABLE_MODES = ["system", "venv", "conda", "docker"]
 
@@ -21,7 +25,26 @@ class PackModeDecision(ErsiliaBase):
             )
         return dockerfile
 
+    def decide_from_config_file_if_available(self):
+        folder = self._model_path(self.model_id)
+        if not os.path.exists(os.path.join(folder, MODEL_CONFIG_FILENAME)):
+            return None
+        with open(os.path.join(folder, MODEL_CONFIG_FILENAME), "r") as f:
+            model_config = json.load(f)
+        if "default_mode" in model_config:
+            default_mode = model_config["default_mode"]
+            if default_mode not in AVAILABLE_MODES:
+                raise Exception("The model default_mode specified in the config.json file of the model repo is not correct. It should be one of {0}".format(" ".join(AVAILABLE_MODES)))
+            else:
+                return default_mode
+        return None
+
     def decide(self):
+        mode = self.decide_from_config_file_if_available()
+        if mode is not None:
+            self.logger.debug("Mode is already specified in the model repository")
+            self.logger.debug("Mode: {0}".format(mode))
+            return mode
         folder = self._model_path(self.model_id)
         self.logger.debug(
             "Check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)"
@@ -42,8 +65,11 @@ class PackModeDecision(ErsiliaBase):
                 return "system"
         self.logger.debug("Model needs some installs")
         cmds = dockerfile.get_install_commands()
+        if cmds is None:
+            self.logger.debug("No Dockerfile found...")
+            raise Exception("No Dockerfile found!")
         self.logger.debug("Checking if only python/conda install will be sufficient")
-        if cmds is not None:
+        if cmds["exclusive_conda_and_pip"]:
             condareq = CondaRequirement()
             if not cmds["conda"] and not condareq.is_installed():
                 self.logger.debug("Mode: venv")

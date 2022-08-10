@@ -1,6 +1,5 @@
 import os
 import shutil
-import csv
 import os.path
 from ... import ErsiliaBase
 from ...utils.terminal import run_command

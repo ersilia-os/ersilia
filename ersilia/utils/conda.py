@@ -106,7 +106,7 @@ class CondaUtils(BaseConda):
                 f.write("\n")
         return checksum
 
-    def get_install_commands_from_dockerfile(self, path):
+    def get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(self, path, force_exclusive=True):
         """Identifies install commands from Dockerfile
         For now this command is conservative and returns None if at least
         one of the commands is not conda ... or pip ... or pip3 ...
@@ -117,12 +117,14 @@ class CondaUtils(BaseConda):
         runs_ = []
         for r in runs:
             exec = r.split(" ")[0]
-            if exec not in ["conda", "pip", "pip3"]:
+            if exec not in ["conda", "pip", "pip3"]: # TODO write better
                 is_valid = False
             if " -y " not in r and exec == "conda":
                 runs_ += [r + " -y"]
             else:
                 runs_ += [r]
+        if not force_exclusive:
+            return runs_
         if is_valid:
             return runs_
         else:
@@ -130,9 +132,7 @@ class CondaUtils(BaseConda):
 
     def specs_from_dockerfile_as_json(self, dockerfile_dir, dest):
         """Writes a json file with the install requirements inferred from the Dockerfile."""
-        runs = self.get_install_commands_from_dockerfile(dockerfile_dir)
-        if not runs:
-            return None
+        runs = self.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(dockerfile_dir, force_exclusive=False)
         dp = SimpleDockerfileParser(dockerfile_dir)
         bi = dp.baseimage
         sp = bi.split("/")
@@ -189,11 +189,11 @@ class CondaUtils(BaseConda):
         self, dockerfile_dir, dest=None, use_checksum=False, name=None
     ):
         if use_checksum:
-            return self.checksum_from_dockerfile(dockerfile, dest)
+            return self.checksum_from_dockerfile(dockerfile, dest) # TODO debug
         else:
             if dest is None:
                 dest = dockerfile_dir
-            json_path = self.specs_from_dockerfile_as_json(dockerfile_dir, dest=dest)
+            json_path = self.specs_from_dockerfile_as_json(dockerfile_dir, dest=dest) # TODO remove?
             filename = os.path.join(dest, self.CHECKSUM_FILE)
             with open(filename, "w") as f:
                 f.write(name)
@@ -245,11 +245,19 @@ class SimpleConda(CondaUtils):
         envs = self._env_list()
         n = len(environment)
         for l in envs:
-            if l[:n] == environment:
+            if l[:n] == environment and l[n] == " ":
                 return True
         return False
 
-    def delete(self, environment):
+    def startswith(self, environment):
+        envs = self._env_list()
+        envs_list = []
+        for l in envs:
+            if l.startswith(environment):
+                envs_list += [l.split(" ")[0]]
+        return envs_list
+
+    def delete_one(self, environment):
         if not self.exists(environment):
             return
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
@@ -264,6 +272,10 @@ class SimpleConda(CondaUtils):
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
+
+    def delete(self, environment):
+        for env in self.startswith(environment):
+            self.delete_one(env)
 
     def export_env_yml(self, environment, dest):
         """
@@ -321,6 +333,7 @@ class SimpleConda(CondaUtils):
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.debug("Activating base environment")
+        logger.debug("Current working directory: {0}".format(os.getcwd()))
         bash_script = self.activate_base()
         bash_script += """
         source ${0}/etc/profile.d/conda.sh

@@ -12,7 +12,7 @@ from ....utils.docker import SimpleDocker
 from ....setup.baseconda import SetupBaseConda
 
 from ....default import DEFAULT_VENV
-from .. import PYTHON_INSTALLS
+from .. import MODEL_INSTALL_COMMANDS_FILE
 
 
 USE_CHECKSUM = False
@@ -41,8 +41,8 @@ class VenvPack(BasePack):
 
     def _setup(self):
         model_path = self._model_path(self.model_id)
-        installs_file = os.path.join(model_path, PYTHON_INSTALLS)
-        self.logger.debug("Reading python installs from {0}".format(installs_file))
+        installs_file = os.path.join(model_path, MODEL_INSTALL_COMMANDS_FILE)
+        self.logger.debug("Reading install commands from {0}".format(installs_file))
         venv = SimpleVenv(model_path)
         venv.create(DEFAULT_VENV)
         with open(installs_file, "r") as f:
@@ -62,7 +62,7 @@ class VenvPack(BasePack):
 
     def run(self):
         self.logger.debug("Packing model with VirtualEnv")
-        self._write_python_installs()
+        self._write_model_install_commands()
         self._run()
 
 
@@ -75,7 +75,7 @@ class CondaPack(BasePack):
     def _setup(self):
         self.logger.debug("Setting up")
         model_id = self.model_id
-        installs_file = os.path.join(self._model_path(model_id), PYTHON_INSTALLS)
+        installs_file = os.path.join(self._model_path(model_id), MODEL_INSTALL_COMMANDS_FILE)
         self.logger.debug("Installs file {0}".format(installs_file))
         model_path = self._model_path(model_id)
         env = self.conda.specs_from_dockerfile(
@@ -104,6 +104,8 @@ class CondaPack(BasePack):
             with open(installs_file, "r") as f:
                 commandlines = f.read()
             self.conda.run_commandlines(environment=env, commandlines=commandlines)
+        else:
+            self.logger.debug("Environment {0} does exist".format(env))
         # create environment yml file
         self.logger.debug("Creating environment YAML file")
         self.conda.export_env_yml(env, model_path)
@@ -125,11 +127,13 @@ class CondaPack(BasePack):
         self.logger.debug("Using environment {0}".format(env))
         self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)
+        self.logger.debug("Previous command successfully run inside {0} conda environment".format(env))
+        self.logger.debug("Now trying to establish symlinks")
         self._symlinks()
 
     def run(self):
         self.logger.debug("Packing model with Conda")
-        self._write_python_installs()
+        self._write_model_install_commands()
         self._run()
 
 
@@ -190,7 +194,7 @@ class DockerPack(BasePack):
 
     def run(self):
         self.logger.debug("Packing model with Docker")
-        self._write_python_installs()
+        self._write_model_install_commands()
         self._run()
 
 

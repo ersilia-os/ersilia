@@ -126,16 +126,16 @@ class ModelModifier(BaseAction):
             for l in lines:
                 f.write(l + os.linesep)
 
-    def _add_python_installs_to_requirements_txt(self, model_id):
-        BundleRequirementsFile(model_id).add_python_installs()
+    def _add_model_install_commands_to_requirements_txt(self, model_id):
+        BundleRequirementsFile(model_id).add_model_install_commands()
 
-    def _add_python_installs_to_environment_yml(self, model_id):
-        BundleEnvironmentFile(model_id).add_python_installs()
+    def _add_model_install_commands_to_environment_yml(self, model_id):
+        BundleEnvironmentFile(model_id).add_model_install_commands()
 
     def modify(self):
         # Add installs to requirements and environment
-        self._add_python_installs_to_requirements_txt(self.model_id)
-        self._add_python_installs_to_environment_yml(self.model_id)
+        self._add_model_install_commands_to_requirements_txt(self.model_id)
+        self._add_model_install_commands_to_environment_yml(self.model_id)
         # Slightly modify bundle environment YAML file, if exists
         self._modify_bundle_environment_yml(self.model_id)
         # Slightly modify bundle Dockerfile, if necessary.

@@ -3,7 +3,7 @@ import yaml
 import collections
 from ...core.base import ErsiliaBase
 from ...default import CONDA_ENV_YML_FILE, DOCKERFILE_FILE
-from ...hub.fetch import PYTHON_INSTALLS, REQUIREMENTS_TXT
+from ...hub.fetch import MODEL_INSTALL_COMMANDS_FILE, REQUIREMENTS_TXT
 from .repo import DockerfileFile
 from dockerfile_parse import DockerfileParser
 
@@ -38,11 +38,11 @@ class BundleEnvironmentFile(ErsiliaBase):
                     return False
             return False
 
-    def add_python_installs(self):
+    def add_model_install_commands(self):
         f0 = self.path
         with open(f0, "r") as f:
             data = yaml.safe_load(f)
-        f1 = os.path.join(self._get_bundle_location(self.model_id), PYTHON_INSTALLS)
+        f1 = os.path.join(self._get_bundle_location(self.model_id), MODEL_INSTALL_COMMANDS_FILE)
         with open(f1, "r") as f:
             for l in f:
                 l = l.rstrip(os.linesep)
@@ -82,13 +82,13 @@ class BundleRequirementsFile(ErsiliaBase):
         self.path = os.path.join(self.dir, REQUIREMENTS_TXT)
         self.exists = os.path.exists(self.path)
 
-    def add_python_installs(self):
+    def add_model_install_commands(self):
         f0 = os.path.join(self._get_bundle_location(self.model_id), REQUIREMENTS_TXT)
         reqs = []
         with open(f0, "r") as f:
             for l in f:
                 reqs += [l.strip(os.linesep)]
-        f1 = os.path.join(self._get_bundle_location(self.model_id), PYTHON_INSTALLS)
+        f1 = os.path.join(self._get_bundle_location(self.model_id), MODEL_INSTALL_COMMANDS_FILE)
         with open(f1, "r") as f:
             for l in f:
                 if "pip " in l:

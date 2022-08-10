@@ -30,6 +30,7 @@ API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
 FETCHED_MODELS_FILENAME = "fetched_models.txt"
+MODEL_CONFIG_FILENAME = "config.json"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"

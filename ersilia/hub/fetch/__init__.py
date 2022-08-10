@@ -1,4 +1,4 @@
-PYTHON_INSTALLS = "python_installs.sh"
+MODEL_INSTALL_COMMANDS_FILE = "model_install_commands.sh"
 DOCKERFILE = "Dockerfile"
 ENVIRONMENT_YML = "environment.yml"
 REQUIREMENTS_TXT = "requirements.txt"

@@ -161,19 +161,33 @@ class DockerfileFile(object):
         else:
             return False
 
+    def needs_conda(self):
+        fn = self.get_file()
+        if fn is None:
+            return False
+        with open(fn, "r") as f:
+            for l in f:
+                if "conda" in l:
+                    return True
+        return False
+
+    def get_install_commands_from_dockerfile(self, fn):
+        dp = SimpleDockerfileParser(fn)
+        runs = dp.get_runs()
+        return runs
+
     def get_install_commands(self):
         fn = self.get_file()
         if fn is None:
             return None
-        runs = self.conda.get_install_commands_from_dockerfile(fn)
-        if not runs:
-            return None
-        needs_conda = False
-        for r in runs:
-            c = "conda"
-            if r[: len(c)] == c:
-                needs_conda = True
-        result = {"conda": needs_conda, "commands": runs}
+        needs_conda = self.needs_conda()
+        runs = self.conda.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(fn)
+        if runs:
+            exclusive_conda_and_pip = True
+        else:
+            exclusive_conda_and_pip = False
+            runs = self.get_install_commands_from_dockerfile(fn)
+        result = {"conda": needs_conda, "commands": runs, "exclusive_conda_and_pip": exclusive_conda_and_pip}
         return result
 
     def append_run_command(self, cmd):
