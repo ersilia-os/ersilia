@@ -22,7 +22,11 @@ class _Deleter(ErsiliaBase):
             self.logger.debug("BentoML path exists! Removing it: {0}".format(bentoml_path))
             deleter = ModelBentoDeleter(config_json=self.config_json)
             deleter.delete(model_id=self.model_id)
-
+        self.logger.debug("Trying to remove path: {0}".format(bentoml_path))
+        try:
+            shutil.rmtree(bentoml_path)
+        except:
+            self.logger.debug("...but path did not exist!")
 
 class _Symlinker(ErsiliaBase):
     def __init__(self, model_id, config_json):
