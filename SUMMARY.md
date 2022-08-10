@@ -22,6 +22,11 @@
 * [Sampling the chemical space](chemistry-tools/sampling-the-chemical-space.md)
 * [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
 
+## 📑 Training materials
+
+* [Google Colaboratory](training-materials/google-colaboratory.md)
+* [Python 101](training-materials/python-101.md)
+
 ## 🌍 About Us
 
 * [Diversity and Inclusion Statement](about-us/diversity-and-inclusion-statement.md)
