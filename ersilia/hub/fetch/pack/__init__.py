@@ -24,6 +24,7 @@ class _Deleter(ErsiliaBase):
             deleter.delete(model_id=self.model_id)
         self.logger.debug("Trying to remove path: {0}".format(bentoml_path))
         try:
+            self.logger.debug("...successfully")
             shutil.rmtree(bentoml_path)
         except:
             self.logger.debug("...but path did not exist!")
