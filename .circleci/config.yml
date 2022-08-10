@@ -20,12 +20,12 @@ jobs:
           name: Fetch model
           command: |
               source activate ersilia
-              ersilia fetch eos0t01
+              ersilia -v fetch eos0t01
       - run:
           name: Delete model
           command: |
               source activate ersilia
-              ersilia delete eos0t01
+              ersilia -v delete eos0t01
       - run:
           name: Test Python interface
           command: |
