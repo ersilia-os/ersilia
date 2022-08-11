@@ -1,5 +1,4 @@
 import tempfile
-import sys
 import os
 
 from ..utils.conda import SimpleConda

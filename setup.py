@@ -56,7 +56,7 @@ webapp = slim + ["streamlit"]
 webapp_requires = _filter_requires(webapp, install_requires)
 
 # Doc builder requirements
-doc_builder = slim + ["sphinx"]
+doc_builder = slim + ["sphinx", "jinja2"]
 doc_builder_requires = _filter_requires(doc_builder, install_requires)
 
 # Test requirements

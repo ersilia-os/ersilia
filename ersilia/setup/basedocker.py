@@ -1,10 +1,11 @@
+import os
 import tempfile
 from ..utils.docker import SimpleDocker
 from ..utils.versioning import Versioner
 from .. import ErsiliaBase
 from .utils.clone import ErsiliaCloner
 
-
+# TODO: Make sure it is used.
 class SetupBaseDocker(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -61,7 +62,7 @@ class SetupBaseDocker(ErsiliaBase):
             lines = lines[1:-1]
             for l in lines:
                 f.write(l[8:] + "\n")
-        docker.build(path=tmp_repo, org=org, img=img, tag=tag)
+        self.docker.build(path=tmp_repo, org=org, img=img, tag=tag)
 
     def delete(self, org, tag):
         pass
