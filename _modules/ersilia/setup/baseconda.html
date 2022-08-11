@@ -66,6 +66,7 @@
   <h1>Source code for ersilia.setup.baseconda</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">packaging</span> <span class="kn">import</span> <span class="n">version</span>
 
 <span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
@@ -95,11 +96,12 @@
 
     <span class="k">def</span> <span class="nf">_parse_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;ver&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="s2">&quot;py&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
             <span class="s2">&quot;python&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">reformat_py</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="p">}</span>
+        <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">_install_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
@@ -113,6 +115,33 @@
 
     <span class="k">def</span> <span class="nf">_get_env_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">base_conda_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SetupBaseConda.find_closest_python_version"><a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.find_closest_python_version">[docs]</a>    <span class="k">def</span> <span class="nf">find_closest_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_version</span><span class="p">):</span>
+        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+        <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;conda_search_python.txt&quot;</span><span class="p">)</span>
+        <span class="n">tmp_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;script.sh&quot;</span><span class="p">)</span>
+        <span class="n">is_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">is_base</span><span class="p">()</span>
+        <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        source </span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
+<span class="s2">        conda search python &gt; </span><span class="si">{1}</span><span class="s2"></span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="n">is_base</span><span class="p">),</span> <span class="n">tmp_file</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">))</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">available_versions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">):</span>
+                    <span class="n">available_versions</span> <span class="o">+=</span> <span class="p">[</span>
+                        <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">]</span>
+        <span class="n">kept</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">available_versions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">python_version</span><span class="p">):</span>
+                <span class="n">kept</span> <span class="o">+=</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kept</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[:</span><span class="mi">2</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="SetupBaseConda.setup"><a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates a conda enviornment to be used as base environment to be used as model server.</span>
@@ -147,6 +176,7 @@
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
+        <span class="n">python_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_closest_python_version</span><span class="p">(</span><span class="n">ptag</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        cd </span><span class="si">{0}</span><span class="s2"></span>
 <span class="s2">        conda create --no-default-packages -n </span><span class="si">{1}</span><span class="s2"> python=</span><span class="si">{2}</span><span class="s2"> -y</span>
@@ -154,7 +184,7 @@
 <span class="s2">        </span><span class="si">{3}</span><span class="s2"></span>
 <span class="s2">        conda deactivate</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">ptag</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">],</span> <span class="n">cmd</span>
+            <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">python_version</span><span class="p">,</span> <span class="n">cmd</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>

@@ -64,12 +64,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.hub.content.table_update</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.catalog</span> <span class="kn">import</span> <span class="n">CatalogTable</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 
-<span class="c1"># define storage file path based on script path (__file__)</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.catalog</span> <span class="kn">import</span> <span class="n">CatalogTable</span>
 
-<span class="n">counter_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;my_counter&quot;</span><span class="p">)</span>
+<span class="n">counter_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(),</span> <span class="s2">&quot;model_counter&quot;</span><span class="p">)</span>
 <span class="c1"># start of script - read or initialise counter</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">counter_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">count_in</span><span class="p">:</span>
