@@ -9,9 +9,15 @@ jobs:
       - run:
           name: Test conda
           command: |
+              which python
+              which conda
+              echo $CONDA_PREFIX
+              echo $CONDA_PREFIX_1
               source activate ersilia
               which python
               which conda
+              echo $CONDA_PREFIX
+              echo $CONDA_PREFIX_1
       - run:
           name: Install ersilia package in slim mode
           command: |
