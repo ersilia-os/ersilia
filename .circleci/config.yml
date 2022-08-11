@@ -13,11 +13,16 @@ jobs:
               which conda
               echo $CONDA_PREFIX
               echo $CONDA_PREFIX_1
+              ls /root/miniconda3/etc/profile.d/conda.sh
               source activate ersilia
               which python
               which conda
               echo $CONDA_PREFIX
               echo $CONDA_PREFIX_1
+              ls /root/miniconda3/envs/ersilia/etc/profile.d/conda.sh
+      - run: Stop circle ci
+          command: |
+              circleci-agent step halt
       - run:
           name: Install ersilia package in slim mode
           command: |
