@@ -70,7 +70,7 @@ class SetupBaseConda(object):
         is_base = self.conda.is_base()
         if not is_base:
             bash_script = """
-            source ${0}/etc/profile.d/conda.sh
+            source {0}/etc/profile.d/conda.sh
             conda deactivate
             """.format(
                 self.conda.conda_prefix(False)
@@ -78,7 +78,7 @@ class SetupBaseConda(object):
         else:
             bash_script = ""
         bash_script += """
-        source ${0}/etc/profile.d/conda.sh
+        source {0}/etc/profile.d/conda.sh
         """.format(
             self.conda.conda_prefix(True)
         )

@@ -3,7 +3,7 @@ import os
 import json
 import hashlib
 from collections import defaultdict, OrderedDict
-from .terminal import run_command
+from .terminal import run_command, run_command_check_output
 from .docker import SimpleDockerfileParser
 from .versioning import Versioner
 from .supp.conda_env_resolve import CHECKSUM_NCHAR, CHECKSUM_FILE
@@ -33,10 +33,16 @@ class BaseConda(object):
 
     @staticmethod
     def conda_prefix(is_base):
+        o = run_command_check_output("which conda").rstrip()
+        if o:
+            o = os.path.abspath(os.path.join(o, "..", ".."))
+            return o
         if is_base:
-            return "CONDA_PREFIX"
+            o = run_command_check_output("echo $CONDA_PREFIX").rstrip()
+            return o
         else:
-            return "CONDA_PREFIX_1"
+            o = run_command_check_output("echo $CONDA_PREFIX_1").rstrip()
+            return o
 
 
 class CondaUtils(BaseConda):
@@ -209,7 +215,7 @@ class CondaUtils(BaseConda):
         if self.is_base():
             return ""
         snippet = """
-        source ${0}/etc/profile.d/conda.sh
+        source {0}/etc/profile.d/conda.sh
         conda activate {1}
         """.format(
             self.conda_prefix(False), BASE
@@ -226,7 +232,7 @@ class SimpleConda(CondaUtils):
         tmp_file = os.path.join(tmp_folder, "env_list.tsv")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = """
-        source ${0}/etc/profile.d/conda.sh
+        source {0}/etc/profile.d/conda.sh
         conda env list > {1}
         """.format(
             self.conda_prefix(self.is_base()), tmp_file
@@ -270,7 +276,7 @@ class SimpleConda(CondaUtils):
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
-        source ${0}/etc/profile.d/conda.sh
+        source {0}/etc/profile.d/conda.sh
         conda env remove --name {1}
         """.format(
             self.conda_prefix(True), environment
@@ -296,7 +302,7 @@ class SimpleConda(CondaUtils):
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
-        source ${0}/etc/profile.d/conda.sh
+        source {0}/etc/profile.d/conda.sh
         conda activate {1}
         conda env export --no-builds > {2}
         conda deactivate
@@ -319,7 +325,7 @@ class SimpleConda(CondaUtils):
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
-        source ${0}/etc/profile.d/conda.sh
+        source {0}/etc/profile.d/conda.sh
         conda create --clone {1} --name {2} -y
         """.format(
             self.conda_prefix(True), src_env, dst_env
@@ -342,7 +348,7 @@ class SimpleConda(CondaUtils):
         logger.debug("Current working directory: {0}".format(os.getcwd()))
         bash_script = self.activate_base()
         bash_script += """
-        source ${0}/etc/profile.d/conda.sh
+        source {0}/etc/profile.d/conda.sh
         conda activate {1}
         conda env list
         {2}

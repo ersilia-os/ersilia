@@ -162,7 +162,7 @@ class Installer(BaseInstaller):
         is_base = sc.is_base()
         if not is_base:
             bash_script = """
-            source ${0}/etc/profile.d/conda.sh
+            source {0}/etc/profile.d/conda.sh
             conda deactivate
             """.format(
                 sc.conda_prefix(False)
@@ -170,7 +170,7 @@ class Installer(BaseInstaller):
         else:
             bash_script = ""
         bash_script += """
-        source ${0}/etc/profile.d/conda.sh
+        source {0}/etc/profile.d/conda.sh
         """.format(
             sc.conda_prefix(True)
         )
