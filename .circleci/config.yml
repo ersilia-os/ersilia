@@ -7,6 +7,12 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Test conda
+          command: |
+              source activate ersilia
+              where python
+              where conda
+      - run:
           name: Install ersilia package in slim mode
           command: |
               source activate ersilia
