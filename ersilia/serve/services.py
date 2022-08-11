@@ -60,7 +60,7 @@ class _BentoMLService(BaseServing):
     def __init__(self, model_id, config_json=None):
         BaseServing.__init__(self, model_id=model_id, config_json=config_json)
         self.SEARCH_PRE_STRING = "* Running on "
-        self.SEARCH_SUF_STRING = "(Press CTRL+C to quit)"
+        self.SEARCH_SUF_STRING = "Press CTRL+C to quit"
         self.ERROR_STRING = "error"
 
     def _bentoml_serve(self, runcommand_func=None):
