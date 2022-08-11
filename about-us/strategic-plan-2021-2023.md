@@ -2,7 +2,7 @@
 
 ### Background
 
-The Ersilia Open Source Initiative (EOSI) is a UK-registered charity founded in November 2020 by three early career scientists who share the belief that scientific development in Low and Lower Middle Income Countries is a major player in their way to progress.
+The [Ersilia Open Source Initiative](https://ersilia.io) (EOSI) is a UK-registered charity founded in November 2020 by three early career scientists who share the belief that scientific development in Low and Lower Middle Income Countries is a major player in their way to progress.
 
 Our inspiration to start EOSI is well summarized in this extract from the WHO world health report 2013:
 
@@ -29,8 +29,6 @@ EOSI mission is to strengthen the research capacity against infectious and negle
 ### Vision
 
 Our vision is that of a world with egalitarian research capacity and access to healthcare.
-
-
 
 * The number of in-house developed models that have been tested _in vitro_ and/or _in vivo_. We aim to validate at least 10 models per year thanks to our collaborators.
 * The number of papers accepted for publication with EOSI as affiliation, either as first/last author (one per year) or in co-authorship (3 papers by the end of 2023).
