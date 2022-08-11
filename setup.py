@@ -22,7 +22,7 @@ with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
 with open("requirements.txt") as f:
-    install_requires = f.read().splitlines()
+    install_requires = [r for r in f.read().splitlines() if not r.startswith("#")]
 
 # Filter dependencies based on names and a larger list of requirements
 def _filter_requires(names, requires):
@@ -68,7 +68,6 @@ dev_requires = install_requires
 
 # Define extras requires
 extras_require = {
-    "webapp": webapp_requires,
     "doc_builder": doc_builder_requires,
     "test": test_requires,
     "dev": dev_requires,
@@ -99,7 +98,7 @@ setup(
     keywords="drug-discovery machine-learning ersilia open-science global-health model-hub infectious-diseases",
     project_urls={
         "Landing page": "https://ersilia.io",
-        "Models": "https://ersilia-hub.netlify.app",
+        "Models": "https://ersilia.io/model-hub",
         "Source Code": "https://github.com/ersilia-os/ersilia/",
     },
     include_package_data=True,
