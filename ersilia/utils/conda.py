@@ -106,7 +106,9 @@ class CondaUtils(BaseConda):
                 f.write("\n")
         return checksum
 
-    def get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(self, path, force_exclusive=True):
+    def get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(
+        self, path, force_exclusive=True
+    ):
         """Identifies install commands from Dockerfile
         For now this command is conservative and returns None if at least
         one of the commands is not conda ... or pip ... or pip3 ...
@@ -117,7 +119,7 @@ class CondaUtils(BaseConda):
         runs_ = []
         for r in runs:
             exec = r.split(" ")[0]
-            if exec not in ["conda", "pip", "pip3"]: # TODO write better
+            if exec not in ["conda", "pip", "pip3"]:  # TODO write better
                 is_valid = False
             if " -y " not in r and exec == "conda":
                 runs_ += [r + " -y"]
@@ -132,7 +134,9 @@ class CondaUtils(BaseConda):
 
     def specs_from_dockerfile_as_json(self, dockerfile_dir, dest):
         """Writes a json file with the install requirements inferred from the Dockerfile."""
-        runs = self.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(dockerfile_dir, force_exclusive=False)
+        runs = self.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(
+            dockerfile_dir, force_exclusive=False
+        )
         dp = SimpleDockerfileParser(dockerfile_dir)
         bi = dp.baseimage
         sp = bi.split("/")
@@ -189,11 +193,13 @@ class CondaUtils(BaseConda):
         self, dockerfile_dir, dest=None, use_checksum=False, name=None
     ):
         if use_checksum:
-            return self.checksum_from_dockerfile(dockerfile, dest) # TODO debug
+            return self.checksum_from_dockerfile(dockerfile, dest)  # TODO debug
         else:
             if dest is None:
                 dest = dockerfile_dir
-            json_path = self.specs_from_dockerfile_as_json(dockerfile_dir, dest=dest) # TODO remove?
+            json_path = self.specs_from_dockerfile_as_json(
+                dockerfile_dir, dest=dest
+            )  # TODO remove?
             filename = os.path.join(dest, self.CHECKSUM_FILE)
             with open(filename, "w") as f:
                 f.write(name)

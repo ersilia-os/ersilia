@@ -19,7 +19,9 @@ class _Deleter(ErsiliaBase):
     def _delete_bentoml_if_exists(self):
         bentoml_path = os.path.join(BENTOML_PATH, "repository", self.model_id)
         if os.path.exists(bentoml_path):
-            self.logger.debug("BentoML path exists! Removing it: {0}".format(bentoml_path))
+            self.logger.debug(
+                "BentoML path exists! Removing it: {0}".format(bentoml_path)
+            )
             deleter = ModelBentoDeleter(config_json=self.config_json)
             deleter.delete(model_id=self.model_id)
         self.logger.debug("Trying to remove path: {0}".format(bentoml_path))
@@ -28,6 +30,7 @@ class _Deleter(ErsiliaBase):
             shutil.rmtree(bentoml_path)
         except:
             self.logger.debug("...but path did not exist!")
+
 
 class _Symlinker(ErsiliaBase):
     def __init__(self, model_id, config_json):
@@ -116,7 +119,7 @@ class _Writer(ErsiliaBase):
                         is_pip3 = False
                     if r[:4] == "pip3":
                         is_pip3 = True
-                    assert (is_pip3 is not None)
+                    assert is_pip3 is not None
                     r = r.split(" ")
                     if is_pip3:
                         r = " ".join([r[0]] + [dis_warn] + r[1:])

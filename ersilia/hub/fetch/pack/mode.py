@@ -34,7 +34,11 @@ class PackModeDecision(ErsiliaBase):
         if "default_mode" in model_config:
             default_mode = model_config["default_mode"]
             if default_mode not in AVAILABLE_MODES:
-                raise Exception("The model default_mode specified in the config.json file of the model repo is not correct. It should be one of {0}".format(" ".join(AVAILABLE_MODES)))
+                raise Exception(
+                    "The model default_mode specified in the config.json file of the model repo is not correct. It should be one of {0}".format(
+                        " ".join(AVAILABLE_MODES)
+                    )
+                )
             else:
                 return default_mode
         return None

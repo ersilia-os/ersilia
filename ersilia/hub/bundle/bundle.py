@@ -42,7 +42,9 @@ class BundleEnvironmentFile(ErsiliaBase):
         f0 = self.path
         with open(f0, "r") as f:
             data = yaml.safe_load(f)
-        f1 = os.path.join(self._get_bundle_location(self.model_id), MODEL_INSTALL_COMMANDS_FILE)
+        f1 = os.path.join(
+            self._get_bundle_location(self.model_id), MODEL_INSTALL_COMMANDS_FILE
+        )
         with open(f1, "r") as f:
             for l in f:
                 l = l.rstrip(os.linesep)
@@ -88,7 +90,9 @@ class BundleRequirementsFile(ErsiliaBase):
         with open(f0, "r") as f:
             for l in f:
                 reqs += [l.strip(os.linesep)]
-        f1 = os.path.join(self._get_bundle_location(self.model_id), MODEL_INSTALL_COMMANDS_FILE)
+        f1 = os.path.join(
+            self._get_bundle_location(self.model_id), MODEL_INSTALL_COMMANDS_FILE
+        )
         with open(f1, "r") as f:
             for l in f:
                 if "pip " in l:

@@ -181,13 +181,19 @@ class DockerfileFile(object):
         if fn is None:
             return None
         needs_conda = self.needs_conda()
-        runs = self.conda.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(fn)
+        runs = self.conda.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(
+            fn
+        )
         if runs:
             exclusive_conda_and_pip = True
         else:
             exclusive_conda_and_pip = False
             runs = self.get_install_commands_from_dockerfile(fn)
-        result = {"conda": needs_conda, "commands": runs, "exclusive_conda_and_pip": exclusive_conda_and_pip}
+        result = {
+            "conda": needs_conda,
+            "commands": runs,
+            "exclusive_conda_and_pip": exclusive_conda_and_pip,
+        }
         return result
 
     def append_run_command(self, cmd):

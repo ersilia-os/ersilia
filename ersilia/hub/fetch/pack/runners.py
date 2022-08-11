@@ -75,7 +75,9 @@ class CondaPack(BasePack):
     def _setup(self):
         self.logger.debug("Setting up")
         model_id = self.model_id
-        installs_file = os.path.join(self._model_path(model_id), MODEL_INSTALL_COMMANDS_FILE)
+        installs_file = os.path.join(
+            self._model_path(model_id), MODEL_INSTALL_COMMANDS_FILE
+        )
         self.logger.debug("Installs file {0}".format(installs_file))
         model_path = self._model_path(model_id)
         env = self.conda.specs_from_dockerfile(
@@ -127,7 +129,9 @@ class CondaPack(BasePack):
         self.logger.debug("Using environment {0}".format(env))
         self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)
-        self.logger.debug("Previous command successfully run inside {0} conda environment".format(env))
+        self.logger.debug(
+            "Previous command successfully run inside {0} conda environment".format(env)
+        )
         self.logger.debug("Now trying to establish symlinks")
         self._symlinks()
 
