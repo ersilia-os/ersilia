@@ -96,13 +96,16 @@ class _BentoMLService(BaseServing):
             self.logger.debug("Process id: {0}".format(self.pid))
         _logged_file_done = False
         _logged_server_done = False
-        for _ in range(int(TIMEOUT_SECONDS / SLEEP_SECONDS)):
+        for it in range(int(TIMEOUT_SECONDS / SLEEP_SECONDS)):
+            self.logger.debug("Trying to wake up. Iteration: {0}".format(it))
+            self.logger.debug("Timeout: {0} Sleep time: {1}".format(TIMEOUT_SECONDS, SLEEP_SECONDS))
             if not os.path.exists(tmp_file):
                 if not _logged_file_done:
                     self.logger.debug("Waiting for file {0}".format(tmp_file))
                 _logged_file_done = True
                 time.sleep(SLEEP_SECONDS)
                 continue
+            self.logger.debug("Temporary file available: {0}".format(tmp_file))
             # If error string is identified, finish
             with open(tmp_file, "r") as f:
                 r = f.read()
@@ -111,15 +114,19 @@ class _BentoMLService(BaseServing):
                     # TODO perhaps find a better error string.
                     # self.url = None
                     # return
+            self.logger.debug("No error strings found in temporary file")
             # If everything looks good, wait until server is ready
             with open(tmp_file, "r") as f:
                 r = f.read()
                 if self.SEARCH_PRE_STRING not in r or self.SEARCH_SUF_STRING not in r:
                     if not _logged_server_done:
                         self.logger.debug("Waiting for server")
+                    else:
+                        self.logger.debug("Server logging done")
                     time.sleep(SLEEP_SECONDS)
                     _logged_server_done = True
                     continue
+            self.logger.debug("Server is ready. Trying to get URL")
             # When the search strings are found get url
             with open(tmp_file, "r") as f:
                 for l in f:
