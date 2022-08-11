@@ -1,5 +1,6 @@
 import tempfile
 import os
+from packaging import version
 
 from ..utils.conda import SimpleConda
 from ..utils.terminal import run_command
@@ -29,11 +30,12 @@ class SetupBaseConda(object):
 
     def _parse_tag(self, tag):
         tag = tag.split("-")
-        return {
+        data = {
             "ver": tag[0],
             "py": tag[1],
             "python": self.versions.reformat_py(tag[1]),
         }
+        return data
 
     def _install_command(self, org, tag):
         tag = self._parse_tag(tag)
@@ -47,6 +49,33 @@ class SetupBaseConda(object):
 
     def _get_env_name(self, org, tag):
         return self.versions.base_conda_name(org, tag)
+
+    def find_closest_python_version(self, python_version):
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_file = os.path.join(tmp_folder, "conda_search_python.txt")
+        tmp_script = os.path.join(tmp_folder, "script.sh")
+        is_base = self.conda.is_base()
+        bash_script = """
+        source {0}/etc/profile.d/conda.sh
+        conda search python > {1}
+        """.format(
+            self.conda.conda_prefix(is_base), tmp_file
+        )
+        with open(tmp_script, "w") as f:
+            f.write(bash_script)
+        run_command("bash {0}".format(tmp_script))
+        with open(tmp_file, "r") as f:
+            available_versions = []
+            for l in f:
+                if l.startswith("python"):
+                    available_versions += [
+                        l.split("python")[1].lstrip(" ").split(" ")[0]
+                    ]
+        kept = []
+        for v in available_versions:
+            if version.parse(v) >= version.parse(python_version):
+                kept += [v]
+        return ".".join(kept[0].split(".")[:2])
 
     def setup(self, org, tag):
         """Creates a conda enviornment to be used as base environment to be used as model server.
@@ -81,6 +110,7 @@ class SetupBaseConda(object):
         """.format(
             self.conda.conda_prefix(True)
         )
+        python_version = self.find_closest_python_version(ptag["python"])
         bash_script += """
         cd {0}
         conda create --no-default-packages -n {1} python={2} -y
@@ -88,7 +118,7 @@ class SetupBaseConda(object):
         {3}
         conda deactivate
         """.format(
-            tmp_repo, env, ptag["python"], cmd
+            tmp_repo, env, python_version, cmd
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)

@@ -1,9 +1,9 @@
+import os
+import tempfile
+
 from .catalog import CatalogTable
 
-# define storage file path based on script path (__file__)
-import os
-
-counter_path = os.path.join(os.path.dirname(__file__), "my_counter")
+counter_path = os.path.join(tempfile.mkdtemp(), "model_counter")
 # start of script - read or initialise counter
 try:
     with open(counter_path, "r") as count_in:
