@@ -98,7 +98,9 @@ class _BentoMLService(BaseServing):
         _logged_server_done = False
         for it in range(int(TIMEOUT_SECONDS / SLEEP_SECONDS)):
             self.logger.debug("Trying to wake up. Iteration: {0}".format(it))
-            self.logger.debug("Timeout: {0} Sleep time: {1}".format(TIMEOUT_SECONDS, SLEEP_SECONDS))
+            self.logger.debug(
+                "Timeout: {0} Sleep time: {1}".format(TIMEOUT_SECONDS, SLEEP_SECONDS)
+            )
             if not os.path.exists(tmp_file):
                 if not _logged_file_done:
                     self.logger.debug("Waiting for file {0}".format(tmp_file))
@@ -131,8 +133,10 @@ class _BentoMLService(BaseServing):
             # When the search strings are found get url
             with open(tmp_file, "r") as f:
                 for l in f:
-                    if self.SEARCH_PRE_STRING in l and self.SEARCH_SUF_STRING in l:
-                        self.url = l.split(self.SEARCH_PRE_STRING)[1].split(" ")[0]
+                    if self.SEARCH_PRE_STRING in l:
+                        self.url = (
+                            l.split(self.SEARCH_PRE_STRING)[1].split(" ")[0].rstrip()
+                        )
                         self.logger.debug("URL found: {0}".format(self.url))
                         return
                 self.logger.debug("Search strings not found yet")
