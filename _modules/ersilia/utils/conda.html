@@ -89,7 +89,10 @@
 
 <div class="viewcode-block" id="BaseConda.default_env"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.BaseConda.default_env">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_env</span><span class="p">():</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">]</span></div>
+        <span class="k">if</span> <span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BASE</span></div>
 
 <div class="viewcode-block" id="BaseConda.is_base"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.BaseConda.is_base">[docs]</a>    <span class="k">def</span> <span class="nf">is_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">default_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_env</span><span class="p">()</span>
