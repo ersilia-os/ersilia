@@ -70,6 +70,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
+<span class="kn">from</span> <span class="nn">..setup.baseconda</span> <span class="kn">import</span> <span class="n">SetupBaseConda</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">CONFIG_JSON</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">check_install_status</span>
@@ -241,6 +242,9 @@
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
+        <span class="n">bc</span> <span class="o">=</span> <span class="n">SetupBaseConda</span><span class="p">()</span>
+        <span class="n">python_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span>
+        <span class="n">python_version</span> <span class="o">=</span> <span class="n">bc</span><span class="o">.</span><span class="n">find_closest_python_version</span><span class="p">(</span><span class="n">python_version</span><span class="p">)</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        cd </span><span class="si">{0}</span><span class="s2"></span>
 <span class="s2">        conda create -n </span><span class="si">{1}</span><span class="s2"> python=</span><span class="si">{2}</span><span class="s2"> -y</span>
@@ -249,7 +253,7 @@
 <span class="s2">        python </span><span class="si">{3}</span><span class="s2"></span>
 <span class="s2">        conda deactivate</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">eos_base_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">python_version</span><span class="p">(),</span> <span class="n">tmp_python_script</span>
+            <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">eos_base_env</span><span class="p">,</span> <span class="n">python_version</span><span class="p">,</span> <span class="n">tmp_python_script</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>

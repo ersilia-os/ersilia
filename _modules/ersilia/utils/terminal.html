@@ -82,6 +82,8 @@
 
 <div class="viewcode-block" id="is_quiet"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.is_quiet">[docs]</a><span class="k">def</span> <span class="nf">is_quiet</span><span class="p">():</span>
     <span class="n">verbose_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">VERBOSE_FILE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">verbose_file</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">verbose_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;verbose&quot;</span><span class="p">]:</span>
