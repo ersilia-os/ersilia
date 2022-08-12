@@ -10,7 +10,7 @@ jobs:
           name: Install ersilia package in slim mode
           command: |
               source activate ersilia
-              pip install -e .
+              pip install .
       - run:
           name: Test CLI
           command: |
@@ -30,7 +30,7 @@ jobs:
           name: Test Python interface
           command: |
             source activate ersilia
-            pip install -e .[test]
+            pip install .[test]
             pytest
   docs-build:
     docker:
