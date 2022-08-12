@@ -22,7 +22,10 @@ class BaseConda(object):
 
     @staticmethod
     def default_env():
-        return os.environ["CONDA_DEFAULT_ENV"]
+        if "CONDA_DEFAULT_ENV" in os.environ:
+            return os.environ["CONDA_DEFAULT_ENV"]
+        else:
+            return BASE
 
     def is_base(self):
         default_env = self.default_env()

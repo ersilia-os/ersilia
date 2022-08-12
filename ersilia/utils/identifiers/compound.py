@@ -1,11 +1,16 @@
 import urllib.parse
 import requests
 import json
-from chembl_webresource_client.unichem import unichem_client as unichem
-from rdkit import Chem
-from rdkit import RDLogger
-
-RDLogger.DisableLog("rdApp.*")
+try:
+    from chembl_webresource_client.unichem import unichem_client as unichem
+except:
+    unichem = None
+try:
+    from rdkit import Chem
+    from rdkit import RDLogger
+    RDLogger.DisableLog("rdApp.*")
+except:
+    Chem = None
 
 
 class CompoundIdentifier(object):
