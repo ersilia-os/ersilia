@@ -3,6 +3,7 @@ import os
 import sys
 import tempfile
 from .conda import SimpleConda
+from ..setup.baseconda import SetupBaseConda
 from ..default import EOS, CONFIG_JSON
 from .. import ErsiliaBase
 from .. import check_install_status
@@ -174,6 +175,9 @@ class Installer(BaseInstaller):
         """.format(
             sc.conda_prefix(True)
         )
+        bc = SetupBaseConda()
+        python_version = self.versions.python_version()
+        python_version = bc.find_closest_python_version(python_version)
         bash_script += """
         cd {0}
         conda create -n {1} python={2} -y
@@ -182,7 +186,7 @@ class Installer(BaseInstaller):
         python {3}
         conda deactivate
         """.format(
-            tmp_repo, eos_base_env, self.versions.python_version(), tmp_python_script
+            tmp_repo, eos_base_env, python_version, tmp_python_script
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)

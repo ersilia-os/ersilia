@@ -15,6 +15,8 @@ from ..default import EOS, VERBOSE_FILE
 
 def is_quiet():
     verbose_file = os.path.join(EOS, VERBOSE_FILE)
+    if not os.path.exists(verbose_file):
+        return False
     with open(verbose_file, "r") as f:
         d = json.load(f)
     if d["verbose"]:
