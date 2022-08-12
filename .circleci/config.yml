@@ -1,16 +1,29 @@
 version: 2
 
 jobs:
+  installation:
+    docker:
+      - image: ersiliaos/conda:3.7
+    steps:
+      - checkout
+      - run:
+          name: Install with pip and git
+          command: |
+              source activate ersilia
+              pip install git+https://github.com/ersilia-os/ersilia.git
+          name: Check help
+          command: |
+              ersilia --help
   test:
     docker:
       - image: ersiliaos/conda:3.7
     steps:
       - checkout
       - run:
-          name: Install ersilia package in slim mode
+          name: Install ersilia package in developer mode
           command: |
               source activate ersilia
-              pip install .
+              pip install -e .
       - run:
           name: Test CLI
           command: |
@@ -30,7 +43,7 @@ jobs:
           name: Test Python interface
           command: |
             source activate ersilia
-            pip install .[test]
+            pip install -e .[test]
             pytest
   docs-build:
     docker:
