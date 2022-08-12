@@ -7,12 +7,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install with pip and git
+          name: Install with pip and git without developer mode
           command: |
               source activate ersilia
               pip install git+https://github.com/ersilia-os/ersilia.git
+      - run:
           name: Check help
           command: |
+              source activate ersilia
               ersilia --help
   test:
     docker:
