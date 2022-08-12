@@ -94,9 +94,12 @@ class GitHubDownloader(object):
         self.overwrite = overwrite
         self.token = token
         auth_method = "x-access-token"
-        self.pygit2_callbacks = pygit2.RemoteCallbacks(
-            pygit2.UserPass(auth_method, token)
-        )
+        try:
+            self.pygit2_callbacks = pygit2.RemoteCallbacks(
+                pygit2.UserPass(auth_method, token)
+            )
+        except:
+            self.pygit2_callbacks = None
 
     @staticmethod
     def _repo_url(org, repo):
@@ -129,11 +132,27 @@ class GitHubDownloader(object):
         return self._exists(destination)
 
     def _clone_with_pygit2(self, org, repo, destination):
+        if self.pygit2_callbacks is None:
+            return False
         pygit2.clone_repository(
             url=self._repo_url(org, repo),
             path=destination,
             callbacks=self.pygit2_callbacks,
         )
+        return self._exists(destination)
+
+    def _clone_with_git(self, org, repo, destination):
+        tmp_folder = os.path.abspath(tempfile.mkdtemp(prefix="ersilia-"))
+        script = """
+        cd {0}
+        git clone https://github.com/{1}/{2}.git
+        mv {2} {3}
+        rm {0}
+        """.format(tmp_folder, org, repo, destination)
+        run_file = os.path.join(os.path.abspath(tempfile.mdktemp(prefix="ersilia")), "run.sh")
+        with open(run_file, "w") as f:
+            f.write(script)
+        run_command("bash {0}".format(run_file))
         return self._exists(destination)
 
     def _git_lfs(self, destination):
@@ -154,10 +173,29 @@ class GitHubDownloader(object):
         if not is_done:
             is_done = self._clone_with_gh(org, repo, destination)
         if not is_done:
+            is_done = self._clone_with_git(org, repo, destination)
+        if not is_done:
             raise Exception("Download from {0}/{1} did not work".format(org, repo))
         self._git_lfs(destination)
         if ungit:
             self._ungit(destination)
+
+    def _download_single_raw_by_branch(self, org, repo, branch, repo_path, destination):
+        url = "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(org, repo, branch, repo_path)
+        response = requests.get(url)
+        if response.status_code != 200:
+            return False
+        with open(destination, "wb") as f:
+            f.write(response.content)
+        return True
+
+    def _download_single_raw(self, org, repo, repo_path, destination):
+        is_done = self._download_single_raw_by_branch(org, repo, "master", repo_path, destination)
+        if is_done:
+            return True
+        else:
+            is_done = self._download_single_raw_by_branch(org, repo, "main", repo_path, destination)
+        return is_done
 
     def download_single(self, org, repo, repo_path, destination):
         if os.path.exists(destination):
@@ -168,13 +206,17 @@ class GitHubDownloader(object):
                     shutil.rmtree(destination)
             else:
                 return
-        tmpdir = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-        self.clone(org, repo, tmpdir)
-        source = os.path.join(tmpdir, repo_path)
-        if os.path.exists(source):
-            if os.path.isfile(source):
-                shutil.copyfile(source, destination)
-            if os.path.isdir(source):
-                shutil.copytree(source, destination)
-        shutil.rmtree(tmpdir)
-        print("file in destination {0}".format(destination))
+        is_done = self._download_single_raw(org, repo, repo_path, destination)
+        if is_done:
+            return True
+        else:
+            tmpdir = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+            self.clone(org, repo, tmpdir)
+            source = os.path.join(tmpdir, repo_path)
+            if os.path.exists(source):
+                if os.path.isfile(source):
+                    shutil.copyfile(source, destination)
+                if os.path.isdir(source):
+                    shutil.copytree(source, destination)
+            shutil.rmtree(tmpdir)
+        return self._exists(destination)
