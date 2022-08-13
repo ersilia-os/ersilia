@@ -148,8 +148,12 @@ class GitHubDownloader(object):
         git clone https://github.com/{1}/{2}.git
         mv {2} {3}
         rm {0}
-        """.format(tmp_folder, org, repo, destination)
-        run_file = os.path.join(os.path.abspath(tempfile.mdktemp(prefix="ersilia")), "run.sh")
+        """.format(
+            tmp_folder, org, repo, destination
+        )
+        run_file = os.path.join(
+            os.path.abspath(tempfile.mdktemp(prefix="ersilia")), "run.sh"
+        )
         with open(run_file, "w") as f:
             f.write(script)
         run_command("bash {0}".format(run_file))
@@ -181,7 +185,9 @@ class GitHubDownloader(object):
             self._ungit(destination)
 
     def _download_single_raw_by_branch(self, org, repo, branch, repo_path, destination):
-        url = "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(org, repo, branch, repo_path)
+        url = "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
+            org, repo, branch, repo_path
+        )
         response = requests.get(url)
         if response.status_code != 200:
             return False
@@ -190,11 +196,15 @@ class GitHubDownloader(object):
         return True
 
     def _download_single_raw(self, org, repo, repo_path, destination):
-        is_done = self._download_single_raw_by_branch(org, repo, "master", repo_path, destination)
+        is_done = self._download_single_raw_by_branch(
+            org, repo, "master", repo_path, destination
+        )
         if is_done:
             return True
         else:
-            is_done = self._download_single_raw_by_branch(org, repo, "main", repo_path, destination)
+            is_done = self._download_single_raw_by_branch(
+                org, repo, "main", repo_path, destination
+            )
         return is_done
 
     def download_single(self, org, repo, repo_path, destination):

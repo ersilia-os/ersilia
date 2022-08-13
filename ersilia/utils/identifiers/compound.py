@@ -1,6 +1,7 @@
 import urllib.parse
 import requests
 import json
+
 try:
     from chembl_webresource_client.unichem import unichem_client as unichem
 except:
@@ -8,6 +9,7 @@ except:
 try:
     from rdkit import Chem
     from rdkit import RDLogger
+
     RDLogger.DisableLog("rdApp.*")
 except:
     Chem = None
