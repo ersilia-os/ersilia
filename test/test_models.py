@@ -4,7 +4,7 @@ from ersilia import ErsiliaModel
 MODELS = ["eos0t01", "eos0t02", "eos0t03", "eos0t04"]
 
 
-def test_model_0():
+def test_model_1():
     MODEL_ID = MODELS[0]
     INPUT = ""
     ModelFetcher().fetch(MODEL_ID)
@@ -16,7 +16,7 @@ def test_model_0():
     assert 1 == 1
 
 
-def test_model_1():
+def test_model_2():
     MODEL_ID = MODELS[1]
     INPUT = "CCCC"
     ModelFetcher().fetch(MODEL_ID)
@@ -27,7 +27,7 @@ def test_model_1():
     assert 1 == 1
 
 
-def test_model_2():
+def test_model_3():
     MODEL_ID = MODELS[2]
     INPUT = "CCCNC"
     ModelFetcher().fetch(MODEL_ID)
@@ -38,7 +38,7 @@ def test_model_2():
     assert 1 == 1
 
 
-def test_model_3():
+def test_model_4():
     MODEL_ID = MODELS[3]
     INPUT = ["CCCCN", "CCCOCC"]
     ModelFetcher().fetch(MODEL_ID)

@@ -120,7 +120,6 @@ class _BentoMLService(BaseServing):
             # If everything looks good, wait until server is ready
             with open(tmp_file, "r") as f:
                 r = f.read()
-                print(r)
                 if self.SEARCH_PRE_STRING not in r or self.SEARCH_SUF_STRING not in r:
                     if not _logged_server_done:
                         self.logger.debug("Waiting for server")

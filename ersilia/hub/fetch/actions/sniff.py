@@ -110,7 +110,7 @@ class ModelSniffer(BaseAction):
             if self.__dicts_are_identical(v):
                 input_schema_[k] = v[0]
             else:
-                self.looger.error("Input data types are not consistent")
+                self.logger.error("Input data types are not consistent")
         output_schema_ = {}
         for k, v in output_schema.items():
             if self.__dicts_are_identical(v):
