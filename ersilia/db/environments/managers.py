@@ -12,7 +12,7 @@ from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
 from .localdb import EnvironmentDb
 
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, DEFAULT_DOCKER_PLATFORM
 
 BENTOML_DOCKERPORT = 5000
 
@@ -133,8 +133,8 @@ class DockerManager(ErsiliaBase):
             name_ = "{0}_{1}".format(model_id, si.encode())
             if not self.container_exists(name_):
                 name = name_
-        cmd = "docker run --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
-            name, port, BENTOML_DOCKERPORT, img, workers, mb_string
+        cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
+            name, port, BENTOML_DOCKERPORT, img, workers, mb_string, DEFAULT_DOCKER_PLATFORM
         )
         self.logger.debug(cmd)
         run_command(cmd)

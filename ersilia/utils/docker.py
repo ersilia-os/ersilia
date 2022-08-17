@@ -1,6 +1,8 @@
 import os
 from dockerfile_parse import DockerfileParser
 import tempfile
+
+from ersilia.default import DEFAULT_DOCKER_PLATFORM
 from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
@@ -121,7 +123,8 @@ class SimpleDocker(object):
     def run(self, org, img, tag, name):
         if name is None:
             name = self.identifier.encode()
-        cmd = "docker run -it -d --name %s %s bash" % (
+        cmd = "docker run -it -d --platform {0} --name {1} {2} bash".format(
+            DEFAULT_DOCKER_PLATFORM,
             name,
             self._image_name(org, img, tag),
         )
