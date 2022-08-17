@@ -78,7 +78,7 @@
 <span class="kn">from</span> <span class="nn">...utils.ports</span> <span class="kn">import</span> <span class="n">find_free_port</span>
 <span class="kn">from</span> <span class="nn">.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
 
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DEFAULT_DOCKER_PLATFORM</span>
 
 <span class="n">BENTOML_DOCKERPORT</span> <span class="o">=</span> <span class="mi">5000</span>
 
@@ -199,8 +199,8 @@
             <span class="n">name_</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">si</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_exists</span><span class="p">(</span><span class="n">name_</span><span class="p">):</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">name_</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run --name </span><span class="si">{0}</span><span class="s2"> -d -p </span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span><span class="s2"> --workers=</span><span class="si">{4}</span><span class="s2"> </span><span class="si">{5}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">BENTOML_DOCKERPORT</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">workers</span><span class="p">,</span> <span class="n">mb_string</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run --platform </span><span class="si">{6}</span><span class="s2"> --name </span><span class="si">{0}</span><span class="s2"> -d -p </span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span><span class="s2"> --workers=</span><span class="si">{4}</span><span class="s2"> </span><span class="si">{5}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">BENTOML_DOCKERPORT</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">workers</span><span class="p">,</span> <span class="n">mb_string</span><span class="p">,</span> <span class="n">DEFAULT_DOCKER_PLATFORM</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
