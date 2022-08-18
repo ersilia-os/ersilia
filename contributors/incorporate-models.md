@@ -4,7 +4,7 @@ description: This tutorial explains how to incorporate models in the Ersilia Mod
 
 # Model incorporation
 
-This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](introduction.md), models can be of three types, namely:
+This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](../ersilia-model-hub/introduction.md), models can be of three types, namely:
 
 1. Models developed by third parties.
 2. Models developed by Ersilia based on publicly available data.
@@ -33,7 +33,7 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 * three alphanumeric (`a-z` and `0-9`) characters.
 
 {% hint style="success" %}
-A list of `eos` identifiers is provided in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=drive\_web\&ouid=114775674178390159004). You can read about this Spreadsheet [here](model-selection.md).
+A list of `eos` identifiers is provided in the [Ersilia Model Hub Spreadsheet](https://docs.google.com/spreadsheets/d/1TQdei8kkF6zMGyDn0km0qmjZb6p-PM9gsBnSWg3637s/edit?usp=drive\_web\&ouid=114775674178390159004). You can read about this Spreadsheet [here](../ersilia-model-hub/model-selection.md).
 {% endhint %}
 
 ### The [`README`](https://github.com/ersilia-os/eos-template/blob/main/README.md) file
@@ -140,15 +140,15 @@ Unless strictly necessary, the `run_predict.sh` file should accept three and onl
 
 {% code title="run_predict.sh" %}
 ```bash
-python $1/code/main.py -i $2 -o $3
+python $1/code/step.py -i $2 -o $3
 ```
 {% endcode %}
 
 In this case, a Python file located in the `[FRAMEWORK_DIR]/src` folder is executed, taking as input (`-i`) the `DATA_FILE` and giving as output (`-o`) the `OUTPUT_FILE`.
 
-To understand this further, we now need to inspect the `main.py`file in more detail. The current template proposes the following script:&#x20;
+To understand this further, we now need to inspect the step`.py`file in more detail. The current template proposes the following script:&#x20;
 
-{% code title="code/main.py" %}
+{% code title="code/step.py" %}
 ```python
 # imports
 import os
@@ -207,7 +207,7 @@ Most of the work of the model contributor will be to work on this or similar scr
 To summarize, in the template, we provide a structure that follows this logic:
 
 1. The `run_predict.sh` script executes the Python `main.py` script.
-2. The `main.py` script:
+2. The `step.py` script:
    * Defines the model code.
    * Loads parameters from `checkpoints`.
    * Reads an input file containing SMILES (with header).
@@ -216,6 +216,8 @@ To summarize, in the template, we provide a structure that follows this logic:
 
 {% hint style="info" %}
 In the template, the example provided is very simple. Depending on the model being incorporated, the logic may be different. For example, many third party models already contain a command-line option, with a specific syntax. In these cases, you may want to write scripts to adapt the input and the output, and then execute the model as-is.
+
+Each script will be one step.py file, we can create as many as necessary and rename them appropriately (see below for examples)
 {% endhint %}
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
@@ -252,7 +254,7 @@ class Model (object):
         ...
 ```
 
-In this case, the model takes as input a list of molecules represented as SMILES strings. This is the standard input type for [Type A](model-selection.md) models, focussed on chemistry data as input.
+In this case, the model takes as input a list of molecules represented as SMILES strings. This is the standard input type for [Type A](../ersilia-model-hub/model-selection.md) models, focussed on chemistry data as input.
 
 {% hint style="info" %}
 You can always rename the `predict` method to something else if your model does not do predictions, strictly. For example, for some models it is more appropriate to rename this method to `calculate`.
@@ -291,7 +293,7 @@ class Model(object):
         ...
 ```
 
-Now we already have the input file of the `run_predict.sh`script, located in the `model/framework/` directory, as specified [above](model-incorporation.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](model-incorporation.md#the-model-folder) that the `run_predict.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
+Now we already have the input file of the `run_predict.sh`script, located in the `model/framework/` directory, as specified [above](incorporate-models.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](incorporate-models.md#the-model-folder) that the `run_predict.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
 
 ```python
 class Model(object):
@@ -390,7 +392,7 @@ Now that we have an idea of the contents of the [Ersilia Model Template](https:/
 
 ### Include the model to the Ersilia Model Hub AirTable
 
-The [Ersilia CLI](https://github.com/ersilia-os/ersilia) accesses data contained in the [Ersilia Model Hub AirTable](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP) database. Thus, the first step is to include the model entry in the database. You can follow the instruction in the [model selection](model-selection.md) page. You will see that, in the Ersilia Model Hub, the current model has the EOS identifier `eos-9ei3` and the slug `sa-score`.
+The [Ersilia CLI](https://github.com/ersilia-os/ersilia) accesses data contained in the [Ersilia Model Hub AirTable](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP) database. Thus, the first step is to include the model entry in the database. You can follow the instruction in the [model selection](../ersilia-model-hub/model-selection.md) page. You will see that, in the Ersilia Model Hub, the current model has the EOS identifier `eos-9ei3` and the slug `sa-score`.
 
 {% hint style="info" %}
 Please contact **@Miquel** if your model is not included in the AirTable database.
@@ -534,25 +536,32 @@ cp SA_Score/sascorer.py eos9ei3/model/framework/code/.
 cp SA_Score/fpscores.pkl.gz eos9ei3/model/checkpoints/.
 ```
 
+{% hint style="info" %}
+The checkpoints contains a dummy checkpoints.joblib that can be deleted
+{% endhint %}
+
 {% hint style="danger" %}
-Note that here we are migrating code and parameters to different folders. This may cause critical errors if code expects to find parameters at a certain relative location. For this reason, it is perfectly acceptable to move both code and parameters to the `framework` folder, and leave the `checkpoints` folder empty.
+Note that here we are migrating code and parameters to different folders. This may cause critical errors if code expects to find parameters at a certain relative location. Try to locate the pointers to the model parameters and change the paths. Only, and exceptionally, if the model architecture is too complex we can keep code and parameters in the /framework folder. Please ask for permission to Ersilia's team before doing it.
 {% endhint %}
 
 ### Write framework code
 
-Now it is time to write some code. Here we will follow the description of the `model` folder [given above](model-incorporation.md#the-model-folder).
+Now it is time to write some code. Here we will follow the description of the `model` folder [given above](incorporate-models.md#the-model-folder).
 
 #### Write input and output adapters
 
-The `eos-template` provides an exemplary `main.py` that is not useful here. Let's remove this file. And let's remove the template parameters, too.
+The `eos-template` provides an exemplary `step.py` that is not useful here. We will actually need to use three steps:
+
+1. Input adapter
+2. SAScorer (in this case, the `sascorer.py` which is already written)
+3. Output adapter
 
 ```bash
 cd model
-rm framework/code/main.py
-rm checkpoints/checkpoints.joblib
+rm framework/code/step.py
 ```
 
-By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](model-incorporation.md#the-service-file)). However, the `sascorer.py` [expects](model-incorporation.md#test-the-model) a two-column file. Let's write an **input** adapter:
+By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](incorporate-models.md#the-service-file)). However, the `sascorer.py` [expects](incorporate-models.md#test-the-model) a two-column file. Let's write an **input** adapter:
 
 {% code title="code/input_adapter.py" %}
 ```python
@@ -605,7 +614,7 @@ Note that we are reading from a `tmp_output.csv`. We then write a one-column out
 
 #### Make sure that parameters are read
 
-So far, we haven't pointed to the model parameters. When [migrating code and parameters](model-incorporation.md#migrate-code-and-parameters), we separated the `sascore.py` file and the `fpscores.pkl.gz` file.
+So far, we haven't pointed to the model parameters. When [migrating code and parameters](incorporate-models.md#migrate-code-and-parameters), we separated the `sascore.py` file and the `fpscores.pkl.gz` file.
 
 Let's inspect `sascore.py` to understand how parameters are read. There is a `readFragmentScore` function that does this job. We need to modify it to point to the `checkpoints` folder:
 
@@ -703,7 +712,7 @@ COPY . /repo
 
 ### Write the `README` file
 
-Don't forget document the model. Read the [instructions to write the `README` file](model-incorporation.md#the-readme-file) page. Feel free to ask for help in the Slack `#internships` channel.
+Don't forget document the model. Read the [instructions to write the `README` file](incorporate-models.md#the-readme-file) page. Feel free to ask for help in the Slack `#internships` channel.
 
 ### Commit changes to the repository
 

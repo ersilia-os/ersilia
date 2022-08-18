@@ -20,7 +20,7 @@ To start contributing:
 3. Fill in models of interest in the **Model Suggestions** list (if you need some sources of inspiration, check below)
 4. Wait for model to be **approved** (or select an already approved one) and notify everyone of your selection on the #contributors channel to avoid duplication.
 5. Fill in the information on the Model Hub sheet. Use the next available EOS ID and **do not** modify it.
-6. Start coding! Head to the [Model Incorporation Guidelines](model-incorporation.md) for more information.
+6. Start coding! Head to the [Model Incorporation Guidelines](../contributors/incorporate-models.md) for more information.
 
 ## Topics of interest
 
