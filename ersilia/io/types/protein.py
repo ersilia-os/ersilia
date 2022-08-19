@@ -16,3 +16,6 @@ class IO(object):
 
     def parse(self, text):  # TODO
         pass
+
+    def string_delimiter(self):
+        return "."

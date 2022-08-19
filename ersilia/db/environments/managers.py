@@ -134,7 +134,13 @@ class DockerManager(ErsiliaBase):
             if not self.container_exists(name_):
                 name = name_
         cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
-            name, port, BENTOML_DOCKERPORT, img, workers, mb_string, DEFAULT_DOCKER_PLATFORM
+            name,
+            port,
+            BENTOML_DOCKERPORT,
+            img,
+            workers,
+            mb_string,
+            DEFAULT_DOCKER_PLATFORM,
         )
         self.logger.debug(cmd)
         run_command(cmd)

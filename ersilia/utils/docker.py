@@ -2,9 +2,10 @@ import os
 from dockerfile_parse import DockerfileParser
 import tempfile
 
-from ersilia.default import DEFAULT_DOCKER_PLATFORM
 from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
+
+from ..default import DEFAULT_DOCKER_PLATFORM
 
 
 def is_inside_docker():
@@ -124,9 +125,7 @@ class SimpleDocker(object):
         if name is None:
             name = self.identifier.encode()
         cmd = "docker run -it -d --platform {0} --name {1} {2} bash".format(
-            DEFAULT_DOCKER_PLATFORM,
-            name,
-            self._image_name(org, img, tag),
+            DEFAULT_DOCKER_PLATFORM, name, self._image_name(org, img, tag)
         )
         run_command(cmd)
         return name

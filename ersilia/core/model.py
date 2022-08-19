@@ -273,9 +273,12 @@ class ErsiliaModel(ErsiliaBase):
 
     def _do_cache_splits(self, input, output):
         self.tfr = None
+        if not os.path.isfile(input):
+            return False
         if self._evaluate_do_cache_splits(input, output):
             self.tfr = TabularFileReader(
-                BaseIOGetter(config_json=self.config_json).get(self.model_id)()
+                path=input,
+                IO=BaseIOGetter(config_json=self.config_json).get(self.model_id),
             )
             if self.tfr.is_worth_splitting(path=input):
                 return True

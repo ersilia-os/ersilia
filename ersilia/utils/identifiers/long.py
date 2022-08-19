@@ -2,6 +2,7 @@ try:
     import uuid
 except ModuleNotFoundError as err:
     uuid = None
+import random
 
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 PATTERN = [8, 4, 4, 4, 12]
