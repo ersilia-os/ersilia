@@ -70,9 +70,12 @@
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 
-<span class="kn">from</span> <span class="nn">.readers.file</span> <span class="kn">import</span> <span class="n">TabularFileReader</span>
 <span class="kn">from</span> <span class="nn">..hub.content.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+
+<span class="kn">from</span> <span class="nn">.shape</span> <span class="kn">import</span> <span class="n">InputShape</span>
+<span class="kn">from</span> <span class="nn">.shape</span> <span class="kn">import</span> <span class="n">InputShapeSingle</span>
+<span class="kn">from</span> <span class="nn">.readers.file</span> <span class="kn">import</span> <span class="n">TabularFileReader</span><span class="p">,</span> <span class="n">JsonFileReader</span>
 
 
 <div class="viewcode-block" id="BaseIOGetter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter">[docs]</a><span class="k">class</span> <span class="nc">BaseIOGetter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -89,18 +92,32 @@
             <span class="n">input_type</span> <span class="o">=</span> <span class="n">input_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">input_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_read_shape_from_card</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading shape from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)[</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input Shape: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_shape</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">InputShape</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BaseIOGetter.shape"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter.shape">[docs]</a>    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_shape_from_card</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="BaseIOGetter.get"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">input_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_input_from_card</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">input_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">input_type</span> <span class="o">=</span> <span class="s2">&quot;naive&quot;</span>
+        <span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input type is: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_type</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input shape is: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_shape</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
         <span class="n">module</span> <span class="o">=</span> <span class="s2">&quot;.types.</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_type</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="s2">&quot;ersilia.io&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">IO</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Importing module: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">module</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="s2">&quot;ersilia.io&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">IO</span><span class="p">(</span>
+            <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span>
+        <span class="p">)</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">_GenericAdapter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BaseIO</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">IO</span> <span class="o">=</span> <span class="n">BaseIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">IO</span> <span class="o">=</span> <span class="n">BaseIO</span>
 
     <span class="k">def</span> <span class="nf">_is_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
@@ -129,9 +146,25 @@
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">data</span>
 
+    <span class="k">def</span> <span class="nf">_is_tabular_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inp</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_is_json_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
     <span class="k">def</span> <span class="nf">_file_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="n">TabularFileReader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_tabular_file</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">TabularFileReader</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">inp</span><span class="p">,</span> <span class="n">IO</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_json_file</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">JsonFileReader</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">inp</span><span class="p">,</span> <span class="n">IO</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
@@ -172,9 +205,10 @@
             <span class="k">yield</span> <span class="n">d</span></div></div>
 
 
-<div class="viewcode-block" id="ExampleGenerator"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator">[docs]</a><span class="k">class</span> <span class="nc">ExampleGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleGenerator"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator">[docs]</a><span class="k">class</span> <span class="nc">ExampleGenerator</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">IO</span> <span class="o">=</span> <span class="n">BaseIOGetter</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">IO</span> <span class="o">=</span> <span class="n">BaseIOGetter</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_delimiter</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
@@ -185,6 +219,9 @@
             <span class="k">return</span> <span class="s2">&quot;,&quot;</span>
 
 <div class="viewcode-block" id="ExampleGenerator.example"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.example">[docs]</a>    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">InputShapeSingle</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Cannot generate example, unfortunately...&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
             <span class="k">if</span> <span class="n">simple</span><span class="p">:</span>

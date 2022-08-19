@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ersilia.utils.identifiers.long &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>ersilia.utils.identifiers.arbitrary &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
@@ -55,7 +55,7 @@
       <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
           <li><a href="../../utils.html">ersilia.utils</a> &raquo;</li>
-      <li>ersilia.utils.identifiers.long</li>
+      <li>ersilia.utils.identifiers.arbitrary</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -64,32 +64,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for ersilia.utils.identifiers.long</h1><div class="highlight"><pre>
-<span></span><span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">uuid</span>
-<span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-    <span class="n">uuid</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="kn">import</span> <span class="nn">random</span>
-
-<span class="n">ALPHABET</span> <span class="o">=</span> <span class="s2">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890&quot;</span>
-<span class="n">PATTERN</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span>
-<span class="n">SEP</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+  <h1>Source code for ersilia.utils.identifiers.arbitrary</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">hashlib</span>
 
 
-<div class="viewcode-block" id="LongIdentifier"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.long.LongIdentifier">[docs]</a><span class="k">class</span> <span class="nc">LongIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ArbitraryIdentifier"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.arbitrary.ArbitraryIdentifier">[docs]</a><span class="k">class</span> <span class="nc">ArbitraryIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">pass</span>
 
-<div class="viewcode-block" id="LongIdentifier.encode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.long.LongIdentifier.encode">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">encode</span><span class="p">():</span>
-        <span class="sd">&quot;&quot;&quot;Get UUID code (long identifier)&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">uuid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">alphabet</span> <span class="o">=</span> <span class="n">ALPHABET</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">PATTERN</span><span class="p">:</span>
-                <span class="n">s</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">alphabet</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])]</span>
-            <span class="k">return</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span></div></div>
+<div class="viewcode-block" id="ArbitraryIdentifier.encode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.arbitrary.ArbitraryIdentifier.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>
