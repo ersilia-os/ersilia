@@ -6,7 +6,7 @@ import shutil
 from ...core.base import ErsiliaBase
 from ...setup.requirements.docker import DockerRequirement
 from ...utils.paths import Paths
-from ...utils.terminal import run_command
+from ...utils.terminal import run_command, run_command_check_output
 from ...utils.docker import SimpleDocker, is_inside_docker
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
@@ -251,12 +251,37 @@ class DockerManager(ErsiliaBase):
         shutil.rmtree(tmp_folder)
         self.remove_stopped_containers()
 
+    def prune(self):
+        cmd = "docker system prune -f"
+        run_command(cmd)
+
+    def delete_image(self, img):
+        fn = os.path.join(self._tmp_dir, "rm_image_output.txt")
+        cmd = "docker image rm {0} --force 2> {1}".format(img, fn)
+        run_command(cmd)
+        with open(fn, "r") as f:
+            text = f.read()
+            patt = "image is being used by running container "
+            if patt in text:
+                container_id = text.split(patt)[1].rstrip()
+                self.logger.debug(
+                    "A running container was found {0}. Removing it before the image".format(
+                        container_id
+                    )
+                )
+                cmd = "docker stop {0}".format(container_id)
+                run_command(cmd)
+                cmd = "docker rm {0}".format(container_id)
+                run_command(cmd)
+                self.delete_image(img)
+
     def delete_images(self, model_id, purge_unnamed=True):
         if self.is_inside_docker():
             return
         if not self.is_installed():
             return
         self.stop_containers(model_id)
+        self.prune()
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-images.txt")
         cmd = "docker images > {0}".format(tmp_file)
@@ -279,8 +304,7 @@ class DockerManager(ErsiliaBase):
             images += unnamed_images
         for img in images:
             self.logger.debug("Removing docker image {0}".format(img))
-            cmd = "docker image rm {0} --force".format(img)
-            run_command(cmd)
+            self.delete_image(img)
 
 
 class CondaManager(object):

@@ -12,7 +12,10 @@ input_shape_list = [
 input_shape_pair_of_lists = [
     [
         ["CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O", "C1=CN=CC=C1C(=O)NN"],
-        ["CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O"],
+        [
+            "CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O",
+            "CN1CCN(CC1)C2=NC3=C(C=CC(=C3)Cl)NC4=CC=CC=C42",
+        ],
     ],
     [
         ["CC(=O)OC1=CC=CC=C1C(=O)O", "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"],
