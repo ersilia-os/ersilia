@@ -63,9 +63,9 @@ class ModelSniffer(BaseAction):
             self.logger.debug("Built-in example found")
             self.inputs = er.example(N)
         else:
-            self.logger.debug("No built-in example available. Generating one.")
+            self.logger.debug("No built-in example available. Generating a test one.")
             eg = ExampleGenerator(model_id, config_json=config_json)
-            self.inputs = eg.example(N, file_name=None, simple=True)
+            self.inputs = eg.test()
         self.logger.debug("Inputs sampled: {0}".format(len(self.inputs)))
 
     @staticmethod

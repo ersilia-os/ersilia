@@ -10,6 +10,7 @@ from ...setup.requirements.compound import (
 )
 from ... import logger
 from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
+from .examples import compound as test_examples
 from . import EXAMPLES_FOLDER
 
 
@@ -32,16 +33,19 @@ class IO(object):
             )
             self._example = self._example_single
             self._parser = self._parse_single
+            self._test = test_examples.input_shape_single
         if type(self.input_shape) is InputShapeList:
             self.logger.debug("InputShapeList shape: {0}".format(self.input_shape.name))
             self._example = self._example_list
             self._parser = self._parse_list
+            self._test = test_examples.input_shape_list
         if type(self.input_shape) is InputShapePairOfLists:
             self.logger.debug(
                 "InputShapePairOfLists shape: {0}".format(self.input_shape.name)
             )
             self._example = self._example_pair_of_lists
             self._parser = self._parse_pair_of_lists
+            self._test = test_examples.input_shape_pair_of_lists
 
     def _sample_example_singlets(self, n_samples):
         delimiter = None
@@ -106,6 +110,9 @@ class IO(object):
 
     def example(self, n_samples):
         return self._example(n_samples)
+
+    def test(self):
+        return self._test
 
     def _parse_dict(self, datum):
         if "key" in datum:

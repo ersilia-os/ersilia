@@ -1,6 +1,7 @@
 import os
 import tempfile
 import csv
+import json
 import collections
 import numpy as np
 
@@ -63,6 +64,38 @@ class FileTyper(object):
 
     def get_extension(self):
         return self.path.split(".")[-1]
+
+
+class BatchCacher(object):
+    def __init__(self):
+        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+
+    def get_cached_files(self, prefix):
+        idx2fn = {}
+        for fn in os.listdir(self.tmp_folder):
+            if fn.startswith(prefix):
+                idx = int(fn.split("-")[-1].split(".")[0])
+                idx2fn[idx] = os.path.join(self.tmp_folder, fn)
+        idxs = sorted(idx2fn.keys())
+        return [idx2fn[idx] for idx in idxs]
+
+    def get_cached_input_files(self):
+        return self.get_cached_files(prefix="chunk-input-")
+
+    def get_cached_output_files(self):
+        return self.get_cached_files(prefix="chunk-output-")
+
+    def name_cached_output_files(self, cached_inputs, output_template):
+        ft = FileTyper(output_template)
+        extension = ft.get_extension()
+        cached_outputs = []
+        for i, _ in enumerate(cached_inputs):
+            cached_outputs += [
+                os.path.join(
+                    self.tmp_folder, "chunk-output-{0}.{1}".format(i, extension)
+                )
+            ]
+        return cached_outputs
 
 
 class BaseTabularFile(object):
@@ -417,8 +450,9 @@ class TabularFileShapeStandardizer(BaseTabularFile):
             self._standardize_pair_of_lists()
 
 
-class StandardTabularFileReader(object):
+class StandardTabularFileReader(BatchCacher):
     def __init__(self, path):
+        BatchCacher.__init__(self)
         self.path = os.path.abspath(path)
         self.logger = logger
         self.logger.debug("Reading standard file from {0}".format(self.path))
@@ -460,7 +494,6 @@ class StandardTabularFileReader(object):
     def split_in_cache(self):
         ft = FileTyper(self.path)
         extension = ft.get_extension()
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         self.logger.debug("Splitting file in cache: {0}".format(self.tmp_folder))
         has_header = self._has_header
         with open(self.path, "r") as f:
@@ -487,33 +520,6 @@ class StandardTabularFileReader(object):
                     g.write(l)
                     i += 1
         return self.get_cached_input_files()
-
-    def get_cached_files(self, prefix):
-        idx2fn = {}
-        for fn in os.listdir(self.tmp_folder):
-            if fn.startswith(prefix):
-                idx = int(fn.split("-")[-1].split(".")[0])
-                idx2fn[idx] = os.path.join(self.tmp_folder, fn)
-        idxs = sorted(idx2fn.keys())
-        return [idx2fn[idx] for idx in idxs]
-
-    def get_cached_input_files(self):
-        return self.get_cached_files(prefix="chunk-input-")
-
-    def get_cached_output_files(self):
-        return self.get_cached_files(prefix="chunk-output-")
-
-    def name_cached_output_files(self, cached_inputs, output_template):
-        ft = FileTyper(output_template)
-        extension = ft.get_extension()
-        cached_outputs = []
-        for i, _ in enumerate(cached_inputs):
-            cached_outputs += [
-                os.path.join(
-                    self.tmp_folder, "chunk-output-{0}.{1}".format(i, extension)
-                )
-            ]
-        return cached_outputs
 
 
 class TabularFileReader(StandardTabularFileReader):
@@ -563,7 +569,6 @@ class TabularFileReader(StandardTabularFileReader):
 
 
 class BaseJsonFile(object):
-    # TODO
     def __init__(self, path, IO, entity_is_list, expected_number):
         self.logger = logger
         self.path = os.path.abspath(path)
@@ -573,26 +578,59 @@ class BaseJsonFile(object):
         self.IO = IO
         self.logger.debug("Expected number: {0}".format(self.expected_number))
         self.logger.debug("Entity is list: {0}".format(self.entity_is_list))
+        self._data = None
+
+    def read_input_json(self):
+        if self._data is None:
+            with open(self.path, "r") as f:
+                self._data = json.load(f)
+        return self._data
+
+    def is_single_input(self):
+        if self._data is None:
+            data = self.read_input_json()
+        else:
+            data = self._data
+        if self.entity_is_list:
+            assert type(data) is list
+            if self.expected_number == 1:
+                one_element = data[0]
+                if type(one_element) is str:
+                    return True
+                else:
+                    return False
+            else:
+                one_element = data[0]
+                assert type(one_element) is list
+                one_inner_element = one_element[0]
+                if type(one_inner_element) is list:
+                    return True
+                else:
+                    return False
+        else:
+            if type(data) is str:
+                return True
+            else:
+                return False
 
 
 class JsonFileShapeStandardizer(BaseJsonFile):
-    # TODO
     def __init__(self, src_path, dst_path, input_shape, IO):
         self.src_path = os.path.abspath(src_path)
         self.dst_path = os.path.abspath(dst_path)
-        self.input_shape = InputShape(input_shape).get()
+        if type(input_shape) is str:
+            self.input_shape = InputShape(input_shape).get()
+        else:
+            self.input_shape = input_shape
         if type(self.input_shape) is InputShapeSingle:
             expected_number = 1
             entity_is_list = False
-            self._standardizer = self._standardize_single
         if type(self.input_shape) is InputShapeList:
             expected_number = 1
             entity_is_list = True
-            self._standardizer = self._standardize_list
         if type(self.input_shape) is InputShapePairOfLists:
             expected_number = 2
             entity_is_list = True
-            self._standardizer = self._standardize_pair_of_lists
         BaseJsonFile.__init__(
             self,
             path=self.src_path,
@@ -601,33 +639,69 @@ class JsonFileShapeStandardizer(BaseJsonFile):
             expected_number=expected_number,
         )
 
-    def _standardize_single(self):
-        pass
-
-    def _standardize_list(self):
-        pass
-
-    def _standardize_pair_of_lists(self):
-        pass
-
     def standardize(self):
-        if type(self.input_shape) is InputShapeSingle:
-            self._standardize_single()
-        if type(self.input_shape) is InputShapeList:
-            self._standardize_list()
-        if type(self.input_shape) is InputShapePairOfLists:
-            self._standardize_pair_of_lists()
+        if self.is_single_input():
+            data = [self.read_input_json()]
+        else:
+            data = self.read_input_json()
+        with open(self.dst_path, "w") as f:
+            json.dump(data, f, indent=4)
 
 
-class StandardJsonFileReader(object):
+class StandardJsonFileReader(BatchCacher):
+    def __init__(self, path):
+        BatchCacher.__init__(self)
+        self.path = os.path.abspath(path)
+        self.logger = logger
+        self.logger.debug("Reading standard file from {0}".format(self.path))
 
-    # TODO: Batch mode with JSON
-    def __init__(self):
-        pass
+    @staticmethod
+    def _chunker(lst, n):
+        for i in range(0, len(lst), n):
+            yield lst[i : i + n]
+
+    def read(self):
+        with open(self.path, "r") as f:
+            return json.load(f)
+
+    def is_worth_splitting(self):
+        n = len(self.read())
+        self.logger.debug("File has {0} entris".format(n))
+        if n > FILE_CHUNKSIZE:
+            self.logger.debug("Worth splitting it")
+            return True
+        else:
+            return False
+
+    def split_in_cache(self):
+        self.logger.debug("Splitting file in cache: {0}".format(self.tmp_folder))
+        with open(self.path, "r") as f:
+            data = json.load(f)
+        for i, data_chunk in enumerate(self._chunker(data, FILE_CHUNKSIZE)):
+            g = os.path.join(self.tmp_folder, "chunk-input-{0}.json".format(i))
+            with open(g, "w") as f:
+                json.dump(data_chunk, g, indent=4)
+        return self.get_cached_input_files()
 
 
 class JsonFileReader(StandardJsonFileReader):
+    def __init__(self, path, IO):
+        self.src_path = os.path.abspath(path)
+        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.dst_path = os.path.join(self.tmp_folder, "standard_input_file.json")
+        self.path = self.dst_path
+        self.IO = IO
+        self.input_shape = IO.input_shape
+        StandardJsonFileReader.__init__(self, path=self.dst_path)
 
-    # TODO
-    def __init__(self):
-        pass
+    def read(self):
+        if not os.path.exists(self.dst_path):
+            jfss = JsonFileShapeStandardizer(
+                src_path=self.src_path,
+                dst_path=self.dst_path,
+                input_shape=self.input_shape,
+                IO=self.IO,
+            )
+            jfss.standardize()
+        with open(self.path, "r") as f:
+            return json.load(f)

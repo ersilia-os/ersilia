@@ -8,7 +8,7 @@ from ..hub.content.card import ModelCard
 from .. import ErsiliaBase
 
 from .shape import InputShape
-from .shape import InputShapeSingle
+from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 from .readers.file import TabularFileReader, JsonFileReader
 
 
@@ -35,7 +35,7 @@ class BaseIOGetter(ErsiliaBase):
     def shape(self, model_id):
         return self._read_shape_from_card(model_id)
 
-    def get(self, model_id):
+    def _get_from_model(self, model_id):
         input_type = self._read_input_from_card(model_id)
         if input_type is None:
             input_type = "naive"
@@ -47,6 +47,20 @@ class BaseIOGetter(ErsiliaBase):
         return importlib.import_module(module, package="ersilia.io").IO(
             input_shape=input_shape
         )
+
+    def _get_from_specs(self, input_type, input_shape):
+        input_type = input_type.lower()
+        input_shape = InputShape(input_shape).get()
+        module = ".types.{0}".format(input_type)
+        return importlib.import_module(module, package="ersilia.io").IO(
+            input_shape=input_shape
+        )
+
+    def get(self, model_id=None, input_type=None, input_shape=None):
+        if model_id is not None:
+            return self._get_from_model(model_id=model_id)
+        else:
+            return self._get_from_specs(input_type=input_type, input_shape=input_shape)
 
 
 class _GenericAdapter(object):
@@ -116,8 +130,12 @@ class _GenericAdapter(object):
 
 
 class GenericInputAdapter(object):
-    def __init__(self, model_id, config_json=None):
-        baseio = BaseIOGetter(config_json=config_json).get(model_id)
+    def __init__(
+        self, model_id=None, input_type=None, input_shape=None, config_json=None
+    ):
+        baseio = BaseIOGetter(config_json=config_json).get(
+            model_id=model_id, input_type=input_type, input_shape=input_shape
+        )
         self.adapter = _GenericAdapter(baseio)
 
     def batch_iter(self, data, batch_size):
@@ -143,6 +161,16 @@ class ExampleGenerator(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
         self.IO = BaseIOGetter(config_json=config_json).get(model_id)
         ErsiliaBase.__init__(self, config_json=config_json)
+        self.input_shape = self.IO.input_shape
+        self._string_delimiter = self.IO.string_delimiter()
+        self._force_simple = True
+        if type(self.input_shape) is InputShapeSingle:
+            self._flatten = self._flatten_single
+            self._force_simple = False
+        if type(self.input_shape) is InputShapeList:
+            self._flatten = self._flatten_list
+        if type(self.input_shape) is InputShapePairOfLists:
+            self._flatten = self._flatten_single
 
     @staticmethod
     def _get_delimiter(file_name):
@@ -152,10 +180,26 @@ class ExampleGenerator(ErsiliaBase):
         else:
             return ","
 
+    def _flatten_single(self, datum):
+        return datum
+
+    def _flatten_list(self, datum):
+        return self._string_delimiter.join(datum)
+
+    def _flatten_pair_of_lists(self, datum):
+        return [
+            self._string_delimiter.join(datum[0]),
+            self._string_delimiter.join(datum[1]),
+        ]
+
+    def test(self):
+        return self.IO.test()
+
     def example(self, n_samples, file_name, simple):
-        if type(self.IO.input_shape) is not InputShapeSingle:
-            self.logger.error("Cannot generate example, unfortunately...")
-            return None
+        if not self._force_simple:
+            simple = simple
+        else:
+            simple = True
         if file_name is None:
             data = [v for v in self.IO.example(n_samples)]
             if simple:
@@ -175,7 +219,7 @@ class ExampleGenerator(ErsiliaBase):
                     writer = csv.writer(f, delimiter=delimiter)
                     if simple:
                         for v in self.IO.example(n_samples):
-                            writer.writerow([v["input"]])
+                            writer.writerow([self._flatten(v["input"])])
                     else:
                         writer.writerow(["key", "input", "text"])
                         for v in self.IO.example(n_samples):
