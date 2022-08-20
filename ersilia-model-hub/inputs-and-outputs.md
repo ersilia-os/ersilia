@@ -28,8 +28,6 @@ Below we show a few exemplary&#x20;
 
 ### Single molecules
 
-The majority of chemistry models take as input a single molecule.
-
 #### One input
 
 {% tabs %}
@@ -51,11 +49,9 @@ CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O
 {% endtab %}
 
 {% tab title="Python" %}
-{% code title="compound_single.py" %}
 ```python
 smiles = "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O"
 ```
-{% endcode %}
 {% endtab %}
 {% endtabs %}
 
@@ -94,7 +90,6 @@ COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5
 {% endtab %}
 
 {% tab title="Python" %}
-{% code title="compound_singles.py" %}
 ```python
 smiles = [
     "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O",
@@ -106,30 +101,244 @@ smiles = [
     "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5",
 ]
 ```
-{% endcode %}
 {% endtab %}
 {% endtabs %}
+
+{% hint style="info" %}
+The majority of Ersilia chemistry models take single molecules as input.
+{% endhint %}
 
 ### List of molecules
 
 #### One input
 
+{% tabs %}
+{% tab title="CSV" %}
+{% code title="compound_list.csv" %}
+```
+smiles
+CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O
+C1=CN=CC=C1C(=O)NN
+CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O
+CC(=O)OC1=CC=CC=C1C(=O)O
+CC(C)CC1=CC=C(C=C1)C(C)C(=O)O
+CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C
+COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="JSON" %}
+{% code title="compound_list.json" %}
+```json
+[
+    "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O",
+    "C1=CN=CC=C1C(=O)NN",
+    "CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O",
+    "CC(=O)OC1=CC=CC=C1C(=O)O",
+    "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+    "CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C",
+    "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5"
+]
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+smiles_list = [
+    "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O",
+    "C1=CN=CC=C1C(=O)NN",
+    "CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O",
+    "CC(=O)OC1=CC=CC=C1C(=O)O",
+    "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+    "CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C",
+    "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5",
+]
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="warning" %}
+Note that, in this case, the full list corresponds to one input. Some generative models, for example, require multiple molecules as a starting point for one generation round.
+{% endhint %}
 
 #### Multiple inputs
 
+{% tabs %}
+{% tab title="CSV" %}
+{% code title="compound_lists.csv" %}
+```csv
+smiles
+CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O.C1=CN=CC=C1C(=O)NN.CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O
+CC(=O)OC1=CC=CC=C1C(=O)O.CC(C)CC1=CC=C(C=C1)C(C)C(=O)O.CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C.COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5
+```
+{% endcode %}
+{% endtab %}
 
+{% tab title="Second Tab" %}
+{% code title="compound_lists.json" %}
+```json
+[
+    [
+        "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O",
+        "C1=CN=CC=C1C(=O)NN",
+        "CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O"
+    ],
+    [
+        "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+        "CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C",
+        "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5"
+    ]
+]
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+smiles_lists = [
+    [
+        "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O",
+        "C1=CN=CC=C1C(=O)NN",
+        "CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O",
+    ],
+    [
+        "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+        "CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C",
+        "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5",
+    ],
+]
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="info" %}
+To specify a list in a single column in a `.csv` file, molecules can be separated with a dot (`.)`.
+{% endhint %}
 
 ### Pair of lists of molecules
 
+#### One input
 
+{% tabs %}
+{% tab title="CSV" %}
+{% code title="compound_pair_of_lists.csv" %}
+```csv
+smiles_1,smiles_2
+CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O,CC(=O)OC1=CC=CC=C1C(=O)O
+C1=CN=CC=C1C(=O)NN,CC(C)CC1=CC=C(C=C1)C(C)C(=O)O
+CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O,CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C
+,COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5
+```
+{% endcode %}
+{% endtab %}
 
-### Generate your own inputs
+{% tab title="JSON" %}
+{% code title="compound_pair_of_lists.json" %}
+```json
+[
+    [
+        "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O",
+        "C1=CN=CC=C1C(=O)NN",
+        "CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O"
+    ],
+    [
+        "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+        "CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C",
+        "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5"
+    ]
+]
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+smiles_pair_of_lists = (
+    [
+        "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O",
+        "C1=CN=CC=C1C(=O)NN",
+        "CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O",
+    ],
+    [
+        "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+        "CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C",
+        "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5",
+    ],
+)
+```
+{% endtab %}
+{% endtabs %}
+
+#### Multiple inputs
+
+{% tabs %}
+{% tab title="CSV" %}
+{% code title="compound_pair_of_lists.csv" %}
+```csv
+smiles_1,smiles_2
+CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O.C1=CN=CC=C1C(=O)NN,CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O
+CC(=O)OC1=CC=CC=C1C(=O)O.CC(C)CC1=CC=C(C=C1)C(C)C(=O)O,CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C.COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="JSON" %}
+{% code title="compound_pairs_of_lists.json" %}
+```json
+[
+    [
+        [
+            "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O",
+            "C1=CN=CC=C1C(=O)NN"
+        ],
+        [
+            "CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O"
+        ]
+    ],
+    [
+        [
+            "CC(=O)OC1=CC=CC=C1C(=O)O",
+            "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+        ],
+        [
+            "CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C",
+            "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5"
+        ]
+    ]
+]
+```
+{% endcode %}
+{% endtab %}
+
+{% tab title="Python" %}
+```python
+smiles_pairs_of_lists = [
+    [
+        ["CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O", "C1=CN=CC=C1C(=O)NN"],
+        ["CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O"],
+    ],
+    [
+        ["CC(=O)OC1=CC=CC=C1C(=O)O", "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"],
+        [
+            "CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C",
+            "COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5",
+        ],
+    ],
+]
+```
+{% endtab %}
+{% endtabs %}
+
+### Randomly generate inputs
 
 You can generate inputs of arbitrary size for your model of interest with the following command. In this case, we generate 1,000 inputs for the `chemprop-antibiotic` model and store them as a `.csv` file.
 
 ```bash
 ersilia example chemprop-antibioitic -n 1000 -f input.csv
 ```
-
-## Outputs
