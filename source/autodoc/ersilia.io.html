@@ -99,10 +99,20 @@
 <li class="toctree-l1"><a class="reference internal" href="ersilia.io.readers.html">ersilia.io.readers package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.io.readers.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.io.readers.html#module-ersilia.io.readers.file">ersilia.io.readers.file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.io.readers.html#module-ersilia.io.readers.pyinput">ersilia.io.readers.pyinput module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.io.readers.html#module-ersilia.io.readers">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.io.types.html">ersilia.io.types package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.io.types.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.types.examples.html">ersilia.io.types.examples package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.types.examples.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.types.examples.html#module-ersilia.io.types.examples.compound">ersilia.io.types.examples.compound module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.types.examples.html#module-ersilia.io.types.examples">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.io.types.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.io.types.html#module-ersilia.io.types.compound">ersilia.io.types.compound module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.io.types.html#module-ersilia.io.types.naive">ersilia.io.types.naive module</a></li>
@@ -143,7 +153,7 @@
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
 <dl class="method">
 <dt id="ersilia.io.input.BaseIOGetter.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>model_id</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#BaseIOGetter.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.input.BaseIOGetter.get" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get</code><span class="sig-paren">(</span><em>model_id=None</em>, <em>input_type=None</em>, <em>input_shape=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#BaseIOGetter.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.input.BaseIOGetter.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -162,11 +172,16 @@
 <code class="descname">example</code><span class="sig-paren">(</span><em>n_samples</em>, <em>file_name</em>, <em>simple</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#ExampleGenerator.example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.input.ExampleGenerator.example" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="ersilia.io.input.ExampleGenerator.test">
+<code class="descname">test</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#ExampleGenerator.test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.input.ExampleGenerator.test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="ersilia.io.input.GenericInputAdapter">
-<em class="property">class </em><code class="descclassname">ersilia.io.input.</code><code class="descname">GenericInputAdapter</code><span class="sig-paren">(</span><em>model_id</em>, <em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#GenericInputAdapter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.input.GenericInputAdapter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ersilia.io.input.</code><code class="descname">GenericInputAdapter</code><span class="sig-paren">(</span><em>model_id=None</em>, <em>input_type=None</em>, <em>input_shape=None</em>, <em>config_json=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#GenericInputAdapter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.input.GenericInputAdapter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="ersilia.io.input.GenericInputAdapter.adapt">

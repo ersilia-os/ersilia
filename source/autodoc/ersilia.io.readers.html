@@ -102,6 +102,16 @@
 <dt id="ersilia.io.readers.file.BaseJsonFile">
 <em class="property">class </em><code class="descclassname">ersilia.io.readers.file.</code><code class="descname">BaseJsonFile</code><span class="sig-paren">(</span><em>path</em>, <em>IO</em>, <em>entity_is_list</em>, <em>expected_number</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BaseJsonFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.BaseJsonFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.io.readers.file.BaseJsonFile.is_single_input">
+<code class="descname">is_single_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BaseJsonFile.is_single_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.BaseJsonFile.is_single_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.io.readers.file.BaseJsonFile.read_input_json">
+<code class="descname">read_input_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BaseJsonFile.read_input_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.BaseJsonFile.read_input_json" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -156,6 +166,32 @@
 </dd></dl>
 
 <dl class="class">
+<dt id="ersilia.io.readers.file.BatchCacher">
+<em class="property">class </em><code class="descclassname">ersilia.io.readers.file.</code><code class="descname">BatchCacher</code><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BatchCacher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.BatchCacher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.io.readers.file.BatchCacher.get_cached_files">
+<code class="descname">get_cached_files</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BatchCacher.get_cached_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.BatchCacher.get_cached_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.io.readers.file.BatchCacher.get_cached_input_files">
+<code class="descname">get_cached_input_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BatchCacher.get_cached_input_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.BatchCacher.get_cached_input_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.io.readers.file.BatchCacher.get_cached_output_files">
+<code class="descname">get_cached_output_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BatchCacher.get_cached_output_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.BatchCacher.get_cached_output_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.io.readers.file.BatchCacher.name_cached_output_files">
+<code class="descname">name_cached_output_files</code><span class="sig-paren">(</span><em>cached_inputs</em>, <em>output_template</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BatchCacher.name_cached_output_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.BatchCacher.name_cached_output_files" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="ersilia.io.readers.file.FileTyper">
 <em class="property">class </em><code class="descclassname">ersilia.io.readers.file.</code><code class="descname">FileTyper</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#FileTyper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.FileTyper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -203,8 +239,13 @@
 
 <dl class="class">
 <dt id="ersilia.io.readers.file.JsonFileReader">
-<em class="property">class </em><code class="descclassname">ersilia.io.readers.file.</code><code class="descname">JsonFileReader</code><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#JsonFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.JsonFileReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">ersilia.io.readers.file.</code><code class="descname">JsonFileReader</code><span class="sig-paren">(</span><em>path</em>, <em>IO</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#JsonFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.JsonFileReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.io.readers.file.StandardJsonFileReader" title="ersilia.io.readers.file.StandardJsonFileReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.io.readers.file.StandardJsonFileReader</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.io.readers.file.JsonFileReader.read">
+<code class="descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#JsonFileReader.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.JsonFileReader.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -220,29 +261,29 @@
 
 <dl class="class">
 <dt id="ersilia.io.readers.file.StandardJsonFileReader">
-<em class="property">class </em><code class="descclassname">ersilia.io.readers.file.</code><code class="descname">StandardJsonFileReader</code><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardJsonFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardJsonFileReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">ersilia.io.readers.file.</code><code class="descname">StandardJsonFileReader</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardJsonFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardJsonFileReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ersilia.io.readers.file.BatchCacher" title="ersilia.io.readers.file.BatchCacher"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.io.readers.file.BatchCacher</span></code></a></p>
+<dl class="method">
+<dt id="ersilia.io.readers.file.StandardJsonFileReader.is_worth_splitting">
+<code class="descname">is_worth_splitting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardJsonFileReader.is_worth_splitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardJsonFileReader.is_worth_splitting" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.io.readers.file.StandardJsonFileReader.read">
+<code class="descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardJsonFileReader.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardJsonFileReader.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.io.readers.file.StandardJsonFileReader.split_in_cache">
+<code class="descname">split_in_cache</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardJsonFileReader.split_in_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardJsonFileReader.split_in_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="ersilia.io.readers.file.StandardTabularFileReader">
 <em class="property">class </em><code class="descclassname">ersilia.io.readers.file.</code><code class="descname">StandardTabularFileReader</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardTabularFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardTabularFileReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="method">
-<dt id="ersilia.io.readers.file.StandardTabularFileReader.get_cached_files">
-<code class="descname">get_cached_files</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardTabularFileReader.get_cached_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardTabularFileReader.get_cached_files" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.io.readers.file.StandardTabularFileReader.get_cached_input_files">
-<code class="descname">get_cached_input_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardTabularFileReader.get_cached_input_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardTabularFileReader.get_cached_input_files" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.io.readers.file.StandardTabularFileReader.get_cached_output_files">
-<code class="descname">get_cached_output_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardTabularFileReader.get_cached_output_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardTabularFileReader.get_cached_output_files" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>Bases: <a class="reference internal" href="#ersilia.io.readers.file.BatchCacher" title="ersilia.io.readers.file.BatchCacher"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.io.readers.file.BatchCacher</span></code></a></p>
 <dl class="method">
 <dt id="ersilia.io.readers.file.StandardTabularFileReader.get_delimiter">
 <code class="descname">get_delimiter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardTabularFileReader.get_delimiter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardTabularFileReader.get_delimiter" title="Permalink to this definition">¶</a></dt>
@@ -251,11 +292,6 @@
 <dl class="method">
 <dt id="ersilia.io.readers.file.StandardTabularFileReader.is_worth_splitting">
 <code class="descname">is_worth_splitting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardTabularFileReader.is_worth_splitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardTabularFileReader.is_worth_splitting" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ersilia.io.readers.file.StandardTabularFileReader.name_cached_output_files">
-<code class="descname">name_cached_output_files</code><span class="sig-paren">(</span><em>cached_inputs</em>, <em>output_template</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardTabularFileReader.name_cached_output_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardTabularFileReader.name_cached_output_files" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -293,6 +329,25 @@
 <dl class="method">
 <dt id="ersilia.io.readers.file.TabularFileShapeStandardizer.standardize">
 <code class="descname">standardize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#TabularFileShapeStandardizer.standardize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.file.TabularFileShapeStandardizer.standardize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ersilia.io.readers.pyinput">
+<span id="ersilia-io-readers-pyinput-module"></span><h2>ersilia.io.readers.pyinput module<a class="headerlink" href="#module-ersilia.io.readers.pyinput" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ersilia.io.readers.pyinput.PyInputReader">
+<em class="property">class </em><code class="descclassname">ersilia.io.readers.pyinput.</code><code class="descname">PyInputReader</code><span class="sig-paren">(</span><em>input</em>, <em>IO</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/pyinput.html#PyInputReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.pyinput.PyInputReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ersilia.io.readers.pyinput.PyInputReader.is_single_input">
+<code class="descname">is_single_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/pyinput.html#PyInputReader.is_single_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.pyinput.PyInputReader.is_single_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ersilia.io.readers.pyinput.PyInputReader.read">
+<code class="descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/pyinput.html#PyInputReader.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ersilia.io.readers.pyinput.PyInputReader.read" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

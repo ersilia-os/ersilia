@@ -208,6 +208,8 @@
 </li>
       <li><a href="source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.batch_iter">batch_iter() (ersilia.io.input.GenericInputAdapter method)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher">BatchCacher (class in ersilia.io.readers.file)</a>
+</li>
       <li><a href="source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.bentoml">bentoml() (ersilia.hub.content.catalog.ModelCatalog method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.bentoml_version">bentoml_version() (ersilia.utils.versioning.Versioner method)</a>
@@ -722,12 +724,12 @@
 </li>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io">ersilia.io (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io.dataframe">ersilia.io.dataframe (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io.input">ersilia.io.input (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io.output">ersilia.io.output (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io.pure">ersilia.io.pure (module)</a>
@@ -736,11 +738,17 @@
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#module-ersilia.io.readers.file">ersilia.io.readers.file (module)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.io.readers.html#module-ersilia.io.readers.pyinput">ersilia.io.readers.pyinput (module)</a>
+</li>
       <li><a href="source/autodoc/ersilia.io.html#module-ersilia.io.shape">ersilia.io.shape (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.types.html#module-ersilia.io.types">ersilia.io.types (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.types.html#module-ersilia.io.types.compound">ersilia.io.types.compound (module)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.io.types.examples.html#module-ersilia.io.types.examples">ersilia.io.types.examples (module)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.io.types.examples.html#module-ersilia.io.types.examples.compound">ersilia.io.types.examples.compound (module)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.types.html#module-ersilia.io.types.naive">ersilia.io.types.naive (module)</a>
 </li>
@@ -1020,11 +1028,11 @@
         <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.get_bentoml_version">(ersilia.hub.bundle.repo.DockerfileFile method)</a>
 </li>
       </ul></li>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.get_cached_files">get_cached_files() (ersilia.io.readers.file.StandardTabularFileReader method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_files">get_cached_files() (ersilia.io.readers.file.BatchCacher method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.get_cached_input_files">get_cached_input_files() (ersilia.io.readers.file.StandardTabularFileReader method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_input_files">get_cached_input_files() (ersilia.io.readers.file.BatchCacher method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.get_cached_output_files">get_cached_output_files() (ersilia.io.readers.file.StandardTabularFileReader method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_output_files">get_cached_output_files() (ersilia.io.readers.file.BatchCacher method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive">get_conda_and_pip_install_commands_from_dockerfile_if_exclusive() (ersilia.utils.conda.CondaUtils method)</a>
 </li>
@@ -1230,10 +1238,10 @@
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_csv">is_csv() (ersilia.io.readers.file.FileTyper method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_docker">is_docker() (ersilia.hub.bundle.status.ModelStatus method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_downloaded">is_downloaded() (ersilia.hub.bundle.status.ModelStatus method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_flattened">is_flattened() (ersilia.io.readers.file.BaseTabularFile method)</a>
@@ -1286,8 +1294,14 @@
 </li>
       <li><a href="source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.is_silence">is_silence() (ersilia.cli.echo.Silencer method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_single_input">is_single_input() (ersilia.io.readers.file.BaseTabularFile method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseJsonFile.is_single_input">is_single_input() (ersilia.io.readers.file.BaseJsonFile method)</a>
+
+      <ul>
+        <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_single_input">(ersilia.io.readers.file.BaseTabularFile method)</a>
 </li>
+        <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.pyinput.PyInputReader.is_single_input">(ersilia.io.readers.pyinput.PyInputReader method)</a>
+</li>
+      </ul></li>
       <li><a href="source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug.is_slug">is_slug() (ersilia.hub.content.slug.Slug method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_tabular">is_tabular() (ersilia.io.readers.file.FileTyper method)</a>
@@ -1308,8 +1322,12 @@
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_valid_output_file">is_valid_output_file() (ersilia.io.readers.file.FileTyper method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.is_worth_splitting">is_worth_splitting() (ersilia.io.readers.file.StandardTabularFileReader method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.is_worth_splitting">is_worth_splitting() (ersilia.io.readers.file.StandardJsonFileReader method)</a>
+
+      <ul>
+        <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.is_worth_splitting">(ersilia.io.readers.file.StandardTabularFileReader method)</a>
 </li>
+      </ul></li>
       <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.interface.IsauraInterface">IsauraInterface (class in ersilia.lake.interface)</a>
 </li>
       <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager">IsauraManager (class in ersilia.lake.manager)</a>
@@ -1488,7 +1506,7 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.name_cached_output_files">name_cached_output_files() (ersilia.io.readers.file.StandardTabularFileReader method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.name_cached_output_files">name_cached_output_files() (ersilia.io.readers.file.BatchCacher method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.needs_conda">needs_conda() (ersilia.hub.bundle.bundle.BundleEnvironmentFile method)</a>
 
@@ -1566,10 +1584,10 @@
 </li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.api.Api.post_amenable_to_h5">post_amenable_to_h5() (ersilia.serve.api.Api method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.api.Api.post_only_calculations">post_only_calculations() (ersilia.serve.api.Api method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.api.Api.post_only_reads">post_only_reads() (ersilia.serve.api.Api method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.api.Api.post_unique_input">post_unique_input() (ersilia.serve.api.Api method)</a>
@@ -1600,6 +1618,8 @@
         <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.upload.OsfUploader.push">(ersilia.utils.upload.OsfUploader method)</a>
 </li>
       </ul></li>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.pyinput.PyInputReader">PyInputReader (class in ersilia.io.readers.pyinput)</a>
+</li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.python_version">python_version() (ersilia.utils.versioning.Versioner method)</a>
 </li>
   </ul></td>
@@ -1618,10 +1638,16 @@
       </ul></li>
       <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.compound.RdkitRequirement">RdkitRequirement (class in ersilia.setup.requirements.compound)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.read">read() (ersilia.io.readers.file.StandardTabularFileReader method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileReader.read">read() (ersilia.io.readers.file.JsonFileReader method)</a>
 
       <ul>
+        <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.read">(ersilia.io.readers.file.StandardJsonFileReader method)</a>
+</li>
+        <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.read">(ersilia.io.readers.file.StandardTabularFileReader method)</a>
+</li>
         <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader.read">(ersilia.io.readers.file.TabularFileReader method)</a>
+</li>
+        <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.pyinput.PyInputReader.read">(ersilia.io.readers.pyinput.PyInputReader method)</a>
 </li>
         <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.interface.IsauraInterface.read">(ersilia.lake.interface.IsauraInterface method)</a>
 </li>
@@ -1631,6 +1657,8 @@
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.read_header">read_header() (ersilia.io.readers.file.StandardTabularFileReader method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.read_input_columns">read_input_columns() (ersilia.io.readers.file.BaseTabularFile method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseJsonFile.read_input_json">read_input_json() (ersilia.io.readers.file.BaseJsonFile method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.read_log">read_log() (ersilia.utils.installers.BaseInstaller method)</a>
 </li>
@@ -1650,6 +1678,8 @@
 </li>
       <li><a href="source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_service_class">register_service_class() (ersilia.core.session.Session method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.remove">remove() (ersilia.db.environments.managers.DockerManager method)</a>
 
       <ul>
@@ -1658,8 +1688,6 @@
         <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.remove.OsfRemover.remove">(ersilia.utils.remove.OsfRemover method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_from_log">remove_from_log() (ersilia.utils.installers.BaseInstaller method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.remove_local_duplicates">remove_local_duplicates() (ersilia.lake.manager.IsauraManager method)</a>
@@ -1836,8 +1864,12 @@
 </li>
       <li><a href="source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.specs_from_dockerfile_as_json">specs_from_dockerfile_as_json() (ersilia.utils.conda.CondaUtils method)</a>
 </li>
-      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.split_in_cache">split_in_cache() (ersilia.io.readers.file.StandardTabularFileReader method)</a>
+      <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.split_in_cache">split_in_cache() (ersilia.io.readers.file.StandardJsonFileReader method)</a>
+
+      <ul>
+        <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.split_in_cache">(ersilia.io.readers.file.StandardTabularFileReader method)</a>
 </li>
+      </ul></li>
       <li><a href="source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack">stack() (ersilia.io.output.TabularOutputStacker method)</a>
 
       <ul>
@@ -1906,10 +1938,16 @@
 </li>
       <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.rebase.TemplateRebaser">TemplateRebaser (class in ersilia.publish.rebase)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.test">test() (ersilia.io.input.ExampleGenerator method)</a>
+
+      <ul>
+        <li><a href="source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.test">(ersilia.io.types.compound.IO method)</a>
+</li>
+        <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.test">(ersilia.publish.publish.ModelPublisher method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.test">test() (ersilia.publish.publish.ModelPublisher method)</a>
-</li>
       <li><a href="source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.timestamp.TimeStampIdentifier">TimeStampIdentifier (class in ersilia.utils.identifiers.timestamp)</a>
 </li>
       <li><a href="source/autodoc/ersilia.cli.commands.utils.html#ersilia.cli.commands.utils.utils.tmp_pid_file">tmp_pid_file() (in module ersilia.cli.commands.utils.utils)</a>
