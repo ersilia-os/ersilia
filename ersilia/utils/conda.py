@@ -2,6 +2,7 @@ import tempfile
 import os
 import json
 import hashlib
+import shutil
 from collections import defaultdict, OrderedDict
 from .terminal import run_command, run_command_check_output
 from .docker import SimpleDockerfileParser
@@ -288,9 +289,19 @@ class SimpleConda(CondaUtils):
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
 
-    def delete(self, environment):
+    def _proper_delete(self, environment):
         for env in self.startswith(environment):
             self.delete_one(env)
+
+    def _manual_delete(self, environment):
+        envs_path = os.path.join(self.conda_prefix(True), "envs")
+        for env in os.listdir(envs_path):
+            if env.startswith(environment):
+                shutil.rmtree(os.path.join(envs_path, env))
+
+    def delete(self, environment):
+        self._proper_delete(environment)
+        self._manual_delete(environment)
 
     def export_env_yml(self, environment, dest):
         """

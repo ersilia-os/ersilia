@@ -604,9 +604,9 @@ class BaseJsonFile(object):
                 assert type(one_element) is list
                 one_inner_element = one_element[0]
                 if type(one_inner_element) is list:
-                    return True
-                else:
                     return False
+                else:
+                    return True
         else:
             if type(data) is str:
                 return True

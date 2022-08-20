@@ -9,6 +9,7 @@ from .. import ErsiliaBase
 
 from .shape import InputShape
 from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
+from .readers.pyinput import PyInputReader
 from .readers.file import TabularFileReader, JsonFileReader
 
 
@@ -68,10 +69,18 @@ class _GenericAdapter(object):
         self.IO = BaseIO
 
     def _is_file(self, inp):
+        if not self._is_string(inp):
+            return False
         if os.path.isfile(inp):
             return True
         else:
             return False
+
+    def _is_python_instance(self, inp):
+        if type(inp) is str:
+            if os.path.isfile(inp):
+                return False
+        return True
 
     def _is_list(self, inp):
         if type(inp) is list:
@@ -85,13 +94,11 @@ class _GenericAdapter(object):
         else:
             return False
 
-    def _string_reader(self, inp):
+    def _try_to_eval(self, inp):
         try:
             data = eval(inp)
         except:
             data = inp
-        if type(data) is str:
-            data = [data]
         return data
 
     def _is_tabular_file(self, inp):
@@ -106,6 +113,11 @@ class _GenericAdapter(object):
         else:
             return False
 
+    def _py_input_reader(self, inp):
+        reader = PyInputReader(input=inp, IO=self.IO)
+        data = reader.read()
+        return data
+
     def _file_reader(self, inp):
         reader = None
         if self._is_tabular_file(inp):
@@ -115,16 +127,15 @@ class _GenericAdapter(object):
         data = reader.read()
         return data
 
+    def _adapt(self, inp):
+        if self._is_file(inp):
+            return self._file_reader(inp)
+        inp = self._try_to_eval(inp)
+        if self._is_python_instance(inp):
+            return self._py_input_reader(inp)
+
     def adapt(self, inp):
-        if self._is_string(inp):
-            if self._is_file(inp):
-                data = self._file_reader(inp)
-            else:
-                data = self._string_reader(inp)
-        elif self._is_list(inp):
-            data = inp
-        else:
-            return None
+        data = self._adapt(inp)
         data = [self.IO.parse(d) for d in data]
         return data
 

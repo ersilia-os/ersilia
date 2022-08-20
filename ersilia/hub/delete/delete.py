@@ -164,8 +164,10 @@ class ModelCondaDeleter(ErsiliaBase):
 
     def delete(self, model_id):
         envs = self.envdb.envs_of_model(model_id)
+        envs = list(set(list(envs) + [model_id]))
         for env in envs:
             models = self.envdb.models_of_env(env)
+            models.update([model_id])
             if len(models) == 1:
                 self.logger.info("Deleting conda environment {0}".format(env))
                 conda = SimpleConda()
