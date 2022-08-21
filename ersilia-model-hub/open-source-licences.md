@@ -21,8 +21,8 @@ This article is a guide to licence third-party code to be incorporated into the 
 
 OS licences fall under two types: Permissive licence and Copyleft licence.
 
-* Permissive licences give users fewer restrictions when using source code. Users can take the permissive-licensed software, make it their own through changes or additions, and distribute that modified program with only a handful of conditions.[\[1\]](https://fossa.com/blog/what-do-open-source-licenses-even-mean/) Some popular examples of permissive licences include MIT, Apache, BSD etc.
-* Copyleft licences are more restrictive than permissive licences. Generally, they require that any derivative work of the copyleft-licensed software be released under the same licence as the original.[\[2\]](https://fossa.com/blog/what-do-open-source-licenses-even-mean/) Some examples of Copyleft licences are AGPL, GPL, LGPL, Mozilla etc.
+* Permissive licences give users fewer restrictions when using source code. Users can take the permissive-licensed software, make it their own through changes or additions, and distribute that modified program with only a handful of conditions [\[1\]](https://fossa.com/blog/what-do-open-source-licenses-even-mean/). Some popular examples of permissive licences include MIT, Apache, BSD etc.
+* Copyleft licences are more restrictive than permissive licences. Generally, they require that any derivative work of the copyleft-licensed software be released under the same licence as the original [\[2\]](https://fossa.com/blog/what-do-open-source-licenses-even-mean/). Some examples of Copyleft licences are AGPL, GPL, LGPL, Mozilla etc.
 
 ### **Permissive Licences**
 
@@ -37,14 +37,14 @@ OS licences fall under two types: Permissive licence and Copyleft licence.
 * **GNU Lesser General Public Licence (LGPL)** [\[8\]](https://opensource.org/licenses/LGPL-3.0) permits users to copy and distribute verbatim copies of the licensed source code but users should not change the source code. _When incorporating code LGPL-licenced, please keep the original copyright and licence notice on the folder where the source code is and reference it in the README file._
 * **Mozilla Public Licence** [\[9\]](https://opensource.org/licenses/MPL-2.0) requires that derivative works should maintain the licence. It permits distribution, modification, and even using the software for commercial purposes, but the original code and its modifications must maintain the MLP licence. _When incorporating MPL-licenced code, maintain the licence notice for the specific folders where source code is._
 
-If the license you are dealing with is not described here please refer to the sources used to write these guidelines and contact the Ersilia Team ([hello@ersilia.io](mailto:hello@ersilia.io)):
+If the license you are dealing with is not described here please refer to the sources used to write these guidelines and contact the Ersilia team ([hello@ersilia.io](mailto:hello@ersilia.io)):
 
-1. Mahak Bandi. All About Open Source Licenses. _FOSSA_ [https://fossa.com/blog/what-do-open-source-licenses-even-mean/](https://fossa.com/blog/what-do-open-source-licenses-even-mean/)
-2. Mahak Bandi. All About Open Source Licenses. _FOSSA_ [https://fossa.com/blog/what-do-open-source-licenses-even-mean/](https://fossa.com/blog/what-do-open-source-licenses-even-mean/)
-3. [The MIT License](https://opensource.org/licenses/MIT). _Open Source Initiative._ Accessed June 2022
-4. Apache License, Version 2.0. _Open Source Initiative_ [https://opensource.org/licenses/Apache-2.0](https://opensource.org/licenses/Apache-2.0)
-5. The 3-Clause BSD License _Open Source Initiative_ [https://opensource.org/licenses/BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
-6. GNU General Public License _Open Source Initiative_ [https://opensource.org/licenses/GPL-3.0](https://opensource.org/licenses/GPL-3.0)
-7. GNU Affero General Public License _Open Source Initiative_ [https://opensource.org/licenses/AGPL-3.0](https://opensource.org/licenses/AGPL-3.0)
-8. GNU Lesser General Public License _Open Source Initiative_ [https://opensource.org/licenses/LGPL-3.0](https://opensource.org/licenses/LGPL-3.0)
-9. Mozilla Public License _Open Source Initiative_ [https://opensource.org/licenses/MPL-2.0](https://opensource.org/licenses/MPL-2.0)
+1. Mahak Bandi. All About Open Source Licenses. _FOSSA_ [\[10\]](https://fossa.com/blog/what-do-open-source-licenses-even-mean/)
+2. Mahak Bandi. All About Open Source Licenses. _FOSSA_ [\[11\]](https://fossa.com/blog/what-do-open-source-licenses-even-mean/)
+3. The MIT License. _Open Source Initiative._ Accessed June 2022 [\[12\]](https://opensource.org/licenses/MIT)
+4. Apache License, Version 2.0. _Open Source Initiative_ [\[13\]](https://opensource.org/licenses/Apache-2.0)
+5. The 3-Clause BSD License _Open Source Initiative_ [\[14\]](https://opensource.org/licenses/BSD-3-Clause)
+6. GNU General Public License _Open Source Initiative_ [\[15\]](https://opensource.org/licenses/GPL-3.0)
+7. GNU Affero General Public License _Open Source Initiative_ [\[16\]](https://opensource.org/licenses/AGPL-3.0)
+8. GNU Lesser General Public License _Open Source Initiative_ [\[17\]](https://opensource.org/licenses/LGPL-3.0)
+9. Mozilla Public License _Open Source Initiative_ [\[18\]](https://opensource.org/licenses/MPL-2.0)
