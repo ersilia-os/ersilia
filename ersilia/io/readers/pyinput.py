@@ -24,7 +24,8 @@ class PyInputReader(object):
 
     def _extract_datum(self, inp):
         inp = self._undict(inp)
-        inp = [self._undict(x) for x in inp]
+        if type(inp) is list or type(inp) is tuple:
+            inp = [self._undict(x) for x in inp]
         return inp
 
     def is_single_input(self):

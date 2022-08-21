@@ -6,7 +6,6 @@ In this folder we outline different kinds of inputs for testing.
 
 * `.csv`: Input in tabular format.
 * `.json`: Input in JSON format.
-* `.txt`: Input in text format, similar to what is passed as an argument.
 * `.py`: These files are used to mimick Python variables, i.e. useful when we use Ersilia in the Python API.
 
 ## Chemistry
