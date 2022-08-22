@@ -72,6 +72,12 @@ ChemXor is available on PyPi and can be installed using pip.
 pip install chemxor
 ```
 
+#### Tutorials
+
+[Model Training](https://github.com/ersilia-os/chemxor/blob/main/notebooks/train\_olindanet\_models.ipynb)
+
+[Model Evaluation and Serving](https://github.com/ersilia-os/chemxor/blob/main/notebooks/fhe\_olindanet\_models.ipynb)
+
 #### Model selection and training
 
 At the moment, one can choose from 3 pre-tuned models.
@@ -93,7 +99,7 @@ The model is a normal Pytorch Lightning module which is compatible with Pytorch 
 
 #### Dataset Preparation
 
-ChemXor provides two generic Pytorch Lightning Datamodules (Regression, Classification) that can be used to train and evaluate the models. These Datamodules expects raw data as CSV files with two columns (SMILES, target).&#x20;
+ChemXor provides two generic Pytorch Lightning Datamodules (Regression, Classification) that can be used to train and evaluate the models. These Datamodules expects raw data as CSV files with two columns (target, SMILES).&#x20;
 
 ```python
 from chemxor.data import OlindaCDataModule, OlindaRDataModule
@@ -159,7 +165,7 @@ from chemxor.utils import process_fhe_input
 output = enc_sample
 for step in fhe_model.steps:
     output = fhe_model(output, step)
-    dec_out = output.decrypt().tolist()
+    dec_out = output.decrypt()
     output = process_fhe_input(
                     dec_out,
                     fhe_model.pre_process[step],
@@ -167,7 +173,7 @@ for step in fhe_model.steps:
                 )
 
 # final decryted output
-decrypted_output = output.decrypt().tolist()
+decrypted_output = output.decrypt()
 ```
 
 This process can automated using a utility function provided by ChemXor
@@ -175,7 +181,7 @@ This process can automated using a utility function provided by ChemXor
 ```python
 from chemxor.utils import evaluate_fhe_model
 
-decrypted_output = evaluate_fhe_model(fhe_model, enc_sample)
+decrypted_output = evaluate_fhe_model(fhe_model, enc_sample[0])
 ```
 
 #### Serve models
@@ -191,12 +197,18 @@ if __name__ == "__main__":
     fhe_model_server.run()
 ```
 
+ChemXor's Pre defined Models can also be served using the CLI
+
+```bash
+chemxor serve olida|olinda_zero|olinda_one 
+```
+
 #### Query models
 
 We can then query models with this simple command:
 
 ```bash
-chemxor query -i [INPUT_FILE_PATH] [MODEL_URL]
+chemxor query [MODEL_URL] [INPUT_SMILES_STRING]
 ```
 
 ### **Future work**
