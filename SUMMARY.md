@@ -8,8 +8,7 @@
 * [Installation](ersilia-model-hub/installation.md)
 * [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
 * [Inputs](ersilia-model-hub/inputs-and-outputs.md)
-* [Model selection](ersilia-model-hub/model-selection.md)
-* [Contribute models](ersilia-model-hub/contribute-models.md)
+* [Contribute models](contributors/incorporate-models.md)
 * [Open source licences](ersilia-model-hub/open-source-licences.md)
 
 ## 🙌 Contributors
