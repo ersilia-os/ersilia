@@ -59,8 +59,6 @@ ersilia catalog
 The Ersilia Model Hub is growing continuously to fulfill the needs of the community. Please do not hesitate to [request new models](https://www.ersilia.io/request-model)!
 {% endhint %}
 
-
-
 ### The Isaura data lake
 
 We highly recommend installation of the [Isaura](https://github.com/ersilia-os/isaura) data lake. With Isaura, you will be able to cache your model predictions (i.e. store them in your local computer). Isaura is a relatively light Python package:
@@ -78,10 +76,10 @@ pip install -e .
 ## Install on Windows
 
 {% hint style="warning" %}
-We are not testing Windows installation consistently. If you encounter problems, please reach out to us at hello@ersilia.io.
+We are not testing Windows installation consistently. If you encounter problems, please reach out to us at [hello@ersilia.io](mailto:hello@ersilia.io).
 {% endhint %}
 
-We recommend that you install Ubuntu on your Windows machine. This can be now done very easily with WSL. You will need at least Windows 10.
+We recommend that you install Ubuntu on your Windows machine. This can be now done very easily with [WSL](https://docs.microsoft.com/en-us/windows/wsl/install). You will need at least Windows 10.
 
 Open a Power Shell with Admin permissions and type:
 
@@ -89,9 +87,7 @@ Open a Power Shell with Admin permissions and type:
 wsl --install
 ```
 
-Then simply [install the Ubuntu terminal](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6#activetab=pivot:overviewtab) on Windows.
-
-Inside the Ubuntu terminal, you can now follow the installation instructions [above](installation.md#install-on-linux-and-macosx).
+Then simply [install the Ubuntu terminal](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6#activetab=pivot:overviewtab) on Windows. Inside the Ubuntu terminal, you can now follow the installation instructions [above](installation.md#install-on-linux-and-macosx).
 
 ## Command-line only installation snippets for Ubuntu
 
