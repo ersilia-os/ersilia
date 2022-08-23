@@ -4,7 +4,7 @@ description: How to communicate with Ersilia's team members and start working to
 
 # Communication
 
-## Work Environment
+## Work environment
 
 EOSI’s team is composed of mission-driven individuals from diverse backgrounds, cultures and life experiences. The diversity is what makes EOSI unique, each individual is encouraged to bring its personal touch to the community. We favour remote working and flexibility, without losing collaborative energy. Asynchronous work happens regularly via Slack and team calls are organised weekly to ensure communication and support!
 
