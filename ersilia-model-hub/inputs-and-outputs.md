@@ -18,17 +18,17 @@ Small molecule structures are typically expressed in the well known [SMILES](htt
 | Remdesivir   | CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C |
 | Cephalotaxin | COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5       |
 
-In the most common case, each input sample corresponds to a **single molecule**. However, some models expect a **list of molecules** as input, and some even expect more complex input such as **pairs of lists of molecules**. Multiple molecules (lists) can be serialized to strings in the SMILES notation with the dot (`.`) character.
+In the most common case, each input sample corresponds to a **single molecule**. However, some models expect a **list of molecules** as input, and some even expect more complex inputs such as **pairs of lists of molecules**. Multiple molecules (lists) can be serialized to strings in the SMILES notation with the dot (`.`) character.
 
-Valid **file formats** are comma-separated (`.csv`), tab-separated (`.tsv`)  and JSON (`.json`). Inputs can also be passed as Python instances through the **Python API**.
+Valid **input file formats** are comma-separated (`.csv`), tab-separated (`.tsv`)  and JSON (`.json`). Ersilia automatically recognizes these formats. Inputs can also be passed as Python instances through the **Ersilia Python API**.
 
-It is possible to run Ersilia models for **one input** as well as **multiple inputs**. Ersilia automatically detects the type of input.
-
-Below we show a few exemplary&#x20;
+It is possible to run Ersilia models for **one input** as well as **multiple inputs**. Ersilia automatically detects the if one or multiple inputs are passed.
 
 ### Single molecules
 
 #### One input
+
+This is the simplest case where one single molecule is passed as input.
 
 {% tabs %}
 {% tab title="CSV" %}
@@ -56,6 +56,8 @@ smiles = "CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O"
 {% endtabs %}
 
 #### Multiple inputs
+
+This is a common case too, where multiple single molecules are passed as input. The model will run predictions/calculations for each molecule independently.
 
 {% tabs %}
 {% tab title="CSV" %}
@@ -112,6 +114,8 @@ The majority of Ersilia chemistry models take single molecules as input.
 
 #### One input
 
+Here the molecule expects a list of molecules as input, therefore, the one prediction/calculation will be done based on the list as a whole. Some generative models, for example, require multiple molecules as a starting point for one generation round.
+
 {% tabs %}
 {% tab title="CSV" %}
 {% code title="compound_list.csv" %}
@@ -160,10 +164,12 @@ smiles_list = [
 {% endtabs %}
 
 {% hint style="warning" %}
-Note that, in this case, the full list corresponds to one input. Some generative models, for example, require multiple molecules as a starting point for one generation round.
+Note that, in this case, the `compound_list.csv` file is the same as the `compound_singles.csv` file, corresponding to the multiple single molecules. However, the model will treat these files differently. In the current case, the full list corresponds to one input, whereas in the previous case each single molecule was an independent input. In the [Ersilia Model Hub](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP), the **Input Shape** field is labelled as _Single_ or _List_, correspondingly.
 {% endhint %}
 
 #### Multiple inputs
+
+Here, multiple lists are passed as input, and each list is treated independently by the model.
 
 {% tabs %}
 {% tab title="CSV" %}
@@ -176,7 +182,7 @@ CC(=O)OC1=CC=CC=C1C(=O)O.CC(C)CC1=CC=C(C=C1)C(C)C(=O)O.CC1(OC2C(OC(C2O1)(C#N)C3=
 {% endcode %}
 {% endtab %}
 
-{% tab title="Second Tab" %}
+{% tab title="JSON" %}
 {% code title="compound_lists.json" %}
 ```json
 [
@@ -216,12 +222,14 @@ smiles_lists = [
 {% endtabs %}
 
 {% hint style="info" %}
-To specify a list in a single column in a `.csv` file, molecules can be separated with a dot (`.)`.
+To specify a list in a single column in a `.csv` file, molecules can be separated with a dot (`.`). **The type of delimiter is specific to the input type**. The SMILES notation naturally accepts the dot as a separator for multiple molecules.
 {% endhint %}
 
 ### Pair of lists of molecules
 
 #### One input
+
+This corresponds to a less common case where, one input is expressed as a pair of lists. An example would be a model comparing two sets of molecules and returning an overall similarity values (one float number) between the two sets.
 
 {% tabs %}
 {% tab title="CSV" %}
@@ -275,7 +283,13 @@ smiles_pair_of_lists = (
 {% endtab %}
 {% endtabs %}
 
+{% hint style="warning" %}
+Please note that the `compound_pair_of_lists.csv` file contains two columns, one for each set. The first set has three molecules, and the second set has four molecules. Therefore, the first column contains one empty row.
+{% endhint %}
+
 #### Multiple inputs
+
+Multiple pairs of lists can be passed to obtain multiple predictions/calculations, one for each pair. Like in the case of multiple lists, molecules can be separated with a dot character in a tabular file.
 
 {% tabs %}
 {% tab title="CSV" %}
