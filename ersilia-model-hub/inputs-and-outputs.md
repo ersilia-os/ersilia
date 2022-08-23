@@ -349,10 +349,29 @@ smiles_pairs_of_lists = [
 {% endtab %}
 {% endtabs %}
 
-### Randomly generate inputs
+### Real-world sets of molecules
 
 You can generate inputs of arbitrary size for your model of interest with the following command. In this case, we generate 1,000 inputs for the `chemprop-antibiotic` model and store them as a `.csv` file.
 
 ```bash
-ersilia example chemprop-antibioitic -n 1000 -f input.csv
+ersilia example chemprop-antibiotic -n 1000 -f input.csv
 ```
+
+This command simply samples drug molecules from the attached table.
+
+{% file src="../.gitbook/assets/drug_molecules.tsv" %}
+Tab-separated file containing drug molecules from the [Drug Repurposing Hub](https://www.broadinstitute.org/drug-repurposing-hub). InChIKeys, SMILES and names are provided.
+{% endfile %}
+
+{% hint style="info" %}
+Ersilia will automatically detect the SMILES column and the format in an input file, so it is acceptable to pass the `drug_molecules.tsv` file as is, or a chunk of it.
+{% endhint %}
+
+#### Small molecule databases
+
+Many small molecule databases exist in the public domain. If you want to look for a molecule of interest, consider the following resources:
+
+* [PubChem](https://pubchem.ncbi.nlm.nih.gov/) as a go-to search tool to obtain generalistic chemical information.
+* [ChEMBL](https://www.ebi.ac.uk/chembl/) as a search tool for bioactivity data of medicinal chemistry compounds.
+* [DrugBank](https://go.drugbank.com/) to obtain comprehensive information about drug molecules.
+* [ZINC](https://zinc20.docking.org/) to search for commercially-available libraries of compounds.
