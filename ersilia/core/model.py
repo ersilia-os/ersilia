@@ -278,7 +278,7 @@ class ErsiliaModel(ErsiliaBase):
                 path=input,
                 IO=BaseIOGetter(config_json=self.config_json).get(self.model_id),
             )
-            if self.tfr.is_worth_splitting(path=input):
+            if self.tfr.is_worth_splitting():
                 return True
             else:
                 self.tfr = None

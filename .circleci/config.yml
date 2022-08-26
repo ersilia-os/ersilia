@@ -42,6 +42,26 @@ jobs:
               source activate ersilia
               ersilia -v delete eos0t01
       - run:
+          name: Fetch molecular-weight model
+          command: |
+              source activate ersilia
+              ersilia -v fetch molecular-weight
+          name: Test molecular weight on inputs and outputs
+          command: |
+              source activate ersilia
+              ersilia serve molecular-weight
+              ersilia api -i "CCC" > output_one_0.json
+              ersilia api -i "CCC" -o output_one_1.json
+              ersilia api -i "CCC" -o output_one_3.csv
+              ersilia api -i test/inputs/compound_list.csv > output_list_0.json
+              ersilia api -i test/inputs/compound_list.csv -o output_list_1.json
+              ersilia api -i test/inputs/compound_list.csv -o output_list_2.csv
+              rm output_*
+          name: Delete molecular-weight model
+          command: |
+              source activate ersilia
+              ersilia -v delete molecular-weight
+      - run:
           name: Test Python interface
           command: |
             source activate ersilia

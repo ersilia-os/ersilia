@@ -532,13 +532,24 @@ class TabularFileReader(StandardTabularFileReader):
         self.input_shape = IO.input_shape
         self.sniff_line_limit = sniff_line_limit
         self._string_delimiter = IO.string_delimiter()
-        StandardTabularFileReader.__init__(self, path=self.dst_path)
         if type(self.input_shape) is InputShapeSingle:
             self._datum_parser = self._datum_parser_single
         if type(self.input_shape) is InputShapeList:
             self._datum_parser = self._datum_parser_list
         if type(self.input_shape) is InputShapePairOfLists:
             self._datum_parser = self._datum_parser_pair_of_lists
+        self._standardize()
+        StandardTabularFileReader.__init__(self, path=self.dst_path)
+
+    def _standardize(self):
+        tfss = TabularFileShapeStandardizer(
+            src_path=self.src_path,
+            dst_path=self.dst_path,
+            input_shape=self.input_shape,
+            IO=self.IO,
+            sniff_line_limit=self.sniff_line_limit,
+        )
+        tfss.standardize()
 
     def _datum_parser_single(self, r):
         return r[0]
@@ -551,14 +562,7 @@ class TabularFileReader(StandardTabularFileReader):
 
     def read(self):
         if not os.path.exists(self.dst_path):
-            tfss = TabularFileShapeStandardizer(
-                src_path=self.src_path,
-                dst_path=self.dst_path,
-                input_shape=self.input_shape,
-                IO=self.IO,
-                sniff_line_limit=self.sniff_line_limit,
-            )
-            tfss.standardize()
+            self._standardize()
         with open(self.path, "r") as f:
             R = []
             reader = csv.reader(f, delimiter=self._column_delimiter)
@@ -692,16 +696,20 @@ class JsonFileReader(StandardJsonFileReader):
         self.path = self.dst_path
         self.IO = IO
         self.input_shape = IO.input_shape
+        self._standardize()
         StandardJsonFileReader.__init__(self, path=self.dst_path)
+
+    def _standardize(self):
+        jfss = JsonFileShapeStandardizer(
+            src_path=self.src_path,
+            dst_path=self.dst_path,
+            input_shape=self.input_shape,
+            IO=self.IO,
+        )
+        jfss.standardize()
 
     def read(self):
         if not os.path.exists(self.dst_path):
-            jfss = JsonFileShapeStandardizer(
-                src_path=self.src_path,
-                dst_path=self.dst_path,
-                input_shape=self.input_shape,
-                IO=self.IO,
-            )
-            jfss.standardize()
+            self._standardize()
         with open(self.path, "r") as f:
             return json.load(f)
