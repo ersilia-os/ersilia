@@ -155,7 +155,7 @@ class GitHubDownloader(object):
             tmp_folder, org, repo, destination
         )
         run_file = os.path.join(
-            os.path.abspath(tempfile.mdktemp(prefix="ersilia")), "run.sh"
+            os.path.abspath(tempfile.mkdtemp(prefix="ersilia")), "run.sh"
         )
         with open(run_file, "w") as f:
             f.write(script)
