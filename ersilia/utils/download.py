@@ -134,11 +134,14 @@ class GitHubDownloader(object):
     def _clone_with_pygit2(self, org, repo, destination):
         if self.pygit2_callbacks is None:
             return False
-        pygit2.clone_repository(
-            url=self._repo_url(org, repo),
-            path=destination,
-            callbacks=self.pygit2_callbacks,
-        )
+        try:
+            pygit2.clone_repository(
+                url=self._repo_url(org, repo),
+                path=destination,
+                callbacks=self.pygit2_callbacks,
+            )
+        except:
+            return False
         return self._exists(destination)
 
     def _clone_with_git(self, org, repo, destination):
