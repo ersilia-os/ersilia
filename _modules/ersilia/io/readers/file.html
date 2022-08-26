@@ -598,13 +598,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">IO</span><span class="o">.</span><span class="n">input_shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sniff_line_limit</span> <span class="o">=</span> <span class="n">sniff_line_limit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span> <span class="o">=</span> <span class="n">IO</span><span class="o">.</span><span class="n">string_delimiter</span><span class="p">()</span>
-        <span class="n">StandardTabularFileReader</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeSingle</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser_single</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser_list</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser_pair_of_lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_standardize</span><span class="p">()</span>
+        <span class="n">StandardTabularFileReader</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_standardize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tfss</span> <span class="o">=</span> <span class="n">TabularFileShapeStandardizer</span><span class="p">(</span>
+            <span class="n">src_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">src_path</span><span class="p">,</span>
+            <span class="n">dst_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">,</span>
+            <span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span>
+            <span class="n">IO</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="p">,</span>
+            <span class="n">sniff_line_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sniff_line_limit</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">tfss</span><span class="o">.</span><span class="n">standardize</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_datum_parser_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -617,14 +628,7 @@
 
 <div class="viewcode-block" id="TabularFileReader.read"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">):</span>
-            <span class="n">tfss</span> <span class="o">=</span> <span class="n">TabularFileShapeStandardizer</span><span class="p">(</span>
-                <span class="n">src_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">src_path</span><span class="p">,</span>
-                <span class="n">dst_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">,</span>
-                <span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span>
-                <span class="n">IO</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="p">,</span>
-                <span class="n">sniff_line_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sniff_line_limit</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">tfss</span><span class="o">.</span><span class="n">standardize</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_standardize</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_delimiter</span><span class="p">)</span>
@@ -758,17 +762,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">IO</span> <span class="o">=</span> <span class="n">IO</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">IO</span><span class="o">.</span><span class="n">input_shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_standardize</span><span class="p">()</span>
         <span class="n">StandardJsonFileReader</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_standardize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">jfss</span> <span class="o">=</span> <span class="n">JsonFileShapeStandardizer</span><span class="p">(</span>
+            <span class="n">src_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">src_path</span><span class="p">,</span>
+            <span class="n">dst_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">,</span>
+            <span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span>
+            <span class="n">IO</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">jfss</span><span class="o">.</span><span class="n">standardize</span><span class="p">()</span>
 
 <div class="viewcode-block" id="JsonFileReader.read"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileReader.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">):</span>
-            <span class="n">jfss</span> <span class="o">=</span> <span class="n">JsonFileShapeStandardizer</span><span class="p">(</span>
-                <span class="n">src_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">src_path</span><span class="p">,</span>
-                <span class="n">dst_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">,</span>
-                <span class="n">input_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span>
-                <span class="n">IO</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">jfss</span><span class="o">.</span><span class="n">standardize</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_standardize</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div></div>
 </pre></div>

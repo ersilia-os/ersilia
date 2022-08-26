@@ -201,11 +201,14 @@
     <span class="k">def</span> <span class="nf">_clone_with_pygit2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pygit2_callbacks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">pygit2</span><span class="o">.</span><span class="n">clone_repository</span><span class="p">(</span>
-            <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_repo_url</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">),</span>
-            <span class="n">path</span><span class="o">=</span><span class="n">destination</span><span class="p">,</span>
-            <span class="n">callbacks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pygit2_callbacks</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pygit2</span><span class="o">.</span><span class="n">clone_repository</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_repo_url</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">),</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">destination</span><span class="p">,</span>
+                <span class="n">callbacks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pygit2_callbacks</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_clone_with_git</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
@@ -219,7 +222,7 @@
             <span class="n">tmp_folder</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span>
         <span class="p">)</span>
         <span class="n">run_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mdktemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia&quot;</span><span class="p">)),</span> <span class="s2">&quot;run.sh&quot;</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia&quot;</span><span class="p">)),</span> <span class="s2">&quot;run.sh&quot;</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
