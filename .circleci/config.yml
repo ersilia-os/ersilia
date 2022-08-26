@@ -46,6 +46,7 @@ jobs:
           command: |
               source activate ersilia
               ersilia -v fetch molecular-weight
+      - run:
           name: Test molecular weight on inputs and outputs
           command: |
               source activate ersilia
@@ -57,6 +58,7 @@ jobs:
               ersilia api -i test/inputs/compound_list.csv -o output_list_1.json
               ersilia api -i test/inputs/compound_list.csv -o output_list_2.csv
               rm output_*
+      - run:
           name: Delete molecular-weight model
           command: |
               source activate ersilia
