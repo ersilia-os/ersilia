@@ -218,9 +218,13 @@ class ErsiliaModel(ErsiliaBase):
             return False
         if type(output) != str:
             return False
-        if output[-4:] == ".csv":
+        if output.endswith(".json"):
             return True
-        if output[-3:] == ".h5":
+        if output.endswith(".csv"):
+            return True
+        if output.endswith(".tsv"):
+            return True
+        if output.endswith(".h5"):
             return True
         return False
 
