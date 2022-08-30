@@ -85,10 +85,12 @@ class _Symlinker(ErsiliaBase):
             self._lake_dir,
             "{0}{1}{2}".format(self.model_id, ISAURA_FILE_TAG, H5_EXTENSION),
         )
-        if os.path.exists(src):
+        if os.path.exists(src) and os.path.exists(os.path.dirname(dst)):
             self.logger.debug("Symbolic link from {0}".format(src))
             self.logger.debug("Symbolic link to {0}".format(dst))
             os.symlink(src, dst, target_is_directory=False)
+        else:
+            self.logger.info("Could not create symbolic link from {0} to {1}".format(src, dst))
 
     def _symlinks(self):
         self._bentoml_bundle_symlink()
