@@ -5,8 +5,8 @@ import os
 from . import ersilia_cli
 from .. import echo
 from ...hub.fetch.fetch import ModelFetcher
+from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ... import ModelBase
-
 
 def fetch_cmd():
     """Create fetch commmand"""
@@ -15,6 +15,7 @@ def fetch_cmd():
         mf.fetch(model_id)
 
     # Example usage: ersilia fetch {MODEL}
+    @throw_ersilia_exception
     @ersilia_cli.command(
         short_help="Fetch model from Ersilia Model Hub",
         help="Fetch model from EOS repository. Model files are downloaded from GitHub and model data are "

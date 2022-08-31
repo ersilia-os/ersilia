@@ -15,9 +15,9 @@ from .actions.content import CardGetter
 from .actions.check import ModelChecker
 from .actions.sniff import ModelSniffer
 
+from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+
 from . import STATUS_FILE, DONE_TAG
-
-
 class ModelFetcher(ErsiliaBase):
     def __init__(
         self,
@@ -89,6 +89,7 @@ class ModelFetcher(ErsiliaBase):
             file.write(str(ts))
             file.write("\n")
 
+    @throw_ersilia_exception
     def fetch(self, model_id):
         self.model_id = model_id
         self._prepare()
