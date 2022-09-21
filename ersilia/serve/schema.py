@@ -17,12 +17,13 @@ class ApiSchema(ErsiliaBase):
             self.logger.debug("Schema not yet available")
         else:
             self.logger.debug("Schema available in {0}".format(self.schema_file))
+        self._array_types = set(["array", "mixed_array", "string_array", "numeric_array"])
+        self._h5_serializable_types = set(["numeric", "numeric_array", "array"])
 
     def _features(self, o):
-        array_types = ["array", "mixed_array", "string_array", "numeric_array"]
         if o["meta"] is not None:
             return o["meta"]
-        if o["type"] in array_types:
+        if o["type"] in self._array_types:
             shape = o["shape"]
         else:
             return None
@@ -84,9 +85,8 @@ class ApiSchema(ErsiliaBase):
 
     def is_h5_serializable(self, api_name):
         schema = self.get_output_by_api(api_name)
-        serializable_types = ["numeric", "numeric_array", "array"] # TODO remove 'array' since it will be deprecated.
         for k, v in schema.items():
-            if v["type"] not in serializable_types:
+            if v["type"] not in self._h5_serializable_types:
                 return False
         return True
 
@@ -109,8 +109,7 @@ class ApiSchema(ErsiliaBase):
         return sorted(self.schema.keys())
 
     def empty_by_field(self, field):
-        array_types = ["array", "numeric_array", "string_array", "mixed_array"]
-        if field["type"] in array_types:
+        if field["type"] in self._array_types:
             shape = tuple(field["shape"])
             return np.full(shape, None).tolist()
         return None

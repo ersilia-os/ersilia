@@ -118,9 +118,18 @@ class ModelSniffer(BaseAction):
             else:
                 self.logger.error("Output data types are not consistent")
         meta = self.model.autoservice._latest_meta
+        self.logger.debug("Latest meta: {0}".format(meta))
         for k, v in output_schema_.items():
-            output_schema_[k]["meta"] = meta[k]
+            self.logger.debug("{0} : {1}".format(k,v))
+            meta_k = meta[k]
+            self.logger.debug("Meta k: {0}".format(meta_k))
+            if output_schema_[k] is None:
+                v = {"meta": meta[k]}
+                output_schema_[k] = {"meta": meta[k]}
+            else:
+                output_schema_[k]["meta"] = meta[k]
         schema = {"input": input_schema_, "output": output_schema_}
+        self.logger.debug("Schema: {0}".format(schema))
         return schema
 
     def sniff(self):
