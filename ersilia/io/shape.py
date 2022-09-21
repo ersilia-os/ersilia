@@ -15,13 +15,16 @@ class InputShapePairOfLists(object):
 
 class InputShape(object):
     def __init__(self, input_shape):
-        self.input_shape = input_shape.lower()
-        if self.input_shape == "single":
+        if input_shape is None:
             self.shape = InputShapeSingle()
-        if self.input_shape == "list":
-            self.shape = InputShapeList()
-        if self.input_shape == "pair of lists":
-            self.shape = InputShapePairOfLists()
+        else:
+            self.input_shape = input_shape.lower()
+            if self.input_shape == "single":
+                self.shape = InputShapeSingle()
+            if self.input_shape == "list":
+                self.shape = InputShapeList()
+            if self.input_shape == "pair of lists":
+                self.shape = InputShapePairOfLists()
 
     def get(self):
         return self.shape

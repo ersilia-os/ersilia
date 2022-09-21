@@ -29,7 +29,10 @@ class BaseIOGetter(ErsiliaBase):
 
     def _read_shape_from_card(self, model_id):
         self.logger.debug("Reading shape from {0}".format(model_id))
-        input_shape = self.mc.get(model_id)["Input Shape"]
+        try:
+            input_shape = self.mc.get(model_id)["Input Shape"]
+        except:
+            input_shape = None
         self.logger.debug("Input Shape: {0}".format(input_shape))
         return InputShape(input_shape).get()
 
