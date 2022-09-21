@@ -19,9 +19,10 @@ class ApiSchema(ErsiliaBase):
             self.logger.debug("Schema available in {0}".format(self.schema_file))
 
     def _features(self, o):
+        array_types = ["array", "mixed_array", "string_array", "numeric_array"]
         if o["meta"] is not None:
             return o["meta"]
-        if o["type"] == "array":
+        if o["type"] in array_types:
             shape = o["shape"]
         else:
             return None
@@ -108,7 +109,8 @@ class ApiSchema(ErsiliaBase):
         return sorted(self.schema.keys())
 
     def empty_by_field(self, field):
-        if field["type"] == "array":
+        array_types = ["array", "numeric_array", "string_array", "mixed_array"]
+        if field["type"] in array_types:
             shape = tuple(field["shape"])
             return np.full(shape, None).tolist()
         return None

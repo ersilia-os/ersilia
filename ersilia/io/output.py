@@ -127,6 +127,7 @@ class GenericOutputAdapter(ResponseRefactor):
         ResponseRefactor.__init__(self, config_json=config_json)
         self.api_schema = None
         self._schema = None
+        self._array_types = set(["array", "numeric_array", "string_array", "mixed_array"])
 
     @staticmethod
     def _is_string(output):
@@ -162,7 +163,7 @@ class GenericOutputAdapter(ResponseRefactor):
     def __cast_values(self, vals, dtypes, output_keys):
         v = []
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
-            if t_ == "array":
+            if t_ in self._array_types:
                 if v_ is None:
                     v_ = [None] * self.__array_shape(k_)
                 v += v_
@@ -179,7 +180,7 @@ class GenericOutputAdapter(ResponseRefactor):
         for v, ok in zip(vals, output_keys):
             m = self.__meta_by_key(ok)
             t = self.__pure_dtype(ok)
-            if t == "array":
+            if t in self._array_types:
                 assert m is not None
                 if v is not None:
                     assert len(m) == len(v)

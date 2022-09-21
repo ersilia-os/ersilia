@@ -29,7 +29,7 @@ class PureDataTyper(object):
         if self._is_array():
             data = np.array(self.data).ravel()
             for x in data:
-                if not self._is_numeric(x):
+                if not PureDataTyper(x)._is_numeric():
                     return False
             return True
         else:
@@ -39,7 +39,7 @@ class PureDataTyper(object):
         if self._is_array():
             data = np.array(self.data).ravel()
             for x in data:
-                if not self._is_string(x):
+                if not PureDataTyper(x)._is_string():
                     return False
             return True
         else:
@@ -51,7 +51,7 @@ class PureDataTyper(object):
             has_string = False
             data = np.array(self.data).ravel()
             for x in data:
-                if self._is_numeric(x):
+                if PureDataTyper(x)._is_numeric():
                     has_numeric = True
                 else:
                     has_string = True
