@@ -20,6 +20,7 @@ from ..io.output import TabularOutputStacker
 from ..io.readers.file import FileTyper, TabularFileReader
 from ..utils import tmp_pid_file
 from ..utils.hdf5 import Hdf5DataLoader
+from ..utils.csvfile import CsvDataLoader
 from ..utils.terminal import yes_no_input
 from ..lake.base import LakeBase
 
@@ -189,12 +190,22 @@ class ErsiliaModel(ErsiliaBase):
             return json.dumps(R, indent=4)
         else:
             tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
-            tmp_output = os.path.join(tmp_folder, "temporary.h5")
+            is_h5_serializable = self.api_schema.is_h5_serializable(api_name=api.api_name)
+            _temporary_prefix = "temporary"
+            if is_h5_serializable:
+                self.logger.debug("Output is HDF5 serializable")
+                tmp_output = os.path.join(tmp_folder, "{0}.h5".format(_temporary_prefix))
+            else:
+                self.logger.debug("Output is not HDF5 serializable")
+                tmp_output = os.path.join(tmp_folder, "{0}.csv".format(_temporary_prefix))
             for r in self._api_runner_iter(
                 api=api, input=input, output=tmp_output, batch_size=batch_size
             ):
                 continue
-            data = Hdf5DataLoader()
+            if is_h5_serializable:
+                data = Hdf5DataLoader()
+            else:
+                data = CsvDataLoader()
             data.load(tmp_output)
             if output == "numpy":
                 return data.values[:]
@@ -202,9 +213,9 @@ class ErsiliaModel(ErsiliaBase):
                 d = collections.OrderedDict()
                 d["key"] = data.keys
                 d["input"] = data.inputs
-                for j, f in enumerate(data.features):
-                    d[f] = data.values[:, j]
-                return pd.DataFrame(d)
+                df = pd.DataFrame(d)
+                df[data.features] = data.values
+                return df
             if output == "dict":
                 d = collections.OrderedDict()
                 d["keys"] = data.keys

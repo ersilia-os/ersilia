@@ -85,7 +85,7 @@ class ApiSchema(ErsiliaBase):
 
     def is_h5_serializable(self, api_name):
         schema = self.get_output_by_api(api_name)
-        for k, v in schema.items():
+        for _, v in schema.items():
             if v["type"] not in self._h5_serializable_types:
                 return False
         return True
