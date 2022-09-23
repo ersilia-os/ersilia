@@ -43,6 +43,8 @@ jobs:
           echo "After conda init"
           python --version
           python -m pip install -e .[test]
+          python -m pip install ruamel-yaml
+          python -m pip install pycosat
       - name: Deploy models
         run: |
           source activate
