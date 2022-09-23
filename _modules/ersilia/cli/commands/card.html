@@ -92,11 +92,7 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show the properties of the data lake&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--api&quot;</span><span class="p">,</span>
-        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show a list of available API&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-a&quot;</span><span class="p">,</span> <span class="s2">&quot;--api&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show a list of available API&quot;</span>
     <span class="p">)</span>
     <span class="k">def</span> <span class="nf">card</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">lake</span><span class="p">,</span> <span class="n">api</span><span class="p">):</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -110,7 +106,7 @@
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="n">api</span><span class="p">:</span>
-            <span class="k">pass</span> <span class="c1"># TODO</span>
+            <span class="k">pass</span>  <span class="c1"># TODO</span>
         <span class="n">ac</span> <span class="o">=</span> <span class="n">ApiSchema</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">ac</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
 </pre></div>
