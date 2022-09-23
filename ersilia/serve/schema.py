@@ -17,7 +17,9 @@ class ApiSchema(ErsiliaBase):
             self.logger.debug("Schema not yet available")
         else:
             self.logger.debug("Schema available in {0}".format(self.schema_file))
-        self._array_types = set(["array", "mixed_array", "string_array", "numeric_array"])
+        self._array_types = set(
+            ["array", "mixed_array", "string_array", "numeric_array"]
+        )
         self._h5_serializable_types = set(["numeric", "numeric_array", "array"])
 
     def _features(self, o):
@@ -27,7 +29,7 @@ class ApiSchema(ErsiliaBase):
             shape = o["shape"]
         else:
             return None
-        if len(shape) == 1: # array
+        if len(shape) == 1:  # array
             n = shape[0]
             chars = len(str(n))
             names = []
@@ -35,17 +37,17 @@ class ApiSchema(ErsiliaBase):
                 i = str(i).zfill(chars)
                 names += ["f{0}".format(i)]
             return names
-        if len(shape) == 2: # image
+        if len(shape) == 2:  # image
             n = shape[0]
             m = shape[1]
             names = []
             for i in range(n):
                 names_ = []
                 for j in range(m):
-                    names_ += ["f{0}-{1}".format(i,j)]
+                    names_ += ["f{0}-{1}".format(i, j)]
                 names += [names_]
             return names
-        if len(shape) == 3: # image with channels
+        if len(shape) == 3:  # image with channels
             n = shape[0]
             m = shape[1]
             l = shape[2]
@@ -55,7 +57,7 @@ class ApiSchema(ErsiliaBase):
                 for j in range(m):
                     names__ = []
                     for k in range(l):
-                        names__ += ["f{0}-{1}-{2}".format(i,j,k)]
+                        names__ += ["f{0}-{1}-{2}".format(i, j, k)]
                     names_ += [names__]
                 names += [names_]
             return names

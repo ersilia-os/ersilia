@@ -127,7 +127,9 @@ class GenericOutputAdapter(ResponseRefactor):
         ResponseRefactor.__init__(self, config_json=config_json)
         self.api_schema = None
         self._schema = None
-        self._array_types = set(["array", "numeric_array", "string_array", "mixed_array"])
+        self._array_types = set(
+            ["array", "numeric_array", "string_array", "mixed_array"]
+        )
 
     @staticmethod
     def _is_string(output):

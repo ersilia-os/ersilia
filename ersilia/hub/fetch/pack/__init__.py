@@ -90,7 +90,9 @@ class _Symlinker(ErsiliaBase):
             self.logger.debug("Symbolic link to {0}".format(dst))
             os.symlink(src, dst, target_is_directory=False)
         else:
-            self.logger.info("Could not create symbolic link from {0} to {1}".format(src, dst))
+            self.logger.info(
+                "Could not create symbolic link from {0} to {1}".format(src, dst)
+            )
 
     def _symlinks(self):
         self._bentoml_bundle_symlink()

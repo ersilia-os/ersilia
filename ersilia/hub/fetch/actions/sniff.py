@@ -120,7 +120,7 @@ class ModelSniffer(BaseAction):
         meta = self.model.autoservice._latest_meta
         self.logger.debug("Latest meta: {0}".format(meta))
         for k, v in output_schema_.items():
-            self.logger.debug("{0} : {1}".format(k,v))
+            self.logger.debug("{0} : {1}".format(k, v))
             meta_k = meta[k]
             self.logger.debug("Meta k: {0}".format(meta_k))
             if output_schema_[k] is None:

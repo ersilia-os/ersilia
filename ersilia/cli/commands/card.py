@@ -26,11 +26,7 @@ def card_cmd():
         help="Show the properties of the data lake",
     )
     @click.option(
-        "-a",
-        "--api",
-        is_flag=True,
-        default=False,
-        help="Show a list of available API",
+        "-a", "--api", is_flag=True, default=False, help="Show a list of available API"
     )
     def card(model, schema, lake, api):
         mdl = ModelBase(model)
@@ -44,6 +40,6 @@ def card_cmd():
             click.echo(mc.get(model_id, as_json=True))
             return
         if api:
-            pass # TODO
+            pass  # TODO
         ac = ApiSchema(model_id, config_json=None)
         click.echo(json.dumps(ac.get(), indent=4))
