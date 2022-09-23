@@ -86,6 +86,7 @@
 <span class="kn">from</span> <span class="nn">..io.readers.file</span> <span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
 <span class="kn">from</span> <span class="nn">..utils.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
+<span class="kn">from</span> <span class="nn">..utils.csvfile</span> <span class="kn">import</span> <span class="n">CsvDataLoader</span>
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
 <span class="kn">from</span> <span class="nn">..lake.base</span> <span class="kn">import</span> <span class="n">LakeBase</span>
 
@@ -255,12 +256,22 @@
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
-            <span class="n">tmp_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;temporary.h5&quot;</span><span class="p">)</span>
+            <span class="n">is_h5_serializable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span><span class="o">.</span><span class="n">is_h5_serializable</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="n">api</span><span class="o">.</span><span class="n">api_name</span><span class="p">)</span>
+            <span class="n">_temporary_prefix</span> <span class="o">=</span> <span class="s2">&quot;temporary&quot;</span>
+            <span class="k">if</span> <span class="n">is_h5_serializable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output is HDF5 serializable&quot;</span><span class="p">)</span>
+                <span class="n">tmp_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_temporary_prefix</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output is not HDF5 serializable&quot;</span><span class="p">)</span>
+                <span class="n">tmp_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_temporary_prefix</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_runner_iter</span><span class="p">(</span>
                 <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">tmp_output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
             <span class="p">):</span>
                 <span class="k">continue</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">Hdf5DataLoader</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">is_h5_serializable</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">Hdf5DataLoader</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">CsvDataLoader</span><span class="p">()</span>
             <span class="n">data</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">tmp_output</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">[:]</span>
@@ -268,9 +279,9 @@
                 <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span>
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">inputs</span>
-                <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">features</span><span class="p">):</span>
-                    <span class="n">d</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>
-                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span>
+                <span class="k">return</span> <span class="n">df</span>
             <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;keys&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span>
