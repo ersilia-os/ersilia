@@ -124,8 +124,10 @@ class ModelSniffer(BaseAction):
             meta_k = meta[k]
             self.logger.debug("Meta k: {0}".format(meta_k))
             if output_schema_[k] is None:
-                v = {"meta": meta[k]}
-                output_schema_[k] = {"meta": meta[k]}
+                output_schema_[k] = {
+                    "meta": meta[k],
+                    "type": None,
+                }  # TODO revise if type=None is the best option
             else:
                 output_schema_[k]["meta"] = meta[k]
         schema = {"input": input_schema_, "output": output_schema_}
