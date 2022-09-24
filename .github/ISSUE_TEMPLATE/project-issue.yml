@@ -1,0 +1,52 @@
+name: ☉ Project Template
+description: Create a new Initiative, Epic or Batch
+title: "[Project]:"
+assignees:
+  - D1M1TR10S,miquelduranfrigola,GemmaTuron
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: "Summarize the project in 1-4 sentences. Include the problem(s) we're tying to solve and proposed solution(s)."
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      multiple: false
+      description: "Is this an Initiative, Epic or Batch? Iniative = months. Epic = weeks. Batch = days. Tasks = minutes or hours
+      options:
+        - Initiative 🐋
+        - Epic 🐅
+        - Batch 🐕
+  - type: textarea
+    id: objectives
+    attributes:
+      label: Obective(s)
+      description: "What are the key objective(s) and goals for this project?"
+  - type: textarea
+    id: team
+    attributes:
+      label: Team
+      description: "List all key stakeholders"
+      value: |
+        | Role & Responsibility | Username(s) | 
+        |--|--|
+        | DRI / Lead Developer | @username |
+        | Reviewer / Backup Developer | @usernames |
+        | Project Manager | @usernames |
+        | Others | @usernames |
+  - type: textarea
+    id: timeline
+    attributes:
+      label: Timeline
+      description: "List all tasks to be completed, and their respective deadlines."
+      value: |
+        - [ ] MM/DD/YY - Task... ?
+        - [ ] ... ?
+  - type: textarea
+    id: resources
+    attributes:
+      label: Documentation 
+      description: "Add links to any documentention, resources, tools or designs"
+      
