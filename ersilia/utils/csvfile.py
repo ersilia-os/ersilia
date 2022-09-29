@@ -11,11 +11,13 @@ class CsvDataLoader(object):
     def load(self, csv_file):
         with open(csv_file, "r") as f:
             reader = csv.reader(f)
-            self.features = next(reader)[3:]
+            self.features = [
+                x for x in next(reader) if x not in ["key", "input", "text"]
+            ]
             self.keys = []
             self.inputs = []
             self.values = []
             for r in reader:
                 self.keys += [r[0]]
                 self.inputs += [r[1]]
-                self.values += [r[3:]]
+                self.values += [r[-len(self.features) :]]

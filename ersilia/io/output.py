@@ -7,10 +7,11 @@ import tempfile
 import collections
 from .dataframe import Dataframe
 from .readers.file import FileTyper
+from .pure import PureDataTyper
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
-from ..default import FEATURE_MERGE_PATTERN
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
+from ..default import FEATURE_MERGE_PATTERN
 
 
 class DataFrame(object):
@@ -173,15 +174,31 @@ class GenericOutputAdapter(ResponseRefactor):
                 v += [v_]
         return v
 
+    def _guess_pure_dtype_if_absent(self, vals):
+        pdt = PureDataTyper(vals)
+        dtype = pdt.get_type()
+        self.logger.debug("Guessed pure datatype: {0}".format(dtype))
+        return dtype["type"]
+
     def __expand_output_keys(self, vals, output_keys):
         output_keys_expanded = []
         if len(output_keys) == 1:
             merge_key = False
         else:
             merge_key = True
+        current_pure_dtype = {}
         for v, ok in zip(vals, output_keys):
+            self.logger.debug("Data: {0}".format(ok))
+            self.logger.debug("Values: {0}".format(v))
             m = self.__meta_by_key(ok)
-            t = self.__pure_dtype(ok)
+            if ok not in current_pure_dtype:
+                t = self.__pure_dtype(ok)
+                if t is None:
+                    t = self._guess_pure_dtype_if_absent(v)
+                current_pure_dtype[ok] = t
+            else:
+                t = current_pure_dtype[ok]
+            self.logger.debug("Pure datatype: {0}".format(t))
             if t in self._array_types:
                 assert m is not None
                 if v is not None:
