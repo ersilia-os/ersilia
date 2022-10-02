@@ -171,4 +171,4 @@ For this part, please do not launch directly onto modelling, wait for the mentor
 2. The mentors will open a GitHub issue with the specific modelling exercise and assign it to you.
 3. All the conversations related to developing the models for the dataset assigned to you will be discussed in the GitHub issue
 
-Once the model is completed, we will add it to the Ersilia Model Hub. Read more about it in the [guidelines](../incorporate-models.md).
+Once the model is completed, we will add it to the Ersilia Model Hub. Read more about it in the [guidelines](../../ersilia-model-hub/contribute-models/).

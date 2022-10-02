@@ -15,8 +15,8 @@
 
 * [Communication](contributors/communication.md)
 * [Internships](contributors/internships/README.md)
-  * [Summer-22 internship](contributors/internships/summer-22-internship.md)
   * [Outreachy Winter 2023](contributors/internships/outreachy-winter-2023.md)
+  * [Summer-22 internship](contributors/internships/summer-22-internship.md)
 
 ## 💊 Chemistry tools
 
