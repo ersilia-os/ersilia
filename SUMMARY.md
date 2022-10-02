@@ -8,13 +8,15 @@
 * [Installation](ersilia-model-hub/installation.md)
 * [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
 * [Inputs](ersilia-model-hub/inputs-and-outputs.md)
-* [Contribute models](contributors/incorporate-models.md)
-* [Open source licences](ersilia-model-hub/open-source-licences.md)
+* [Contribute models](ersilia-model-hub/contribute-models/README.md)
+  * [Open source licences](ersilia-model-hub/contribute-models/open-source-licences.md)
 
 ## 🙌 Contributors
 
 * [Communication](contributors/communication.md)
-* [Summer-22 internship](contributors/summer-22-internship.md)
+* [Internships](contributors/internships/README.md)
+  * [Summer-22 internship](contributors/internships/summer-22-internship.md)
+  * [Outreachy Winter 2023](contributors/internships/outreachy-winter-2023.md)
 
 ## 💊 Chemistry tools
 

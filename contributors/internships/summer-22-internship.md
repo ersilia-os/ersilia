@@ -101,10 +101,10 @@ For now, **@Miquel** will be responsible for **curating** the models listed in t
 
 ### Start coding! :rocket:
 
-As soon as you feel ready to start coding, you should change the _Status_ in the Spreadsheet Hub sheet from _To do_ to _In progress_. Please go to the next page to learn more about how to [Incorporate models to the hub](incorporate-models.md).
+As soon as you feel ready to start coding, you should change the _Status_ in the Spreadsheet Hub sheet from _To do_ to _In progress_. Please go to the next page to learn more about how to [Incorporate models to the hub](../../ersilia-model-hub/contribute-models/).
 
-{% content-ref url="incorporate-models.md" %}
-[incorporate-models.md](incorporate-models.md)
+{% content-ref url="../../ersilia-model-hub/contribute-models/" %}
+[contribute-models](../../ersilia-model-hub/contribute-models/)
 {% endcontent-ref %}
 
 ## TL;DR
@@ -118,5 +118,5 @@ In brief, this is a suggested routine that you can follow:
 5. Wait for approval.
 6. Select an approved model.
 7. Move to the **Hub** sheet of the Spreadsheet and [fill in as much information as you can](summer-22-internship.md#ersilia-model-hub-spreadsheet). For now, set the _Status_ to _To do_.
-8. When you are ready to [start coding](incorporate-models.md), change the _Status_ to _In progress_.
+8. When you are ready to [start coding](../../ersilia-model-hub/contribute-models/), change the _Status_ to _In progress_.
 9. When the model is successfully added, change the _Status_ to _Done_! __ :tada:__
