@@ -1,0 +1,17 @@
+name: Approve Command Trigger
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  approve-command-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Approve Command Trigger
+        uses: peter-evans/slash-command-dispatch@2afb49dbaafaba8005860648bf7fc178637aca0d # pin@v3
+        with:
+          token: ${{ secrets.PAT }}
+          issue-type: issue
+          permission: write
+          reactions: false
+          commands: |
+            approve
