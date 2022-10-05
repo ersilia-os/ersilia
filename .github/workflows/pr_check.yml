@@ -11,12 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3
+
       - name: Add conda to system path
-        run: |
-          echo $CONDA/bin >> $GITHUB_PATH
+        run: echo $CONDA/bin >> $GITHUB_PATH
+
       - name: Source conda
-        run: |
-          source $CONDA/etc/profile.d/conda.sh
+        run: source $CONDA/etc/profile.d/conda.sh
+
       - name: Install dependencies
         run: |
           source activate
@@ -24,6 +25,7 @@ jobs:
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
+
       - name: Install ersilia
         run: |
           source activate
@@ -31,13 +33,15 @@ jobs:
           echo "After conda init"
           conda init
           python -m pip install -e .[test]
+
       - name: Deploy models
         run: |
           source activate
           ersilia fetch molecular-weight
           echo "Serving molecular-weight model."
           ersilia serve molecular-weight
-          ersilia api calculate -i "CC(=O)OC1=CC=CC=C1C(=O)O"|grep "180.15899"
+          ersilia api calculate -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
+
       - name: Run pytest
         run: |
           source activate          
