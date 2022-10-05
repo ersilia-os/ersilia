@@ -28,6 +28,14 @@ jobs:
           git-lfs install
           conda install gh -c conda-forge
 
+      - name: Install ersilia
+        run: |
+          source activate
+          python --version
+          echo "After conda init"
+          conda init
+          python -m pip install -e .[test]
+
       - name: Run pytest
         run: |
           source activate          
