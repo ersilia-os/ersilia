@@ -17,9 +17,10 @@ jobs:
       - uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2
 
       - name: Set up Python
-        uses: actions/setup-python@7f80679172b057fc5e90d70d197929d454754a5a # pin@v2
+        uses: actions/setup-python@b55428b1882923874294fa556849718a1d7f2ca5 # pin@v4.2.0
         with:
           python-version: '3.7'
+          cache: 'pip' # caching pip dependencies
 
       - name: Install dependencies
         run: |
