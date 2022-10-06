@@ -89,12 +89,12 @@ setup(
     extras_require=extras_require,
     packages=find_packages(),
     entry_points={"console_scripts": ["ersilia=ersilia.cli:cli"]},
-    classifiers=(
+    classifiers=[
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    ),
+    ],
     keywords="drug-discovery machine-learning ersilia open-science global-health model-hub infectious-diseases",
     project_urls={
         "Landing page": "https://ersilia.io",
