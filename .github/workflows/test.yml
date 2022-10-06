@@ -1,4 +1,4 @@
-name: Deploy and test ersilia on PR
+name: test
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3
@@ -36,10 +36,8 @@ jobs:
           conda init
           python -m pip install -e .[test]
 
-      - name: Deploy models
+      - name: Run pytest
         run: |
-          source activate
-          ersilia fetch molecular-weight
-          echo "Serving molecular-weight model."
-          ersilia serve molecular-weight
-          ersilia api calculate -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
+          source activate          
+          pip install pytest
+          pytest
