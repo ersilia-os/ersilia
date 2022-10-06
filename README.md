@@ -56,7 +56,7 @@ ersilia api -i my_molecules.csv -o my_predictions.csv
 ersilia close
 ```
 
-Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations. _To install the Ersilia package in Windows, we recommend using an Ubuntu WSL_
+Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # Contribute
