@@ -1,8 +1,12 @@
 import random
 import string
 import json
-from ..paths import Paths
-from ..terminal import run_command_check_output
+import subprocess
+import os
+
+
+def run_command_check_output(cmd):
+    return subprocess.check_output(cmd, shell=True, stderr=open(os.devnull))
 
 
 class ModelIdentifier(object):
@@ -19,15 +23,6 @@ class ModelIdentifier(object):
         )
         return result_str
 
-    def is_valid(self, s):
-        return Paths._eos_regex().match(s)
-
-    def is_test(self, s):
-        if s[3] == "0":
-            return True
-        else:
-            return False
-
     def exists(self, model_id):
         cmd = "curl https://api.github.com/repos/ersilia-os/{0}".format(model_id)
         output = json.loads(run_command_check_output(cmd))
@@ -39,21 +34,13 @@ class ModelIdentifier(object):
         else:
             return False
 
-    def generate(self, n):
-        ids = set()
-        while True:
-            if len(ids) < n:
-                model_id = self.encode()
-                if not self.exists(model_id):
-                    ids.update([self.encode()])
-            else:
-                break
-        ids = list(ids)
-        random.shuffle(ids)
-        return ids
-
     def choice(self):
         while True:
             model_id = self.encode()
             if not self.exists(model_id):
                 return model_id
+
+
+if __name__ == "__main__":
+    mi = ModelIdentifier()
+    print(mi.choice())
