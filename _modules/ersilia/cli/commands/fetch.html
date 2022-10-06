@@ -65,9 +65,6 @@
              
   <h1>Source code for ersilia.cli.commands.fetch</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">import</span> <span class="nn">time</span>
-
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span> <span class="nn">...hub.fetch.fetch</span> <span class="kn">import</span> <span class="n">ModelFetcher</span>
@@ -88,25 +85,17 @@
         <span class="s2">&quot;an EOS folder, then packed to a BentoML bundle&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--repo_path&quot;</span><span class="p">,</span> <span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--mode&quot;</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--dockerize/--not-dockerize&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">dockerize</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">dockerize</span><span class="p">):</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
-        <span class="c1"># TODO: Move the commented code</span>
-        <span class="c1"># url = &quot;https://github.com/ersilia-os/{0}.git/info/lfs&quot;.format(model_id)</span>
-        <span class="c1"># cmd = &quot;echo &quot; + url + &quot;| perl -ne &#39;print $1 if m!([^/]+/[^/]+?)(?:\.git)?$!&#39; | xargs -I{} curl -s -k https://api.github.com/repos/&#39;{}&#39; | grep size&quot;</span>
-        <span class="c1"># echo(</span>
-        <span class="c1">#    &quot;The disk storage of this model in KB is&quot;</span>
-        <span class="c1"># )</span>
-        <span class="c1"># print (</span>
-        <span class="c1">#    os.system(cmd)</span>
-        <span class="c1"># )</span>
         <span class="n">echo</span><span class="p">(</span>
             <span class="s2">&quot;:down_arrow:  Fetching model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">dockerize</span><span class="o">=</span><span class="n">dockerize</span><span class="p">)</span>
+        <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span><span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">dockerize</span><span class="o">=</span><span class="n">dockerize</span><span class="p">)</span>
         <span class="n">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> fetched successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span></div>
 </pre></div>
