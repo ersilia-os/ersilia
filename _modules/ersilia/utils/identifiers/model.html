@@ -67,7 +67,9 @@
   <h1>Source code for ersilia.utils.identifiers.model</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">..paths</span> <span class="kn">import</span> <span class="n">Paths</span>
+<span class="kn">from</span> <span class="nn">..terminal</span> <span class="kn">import</span> <span class="n">run_command_check_output</span>
 
 
 <div class="viewcode-block" id="ModelIdentifier"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.model.ModelIdentifier">[docs]</a><span class="k">class</span> <span class="nc">ModelIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -93,16 +95,35 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
+<div class="viewcode-block" id="ModelIdentifier.exists"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.model.ModelIdentifier.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;curl https://api.github.com/repos/ersilia-os/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">&quot;message&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Not Found&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
 <div class="viewcode-block" id="ModelIdentifier.generate"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.model.ModelIdentifier.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="n">ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
-                <span class="n">ids</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">()])</span>
+                <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                    <span class="n">ids</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">()])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">break</span>
         <span class="n">ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
         <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ids</span></div></div>
+        <span class="k">return</span> <span class="n">ids</span></div>
+
+<div class="viewcode-block" id="ModelIdentifier.choice"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.model.ModelIdentifier.choice">[docs]</a>    <span class="k">def</span> <span class="nf">choice</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">model_id</span></div></div>
 </pre></div>
 
            </div>
