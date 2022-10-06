@@ -84,8 +84,12 @@ class ModelParametersGetter(BaseAction):
 
 
 class ModelGetter(BaseAction):
-    def __init__(self, model_id, config_json):
+    def __init__(self, model_id, repo_path, config_json):
+        BaseAction.__init__(
+            self, model_id=model_id, config_json=config_json, credentials_json=None
+        )
         self.model_id = model_id
+        self.repo_path = repo_path
         self.mrg = ModelRepositoryGetter(model_id=model_id, config_json=config_json)
         self.mpg = ModelParametersGetter(model_id=model_id, config_json=config_json)
 
@@ -95,6 +99,14 @@ class ModelGetter(BaseAction):
     def _get_model_parameters(self):
         self.mpg.get()
 
+    def _copy_from_repo_path(self):
+        dst = self._model_path(self.model_id)
+        src = self.repo_path
+        shutil.copytree(src, dst)
+
     def get(self):
-        self._get_repository()
-        self._get_model_parameters()
+        if self.repo_path is None:
+            self._get_repository()
+            self._get_model_parameters()
+        else:
+            self._copy_from_repo_path()

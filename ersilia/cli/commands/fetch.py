@@ -1,7 +1,4 @@
 import click
-import time
-
-import os
 from . import ersilia_cli
 from .. import echo
 from ...hub.fetch.fetch import ModelFetcher
@@ -22,24 +19,16 @@ def fetch_cmd():
         "an EOS folder, then packed to a BentoML bundle",
     )
     @click.argument("model", type=click.STRING)
+    @click.option("--repo_path", "-r", default=None, type=click.STRING)
     @click.option("--mode", "-m", default=None, type=click.STRING)
     @click.option("--dockerize/--not-dockerize", default=False)
-    def fetch(model, mode, dockerize):
+    def fetch(model, repo_path, mode, dockerize):
         mdl = ModelBase(model)
         model_id = mdl.model_id
-        # TODO: Move the commented code
-        # url = "https://github.com/ersilia-os/{0}.git/info/lfs".format(model_id)
-        # cmd = "echo " + url + "| perl -ne 'print $1 if m!([^/]+/[^/]+?)(?:\.git)?$!' | xargs -I{} curl -s -k https://api.github.com/repos/'{}' | grep size"
-        # echo(
-        #    "The disk storage of this model in KB is"
-        # )
-        # print (
-        #    os.system(cmd)
-        # )
         echo(
             ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
             fg="blue",
         )
-        mf = ModelFetcher(mode=mode, dockerize=dockerize)
+        mf = ModelFetcher(repo_path=repo_path, mode=mode, dockerize=dockerize)
         _fetch(mf, model_id)
         echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
