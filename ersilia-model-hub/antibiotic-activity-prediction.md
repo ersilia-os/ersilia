@@ -18,35 +18,33 @@ Each model is identified by:
 * EOS-ID: `eos[1-9][a-z0-9]{3}`
 * Slug: 1-3 word reference for the model
 
-In this case example, we show how to run predictions based on the AI/ML model developed in the paper _A Deep Learning Approach to Antibiotic Drug Discovery_, by [Stokes et al. Cell (2020)](https://www.cell.com/cell/fulltext/S0092-8674\(20\)30102-1?\_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867420301021%3Fshowall%3Dtrue). In this study, a deep learning model was trained using the excellent [Chemprop](https://github.com/chemprop/chemprop) tool. Halicin, a drug originally researched for the treatment of diabetes, was predicted to have broad antibacterial activity.
+In this case example, we show how to run predictions based on the AI/ML model developed in the paper _Retrosynthetic accessibility score (RAscore) – rapid machine learned synthesizability classification from AI driven retrosynthetic planning_ by [Thakkar et al, 2021](http://dx.doi.org/10.1039/D0SC05401A). The RA score is particularly useful to pre-screen large libraries of compounds, for example those produced by generative models.
 
 ## Use model through CLI
-
-### Get model information
-
-In the Ersilia Model Hub, the antibiotic activity prediction model has the **identifier** `eos4e40`  and the **slug** `chemprop-antibiotic`. You can use either one to refer to this model all of the commands below. For example, you can get more information through the model card:
-
-```bash
-# display model card using slug...
-ersilia card chemprop-antibiotic
-# ... or using ersilia identifier
-ersilia card eos4e40
-```
 
 ### Fetch model and install it locally
 
 The first step is to download the model to your local device and install it along with its dependencies. By default, a `~/eos` directory (for Ersilia Open Source) will be created in your `HOME`. This folder will contain all fetched models along with additional files to manage the AI/ML content available locally.
 
-To download and install the antibiotic activity prediction model, simply use the `fetch` command:
+To download and install the RA Score prediction model, simply use the `fetch` command. In the Ersilia Model Hub, the RA Score prediction model has the **identifier** `eos2r5a`  and the **slug** `retrosynthetic-accessibility`. You can use either one to refer to this model all of the commands below
 
 ```bash
-# fetch model from remote repository
-ersilia fetch chemprop-antibiotic
+# fetch model from remote repository using slug ...
+ersilia fetch retrosynthetic-accessibility
+# ... or using ersilia identifier
+ersilia fetch eos2r5a
 ```
 
-{% hint style="warning" %}
-This model weighs 850 MB, so fetching will take a while. In order to provide robust predictions, the original paper released an ensemble of 20 individual models. We do not want to compromise the accuracy of the model, this is why the full ensemble is downloaded. Our team is currently developing a **lightning** library that will provide lighter versions of the models for easier testing and deployment.
-{% endhint %}
+### Get model information
+
+Once the model is downloaded, you can get more information through the model card:
+
+```bash
+# display model card using slug...
+ersilia card retrosynthetic-accessibility
+# ... or using ersilia identifier
+ersilia card eos2r5a
+```
 
 {% hint style="info" %}
 We do our best to keep the user away from the [dependency hell](https://en.wikipedia.org/wiki/Dependency\_hell). Models are **automatically** installed with the necessary degree of isolation from the system. While some models have no dependencies at all and can be run using the system Python installation, others need to be containerized using Docker.&#x20;
@@ -58,10 +56,10 @@ Once the model has been fetched, it should be ready to be used. A model in the E
 
 ```bash
 # serve model
-ersilia serve chemprop-antibiotic
+ersilia serve retrosynthetic-accessibility
 ```
 
-A URL will be prompted as well as a process id (PID). These can be relevant if you are an advanced user and want to have low-level control of the tool. The most important is, however, the list of **available APIs**. In this case, we want to infer antibiotic activity through the `predict` API.
+A URL will be prompted as well as a process id (PID). These can be relevant if you are an advanced user and want to have low-level control of the tool. The most important is, however, the list of **available APIs**. In this case, we want to infer RA Score through the `predict` API.
 
 {% hint style="info" %}
 The `predict` API is obviously one of the most ubiquitous throughout our catalog of models. Other common APIs are `transform` and `interpret`.
@@ -69,9 +67,9 @@ The `predict` API is obviously one of the most ubiquitous throughout our catalog
 
 ### Make predictions
 
-The antibiotic activity prediction model takes **chemical structures** as input and provides an activity score (ranging from 0 to 1) under a cutoff of _E.coli_ growth inhibition of 50 uM.
+The RA Score prediction model takes **chemical structures** as input and provides an score (ranging from 0 to 1). The higher the score the more synthetically accessible the molecule is predicted to be.
 
-Ideally, in the chemistry models, the input molecules are specified as **SMILES** strings. SMILES strings can be easily found online. For instance, we can find Halicin in [PubChem](https://pubchem.ncbi.nlm.nih.gov/compound/Halicin#section=Canonical-SMILES) and then predict its antimicrobial activity as follows:
+Ideally, in the chemistry models, the input molecules are specified as **SMILES** strings. SMILES strings can be easily found online. For instance, we can find an antibiotic, Halicin in [PubChem](https://pubchem.ncbi.nlm.nih.gov/compound/Halicin#section=Canonical-SMILES), and then predict its retrosynthetic accessibility as follows:
 
 ```bash
 # Halicin
@@ -82,7 +80,7 @@ ersilia api predict -i "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]"
 It is also possible to use [InChIKey](https://pubchem.ncbi.nlm.nih.gov/compound/Halicin#section=InChI-Key) or even molecule name (through the [Chemical Identifier Resolver](https://cactus.nci.nih.gov/chemical/structure)) instead of SMILES. Ersilia will take care of this automatically. However, please take into account that this requires an internet connection and will slow down the process, as requests to external tools are necessary.
 {% endhint %}
 
-You can make **multiple predictions** in batch mode. This is typically much faster than running predictions one by one in a loop. For instance, we can predict the antimicrobial activity of Halicin and [Ibuprofen](https://pubchem.ncbi.nlm.nih.gov/compound/Ibuprofen#section=Canonical-SMILES). We don't expect Ibuprofen to be active.
+You can make **multiple predictions** in batch mode. This is typically much faster than running predictions one by one in a loop. For instance, we can predict the RA Score of Halicin and [Ibuprofen](https://pubchem.ncbi.nlm.nih.gov/compound/Ibuprofen#section=Canonical-SMILES).
 
 ```bash
 # Halicin and Ibuprofen
@@ -131,7 +129,7 @@ If you are sure you don't want to use a model anymore, you may want to remove it
 
 ```bash
 # delete model
-ersilia delete chemprop-antibiotic
+ersilia delete retrosynthetic-accessibility
 ```
 
 ## As a Python package
@@ -142,7 +140,7 @@ Models can be fetched from the Ersilia Model Hub, served, and run as a Python pa
 # import main class
 from ersilia import ErsiliaModel
 # instantiate the model
-mdl = ErsiliaModel("chemprop-antibiotic")
+mdl = ErsiliaModel("retrosynthetic-accessibility")
 ```
 
 Then, you can perform the same actions as in the CLI. To **serve**:
@@ -177,6 +175,6 @@ A more concise way to run prediction would be to use the `with` clause:
 
 ```python
 # use with statement
-with ErsiliaModel("chemprop-antibiotic") as mdl:
+with ErsiliaModel("retrosynthetic-accessibility") as mdl:
     mdl.predict(input)
 ```
