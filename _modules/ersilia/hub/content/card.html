@@ -66,7 +66,6 @@
   <h1>Source code for ersilia.hub.content.card</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">pyairtable</span> <span class="kn">import</span> <span class="n">Table</span>
@@ -80,7 +79,6 @@
     <span class="n">Hdf5Explorer</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AIRTABLE_READONLY_API_KEY</span><span class="p">,</span>
     <span class="n">AIRTABLE_MODEL_HUB_BASE_ID</span><span class="p">,</span>
     <span class="n">AIRTABLE_MODEL_HUB_TABLE_NAME</span><span class="p">,</span>
     <span class="n">ISAURA_DIR</span><span class="p">,</span>
@@ -167,12 +165,19 @@
 <div class="viewcode-block" id="AirtableCard"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableCard">[docs]</a><span class="k">class</span> <span class="nc">AirtableCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">AIRTABLE_READONLY_API_KEY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_read_only_airtable_api_key</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_id</span> <span class="o">=</span> <span class="n">AIRTABLE_MODEL_HUB_BASE_ID</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">AIRTABLE_MODEL_HUB_TABLE_NAME</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_rows</span> <span class="o">=</span> <span class="n">AIRTABLE_MAX_ROWS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">page_size</span> <span class="o">=</span> <span class="n">AIRTABLE_PAGE_SIZE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_read_only_airtable_api_key</span><span class="p">():</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/ersilia/master/config/read_only_keys.json&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;AIRTABLE_READONLY_API_KEY&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_find_card</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
         <span class="n">card</span> <span class="o">=</span> <span class="kc">None</span>
