@@ -94,6 +94,45 @@ For Windows users, we recommend using a WSL with Visual Studio Code to access it
 A common mistake is to forget the installation of Git-LFS, which is required for many models. Please do so!
 {% endhint %}
 
+#### Testing that Ersilia works
+
+We will first make sure ersilia works by running the following commands:
+
+```
+ersilia --help #this should output the command options for ersilia
+```
+
+Once we are sure ersilia is recognised in the CLI, we will test a very simple model
+
+```
+ersilia -v fetch eos3b5e
+ersilia serve
+ersilia -v api calculate eos3b5e
+```
+
+This is calculating the molecular weight of the molecules, the output should be printed in your CLI and look like:
+
+```
+{
+    "input": {
+        "key": "IJDNQMDRQITEOD-UHFFFAOYSA-N",
+        "input": "CCCC",
+        "text": "CCCC"
+    },
+    "output": {
+        "mw": 58.123999999999995
+    }
+}
+```
+
+{% hint style="danger" %}
+These tests do not work, what now?! Open an issue on GitHub, indicating on the title Ersilia installation problem and giving a full description of the errors you get. The mentors will answer as soon as possible.
+{% endhint %}
+
+{% hint style="success" %}
+These work just fine! Perfect, tag the mentor Gemma on the #stage1-contributors Slack channel so she can assign you models for the next step (see below)
+{% endhint %}
+
 ### 3. Run models on the Ersilia CLI
 
 Your second task for the contribution period is to help us debug any issues when running models with the Ersilia Command Line Interface. You can find more information about it on the [Model Usage](../../ersilia-model-hub/antibiotic-activity-prediction.md) guide.
@@ -117,7 +156,7 @@ To keep track of the models we have tested, please add your information to the [
    2. <mark style="color:red;background-color:red;">Red</mark>, if there was an issue
 4. If you run the model <mark style="color:green;">successfully:</mark>&#x20;
    1. Write fetch and predict times on the excel cell.
-   2. Go on to the next model, until you have tested 5 models.
+   2. Go on to the next model, until you have tested the models assigned to you.
 5. If you encountered a problem:
    1. Go to Ersilia's GitHub repository and check if there is a Bug already for this model. If there is, add your error on the same thread.
    2. If not, open a Bug issue (use the provided template) and add the model identifier (eosxxxx) as issue title.
@@ -153,7 +192,7 @@ All the model requirements stay within Google's free tier
 Once you have:
 
 * Successfully installed the Ersilia Model Hub in your computer
-* Successfully run predictions for at least, 5 models using the command line AND debugged any issues you might have
+* Successfully run predictions for at least, 3 models using the command line AND debugged any issues you might have.
 * Successfully run the same five models in Google Colaboratory using the Ersilia PyPi package
 
 We are ready to continue onto the next stage of the contribution period 🎉
@@ -171,4 +210,4 @@ For this part, please do not launch directly onto modelling, wait for the mentor
 2. The mentors will open a GitHub issue with the specific modelling exercise and assign it to you.
 3. All the conversations related to developing the models for the dataset assigned to you will be discussed in the GitHub issue
 
-Once the model is completed, we will add it to the Ersilia Model Hub. Read more about it in the [guidelines](../../ersilia-model-hub/contribute-models/).
+Once the model is completed, we will add it to the Ersilia Model Hub. Read more about it in the [guidelines](../incorporate-models.md).
