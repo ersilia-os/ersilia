@@ -106,8 +106,8 @@ Once we are sure ersilia is recognised in the CLI, we will test a very simple mo
 
 ```
 ersilia -v fetch eos3b5e
-ersilia serve
-ersilia -v api calculate eos3b5e
+ersilia serve eos3b5e
+ersilia -v api calculate -i "CCCC"
 ```
 
 This is calculating the molecular weight of the molecules, the output should be printed in your CLI and look like:
