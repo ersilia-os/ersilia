@@ -45,6 +45,10 @@ class Command(object):
         m = importlib.import_module("ersilia.cli.commands.publish")
         m.publish_cmd()
 
+    def sample(self):
+        m = importlib.import_module("ersilia.cli.commands.sample")
+        m.sample_cmd()
+
     def serve(self):
         m = importlib.import_module("ersilia.cli.commands.serve")
         m.serve_cmd()

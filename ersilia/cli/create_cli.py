@@ -8,20 +8,22 @@ def create_ersilia_cli():
 
     cmd = Command()
 
-    cmd.auth()
-    cmd.fetch()
-    cmd.delete()
-    cmd.serve()
-    cmd.close()
     cmd.api()
-    cmd.example()
-    cmd.catalog()
+    cmd.auth()
     cmd.card()
+    cmd.catalog()
     cmd.clear()
+    cmd.close()
+    cmd.delete()
+    cmd.example()
+    cmd.fetch()
 
     # TODO: publishing functionalities
     if is_contributor:
         cmd.publish()
+
+    cmd.sample()
+    cmd.serve()
 
     # TODO: functions only for contributors
     # Functions only for contributors

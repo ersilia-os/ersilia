@@ -2,10 +2,10 @@ import os
 import json
 import tempfile
 import requests
-from pyairtable import Table
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
+from ...db.hubdata.interfaces import AirtableInterface
 
 try:
     from isaura.core.hdf5 import Hdf5Explorer
@@ -13,17 +13,12 @@ except:
     Hdf5Explorer = None
 
 from ...default import (
-    AIRTABLE_MODEL_HUB_BASE_ID,
-    AIRTABLE_MODEL_HUB_TABLE_NAME,
     ISAURA_DIR,
     ISAURA_FILE_TAG,
     ISAURA_FILE_TAG_LOCAL,
     H5_EXTENSION,
     CARD_FILE,
 )
-
-AIRTABLE_MAX_ROWS = 100000
-AIRTABLE_PAGE_SIZE = 100
 
 
 class ReadmeCard(ErsiliaBase):
@@ -96,22 +91,9 @@ class ReadmeCard(ErsiliaBase):
         return self.parse(model_id)
 
 
-class AirtableCard(ErsiliaBase):
+class AirtableCard(AirtableInterface):
     def __init__(self, config_json):
-        ErsiliaBase.__init__(self, config_json=config_json)
-        self.api_key = self._get_read_only_airtable_api_key()
-        self.base_id = AIRTABLE_MODEL_HUB_BASE_ID
-        self.table_name = AIRTABLE_MODEL_HUB_TABLE_NAME
-        self.max_rows = AIRTABLE_MAX_ROWS
-        self.page_size = AIRTABLE_PAGE_SIZE
-        self.table = Table(self.api_key, self.base_id, self.table_name)
-
-    @staticmethod
-    def _get_read_only_airtable_api_key():
-        url = "https://raw.githubusercontent.com/ersilia-os/ersilia/master/config/read_only_keys.json"
-        r = requests.get(url)
-        data = r.json()
-        return data["AIRTABLE_READONLY_API_KEY"]
+        AirtableInterface.__init__(self, config_json=config_json)
 
     def _find_card(self, text, field):
         card = None
