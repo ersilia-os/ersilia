@@ -84,11 +84,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">versioner</span> <span class="o">=</span> <span class="n">Versioner</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_correct_protobuf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">dockerfile</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_correct_protobuf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">dockerfile</span><span class="p">,</span> <span class="n">protobuf_version</span><span class="o">=</span><span class="s2">&quot;3.19.5&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;0.11&quot;</span> <span class="ow">in</span> <span class="n">version</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]:</span>
-            <span class="n">dockerfile</span><span class="o">.</span><span class="n">append_run_command</span><span class="p">(</span><span class="s2">&quot;pip install protobuf==3.19.0&quot;</span><span class="p">)</span>
+            <span class="n">dockerfile</span><span class="o">.</span><span class="n">append_run_command</span><span class="p">(</span><span class="s2">&quot;pip install protobuf==</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">protobuf_version</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Since BentoML is version 0.11, protobuf will been downgraded to 3.19.0&quot;</span>
+                <span class="s2">&quot;Since BentoML is version 0.11, protobuf will been downgraded to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">protobuf_version</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">dockerfile</span>
 
