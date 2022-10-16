@@ -19,9 +19,13 @@ class PackModeDecision(ErsiliaBase):
 
     def _correct_protobuf(self, version, dockerfile, protobuf_version="3.19.5"):
         if "0.11" in version["version"]:
-            dockerfile.append_run_command("pip install protobuf=={0}".format(protobuf_version))
+            dockerfile.append_run_command(
+                "pip install protobuf=={0}".format(protobuf_version)
+            )
             self.logger.info(
-                "Since BentoML is version 0.11, protobuf will been downgraded to {0}".format(protobuf_version)
+                "Since BentoML is version 0.11, protobuf will been downgraded to {0}".format(
+                    protobuf_version
+                )
             )
         return dockerfile
 
