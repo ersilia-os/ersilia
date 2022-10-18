@@ -155,9 +155,7 @@ class ModelSniffer(BaseAction):
             self.logger.debug(results)
             for r in results:
                 if not r["output"]:
-                    raise EmptyOutputError(
-                        model_id=self.model_id, api_name=api_name
-                    )
+                    raise EmptyOutputError(model_id=self.model_id, api_name=api_name)
             schema = self._get_schema(results)
             self.logger.debug(schema)
             all_schemas[api_name] = schema

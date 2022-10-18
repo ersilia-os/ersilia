@@ -1,5 +1,6 @@
 import sys
 
+
 def query_yes_no(question):
     valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
     prompt = " [y/n] "

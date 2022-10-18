@@ -3,15 +3,18 @@ from ...utils.cli_query import query_yes_no
 from ...utils.exceptions_utils.issue_reporting import send_exception_issue
 import sys
 import click
+
 try:
     import emoji
 except:
     emoji = None
 
+
 def echo(text: str, **styles):
     if emoji is not None:
         text = emoji.emojize(text)
     return click.echo(click.style(text, **styles))
+
 
 def throw_ersilia_exception(func):
     def inner_function(*args, **kwargs):
@@ -31,7 +34,9 @@ def throw_ersilia_exception(func):
 
             if query_yes_no("Would you like to report this error to Ersilia?"):
 
-                if query_yes_no("Would you like to include your last Ersilia command in the issue (for issue reproducibility)?"):
+                if query_yes_no(
+                    "Would you like to include your last Ersilia command in the issue (for issue reproducibility)?"
+                ):
                     sys.stdout.write("Please re-type your last Ersilia command: ")
                     message = input()
                     send_exception_issue(E, message)
@@ -43,7 +48,5 @@ def throw_ersilia_exception(func):
             #     # TODO: execute cli logic for [y/n] query and write log to a file
 
             sys.exit()
+
     return inner_function
-
-
-    

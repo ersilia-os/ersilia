@@ -11,7 +11,7 @@ class ErsiliaError(Exception):
             text += "Hints:\n"
             text += hints
             text += "\n\n"
-        
+
         super().__init__(text)
 
 

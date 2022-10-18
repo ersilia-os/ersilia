@@ -19,6 +19,8 @@ from .actions.sniff import ModelSniffer
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 
 from . import STATUS_FILE, DONE_TAG
+
+
 class ModelFetcher(ErsiliaBase):
     def __init__(
         self,
@@ -89,7 +91,7 @@ class ModelFetcher(ErsiliaBase):
         status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         with open(status_file, "w") as f:
             json.dump(done, f, indent=4)
-    
+
     @throw_ersilia_exception
     def fetch(self, model_id):
         start = timer()

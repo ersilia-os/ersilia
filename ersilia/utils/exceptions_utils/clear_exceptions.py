@@ -1,5 +1,6 @@
 from .exceptions import ErsiliaError
 
+
 class ClearErsiliaError(ErsiliaError):
     def __init__(self):
         self.message = "Error occured while running clear command"

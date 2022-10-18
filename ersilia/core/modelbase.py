@@ -8,6 +8,8 @@ from ..hub.fetch import STATUS_FILE, DONE_TAG
 
 from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+
+
 class ModelBase(ErsiliaBase):
     """Base class of a Model."""
 
@@ -16,7 +18,7 @@ class ModelBase(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.text = model_id_or_slug
         slugger = Slug()
-        
+
         if slugger.is_slug(model_id_or_slug):
             self.slug = model_id_or_slug
             self.model_id = slugger.encode(self.slug)
