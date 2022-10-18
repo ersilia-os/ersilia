@@ -70,15 +70,18 @@
 <span class="kn">from</span> <span class="nn">...utils.exceptions_utils.issue_reporting</span> <span class="kn">import</span> <span class="n">send_exception_issue</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">click</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">emoji</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">emoji</span> <span class="o">=</span> <span class="kc">None</span>
 
+
 <div class="viewcode-block" id="echo"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.handle_undecorated_exception.echo">[docs]</a><span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">emoji</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">emoji</span><span class="o">.</span><span class="n">emojize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span></div>
+
 
 <div class="viewcode-block" id="handle_undecorated_exception"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.handle_undecorated_exception.handle_undecorated_exception">[docs]</a><span class="k">def</span> <span class="nf">handle_undecorated_exception</span><span class="p">(</span><span class="n">E</span><span class="p">):</span>
     <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;:triangular_flag: Something went wrong with Ersilia...</span><span class="se">\n\n</span><span class="s2">&quot;</span>
@@ -89,12 +92,16 @@
     <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot; - https://github.com/ersilia-os/ersilia</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;Or feel free to reach out to us at:</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot; - hello[at]ersilia.io</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-    <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;If you haven&#39;t, try to run your command in verbose mode (-v in the CLI)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">text</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="s2">&quot;If you haven&#39;t, try to run your command in verbose mode (-v in the CLI)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
     <span class="n">echo</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">query_yes_no</span><span class="p">(</span><span class="s2">&quot;Would you like to report this error to Ersilia?&quot;</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="n">query_yes_no</span><span class="p">(</span><span class="s2">&quot;Would you like to include your last Ersilia command in the issue (for issue reproducibility)?&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">query_yes_no</span><span class="p">(</span>
+            <span class="s2">&quot;Would you like to include your last Ersilia command in the issue (for issue reproducibility)?&quot;</span>
+        <span class="p">):</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Please re-type your last Ersilia command: &quot;</span><span class="p">)</span>
             <span class="n">message</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
             <span class="n">send_exception_issue</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
@@ -106,9 +113,6 @@
     <span class="c1">#     # TODO: execute cli logic for [y/n] query and write log to a file</span>
 
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
-
-
-    
 </pre></div>
 
            </div>

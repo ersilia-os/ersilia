@@ -76,10 +76,13 @@
 <span class="n">REPO_NAME</span> <span class="o">=</span> <span class="s2">&quot;alice.github.io&quot;</span>
 <span class="n">AUTH_TOKEN</span> <span class="o">=</span> <span class="kc">None</span>
 
+
 <div class="viewcode-block" id="send_exception_issue"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.issue_reporting.send_exception_issue">[docs]</a><span class="k">def</span> <span class="nf">send_exception_issue</span><span class="p">(</span><span class="n">E</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">lastinput</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;gh&#39;</span><span class="p">,</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="s1">&#39;login&#39;</span><span class="p">])</span> <span class="c1"># user login</span>
-    <span class="n">auth_out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;gh&#39;</span><span class="p">,</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;-t&#39;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># retrieve user&#39;s auth token</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;gh&quot;</span><span class="p">,</span> <span class="s2">&quot;auth&quot;</span><span class="p">,</span> <span class="s2">&quot;login&quot;</span><span class="p">])</span>  <span class="c1"># user login</span>
+    <span class="n">auth_out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;gh&quot;</span><span class="p">,</span> <span class="s2">&quot;auth&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;-t&quot;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>  <span class="c1"># retrieve user&#39;s auth token</span>
 
     <span class="c1"># if stdout not there, parse stderr for Token</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -90,12 +93,12 @@
             <span class="k">if</span> <span class="n">found_token</span><span class="p">:</span>
                 <span class="n">AUTH_TOKEN</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
                 <span class="k">break</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s1">&#39;Token:&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;Token:&quot;</span><span class="p">:</span>
                 <span class="n">found_token</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># if token not found, print error</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">found_token</span><span class="p">:</span> 
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No token found.&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">found_token</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No token found.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)[</span><span class="mi">2</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
             <span class="k">return</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># parse stdout</span>
@@ -106,50 +109,51 @@
             <span class="k">if</span> <span class="n">found_token</span><span class="p">:</span>
                 <span class="n">AUTH_TOKEN</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
                 <span class="k">break</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s1">&#39;Token:&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;Token:&quot;</span><span class="p">:</span>
                 <span class="n">found_token</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">AUTH_TOKEN</span><span class="p">)</span>
         <span class="c1"># if token not found, print error</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">found_token</span> <span class="ow">and</span> <span class="n">AUTH_TOKEN</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> 
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No token found.&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">found_token</span> <span class="ow">and</span> <span class="n">AUTH_TOKEN</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No token found.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)[</span><span class="mi">2</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
             <span class="k">return</span>
 
-
-    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://api.github.com/repos/</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">/issues&#39;</span> <span class="o">%</span> <span class="p">(</span>
-        <span class="n">REPO_OWNER</span><span class="p">,</span> <span class="n">REPO_NAME</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com/repos/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">/issues&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">REPO_OWNER</span><span class="p">,</span> <span class="n">REPO_NAME</span><span class="p">)</span>
 
     <span class="c1"># Create an authenticated session to create the issue</span>
     <span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
     <span class="c1"># Create our issue and headers to authenticate/format</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;token </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">AUTH_TOKEN</span><span class="p">,</span>
-               <span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/vnd.github+json&#39;</span><span class="p">}</span>
-    
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;token </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">AUTH_TOKEN</span><span class="p">,</span>
+        <span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/vnd.github+json&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
 
     <span class="c1"># Building the message for the body of the GitHub Issue</span>
     <span class="n">dt_only</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S&quot;</span><span class="p">)</span>
     <span class="n">datetime_str</span> <span class="o">=</span> <span class="s2">&quot;Date and time of issue: &quot;</span> <span class="o">+</span> <span class="n">dt_only</span>
     <span class="n">exception_str</span> <span class="o">=</span> <span class="s2">&quot;Exception message: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
-    <span class="n">lastinput_str</span> <span class="o">=</span> <span class="s2">&quot;Last Input: &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="n">lastinput</span> <span class="k">if</span> <span class="p">(</span><span class="n">lastinput</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;not provided.&quot;</span><span class="p">)</span>
+    <span class="n">lastinput_str</span> <span class="o">=</span> <span class="s2">&quot;Last Input: &quot;</span> <span class="o">+</span> <span class="p">(</span>
+        <span class="n">lastinput</span> <span class="k">if</span> <span class="p">(</span><span class="n">lastinput</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;not provided.&quot;</span>
+    <span class="p">)</span>
     <span class="c1"># include log information here</span>
-    <span class="n">body_message</span> <span class="o">=</span> <span class="n">datetime_str</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">exception_str</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">lastinput_str</span> 
-    
+    <span class="n">body_message</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">datetime_str</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">exception_str</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">lastinput_str</span>
+    <span class="p">)</span>
+
     <span class="n">issue</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;New issue: &#39;</span> <span class="o">+</span> <span class="n">dt_only</span><span class="p">,</span> 
-        <span class="s1">&#39;body&#39;</span><span class="p">:</span> <span class="n">body_message</span><span class="p">,</span>
-        <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Reported Issue&quot;</span><span class="p">]</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;New issue: &quot;</span> <span class="o">+</span> <span class="n">dt_only</span><span class="p">,</span>
+        <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">body_message</span><span class="p">,</span>
+        <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Reported Issue&quot;</span><span class="p">],</span>
     <span class="p">}</span>
 
     <span class="c1"># Post the request to create an issue</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">issue</span><span class="p">),</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">201</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">201</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Created issue!&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t create issue.&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Response:&quot;</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
-
-
 
 
 <span class="c1"># previous email reporting:</span>
@@ -188,7 +192,7 @@
 <span class="c1">#         # Print any error messages to stdout</span>
 <span class="c1">#         print(e)</span>
 <span class="c1">#     finally:</span>
-<span class="c1">#         server.quit() </span>
+<span class="c1">#         server.quit()</span>
 </pre></div>
 
            </div>
