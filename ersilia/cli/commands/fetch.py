@@ -4,7 +4,6 @@ from .. import echo
 from ...hub.fetch.fetch import ModelFetcher
 from ... import ModelBase
 
-
 def fetch_cmd():
     """Create fetch commmand"""
 

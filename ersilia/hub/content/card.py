@@ -91,6 +91,7 @@ class ReadmeCard(ErsiliaBase):
 
     def get(self, model_id):
         return self.parse(model_id)
+        
 
 
 class AirtableCard(AirtableInterface):
@@ -121,7 +122,7 @@ class AirtableCard(AirtableInterface):
 
     def get(self, model_id):
         return self.find_card_by_model_id(model_id)
-
+       
 
 class LocalCard(ErsiliaBase):
     def __init__(self, config_json):
@@ -138,6 +139,7 @@ class LocalCard(ErsiliaBase):
             return None
 
 
+
 class LakeCard(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -151,6 +153,7 @@ class LakeCard(ErsiliaBase):
             return json.dumps(card, indent=4)
         else:
             return card
+
 
 
 class ModelCard(object):

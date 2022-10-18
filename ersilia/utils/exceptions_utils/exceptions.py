@@ -11,13 +11,7 @@ class ErsiliaError(Exception):
             text += "Hints:\n"
             text += hints
             text += "\n\n"
-        text += "If this error message is not helpful, open an issue at:\n"
-        text += " - https://github.com/ersilia-os/ersilia\n"
-        text += "Or feel free to reach out to us at:\n"
-        text += " - hello[at]ersilia.io\n\n"
-        text += (
-            "If you haven't, try to run your command in verbose mode (-v in the CLI)"
-        )
+        
         super().__init__(text)
 
 
@@ -32,7 +26,7 @@ class MissingDependencyError(ErsiliaError):
 class InvalidModelIdentifierError(ErsiliaError):
     def __init__(self, model):
         self.model = model
-        self.message = "Could not identifiy model identifier or slug {0}:".format(
+        self.message = "Could not identify model identifier or slug {0}:".format(
             self.model
         )
         self.hints = "Please check that {0} exists in the Ersilia Model Hub:\n - https://ersilia.io/model-hub (for approved models)\n - https://airtable.com/shrUcrUnd7jB9ChZV (for approved and in preparation models)".format(

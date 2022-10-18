@@ -11,7 +11,7 @@ from .... import ErsiliaModel
 from ....io.input import ExampleGenerator
 from ....io.pure import PureDataTyper
 from ....default import API_SCHEMA_FILE, MODEL_SIZE_FILE
-from ....utils.exceptions import EmptyOutputError
+from ....utils.exceptions_utils.exceptions import EmptyOutputError
 
 
 N = 3
@@ -153,15 +153,11 @@ class ModelSniffer(BaseAction):
                 result for result in self.model.autoservice.api(api_name, self.inputs)
             ]
             self.logger.debug(results)
-            try:
-                for r in results:
-                    if not r["output"]:
-                        raise EmptyOutputError(
-                            model_id=self.model_id, api_name=api_name
-                        )
-            except EmptyOutputError as err:
-                print(err)
-                sys.exit()
+            for r in results:
+                if not r["output"]:
+                    raise EmptyOutputError(
+                        model_id=self.model_id, api_name=api_name
+                    )
             schema = self._get_schema(results)
             self.logger.debug(schema)
             all_schemas[api_name] = schema
