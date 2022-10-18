@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ersilia.utils.exceptions_utils.issue_reporting &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Ersilia
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/package.html">Package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/devel.html">For developers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Ersilia</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../utils.html">ersilia.utils</a> &raquo;</li>
+      <li>ersilia.utils.exceptions_utils.issue_reporting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ersilia.utils.exceptions_utils.issue_reporting</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="c1"># REPO_OWNER = &#39;ersilia-os&#39;</span>
+<span class="c1"># REPO_NAME = &#39;ersilia&#39;</span>
+<span class="n">REPO_OWNER</span> <span class="o">=</span> <span class="s2">&quot;azycn&quot;</span>
+<span class="n">REPO_NAME</span> <span class="o">=</span> <span class="s2">&quot;alice.github.io&quot;</span>
+<span class="n">AUTH_TOKEN</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="send_exception_issue"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.issue_reporting.send_exception_issue">[docs]</a><span class="k">def</span> <span class="nf">send_exception_issue</span><span class="p">(</span><span class="n">E</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">lastinput</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;gh&#39;</span><span class="p">,</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="s1">&#39;login&#39;</span><span class="p">])</span> <span class="c1"># user login</span>
+    <span class="n">auth_out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;gh&#39;</span><span class="p">,</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;-t&#39;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># retrieve user&#39;s auth token</span>
+
+    <span class="c1"># if stdout not there, parse stderr for Token</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># parse stderr for Token</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">found_token</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">found_token</span><span class="p">:</span>
+                <span class="n">AUTH_TOKEN</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s1">&#39;Token:&#39;</span><span class="p">:</span>
+                <span class="n">found_token</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># if token not found, print error</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">found_token</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No token found.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># parse stdout</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="n">found_token</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">found_token</span><span class="p">:</span>
+                <span class="n">AUTH_TOKEN</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s1">&#39;Token:&#39;</span><span class="p">:</span>
+                <span class="n">found_token</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">AUTH_TOKEN</span><span class="p">)</span>
+        <span class="c1"># if token not found, print error</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">found_token</span> <span class="ow">and</span> <span class="n">AUTH_TOKEN</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No token found.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stderr</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">auth_out</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">return</span>
+
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://api.github.com/repos/</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">/issues&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">REPO_OWNER</span><span class="p">,</span> <span class="n">REPO_NAME</span><span class="p">)</span>
+
+    <span class="c1"># Create an authenticated session to create the issue</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+    <span class="c1"># Create our issue and headers to authenticate/format</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;token </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">AUTH_TOKEN</span><span class="p">,</span>
+               <span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/vnd.github+json&#39;</span><span class="p">}</span>
+    
+
+    <span class="c1"># Building the message for the body of the GitHub Issue</span>
+    <span class="n">dt_only</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S&quot;</span><span class="p">)</span>
+    <span class="n">datetime_str</span> <span class="o">=</span> <span class="s2">&quot;Date and time of issue: &quot;</span> <span class="o">+</span> <span class="n">dt_only</span>
+    <span class="n">exception_str</span> <span class="o">=</span> <span class="s2">&quot;Exception message: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">E</span><span class="p">)</span>
+    <span class="n">lastinput_str</span> <span class="o">=</span> <span class="s2">&quot;Last Input: &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="n">lastinput</span> <span class="k">if</span> <span class="p">(</span><span class="n">lastinput</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;not provided.&quot;</span><span class="p">)</span>
+    <span class="c1"># include log information here</span>
+    <span class="n">body_message</span> <span class="o">=</span> <span class="n">datetime_str</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">exception_str</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">lastinput_str</span> 
+    
+    <span class="n">issue</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;New issue: &#39;</span> <span class="o">+</span> <span class="n">dt_only</span><span class="p">,</span> 
+        <span class="s1">&#39;body&#39;</span><span class="p">:</span> <span class="n">body_message</span><span class="p">,</span>
+        <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Reported Issue&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Post the request to create an issue</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">issue</span><span class="p">),</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">201</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Created issue!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t create issue.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Response:&quot;</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+
+
+
+
+<span class="c1"># previous email reporting:</span>
+
+<span class="c1"># import smtplib, ssl</span>
+<span class="c1"># from datetime import datetime</span>
+
+<span class="c1"># smtp_server = &quot;smtp.gmail.com&quot;</span>
+<span class="c1"># port = 587  # For starttls</span>
+<span class="c1"># sender_email = &quot;ersilia.errors@gmail.com&quot;</span>
+<span class="c1"># password = &#39;xjaluhzxtrnazpro&#39; # insecure: the password will be visible from the code. Is this permissible?</span>
+<span class="c1">#     # note - turn on 2 step verification, generate an &quot;app password&quot;, and replace the password with this app pass</span>
+
+<span class="c1"># sender_email = &quot;ersilia.errors@gmail.com&quot;</span>
+<span class="c1"># receiver_email = &quot;ersilia.errors@gmail.com&quot;</span>
+
+<span class="c1"># def send_exception_report_email(E:Exception, log_text:str = &quot;&quot;):</span>
+<span class="c1">#     # get date/time info for message</span>
+<span class="c1">#     datetime_str = datetime.now().strftime(&quot;%d/%m/%Y %H:%M:%S&quot;)</span>
+
+<span class="c1">#     # Create a secure SSL context</span>
+<span class="c1">#     context = ssl.create_default_context()</span>
+
+<span class="c1">#     # Try to log in to server and send email</span>
+<span class="c1">#     try:</span>
+<span class="c1">#         server = smtplib.SMTP(smtp_server,port)</span>
+<span class="c1">#         server.starttls(context=context) # Secure the connection</span>
+<span class="c1">#         server.login(sender_email, password)</span>
+
+<span class="c1">#         message = f&quot;Subject: Exception {type(E)}: {datetime_str}\n\n&quot;</span>
+<span class="c1">#         message += f&quot;{str(E)}\n\n&quot;</span>
+<span class="c1">#         message += log_text</span>
+<span class="c1">#         server.sendmail(sender_email, receiver_email, message)</span>
+
+<span class="c1">#     except Exception as e:</span>
+<span class="c1">#         # Print any error messages to stdout</span>
+<span class="c1">#         print(e)</span>
+<span class="c1">#     finally:</span>
+<span class="c1">#         server.quit() </span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
