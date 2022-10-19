@@ -32,7 +32,9 @@ def throw_ersilia_exception(func):
             text += "Or feel free to reach out to us at:\n"
             text += " - hello[at]ersilia.io\n\n"
             text += "If you haven't, try to run your command in verbose mode (-v in the CLI)\n"
-            text += " - You fill find the console log file in: {0}/{1}".format(EOS, CURRENT_LOGGING_FILE)
+            text += " - You fill find the console log file in: {0}/{1}".format(
+                EOS, CURRENT_LOGGING_FILE
+            )
             echo(text, fg="green")
 
             sys.exit()  # TODO Enable automatic reporting

@@ -4,7 +4,9 @@ from ... import ErsiliaBase
 class ErsiliaError(Exception):
     """Base class for managing errors in Ersilia"""
 
-    def __init__(self, message="Ersilia has experienced an error", hints="", config_json=None):
+    def __init__(
+        self, message="Ersilia has experienced an error", hints="", config_json=None
+    ):
         text = "Ersilia exception class:\n"
         text += "{}\n\n".format(self.__class__.__name__)
         text += "Detailed error:\n"
