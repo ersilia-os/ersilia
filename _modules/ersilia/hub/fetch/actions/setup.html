@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ersilia.hub.fetch.actions.prepare &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <title>ersilia.hub.fetch.actions.setup &mdash; Ersilia  documentation</title><link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../../_static/js/html5shiv.min.js"></script>
@@ -55,7 +55,7 @@
       <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../../../index.html">Module code</a> &raquo;</li>
           <li><a href="../actions.html">ersilia.hub.fetch.actions</a> &raquo;</li>
-      <li>ersilia.hub.fetch.actions.prepare</li>
+      <li>ersilia.hub.fetch.actions.setup</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -64,33 +64,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for ersilia.hub.fetch.actions.prepare</h1><div class="highlight"><pre>
+  <h1>Source code for ersilia.hub.fetch.actions.setup</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
-<span class="kn">from</span> <span class="nn">...bundle.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
-<span class="kn">from</span> <span class="nn">...delete.delete</span> <span class="kn">import</span> <span class="n">ModelFullDeleter</span>
-
-<span class="kn">from</span> <span class="nn">....utils.exceptions_utils.delete_exceptions</span> <span class="kn">import</span> <span class="n">ModelDeleteError</span>
-<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 
 
-<div class="viewcode-block" id="ModelPreparer"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.prepare.ModelPreparer">[docs]</a><span class="k">class</span> <span class="nc">ModelPreparer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<div class="viewcode-block" id="SetupChecker"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker">[docs]</a><span class="k">class</span> <span class="nc">SetupChecker</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">deleter</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
-    <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">is_downloaded</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
-                <span class="k">return</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">deleter</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ModelDeleteError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
+<div class="viewcode-block" id="SetupChecker.check"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div></div>
 </pre></div>
 
            </div>

@@ -64,8 +64,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.setup.requirements.git</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">s</span>
+<span></span><span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">s</span>
+
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.setup_exceptions</span> <span class="kn">import</span> <span class="n">GitLfsSetupError</span>
 
 
 <div class="viewcode-block" id="GithubCliRequirement"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement">[docs]</a><span class="k">class</span> <span class="nc">GithubCliRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -83,19 +85,18 @@
 
 <div class="viewcode-block" id="GitLfsRequirement"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement">[docs]</a><span class="k">class</span> <span class="nc">GitLfsRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
 
-<div class="viewcode-block" id="GitLfsRequirement.is_installed"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.is_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@throw_ersilia_exception</span>
+    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">check</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;git-lfs&quot;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">check</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;git-lfsxx&quot;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GitLfsSetupError</span>
 
-        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
-                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Git LFS is not installed. We recommend installing Git LFS to&quot;</span>
-                <span class="s2">&quot; use large size models.</span><span class="se">\n\n</span><span class="s2">Check out https://git-lfs.github.com/&quot;</span>
-                <span class="s2">&quot; on how to install. After installation, simply use the command&quot;</span>
-                <span class="s2">&quot; `git lfs install` in your repository.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="p">)</span></div></div>
+<div class="viewcode-block" id="GitLfsRequirement.activate"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.activate">[docs]</a>    <span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;git-lfs install&quot;</span><span class="p">])</span></div></div>
 </pre></div>
 
            </div>
