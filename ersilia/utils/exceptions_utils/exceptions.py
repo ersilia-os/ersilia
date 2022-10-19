@@ -1,8 +1,11 @@
+from ... import ErsiliaBase
+
+
 class ErsiliaError(Exception):
     """Base class for managing errors in Ersilia"""
 
-    def __init__(self, message="Ersilia has experienced an error", hints=""):
-        text = "Something went wrong with Ersilia...\n\n"
+    def __init__(self, message="Ersilia has experienced an error", hints="", config_json=None):
+        text = "Ersilia exception class:\n"
         text += "{}\n\n".format(self.__class__.__name__)
         text += "Detailed error:\n"
         text += message
@@ -10,8 +13,9 @@ class ErsiliaError(Exception):
         if hints:
             text += "Hints:\n"
             text += hints
-            text += "\n\n"
-
+            text += "\n"
+        eb = ErsiliaBase(config_json=config_json, credentials_json=None)
+        eb.logger.error(text)
         super().__init__(text)
 
 

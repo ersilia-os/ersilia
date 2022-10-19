@@ -1,8 +1,10 @@
-# from ...cli import echo
-from ...utils.cli_query import query_yes_no
-from ...utils.exceptions_utils.issue_reporting import send_exception_issue
 import sys
 import click
+
+from ...utils.cli_query import query_yes_no
+from ...utils.exceptions_utils.issue_reporting import send_exception_issue
+from ... import EOS
+from ...default import CURRENT_LOGGING_FILE
 
 try:
     import emoji
@@ -22,14 +24,15 @@ def throw_ersilia_exception(func):
             func(*args, **kwargs)
         except Exception as E:
             text = ":police_car_light::police_car_light::police_car_light: Something went wrong with Ersilia :police_car_light::police_car_light::police_car_light:\n"
-            echo(text)
+            echo(text, blink=False, bold=True, fg="red")
             echo("Error message:\n", fg="red", bold=True)
-            echo(":prohibited: " + str(E), fg="red")
+            echo(str(E), fg="red")
             text = "If this error message is not helpful, open an issue at:\n"
-            text += " - https://github.com/ersilia-os/ersilia\n"
+            text += " - [https://github.com/ersilia-os/ersilia](https://github.com/ersilia-os/ersilia)\n"
             text += "Or feel free to reach out to us at:\n"
             text += " - hello[at]ersilia.io\n\n"
-            text += "If you haven't, try to run your command in verbose mode (-v in the CLI)\n\n"
+            text += "If you haven't, try to run your command in verbose mode (-v in the CLI)\n"
+            text += " - You fill find the console log file in: {0}/{1}".format(EOS, CURRENT_LOGGING_FILE)
             echo(text, fg="green")
 
             sys.exit()  # TODO Enable automatic reporting
