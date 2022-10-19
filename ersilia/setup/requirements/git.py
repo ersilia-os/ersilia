@@ -1,5 +1,7 @@
-import sys
 import subprocess as s
+
+from ... import throw_ersilia_exception
+from ...utils.exceptions_utils.setup_exceptions import GitLfsSetupError
 
 
 class GithubCliRequirement(object):
@@ -17,16 +19,15 @@ class GithubCliRequirement(object):
 
 class GitLfsRequirement(object):
     def __init__(self):
-        pass
+        self.is_installed()
+        self.activate()
 
+    @throw_ersilia_exception
     def is_installed(self):
         try:
-            check = s.run(["git-lfs"], capture_output=True)
+            check = s.run(["git-lfsxx"], capture_output=True)
+        except:
+            raise GitLfsSetupError
 
-        except ModuleNotFoundError:
-            sys.exit(
-                "\nGit LFS is not installed. We recommend installing Git LFS to"
-                " use large size models.\n\nCheck out https://git-lfs.github.com/"
-                " on how to install. After installation, simply use the command"
-                " `git lfs install` in your repository.\n"
-            )
+    def activate(self):
+        s.run(["git-lfs install"])

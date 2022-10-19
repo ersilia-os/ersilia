@@ -4,7 +4,7 @@ class ErsiliaError(Exception):
     def __init__(self, message="Ersilia has experienced an error", hints=""):
         text = "Something went wrong with Ersilia...\n\n"
         text += "{}\n\n".format(self.__class__.__name__)
-        text += "Error message:\n"
+        text += "Detailed error:\n"
         text += message
         text += "\n\n"
         if hints:
@@ -26,7 +26,7 @@ class MissingDependencyError(ErsiliaError):
 class InvalidModelIdentifierError(ErsiliaError):
     def __init__(self, model):
         self.model = model
-        self.message = "Could not identify model identifier or slug {0}:".format(
+        self.message = "Could not identify model identifier or slug: {0}:".format(
             self.model
         )
         self.hints = "Please check that {0} exists in the Ersilia Model Hub:\n - https://ersilia.io/model-hub (for approved models)\n - https://airtable.com/shrUcrUnd7jB9ChZV (for approved and in preparation models)".format(

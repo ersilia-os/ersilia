@@ -20,6 +20,9 @@ if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
 # Logger
 from .utils.logging import logger
 
+# Exceptions
+from .utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+
 # Environmental variables
 os.environ["EOS_HOME"] = EOS
 

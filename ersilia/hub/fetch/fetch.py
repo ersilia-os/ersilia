@@ -6,7 +6,8 @@ from timeit import default_timer as timer
 from datetime import timedelta
 
 from ... import ErsiliaBase
-from ... import logger
+from ... import throw_ersilia_exception
+from .actions.setup import SetupChecker
 from .actions.prepare import ModelPreparer
 from .actions.get import ModelGetter
 from .actions.lake import LakeGetter
@@ -15,8 +16,6 @@ from .actions.toolize import ModelToolizer
 from .actions.content import CardGetter
 from .actions.check import ModelChecker
 from .actions.sniff import ModelSniffer
-
-from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 
 from . import STATUS_FILE, DONE_TAG
 
@@ -43,6 +42,10 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("When packing mode is docker, dockerization is mandatory")
             dockerize = True
         self.do_docker = dockerize
+
+    def _setup_check(self):
+        dc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
+        dc.check()
 
     def _prepare(self):
         mp = ModelPreparer(
@@ -96,6 +99,7 @@ class ModelFetcher(ErsiliaBase):
     def fetch(self, model_id):
         start = timer()
         self.model_id = model_id
+        self._setup_check()
         self._prepare()
         self._get()
         self._pack()
@@ -106,6 +110,6 @@ class ModelFetcher(ErsiliaBase):
         self._success()
         end = timer()
         elapsed_time = timedelta(seconds=end - start)
-        logger.info(
+        self.logger.info(
             "Fetching {0} done successfully: {1}".format(model_id, elapsed_time)
         )

@@ -21,17 +21,18 @@ def throw_ersilia_exception(func):
         try:
             func(*args, **kwargs)
         except Exception as E:
-            text = ":triangular_flag: Something went wrong with Ersilia...\n\n"
+            text = ":police_car_light::police_car_light::police_car_light: Something went wrong with Ersilia :police_car_light::police_car_light::police_car_light:\n"
             echo(text)
-            echo("Error message:\n")
+            echo("Error message:\n", fg="red", bold=True)
             echo(":prohibited: " + str(E), fg="red")
             text = "If this error message is not helpful, open an issue at:\n"
             text += " - https://github.com/ersilia-os/ersilia\n"
             text += "Or feel free to reach out to us at:\n"
             text += " - hello[at]ersilia.io\n\n"
             text += "If you haven't, try to run your command in verbose mode (-v in the CLI)\n\n"
-            echo(text)
+            echo(text, fg="green")
 
+            sys.exit()  # TODO Enable automatic reporting
             if query_yes_no("Would you like to report this error to Ersilia?"):
 
                 if query_yes_no(
