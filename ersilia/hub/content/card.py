@@ -12,13 +12,7 @@ try:
 except:
     Hdf5Explorer = None
 
-from ...default import (
-    ISAURA_DIR,
-    ISAURA_FILE_TAG,
-    ISAURA_FILE_TAG_LOCAL,
-    H5_EXTENSION,
-    CARD_FILE,
-)
+from ...default import CARD_FILE
 
 
 class ReadmeCard(ErsiliaBase):
