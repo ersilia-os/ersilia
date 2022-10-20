@@ -34,7 +34,7 @@ jobs:
           conda init
           python -m pip install -e .[test]
   
-      - name: Predict models
+      - name: Predict output
         run: |
           source activate
           MODEL_ID=$(ersilia sample --model)
