@@ -38,6 +38,7 @@ jobs:
         run: |
           source activate
           MODEL_ID=$(ersilia sample --model)
+          echo "Sample model id selected: $MODEL_ID"
           ersilia fetch $MODEL_ID
           ersilia serve $MODEL_ID
           ersilia sample -n 100 -f input.csv
