@@ -28,7 +28,7 @@ def throw_ersilia_exception(func):
             echo("Error message:\n", fg="red", bold=True)
             echo(str(E), fg="red")
             text = "If this error message is not helpful, open an issue at:\n"
-            text += " - [https://github.com/ersilia-os/ersilia](https://github.com/ersilia-os/ersilia)\n"
+            text += " - https://github.com/ersilia-os/ersilia\n"
             text += "Or feel free to reach out to us at:\n"
             text += " - hello[at]ersilia.io\n\n"
             text += "If you haven't, try to run your command in verbose mode (-v in the CLI)\n"
