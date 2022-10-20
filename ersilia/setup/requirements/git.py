@@ -11,12 +11,15 @@ class GithubCliRequirement(object):
         self.name = "gh"
 
     @throw_ersilia_exception
-    def is_installed(self):
+    def is_installed(self, raise_exception):
         check = run_command_check_output("gh")
         if "GitHub" in check:
             return True
         else:
-            raise GithubCliSetupError
+            if raise_exception:
+                raise GithubCliSetupError
+            else:
+                return False
 
 
 class GitLfsRequirement(object):

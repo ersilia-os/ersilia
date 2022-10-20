@@ -10,8 +10,12 @@ class SetupChecker(BaseAction):
 
     def _gh_cli(self):
         req = GithubCliRequirement()
-        req.is_installed()
-        self.logger.debug("GitHub CLI is installed")
+        if req.is_installed(raise_exception=False):
+            self.logger.debug("GitHub CLI is installed")
+        else:
+            self.logger.info(
+                "GitHub CLI is not installed. Ersilia can work without it, but we highy recommend that you install this tool."
+            )
 
     def _git_lfs(self):
         req = GitLfsRequirement()
@@ -23,4 +27,3 @@ class SetupChecker(BaseAction):
     def check(self):
         self._gh_cli()
         self._git_lfs()
-        # self._is_git
