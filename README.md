@@ -19,7 +19,6 @@ The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infe
 
 * Read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/)
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 # Quick start guide
 Please check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). The next steps are a quickstart guide to installing Ersilia.
@@ -57,7 +56,6 @@ ersilia close
 ```
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 # Contribute
 The Ersilia Model Hub is a Free, Open Source Software and we highly value new contributors. There are several ways in which you can contribute to the project:
@@ -73,11 +71,8 @@ The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https:/
 # License and citation
 This repository is open-sourced under the [GPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 # About us
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.
 
 [Help us](https://www.ersilia.io/donate) achieve our mission or [volunteer](https://www.ersilia.io/volunteer) with us!
-
-<p align="right">(<a href="#top">back to top</a>)</p>
