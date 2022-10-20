@@ -33,6 +33,7 @@ MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
 FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"
+DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 
 # Isaura data lake
 H5_EXTENSION = ".h5"

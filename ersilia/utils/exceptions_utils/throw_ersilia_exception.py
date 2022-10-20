@@ -4,7 +4,7 @@ import click
 from ...utils.cli_query import query_yes_no
 from ...utils.exceptions_utils.issue_reporting import send_exception_issue
 from ... import EOS
-from ...default import CURRENT_LOGGING_FILE
+from ...default import CURRENT_LOGGING_FILE, DEFAULT_ERSILIA_ERROR_EXIT_CODE
 
 try:
     import emoji
@@ -37,7 +37,7 @@ def throw_ersilia_exception(func):
             )
             echo(text, fg="green")
 
-            sys.exit()  # TODO Enable automatic reporting
+            sys.exit(DEFAULT_ERSILIA_ERROR_EXIT_CODE)  # TODO Enable automatic reporting
             if query_yes_no("Would you like to report this error to Ersilia?"):
 
                 if query_yes_no(
