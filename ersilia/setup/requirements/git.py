@@ -11,15 +11,21 @@ class GithubCliRequirement(object):
         self.name = "gh"
 
     @throw_ersilia_exception
-    def is_installed(self, raise_exception):
+    def is_installed(self, raise_exception=False, install_if_necessary=False):
         check = run_command_check_output("gh")
         if "GitHub" in check:
             return True
         else:
             if raise_exception:
-                raise GithubCliSetupError
+                if install_if_necessary:
+                    self.install()
+                else:
+                    raise GithubCliSetupError
             else:
                 return False
+
+    def install(self):
+        run_command("conda install -c conda-forge gh")
 
 
 class GitLfsRequirement(object):
@@ -27,12 +33,18 @@ class GitLfsRequirement(object):
         self.name = "git-lfs"
 
     @throw_ersilia_exception
-    def is_installed(self):
+    def is_installed(self, install_if_necessary=True):
         check = run_command_check_output("git-lfs")
         if check.startswith("git-lfs"):
             return True
         else:
-            raise GitLfsSetupError
+            if install_if_necessary:
+                self.install()
+            else:
+                raise GitLfsSetupError
 
     def activate(self):
         run_command("git-lfs install")
+
+    def install(self):
+        run_command("conda install -c conda-forge git-lfs")
