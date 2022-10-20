@@ -68,11 +68,6 @@
 <span></span><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ErsiliaError</span>
 
 
-<div class="viewcode-block" id="ErsiliaHomePathError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.setup_exceptions.ErsiliaHomePathError">[docs]</a><span class="k">class</span> <span class="nc">ErsiliaHomePathError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
-
-
 <div class="viewcode-block" id="GitLfsSetupError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.setup_exceptions.GitLfsSetupError">[docs]</a><span class="k">class</span> <span class="nc">GitLfsSetupError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -82,13 +77,43 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Git LFS is not installed! Git LFS is needed to download large files from our GitHub Model Hub repositories.&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Git LFS is not installed! Git LFS is needed to download large files from our GitHub repositories.&quot;</span>
         <span class="k">return</span> <span class="n">text</span>
 
     <span class="k">def</span> <span class="nf">_get_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;An easy way to install Git LFS is the following Conda command:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;$ conda install -c conda-forge git-lfs&quot;</span>
         <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="GithubCliSetupError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.setup_exceptions.GithubCliSetupError">[docs]</a><span class="k">class</span> <span class="nc">GithubCliSetupError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_hints</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;GitHub CLI is not installed! GitHub CLI is a fantastic tool to interact with GitHub. Ersilia uses it in the backend.&quot;</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+    <span class="k">def</span> <span class="nf">_get_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;An easy way to install the GitHub CLI is the following Conda command:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;$ conda install -c conda-forge gh&quot;</span>
+        <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="CondaSetupError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.setup_exceptions.CondaSetupError">[docs]</a><span class="k">class</span> <span class="nc">CondaSetupError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="PingError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.setup_exceptions.PingError">[docs]</a><span class="k">class</span> <span class="nc">PingError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="EosHomePathNotFoundError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.setup_exceptions.EosHomePathNotFoundError">[docs]</a><span class="k">class</span> <span class="nc">EosHomePathNotFoundError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
 </pre></div>
 
            </div>

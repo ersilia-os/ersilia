@@ -65,7 +65,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.hub.fetch.actions.setup</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
+<span></span><span class="kn">from</span> <span class="nn">ersilia.setup.requirements.git</span> <span class="kn">import</span> <span class="n">GitLfsRequirement</span><span class="p">,</span> <span class="n">GithubCliRequirement</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
 
 
 <div class="viewcode-block" id="SetupChecker"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker">[docs]</a><span class="k">class</span> <span class="nc">SetupChecker</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
@@ -74,8 +75,25 @@
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_gh_cli</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">GithubCliRequirement</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;GitHub CLI is installed&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;GitHub CLI is not installed. Ersilia can work without it, but we highy recommend that you install this tool.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_git_lfs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">GitLfsRequirement</span><span class="p">()</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Git LFS is installed&quot;</span><span class="p">)</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Git LFS has been activated&quot;</span><span class="p">)</span>
+
 <div class="viewcode-block" id="SetupChecker.check"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gh_cli</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_git_lfs</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>

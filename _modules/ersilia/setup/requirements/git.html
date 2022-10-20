@@ -64,39 +64,56 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.setup.requirements.git</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">s</span>
-
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
-<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.setup_exceptions</span> <span class="kn">import</span> <span class="n">GitLfsSetupError</span>
+<span></span><span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.setup_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GitLfsSetupError</span><span class="p">,</span>
+    <span class="n">GithubCliSetupError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
 
 
 <div class="viewcode-block" id="GithubCliRequirement"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement">[docs]</a><span class="k">class</span> <span class="nc">GithubCliRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__ini__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;gh&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
 
-<div class="viewcode-block" id="GithubCliRequirement.is_installed"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement.is_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+    <span class="nd">@throw_ersilia_exception</span>
+    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">install_if_necessary</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;gh&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;GitHub&quot;</span> <span class="ow">in</span> <span class="n">check</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">install_if_necessary</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">GithubCliSetupError</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="GithubCliRequirement.install"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div></div>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;conda install -c conda-forge gh&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="GitLfsRequirement"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement">[docs]</a><span class="k">class</span> <span class="nc">GitLfsRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;git-lfs&quot;</span>
 
     <span class="nd">@throw_ersilia_exception</span>
-    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">check</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;git-lfsxx&quot;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">GitLfsSetupError</span>
+    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">install_if_necessary</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;git-lfs&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">check</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git-lfs&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">install_if_necessary</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">GitLfsSetupError</span>
 
 <div class="viewcode-block" id="GitLfsRequirement.activate"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.activate">[docs]</a>    <span class="k">def</span> <span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;git-lfs install&quot;</span><span class="p">])</span></div></div>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;git-lfs install&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GitLfsRequirement.install"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;conda install -c conda-forge git-lfs&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
