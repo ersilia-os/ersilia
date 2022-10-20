@@ -1,33 +1,32 @@
-import subprocess as s
-
 from ... import throw_ersilia_exception
-from ...utils.exceptions_utils.setup_exceptions import GitLfsSetupError
+from ...utils.exceptions_utils.setup_exceptions import GitLfsSetupError, GithubCliSetupError
+from ...utils.terminal import run_command, run_command_check_output
 
 
 class GithubCliRequirement(object):
     def __ini__(self):
         self.name = "gh"
-        if not self.is_installed():
-            self.install()
-
+    
+    @throw_ersilia_exception
     def is_installed(self):
-        pass
-
-    def install(self):
-        pass
+        check = run_command_check_output("gh")
+        if "GitHub" in check:
+            return True
+        else:
+            raise GithubCliSetupError
 
 
 class GitLfsRequirement(object):
     def __init__(self):
-        self.is_installed()
-        self.activate()
+        self.name = "git-lfs"
 
     @throw_ersilia_exception
     def is_installed(self):
-        try:
-            check = s.run(["git-lfsxx"], capture_output=True)
-        except:
+        check = run_command_check_output("git-lfs")
+        if check.startswith("git-lfs"):
+            return True
+        else:
             raise GitLfsSetupError
 
     def activate(self):
-        s.run(["git-lfs install"])
+        run_command("git-lfs install")

@@ -6,7 +6,6 @@ from timeit import default_timer as timer
 from datetime import timedelta
 
 from ... import ErsiliaBase
-from ... import throw_ersilia_exception
 from .actions.setup import SetupChecker
 from .actions.prepare import ModelPreparer
 from .actions.get import ModelGetter
@@ -44,8 +43,8 @@ class ModelFetcher(ErsiliaBase):
         self.do_docker = dockerize
 
     def _setup_check(self):
-        dc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
-        dc.check()
+        sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
+        sc.check()
 
     def _prepare(self):
         mp = ModelPreparer(
@@ -95,7 +94,6 @@ class ModelFetcher(ErsiliaBase):
         with open(status_file, "w") as f:
             json.dump(done, f, indent=4)
 
-    @throw_ersilia_exception
     def fetch(self, model_id):
         start = timer()
         self.model_id = model_id
