@@ -23,4 +23,4 @@ class SetupChecker(BaseAction):
     def check(self):
         self._gh_cli()
         self._git_lfs()
-        #self._is_git
+        # self._is_git
