@@ -6,7 +6,8 @@
 
 * [Introduction](ersilia-model-hub/introduction.md)
 * [Installation](ersilia-model-hub/installation.md)
-* [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
+* [Model usage](ersilia-model-hub/antibiotic-activity-prediction/README.md)
+  * [Ersilia on Google Colab](ersilia-model-hub/antibiotic-activity-prediction/ersilia-on-google-colab.md)
 * [Inputs](ersilia-model-hub/inputs-and-outputs.md)
 * [Contribute models](contributors/incorporate-models.md)
   * [Model Incorporation Guidelines](ersilia-model-hub/contribute-models/model-incorporation-guidelines.md)

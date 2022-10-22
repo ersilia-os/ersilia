@@ -49,9 +49,9 @@ Ersilia does not follow this roadmap strictly. Since we are already involved in 
 
 We estimate that we will be able to include at least 200 AI/ML models in **1.A**. At the end of this process, we will write a **scientific publication**.
 
-### Phase 1 Type A models: Chemistry models trained by others
+### 1.A: Chemistry models trained by others
 
-Drug discovery, and especially antimicrobial drug discovery, relies heavily on small molecule compounds. Type A models can play an important role in the drug discovery pipeline by helping increase the hit rate of pre-clinical experiments, anticipating toxicity outcomes in clinical trials, or even suggesting new drug candidates _de novo_.
+Drug discovery, and especially antimicrobial drug discovery, relies heavily on small molecule compounds. **Type A** models can play an important role in the drug discovery pipeline by helping increase the hit rate of pre-clinical experiments, anticipating toxicity outcomes in clinical trials, or even suggesting new drug candidates _de novo_.
 
 In general, the **input** of a Type A model will be a molecules or a list of molecules expressed in the [SMILES](https://en.wikipedia.org/wiki/Simplified\_molecular-input\_line-entry\_system) format. The SMILES strings captures the atomic connectivity of a molecule (i.e. its 2D structure), which is usually sufficient to make good predictions about the compound.
 
