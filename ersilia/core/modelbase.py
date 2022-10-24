@@ -5,7 +5,7 @@ from .. import ErsiliaBase
 from ..hub.content.slug import Slug
 from ..hub.fetch import STATUS_FILE, DONE_TAG
 
-from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
+from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError, ModelNotAvailableLocallyError
 from .. import throw_ersilia_exception
 
 
@@ -32,12 +32,14 @@ class ModelBase(ErsiliaBase):
             return False
         else:
             return True
-
+            
+    @throw_ersilia_exception
     def is_available_locally(self):
         fetch_status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         if not os.path.exists(fetch_status_file):
             self.logger.debug("No status file exists")
             is_fetched = False
+            raise ModelNotAvailableLocallyError(model=self.text)
         else:
             with open(fetch_status_file, "r") as f:
                 status = json.load(f)

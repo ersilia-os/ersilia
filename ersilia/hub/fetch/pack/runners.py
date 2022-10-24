@@ -14,6 +14,8 @@ from ....setup.baseconda import SetupBaseConda
 from ....default import DEFAULT_VENV
 from .. import MODEL_INSTALL_COMMANDS_FILE
 
+from ....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
+from .... import throw_ersilia_exception
 
 USE_CHECKSUM = False
 
@@ -72,6 +74,7 @@ class CondaPack(BasePack):
         self.conda = SimpleConda()
         self.logger.debug("Initializing conda packer")
 
+    @throw_ersilia_exception
     def _setup(self):
         self.logger.debug("Setting up")
         model_id = self.model_id
@@ -85,6 +88,7 @@ class CondaPack(BasePack):
         )
         self.logger.debug("Conda environment {0}".format(env))
         if not self.conda.exists(env):
+            raise CondaEnvironmentExistsError(env)
             self.logger.debug("Environment {0} does not exist".format(env))
             # clone base conda environment and add model dependencies
             base_env = self.conda.get_base_env(model_path)

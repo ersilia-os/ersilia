@@ -1,5 +1,6 @@
 from ...utils.terminal import run_command_check_output
-
+from ... import throw_ersilia_exception
+from ...utils.exceptions_utils.setup_exceptions import CondaSetupError
 
 class CondaRequirement(object):
     def __init__(self):
@@ -11,7 +12,7 @@ class CondaRequirement(object):
         if self.name in output:
             return True
         else:
-            return False
+            raise CondaSetupError
 
     def install(self):
         pass
