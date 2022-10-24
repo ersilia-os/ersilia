@@ -88,7 +88,6 @@ class CondaPack(BasePack):
         )
         self.logger.debug("Conda environment {0}".format(env))
         if not self.conda.exists(env):
-            raise CondaEnvironmentExistsError(env)
             self.logger.debug("Environment {0} does not exist".format(env))
             # clone base conda environment and add model dependencies
             base_env = self.conda.get_base_env(model_path)
@@ -103,6 +102,8 @@ class CondaPack(BasePack):
                 tag = "-".join(base_env.split("-")[-2:])
                 self.logger.debug("Setting up base environment {0}".format(base_env))
                 SetupBaseConda().setup(org=org, tag=tag)
+                if not self.conda.exists(base_env):
+                    raise CondaEnvironmentExistsError(base_env)
             self.logger.info(
                 "Cloning base conda environment and adding model dependencies"
             )
@@ -121,7 +122,11 @@ class CondaPack(BasePack):
         db.table = "conda"
         db.insert(model_id=model_id, env=env)
         self.logger.debug("Done with the Conda setup")
+
+        if not self.conda.exists(env):
+            raise CondaEnvironmentExistsError(env)
         return env
+
 
     def _run(self):
         env = self._setup()

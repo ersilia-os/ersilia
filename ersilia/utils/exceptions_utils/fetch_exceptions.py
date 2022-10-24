@@ -45,7 +45,8 @@ class CondaEnvironmentExistsError(ErsiliaError):
         return text
 
     def _get_hints(self):
-        text = "CondaEnvironmentExistsError hint\n"   # TO DO
+        text  = "Try to look at the log files and see if there is an error in the conda installation\n"
+        text += "Please report the error at:\n - https://github.com/ersilia-os/ersilia\n"
         return text
 
 class ModelPackageInstallError(ErsiliaError):
@@ -60,5 +61,22 @@ class ModelPackageInstallError(ErsiliaError):
         return text
 
     def _get_hints(self):
-        text = "Try to manually activate the model environment and install package manually. If this does not work, \n"   # TO DO
+        text = "Try to manually activate the model environment and install package manually.\n"
+        text+= "If this does not work, please report the error at:\n - https://github.com/ersilia-os/ersilia\n\n"   
+        return text
+
+class VirtualEnvironmentSetupError(ErsiliaError):
+    def __init__(self,venv_name):
+        self.virtual_env_name = venv_name
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        super().__init__(self.message, self.hints)
+        
+    def _get_message(self):
+        text = "Virtual Environment " + self.virtual_env_name + " does not exist!"
+        return text
+
+    def _get_hints(self):
+        text  = "Try to look at the log files and see if there is an error in the venv installation\n"
+        text += "Please report the error at:\n - https://github.com/ersilia-os/ersilia\n"
         return text
