@@ -208,6 +208,14 @@ For this part, please do not launch directly onto modelling, wait for the mentor
 
 1. Once you have completed all the above steps, mention the mentors on the Slack channel #stage1-contributions and explain all the steps done on the first phase. Add your GitHub handle in the issue!
 2. The mentors will open a GitHub issue with the specific modelling exercise and assign it to you.
-3. All the conversations related to developing the models for the dataset assigned to you will be discussed in the GitHub issue
-
-Once the model is completed, we will add it to the Ersilia Model Hub. Read more about it in the [guidelines](../incorporate-models.md).
+3. Use the steps described in the template notebook to train a new model
+4. Answer these questions (and more that you might have) about your data and models:
+   1. What are we trying to predict? (do some reading!)&#x20;
+   2. Is this a classification or a regression problem?&#x20;
+   3. How many datapoints do we have in total and in each set (train / validation / test)?&#x20;
+   4. How many actives and inactives do we have?&#x20;
+   5. Can you show in a plot the distribution of actives/inactives, or the values for the regression?
+   6. What is the performance of your model? What metrics are you using and why?
+   7. How do you interpret the ROC Curve you got?
+   8. How could we improve the model?
+5. All the conversations related to developing the models for the dataset assigned to you will be discussed in the GitHub issue.
