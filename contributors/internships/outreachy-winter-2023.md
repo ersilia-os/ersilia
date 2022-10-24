@@ -208,7 +208,7 @@ For this part, please do not launch directly onto modelling, wait for the mentor
 
 1. Once you have completed all the above steps, mention the mentors on the Slack channel #stage1-contributions and explain all the steps done on the first phase. Add your GitHub handle in the issue!
 2. The mentors will open a GitHub issue with the specific modelling exercise and assign it to you.
-3. Use the steps described in the template notebook to train a new model
+3. Use the steps described in the [template notebook](https://colab.research.google.com/drive/1iA7kIuuoUywfoOPx-KIAk-sDY630NLMS?usp=sharing) to train a new model
 4. Answer these questions (and more that you might have) about your data and models:
    1. What are we trying to predict? (do some reading!)&#x20;
    2. Is this a classification or a regression problem?&#x20;
@@ -218,4 +218,8 @@ For this part, please do not launch directly onto modelling, wait for the mentor
    6. What is the performance of your model? What metrics are you using and why?
    7. How do you interpret the ROC Curve you got?
    8. How could we improve the model?
-5. All the conversations related to developing the models for the dataset assigned to you will be discussed in the GitHub issue.
+5. Finally, comment on at least TWO of your peers models, discussing their results and suggesting ideas or improvements if needed.
+
+{% hint style="success" %}
+All the conversations related to developing the models for the dataset assigned to you will be discussed in the GitHub issue.
+{% endhint %}
