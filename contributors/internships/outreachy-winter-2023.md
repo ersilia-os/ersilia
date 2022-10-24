@@ -187,7 +187,7 @@ Once you have successfully tested 5 models, go on and try to repeat the exercise
 All the model requirements stay within Google's free tier
 {% endhint %}
 
-### 5. Train a new model and incorporate it in the Hub
+### 5. Train an AI/ML model
 
 Once you have:
 
