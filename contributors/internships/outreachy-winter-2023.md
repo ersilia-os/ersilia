@@ -135,7 +135,7 @@ These work just fine! Perfect, tag the mentor Gemma on the #stage1-contributors 
 
 ### 3. Run models on the Ersilia CLI
 
-Your second task for the contribution period is to help us debug any issues when running models with the Ersilia Command Line Interface. You can find more information about it on the [Model Usage](../../ersilia-model-hub/antibiotic-activity-prediction/) guide.
+Your second task for the contribution period is to help us debug any issues when running models with the Ersilia Command Line Interface. You can find more information about it on the [Model Usage](../../ersilia-model-hub/antibiotic-activity-prediction.md) guide.
 
 {% hint style="warning" %}
 Use the -v (verbose) in all commands to see the error outputs.

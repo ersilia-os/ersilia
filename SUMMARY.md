@@ -6,7 +6,7 @@
 
 * [Introduction](ersilia-model-hub/introduction.md)
 * [Installation](ersilia-model-hub/installation.md)
-* [Model usage](ersilia-model-hub/antibiotic-activity-prediction/README.md)
+* [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
   * [Ersilia on Google Colab](ersilia-model-hub/antibiotic-activity-prediction/ersilia-on-google-colab.md)
 * [Inputs](ersilia-model-hub/inputs-and-outputs.md)
 * [Contribute models](contributors/incorporate-models.md)
@@ -25,6 +25,11 @@
 * [Automated activity prediction models](chemistry-tools/automated-activity-prediction-models.md)
 * [Sampling the chemical space](chemistry-tools/sampling-the-chemical-space.md)
 * [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
+
+## 🎨 Styles
+
+* [Brand guidelines](styles/brand-guidelines.md)
+* [Scientific figures](styles/scientific-figures.md)
 
 ## 📑 Training materials
 
