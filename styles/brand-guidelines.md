@@ -36,4 +36,4 @@ More versions of the logo can be found in [this folder](https://drive.google.com
 
 Ersilia's corporate typeface is **Beausite Classic Clear**, with the addition of **Beausite Classic Clear Italic** and **Beausite Classic Semi Bold**.
 
-<figure><img src="../.gitbook/assets/1_D_h-SVUIdAmkxrXa94OFig (4).png" alt=""><figcaption><p>Ersilia's corporate typography.</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/1_D_h-SVUIdAmkxrXa94OFig (2).png" alt=""><figcaption><p>Ersilia's corporate typography.</p></figcaption></figure>

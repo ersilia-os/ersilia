@@ -2,7 +2,7 @@
 
 ##
 
-## Styila
+## Stylia
 
 ### Color palettes
 
