@@ -51,7 +51,7 @@ class ModelNotAvailableLocallyError(ErsiliaError):
         )
         self.hints = "Fetch the model using the CLI. Simply run:\n"
         self.hints += "$ ersilia fetch {0}".format(self.model)
-        super().__init__(self.message, self.hint)
+        super().__init__(self.message, self.hints)
 
 
 class EmptyOutputError(ErsiliaError):
