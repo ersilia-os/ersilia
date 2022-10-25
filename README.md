@@ -9,7 +9,7 @@
 
 ### Table of Contents:
 1. [Project Description](https://github.com/ersilia-os/ersilia#project-description)
-2. [Installation](https://github.com/ersilia-os/ersilia#installation)
+2. [Quick start guide](https://github.com/ersilia-os/ersilia#quick-start-guide)
 3. [Contribute](https://github.com/ersilia-os/ersilia#contribute)
 4. [License and citation](https://github.com/ersilia-os/ersilia#license-and-citation)
 5. [About us](https://github.com/ersilia-os/ersilia#about-us)
