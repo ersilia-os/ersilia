@@ -1,4 +1,4 @@
-from ersilia.setup.requirements.git import GitLfsRequirement, GithubCliRequirement
+from ....setup.requirements.git import GitLfsRequirement, GithubCliRequirement
 from . import BaseAction
 
 

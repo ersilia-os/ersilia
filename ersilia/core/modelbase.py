@@ -39,11 +39,10 @@ class ModelBase(ErsiliaBase):
         if not os.path.exists(fetch_status_file):
             self.logger.debug("No status file exists")
             is_fetched = False
-            raise ModelNotAvailableLocallyError(model=self.text)
+            #raise ModelNotAvailableLocallyError(model=self.text)
         else:
             with open(fetch_status_file, "r") as f:
                 status = json.load(f)
             is_fetched = status[DONE_TAG]
         self.logger.debug("Is fetched: {0}".format(is_fetched))
         return is_fetched
-        
