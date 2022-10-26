@@ -9,9 +9,8 @@ class PingRequirement(object):
     @throw_ersilia_exception
     def is_connected(self):
         url = 'http://www.google.com/'
-        raise PingError
         try:
-            #_ = requests.get(url)
+            _ = requests.get(url)
             return True
         except:
             raise PingError

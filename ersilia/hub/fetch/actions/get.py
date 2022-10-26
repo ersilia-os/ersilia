@@ -1,14 +1,13 @@
 import os
 import shutil
-
 from . import BaseAction
 from ....utils.download import GitHubDownloader
 from ....utils.paths import Paths
 from ...bundle.repo import PackFile
-
+from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from ....utils.exceptions_utils.fetch_exceptions import FolderNotFoundError
 
 MODEL_DIR = "model"
-
 
 class ModelRepositoryGetter(BaseAction):
     def __init__(self, model_id, config_json):
@@ -71,6 +70,7 @@ class ModelParametersGetter(BaseAction):
         model_path = self._model_path(self.model_id)
         return os.path.join(model_path, MODEL_DIR)
 
+    @throw_ersilia_exception
     def get(self):
         """Create a ./model folder in the model repository"""
         model_path = self._model_path(self.model_id)
@@ -80,7 +80,7 @@ class ModelParametersGetter(BaseAction):
         if not self._requires_parameters(model_path):
             return None
         if not os.path.exists(folder):
-            raise Exception
+            raise FolderNotFoundError(folder)
 
 
 class ModelGetter(BaseAction):
@@ -104,9 +104,12 @@ class ModelGetter(BaseAction):
         src = self.repo_path
         shutil.copytree(src, dst)
 
+    @throw_ersilia_exception
     def get(self):
         if self.repo_path is None:
             self._get_repository()
             self._get_model_parameters()
         else:
             self._copy_from_repo_path()
+        if not os.path.exists(self._model_path(self.model_id)):
+            raise FolderNotFoundError(os.path.exists(self._model_path(self.model_id)))
