@@ -378,7 +378,9 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_cache_splits</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">):</span>
-            <span class="n">splitted_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tfr</span><span class="o">.</span><span class="n">split_in_cache</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+            <span class="n">splitted_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tfr</span><span class="o">.</span><span class="n">split_in_cache</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Split inputs:&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splitted_inputs</span><span class="p">))</span>
             <span class="n">splitted_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tfr</span><span class="o">.</span><span class="n">name_cached_output_files</span><span class="p">(</span>
                 <span class="n">splitted_inputs</span><span class="p">,</span> <span class="n">output</span>
             <span class="p">)</span>
@@ -392,6 +394,7 @@
             <span class="n">TabularOutputStacker</span><span class="p">(</span><span class="n">splitted_outputs</span><span class="p">)</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">output</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No file splitting necessary!&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_task</span><span class="p">(</span>
                 <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
             <span class="p">)</span></div>
