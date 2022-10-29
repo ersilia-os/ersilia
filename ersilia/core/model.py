@@ -311,7 +311,9 @@ class ErsiliaModel(ErsiliaBase):
         self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
     ):
         if self._do_cache_splits(input=input, output=output):
-            splitted_inputs = self.tfr.split_in_cache(input)
+            splitted_inputs = self.tfr.split_in_cache()
+            self.logger.debug("Split inputs:")
+            self.logger.debug(" ".join(splitted_inputs))
             splitted_outputs = self.tfr.name_cached_output_files(
                 splitted_inputs, output
             )
@@ -325,6 +327,7 @@ class ErsiliaModel(ErsiliaBase):
             TabularOutputStacker(splitted_outputs).stack(output)
             return output
         else:
+            self.logger.debug("No file splitting necessary!")
             return self.api_task(
                 api_name=api_name, input=input, output=output, batch_size=batch_size
             )
