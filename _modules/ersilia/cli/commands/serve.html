@@ -66,8 +66,6 @@
              
   <h1>Source code for ersilia.cli.commands.serve</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">...utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaModel</span>
@@ -81,12 +79,21 @@
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--lake/--no-lake&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--docker/--no-docker&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">lake</span><span class="p">,</span> <span class="n">docker</span><span class="p">):</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preferred port to use (integer)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">lake</span><span class="p">,</span> <span class="n">docker</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">docker</span><span class="p">:</span>
             <span class="n">service_class</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">service_class</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">save_to_lake</span><span class="o">=</span><span class="n">lake</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">save_to_lake</span><span class="o">=</span><span class="n">lake</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
             <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
         <span class="n">mdl</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>

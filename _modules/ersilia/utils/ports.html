@@ -70,8 +70,15 @@
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span>
 
 
-<div class="viewcode-block" id="find_free_port"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.ports.find_free_port">[docs]</a><span class="k">def</span> <span class="nf">find_free_port</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Find a free port.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="is_port_in_use"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.ports.is_port_in_use">[docs]</a><span class="k">def</span> <span class="nf">is_port_in_use</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="find_free_port"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.ports.find_free_port">[docs]</a><span class="k">def</span> <span class="nf">find_free_port</span><span class="p">(</span><span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">preferred_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_port_in_use</span><span class="p">(</span><span class="n">preferred_port</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">preferred_port</span>
     <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">))</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
         <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">s</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>

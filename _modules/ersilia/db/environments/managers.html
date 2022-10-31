@@ -85,7 +85,7 @@
 
 
 <div class="viewcode-block" id="DockerManager"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager">[docs]</a><span class="k">class</span> <span class="nc">DockerManager</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_eos_regex</span> <span class="o">=</span> <span class="n">Paths</span><span class="p">()</span><span class="o">.</span><span class="n">_eos_regex</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_org_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">)</span>
@@ -93,6 +93,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preferred_port</span> <span class="o">=</span> <span class="n">preferred_port</span>
 
 <div class="viewcode-block" id="DockerManager.is_inside_docker"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_inside_docker">[docs]</a>    <span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inside_docker</span></div>
@@ -193,7 +194,7 @@
             <span class="n">mb_string</span> <span class="o">=</span> <span class="s2">&quot;--enable-microbatch&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mb_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">port</span> <span class="o">=</span> <span class="n">find_free_port</span><span class="p">()</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="n">find_free_port</span><span class="p">(</span><span class="n">preferred_port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">preferred_port</span><span class="p">)</span>
         <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">si</span> <span class="o">=</span> <span class="n">ShortIdentifier</span><span class="p">()</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
