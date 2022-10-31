@@ -18,7 +18,7 @@ BENTOML_DOCKERPORT = 5000
 
 
 class DockerManager(ErsiliaBase):
-    def __init__(self, config_json=None):
+    def __init__(self, config_json=None, preferred_port=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self._eos_regex = Paths()._eos_regex()
         self._org_regex = re.compile(DOCKERHUB_ORG)
@@ -26,6 +26,7 @@ class DockerManager(ErsiliaBase):
         self.docker = SimpleDocker()
         self.db = EnvironmentDb()
         self.db.table = "docker"
+        self.preferred_port = preferred_port
 
     def is_inside_docker(self):
         return self.inside_docker
@@ -126,7 +127,7 @@ class DockerManager(ErsiliaBase):
             mb_string = "--enable-microbatch"
         else:
             mb_string = ""
-        port = find_free_port()
+        port = find_free_port(preferred_port=self.preferred_port)
         name = None
         si = ShortIdentifier()
         while not name:
