@@ -122,6 +122,8 @@ def bashrc_cli_snippet(overwrite=True):
         - overwrite (bool): Overwrite the current bash profile file if the eosconda string is found.
     """
     fn = bashrc_path()
+    if fn is None:
+        return
     with open(fn, "r") as f:
         text = f.read()
     if snippet in text:
