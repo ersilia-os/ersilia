@@ -20,7 +20,9 @@ DEFAULT_OUTPUT = None
 
 
 class AutoService(ErsiliaBase):
-    def __init__(self, model_id, service_class=None, config_json=None, preferred_port=None):
+    def __init__(
+        self, model_id, service_class=None, config_json=None, preferred_port=None
+    ):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Setting AutoService for {0}".format(model_id))
         self.config_json = config_json
@@ -46,18 +48,26 @@ class AutoService(ErsiliaBase):
                 self.logger.debug("Service class: {0}".format(s))
                 if s == "system":
                     self.service = SystemBundleService(
-                        model_id, config_json=config_json, preferred_port=preferred_port,
+                        model_id,
+                        config_json=config_json,
+                        preferred_port=preferred_port,
                     )
                 elif s == "venv":
                     self.service = VenvEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port,
+                        model_id,
+                        config_json=config_json,
+                        preferred_port=preferred_port,
                     )
                 elif s == "conda":
                     self.service = CondaEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port,
+                        model_id,
+                        config_json=config_json,
+                        preferred_port=preferred_port,
                     )
                 elif s == "docker":
-                    self.service = DockerImageService(model_id, config_json=config_json, preferred_port=preferred_port)
+                    self.service = DockerImageService(
+                        model_id, config_json=config_json, preferred_port=preferred_port
+                    )
                 else:
                     self.service = None
                 self._service_class = s
@@ -67,50 +77,74 @@ class AutoService(ErsiliaBase):
                 )
                 with open(service_class_file, "w") as f:
                     if SystemBundleService(
-                        model_id, config_json=config_json, preferred_port=preferred_port,
+                        model_id,
+                        config_json=config_json,
+                        preferred_port=preferred_port,
                     ).is_available():
                         self.service = SystemBundleService(
-                            model_id, config_json=config_json, preferred_port=preferred_port,
+                            model_id,
+                            config_json=config_json,
+                            preferred_port=preferred_port,
                         )
                         self.logger.debug("Service class: system")
                         f.write("system")
                         self._service_class = "system"
                     elif VenvEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port,
+                        model_id,
+                        config_json=config_json,
+                        preferred_port=preferred_port,
                     ).is_available():
                         self.service = VenvEnvironmentService(
-                            model_id, config_json=config_json, preferred_port=preferred_port,
+                            model_id,
+                            config_json=config_json,
+                            preferred_port=preferred_port,
                         )
                         f.write("venv")
                         self.logger.debug("Service class: venv")
                         self._service_class = "venv"
                     elif CondaEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port,
+                        model_id,
+                        config_json=config_json,
+                        preferred_port=preferred_port,
                     ).is_available():
                         self.service = CondaEnvironmentService(
-                            model_id, config_json=config_json, preferred_port=preferred_port,
+                            model_id,
+                            config_json=config_json,
+                            preferred_port=preferred_port,
                         )
                         f.write("conda")
                         self.logger.debug("Service class: conda")
                         self._service_class = "conda"
                     elif DockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port,
+                        model_id,
+                        config_json=config_json,
+                        preferred_port=preferred_port,
                     ).is_available():
                         self.service = DockerImageService(
-                            model_id, config_json=config_json, preferred_port=preferred_port,
+                            model_id,
+                            config_json=config_json,
+                            preferred_port=preferred_port,
                         )
                         f.write("docker")
                         self.logger.debug("Service class: docker")
                         self._service_class = "docker"
                     else:
                         self.logger.debug("Service class: dummy")
-                        self.service = DummyService(model_id, config_json=config_json, preferred_port=preferred_port,)
+                        self.service = DummyService(
+                            model_id,
+                            config_json=config_json,
+                            preferred_port=preferred_port,
+                        )
         else:
             self.logger.info("Service class provided")
             # predefined service class
             service_class = self._service_class_loader(service_class)
-            if service_class(model_id, config_json=config_json, preferred_port=preferred_port).is_available():
-                self.service = service_class(model_id, config_json=config_json, preferred_prot=preferred_port)
+            if service_class(
+                model_id, config_json=config_json, preferred_port=preferred_port
+            ).is_available():
+                self.service = service_class(
+                    model_id, config_json=config_json, preferred_port=preferred_port
+                )
             else:
                 self.service = None
         self._set_apis()

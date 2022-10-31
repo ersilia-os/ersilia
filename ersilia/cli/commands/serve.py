@@ -12,13 +12,21 @@ def serve_cmd():
     @click.argument("model", type=click.STRING)
     @click.option("--lake/--no-lake", is_flag=True, default=True)
     @click.option("--docker/--no-docker", is_flag=True, default=False)
-    @click.option("--port", "-p", default=None, type=click.INT, help="Preferred port to use (integer)")
+    @click.option(
+        "--port",
+        "-p",
+        default=None,
+        type=click.INT,
+        help="Preferred port to use (integer)",
+    )
     def serve(model, lake, docker, port):
         if docker:
             service_class = "docker"
         else:
             service_class = None
-        mdl = ErsiliaModel(model, save_to_lake=lake, service_class=service_class, preferred_port=port)
+        mdl = ErsiliaModel(
+            model, save_to_lake=lake, service_class=service_class, preferred_port=port
+        )
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
         mdl.serve()

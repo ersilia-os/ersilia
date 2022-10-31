@@ -109,7 +109,7 @@ class ErsiliaModel(ErsiliaBase):
             model_id=self.model_id,
             service_class=self.service_class,
             config_json=self.config_json,
-            preferred_port=preferred_port
+            preferred_port=preferred_port,
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
