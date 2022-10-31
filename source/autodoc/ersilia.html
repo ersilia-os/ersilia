@@ -14,7 +14,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -57,7 +59,12 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-ersilia.default">ersilia.default module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-ersilia.default">ersilia.default module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ersilia.default.bashrc_cli_snippet"><code class="docutils literal notranslate"><span class="pre">bashrc_cli_snippet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ersilia.default.bashrc_path"><code class="docutils literal notranslate"><span class="pre">bashrc_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ersilia.default.has_profile_snippet"><code class="docutils literal notranslate"><span class="pre">has_profile_snippet()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-ersilia">Module contents</a></li>
 </ul>
 </li>
@@ -92,9 +99,9 @@
            <div itemprop="articleBody">
              
   <section id="ersilia-package">
-<h1>ersilia package<a class="headerlink" href="#ersilia-package" title="Permalink to this headline"></a></h1>
+<h1>ersilia package<a class="headerlink" href="#ersilia-package" title="Permalink to this heading"></a></h1>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline"></a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a><ul>
@@ -114,7 +121,18 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.auth.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.auth.html#module-ersilia.auth.auth">ersilia.auth.auth module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.auth.html#module-ersilia.auth.auth">ersilia.auth.auth module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.auth.html#ersilia.auth.auth.Auth"><code class="docutils literal notranslate"><span class="pre">Auth</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html#ersilia.auth.auth.Auth.is_contributor"><code class="docutils literal notranslate"><span class="pre">Auth.is_contributor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html#ersilia.auth.auth.Auth.login"><code class="docutils literal notranslate"><span class="pre">Auth.login()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html#ersilia.auth.auth.Auth.logout"><code class="docutils literal notranslate"><span class="pre">Auth.logout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html#ersilia.auth.auth.Auth.oauth_token"><code class="docutils literal notranslate"><span class="pre">Auth.oauth_token()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html#ersilia.auth.auth.Auth.status"><code class="docutils literal notranslate"><span class="pre">Auth.status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html#ersilia.auth.auth.Auth.user"><code class="docutils literal notranslate"><span class="pre">Auth.user()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.auth.html#module-ersilia.auth">Module contents</a></li>
 </ul>
 </li>
@@ -143,19 +161,99 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli.cmd">ersilia.cli.cmd module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli.create_cli">ersilia.cli.create_cli module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli.echo">ersilia.cli.echo module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli.messages">ersilia.cli.messages module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli.cmd">ersilia.cli.cmd module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command"><code class="docutils literal notranslate"><span class="pre">Command</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.api"><code class="docutils literal notranslate"><span class="pre">Command.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.auth"><code class="docutils literal notranslate"><span class="pre">Command.auth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.card"><code class="docutils literal notranslate"><span class="pre">Command.card()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.catalog"><code class="docutils literal notranslate"><span class="pre">Command.catalog()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.clear"><code class="docutils literal notranslate"><span class="pre">Command.clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.close"><code class="docutils literal notranslate"><span class="pre">Command.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.delete"><code class="docutils literal notranslate"><span class="pre">Command.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.example"><code class="docutils literal notranslate"><span class="pre">Command.example()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.fetch"><code class="docutils literal notranslate"><span class="pre">Command.fetch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.publish"><code class="docutils literal notranslate"><span class="pre">Command.publish()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.sample"><code class="docutils literal notranslate"><span class="pre">Command.sample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.serve"><code class="docutils literal notranslate"><span class="pre">Command.serve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.setup"><code class="docutils literal notranslate"><span class="pre">Command.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli.create_cli">ersilia.cli.create_cli module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.create_cli.create_ersilia_cli"><code class="docutils literal notranslate"><span class="pre">create_ersilia_cli()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli.echo">ersilia.cli.echo module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.echo.Silencer"><code class="docutils literal notranslate"><span class="pre">Silencer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.echo.Silencer.is_silence"><code class="docutils literal notranslate"><span class="pre">Silencer.is_silence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.echo.Silencer.silence"><code class="docutils literal notranslate"><span class="pre">Silencer.silence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.echo.Silencer.speak"><code class="docutils literal notranslate"><span class="pre">Silencer.speak()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.echo.echo"><code class="docutils literal notranslate"><span class="pre">echo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli.messages">ersilia.cli.messages module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.messages.ModelNotFound"><code class="docutils literal notranslate"><span class="pre">ModelNotFound</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.messages.ModelNotFound.echo"><code class="docutils literal notranslate"><span class="pre">ModelNotFound.echo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.messages.ModelNotInLocal"><code class="docutils literal notranslate"><span class="pre">ModelNotInLocal</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.messages.ModelNotInLocal.echo"><code class="docutils literal notranslate"><span class="pre">ModelNotInLocal.echo()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.cli.html#module-ersilia.cli">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.base">ersilia.core.base module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.model">ersilia.core.model module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.modelbase">ersilia.core.modelbase module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.session">ersilia.core.session module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.base">ersilia.core.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase"><code class="docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.model">ersilia.core.model module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.api"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.api_task"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.api_task()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.close"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.example"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.example()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.get_apis"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.get_apis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.input_type"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.input_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.is_valid"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.is_valid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.meta"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.meta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.output_type"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.output_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.paths"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.paths</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.schema"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.schema</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.serve"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.serve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.size"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.model.ErsiliaModel.update_model_usage_time"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.update_model_usage_time()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.modelbase">ersilia.core.modelbase module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.core.html#ersilia.core.modelbase.ModelBase"><code class="docutils literal notranslate"><span class="pre">ModelBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.modelbase.ModelBase.is_available_locally"><code class="docutils literal notranslate"><span class="pre">ModelBase.is_available_locally()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.modelbase.ModelBase.is_valid"><code class="docutils literal notranslate"><span class="pre">ModelBase.is_valid()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.session">ersilia.core.session module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.close"><code class="docutils literal notranslate"><span class="pre">Session.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.current_model_id"><code class="docutils literal notranslate"><span class="pre">Session.current_model_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.current_service_class"><code class="docutils literal notranslate"><span class="pre">Session.current_service_class()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.get"><code class="docutils literal notranslate"><span class="pre">Session.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.open"><code class="docutils literal notranslate"><span class="pre">Session.open()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.register_service_class"><code class="docutils literal notranslate"><span class="pre">Session.register_service_class()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core">Module contents</a></li>
 </ul>
 </li>
@@ -247,38 +345,258 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.dataframe">ersilia.io.dataframe module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.input">ersilia.io.input module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.output">ersilia.io.output module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.pure">ersilia.io.pure module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.shape">ersilia.io.shape module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.dataframe">ersilia.io.dataframe module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.dataframe.Dataframe"><code class="docutils literal notranslate"><span class="pre">Dataframe</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.dataframe.Dataframe.from_csv"><code class="docutils literal notranslate"><span class="pre">Dataframe.from_csv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.dataframe.Dataframe.iterrows"><code class="docutils literal notranslate"><span class="pre">Dataframe.iterrows()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.input">ersilia.io.input module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.BaseIOGetter"><code class="docutils literal notranslate"><span class="pre">BaseIOGetter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.BaseIOGetter.get"><code class="docutils literal notranslate"><span class="pre">BaseIOGetter.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.BaseIOGetter.shape"><code class="docutils literal notranslate"><span class="pre">BaseIOGetter.shape()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.ExampleGenerator"><code class="docutils literal notranslate"><span class="pre">ExampleGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.ExampleGenerator.example"><code class="docutils literal notranslate"><span class="pre">ExampleGenerator.example()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.ExampleGenerator.test"><code class="docutils literal notranslate"><span class="pre">ExampleGenerator.test()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.GenericInputAdapter"><code class="docutils literal notranslate"><span class="pre">GenericInputAdapter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.GenericInputAdapter.adapt"><code class="docutils literal notranslate"><span class="pre">GenericInputAdapter.adapt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.GenericInputAdapter.adapt_one_by_one"><code class="docutils literal notranslate"><span class="pre">GenericInputAdapter.adapt_one_by_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.input.GenericInputAdapter.batch_iter"><code class="docutils literal notranslate"><span class="pre">GenericInputAdapter.batch_iter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.output">ersilia.io.output module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.DataFrame"><code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.DataFrame.decompose"><code class="docutils literal notranslate"><span class="pre">DataFrame.decompose()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.DataFrame.write"><code class="docutils literal notranslate"><span class="pre">DataFrame.write()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.DataFrame.write_hdf5"><code class="docutils literal notranslate"><span class="pre">DataFrame.write_hdf5()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.DataFrame.write_text"><code class="docutils literal notranslate"><span class="pre">DataFrame.write_text()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.DictlistDataframeConverter"><code class="docutils literal notranslate"><span class="pre">DictlistDataframeConverter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dataframe2dictlist"><code class="docutils literal notranslate"><span class="pre">DictlistDataframeConverter.dataframe2dictlist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dictlist2dataframe"><code class="docutils literal notranslate"><span class="pre">DictlistDataframeConverter.dictlist2dataframe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.GenericOutputAdapter"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.GenericOutputAdapter.adapt"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.adapt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.GenericOutputAdapter.merge"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.merge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.GenericOutputAdapter.meta"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.meta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.ResponseRefactor"><code class="docutils literal notranslate"><span class="pre">ResponseRefactor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.ResponseRefactor.refactor_response"><code class="docutils literal notranslate"><span class="pre">ResponseRefactor.refactor_response()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.TabularOutputStacker"><code class="docutils literal notranslate"><span class="pre">TabularOutputStacker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack"><code class="docutils literal notranslate"><span class="pre">TabularOutputStacker.stack()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack_hdf5"><code class="docutils literal notranslate"><span class="pre">TabularOutputStacker.stack_hdf5()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack_text"><code class="docutils literal notranslate"><span class="pre">TabularOutputStacker.stack_text()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.pure">ersilia.io.pure module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.pure.PureDataTyper"><code class="docutils literal notranslate"><span class="pre">PureDataTyper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.pure.PureDataTyper.get_type"><code class="docutils literal notranslate"><span class="pre">PureDataTyper.get_type()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io.shape">ersilia.io.shape module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.shape.InputShape"><code class="docutils literal notranslate"><span class="pre">InputShape</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html#ersilia.io.shape.InputShape.get"><code class="docutils literal notranslate"><span class="pre">InputShape.get()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.shape.InputShapeList"><code class="docutils literal notranslate"><span class="pre">InputShapeList</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.shape.InputShapePairOfLists"><code class="docutils literal notranslate"><span class="pre">InputShapePairOfLists</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.io.html#ersilia.io.shape.InputShapeSingle"><code class="docutils literal notranslate"><span class="pre">InputShapeSingle</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.io.html#module-ersilia.io">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.lake.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.lake.html#module-ersilia.lake.base">ersilia.lake.base module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.lake.html#module-ersilia.lake.interface">ersilia.lake.interface module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.lake.html#module-ersilia.lake.manager">ersilia.lake.manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.lake.html#module-ersilia.lake.base">ersilia.lake.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.base.LakeBase"><code class="docutils literal notranslate"><span class="pre">LakeBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.base.LakeBase.is_installed"><code class="docutils literal notranslate"><span class="pre">LakeBase.is_installed()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.lake.html#module-ersilia.lake.interface">ersilia.lake.interface module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.interface.IsauraInterface"><code class="docutils literal notranslate"><span class="pre">IsauraInterface</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.interface.IsauraInterface.done_todo"><code class="docutils literal notranslate"><span class="pre">IsauraInterface.done_todo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.interface.IsauraInterface.read"><code class="docutils literal notranslate"><span class="pre">IsauraInterface.read()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.interface.IsauraInterface.write"><code class="docutils literal notranslate"><span class="pre">IsauraInterface.write()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.lake.html#module-ersilia.lake.manager">ersilia.lake.manager module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.manager.IsauraManager"><code class="docutils literal notranslate"><span class="pre">IsauraManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.manager.IsauraManager.append_local_to_public"><code class="docutils literal notranslate"><span class="pre">IsauraManager.append_local_to_public()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.manager.IsauraManager.pull"><code class="docutils literal notranslate"><span class="pre">IsauraManager.pull()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.manager.IsauraManager.push"><code class="docutils literal notranslate"><span class="pre">IsauraManager.push()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html#ersilia.lake.manager.IsauraManager.remove_local_duplicates"><code class="docutils literal notranslate"><span class="pre">IsauraManager.remove_local_duplicates()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.lake.html#module-ersilia.lake">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#ersilia-publish-deploy-module">ersilia.publish.deploy module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish.lake">ersilia.publish.lake module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish.publish">ersilia.publish.publish module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish.rebase">ersilia.publish.rebase module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish.store">ersilia.publish.store module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish.lake">ersilia.publish.lake module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.lake.LakeStorer"><code class="docutils literal notranslate"><span class="pre">LakeStorer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.lake.LakeStorer.store"><code class="docutils literal notranslate"><span class="pre">LakeStorer.store()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish.publish">ersilia.publish.publish module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.publish.ModelPublisher"><code class="docutils literal notranslate"><span class="pre">ModelPublisher</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.publish.ModelPublisher.create"><code class="docutils literal notranslate"><span class="pre">ModelPublisher.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.publish.ModelPublisher.docker"><code class="docutils literal notranslate"><span class="pre">ModelPublisher.docker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.publish.ModelPublisher.dvc"><code class="docutils literal notranslate"><span class="pre">ModelPublisher.dvc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.publish.ModelPublisher.git_push"><code class="docutils literal notranslate"><span class="pre">ModelPublisher.git_push()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.publish.ModelPublisher.push"><code class="docutils literal notranslate"><span class="pre">ModelPublisher.push()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.publish.ModelPublisher.rebase"><code class="docutils literal notranslate"><span class="pre">ModelPublisher.rebase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.publish.ModelPublisher.test"><code class="docutils literal notranslate"><span class="pre">ModelPublisher.test()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish.rebase">ersilia.publish.rebase module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.rebase.TemplateRebaser"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.rebase.TemplateRebaser.clean"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.clean()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.rebase.TemplateRebaser.clone_current_model"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.clone_current_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.rebase.TemplateRebaser.clone_template"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.clone_template()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.rebase.TemplateRebaser.dvc_part"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.dvc_part()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.rebase.TemplateRebaser.rebase"><code class="docutils literal notranslate"><span class="pre">TemplateRebaser.rebase()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish.store">ersilia.publish.store module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.store.ModelRemover"><code class="docutils literal notranslate"><span class="pre">ModelRemover</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.store.ModelRemover.remove"><code class="docutils literal notranslate"><span class="pre">ModelRemover.remove()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.store.ModelStorager"><code class="docutils literal notranslate"><span class="pre">ModelStorager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html#ersilia.publish.store.ModelStorager.store"><code class="docutils literal notranslate"><span class="pre">ModelStorager.store()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.publish.html#module-ersilia.publish">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve.api">ersilia.serve.api module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve.autoservice">ersilia.serve.autoservice module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve.schema">ersilia.serve.schema module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve.services">ersilia.serve.services module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve.api">ersilia.serve.api module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.api.Api"><code class="docutils literal notranslate"><span class="pre">Api</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.api.Api.meta"><code class="docutils literal notranslate"><span class="pre">Api.meta()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.api.Api.post"><code class="docutils literal notranslate"><span class="pre">Api.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.api.Api.post_amenable_to_h5"><code class="docutils literal notranslate"><span class="pre">Api.post_amenable_to_h5()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.api.Api.post_only_calculations"><code class="docutils literal notranslate"><span class="pre">Api.post_only_calculations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.api.Api.post_only_reads"><code class="docutils literal notranslate"><span class="pre">Api.post_only_reads()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.api.Api.post_unique_input"><code class="docutils literal notranslate"><span class="pre">Api.post_unique_input()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve.autoservice">ersilia.serve.autoservice module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService"><code class="docutils literal notranslate"><span class="pre">AutoService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.api"><code class="docutils literal notranslate"><span class="pre">AutoService.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_before_serving"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_before_serving()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_docker_containers"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_docker_containers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_temp_dir"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_temp_dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.close"><code class="docutils literal notranslate"><span class="pre">AutoService.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.get_apis"><code class="docutils literal notranslate"><span class="pre">AutoService.get_apis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.is_available"><code class="docutils literal notranslate"><span class="pre">AutoService.is_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.is_served"><code class="docutils literal notranslate"><span class="pre">AutoService.is_served()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.serve"><code class="docutils literal notranslate"><span class="pre">AutoService.serve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve.schema">ersilia.serve.schema module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema"><code class="docutils literal notranslate"><span class="pre">ApiSchema</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty"><code class="docutils literal notranslate"><span class="pre">ApiSchema.empty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty_by_api"><code class="docutils literal notranslate"><span class="pre">ApiSchema.empty_by_api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty_by_field"><code class="docutils literal notranslate"><span class="pre">ApiSchema.empty_by_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty_input_by_api"><code class="docutils literal notranslate"><span class="pre">ApiSchema.empty_input_by_api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty_output_by_api"><code class="docutils literal notranslate"><span class="pre">ApiSchema.empty_output_by_api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.get"><code class="docutils literal notranslate"><span class="pre">ApiSchema.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_apis"><code class="docutils literal notranslate"><span class="pre">ApiSchema.get_apis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_meta"><code class="docutils literal notranslate"><span class="pre">ApiSchema.get_meta()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_meta_by_api"><code class="docutils literal notranslate"><span class="pre">ApiSchema.get_meta_by_api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_output_by_api"><code class="docutils literal notranslate"><span class="pre">ApiSchema.get_output_by_api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_schema_by_api"><code class="docutils literal notranslate"><span class="pre">ApiSchema.get_schema_by_api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.is_h5_serializable"><code class="docutils literal notranslate"><span class="pre">ApiSchema.is_h5_serializable()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.isfile"><code class="docutils literal notranslate"><span class="pre">ApiSchema.isfile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.schema.ApiSchema.schema"><code class="docutils literal notranslate"><span class="pre">ApiSchema.schema</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve.services">ersilia.serve.services module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.BaseServing"><code class="docutils literal notranslate"><span class="pre">BaseServing</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService"><code class="docutils literal notranslate"><span class="pre">CondaEnvironmentService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.api"><code class="docutils literal notranslate"><span class="pre">CondaEnvironmentService.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.close"><code class="docutils literal notranslate"><span class="pre">CondaEnvironmentService.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.is_available"><code class="docutils literal notranslate"><span class="pre">CondaEnvironmentService.is_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.serve"><code class="docutils literal notranslate"><span class="pre">CondaEnvironmentService.serve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DockerImageService"><code class="docutils literal notranslate"><span class="pre">DockerImageService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DockerImageService.api"><code class="docutils literal notranslate"><span class="pre">DockerImageService.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DockerImageService.close"><code class="docutils literal notranslate"><span class="pre">DockerImageService.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DockerImageService.is_available"><code class="docutils literal notranslate"><span class="pre">DockerImageService.is_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DockerImageService.serve"><code class="docutils literal notranslate"><span class="pre">DockerImageService.serve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DummyService"><code class="docutils literal notranslate"><span class="pre">DummyService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DummyService.api"><code class="docutils literal notranslate"><span class="pre">DummyService.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DummyService.close"><code class="docutils literal notranslate"><span class="pre">DummyService.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DummyService.is_available"><code class="docutils literal notranslate"><span class="pre">DummyService.is_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.DummyService.serve"><code class="docutils literal notranslate"><span class="pre">DummyService.serve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.PipInstalledService"><code class="docutils literal notranslate"><span class="pre">PipInstalledService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.PipInstalledService.api"><code class="docutils literal notranslate"><span class="pre">PipInstalledService.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.PipInstalledService.close"><code class="docutils literal notranslate"><span class="pre">PipInstalledService.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.PipInstalledService.is_available"><code class="docutils literal notranslate"><span class="pre">PipInstalledService.is_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.PipInstalledService.serve"><code class="docutils literal notranslate"><span class="pre">PipInstalledService.serve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.SystemBundleService"><code class="docutils literal notranslate"><span class="pre">SystemBundleService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.SystemBundleService.api"><code class="docutils literal notranslate"><span class="pre">SystemBundleService.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.SystemBundleService.close"><code class="docutils literal notranslate"><span class="pre">SystemBundleService.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.SystemBundleService.is_available"><code class="docutils literal notranslate"><span class="pre">SystemBundleService.is_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.SystemBundleService.serve"><code class="docutils literal notranslate"><span class="pre">SystemBundleService.serve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService"><code class="docutils literal notranslate"><span class="pre">VenvEnvironmentService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.api"><code class="docutils literal notranslate"><span class="pre">VenvEnvironmentService.api()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.close"><code class="docutils literal notranslate"><span class="pre">VenvEnvironmentService.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.is_available"><code class="docutils literal notranslate"><span class="pre">VenvEnvironmentService.is_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.serve"><code class="docutils literal notranslate"><span class="pre">VenvEnvironmentService.serve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.serve.html#module-ersilia.serve">Module contents</a></li>
 </ul>
 </li>
@@ -304,11 +622,44 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.baseconda">ersilia.setup.baseconda module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.basedocker">ersilia.setup.basedocker module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.conda">ersilia.setup.conda module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.config">ersilia.setup.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.profile">ersilia.setup.profile module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.baseconda">ersilia.setup.baseconda module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda"><code class="docutils literal notranslate"><span class="pre">SetupBaseConda</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.delete"><code class="docutils literal notranslate"><span class="pre">SetupBaseConda.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.find_closest_python_version"><code class="docutils literal notranslate"><span class="pre">SetupBaseConda.find_closest_python_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.setup"><code class="docutils literal notranslate"><span class="pre">SetupBaseConda.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.basedocker">ersilia.setup.basedocker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.basedocker.SetupBaseDocker"><code class="docutils literal notranslate"><span class="pre">SetupBaseDocker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.basedocker.SetupBaseDocker.delete"><code class="docutils literal notranslate"><span class="pre">SetupBaseDocker.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.basedocker.SetupBaseDocker.setup"><code class="docutils literal notranslate"><span class="pre">SetupBaseDocker.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.conda">ersilia.setup.conda module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.conda.SetupConda"><code class="docutils literal notranslate"><span class="pre">SetupConda</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.conda.SetupConda.setup"><code class="docutils literal notranslate"><span class="pre">SetupConda.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.config">ersilia.setup.config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.config.SetupConfig"><code class="docutils literal notranslate"><span class="pre">SetupConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.config.SetupConfig.setup"><code class="docutils literal notranslate"><span class="pre">SetupConfig.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup.profile">ersilia.setup.profile module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.profile.SetupProfile"><code class="docutils literal notranslate"><span class="pre">SetupProfile</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html#ersilia.setup.profile.SetupProfile.setup"><code class="docutils literal notranslate"><span class="pre">SetupProfile.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup">Module contents</a></li>
 </ul>
 </li>
@@ -355,39 +706,292 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.clear">ersilia.utils.clear module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.cli_query">ersilia.utils.cli_query module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.conda">ersilia.utils.conda module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.config">ersilia.utils.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.cron">ersilia.utils.cron module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.csvfile">ersilia.utils.csvfile module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.docker">ersilia.utils.docker module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.download">ersilia.utils.download module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.dvc">ersilia.utils.dvc module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.environment">ersilia.utils.environment module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.hdf5">ersilia.utils.hdf5 module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.import">ersilia.utils.import module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.installers">ersilia.utils.installers module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.logging">ersilia.utils.logging module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.paths">ersilia.utils.paths module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.ports">ersilia.utils.ports module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.remove">ersilia.utils.remove module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.terminal">ersilia.utils.terminal module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.upload">ersilia.utils.upload module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.venv">ersilia.utils.venv module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.versioning">ersilia.utils.versioning module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.zip">ersilia.utils.zip module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.clear">ersilia.utils.clear module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.clear.Clearer"><code class="docutils literal notranslate"><span class="pre">Clearer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.clear.Clearer.clear"><code class="docutils literal notranslate"><span class="pre">Clearer.clear()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.cli_query">ersilia.utils.cli_query module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.cli_query.query_yes_no"><code class="docutils literal notranslate"><span class="pre">query_yes_no()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.conda">ersilia.utils.conda module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.BaseConda"><code class="docutils literal notranslate"><span class="pre">BaseConda</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.BaseConda.conda_prefix"><code class="docutils literal notranslate"><span class="pre">BaseConda.conda_prefix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.BaseConda.default_env"><code class="docutils literal notranslate"><span class="pre">BaseConda.default_env()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.BaseConda.is_base"><code class="docutils literal notranslate"><span class="pre">BaseConda.is_base()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils"><code class="docutils literal notranslate"><span class="pre">CondaUtils</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils.activate_base"><code class="docutils literal notranslate"><span class="pre">CondaUtils.activate_base()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_conda_yml_file"><code class="docutils literal notranslate"><span class="pre">CondaUtils.checksum_from_conda_yml_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_dockerfile"><code class="docutils literal notranslate"><span class="pre">CondaUtils.checksum_from_dockerfile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_file"><code class="docutils literal notranslate"><span class="pre">CondaUtils.checksum_from_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils.get_base_env"><code class="docutils literal notranslate"><span class="pre">CondaUtils.get_base_env()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive"><code class="docutils literal notranslate"><span class="pre">CondaUtils.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils.specs_from_dockerfile"><code class="docutils literal notranslate"><span class="pre">CondaUtils.specs_from_dockerfile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.CondaUtils.specs_from_dockerfile_as_json"><code class="docutils literal notranslate"><span class="pre">CondaUtils.specs_from_dockerfile_as_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda"><code class="docutils literal notranslate"><span class="pre">SimpleConda</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.active_env"><code class="docutils literal notranslate"><span class="pre">SimpleConda.active_env()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.clone"><code class="docutils literal notranslate"><span class="pre">SimpleConda.clone()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.delete"><code class="docutils literal notranslate"><span class="pre">SimpleConda.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.delete_one"><code class="docutils literal notranslate"><span class="pre">SimpleConda.delete_one()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.exists"><code class="docutils literal notranslate"><span class="pre">SimpleConda.exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.export_env_yml"><code class="docutils literal notranslate"><span class="pre">SimpleConda.export_env_yml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.run_commandlines"><code class="docutils literal notranslate"><span class="pre">SimpleConda.run_commandlines()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.startswith"><code class="docutils literal notranslate"><span class="pre">SimpleConda.startswith()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.config">ersilia.utils.config module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.config.Config.keys"><code class="docutils literal notranslate"><span class="pre">Config.keys()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.config.Credentials"><code class="docutils literal notranslate"><span class="pre">Credentials</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.config.Credentials.keys"><code class="docutils literal notranslate"><span class="pre">Credentials.keys()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.cron">ersilia.utils.cron module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.cron.del_model"><code class="docutils literal notranslate"><span class="pre">del_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.cron.model_cleanup"><code class="docutils literal notranslate"><span class="pre">model_cleanup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.cron.seconds_to_days"><code class="docutils literal notranslate"><span class="pre">seconds_to_days()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.csvfile">ersilia.utils.csvfile module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.csvfile.CsvDataLoader"><code class="docutils literal notranslate"><span class="pre">CsvDataLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.csvfile.CsvDataLoader.load"><code class="docutils literal notranslate"><span class="pre">CsvDataLoader.load()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.docker">ersilia.utils.docker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker"><code class="docutils literal notranslate"><span class="pre">SimpleDocker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.build"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.build()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.containers"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.containers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cp_from_container"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.cp_from_container()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cp_from_image"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.cp_from_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.delete"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.exec"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.exec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.exec_container"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.exec_container()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.exists"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.images"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.kill"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.kill()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.run"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDockerfileParser"><code class="docutils literal notranslate"><span class="pre">SimpleDockerfileParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDockerfileParser.get_baseimage"><code class="docutils literal notranslate"><span class="pre">SimpleDockerfileParser.get_baseimage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDockerfileParser.get_runs"><code class="docutils literal notranslate"><span class="pre">SimpleDockerfileParser.get_runs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.is_inside_docker"><code class="docutils literal notranslate"><span class="pre">is_inside_docker()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.download">ersilia.utils.download module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.GitHubDownloader"><code class="docutils literal notranslate"><span class="pre">GitHubDownloader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.GitHubDownloader.clone"><code class="docutils literal notranslate"><span class="pre">GitHubDownloader.clone()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.GitHubDownloader.download_single"><code class="docutils literal notranslate"><span class="pre">GitHubDownloader.download_single()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader"><code class="docutils literal notranslate"><span class="pre">GoogleDriveDownloader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.download_file_from_google_drive"><code class="docutils literal notranslate"><span class="pre">GoogleDriveDownloader.download_file_from_google_drive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.fetch_zip"><code class="docutils literal notranslate"><span class="pre">GoogleDriveDownloader.fetch_zip()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.get_confirm_token"><code class="docutils literal notranslate"><span class="pre">GoogleDriveDownloader.get_confirm_token()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.save_response_content"><code class="docutils literal notranslate"><span class="pre">GoogleDriveDownloader.save_response_content()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.OsfDownloader"><code class="docutils literal notranslate"><span class="pre">OsfDownloader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.OsfDownloader.fetch"><code class="docutils literal notranslate"><span class="pre">OsfDownloader.fetch()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.PseudoDownloader"><code class="docutils literal notranslate"><span class="pre">PseudoDownloader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.download.PseudoDownloader.fetch"><code class="docutils literal notranslate"><span class="pre">PseudoDownloader.fetch()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.dvc">ersilia.utils.dvc module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCBrancher"><code class="docutils literal notranslate"><span class="pre">DVCBrancher</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCFetcher"><code class="docutils literal notranslate"><span class="pre">DVCFetcher</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_dvc_exists"><code class="docutils literal notranslate"><span class="pre">DVCFetcher.check_dvc_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_h5_exists"><code class="docutils literal notranslate"><span class="pre">DVCFetcher.check_h5_exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.get_data"><code class="docutils literal notranslate"><span class="pre">DVCFetcher.get_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.has_data"><code class="docutils literal notranslate"><span class="pre">DVCFetcher.has_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCSetup"><code class="docutils literal notranslate"><span class="pre">DVCSetup</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_folder_id"><code class="docutils literal notranslate"><span class="pre">DVCSetup.gdrive_folder_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_setup"><code class="docutils literal notranslate"><span class="pre">DVCSetup.gdrive_setup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCSetup.git_add_and_commit"><code class="docutils literal notranslate"><span class="pre">DVCSetup.git_add_and_commit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.DVCSetup.set_dvc_gdrive"><code class="docutils literal notranslate"><span class="pre">DVCSetup.set_dvc_gdrive()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.dvc.set_secrets_file"><code class="docutils literal notranslate"><span class="pre">set_secrets_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.environment">ersilia.utils.environment module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.environment.Environment"><code class="docutils literal notranslate"><span class="pre">Environment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.environment.Environment.has_module"><code class="docutils literal notranslate"><span class="pre">Environment.has_module()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.hdf5">ersilia.utils.hdf5 module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.hdf5.Hdf5Data"><code class="docutils literal notranslate"><span class="pre">Hdf5Data</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.hdf5.Hdf5Data.save"><code class="docutils literal notranslate"><span class="pre">Hdf5Data.save()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.hdf5.Hdf5DataLoader"><code class="docutils literal notranslate"><span class="pre">Hdf5DataLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.hdf5.Hdf5DataLoader.load"><code class="docutils literal notranslate"><span class="pre">Hdf5DataLoader.load()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.hdf5.Hdf5DataStacker"><code class="docutils literal notranslate"><span class="pre">Hdf5DataStacker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.hdf5.Hdf5DataStacker.stack"><code class="docutils literal notranslate"><span class="pre">Hdf5DataStacker.stack()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.import">ersilia.utils.import module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.import.import_extra"><code class="docutils literal notranslate"><span class="pre">import_extra()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.installers">ersilia.utils.installers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.BaseInstaller"><code class="docutils literal notranslate"><span class="pre">BaseInstaller</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.BaseInstaller.read_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.read_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_from_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.remove_from_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.remove_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.BaseInstaller.update_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.update_log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.BaseInstaller.write_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.write_log()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer"><code class="docutils literal notranslate"><span class="pre">Installer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.base_conda"><code class="docutils literal notranslate"><span class="pre">Installer.base_conda()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.base_conda_slim"><code class="docutils literal notranslate"><span class="pre">Installer.base_conda_slim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.conda"><code class="docutils literal notranslate"><span class="pre">Installer.conda()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.config"><code class="docutils literal notranslate"><span class="pre">Installer.config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.git"><code class="docutils literal notranslate"><span class="pre">Installer.git()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.profile"><code class="docutils literal notranslate"><span class="pre">Installer.profile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.rdkit"><code class="docutils literal notranslate"><span class="pre">Installer.rdkit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.server_docker"><code class="docutils literal notranslate"><span class="pre">Installer.server_docker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Installer.server_docker_slim"><code class="docutils literal notranslate"><span class="pre">Installer.server_docker_slim()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Uninstaller"><code class="docutils literal notranslate"><span class="pre">Uninstaller</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Uninstaller.base_conda"><code class="docutils literal notranslate"><span class="pre">Uninstaller.base_conda()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Uninstaller.rdkit"><code class="docutils literal notranslate"><span class="pre">Uninstaller.rdkit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.Uninstaller.server_docker"><code class="docutils literal notranslate"><span class="pre">Uninstaller.server_docker()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.base_installer"><code class="docutils literal notranslate"><span class="pre">base_installer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.installers.full_installer"><code class="docutils literal notranslate"><span class="pre">full_installer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.logging">ersilia.utils.logging module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger.critical"><code class="docutils literal notranslate"><span class="pre">Logger.critical()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger.debug"><code class="docutils literal notranslate"><span class="pre">Logger.debug()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger.error"><code class="docutils literal notranslate"><span class="pre">Logger.error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger.info"><code class="docutils literal notranslate"><span class="pre">Logger.info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger.set_verbosity"><code class="docutils literal notranslate"><span class="pre">Logger.set_verbosity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger.success"><code class="docutils literal notranslate"><span class="pre">Logger.success()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.logging.Logger.warning"><code class="docutils literal notranslate"><span class="pre">Logger.warning()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.paths">ersilia.utils.paths module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths"><code class="docutils literal notranslate"><span class="pre">Paths</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.ersilia_development_path"><code class="docutils literal notranslate"><span class="pre">Paths.ersilia_development_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.exists"><code class="docutils literal notranslate"><span class="pre">Paths.exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.home"><code class="docutils literal notranslate"><span class="pre">Paths.home()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.model_id_from_path"><code class="docutils literal notranslate"><span class="pre">Paths.model_id_from_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.models_development_path"><code class="docutils literal notranslate"><span class="pre">Paths.models_development_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.org_development_path"><code class="docutils literal notranslate"><span class="pre">Paths.org_development_path()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.ports">ersilia.utils.ports module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.ports.find_free_port"><code class="docutils literal notranslate"><span class="pre">find_free_port()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.ports.is_port_in_use"><code class="docutils literal notranslate"><span class="pre">is_port_in_use()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.remove">ersilia.utils.remove module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.remove.OsfRemover"><code class="docutils literal notranslate"><span class="pre">OsfRemover</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.remove.OsfRemover.remove"><code class="docutils literal notranslate"><span class="pre">OsfRemover.remove()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.terminal">ersilia.utils.terminal module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.terminal.is_quiet"><code class="docutils literal notranslate"><span class="pre">is_quiet()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.terminal.raw_input_with_timeout"><code class="docutils literal notranslate"><span class="pre">raw_input_with_timeout()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.terminal.run_command"><code class="docutils literal notranslate"><span class="pre">run_command()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.terminal.run_command_check_output"><code class="docutils literal notranslate"><span class="pre">run_command_check_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.terminal.yes_no_input"><code class="docutils literal notranslate"><span class="pre">yes_no_input()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.upload">ersilia.utils.upload module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.upload.OsfUploader"><code class="docutils literal notranslate"><span class="pre">OsfUploader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.upload.OsfUploader.push"><code class="docutils literal notranslate"><span class="pre">OsfUploader.push()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.venv">ersilia.utils.venv module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.venv.SimpleVenv"><code class="docutils literal notranslate"><span class="pre">SimpleVenv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.venv.SimpleVenv.create"><code class="docutils literal notranslate"><span class="pre">SimpleVenv.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.venv.SimpleVenv.delete"><code class="docutils literal notranslate"><span class="pre">SimpleVenv.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.venv.SimpleVenv.exists"><code class="docutils literal notranslate"><span class="pre">SimpleVenv.exists()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.venv.SimpleVenv.run_commandlines"><code class="docutils literal notranslate"><span class="pre">SimpleVenv.run_commandlines()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.versioning">ersilia.utils.versioning module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner"><code class="docutils literal notranslate"><span class="pre">Versioner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner.base_conda_name"><code class="docutils literal notranslate"><span class="pre">Versioner.base_conda_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner.bentoml_version"><code class="docutils literal notranslate"><span class="pre">Versioner.bentoml_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner.ersilia_version"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner.ersilia_version_from_path"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version_from_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner.ersilia_version_with_py"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version_with_py()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner.python_version"><code class="docutils literal notranslate"><span class="pre">Versioner.python_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner.reformat_py"><code class="docutils literal notranslate"><span class="pre">Versioner.reformat_py()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.versioning.Versioner.server_docker_name"><code class="docutils literal notranslate"><span class="pre">Versioner.server_docker_name()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.zip">ersilia.utils.zip module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.zip.Zipper"><code class="docutils literal notranslate"><span class="pre">Zipper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.zip.Zipper.unzip"><code class="docutils literal notranslate"><span class="pre">Zipper.unzip()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.zip.Zipper.zip"><code class="docutils literal notranslate"><span class="pre">Zipper.zip()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.tmp_pid_file"><code class="docutils literal notranslate"><span class="pre">tmp_pid_file()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 </section>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-ersilia.default">
-<span id="ersilia-default-module"></span><h2>ersilia.default module<a class="headerlink" href="#module-ersilia.default" title="Permalink to this headline"></a></h2>
+<span id="ersilia-default-module"></span><h2>ersilia.default module<a class="headerlink" href="#module-ersilia.default" title="Permalink to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.default.bashrc_cli_snippet">
 <span class="sig-prename descclassname"><span class="pre">ersilia.default.</span></span><span class="sig-name descname"><span class="pre">bashrc_cli_snippet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/default.html#bashrc_cli_snippet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.default.bashrc_cli_snippet" title="Permalink to this definition"></a></dt>
@@ -414,7 +1018,7 @@ with conda environments based on model identifiers.</p>
 
 </section>
 <section id="module-ersilia">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia" title="Permalink to this headline"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 

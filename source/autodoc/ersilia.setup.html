@@ -14,7 +14,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -93,25 +95,81 @@
            <div itemprop="articleBody">
              
   <section id="ersilia-setup-package">
-<h1>ersilia.setup package<a class="headerlink" href="#ersilia-setup-package" title="Permalink to this headline"></a></h1>
+<h1>ersilia.setup package<a class="headerlink" href="#ersilia-setup-package" title="Permalink to this heading"></a></h1>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline"></a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.setup.requirements.html">ersilia.setup.requirements package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.compound">ersilia.setup.requirements.compound module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.conda">ersilia.setup.requirements.conda module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.docker">ersilia.setup.requirements.docker module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.git">ersilia.setup.requirements.git module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.isaura">ersilia.setup.requirements.isaura module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.ping">ersilia.setup.requirements.ping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.compound">ersilia.setup.requirements.compound module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.compound.ChemblWebResourceClientRequirement"><code class="docutils literal notranslate"><span class="pre">ChemblWebResourceClientRequirement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.compound.ChemblWebResourceClientRequirement.install"><code class="docutils literal notranslate"><span class="pre">ChemblWebResourceClientRequirement.install()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.compound.RdkitRequirement"><code class="docutils literal notranslate"><span class="pre">RdkitRequirement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.compound.RdkitRequirement.install"><code class="docutils literal notranslate"><span class="pre">RdkitRequirement.install()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.conda">ersilia.setup.requirements.conda module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement"><code class="docutils literal notranslate"><span class="pre">CondaRequirement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement.install"><code class="docutils literal notranslate"><span class="pre">CondaRequirement.install()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement.is_installed"><code class="docutils literal notranslate"><span class="pre">CondaRequirement.is_installed()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.docker">ersilia.setup.requirements.docker module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement"><code class="docutils literal notranslate"><span class="pre">DockerRequirement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.install"><code class="docutils literal notranslate"><span class="pre">DockerRequirement.install()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_inside_docker"><code class="docutils literal notranslate"><span class="pre">DockerRequirement.is_inside_docker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_installed"><code class="docutils literal notranslate"><span class="pre">DockerRequirement.is_installed()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.git">ersilia.setup.requirements.git module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement"><code class="docutils literal notranslate"><span class="pre">GitLfsRequirement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.activate"><code class="docutils literal notranslate"><span class="pre">GitLfsRequirement.activate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.install"><code class="docutils literal notranslate"><span class="pre">GitLfsRequirement.install()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.is_installed"><code class="docutils literal notranslate"><span class="pre">GitLfsRequirement.is_installed()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement"><code class="docutils literal notranslate"><span class="pre">GithubCliRequirement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement.install"><code class="docutils literal notranslate"><span class="pre">GithubCliRequirement.install()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement.is_installed"><code class="docutils literal notranslate"><span class="pre">GithubCliRequirement.is_installed()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.isaura">ersilia.setup.requirements.isaura module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.isaura.IsauraRequirement"><code class="docutils literal notranslate"><span class="pre">IsauraRequirement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.isaura.IsauraRequirement.install"><code class="docutils literal notranslate"><span class="pre">IsauraRequirement.install()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements.ping">ersilia.setup.requirements.ping module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.ping.PingRequirement"><code class="docutils literal notranslate"><span class="pre">PingRequirement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html#ersilia.setup.requirements.ping.PingRequirement.is_connected"><code class="docutils literal notranslate"><span class="pre">PingRequirement.is_connected()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.setup.requirements.html#module-ersilia.setup.requirements">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.setup.utils.html">ersilia.setup.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.setup.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.utils.html#module-ersilia.setup.utils.clone">ersilia.setup.utils.clone module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.setup.utils.html#module-ersilia.setup.utils.clone">ersilia.setup.utils.clone module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.setup.utils.html#ersilia.setup.utils.clone.ErsiliaCloner"><code class="docutils literal notranslate"><span class="pre">ErsiliaCloner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.utils.html#ersilia.setup.utils.clone.ErsiliaCloner.clone"><code class="docutils literal notranslate"><span class="pre">ErsiliaCloner.clone()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.setup.utils.html#module-ersilia.setup.utils">Module contents</a></li>
 </ul>
 </li>
@@ -119,10 +177,10 @@
 </div>
 </section>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-ersilia.setup.baseconda">
-<span id="ersilia-setup-baseconda-module"></span><h2>ersilia.setup.baseconda module<a class="headerlink" href="#module-ersilia.setup.baseconda" title="Permalink to this headline"></a></h2>
+<span id="ersilia-setup-baseconda-module"></span><h2>ersilia.setup.baseconda module<a class="headerlink" href="#module-ersilia.setup.baseconda" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.setup.baseconda.SetupBaseConda">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.setup.baseconda.</span></span><span class="sig-name descname"><span class="pre">SetupBaseConda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/setup/baseconda.html#SetupBaseConda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.setup.baseconda.SetupBaseConda" title="Permalink to this definition"></a></dt>
@@ -155,11 +213,11 @@
 
 </section>
 <section id="module-ersilia.setup.basedocker">
-<span id="ersilia-setup-basedocker-module"></span><h2>ersilia.setup.basedocker module<a class="headerlink" href="#module-ersilia.setup.basedocker" title="Permalink to this headline"></a></h2>
+<span id="ersilia-setup-basedocker-module"></span><h2>ersilia.setup.basedocker module<a class="headerlink" href="#module-ersilia.setup.basedocker" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.setup.basedocker.SetupBaseDocker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.setup.basedocker.</span></span><span class="sig-name descname"><span class="pre">SetupBaseDocker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/setup/basedocker.html#SetupBaseDocker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.setup.basedocker.SetupBaseDocker" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ersilia.core.base.ErsiliaBase</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.setup.basedocker.SetupBaseDocker.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/setup/basedocker.html#SetupBaseDocker.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.setup.basedocker.SetupBaseDocker.delete" title="Permalink to this definition"></a></dt>
@@ -174,7 +232,7 @@
 
 </section>
 <section id="module-ersilia.setup.conda">
-<span id="ersilia-setup-conda-module"></span><h2>ersilia.setup.conda module<a class="headerlink" href="#module-ersilia.setup.conda" title="Permalink to this headline"></a></h2>
+<span id="ersilia-setup-conda-module"></span><h2>ersilia.setup.conda module<a class="headerlink" href="#module-ersilia.setup.conda" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.setup.conda.SetupConda">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.setup.conda.</span></span><span class="sig-name descname"><span class="pre">SetupConda</span></span><a class="reference internal" href="../../_modules/ersilia/setup/conda.html#SetupConda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.setup.conda.SetupConda" title="Permalink to this definition"></a></dt>
@@ -188,7 +246,7 @@
 
 </section>
 <section id="module-ersilia.setup.config">
-<span id="ersilia-setup-config-module"></span><h2>ersilia.setup.config module<a class="headerlink" href="#module-ersilia.setup.config" title="Permalink to this headline"></a></h2>
+<span id="ersilia-setup-config-module"></span><h2>ersilia.setup.config module<a class="headerlink" href="#module-ersilia.setup.config" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.setup.config.SetupConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.setup.config.</span></span><span class="sig-name descname"><span class="pre">SetupConfig</span></span><a class="reference internal" href="../../_modules/ersilia/setup/config.html#SetupConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.setup.config.SetupConfig" title="Permalink to this definition"></a></dt>
@@ -202,7 +260,7 @@
 
 </section>
 <section id="module-ersilia.setup.profile">
-<span id="ersilia-setup-profile-module"></span><h2>ersilia.setup.profile module<a class="headerlink" href="#module-ersilia.setup.profile" title="Permalink to this headline"></a></h2>
+<span id="ersilia-setup-profile-module"></span><h2>ersilia.setup.profile module<a class="headerlink" href="#module-ersilia.setup.profile" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.setup.profile.SetupProfile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.setup.profile.</span></span><span class="sig-name descname"><span class="pre">SetupProfile</span></span><a class="reference internal" href="../../_modules/ersilia/setup/profile.html#SetupProfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.setup.profile.SetupProfile" title="Permalink to this definition"></a></dt>
@@ -216,7 +274,7 @@
 
 </section>
 <section id="module-ersilia.setup">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.setup" title="Permalink to this headline"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.setup" title="Permalink to this heading"></a></h2>
 </section>
 </section>
 
