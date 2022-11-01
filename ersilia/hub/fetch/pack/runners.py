@@ -13,7 +13,8 @@ from ....setup.baseconda import SetupBaseConda
 
 from ....default import DEFAULT_VENV
 from .. import MODEL_INSTALL_COMMANDS_FILE
-
+from .... import throw_ersilia_exception
+from ....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
 
 USE_CHECKSUM = False
 
@@ -71,7 +72,7 @@ class CondaPack(BasePack):
         BasePack.__init__(self, model_id, config_json)
         self.conda = SimpleConda()
         self.logger.debug("Initializing conda packer")
-
+        
     def _setup(self):
         self.logger.debug("Setting up")
         model_id = self.model_id
@@ -102,6 +103,10 @@ class CondaPack(BasePack):
             self.logger.info(
                 "Cloning base conda environment and adding model dependencies"
             )
+            if base_env is not None:
+                if not self.conda.exists(base_env):
+                    raise CondaEnvironmentExistsError(base_env)
+
             self.conda.clone(base_env, env)
             with open(installs_file, "r") as f:
                 commandlines = f.read()
@@ -117,6 +122,10 @@ class CondaPack(BasePack):
         db.table = "conda"
         db.insert(model_id=model_id, env=env)
         self.logger.debug("Done with the Conda setup")
+
+        if env is not None:
+            if not self.conda.exists(env):
+                raise CondaEnvironmentExistsError(env)        
         return env
 
     def _run(self):
@@ -127,7 +136,7 @@ class CondaPack(BasePack):
             self.cfg.HUB.PACK_SCRIPT
         )
         self.logger.debug("Using environment {0}".format(env))
-        self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
+        self.logger.debug("Running command: {0}".format(pack_snippet.strip()))       
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)
         self.logger.debug(
             "Previous command successfully run inside {0} conda environment".format(env)
@@ -135,6 +144,7 @@ class CondaPack(BasePack):
         self.logger.debug("Now trying to establish symlinks")
         self._symlinks()
 
+    @throw_ersilia_exception
     def run(self):
         self.logger.debug("Packing model with Conda")
         self._write_model_install_commands()

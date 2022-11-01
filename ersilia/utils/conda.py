@@ -349,6 +349,15 @@ class SimpleConda(CondaUtils):
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
 
+    def _catch_critical_errors_in_conda(self, log):
+        log = log.split(os.linesep)
+        critical_errors = []
+        for l in log:
+            if l.startswith("ERROR"):
+                if "dependency resolver" not in l:
+                    critical_errors += [l]
+        return critical_errors
+
     @throw_ersilia_exception
     def run_commandlines(self, environment, commandlines):
         """
@@ -383,6 +392,8 @@ class SimpleConda(CondaUtils):
             log_file = f.read()
         logger.debug(log_file)
         if "ERROR" in log_file:
-            #raise ModelPackageInstallError(cmd)
             logger.debug("Error occurred while running: {0}".format(cmd))
+            critical_errors = self._catch_critical_errors_in_conda(log_file)
+            if len(critical_errors) > 0:
+                raise ModelPackageInstallError(cmd)
         logger.debug("Activation done")

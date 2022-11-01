@@ -5,6 +5,8 @@ import json
 import collections
 from pathlib import Path
 
+from .... import throw_ersilia_exception
+
 from . import BaseAction
 from .... import ErsiliaBase
 from .... import ErsiliaModel
@@ -134,6 +136,7 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Schema: {0}".format(schema))
         return schema
 
+    @throw_ersilia_exception
     def sniff(self):
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")
