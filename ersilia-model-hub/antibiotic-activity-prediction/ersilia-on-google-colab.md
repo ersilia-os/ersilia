@@ -34,7 +34,7 @@ You’ll have access to a Jupyter Notebook-like environment.
 
 Click the play button on the below image to install the Ersilia Model Hub on Google collab. It will upload a folder named Sample\_folder onto your notebook, and here you can find the various packages installed on the Notebook.
 
-<figure><img src="../../.gitbook/assets/imagen (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/imagen (4).png" alt=""><figcaption></figcaption></figure>
 
 ### **How to import data on Google Colab?**
 
@@ -44,31 +44,31 @@ We will talk about how to import data from your google drive here, but you can l
 
 To mount your drive Run the following code.
 
-<figure><img src="../../.gitbook/assets/imagen (6).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/imagen.png" alt=""><figcaption></figcaption></figure>
 
 A pop-up will come up requesting access to connect to your google drive.
 
-<figure><img src="../../.gitbook/assets/imagen (7).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/imagen (1).png" alt=""><figcaption></figcaption></figure>
 
 After clicking “Connect to Google Drive” it will take you to a follow-up google page to sign in to your email account to allow Google Colab to access your google drive.
 
 To locate the folder in Drive where the Google Colab files are located. You can find it in the File tab located at the top left of your Google Colab environment: “File -> Located in Drive”. When we click on ‘Locate in drive’, this takes us to the folder where all the files are located called: "Colab Notebook".
 
-![](../../.gitbook/assets/3)
+![](<../../.gitbook/assets/3 (1)>)
 
 When you are inside the Colab Notebooks folder on the drive you can upload the file:
 
-<figure><img src="../../.gitbook/assets/imagen (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/imagen (5).png" alt=""><figcaption></figcaption></figure>
 
 From the side panel, you can explore the files that were mounted as shown in the figure below:
 
-<figure><img src="../../.gitbook/assets/imagen.png" alt=""><figcaption></figcaption></figure>
-
 <figure><img src="../../.gitbook/assets/imagen (2).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../../.gitbook/assets/imagen (7).png" alt=""><figcaption></figcaption></figure>
 
 Now, we define all paths in the starting e.g. from where to get the input file and save the output files, etc.
 
-<figure><img src="../../.gitbook/assets/imagen (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/imagen (6).png" alt=""><figcaption></figcaption></figure>
 
 ### **5. What are SMILES strings?**
 
@@ -96,11 +96,11 @@ The identifier is the “eos-id” like “eos92sw” while the slug is the word
 
 You can define model\_name either using an identifier e.g. “eos92sw” as shown in the figure below,
 
-![](../../.gitbook/assets/9)
+![](<../../.gitbook/assets/9 (1)>)
 
 Or define it using slug e.g. “retrosynthetic-accessibility” as shown in the figure below,
 
-![](../../.gitbook/assets/10)
+![](<../../.gitbook/assets/10 (1)>)
 
 To **fetch** the ersilia model, we use fetch API.
 
@@ -128,7 +128,7 @@ Just like the input file is uploaded and a path is copied, a new file needs to b
 4. Paste the path copied into the specified output\_ path(Circled in red in the above image).
 5. Then you can proceed to run the code cell.
 
-<figure><img src="../../.gitbook/assets/imagen (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/imagen (3).png" alt=""><figcaption></figcaption></figure>
 
 ### **Conclusion**
 

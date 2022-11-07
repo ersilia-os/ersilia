@@ -22,7 +22,7 @@
 
 ## 💊 Chemistry tools
 
-* [Automated activity prediction models](chemistry-tools/automated-activity-prediction-models/README.md)
+* [Automated activity prediction models](chemistry-tools/automated-activity-prediction-models.md)
   * [Light-weight AutoML with LazyQSAR](chemistry-tools/automated-activity-prediction-models/light-weight-automl-with-lazyqsar.md)
   * [Accurate AutoML with ZairaChem](chemistry-tools/automated-activity-prediction-models/accurate-automl-with-zairachem.md)
   * [Model distillation with Olinda](chemistry-tools/automated-activity-prediction-models/model-distillation-with-olinda.md)
