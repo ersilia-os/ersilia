@@ -144,28 +144,6 @@ model.load("path/to/checkpoint")
 fhe_model = FHEOlindaNetZero(model=model)
 ```
 
-```python
-from chemxor.models import OlindaNetZero, FHEOlindaNetZero
-
-model = OlindaNetZero(output = 1)
-model.load("path/to/checkpoint")
-fhe_model = FHEOlindaNetZero(model=model)
-```
-
-```python
-from chemxor.service import PartitionNetServer
-
-fhe_model_server = PartitionNetServer(fhe_model)
-fhe_model_server.run()
-```
-
-```python
-from chemxor.service import PartitionNetClient
-
-model_client = PartitionNetClient(url="http://localhost:5000/v1/fhe")
-model_client.query(x="COC(=O)C1=CC=CC2=C1C(=O)C1=CC([N+](=O)[O-])=CC=C21")
-```
-
 #### **FHE inputs evaluation**
 
 The Datamodules can generate Pytorch dataloaders that produce encrypted inputs for the model.
