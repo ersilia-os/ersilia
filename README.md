@@ -67,7 +67,6 @@ The Ersilia Model Hub is a Free, Open Source Software and we highly value new co
 * Check our [Contributing Guide](https://github.com/ersilia-os/ersilia/blob/master/CONTRIBUTING.md) for more details
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) code of conduct.
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 # License and citation
 This repository is open-sourced under the [GPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
