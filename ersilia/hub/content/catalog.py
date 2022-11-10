@@ -140,7 +140,6 @@ class ModelCatalog(ErsiliaBase):
     def local(self):
         """List models available locally"""
         mc = ModelCard()
-        mi = ModelIdentifier()
         R = []
         logger.debug("Looking for models in {0}".format(self._bundles_dir))
         for model_id in os.listdir(self._bundles_dir):
@@ -152,6 +151,8 @@ class ModelCatalog(ErsiliaBase):
             mode = self._get_mode(card)
             R += [[model_id, slug, title, mode]]
         logger.info("Found {0} models".format(len(R)))
+        if len(R) == 0:
+            return None
         return CatalogTable(data=R, columns=["MODEL_ID", "SLUG", "TITLE", "MODE"])
 
     def bentoml(self):
