@@ -191,6 +191,8 @@
 <span class="sd">        - overwrite (bool): Overwrite the current bash profile file if the eosconda string is found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fn</span> <span class="o">=</span> <span class="n">bashrc_path</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">snippet</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
