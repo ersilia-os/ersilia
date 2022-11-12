@@ -32,7 +32,7 @@
 ## 🎨 Styles
 
 * [Brand guidelines](styles/brand-guidelines.md)
-* [Scientific figures](styles/scientific-figures.md)
+* [Scientific figures with Stylia](styles/scientific-figures-with-stylia.md)
 
 ## 📑 Training materials
 
