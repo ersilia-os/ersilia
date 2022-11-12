@@ -10,6 +10,12 @@ description: Sytlia is a small Python library for styling plots
 
 ### Installation
 
+First make sure that you have the Arial font installed in your computer (Linux systems do not have it preinstalled). The best is to install Arial in the conda environment you are using:
+
+`conda install -c conda-forge mscorefonts`
+
+You can read more about fonts and Matplotlib in this excellent [blogpost](https://alexanderlabwhoi.github.io/post/2021-03-missingfont/) from the Alexander Lab.
+
 Stylia is constantly evolving, so we recommend that you install it directly from the [GitHub repository](https://github.com/ersilia-os/stylia).
 
 ```python
