@@ -11,6 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
+      # in this step we get the issue body out of the dispatch workflow context
       - name: Get Issue Body
         id: get-issue-body
         env:
@@ -19,13 +20,34 @@ jobs:
           BODY=$(echo "$PAYLOAD_CONTEXT" | jq .github.payload.issue.body)
           echo "::set-output name=body::$BODY"
 
+      # parse the issue body from free form text to a structured JSON object
       - name: parse issue
         uses: GrantBirki/issue-template-parser@3d81f4b4ae6553671590816e65e76b804a29d0ce # pin@v5.0.1
         id: issue-parser
         with:
           body: ${{ steps.get-issue-body.outputs.body }}
 
+      # echo the parsed issue body to the console for debugging if we need to
       - name: echo body
         run: echo $ISSUE_BODY
         env:
           ISSUE_BODY: ${{ steps.issue-parser.outputs.json }}
+
+      # run a sanity check to make sure the repo we will soon create doesn't already exist
+      - name: check if repo exists
+        env:
+          OWNER: ersilia-os
+          JSON: ${{ steps.issue-parser.outputs.json }}
+        run: |
+          REPO_NAME=$(echo $JSON | jq -r .'ersilia_id')
+
+          URL="https://api.github.com/repos/${OWNER}/${REPO_NAME}"
+
+          curl -f -s $URL > /dev/null
+
+          if [ $? -eq 0 ]; then
+            echo "Repo ${OWNER}/${REPO_NAME} invalid repository (could already exist) ❌"
+            exit 1
+          fi
+
+          echo "Repo ${OWNER}/${REPO_NAME} is available ✅"
