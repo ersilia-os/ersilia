@@ -39,6 +39,7 @@ jobs:
           OWNER: ersilia-os
           JSON: ${{ steps.issue-parser.outputs.json }}
         run: |
+          set +e
           REPO_NAME=$(echo $JSON | jq -r .'ersilia_id')
 
           URL="https://api.github.com/repos/${OWNER}/${REPO_NAME}"
