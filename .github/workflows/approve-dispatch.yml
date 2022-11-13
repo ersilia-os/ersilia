@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@7884fcad6b5d53d10323aee724dc68d8b9096a2e # pin@v2.4.2
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
       - name: Get Issue Body
         id: get-issue-body
@@ -19,13 +19,13 @@ jobs:
           BODY=$(echo "$PAYLOAD_CONTEXT" | jq .github.payload.issue.body)
           echo "::set-output name=body::$BODY"
 
-      - name: Issue Template Parser
+      - name: parse issue
+        uses: GrantBirki/issue-template-parser@3d81f4b4ae6553671590816e65e76b804a29d0ce # pin@v5.0.1
         id: issue-parser
-        uses: GrantBirki/issue-template-parser@v3.0.2
         with:
-          issue-body: ${{ steps.get-issue-body.outputs.body }}
-          template-path: .github/ISSUE_TEMPLATE/model_request.yml
+          body: ${{ steps.get-issue-body.outputs.body }}
 
-      - run: echo "$ISSUE_CONTEXT"
+      - name: echo body
+        run: echo $ISSUE_BODY
         env:
-          ISSUE_CONTEXT: ${{ steps.issue-parser.outputs.jsonString }}
+          ISSUE_BODY: ${{ steps.issue-parser.outputs.json }}
