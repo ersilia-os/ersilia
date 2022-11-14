@@ -1,23 +1,71 @@
-name: 🦠 Model Request 
+name: 🦠 Model Request
 description: Request a model to be included in the hub
-title: "🦠 Model Request: "
-labels: [enhancement]
+title: "🦠 Model Request: <name>"
+labels: [new-model]
 
 body:
   - type: markdown
     attributes:
-      value: "Thank you for taking the time to file a Feature Request report."
+      value: "Thank you for taking the time to open a Model Request!"
+
   - type: input
+    id: model-name
     attributes:
-      label: Model Title
-      description: "Suggest a title for your model (e.g. 'Antimicrobial activity prediction')"
+      label: Model Name
+      description: "Suggest a name for your model"
+      placeholder: "Antimicrobial activity prediction"
     validations:
       required: true
+
+  - type: input
+    id: model-description
+    attributes:
+      label: Model Description
+      description: "Please provide a short description of your model"
+      placeholder: "Prediction of the E.coli in vitro growth inhibition potential of small molecules"
+    validations:
+      required: true
+
+  - type: input
+    id: model-id
+    attributes:
+      label: Ersilia ID
+      description: "Please provide (or suggest) an Ersilia ID for your model. This will be used to identify your model in the hub and be the repository name for your model. Format: eos<fill-in-here> - Where <fill-in-here> is four characters long and consists of lowercase letters and numbers - Ex: eos7jlv"
+      placeholder: "eos12ab"
+    validations:
+      required: true
+
+  - type: input
+    id: slug
+    attributes:
+      label: Slug
+      description: "Please provide (or suggest) a 'slug' for your model. A slug is a short label for something, containing only letters, numbers, or hyphens. Ex: antimicrobial-activity-prediction"
+      placeholder: "antimicrobial-activity-prediction"
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: "Please provide (or suggest) a 'tags' for your model. Tags are used to categorize your model. Tags should be short and appear as comma seperated items. Ex: antimicrobial,activity,prediction"
+      placeholder: "price,synthesis,generative"
+
   - type: textarea
+    id: model-publication
     attributes:
       label: Publication
       description: "Is there a link to a publication? (DOI, PMID, URL...)?"
+
   - type: textarea
+    id: model-code
     attributes:
       label: Code
       description: "Is code available? If so, please provide link to repository (GitHub, GitLab, BitBucket...)?"
+
+  - type: textarea
+    id: model-license
+    attributes:
+      label: License
+      description: "If there is a license, please provide the name of the license (or a link to the license)"
+      placeholder: "MIT"
