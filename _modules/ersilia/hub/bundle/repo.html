@@ -250,10 +250,8 @@
         <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">needs_conda</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_conda</span><span class="p">()</span>
-        <span class="n">runs</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">get_conda_and_pip_install_commands_from_dockerfile_if_exclusive</span><span class="p">(</span>
-                <span class="n">fn</span>
-            <span class="p">)</span>
+        <span class="n">runs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">get_conda_and_pip_install_commands_from_dockerfile_if_exclusive</span><span class="p">(</span>
+            <span class="n">fn</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">runs</span><span class="p">:</span>
             <span class="n">exclusive_conda_and_pip</span> <span class="o">=</span> <span class="kc">True</span>

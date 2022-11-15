@@ -136,13 +136,11 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
         <span class="n">input_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/main/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">_ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY</span><span class="p">,</span>
-                <span class="n">input_type</span><span class="p">,</span>
-                <span class="n">input_shape</span><span class="p">,</span>
-                <span class="n">file_name</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/main/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">_ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY</span><span class="p">,</span>
+            <span class="n">input_type</span><span class="p">,</span>
+            <span class="n">input_shape</span><span class="p">,</span>
+            <span class="n">file_name</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
             <span class="n">download</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
