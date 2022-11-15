@@ -48,21 +48,15 @@ class AutoService(ErsiliaBase):
                 self.logger.debug("Service class: {0}".format(s))
                 if s == "system":
                     self.service = SystemBundleService(
-                        model_id,
-                        config_json=config_json,
-                        preferred_port=preferred_port,
+                        model_id, config_json=config_json, preferred_port=preferred_port
                     )
                 elif s == "venv":
                     self.service = VenvEnvironmentService(
-                        model_id,
-                        config_json=config_json,
-                        preferred_port=preferred_port,
+                        model_id, config_json=config_json, preferred_port=preferred_port
                     )
                 elif s == "conda":
                     self.service = CondaEnvironmentService(
-                        model_id,
-                        config_json=config_json,
-                        preferred_port=preferred_port,
+                        model_id, config_json=config_json, preferred_port=preferred_port
                     )
                 elif s == "docker":
                     self.service = DockerImageService(
@@ -77,9 +71,7 @@ class AutoService(ErsiliaBase):
                 )
                 with open(service_class_file, "w") as f:
                     if SystemBundleService(
-                        model_id,
-                        config_json=config_json,
-                        preferred_port=preferred_port,
+                        model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
                         self.service = SystemBundleService(
                             model_id,
@@ -90,9 +82,7 @@ class AutoService(ErsiliaBase):
                         f.write("system")
                         self._service_class = "system"
                     elif VenvEnvironmentService(
-                        model_id,
-                        config_json=config_json,
-                        preferred_port=preferred_port,
+                        model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
                         self.service = VenvEnvironmentService(
                             model_id,
@@ -103,9 +93,7 @@ class AutoService(ErsiliaBase):
                         self.logger.debug("Service class: venv")
                         self._service_class = "venv"
                     elif CondaEnvironmentService(
-                        model_id,
-                        config_json=config_json,
-                        preferred_port=preferred_port,
+                        model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
                         self.service = CondaEnvironmentService(
                             model_id,
@@ -116,9 +104,7 @@ class AutoService(ErsiliaBase):
                         self.logger.debug("Service class: conda")
                         self._service_class = "conda"
                     elif DockerImageService(
-                        model_id,
-                        config_json=config_json,
-                        preferred_port=preferred_port,
+                        model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
                         self.service = DockerImageService(
                             model_id,

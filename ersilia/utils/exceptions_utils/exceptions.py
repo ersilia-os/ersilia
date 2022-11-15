@@ -29,6 +29,14 @@ class MissingDependencyError(ErsiliaError):
         super().__init__(self.message, self.hints)
 
 
+class NullModelIdentifierError(ErsiliaError):
+    def __init__(self, model):
+        self.model = model
+        self.message = "Model identifier {0} is null".format(self.model)
+        self.hints = "This type of error typically occurs when a model has not been served. Please run 'ersilia serve MODEL_ID' if you have a model identifier in mind"
+        super().__init__(self.message, self.hints)
+
+
 class InvalidModelIdentifierError(ErsiliaError):
     def __init__(self, model):
         self.model = model
@@ -44,10 +52,8 @@ class InvalidModelIdentifierError(ErsiliaError):
 class ModelNotAvailableLocallyError(ErsiliaError):
     def __init__(self, model):
         self.model = model
-        self.message = (
-            "Model {0} is not available locally, so it cannot be served".format(
-                self.model
-            )
+        self.message = "Model {0} is not available locally, so it cannot be served".format(
+            self.model
         )
         self.hints = "Fetch the model using the CLI. Simply run:\n"
         self.hints += "$ ersilia fetch {0}".format(self.model)
