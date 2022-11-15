@@ -173,6 +173,7 @@ class GenericInputAdapter(object):
 
 class ExampleGenerator(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
+        self.check_model_id(model_id)
         self.IO = BaseIOGetter(config_json=config_json).get(model_id)
         ErsiliaBase.__init__(self, config_json=config_json)
         self.input_shape = self.IO.input_shape
@@ -185,6 +186,9 @@ class ExampleGenerator(ErsiliaBase):
             self._flatten = self._flatten_list
         if type(self.input_shape) is InputShapePairOfLists:
             self._flatten = self._flatten_single
+
+    def check_model_id(self, model_id):
+        pass
 
     @staticmethod
     def _get_delimiter(file_name):

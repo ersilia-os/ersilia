@@ -21,12 +21,12 @@ def example_cmd():
     @click.option("--file_name", "-f", default=None, type=click.STRING)
     @click.option("--simple/--complete", "-s/-c", default=True)
     def example(model, n_samples, file_name, simple):
-        if model is None:
+        if model is not None:
             model_id = ModelBase(model).model_id
         else:
             session = Session(config_json=None)
             model_id = session.current_model_id()
-        eg = ExampleGenerator(model_id)
+        eg = ExampleGenerator(model_id=model_id)
         if file_name is None:
             echo(json.dumps(eg.example(n_samples, file_name, simple), indent=4))
         else:
