@@ -64,6 +64,16 @@ FHE community is still small which results in poor documentation and limited wor
 
 We have created a Python library ([ChemXor](https://github.com/ersilia-os/chemxor)). It provides a set of pre-tuned model architectures for evaluating FHE(Fully homomorphic encryption) encrypted inputs. These models can be trained as normal Pytorch models. It also provides convenient functions to quickly query and host these models as a service with strong privacy guarantees for the end-user. It is built on top of TenSEAL and Pytorch.
 
+**Encryption**
+
+The encryption context for input data is based on the third-party TenSeal library. TenSeal is currently using the CKKS encryption schema but it can be adapted to incorporate other encryption schemas as well. Computational performance is extremely sensitive to CKKS parameters. For the built-in model architectures available in ChemXor, we already provide manually tuned CKKS parameters. As a result, ChemXor provides a straightforward API to perform this otherwise laborious FHE step.
+
+**Partitioned models**
+
+FHE inputs also suffer from fixed multiplication depth. After a certain number of multiplication operations, the noise in the input grows too large. This limits the number of layers that a neural network can have. To overcome this problem, ChemXor encrypted models are partitioned. After a certain number of multiplications, the output is sent back to the user. The user decrypts the output, recovers the plain text and encrypts it again to send back to the model to continue execution. ChemXor provides functions to do all of this automatically.
+
+
+
 #### **Getting started with ChemXor**
 
 ChemXor is available on PyPi and can be installed using pip.
