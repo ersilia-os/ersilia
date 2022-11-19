@@ -11,22 +11,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
 
-      # in this step we get the issue body out of the dispatch workflow context
-      - name: Get Issue Body
-        id: issue-data
-        env:
-          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
-        run: |
-          BODY=$(echo "$PAYLOAD_CONTEXT" | jq .github.payload.issue.body)
-          echo "::set-output name=body::$BODY"
-          echo "::set-output name=number::$(echo "$PAYLOAD_CONTEXT" | jq .github.payload.issue.number)"
-
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
-        uses: GrantBirki/issue-template-parser@3d81f4b4ae6553671590816e65e76b804a29d0ce # pin@v5.0.1
+        uses: GrantBirki/issue-template-parser@96ade3338da4a4b5e512f9ef6c7037dcf4ea1dd0 # pin@v5.0.2
         id: issue-parser
         with:
-          body: ${{ steps.issue-data.outputs.body }}
+          body: ${{ github.event.client_payload.github.payload.issue.body }}
 
       # echo the parsed issue body to the console for debugging if we need to
       - name: echo body
@@ -42,7 +32,7 @@ jobs:
           JSON: ${{ steps.issue-parser.outputs.json }}
           TEMPLATE: ersilia-os/eos-template
           FLAGS: --public
-          ISSUE_NUMBER: ${{ steps.issue-data.outputs.number }}
+          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
         run: |
           REPO_NAME=$(echo $JSON | jq -r .'ersilia_id')
 
