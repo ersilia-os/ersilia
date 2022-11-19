@@ -18,10 +18,10 @@ The current project offers a solution to this problem. We propose that **sensiti
 Fully homomorphic encryption (FHE) allows **computation on encrypted data** without leaking any information about the encrypted data. More succinctly:
 
 $$
-FHE(a·b) = FHE(a)·FHE(b)
+FHE(a*b) = FHE(a)*FHE(b)
 $$
 
-The result of the computation can only be decrypted by the party that holds the decryption key.
+Where `*` can be either multiplication or addition. The result of the computation can only be decrypted by the party that holds the decryption key.
 
 ### The current state of FHE
 
