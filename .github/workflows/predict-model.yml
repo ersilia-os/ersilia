@@ -1,0 +1,47 @@
+name: Ersillia model output prediction
+on:  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        count: [0, 1, 2, 3, 4]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3
+
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Source conda
+        run: source $CONDA/etc/profile.d/conda.sh
+
+      - name: Install dependencies
+        run: |
+          source activate
+          conda init
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+
+      - name: Install ersilia
+        run: |
+          source activate
+          python --version
+          echo "After conda init"
+          conda init
+          python -m pip install -e .[test]
+  
+      - name: Predict output
+        run: |
+          source activate
+          MODEL_ID=$(ersilia sample --model)
+          echo "Sample model id selected: $MODEL_ID"
+          ersilia fetch $MODEL_ID
+          ersilia serve $MODEL_ID
+          ersilia sample -n 100 -f input.csv
+          ersilia api -i input.csv -o output.csv
+          ersilia close

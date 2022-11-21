@@ -2,9 +2,7 @@ from .exceptions import ErsiliaError
 
 
 class GitLfsSetupError(ErsiliaError):
-    def __init__(
-        self,
-    ):
+    def __init__(self,):
         self.message = self._get_message()
         self.hints = self._get_hints()
         super().__init__(self.message, self.hints)
@@ -20,9 +18,7 @@ class GitLfsSetupError(ErsiliaError):
 
 
 class GithubCliSetupError(ErsiliaError):
-    def __init__(
-        self,
-    ):
+    def __init__(self,):
         self.message = self._get_message()
         self.hints = self._get_hints()
         super().__init__(self.message, self.hints)

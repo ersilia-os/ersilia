@@ -20,10 +20,11 @@ TIMEOUT_SECONDS = 1000
 
 
 class BaseServing(ErsiliaBase):
-    def __init__(self, model_id, config_json=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
         self.bundle_tag = self._get_latest_bundle_tag(model_id=self.model_id)
+        self.port = preferred_port
 
     def _get_info_from_bento(self):
         """Get info available from the Bento"""
@@ -57,15 +58,27 @@ class BaseServing(ErsiliaBase):
 
 
 class _BentoMLService(BaseServing):
-    def __init__(self, model_id, config_json=None):
-        BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
         self.SEARCH_PRE_STRING = "* Running on "
         self.SEARCH_SUF_STRING = "Press CTRL+C to quit"
         self.ERROR_STRING = "error"
 
     def _bentoml_serve(self, runcommand_func=None):
         self.logger.debug("Trying to serve model with BentoML locally")
-        self.port = find_free_port()
+        preferred_port = self.port
+        self.port = find_free_port(preferred_port=preferred_port)
+        if self.port != preferred_port:
+            self.logger.warning(
+                "Port {0} was already in use. Using {1} instead".format(
+                    preferred_port, self.port
+                )
+            )
         self.logger.debug("Free port: {0}".format(self.port))
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "serve.sh")
@@ -150,8 +163,13 @@ class _BentoMLService(BaseServing):
 
 
 class SystemBundleService(_BentoMLService):
-    def __init__(self, model_id, config_json=None):
-        _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        _BentoMLService.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
 
     def __enter__(self):
         self.serve()
@@ -185,8 +203,13 @@ class SystemBundleService(_BentoMLService):
 
 
 class VenvEnvironmentService(_BentoMLService):
-    def __init__(self, model_id, config_json=None):
-        _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        _BentoMLService.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
         self.venv = SimpleVenv(self._model_path(model_id))
 
     def __enter__(self):
@@ -217,8 +240,13 @@ class VenvEnvironmentService(_BentoMLService):
 
 
 class CondaEnvironmentService(_BentoMLService):
-    def __init__(self, model_id, config_json=None):
-        _BentoMLService.__init__(self, model_id=model_id, config_json=config_json)
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        _BentoMLService.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
         self.db = EnvironmentDb()
         self.db.table = "conda"
         self.conda = SimpleConda()
@@ -260,12 +288,17 @@ class CondaEnvironmentService(_BentoMLService):
 
 
 class DockerImageService(BaseServing):
-    def __init__(self, model_id, config_json=None):
-        BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
         self.db = EnvironmentDb()
         self.db.table = "docker"
         self.docker = SimpleDocker()
-        self.dm = DockerManager(config_json=config_json)
+        self.dm = DockerManager(config_json=config_json, preferred_port=preferred_port)
         self.pid = -1
 
     def __enter__(self):
@@ -309,8 +342,13 @@ class DockerImageService(BaseServing):
 
 # TODO: Include 'pip' within available service_class
 class PipInstalledService(BaseServing):
-    def __init__(self, model_id, config_json=None):
-        BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
         self.pid = -1
 
     def __enter__(self):
@@ -347,8 +385,13 @@ class PipInstalledService(BaseServing):
 
 
 class DummyService(BaseServing):
-    def __init__(self, model_id, config_json=None):
-        BaseServing.__init__(self, model_id=model_id, config_json=config_json)
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
 
     def __enter__(self):
         return self

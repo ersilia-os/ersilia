@@ -1,0 +1,45 @@
+name: Approve Command Dispatch
+
+on:
+  repository_dispatch:
+    types: [approve-command]
+
+jobs:
+  approve-command-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+
+      # parse the issue body from free form text to a structured JSON object
+      - name: parse issue
+        uses: GrantBirki/issue-template-parser@96ade3338da4a4b5e512f9ef6c7037dcf4ea1dd0 # pin@v5.0.2
+        id: issue-parser
+        with:
+          body: ${{ github.event.client_payload.github.payload.issue.body }}
+
+      # echo the parsed issue body to the console for debugging if we need to
+      - name: echo body
+        run: echo $ISSUE_BODY
+        env:
+          ISSUE_BODY: ${{ steps.issue-parser.outputs.json }}
+
+      # create the model repo from the template
+      - name: create model repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+          OWNER: ersilia-os
+          JSON: ${{ steps.issue-parser.outputs.json }}
+          TEMPLATE: ersilia-os/eos-template
+          FLAGS: --public
+          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
+        run: |
+          REPO_NAME=$(echo $JSON | jq -r .'ersilia_id')
+
+          if [ "$REPO_NAME" == "null" ]; then
+            gh issue comment $ISSUE_NUMBER --body "❌ Repository name cannot be null. Please provide a valid repository name. (note: you may need to edit the issue body to add a random newline somewhere if our automation is not correctly parsing the issue body)"
+            exit 1
+          fi
+
+          gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
+          gh issue comment $ISSUE_NUMBER --body "Created repository [${OWNER}/${REPO_NAME}](https://github.com/${OWNER}/${REPO_NAME}) ✨"

@@ -43,6 +43,7 @@ class ErsiliaModel(ErsiliaBase):
         credentials_json=None,
         verbose=None,
         fetch_if_not_available=True,
+        preferred_port=None,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -103,10 +104,12 @@ class ErsiliaModel(ErsiliaBase):
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
         )
+        self.preferred_port = preferred_port
         self.autoservice = AutoService(
             model_id=self.model_id,
             service_class=self.service_class,
             config_json=self.config_json,
+            preferred_port=preferred_port,
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
@@ -311,7 +314,9 @@ class ErsiliaModel(ErsiliaBase):
         self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
     ):
         if self._do_cache_splits(input=input, output=output):
-            splitted_inputs = self.tfr.split_in_cache(input)
+            splitted_inputs = self.tfr.split_in_cache()
+            self.logger.debug("Split inputs:")
+            self.logger.debug(" ".join(splitted_inputs))
             splitted_outputs = self.tfr.name_cached_output_files(
                 splitted_inputs, output
             )
@@ -325,6 +330,7 @@ class ErsiliaModel(ErsiliaBase):
             TabularOutputStacker(splitted_outputs).stack(output)
             return output
         else:
+            self.logger.debug("No file splitting necessary!")
             return self.api_task(
                 api_name=api_name, input=input, output=output, batch_size=batch_size
             )

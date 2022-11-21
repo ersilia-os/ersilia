@@ -1,0 +1,18 @@
+set -e
+#!/bin/bash
+echo "Configuring Conda Environment..."
+conda init bash
+source /root/.bashrc
+conda create -yn ersilia python=3.7 && \
+conda activate ersilia && \
+echo "Installing Ersilia dependencies..."
+conda install -y gh -c conda-forge && \
+conda install -y git-lfs -c conda-forge && \
+git-lfs install && \
+git clone https://github.com/ersilia-os/isaura.git && \
+cd isaura && \
+pip install -e . && \
+cd /root && \
+git clone https://github.com/ersilia-os/ersilia.git && \
+cd ersilia && \
+pip install -e .

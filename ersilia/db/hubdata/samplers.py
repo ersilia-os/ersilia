@@ -67,13 +67,11 @@ class InputSampler(ErsiliaBase):
         assert len(self.input_type) == 1
         input_type = self.input_type[0].lower()
         input_shape = self.input_shape.lower().replace(" ", "-")
-        url = (
-            "https://raw.githubusercontent.com/ersilia-os/{0}/main/{1}/{2}/{3}".format(
-                _ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY,
-                input_type,
-                input_shape,
-                file_name,
-            )
+        url = "https://raw.githubusercontent.com/ersilia-os/{0}/main/{1}/{2}/{3}".format(
+            _ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY,
+            input_type,
+            input_shape,
+            file_name,
         )
         with requests.Session() as s:
             download = s.get(url)
