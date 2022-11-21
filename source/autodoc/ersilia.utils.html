@@ -132,7 +132,10 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#module-ersilia.utils.exceptions_utils.exceptions">ersilia.utils.exceptions_utils.exceptions module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.EmptyOutputError"><code class="docutils literal notranslate"><span class="pre">EmptyOutputError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.EmptyOutputError"><code class="docutils literal notranslate"><span class="pre">EmptyOutputError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.EmptyOutputError.run_from_terminal"><code class="docutils literal notranslate"><span class="pre">EmptyOutputError.run_from_terminal()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ErsiliaError"><code class="docutils literal notranslate"><span class="pre">ErsiliaError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.InvalidModelIdentifierError"><code class="docutils literal notranslate"><span class="pre">InvalidModelIdentifierError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.MissingDependencyError"><code class="docutils literal notranslate"><span class="pre">MissingDependencyError</span></code></a></li>
@@ -141,8 +144,12 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#module-ersilia.utils.exceptions_utils.fetch_exceptions">ersilia.utils.exceptions_utils.fetch_exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.CondaEnvironmentExistsError"><code class="docutils literal notranslate"><span class="pre">CondaEnvironmentExistsError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.FetchErsiliaError"><code class="docutils literal notranslate"><span class="pre">FetchErsiliaError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.FolderNotFoundError"><code class="docutils literal notranslate"><span class="pre">FolderNotFoundError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.GetFetchErsiliaError"><code class="docutils literal notranslate"><span class="pre">GetFetchErsiliaError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.ModelPackageInstallError"><code class="docutils literal notranslate"><span class="pre">ModelPackageInstallError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.VirtualEnvironmentSetupError"><code class="docutils literal notranslate"><span class="pre">VirtualEnvironmentSetupError</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#module-ersilia.utils.exceptions_utils.handle_undecorated_exception">ersilia.utils.exceptions_utils.handle_undecorated_exception module</a><ul>
@@ -385,9 +392,8 @@ one of the commands is not conda … or pip … or pip3 …</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.conda.SimpleConda.run_commandlines">
-<span class="sig-name descname"><span class="pre">run_commandlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commandlines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/conda.html#SimpleConda.run_commandlines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.conda.SimpleConda.run_commandlines" title="Permalink to this definition"></a></dt>
-<dd><p>Run commands in a given conda environment.</p>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">run_commandlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.utils.conda.SimpleConda.run_commandlines" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.conda.SimpleConda.startswith">
@@ -1027,7 +1033,7 @@ The directory with more ‘eos0xxx’ subdirectories will be returned.</p>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.venv.SimpleVenv.create">
-<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/venv.html#SimpleVenv.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.venv.SimpleVenv.create" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.utils.venv.SimpleVenv.create" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1042,7 +1048,7 @@ The directory with more ‘eos0xxx’ subdirectories will be returned.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.venv.SimpleVenv.run_commandlines">
-<span class="sig-name descname"><span class="pre">run_commandlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commandlines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/venv.html#SimpleVenv.run_commandlines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.venv.SimpleVenv.run_commandlines" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_commandlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.utils.venv.SimpleVenv.run_commandlines" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
