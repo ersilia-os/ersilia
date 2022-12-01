@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  pre-req:
+  test-collab-notebook:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3
@@ -19,9 +19,6 @@ jobs:
         run: |
           source activate
           conda init
-          conda install git-lfs -c conda-forge
-          git-lfs install
-          conda install gh -c conda-forge
           conda install google-colab -c conda-forge
           jupyter --version
           
