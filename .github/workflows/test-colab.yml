@@ -24,4 +24,12 @@ jobs:
           conda install gh -c conda-forge
           conda install google-colab -c conda-forge
           jupyter --version
-          jupyter nbconvert --to notebook --execute notebooks/test-collab-notebook.ipynb --output=output_notebook_name.ipynb --ExecutePreprocessor.timeout=-1
+          
+      - name: Test Google Collab Notebook
+        run: jupyter nbconvert --to notebook --execute notebooks/test-collab-notebook.ipynb --output=output.ipynb --ExecutePreprocessor.timeout=-1
+
+      - name: Upload Output of the Google Collab Notebook
+        uses: actions/upload-artifact@v3
+        with:
+          name: output.ipynb
+          path: output.ipynb
