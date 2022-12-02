@@ -1,0 +1,33 @@
+name: Test Colab Notebook
+
+on:
+  push:
+  workflow_dispatch:
+  
+jobs:
+  test-collab-notebook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Source conda
+        run: source $CONDA/etc/profile.d/conda.sh
+
+      - name: Install dependencies
+        run: |
+          source activate
+          conda init
+          conda install google-colab -c conda-forge
+          jupyter --version
+          
+      - name: Test Google Collab Notebook
+        run: jupyter nbconvert --to notebook --execute notebooks/test-collab-notebook.ipynb --output=output.ipynb --ExecutePreprocessor.timeout=-1
+
+      - name: Upload Output of the Google Collab Notebook
+        uses: actions/upload-artifact@v3
+        with:
+          name: output.ipynb
+          path: notebooks/output.ipynb
+          retention-days: 7
