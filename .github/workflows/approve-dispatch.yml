@@ -24,22 +24,41 @@ jobs:
         env:
           ISSUE_BODY: ${{ steps.issue-parser.outputs.json }}
 
+      # setup python
+      - name: setup python
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        with:
+          python-version: "3.10"
+
       # create the model repo from the template
       - name: create model repo
+        id: create-model-repo
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.PAT }} # PAT for the ersilia-bot GitHub account
           OWNER: ersilia-os
           JSON: ${{ steps.issue-parser.outputs.json }}
           TEMPLATE: ersilia-os/eos-template
           FLAGS: --public
+        run: |
+          REPO_NAME=$(python3 .github/scripts/generate_eos_identifier.py)
+          gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
+          echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
+
+      # find the creator of the issue
+      - name: find original issue creator
+        id: issue-creator
+        env:
           ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
         run: |
-          REPO_NAME=$(echo $JSON | jq -r .'ersilia_id')
+          ISSUE_CREATOR=$(gh api /repos/${{ github.repository }}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
+          echo "issue_creator=${ISSUE_CREATOR}" >> $GITHUB_OUTPUT
 
-          if [ "$REPO_NAME" == "null" ]; then
-            gh issue comment $ISSUE_NUMBER --body "❌ Repository name cannot be null. Please provide a valid repository name. (note: you may need to edit the issue body to add a random newline somewhere if our automation is not correctly parsing the issue body)"
-            exit 1
-          fi
-
-          gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
-          gh issue comment $ISSUE_NUMBER --body "Created repository [${OWNER}/${REPO_NAME}](https://github.com/${OWNER}/${REPO_NAME}) ✨"
+      # comment on the issue comment with further instructions for the user
+      - name: comment
+        uses: GrantBirki/comment@6c713c5278bc92110ecda1ca63c320deb123c6fd # pin@v2.0.1
+        with:
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          file: .github/workflows/templates/new-model.md
+          vars: |
+            repo_name: ${{ steps.create-model-repo.outputs.repo_name }}
+            issue_creator: ${{ steps.issue-creator.outputs.issue_creator }}
