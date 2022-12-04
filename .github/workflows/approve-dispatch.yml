@@ -49,8 +49,10 @@ jobs:
         id: issue-creator
         env:
           ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
+          OWNER: ersilia-os
+          REPO: ersilia
         run: |
-          ISSUE_CREATOR=$(gh api /repos/${{ github.repository }}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
+          ISSUE_CREATOR=$(gh api /repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
           echo "issue_creator=${ISSUE_CREATOR}" >> $GITHUB_OUTPUT
 
       # comment on the issue comment with further instructions for the user
