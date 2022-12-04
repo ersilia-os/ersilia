@@ -88,6 +88,8 @@ The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https:/
 
 If you want to incorporate a new model in the platform, open a new issue using the [model request template](https://github.com/ersilia-os/ersilia/issues/new?assignees=&labels=new-model&template=model_request.yml&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) or contact us using the following [form](https://www.ersilia.io/request-model)
 
+After submitting your model request via an issue (suggested), a maintainer will review your request. If they `/approve` your request, a new model respository will be created for you to fork and use!
+
 ## License and Citation
 
 This repository is open-sourced under the [GPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
