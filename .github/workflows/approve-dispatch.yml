@@ -58,7 +58,7 @@ jobs:
         uses: GrantBirki/comment@6c713c5278bc92110ecda1ca63c320deb123c6fd # pin@v2.0.1
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          file: .github/workflows/templates/new-model.md
+          file: .github/templates/new-model.md
           vars: |
             repo_name: ${{ steps.create-model-repo.outputs.repo_name }}
             issue_creator: ${{ steps.issue-creator.outputs.issue_creator }}
