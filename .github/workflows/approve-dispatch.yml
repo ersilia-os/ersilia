@@ -42,7 +42,6 @@ jobs:
         run: |
           REPO_NAME=$(python3 .github/scripts/generate_eos_identifier.py)
           gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
-          gh issue comment $ISSUE_NUMBER --body "Created repository [${OWNER}/${REPO_NAME}](https://github.com/${OWNER}/${REPO_NAME}) ✨"
           echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
 
       # find the creator of the issue
