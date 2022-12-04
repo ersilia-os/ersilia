@@ -79,11 +79,14 @@ The Ersilia Model Hub is a Free, Open Source Software and we highly value new co
 
 * A good place to start is checking open [issues](https://github.com/ersilia-os/ersilia/issues).
 * If you have identified a bug in the code, please open a new issue using the bug template.
-* If you want to incorporate a new model in the platform, open a new issue using the model request template or contact us using the following [form](https://www.ersilia.io/request-model)
 * Share any feedback with the community using [GitHub Discussions](https://github.com/ersilia-os/ersilia/discussions) for the project
 * Check our [Contributing Guide](https://github.com/ersilia-os/ersilia/blob/master/CONTRIBUTING.md) for more details
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) code of conduct.
+
+### Submit a New Model
+
+If you want to incorporate a new model in the platform, open a new issue using the [model request template](https://github.com/ersilia-os/ersilia/issues/new?assignees=&labels=new-model&template=model_request.yml&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) or contact us using the following [form](https://www.ersilia.io/request-model)
 
 ## License and Citation
 
