@@ -32,14 +32,34 @@ jobs:
 
       # create the model repo from the template
       - name: create model repo
+        id: create-model-repo
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.PAT }} # PAT for the ersilia-bot GitHub account
           OWNER: ersilia-os
           JSON: ${{ steps.issue-parser.outputs.json }}
           TEMPLATE: ersilia-os/eos-template
           FLAGS: --public
-          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
         run: |
           REPO_NAME=$(python3 .github/scripts/generate_eos_identifier.py)
           gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
           gh issue comment $ISSUE_NUMBER --body "Created repository [${OWNER}/${REPO_NAME}](https://github.com/${OWNER}/${REPO_NAME}) ✨"
+          echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
+
+      # find the creator of the issue
+      - name: find original issue creator
+        id: issue-creator
+        env:
+          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
+        run: |
+          ISSUE_CREATOR=$(gh api /repos/${{ github.repository }}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
+          echo "issue_creator=${ISSUE_CREATOR}" >> $GITHUB_OUTPUT
+
+      # comment on the issue comment with further instructions for the user
+      - name: comment
+        uses: GrantBirki/comment@v2.0.1
+        with:
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          file: .github/workflows/templates/new-model.md
+          vars: |
+            repo_name: ${{ steps.create-model-repo.outputs.repo_name }}
+            issue_creator: ${{ steps.issue-creator.outputs.issue_creator }}
