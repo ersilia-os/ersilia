@@ -1,7 +1,10 @@
 # Version
 from ._version import __version__
 
-del _version
+try:
+    del _version
+except:
+    pass
 
 # External imports
 import os
