@@ -4,35 +4,23 @@ description: A step-by-step guide on using Ersilia on Google Colab
 
 # Ersilia on Google Colab
 
-## **Table of content:**
+## **What is Google Colab?** <a href="#_yjhtj6a0s79m" id="_yjhtj6a0s79m"></a>
 
-1. What is Google Colab?
-2. Getting Started on using Google Colab
-3. Ersilia installation on Google Colab
-4. How to import data on Google Colab?
-5. What are SMILES strings?
-6. Working with Files
-7. Fetch, Serve and Predict Ersilia models
-8. How to save your output
-9. Conclusion
-
-### **What is Google Colab?** <a href="#_yjhtj6a0s79m" id="_yjhtj6a0s79m"></a>
-
-Google Colab allows you to write and execute python code through the browser, it is a well-suited coding environment for machine learning and data analysis having more computing resources (CPU, GPU, and TPU). This allows it to be a favorite tool in the field of machine learning and artificial intelligence research.
+Google Colab allows you to write and execute Python code through the browser, it is a well-suited coding environment for machine learning and data analysis having more computing resources (CPU, GPU, and TPU). This allows it to be a favorite tool in the field of machine learning and artificial intelligence research.
 
 It is also free to use and anyone can have access to it.
 
 If you prefer to read more on Google Colab, you can check out Google [Colab Documentation and Code Snippet](https://colab.research.google.com/notebooks/welcome.ipynb), you can also interact with the community on [Stack Overflow](https://stackoverflow.com/questions/tagged/google-colaboratory).
 
-### **Getting Started on using Google Colab** <a href="#_wjcgqbf4aiql" id="_wjcgqbf4aiql"></a>
+### **Getting started on using Google Colab** <a href="#_wjcgqbf4aiql" id="_wjcgqbf4aiql"></a>
 
 You don’t need to install any prerequisite, all you need is a working laptop with a stable connection, and you also need to have a Gmail account.
 
 You’ll have access to a Jupyter Notebook-like environment.
 
-### **3. Ersilia installation on Google Colab**
+### **Ersilia installation on Google Colab**
 
-Click the play button on the below image to install the Ersilia Model Hub on Google collab. It will upload a folder named Sample\_folder onto your notebook, and here you can find the various packages installed on the Notebook.
+Click the play button on the below image to install the Ersilia Model Hub on Google Colab. It will upload a folder named Sample\_folder onto your notebook, and here you can find the various packages installed on the Notebook.
 
 <figure><img src="../../.gitbook/assets/imagen (3).png" alt=""><figcaption></figcaption></figure>
 
