@@ -20,7 +20,7 @@ ZairaChem can be installed as follows:
 ```bash
 git clone https://github.com/ersilia-os/zaira-chem.git
 cd zaira-chem
-bash install_script.sh
+bash install_linux.sh
 ```
 
 A Conda environment called `zairachem` will be created. Start by activating this environment:
@@ -40,7 +40,7 @@ zairachem --help
 To get started, let's use a classification task from [Therapeutic Data Commons](https://tdcommons.ai/).
 
 ```
-zairachem example --classification --file input.csv
+zairachem example --classification --file_name input.csv
 ```
 
 This file can be split into train and test sets.
