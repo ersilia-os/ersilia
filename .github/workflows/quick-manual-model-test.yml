@@ -37,7 +37,7 @@ jobs:
           echo "After conda init"
           conda init
           python -m pip install -e .[test]
-  
+
       - name: Predict output
         run: |
           source activate
@@ -47,3 +47,9 @@ jobs:
           ersilia sample -n 5 -f input.csv
           ersilia -v api -i input.csv
           ersilia close
+
+      - name: Upload log output
+        uses: actions/upload-artifact@v3
+        with:
+          name: ersilia-predict-logs
+          path: /home/runner/eos/console.log
