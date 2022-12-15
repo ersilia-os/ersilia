@@ -23,7 +23,7 @@ RUN apt-get update \
     rm -rf ~/miniconda3/miniconda.sh \
     && rm -rf /var/lib/apt/lists/*
 
-## Create Ersilia (Running as non-root)
+## Create Ersilia user (non-root user)
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
