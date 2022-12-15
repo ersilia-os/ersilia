@@ -23,6 +23,15 @@ RUN apt-get update \
     rm -rf ~/miniconda3/miniconda.sh \
     && rm -rf /var/lib/apt/lists/*
 
+## Create Ersilia (Running as non-root)
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+RUN if ! getent group "$USER_GID"; then groupadd --gid "$USER_GID" ersilia ; \
+     else GROUP_NAME=$(getent group $USER_GID | awk -F':' '{print $1}'); groupmod -n ersilia "$GROUP_NAME" ; fi \
+  && useradd --uid "${USER_UID}" --gid "${USER_GID}" -m ersilia \
+  && mkdir -p /root && chown ersilia:ersilia /root
+
 ## Ersilia setup
 ENV PATH=$PATH:/root/miniconda3/bin
 COPY setup-ersilia /usr/bin/setup-ersilia
