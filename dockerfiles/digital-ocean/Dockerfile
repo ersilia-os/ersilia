@@ -1,4 +1,8 @@
 FROM ubuntu:22.04 as conda
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+## SYSTEM DEPENDENCIES
 RUN apt-get update \
     && apt install -y --no-install-recommends \
     build-essential \
@@ -19,7 +23,7 @@ RUN apt-get update \
     rm -rf ~/miniconda3/miniconda.sh \
     && rm -rf /var/lib/apt/lists/*
 
-SHELL ["/bin/bash", "-c"]
+## Ersilia setup
 ENV PATH=$PATH:/root/miniconda3/bin
 COPY setup-ersilia /usr/bin/setup-ersilia
 RUN chmod +x /usr/bin/setup-ersilia
