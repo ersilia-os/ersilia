@@ -49,6 +49,7 @@ jobs:
           ersilia close
 
       - name: Upload log output
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v3
         with:
           name: ersilia-predict-logs
