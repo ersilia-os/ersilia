@@ -3,6 +3,7 @@ import os
 import json
 import hashlib
 import shutil
+import subprocess
 from collections import defaultdict, OrderedDict
 from .terminal import run_command, run_command_check_output
 from .docker import SimpleDockerfileParser
