@@ -13,6 +13,8 @@ from .. import logger
 from .. import ErsiliaBase
 from .schema import ApiSchema
 
+from ..utils.exceptions_utils.api_exceptions import InputFileNotFoundError
+
 
 class Api(object):
     def __init__(self, model_id, url, api_name, save_to_lake, config_json):
@@ -294,7 +296,22 @@ class Api(object):
             for res in self.post_amenable_to_h5(input, output, batch_size):
                 yield res
 
+    def _is_input_file(self, input):
+        if type(input) is str:
+            if input.endswith(".csv"):
+                return True
+            if input.endswith(".tst"):
+                return True
+            if input.endswith(".json"):
+                return True
+            if input.endswith(".txt"):
+                return True
+        return False
+
     def post(self, input, output, batch_size):
+        if self._is_input_file(input):
+            if not os.path.exists(input):
+                raise InputFileNotFoundError(file_name=input)
         self.logger.debug("Posting to {0}".format(self.api_name))
         self.logger.debug("Batch size {0}".format(batch_size))
         unique_input, mapping = self._unique_input(input)

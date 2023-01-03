@@ -11,7 +11,8 @@ from .versioning import Versioner
 from .supp.conda_env_resolve import CHECKSUM_NCHAR, CHECKSUM_FILE
 from ..default import CONDA_ENV_YML_FILE
 from .. import logger
-
+from ..utils.exceptions_utils.fetch_exceptions import ModelPackageInstallError
+from .. import throw_ersilia_exception
 
 BASE = "base"
 SPECS_JSON = ".specs.json"
@@ -355,6 +356,16 @@ class SimpleConda(CondaUtils):
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
 
+    def _catch_critical_errors_in_conda(self, log):
+        log = log.split(os.linesep)
+        critical_errors = []
+        for l in log:
+            if l.startswith("ERROR"):
+                if "dependency resolver" not in l:
+                    critical_errors += [l]
+        return critical_errors
+
+    @throw_ersilia_exception
     def run_commandlines(self, environment, commandlines):
         """
         Run commands in a given conda environment.
@@ -378,7 +389,18 @@ class SimpleConda(CondaUtils):
         )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
-        cmd = "bash {0}".format(tmp_script)
+      
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_log = os.path.join(tmp_folder, "installs.log")
+        cmd = "bash {0} > {1} 2>&1".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
         run_command(cmd)
+        with open(tmp_log, "r") as f:
+            log_file = f.read()
+        logger.debug(log_file)
+        if "ERROR" in log_file:
+            logger.debug("Error occurred while running: {0}".format(cmd))
+            critical_errors = self._catch_critical_errors_in_conda(log_file)
+            if len(critical_errors) > 0:
+                raise ModelPackageInstallError(cmd)
         logger.debug("Activation done")

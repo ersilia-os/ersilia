@@ -14,8 +14,5 @@ class CondaRequirement(object):
             return False
 
     def install(self):
+        pass
         # TODO
-        msg = """
-        Install docker
-        """
-        print(msg)

@@ -48,12 +48,9 @@ slim = [
     "PyDrive2",
     "inputimeout",
     "protobuf",
+    "requests",
 ]
 slim_requires = _filter_requires(slim, install_requires)
-
-# Web app requirements
-webapp = slim + ["streamlit"]
-webapp_requires = _filter_requires(webapp, install_requires)
 
 # Doc builder requirements
 doc_builder = slim + ["sphinx", "jinja2"]

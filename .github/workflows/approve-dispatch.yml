@@ -1,0 +1,67 @@
+name: Approve Command Dispatch
+
+on:
+  repository_dispatch:
+    types: [approve-command]
+
+jobs:
+  approve-command-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+
+      # parse the issue body from free form text to a structured JSON object
+      - name: parse issue
+        uses: GrantBirki/issue-template-parser@96ade3338da4a4b5e512f9ef6c7037dcf4ea1dd0 # pin@v5.0.2
+        id: issue-parser
+        with:
+          body: ${{ github.event.client_payload.github.payload.issue.body }}
+
+      # echo the parsed issue body to the console for debugging if we need to
+      - name: echo body
+        run: echo $ISSUE_BODY
+        env:
+          ISSUE_BODY: ${{ steps.issue-parser.outputs.json }}
+
+      # setup python
+      - name: setup python
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        with:
+          python-version: "3.10"
+
+      # create the model repo from the template
+      - name: create model repo
+        id: create-model-repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }} # PAT for the ersilia-bot GitHub account
+          OWNER: ersilia-os
+          JSON: ${{ steps.issue-parser.outputs.json }}
+          TEMPLATE: ersilia-os/eos-template
+          FLAGS: --public
+        run: |
+          REPO_NAME=$(python3 .github/scripts/generate_eos_identifier.py)
+          gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
+          echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
+
+      # find the creator of the issue
+      - name: find original issue creator
+        id: issue-creator
+        env:
+          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
+          OWNER: ersilia-os
+          REPO: ersilia
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ISSUE_CREATOR=$(gh api /repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
+          echo "issue_creator=${ISSUE_CREATOR}" >> $GITHUB_OUTPUT
+
+      # comment on the issue comment with further instructions for the user
+      - name: comment
+        uses: GrantBirki/comment@1e9986de26cf23e6c4350276234c91705c540fef # pin@v2.0.3
+        with:
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          file: .github/templates/new-model.md
+          vars: |
+            repo_name: ${{ steps.create-model-repo.outputs.repo_name }}
+            issue_creator: ${{ steps.issue-creator.outputs.issue_creator }}

@@ -79,7 +79,7 @@ def yes_no_input(prompt, default_answer, timeout=5):
     ans = raw_input_with_timeout(
         prompt=prompt, default_answer=default_answer, timeout=timeout
     )
-    if ans is None:
+    if ans is None or ans == "":
         return default_answer
     ans = str(ans).lower()
     if ans[0] == "n":

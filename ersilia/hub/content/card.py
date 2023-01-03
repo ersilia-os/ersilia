@@ -12,13 +12,7 @@ try:
 except:
     Hdf5Explorer = None
 
-from ...default import (
-    ISAURA_DIR,
-    ISAURA_FILE_TAG,
-    ISAURA_FILE_TAG_LOCAL,
-    H5_EXTENSION,
-    CARD_FILE,
-)
+from ...default import CARD_FILE
 
 
 class ReadmeCard(ErsiliaBase):
@@ -26,10 +20,8 @@ class ReadmeCard(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
-        url = (
-            "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
-                model_id
-            )
+        url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
+            model_id
         )
         return url
 

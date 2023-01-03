@@ -6,6 +6,9 @@ import itertools
 
 from ..hub.content.card import ModelCard
 from .. import ErsiliaBase
+from .. import throw_ersilia_exception
+
+from ..utils.exceptions_utils.exceptions import NullModelIdentifierError
 
 from .shape import InputShape
 from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
@@ -173,6 +176,7 @@ class GenericInputAdapter(object):
 
 class ExampleGenerator(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
+        self.check_model_id(model_id)
         self.IO = BaseIOGetter(config_json=config_json).get(model_id)
         ErsiliaBase.__init__(self, config_json=config_json)
         self.input_shape = self.IO.input_shape
@@ -185,6 +189,11 @@ class ExampleGenerator(ErsiliaBase):
             self._flatten = self._flatten_list
         if type(self.input_shape) is InputShapePairOfLists:
             self._flatten = self._flatten_single
+
+    @throw_ersilia_exception
+    def check_model_id(self, model_id):
+        if model_id is None:
+            raise NullModelIdentifierError(model=model_id)
 
     @staticmethod
     def _get_delimiter(file_name):

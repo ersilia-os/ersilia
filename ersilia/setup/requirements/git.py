@@ -1,32 +1,50 @@
-import sys
-import subprocess as s
+from ... import throw_ersilia_exception
+from ...utils.exceptions_utils.setup_exceptions import (
+    GitLfsSetupError,
+    GithubCliSetupError,
+)
+from ...utils.terminal import run_command, run_command_check_output
 
 
 class GithubCliRequirement(object):
     def __ini__(self):
         self.name = "gh"
-        if not self.is_installed():
-            self.install()
 
-    def is_installed(self):
-        pass
+    @throw_ersilia_exception
+    def is_installed(self, raise_exception=False, install_if_necessary=False):
+        check = run_command_check_output("gh")
+        if "GitHub" in check:
+            return True
+        else:
+            if raise_exception:
+                if install_if_necessary:
+                    self.install()
+                else:
+                    raise GithubCliSetupError
+            else:
+                return False
 
     def install(self):
-        pass
+        run_command("conda install -c conda-forge gh")
 
 
 class GitLfsRequirement(object):
     def __init__(self):
-        pass
+        self.name = "git-lfs"
 
-    def is_installed(self):
-        try:
-            check = s.run(["git-lfs"], capture_output=True)
+    @throw_ersilia_exception
+    def is_installed(self, install_if_necessary=True):
+        check = run_command_check_output("git-lfs")
+        if check.startswith("git-lfs"):
+            return True
+        else:
+            if install_if_necessary:
+                self.install()
+            else:
+                raise GitLfsSetupError
 
-        except ModuleNotFoundError:
-            sys.exit(
-                "\nGit LFS is not installed. We recommend installing Git LFS to"
-                " use large size models.\n\nCheck out https://git-lfs.github.com/"
-                " on how to install. After installation, simply use the command"
-                " `git lfs install` in your repository.\n"
-            )
+    def activate(self):
+        run_command("git-lfs install")
+
+    def install(self):
+        run_command("conda install -c conda-forge git-lfs")

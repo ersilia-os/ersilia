@@ -24,6 +24,7 @@ DEFAULT_MODEL_ID = "eos0zzz"
 DEFAULT_VENV = "env"
 PACKMODE_FILE = "pack_mode.txt"
 LOGGING_FILE = "console.log"
+CURRENT_LOGGING_FILE = "current.log"
 CARD_FILE = "card.json"
 SILENCE_FILE = ".silence.json"
 VERBOSE_FILE = ".verbose.json"
@@ -32,6 +33,7 @@ MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
 FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"
+DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 
 # Isaura data lake
 H5_EXTENSION = ".h5"
@@ -120,6 +122,8 @@ def bashrc_cli_snippet(overwrite=True):
         - overwrite (bool): Overwrite the current bash profile file if the eosconda string is found.
     """
     fn = bashrc_path()
+    if fn is None:
+        return
     with open(fn, "r") as f:
         text = f.read()
     if snippet in text:

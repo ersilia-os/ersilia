@@ -1,9 +1,7 @@
 import click
-import json
 
 from . import ersilia_cli
 from ...hub.content.card import ModelCard, LakeCard
-from ...serve.schema import ApiSchema
 from ... import ModelBase
 
 
@@ -33,7 +31,7 @@ def card_cmd():
         model_id = mdl.model_id
         if schema:
             mc = ModelCard()
-            click.echo(mc.get(model_id, as_json=True))
+            click.echo(mc.get(model_id, as_json=True))  # TODO
             return
         if lake:
             mc = LakeCard()
@@ -41,5 +39,5 @@ def card_cmd():
             return
         if api:
             pass  # TODO
-        ac = ApiSchema(model_id, config_json=None)
-        click.echo(json.dumps(ac.get(), indent=4))
+        mc = ModelCard()
+        click.echo(mc.get(model_id, as_json=True))

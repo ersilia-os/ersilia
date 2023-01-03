@@ -5,13 +5,15 @@ import json
 import collections
 from pathlib import Path
 
+from .... import throw_ersilia_exception
+
 from . import BaseAction
 from .... import ErsiliaBase
 from .... import ErsiliaModel
 from ....io.input import ExampleGenerator
 from ....io.pure import PureDataTyper
 from ....default import API_SCHEMA_FILE, MODEL_SIZE_FILE
-from ....utils.exceptions import EmptyOutputError
+from ....utils.exceptions_utils.exceptions import EmptyOutputError
 
 
 N = 3
@@ -88,7 +90,7 @@ class ModelSniffer(BaseAction):
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
-        mbytes = size / (1024**2)
+        mbytes = size / (1024 ** 2)
         return mbytes
 
     def _get_schema(self, results):
@@ -134,6 +136,7 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Schema: {0}".format(schema))
         return schema
 
+    @throw_ersilia_exception
     def sniff(self):
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")
@@ -153,15 +156,9 @@ class ModelSniffer(BaseAction):
                 result for result in self.model.autoservice.api(api_name, self.inputs)
             ]
             self.logger.debug(results)
-            try:
-                for r in results:
-                    if not r["output"]:
-                        raise EmptyOutputError(
-                            model_id=self.model_id, api_name=api_name
-                        )
-            except EmptyOutputError as err:
-                print(err)
-                sys.exit()
+            for r in results:
+                if not r["output"]:
+                    raise EmptyOutputError(model_id=self.model_id, api_name=api_name)
             schema = self._get_schema(results)
             self.logger.debug(schema)
             all_schemas[api_name] = schema
