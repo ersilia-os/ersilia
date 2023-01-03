@@ -88,7 +88,7 @@ class ErsiliaModel(ErsiliaBase):
         if not self._is_available_locally and fetch_if_not_available:
             self.logger.info("Model is not available locally")
             do_fetch = yes_no_input(
-                "Requested model {0} if not available locally. Do you want to fetch it? [Y/n]".format(
+                "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
                     self.model_id
                 ),
                 default_answer="Y",
