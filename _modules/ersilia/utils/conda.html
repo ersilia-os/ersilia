@@ -73,6 +73,7 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
 <span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">SimpleDockerfileParser</span>
@@ -343,6 +344,16 @@
             <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">environment</span><span class="p">):</span>
                 <span class="n">envs_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">envs_list</span></div>
+
+<div class="viewcode-block" id="SimpleConda.get_python_path_env"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.get_python_path_env">[docs]</a>    <span class="k">def</span> <span class="nf">get_python_path_env</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">environment</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> environment does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">environment</span><span class="p">))</span>
+        <span class="n">python_path</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+            <span class="s2">&quot;which python&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">index_env</span> <span class="o">=</span> <span class="n">python_path</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;envs/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span>
+        <span class="n">python_path_to_envs</span> <span class="o">=</span> <span class="n">python_path</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">index_env</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0}{1}</span><span class="s2">/bin/python&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">python_path_to_envs</span><span class="p">,</span> <span class="n">environment</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SimpleConda.delete_one"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.delete_one">[docs]</a>    <span class="k">def</span> <span class="nf">delete_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">environment</span><span class="p">):</span>
