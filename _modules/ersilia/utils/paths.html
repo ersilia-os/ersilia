@@ -86,11 +86,11 @@
 
 <div class="viewcode-block" id="Paths.home"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.home">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">home</span><span class="p">():</span>
-        <span class="sd">&quot;&quot;&quot;Get home directory&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get home directory&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()))</span></div>
 
 <div class="viewcode-block" id="Paths.model_id_from_path"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.model_id_from_path">[docs]</a>    <span class="k">def</span> <span class="nf">model_id_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Guess model identifier based on the path&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Guess model identifier based on the path&quot;&quot;&quot;</span>
         <span class="n">regex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eos_regex</span><span class="p">()</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">model_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span>
@@ -100,7 +100,7 @@
             <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="Paths.org_development_path"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.org_development_path">[docs]</a>    <span class="k">def</span> <span class="nf">org_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Guess generic development path&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Guess generic development path&quot;&quot;&quot;</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ersilia_development_path</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -108,7 +108,7 @@
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Paths.ersilia_development_path"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.ersilia_development_path">[docs]</a>    <span class="k">def</span> <span class="nf">ersilia_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Try to guess the package development path in the local computer&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to guess the package development path in the local computer&quot;&quot;&quot;</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -118,7 +118,7 @@
         <span class="k">return</span> <span class="n">path</span></div>
 
 <div class="viewcode-block" id="Paths.models_development_path"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.models_development_path">[docs]</a>    <span class="k">def</span> <span class="nf">models_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Try to guess the models path in the local computer.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to guess the models path in the local computer.</span>
 <span class="sd">        The directory with more &#39;eos0xxx&#39; subdirectories will be returned.&quot;&quot;&quot;</span>
         <span class="n">org_dev_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">org_development_path</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">org_dev_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -152,7 +152,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

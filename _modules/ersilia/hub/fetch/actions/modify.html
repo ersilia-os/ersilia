@@ -90,7 +90,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_bundle_uses_ersilia</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check if the bundle imports ersilia&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the bundle imports ersilia&quot;&quot;&quot;</span>
         <span class="n">src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">)</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;grep.txt&quot;</span><span class="p">)</span>
@@ -104,7 +104,7 @@
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_modify_bundle_environment_yml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This method corrects some inconsistencies in default yml file created by conda.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method corrects some inconsistencies in default yml file created by conda.</span>
 <span class="sd">        - libfortran version is removed (inconsistency between mac and linux)</span>
 <span class="sd">        - ruamel is not explicitly installed</span>
 <span class="sd">        - ersilia is downloaded from github</span>
@@ -130,7 +130,7 @@
             <span class="k">return</span>
 
     <span class="k">def</span> <span class="nf">_bundle_environment_yml_has_ersilia</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check if bundle environment.yml file installs ersilia&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if bundle environment.yml file installs ersilia&quot;&quot;&quot;</span>
         <span class="n">search</span> <span class="o">=</span> <span class="s2">&quot;ersilia=&quot;</span>
         <span class="nb">dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">yml_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">ENVIRONMENT_YML</span><span class="p">)</span>
@@ -149,7 +149,7 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_bundle_dockerfile_has_ersilia</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check if bundle Dockerfile uses ersilia&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if bundle Dockerfile uses ersilia&quot;&quot;&quot;</span>
         <span class="nb">dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">dockerfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">DOCKERFILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dockerfile</span><span class="p">):</span>
@@ -166,7 +166,7 @@
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_modify_bundle_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This method modifies the dockerfile generated by BentoML.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method modifies the dockerfile generated by BentoML.</span>
 <span class="sd">        If ersilia is needed by the bundle and not specified, it is added in the Dockerfile.</span>
 <span class="sd">        If a development path exists locally, then this is the one we use.</span>
 <span class="sd">        If not, we use the latest version available from github. This may change in the future to use the PyPi version, correspondingly.</span>
@@ -235,7 +235,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

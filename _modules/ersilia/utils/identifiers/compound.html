@@ -164,7 +164,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.chemical_identifier_resolver"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">chemical_identifier_resolver</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns SMILES string of a given identifier, using NCI tool&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns SMILES string of a given identifier, using NCI tool&quot;&quot;&quot;</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://cactus.nci.nih.gov/chemical/structure/</span><span class="si">{0}</span><span class="s2">/smiles&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">identifier</span>
@@ -175,7 +175,7 @@
         <span class="k">return</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span></div>
 
 <div class="viewcode-block" id="CompoundIdentifier.encode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get InChIKey of compound based on SMILES string&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get InChIKey of compound based on SMILES string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">inchikey</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -201,7 +201,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

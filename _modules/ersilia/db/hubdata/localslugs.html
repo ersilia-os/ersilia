@@ -120,7 +120,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        DELETE FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        DELETE FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE model_id = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">model_id</span>
@@ -135,7 +135,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        DELETE FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        DELETE FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE slug = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">slug</span>
@@ -150,7 +150,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        DELETE FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        DELETE FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE model_id = &#39;</span><span class="si">{1}</span><span class="s2">&#39; AND slug = &#39;</span><span class="si">{2}</span><span class="s2">&#39;</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span>
@@ -163,7 +163,7 @@
 
 <div class="viewcode-block" id="SlugDb.models_of_slug"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.models_of_slug">[docs]</a>    <span class="k">def</span> <span class="nf">models_of_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        SELECT model_id FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        SELECT model_id FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE slug = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">slug</span>
@@ -177,7 +177,7 @@
 
 <div class="viewcode-block" id="SlugDb.slugs_of_model"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.slugs_of_model">[docs]</a>    <span class="k">def</span> <span class="nf">slugs_of_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        SELECT slug FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        SELECT slug FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE model_id = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">model_id</span>
@@ -193,7 +193,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        DELETE FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        DELETE FROM </span><span class="si">{0}</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span>
         <span class="p">)</span>
@@ -211,7 +211,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

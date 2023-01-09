@@ -126,7 +126,7 @@
         <span class="n">is_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">is_base</span><span class="p">()</span>
         <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        source </span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
-<span class="s2">        conda search python &gt; </span><span class="si">{1}</span><span class="s2"></span>
+<span class="s2">        conda search python &gt; </span><span class="si">{1}</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="n">is_base</span><span class="p">),</span> <span class="n">tmp_file</span>
         <span class="p">)</span>
@@ -147,7 +147,7 @@
         <span class="k">return</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kept</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[:</span><span class="mi">2</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="SetupBaseConda.setup"><a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates a conda enviornment to be used as base environment to be used as model server.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a conda enviornment to be used as base environment to be used as model server.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            org: organisation (bentoml or ersiliaos)</span>
@@ -181,10 +181,10 @@
         <span class="p">)</span>
         <span class="n">python_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_closest_python_version</span><span class="p">(</span><span class="n">ptag</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        cd </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        cd </span><span class="si">{0}</span>
 <span class="s2">        conda create --no-default-packages -n </span><span class="si">{1}</span><span class="s2"> python=</span><span class="si">{2}</span><span class="s2"> -y</span>
-<span class="s2">        conda activate </span><span class="si">{1}</span><span class="s2"></span>
-<span class="s2">        </span><span class="si">{3}</span><span class="s2"></span>
+<span class="s2">        conda activate </span><span class="si">{1}</span>
+<span class="s2">        </span><span class="si">{3}</span>
 <span class="s2">        conda deactivate</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">python_version</span><span class="p">,</span> <span class="n">cmd</span>
@@ -205,7 +205,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

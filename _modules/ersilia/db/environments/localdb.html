@@ -142,7 +142,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        DELETE FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        DELETE FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE model_id = &#39;</span><span class="si">{1}</span><span class="s2">&#39; AND env = &#39;</span><span class="si">{2}</span><span class="s2">&#39;</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">env</span>
@@ -157,7 +157,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        SELECT env FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        SELECT env FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE model_id = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">model_id</span>
@@ -173,7 +173,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        SELECT model_id FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        SELECT model_id FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE env = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">env</span>
@@ -189,7 +189,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        SELECT model_id FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        SELECT model_id FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE env IN (SELECT env FROM </span><span class="si">{0}</span><span class="s2"> WHERE model_id = &#39;</span><span class="si">{1}</span><span class="s2">&#39;)</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">model_id</span>
@@ -205,7 +205,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        SELECT env FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        SELECT env FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE model_id IN (SELECT model_id FROM </span><span class="si">{0}</span><span class="s2"> WHERE env = &#39;</span><span class="si">{1}</span><span class="s2">&#39;)</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">env</span>
@@ -221,7 +221,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        SELECT * FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        SELECT * FROM </span><span class="si">{0}</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span>
         <span class="p">)</span>
@@ -236,7 +236,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        DELETE FROM </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        DELETE FROM </span><span class="si">{0}</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_table</span>
         <span class="p">)</span>
@@ -254,7 +254,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

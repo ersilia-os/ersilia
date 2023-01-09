@@ -85,13 +85,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_status</span> <span class="o">=</span> <span class="n">ModelStatus</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ModelToolizer.pip_install"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install">[docs]</a>    <span class="k">def</span> <span class="nf">pip_install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Install the model and distribute as a python package&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Install the model and distribute as a python package&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Distributing as a python package with pip&quot;</span><span class="p">)</span>
         <span class="n">bento</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="n">bento</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="ModelToolizer.dockerize"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize">[docs]</a>    <span class="k">def</span> <span class="nf">dockerize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Containerize model using bentoml with docker&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Containerize model using bentoml with docker&quot;&quot;&quot;</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cannot dockerize. Please make sure docker is installed.&quot;</span><span class="p">)</span>
@@ -129,7 +129,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

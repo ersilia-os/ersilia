@@ -96,7 +96,7 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PseudoDownloader.fetch"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.PseudoDownloader.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Copy entire directory&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy entire directory&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_copy_local_directory</span><span class="p">(</span>
             <span class="n">src</span><span class="p">,</span> <span class="n">dst</span>
         <span class="p">)</span>  <span class="c1"># TODO: Add smart functions to deal with zipped files etc.</span></div></div>
@@ -151,7 +151,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">save_response_content</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GoogleDriveDownloader.fetch_zip"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.fetch_zip">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Download file from google docs. The file id is necessary. A .zip file is assumed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download file from google docs. The file id is necessary. A .zip file is assumed.&quot;&quot;&quot;</span>
         <span class="n">tmp_zip</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="n">destination</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">download_file_from_google_drive</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">tmp_zip</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">tmp_zip</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
@@ -217,10 +217,10 @@
     <span class="k">def</span> <span class="nf">_clone_with_git</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">))</span>
         <span class="n">script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        cd </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        cd </span><span class="si">{0}</span>
 <span class="s2">        git clone https://github.com/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">.git</span>
-<span class="s2">        mv </span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span><span class="s2"></span>
-<span class="s2">        rm </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        mv </span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span>
+<span class="s2">        rm </span><span class="si">{0}</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">tmp_folder</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span>
         <span class="p">)</span>
@@ -312,7 +312,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

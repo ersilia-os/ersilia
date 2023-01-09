@@ -249,11 +249,11 @@
         <span class="n">python_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span>
         <span class="n">python_version</span> <span class="o">=</span> <span class="n">bc</span><span class="o">.</span><span class="n">find_closest_python_version</span><span class="p">(</span><span class="n">python_version</span><span class="p">)</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        cd </span><span class="si">{0}</span><span class="s2"></span>
+<span class="s2">        cd </span><span class="si">{0}</span>
 <span class="s2">        conda create -n </span><span class="si">{1}</span><span class="s2"> python=</span><span class="si">{2}</span><span class="s2"> -y</span>
-<span class="s2">        conda activate </span><span class="si">{1}</span><span class="s2"></span>
+<span class="s2">        conda activate </span><span class="si">{1}</span>
 <span class="s2">        pip install -e .</span>
-<span class="s2">        python </span><span class="si">{3}</span><span class="s2"></span>
+<span class="s2">        python </span><span class="si">{3}</span>
 <span class="s2">        conda deactivate</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">eos_base_env</span><span class="p">,</span> <span class="n">python_version</span><span class="p">,</span> <span class="n">tmp_python_script</span>
@@ -291,13 +291,13 @@
         <span class="n">tmp_repo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone_repo</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
         <span class="c1"># write the dockerfile</span>
         <span class="n">dockerfile</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        FROM bentoml/model-server:</span><span class="si">{0}</span><span class="s2">-</span><span class="si">{1}</span><span class="s2"></span>
+<span class="s2">        FROM bentoml/model-server:</span><span class="si">{0}</span><span class="s2">-</span><span class="si">{1}</span>
 <span class="s2">        MAINTAINER ersilia</span>
 
 <span class="s2">        ENV LC_ALL=C.UTF-8</span>
 <span class="s2">        ENV LANG=C.UTF-8</span>
 
-<span class="s2">        WORKDIR </span><span class="si">{2}</span><span class="s2"></span>
+<span class="s2">        WORKDIR </span><span class="si">{2}</span>
 
 <span class="s2">        COPY . .</span>
 
@@ -359,7 +359,7 @@
 
 
 <div class="viewcode-block" id="base_installer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.base_installer">[docs]</a><span class="k">def</span> <span class="nf">base_installer</span><span class="p">(</span><span class="n">ignore_status</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The base installer does a bare minimum installation of dependencies.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The base installer does a bare minimum installation of dependencies.</span>
 <span class="sd">    It is mainly used to make a base environment for the models.&quot;&quot;&quot;</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">check_install_status</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ignore_status</span><span class="p">:</span>
@@ -371,7 +371,7 @@
 
 
 <div class="viewcode-block" id="full_installer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.full_installer">[docs]</a><span class="k">def</span> <span class="nf">full_installer</span><span class="p">(</span><span class="n">ignore_status</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The full installer does all the installations necessary to run ersila.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The full installer does all the installations necessary to run ersila.&quot;&quot;&quot;</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">check_install_status</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;full&quot;</span> <span class="ow">or</span> <span class="n">ignore_status</span><span class="p">:</span>
         <span class="n">ins</span> <span class="o">=</span> <span class="n">Installer</span><span class="p">()</span>
@@ -393,7 +393,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Ersilia Open Source Initiative.</p>
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
