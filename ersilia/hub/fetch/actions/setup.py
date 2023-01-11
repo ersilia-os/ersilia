@@ -42,7 +42,6 @@ class SetupChecker(BaseAction):
         req.eos_home_path_exists()
         self.logger.debug("EOS Home path exists")
 
-
     def check(self):
         self._gh_cli()
         self._git_lfs()

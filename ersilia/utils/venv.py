@@ -5,9 +5,13 @@ import shutil
 from .. import ErsiliaBase
 
 from .terminal import run_command
-from ..utils.exceptions_utils.fetch_exceptions import VirtualEnvironmentSetupError, ModelPackageInstallError
+from ..utils.exceptions_utils.fetch_exceptions import (
+    VirtualEnvironmentSetupError,
+    ModelPackageInstallError,
+)
 from .. import throw_ersilia_exception
 from .. import logger
+
 
 class SimpleVenv(ErsiliaBase):
     def __init__(self, root):
@@ -23,7 +27,7 @@ class SimpleVenv(ErsiliaBase):
             return True
         else:
             return False
-            
+
     @throw_ersilia_exception
     def create(self, environment):
         path = self._get_path(environment)
@@ -32,7 +36,6 @@ class SimpleVenv(ErsiliaBase):
         run_command("python -m venv {0} --symlinks --clear".format(path))
         if not self.exists(environment):
             raise VirtualEnvironmentSetupError(environment)
-
 
     def delete(self, environment):
         path = self._get_path(environment)
@@ -53,10 +56,10 @@ class SimpleVenv(ErsiliaBase):
             f.write("{0}{1}".format(commandlines, os.linesep))
             f.write("deactivate")
 
-        logger.debug("Running {0}".format(tmp_script))   # 
-        
-        #run_command("bash {0}".format(tmp_script))        
-        run_command("bash {0} > {1} 2>&1".format(tmp_script, tmp_log)) #
+        logger.debug("Running {0}".format(tmp_script))  #
+
+        # run_command("bash {0}".format(tmp_script))
+        run_command("bash {0} > {1} 2>&1".format(tmp_script, tmp_log))  #
         with open(tmp_log, "r") as f:
             log_file = f.read()
         logger.debug(log_file)

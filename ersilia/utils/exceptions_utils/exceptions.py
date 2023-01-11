@@ -3,6 +3,7 @@ import os
 import tempfile
 from ...utils.terminal import run_command
 
+
 class ErsiliaError(Exception):
     """Base class for managing errors in Ersilia"""
 
@@ -73,12 +74,13 @@ class EmptyOutputError(ErsiliaError):
         self.message += log
         self.hints = "- Visit the fetch troubleshooting site"
         super().__init__(self.message, self.hints)
-        
 
     def run_from_terminal(self):
         eb = ErsiliaBase()
         bundle_dir = eb._get_bundle_location(model_id=self.model_id)
-        framework_dir = os.path.join(bundle_dir, self.model_id, "artifacts", "framework")
+        framework_dir = os.path.join(
+            bundle_dir, self.model_id, "artifacts", "framework"
+        )
         bash_executables = ["run.sh", "run_predict.sh", "run_calculate.sh"]
         for exec_file in os.listdir(framework_dir):
             if exec_file in bash_executables:
@@ -89,7 +91,9 @@ class EmptyOutputError(ErsiliaError):
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         log_file = os.path.join(tmp_folder, "terminal.log")
         run_command("ersilia example {0} -n 3 -f {1}".format(self.model_id, input_file))
-        cmd = "bash {0} {1} {2} {3} > {4} 2>&1 ".format(exec_file, framework_dir, input_file, output_file, log_file)
+        cmd = "bash {0} {1} {2} {3} > {4} 2>&1 ".format(
+            exec_file, framework_dir, input_file, output_file, log_file
+        )
         run_command(cmd)
         with open(log_file, "r") as f:
             log = f.read()

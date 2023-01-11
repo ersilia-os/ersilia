@@ -15,6 +15,7 @@ class AirtableInterface(ErsiliaBase):
         self.table_name = AIRTABLE_MODEL_HUB_TABLE_NAME
         self.max_rows = AIRTABLE_MAX_ROWS
         self.page_size = AIRTABLE_PAGE_SIZE
+        self.write_api_key = None
         self.table = Table(self.api_key, self.base_id, self.table_name)
 
     @staticmethod
@@ -23,6 +24,10 @@ class AirtableInterface(ErsiliaBase):
         r = requests.get(url)
         data = r.json()
         return data["AIRTABLE_READONLY_API_KEY"]
+
+    def set_write_api_key(self, write_api_key):
+        self.write_api_key = write_api_key
+        self.table = Table(self.write_api_key, self.base_id, self.table_name)
 
     def items(self):
         for records in self.table.iterate(

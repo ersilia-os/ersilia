@@ -72,7 +72,7 @@ class CondaPack(BasePack):
         BasePack.__init__(self, model_id, config_json)
         self.conda = SimpleConda()
         self.logger.debug("Initializing conda packer")
-        
+
     def _setup(self):
         self.logger.debug("Setting up")
         model_id = self.model_id
@@ -125,7 +125,7 @@ class CondaPack(BasePack):
 
         if env is not None:
             if not self.conda.exists(env):
-                raise CondaEnvironmentExistsError(env)        
+                raise CondaEnvironmentExistsError(env)
         return env
 
     def _run(self):
@@ -136,7 +136,7 @@ class CondaPack(BasePack):
             self.cfg.HUB.PACK_SCRIPT
         )
         self.logger.debug("Using environment {0}".format(env))
-        self.logger.debug("Running command: {0}".format(pack_snippet.strip()))       
+        self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)
         self.logger.debug(
             "Previous command successfully run inside {0} conda environment".format(env)
@@ -221,4 +221,3 @@ def get_runner(pack_mode):
         return CondaPack
     if pack_mode == "docker":
         return DockerPack
-        
