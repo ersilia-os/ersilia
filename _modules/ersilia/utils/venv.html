@@ -75,9 +75,13 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 
 <span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="n">VirtualEnvironmentSetupError</span><span class="p">,</span> <span class="n">ModelPackageInstallError</span>
+<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">VirtualEnvironmentSetupError</span><span class="p">,</span>
+    <span class="n">ModelPackageInstallError</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
+
 
 <div class="viewcode-block" id="SimpleVenv"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.venv.SimpleVenv">[docs]</a><span class="k">class</span> <span class="nc">SimpleVenv</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
@@ -93,7 +97,7 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
-            
+
     <span class="nd">@throw_ersilia_exception</span>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_path</span><span class="p">(</span><span class="n">environment</span><span class="p">)</span>
@@ -102,7 +106,6 @@
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;python -m venv </span><span class="si">{0}</span><span class="s2"> --symlinks --clear&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">environment</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">VirtualEnvironmentSetupError</span><span class="p">(</span><span class="n">environment</span><span class="p">)</span>
-
 
 <div class="viewcode-block" id="SimpleVenv.delete"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.venv.SimpleVenv.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_path</span><span class="p">(</span><span class="n">environment</span><span class="p">)</span>
@@ -123,10 +126,10 @@
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">commandlines</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">))</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;deactivate&quot;</span><span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">))</span>   <span class="c1"># </span>
-        
-        <span class="c1">#run_command(&quot;bash {0}&quot;.format(tmp_script))        </span>
-        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2"> &gt; </span><span class="si">{1}</span><span class="s2"> 2&gt;&amp;1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="n">tmp_log</span><span class="p">))</span> <span class="c1">#</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">))</span>  <span class="c1">#</span>
+
+        <span class="c1"># run_command(&quot;bash {0}&quot;.format(tmp_script))</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2"> &gt; </span><span class="si">{1}</span><span class="s2"> 2&gt;&amp;1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="n">tmp_log</span><span class="p">))</span>  <span class="c1">#</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_log</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">log_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">log_file</span><span class="p">)</span>
