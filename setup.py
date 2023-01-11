@@ -37,6 +37,7 @@ def _filter_requires(names, requires):
 # Slim requirements
 slim = [
     "bentoml",
+    "validators",
     "PyYAML",
     "virtualenv",
     "dockerfile-parse",
