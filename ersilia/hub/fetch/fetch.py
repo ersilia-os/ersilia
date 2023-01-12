@@ -106,7 +106,7 @@ class ModelFetcher(ErsiliaBase):
         self.progress["step1_seconds"] = time.time()
         progress_bar.update(1)
         tqdm.write(
-            "Checking setup: {}s".format(
+            "Checking setup: {0:.3f}s".format(
                 self.progress["step1_seconds"] - self.progress["step0_seconds"]
             )
         )

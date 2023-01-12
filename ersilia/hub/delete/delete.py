@@ -224,7 +224,8 @@ class TmpCleaner(ErsiliaBase):
 
 
 class ModelFullDeleter(ErsiliaBase):
-    def __init__(self, config_json=None):
+    def __init__(self, config_json=None, overwrite=True):
+        self.overwrite = overwrite
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
     def needs_delete(self, model_id):
@@ -240,7 +241,8 @@ class ModelFullDeleter(ErsiliaBase):
         ModelSlugDeleter(self.config_json).delete(model_id)
         ModelBundleDeleter(self.config_json).delete(model_id)
         ModelBentoDeleter(self.config_json).delete(model_id)
-        ModelCondaDeleter(self.config_json).delete(model_id)
+        if self.overwrite:
+            ModelCondaDeleter(self.config_json).delete(model_id)
         ModelTmpDeleter(self.config_json).delete(model_id)
         ModelLakeDeleter(self.config_json).delete(model_id)
         ModelPipDeleter(self.config_json).delete(model_id)

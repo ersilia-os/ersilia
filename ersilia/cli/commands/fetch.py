@@ -22,13 +22,20 @@ def fetch_cmd():
     @click.option("--repo_path", "-r", default=None, type=click.STRING)
     @click.option("--mode", "-m", default=None, type=click.STRING)
     @click.option("--dockerize/--not-dockerize", default=False)
-    def fetch(model, repo_path, mode, dockerize):
+    @click.option(
+        "--overwrite/--reuse",
+        default=True,
+        help="Overwrite environment or reuse using already available environment for this model",
+    )
+    def fetch(model, repo_path, mode, dockerize, overwrite):
         mdl = ModelBase(model)
         model_id = mdl.model_id
         echo(
             ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
             fg="blue",
         )
-        mf = ModelFetcher(repo_path=repo_path, mode=mode, dockerize=dockerize)
+        mf = ModelFetcher(
+            repo_path=repo_path, mode=mode, dockerize=dockerize, overwrite=overwrite
+        )
         _fetch(mf, model_id)
         echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
