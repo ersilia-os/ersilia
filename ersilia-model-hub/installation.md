@@ -28,8 +28,6 @@ There are a few third-party **pre-requisites** and you need to have them install
 
 If you already meet some of the pre-requisites you may skip the corresponding steps.
 
-####
-
 #### Pre-requisite 1: The gcc compiler
 
 Probably you have the gcc compiler installed already. This is the command to install it in **Ubuntu** (the command may be different if you do not use Ubuntu):
@@ -37,8 +35,6 @@ Probably you have the gcc compiler installed already. This is the command to ins
 ```
 sudo apt install build-essential
 ```
-
-####
 
 #### Pre-requisite 2: Python and Conda
 
@@ -56,8 +52,6 @@ rm -rf ~/miniconda3/miniconda.sh
 ~/miniconda3/bin/conda init bash
 ~/miniconda3/bin/conda init zsh
 ```
-
-
 
 #### Pre-requisite 3: Git and GitHub CLI
 
@@ -79,8 +73,6 @@ gh auth login
 
 And then follow the instructions.
 
-###
-
 #### Pre-requisite 4: Git LFS
 
 Some pre-trained models, especially the ones that contain many parameters, require [**Git Large File Storage** (LFS)](https://git-lfs.github.com/).
@@ -97,8 +89,6 @@ Activate Git LFS:
 git-lfs install
 ```
 
-
-
 #### Pre-requisite 5: The Isaura data lake
 
 We highly recommend installation of the [Isaura](https://github.com/ersilia-os/isaura) data lake. With Isaura, you will be able to cache your model predictions (i.e. store them in your local computer). Isaura is a relatively light Python package:
@@ -106,20 +96,16 @@ We highly recommend installation of the [Isaura](https://github.com/ersilia-os/i
 ```
 #activate ersilia's conda environment
 conda activate ersilia
-# clone from github
-git clone https://github.com/ersilia-os/isaura.git
-cd isaura
-# install with pip (use -e for developer mode)
-pip install -e .
+python -m pip install isaura==0.1
 ```
 
-####
+{% hint style="danger" %}
+Isaura has different functionalities, please make sure to install v0.1
+{% endhint %}
 
 #### Pre-requisite 6: Docker
 
 Docker containers are an excellent way to share applications and simplify the management of system requirements and configurations. Please [install Docker](https://www.docker.com) to ensure that all our AI/ML assets will work smoothly in your local device.
-
-
 
 ### 2.2. Install Ersilia
 
