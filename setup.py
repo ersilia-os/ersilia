@@ -50,6 +50,7 @@ slim = [
     "inputimeout",
     "protobuf",
     "requests",
+    "tqdm",
 ]
 slim_requires = _filter_requires(slim, install_requires)
 
