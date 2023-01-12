@@ -301,7 +301,7 @@ def base_installer(ignore_status=False):
 
 
 def full_installer(ignore_status=False):
-    """The full installer does all the installations necessary to run ersila."""
+    """The full installer does all the installations necessary to run ersilia."""
     status = check_install_status()
     if status["status"] != "full" or ignore_status:
         ins = Installer()

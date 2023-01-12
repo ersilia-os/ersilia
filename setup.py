@@ -54,6 +54,10 @@ slim = [
 ]
 slim_requires = _filter_requires(slim, install_requires)
 
+# Lake requirements
+lake = ["isaura==0.1"]
+lake_requires = slim_requires + lake
+
 # Doc builder requirements
 doc_builder = slim + ["sphinx", "jinja2"]
 doc_builder_requires = _filter_requires(doc_builder, install_requires)
@@ -67,6 +71,7 @@ dev_requires = install_requires
 
 # Define extras requires
 extras_require = {
+    "lake": lake_requires,
     "doc_builder": doc_builder_requires,
     "test": test_requires,
     "dev": dev_requires,
@@ -82,7 +87,7 @@ setup(
     description="A hub of AI/ML models for open source drug discovery and global health",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    license="MIT",
+    license="GPLv3",
     python_requires=">=3.7",
     install_requires=slim_requires,
     extras_require=extras_require,
@@ -90,7 +95,7 @@ setup(
     entry_points={"console_scripts": ["ersilia=ersilia.cli:cli"]},
     classifiers=[
         "Programming Language :: Python :: 3.7",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
