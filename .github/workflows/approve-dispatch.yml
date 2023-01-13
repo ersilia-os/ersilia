@@ -56,6 +56,17 @@ jobs:
           JSON: ${{ steps.issue-parser.outputs.json }}
         run: python3 .github/scripts/update_metadata.py
 
+      # sync metadata to airtable
+      # now that the repo has been created, and the metadata.json file has been updated, we can sync the metadata to airtable
+      - name: sync metadata to airtable
+        id: sync-metadata-to-airtable
+        env:
+          USER_NAME: ersilia-bot
+          REPO_NAME: ${{ steps.create-model-repo.outputs.repo_name }}
+          BRANCH: main
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+        run: python3 insert_metadata_to_airtable.py $USER_NAME $REPO_NAME $BRANCH $AIRTABLE_API_KEY
+
       # find the creator of the issue
       - name: find original issue creator
         id: issue-creator
