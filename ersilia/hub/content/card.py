@@ -33,7 +33,7 @@ try:
 except:
     Hdf5Explorer = None
 
-from ...default import CARD_FILE
+from ...default import CARD_FILE, METADATA_JSON_FILE
 
 
 class BaseInformation(ErsiliaBase):
@@ -319,8 +319,8 @@ class RepoMetadataFile(ErsiliaBase):
             org = "ersilia-os"
         if branch is None:
             branch = "main"
-        return "https://raw.githubusercontent.com/{0}/{1}/{2}/metadata.json".format(
-            org, self.model_id, branch
+        return "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
+            org, self.model_id, branch, METADATA_JSON_FILE
         )
 
     def get_json_file(self, org=None, branch=None):
@@ -383,6 +383,22 @@ class AirtableMetadata(AirtableInterface):
         d = data.as_dict()
         d["GitHub"] = data.github
         self.table.create(d)
+
+
+class MetadataCard(ErsiliaBase):
+    def __init__(self, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json)
+
+    def get(self, model_id):
+        dest_dir = self._model_path(model_id=model_id)
+        self.logger.debug("Trying to get metadata from: {0}".format(dest_dir))
+        metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
+        if os.path.exists(metadata_json):
+            with open(metadata_json, "r") as f:
+                data = json.load(f)
+            return data
+        else:
+            return None
 
 
 class ReadmeCard(ErsiliaBase):
@@ -453,14 +469,6 @@ class ReadmeCard(ErsiliaBase):
         return self.parse(model_id)
 
 
-class GithubCard(ErsiliaBase):
-    def __init__(self, config_json):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-
-    def get(self, model_id):
-        pass
-
-
 class AirtableCard(AirtableInterface):
     def __init__(self, config_json):
         AirtableInterface.__init__(self, config_json=config_json)
@@ -525,6 +533,7 @@ class ModelCard(object):
     def __init__(self, config_json=None):
         self.lc = LocalCard(config_json=config_json)
         self.ac = AirtableCard(config_json=config_json)
+        self.mc = MetadataCard(config_json=config_json)
         self.rc = ReadmeCard(config_json=config_json)
 
     def _get(self, model_id):
@@ -532,6 +541,9 @@ class ModelCard(object):
         if card is not None:
             return card
         card = self.ac.get(model_id)
+        if card is not None:
+            return card
+        card = self.mc.get(model_id)
         if card is not None:
             return card
         card = self.rc.get(model_id)

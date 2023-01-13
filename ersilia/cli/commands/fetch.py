@@ -28,7 +28,10 @@ def fetch_cmd():
         help="Overwrite environment or reuse using already available environment for this model",
     )
     def fetch(model, repo_path, mode, dockerize, overwrite):
-        mdl = ModelBase(model)
+        if repo_path is not None:
+            mdl = ModelBase(repo_path=repo_path)
+        else:
+            mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id
         echo(
             ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
