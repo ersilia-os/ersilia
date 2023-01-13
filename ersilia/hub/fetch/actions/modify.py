@@ -136,6 +136,8 @@ class ModelModifier(BaseAction):
     def _explicit_conda_python_path_in_run(self, model_id):
         dir = self._get_bundle_location(model_id)
         framework_dir = os.path.join(dir, model_id, "artifacts", "framework")
+        if not os.path.exists(framework_dir):
+            return
         run_files = []
         for l in os.listdir(framework_dir):
             if l.startswith("run") and l.endswith(".sh"):
