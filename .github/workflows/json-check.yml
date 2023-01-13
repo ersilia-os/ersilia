@@ -1,0 +1,19 @@
+name: json syntax check
+
+on:
+  push:
+    paths:
+      - "**.json"
+  pull_request:
+
+jobs:
+  json-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # pin@v3.3.0
+
+      - name: json syntax check
+        uses: limitusus/json-syntax-check@94555527ace7b96df4a600874a4aafd735842780 # pin@v2.0.0
+        with:
+          pattern: "\\.json$"
