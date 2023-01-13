@@ -5,6 +5,7 @@ import yaml
 from ersilia.default import PACKMODE_FILE
 from . import BaseAction
 from .. import ENVIRONMENT_YML, DOCKERFILE
+from ....utils.conda import SimpleConda
 from ....utils.terminal import run_command
 from ...bundle.bundle import (
     BundleEnvironmentFile,
@@ -132,6 +133,28 @@ class ModelModifier(BaseAction):
     def _add_model_install_commands_to_environment_yml(self, model_id):
         BundleEnvironmentFile(model_id).add_model_install_commands()
 
+    def _explicit_conda_python_path_in_run(self, model_id):
+        dir = self._get_bundle_location(model_id)
+        framework_dir = os.path.join(dir, model_id, "artifacts", "framework")
+        run_files = []
+        for l in os.listdir(framework_dir):
+            if l.startswith("run") and l.endswith(".sh"):
+                run_files += [l]
+        if len(run_files) != 1:
+            return
+        run_file = os.path.join(framework_dir, run_files[0])
+        self.logger.debug("Run file found in framework: {0}".format(run_file))
+        python_exec = SimpleConda().get_python_path_env(model_id)
+        R = []
+        with open(run_file, "r") as f:
+            for r in f:
+                if r.startswith("python "):
+                    r = python_exec + r[6:]
+                R += [r]
+        with open(run_file, "w") as f:
+            for r in R:
+                f.write(r)
+
     def modify(self):
         # Add installs to requirements and environment
         self._add_model_install_commands_to_requirements_txt(self.model_id)
@@ -147,6 +170,8 @@ class ModelModifier(BaseAction):
             pack_mode = f.read()
         if pack_mode == "conda":
             needs_conda = True
+            # Redirect python path from run command to conda path (if necessary)
+            self._explicit_conda_python_path_in_run(self.model_id)
         else:
             needs_conda = BundleEnvironmentFile(self.model_id).needs_conda()
         dockerfile = BundleDockerfileFile(self.model_id)
