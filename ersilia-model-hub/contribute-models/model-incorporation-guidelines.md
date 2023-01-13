@@ -4,6 +4,10 @@ description: This tutorial explains how to incorporate models in the Ersilia Mod
 
 # Model Incorporation Guidelines
 
+{% hint style="danger" %}
+We are currently working on a model incorporation pipeline. Content in this page is therefore slightly outdated.
+{% endhint %}
+
 ## Anatomy of the Ersilia Model Template
 
 Each model in the Ersilia Model Hub is contained within an individual GitHub repository. The [**Ersilia Model Template**](https://github.com/ersilia-os/eos-template) repository is stored as a GitHub Template, so you can [create a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) based on it.
@@ -49,7 +53,9 @@ The `README.md` file is where we give basic information about the model. It must
 * Mode of training: pretrained (the checkpoints where downloaded directly from a third party) retrained (the model was trained again using the same or a new dataset), new (if the model has been developed from scratch by Ersilia's contributors)
 
 {% hint style="info" %}
-Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based **TL;DR** short description of many indexed papers.&#x20;
+Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based **TL;DR** short description of many indexed papers. \
+\
+You can also try [ChatGPT](https://openai.com/blog/chatgpt/)!
 {% endhint %}
 
 **Results interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification.
