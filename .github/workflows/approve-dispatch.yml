@@ -46,6 +46,16 @@ jobs:
           gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
           echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
 
+      # commit updates to the metadata.json file
+      - name: commit metadata.json
+        id: update-metadata
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }} # PAT for the ersilia-bot GitHub account
+          OWNER: ersilia-os
+          REPO: ${{ steps.create-model-repo.outputs.repo_name }}
+          JSON: ${{ steps.issue-parser.outputs.json }}
+        run: python3 .github/scripts/update_metadata.py
+
       # find the creator of the issue
       - name: find original issue creator
         id: issue-creator
