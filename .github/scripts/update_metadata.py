@@ -9,6 +9,7 @@ class UpdateMetadata:
     """
     Class for reading the metadata file from a repo and updating it from the new model submission request
     """
+
     def __init__(self):
         self.log = self.logger()
         self.metadata_filename = "metadata.json"
@@ -63,7 +64,9 @@ class UpdateMetadata:
         Populate the metadata file with the new model submission request
         We will mash the metadata file with the JSON input from the new model submission request
         """
-        self.log.info(f"populating {self.metadata_filename} with new model submission request data")
+        self.log.info(
+            f"populating {self.metadata_filename} with new model submission request data"
+        )
 
         # Match the metadata keys to the JSON input keys
         # We will only populate the metadata file with the JSON input if the metadata file is empty ("" or [])
@@ -91,7 +94,9 @@ class UpdateMetadata:
         In this function, we use the GitHub Python SDK to write the metadata file to the repo
         We will commit the file to the repo and push it to the main branch
         """
-        self.log.info(f"committing {self.metadata_filename} to {self.owner}/{self.repo}")
+        self.log.info(
+            f"committing {self.metadata_filename} to {self.owner}/{self.repo}"
+        )
 
         # Get the repo and contents
         repo = self.github.get_repo(f"{self.owner}/{self.repo}")
@@ -101,8 +106,16 @@ class UpdateMetadata:
         metadata_string = json.dumps(self.metadata, indent=4).encode("utf-8")
 
         # Write the metadata to the repo and commit
-        repo.update_file(contents.path, "initialize metadata", metadata_string, contents.sha, branch=self.branch)
-        self.log.info(f"successfully wrote {self.metadata_filename} to {self.owner}/{self.repo}")
+        repo.update_file(
+            contents.path,
+            "initialize metadata",
+            metadata_string,
+            contents.sha,
+            branch=self.branch,
+        )
+        self.log.info(
+            f"successfully wrote {self.metadata_filename} to {self.owner}/{self.repo}"
+        )
 
     def run(self):
         """
@@ -111,6 +124,7 @@ class UpdateMetadata:
         self.read_metadata()
         self.populate_metadata()
         self.write_metadata()
+
 
 if __name__ == "__main__":
     UpdateMetadata().run()

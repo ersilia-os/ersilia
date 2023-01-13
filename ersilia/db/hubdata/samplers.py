@@ -1,9 +1,12 @@
+import os
 import csv
+import json
 import requests
 import random
 from .interfaces import AirtableInterface
 from ... import ErsiliaBase
 
+from ...default import METADATA_JSON_FILE
 
 _AIRTABLE_MODEL_STATUS_READY = "Ready"
 _AIRTABLE_STATUS_FIELD = "Status"
@@ -49,7 +52,7 @@ class InputSampler(ErsiliaBase):
         self.input_type = result[0]
         self.input_shape = result[1]
 
-    def _get_input_type_and_shape(self):
+    def _get_input_type_and_shape_from_airtable(self):
         airtable_interface = AirtableInterface(config_json=self.config_json)
         for records in airtable_interface.items():
             fields = records["fields"]
@@ -60,6 +63,26 @@ class InputSampler(ErsiliaBase):
             if status == _AIRTABLE_MODEL_STATUS_READY:
                 if model_id == self.model_id:
                     return input_type, input_shape
+        return None
+
+    def _get_input_type_and_shape_from_metadata(self):
+        dest_path = self._model_path(self.model_id)
+        metadata_json = os.path.join(dest_path, METADATA_JSON_FILE)
+        if not os.path.exists(metadata_json):
+            return None
+        with open(metadata_json, "r") as f:
+            data = json.load(f)
+        input_type = data[_AIRTABLE_INPUT_TYPE_FIELD]
+        input_shape = data[_AIRTABLE_INPUT_SHAPE_FIELD]
+        return input_type, input_shape
+
+    def _get_input_type_and_shape(self):
+        res = self._get_input_type_and_shape_from_metadata()
+        if res is not None:
+            return res
+        res = self._get_input_type_and_shape_from_airtable()
+        if res is not None:
+            return res
         return None
 
     def _get_inputs_from_maintained_file(self):
