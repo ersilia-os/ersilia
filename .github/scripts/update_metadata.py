@@ -1,7 +1,8 @@
-import os
 import json
-from github import Github
 import logging
+import os
+
+from github import Github
 
 
 class UpdateMetadata:
@@ -14,6 +15,7 @@ class UpdateMetadata:
         self.token = os.environ.get("GITHUB_TOKEN")
         self.owner = os.environ.get("OWNER")
         self.repo = os.environ.get("REPO")
+        self.branch = os.environ.get("BRANCH", "main")
         self.metadata = None
         self.json_input = self.load_json_input()
         self.github = Github(self.token)
@@ -36,6 +38,8 @@ class UpdateMetadata:
         :return: dict
         """
         self.log.info(f"loading JSON input from env vars")
+
+        # Load the JSON input from the env vars and convert it to a dict
         return json.loads(os.environ.get("JSON"))
 
     def read_metadata(self):
@@ -43,8 +47,12 @@ class UpdateMetadata:
         Read the metadata file from the repo
         """
         self.log.info(f"loading {self.metadata_filename} from {self.owner}/{self.repo}")
+
+        # Get the repo and contents
         repo = self.github.get_repo(f"{self.owner}/{self.repo}")
         contents = repo.get_contents(self.metadata_filename)
+
+        # Load the metadata.json from the repo and convert it to a dict
         self.metadata = json.loads(contents.decoded_content.decode())
 
     def populate_metadata(self):
@@ -53,6 +61,7 @@ class UpdateMetadata:
         """
         self.log.info(f"populating {self.metadata_filename} with new model submission request data")
 
+        # Match the metadata keys to the JSON input keys
         # This is gross, sorry
         if self.metadata["Identifier"] == "":
             self.metadata["Identifier"] = self.repo
@@ -71,7 +80,30 @@ class UpdateMetadata:
             tags = [tag.strip() for tag in self.json_input["tags"].split(",")]
             self.metadata["Tag"] = tags
 
+    def write_metadata(self):
+        """
+        Write the metadata file to the repo
+        """
+        self.log.info(f"committing {self.metadata_filename} to {self.owner}/{self.repo}")
+
+        # Get the repo and contents
+        repo = self.github.get_repo(f"{self.owner}/{self.repo}")
+        contents = repo.get_contents(self.metadata_filename)
+
+        # Convert the metadata to a JSON formatted string
+        metadata_string = json.dumps(self.metadata, indent=4).encode("utf-8")
+
+        # Write the metadata to the repo and commit
+        repo.update_file(contents.path, "initialize metadata", metadata_string, contents.sha, branch=self.branch)
+        self.log.info(f"successfully wrote {self.metadata_filename} to {self.owner}/{self.repo}")
+
+    def run(self):
+        """
+        Run the script
+        """
+        self.read_metadata()
+        self.populate_metadata()
+        self.write_metadata()
+
 if __name__ == "__main__":
-    um = UpdateMetadata()
-    um.read_metadata()
-    um.populate_metadata()
+    UpdateMetadata().run()
