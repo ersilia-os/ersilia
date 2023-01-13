@@ -67,12 +67,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.db.hubdata.samplers</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">.interfaces</span> <span class="kn">import</span> <span class="n">AirtableInterface</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">METADATA_JSON_FILE</span>
 
 <span class="n">_AIRTABLE_MODEL_STATUS_READY</span> <span class="o">=</span> <span class="s2">&quot;Ready&quot;</span>
 <span class="n">_AIRTABLE_STATUS_FIELD</span> <span class="o">=</span> <span class="s2">&quot;Status&quot;</span>
@@ -118,7 +121,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_type</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_get_input_type_and_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_input_type_and_shape_from_airtable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">airtable_interface</span> <span class="o">=</span> <span class="n">AirtableInterface</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">records</span> <span class="ow">in</span> <span class="n">airtable_interface</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">records</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
@@ -129,6 +132,26 @@
             <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">_AIRTABLE_MODEL_STATUS_READY</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">model_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">input_type</span><span class="p">,</span> <span class="n">input_shape</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_get_input_type_and_shape_from_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dest_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">metadata_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_path</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">input_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">_AIRTABLE_INPUT_TYPE_FIELD</span><span class="p">]</span>
+        <span class="n">input_shape</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">_AIRTABLE_INPUT_SHAPE_FIELD</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">input_type</span><span class="p">,</span> <span class="n">input_shape</span>
+
+    <span class="k">def</span> <span class="nf">_get_input_type_and_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input_type_and_shape_from_metadata</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input_type_and_shape_from_airtable</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_get_inputs_from_maintained_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
