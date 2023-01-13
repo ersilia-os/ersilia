@@ -35,6 +35,7 @@ class UpdateMetadata:
     def load_json_input(self):
         """
         Helper function for loading the JSON input from the env vars
+        This is the JSON data parsed from the new model submission request (GitHub issue)
         :return: dict
         """
         self.log.info(f"loading JSON input from env vars")
@@ -45,6 +46,8 @@ class UpdateMetadata:
     def read_metadata(self):
         """
         Read the metadata file from the repo
+        :note: this is the metadata.json file in the repo that was just created by the new model submission request...
+        ...and it should be empty (contain default values)
         """
         self.log.info(f"loading {self.metadata_filename} from {self.owner}/{self.repo}")
 
@@ -58,10 +61,12 @@ class UpdateMetadata:
     def populate_metadata(self):
         """
         Populate the metadata file with the new model submission request
+        We will mash the metadata file with the JSON input from the new model submission request
         """
         self.log.info(f"populating {self.metadata_filename} with new model submission request data")
 
         # Match the metadata keys to the JSON input keys
+        # We will only populate the metadata file with the JSON input if the metadata file is empty ("" or [])
         # This is gross, sorry
         if self.metadata["Identifier"] == "":
             self.metadata["Identifier"] = self.repo
@@ -83,6 +88,8 @@ class UpdateMetadata:
     def write_metadata(self):
         """
         Write the metadata file to the repo
+        In this function, we use the GitHub Python SDK to write the metadata file to the repo
+        We will commit the file to the repo and push it to the main branch
         """
         self.log.info(f"committing {self.metadata_filename} to {self.owner}/{self.repo}")
 
