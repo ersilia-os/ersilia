@@ -97,7 +97,10 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Overwrite environment or reuse using already available environment for this model&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">dockerize</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
-        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model_id_or_slug</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">echo</span><span class="p">(</span>
             <span class="s2">&quot;:down_arrow:  Fetching model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">),</span>
