@@ -1,9 +1,5 @@
 # External resources
 
-## Machine learning
-
-XX
-
 ## Drug discovery
 
 ### Wellcome Centre Anti-Infectives Research (WCAIR)

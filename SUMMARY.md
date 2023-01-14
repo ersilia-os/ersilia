@@ -37,7 +37,7 @@
 
 * [Google Colaboratory](training-materials/google-colaboratory.md)
 * [Python 101](training-materials/python-101.md)
-* [Event Fund](training-materials/event-fund.md)
+* [ML for Drug Discovery](training-materials/ml-for-drug-discovery.md)
 * [External resources](training-materials/external-resources.md)
 
 ## 🌍 About Us

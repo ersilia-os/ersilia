@@ -178,3 +178,11 @@ A more concise way to run prediction would be to use the `with` clause:
 with ErsiliaModel("retrosynthetic-accessibility") as mdl:
     mdl.predict(input)
 ```
+
+## Using Ersilia through Colab
+
+We have prepared a ready-to-go Google Colaboratory (Colab) notebook to run models and store predictions in Google Drive. Read more about Colab in our [training materials](../training-materials/google-colaboratory.md) and get started by clicking on the button Open in Colab from our [GitHub](https://github.com/ersilia-os/ersilia/blob/master/notebooks/ersilia-on-colab.ipynb).
+
+{% hint style="warning" %}
+Please note we do not extensively maintain the Colaboratory implementation and some models might not work. Please open an issue on GitHub if you encounter any problems.
+{% endhint %}
