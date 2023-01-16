@@ -1,7 +1,9 @@
 import json
 import logging
 import os
+import time
 
+import github.GithubException
 from github import Github
 
 
@@ -13,6 +15,8 @@ class UpdateMetadata:
     def __init__(self):
         self.log = self.logger()
         self.metadata_filename = "metadata.json"
+        self.retries = 9
+        self.retry_delay = 3
         self.token = os.environ.get("GITHUB_TOKEN")
         self.owner = os.environ.get("OWNER")
         self.repo = os.environ.get("REPO")
@@ -54,7 +58,30 @@ class UpdateMetadata:
 
         # Get the repo and contents
         repo = self.github.get_repo(f"{self.owner}/{self.repo}")
-        contents = repo.get_contents(self.metadata_filename)
+
+        # check to see if the repository has any contents
+        for i in range(self.retries):
+            try:
+                # fetch the repo contents
+                contents = repo.get_contents(self.metadata_filename)
+                break
+            except github.GithubException.GithubException as exception:
+                # if the repo is empty, we will get a 404 error
+                if exception.status != 404:
+                    # if the error is not a 404, we will raise the exception
+                    self.log.info(f"exception: {exception}")
+                    raise exception
+
+                # if we have reached the retry limit, we will raise the exception
+                if i == self.retries:
+                    self.log.info(f"retry limit reached ({self.retries}), exiting")
+                    raise exception
+
+                # if we have not reached the retry limit, we will wait and try again
+                self.log.info(
+                    f"waiting for {self.metadata_filename} to be created and trying again..."
+                )
+                time.sleep(self.retry_delay)
 
         # Load the metadata.json from the repo and convert it to a dict
         self.metadata = json.loads(contents.decoded_content.decode())
