@@ -147,6 +147,7 @@ class ModelModifier(BaseAction):
         run_file = os.path.join(framework_dir, run_files[0])
         self.logger.debug("Run file found in framework: {0}".format(run_file))
         python_exec = SimpleConda().get_python_path_env(model_id)
+        self.logger.debug("Python executable: {0}".format(python_exec))
         R = []
         with open(run_file, "r") as f:
             for r in f:

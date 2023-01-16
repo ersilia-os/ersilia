@@ -24,11 +24,11 @@ if r.status_code == 200:
 data["GitHub"] = github
 data["Status"] = "In progress"
 
-if data["Publication"]== "":
+if data["Publication"] == "":
     del data["Publication"]
-if data["Source"]== "":
+if data["Source"] == "":
     del data["Source"]
-    
+
 del data["Tag"]
 del data["Mode"]
 del data["Input"]

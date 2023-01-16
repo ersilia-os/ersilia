@@ -52,11 +52,11 @@ class BaseInformation(ErsiliaBase):
         if isinstance(result, ValidationFailure):
             return False
         return result
-    
+
     def _read_default_fields(self, field):
         root = os.path.dirname(os.path.abspath(__file__))
         filename = field.lower().replace(" ", "_")
-        file_path =  os.path.join(root, "metadata", filename+".txt")
+        file_path = os.path.join(root, "metadata", filename + ".txt")
         with open(file_path, "r") as f:
             valid_field = f.read().split("\n")
         return valid_field
@@ -367,6 +367,16 @@ class AirtableMetadata(AirtableInterface):
                     data = record["fields"]
         return data
 
+    def _find_airtable_record_id(self):
+        rec_id = None
+        for records in self.table.iterate(
+            page_size=self.page_size, max_records=self.max_rows
+        ):
+            for record in records:
+                if self.model_id == record["fields"]["Identifier"]:
+                    rec_id = record["id"]
+        return rec_id
+
     def read_information(self):
         data = self._find_record()
         bi = BaseInformation(config_json=self.config_json)
@@ -376,7 +386,19 @@ class AirtableMetadata(AirtableInterface):
     def write_information(self, data: BaseInformation):
         d = data.as_dict()
         d["GitHub"] = data.github
-        self.table.create(d)
+        rec_id = self._find_airtable_record_id()
+        if rec_id is None:
+            self.logger.debug(
+                "Model {0} does not exist in AirTable. Creating new record".format(
+                    self.model_id
+                )
+            )
+            self.table.create(d)
+        else:
+            self.logger.debug(
+                "Model {0} exists in AirTable. Updating record".format(self.model_id)
+            )
+            self.table.update(record_id=rec_id, fields=d)
 
 
 class MetadataCard(ErsiliaBase):
