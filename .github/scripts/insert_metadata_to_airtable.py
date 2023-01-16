@@ -1,6 +1,7 @@
 import sys
 import json
 from pyairtable import Table
+import requests
 
 write_api_key = sys.argv[2]
 model_id = sys.argv[1]
@@ -15,8 +16,11 @@ json_path = "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
 )
 github = "https://github.com/ersilia-os/{0}".format(model_id)
 
-with open(json_path, "r") as f:
-    data = json.load(f)
+r = requests.get(json_path)
+if r.status_code == 200:
+    text = r.content
+    data = json.loads(text)
+
 data["GitHub"] = github
 data["Status"] = "In Progress"
 
