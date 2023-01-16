@@ -51,7 +51,7 @@ class TitleBaseInformationError(ErsiliaError):
 class DescriptionBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia description"
-        self.hints = "Description must be longer than the title"
+        self.hints = "Description must be longer than 300 characters and different from the title"
         super().__init__(self.message, self.hints)
 
 
@@ -76,6 +76,15 @@ class InputShapeBaseInformationError(ErsiliaError):
         self.message = "Wrong Ersilia input shape"
         self.hints = (
             "Only shapes allowed: Single, Pair, List, Pair of Lists, List of Lists"
+        )
+        super().__init__(self.message, self.hints)
+
+
+class OutputBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong Ersilia output"
+        self.hints = (
+            "Only outputs allowed: Probability, Score, Compound, Descriptor, Vector, Toxicity, IC50"
         )
         super().__init__(self.message, self.hints)
 

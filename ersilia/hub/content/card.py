@@ -18,6 +18,7 @@ from ...utils.exceptions_utils.card_exceptions import (
     ModeBaseInformationError,
     InputBaseInformationError,
     InputShapeBaseInformationError,
+    OutputBaseInformationError,
     TaskBaseInformationError,
     TagBaseInformationError,
     PublicationBaseInformationError,
@@ -51,6 +52,14 @@ class BaseInformation(ErsiliaBase):
         if isinstance(result, ValidationFailure):
             return False
         return result
+    
+    def _read_default_fields(self, field):
+        root = os.path.dirname(os.path.abspath(__file__))
+        filename = field.lower().replace(" ", "_")
+        file_path =  os.path.join(root, "metadata", filename+".txt")
+        with open(file_path, "r") as f:
+            valid_field = f.read().split("\n")
+        return valid_field
 
     @property
     def identifier(self):
@@ -83,7 +92,7 @@ class BaseInformation(ErsiliaBase):
 
     @status.setter
     def status(self, new_status):
-        if new_status not in ["Test", "Ready", "In progress", "To do"]:
+        if new_status not in self._read_default_fields("Status"):
             raise StatusBaseInformationError
         self._status = new_status
 
@@ -117,7 +126,7 @@ class BaseInformation(ErsiliaBase):
 
     @mode.setter
     def mode(self, new_mode):
-        if new_mode not in ["Pretrained", "Retrained", "In-house", "Online"]:
+        if new_mode not in self._read_default_fields("Mode"):
             raise ModeBaseInformationError
         self._mode = new_mode
 
@@ -130,7 +139,7 @@ class BaseInformation(ErsiliaBase):
         if type(new_input) is not list:
             raise InputBaseInformationError
         for inp in new_input:
-            if inp not in ["Compound", "Protein", "Text"]:
+            if inp not in self._read_default_fields("Input"):
                 raise InputBaseInformationError
         self._input = new_input
 
@@ -140,13 +149,7 @@ class BaseInformation(ErsiliaBase):
 
     @input_shape.setter
     def input_shape(self, new_input_shape):
-        if new_input_shape not in [
-            "Single",
-            "Pair",
-            "List",
-            "Pair of Lists",
-            "List of Lists",
-        ]:
+        if new_input_shape not in self._read_default_fields("Input Shape"):
             raise InputShapeBaseInformationError
         self._input_shape = new_input_shape
 
@@ -159,15 +162,7 @@ class BaseInformation(ErsiliaBase):
         if type(new_task) is not list:
             raise TaskBaseInformationError
         for nt in new_task:
-            if nt not in [
-                "Classification",
-                "Regression",
-                "Generative",
-                "Embedding",
-                "Similarity",
-                "Clustering",
-                "Dimensionality reduction",
-            ]:
+            if nt not in self._read_default_fields("Task"):
                 raise TaskBaseInformationError
         self._task = new_task
 
@@ -177,6 +172,10 @@ class BaseInformation(ErsiliaBase):
 
     @output.setter
     def output(self, new_output):
+        default_output = self._read_default_fields("Output")
+        for no in new_output:
+            if no not in default_output:
+                raise OutputBaseInformationError
         self._output = new_output
 
     @property
@@ -195,6 +194,10 @@ class BaseInformation(ErsiliaBase):
     def tag(self, new_tag):
         if type(new_tag) is not list:
             raise TagBaseInformationError
+        default_tags = self._read_default_fields("Tag")
+        for nt in new_tag:
+            if nt not in default_tags:
+                raise TagBaseInformationError
         self._tag = new_tag
 
     @property
@@ -223,18 +226,7 @@ class BaseInformation(ErsiliaBase):
 
     @license.setter
     def license(self, new_license):
-        if new_license not in [
-            "MIT",
-            "GPLv3",
-            "LGPL",
-            "Apache",
-            "BSD-2",
-            "BSD-3",
-            "Mozilla",
-            "CC",
-            "Proprietary",
-            "None",
-        ]:
+        if new_license not in self._read_default_fields("License"):
             raise LicenseBaseInformationError
         self._license = new_license
 
@@ -329,7 +321,9 @@ class RepoMetadataFile(ErsiliaBase):
         r = requests.get(url)
         if r.status_code == 200:
             text = r.content
-            return json.loads(text)
+            data = json.loads(text)
+            print(data)
+            return data
         else:
             return None
 
