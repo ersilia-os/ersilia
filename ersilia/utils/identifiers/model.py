@@ -20,6 +20,8 @@ class ModelIdentifier(object):
         return result_str
 
     def is_valid(self, s):
+        if len(s) != 7:
+            return False
         return Paths._eos_regex().match(s)
 
     def is_test(self, s):

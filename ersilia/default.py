@@ -34,6 +34,7 @@ DEFAULT_BATCH_SIZE = 100
 FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
+METADATA_JSON_FILE = "metadata.json"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"
@@ -55,6 +56,7 @@ AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 # URLS
 ERSILIA_WEB_URL = "https://ersilia.io"
 ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
+AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/shrNc3sTtTA3QeEZu"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

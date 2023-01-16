@@ -13,13 +13,12 @@ class ModelPreparer(BaseAction):
         )
         self.overwrite = overwrite
         self.status = ModelStatus(config_json=self.config_json)
-        self.deleter = ModelFullDeleter(config_json=self.config_json)
+        self.deleter = ModelFullDeleter(
+            config_json=self.config_json, overwrite=self.overwrite
+        )
 
     @throw_ersilia_exception
     def prepare(self):
-        if self.status.is_downloaded(self.model_id):
-            if not self.overwrite:
-                return
         try:
             self.deleter.delete(self.model_id)
         except:

@@ -9,6 +9,7 @@ from ....utils.exceptions_utils.fetch_exceptions import FolderNotFoundError
 
 MODEL_DIR = "model"
 
+
 class ModelRepositoryGetter(BaseAction):
     def __init__(self, model_id, config_json):
         BaseAction.__init__(

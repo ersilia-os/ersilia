@@ -29,6 +29,8 @@ jobs:
         uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
         with:
           python-version: "3.10"
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r .github/scripts/requirements.txt
 
       # create the model repo from the template
       - name: create model repo
@@ -43,6 +45,27 @@ jobs:
           REPO_NAME=$(python3 .github/scripts/generate_eos_identifier.py)
           gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
           echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
+
+      # commit updates to the metadata.json file
+      - name: commit metadata.json
+        id: update-metadata
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }} # PAT for the ersilia-bot GitHub account
+          OWNER: ersilia-os
+          REPO: ${{ steps.create-model-repo.outputs.repo_name }}
+          JSON: ${{ steps.issue-parser.outputs.json }}
+        run: python3 .github/scripts/update_metadata.py
+
+      # sync metadata to airtable
+      # now that the repo has been created, and the metadata.json file has been updated, we can sync the metadata to airtable
+      - name: sync metadata to airtable
+        id: sync-metadata-to-airtable
+        env:
+          USER_NAME: ersilia-bot
+          REPO_NAME: ${{ steps.create-model-repo.outputs.repo_name }}
+          BRANCH: main
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+        run: python3 insert_metadata_to_airtable.py $USER_NAME $REPO_NAME $BRANCH $AIRTABLE_API_KEY
 
       # find the creator of the issue
       - name: find original issue creator

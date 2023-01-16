@@ -24,6 +24,8 @@ from ..utils.csvfile import CsvDataLoader
 from ..utils.terminal import yes_no_input
 from ..lake.base import LakeBase
 
+from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
+
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
 from ..default import DEFAULT_BATCH_SIZE
 
@@ -87,12 +89,16 @@ class ErsiliaModel(ErsiliaBase):
         self._is_available_locally = mdl.is_available_locally()
         if not self._is_available_locally and fetch_if_not_available:
             self.logger.info("Model is not available locally")
-            do_fetch = yes_no_input(
-                "Requested model {0} if not available locally. Do you want to fetch it? [Y/n]".format(
-                    self.model_id
-                ),
-                default_answer="Y",
-            )
+            try:
+                do_fetch = yes_no_input(
+                    "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
+                        self.model_id
+                    ),
+                    default_answer="Y",
+                )
+            except:
+                self.logger.debug("Unable to capture user input. Fetching anyway.")
+                do_fetch = True
             if do_fetch:
                 fetch = importlib.import_module("ersilia.hub.fetch.fetch")
                 mf = fetch.ModelFetcher(
@@ -271,6 +277,8 @@ class ErsiliaModel(ErsiliaBase):
             use_iter = True
         elif self.__output_is_format(output):
             use_iter = False
+        else:
+            raise ApiSpecifiedOutputError
         if use_iter:
             return self._api_runner_iter
         else:
