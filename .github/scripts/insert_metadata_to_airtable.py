@@ -24,5 +24,19 @@ if r.status_code == 200:
 data["GitHub"] = github
 data["Status"] = "In progress"
 
+if data["Tag"]== "":
+    del data["Tag"]
+if data["Publication"]== "":
+    del data["Publication"]
+if data["Source"]== "":
+    del data["Source"]
+
+del data["Mode"]
+del data["Input"]
+del data["Input Shape"]
+del data["Task"]
+del data["Output"]
+del data["Interpretation"]
+
 table = Table(write_api_key, base_id, table_name)
 table.create(data)
