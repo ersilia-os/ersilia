@@ -22,7 +22,7 @@ if r.status_code == 200:
     data = json.loads(text)
 
 data["GitHub"] = github
-data["Status"] = "In Progress"
+data["Status"] = "In progress"
 
 table = Table(write_api_key, base_id, table_name)
 table.create(data)
