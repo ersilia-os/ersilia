@@ -65,7 +65,7 @@ jobs:
           REPO_NAME: ${{ steps.create-model-repo.outputs.repo_name }}
           BRANCH: main
           AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
-        run: python3 insert_metadata_to_airtable.py $USER_NAME $REPO_NAME $BRANCH $AIRTABLE_API_KEY
+        run: python3 .github/scripts/insert_metadata_to_airtable.py $USER_NAME $REPO_NAME $BRANCH $AIRTABLE_API_KEY
 
       # find the creator of the issue
       - name: find original issue creator
