@@ -83,9 +83,7 @@ class InputShapeBaseInformationError(ErsiliaError):
 class OutputBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia output"
-        self.hints = (
-            "Only outputs allowed: Probability, Score, Compound, Descriptor, Vector, Toxicity, IC50"
-        )
+        self.hints = "Only outputs allowed: Probability, Score, Compound, Descriptor, Vector, Toxicity, IC50"
         super().__init__(self.message, self.hints)
 
 

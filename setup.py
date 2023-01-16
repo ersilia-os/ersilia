@@ -105,6 +105,6 @@ setup(
         "Models": "https://ersilia.io/model-hub",
         "Source Code": "https://github.com/ersilia-os/ersilia/",
     },
-    package_data={'ersilia': ['hub/content/metadata/*.txt']},
+    package_data={"ersilia": ["hub/content/metadata/*.txt"]},
     include_package_data=True,
 )

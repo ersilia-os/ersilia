@@ -52,11 +52,11 @@ class BaseInformation(ErsiliaBase):
         if isinstance(result, ValidationFailure):
             return False
         return result
-    
+
     def _read_default_fields(self, field):
         root = os.path.dirname(os.path.abspath(__file__))
         filename = field.lower().replace(" ", "_")
-        file_path =  os.path.join(root, "metadata", filename+".txt")
+        file_path = os.path.join(root, "metadata", filename + ".txt")
         with open(file_path, "r") as f:
             valid_field = f.read().split("\n")
         return valid_field
@@ -388,10 +388,16 @@ class AirtableMetadata(AirtableInterface):
         d["GitHub"] = data.github
         rec_id = self._find_airtable_record_id()
         if rec_id is None:
-            self.logger.debug("Model {0} does not exist in AirTable. Creating new record".format(self.model_id))
+            self.logger.debug(
+                "Model {0} does not exist in AirTable. Creating new record".format(
+                    self.model_id
+                )
+            )
             self.table.create(d)
         else:
-            self.logger.debug("Model {0} exists in AirTable. Updating record".format(self.model_id))
+            self.logger.debug(
+                "Model {0} exists in AirTable. Updating record".format(self.model_id)
+            )
             self.table.update(record_id=rec_id, fields=d)
 
 

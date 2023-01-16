@@ -276,12 +276,12 @@ class SimpleConda(CondaUtils):
         return envs_list
 
     def get_python_path_env(self, environment):
-        if not self.exists(environment):
-            raise Exception("{0} environment does not exist".format(environment))
-        python_path = subprocess.check_output("which python", shell=True).strip()
-        index_env = python_path.decode("utf-8").find("envs/") + 5
-        python_path_to_envs = python_path.decode("utf-8")[0:index_env]
-        return "{0}{1}/bin/python".format(python_path_to_envs, environment)
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_file = os.path.join(tmp_folder, "tmp.txt")
+        self.run_commandlines(environment, "which python > {0}".format(tmp_file))
+        with open(tmp_file, "r") as f:
+            python_path = f.read().rstrip()
+        return python_path
 
     def delete_one(self, environment):
         if not self.exists(environment):
@@ -393,7 +393,7 @@ class SimpleConda(CondaUtils):
             f.write(bash_script)
 
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
-        tmp_log = os.path.join(tmp_folder, "installs.log")
+        tmp_log = os.path.join(tmp_folder, "command_outputs.log")
         cmd = "bash {0} > {1} 2>&1".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
         run_command(cmd)
