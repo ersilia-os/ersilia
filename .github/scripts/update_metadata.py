@@ -3,8 +3,7 @@ import logging
 import os
 import time
 
-import github.GithubException
-from github import Github
+from github import Github, GithubException
 
 
 class UpdateMetadata:
@@ -56,16 +55,15 @@ class UpdateMetadata:
         """
         self.log.info(f"loading {self.metadata_filename} from {self.owner}/{self.repo}")
 
-        # Get the repo and contents
-        repo = self.github.get_repo(f"{self.owner}/{self.repo}")
-
         # check to see if the repository has any contents
         for i in range(self.retries):
             try:
+                # Get the repo and contents
+                repo = self.github.get_repo(f"{self.owner}/{self.repo}")
                 # fetch the repo contents
                 contents = repo.get_contents(self.metadata_filename)
                 break
-            except github.GithubException.GithubException as exception:
+            except GithubException as exception:
                 # if the repo is empty, we will get a 404 error
                 if exception.status != 404:
                     # if the error is not a 404, we will raise the exception
