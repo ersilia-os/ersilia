@@ -32,6 +32,19 @@ jobs:
           cache: 'pip' # caching pip dependencies
       - run: pip install -r .github/scripts/requirements.txt
 
+      # setup conda
+      - name: add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+      - name: source conda
+        run: source $CONDA/etc/profile.d/conda.sh
+      - name: install dependencies through conda
+        run: |
+          source activate
+          conda init
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+
       # create the model repo from the template
       - name: create model repo
         id: create-model-repo
