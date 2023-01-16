@@ -18,6 +18,7 @@ github = "https://github.com/ersilia-os/{0}".format(model_id)
 with open(json_path, "r") as f:
     data = json.load(f)
 data["GitHub"] = github
+data["Status"] = "In Progress"
 
 table = Table(write_api_key, base_id, table_name)
 table.create(data)
