@@ -105,5 +105,6 @@ setup(
         "Models": "https://ersilia.io/model-hub",
         "Source Code": "https://github.com/ersilia-os/ersilia/",
     },
+    package_data={'': ['*.txt', '*.csv']},
     include_package_data=True,
 )
