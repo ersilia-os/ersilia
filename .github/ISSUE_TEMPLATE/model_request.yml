@@ -39,7 +39,7 @@ body:
     id: tags
     attributes:
       label: Tags
-      description: "Please provide (or suggest) a 'tags' for your model. Tags are used to categorize your model. Tags should be short and appear as comma seperated items. Ex: antimicrobial,activity,prediction"
+      description: "Please provide (or suggest) a 'tags' for your model. Tags are used to categorize your model. Tags should be short and appear as comma seperated items."
       placeholder: "price,synthesis,generative"
 
   - type: textarea
@@ -52,14 +52,16 @@ body:
     id: model-code
     attributes:
       label: Code
-      description: "Is code available? If so, please provide link to repository (GitHub, GitLab, BitBucket...)?"
+      description: "Is code available? If so, please provide link to repositor (GitHub, GitLab, BitBucket...)?"
 
   - type: textarea
     id: model-license
     attributes:
       label: License
-      description: "If there is a license, please provide the name of the license (or a link to the license)"
+      description: "If there is a license, please provide the name of the license (or None if there is no license specified)"
       placeholder: "MIT"
+    validations:
+      required: true
 
   - type: markdown
     attributes:
