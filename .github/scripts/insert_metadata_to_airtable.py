@@ -1,15 +1,23 @@
 import sys
-from ersilia.hub.content.card import RepoMetadataFile, AirtableMetadata
+import json
+from pyairtable import Table
 
-user_name = sys.argv[1]
-repo_name = sys.argv[2]
-branch = sys.argv[3]
-airtable_api_key = sys.argv[4]
+write_api_key = sys.argv[2]
+model_id = sys.argv[1]
 
-rm = RepoMetadataFile(model_id=repo_name, config_json=None)
-data = rm.read_information(org=user_name, branch=branch)
-print(data.as_dict())
+base_id = "appgxpCzCDNyGjWc8"
+table_name = "Models"
+METADATA_JSON_FILE = "metadata.json"
+org = "ersilia-os"
+branch = "main"
+json_path = "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
+    org, model_id, branch, METADATA_JSON_FILE
+)
+github = "https://github.com/ersilia-os/{0}".format(model_id)
 
-am = AirtableMetadata(model_id=repo_name, config_json=None)
-am.set_write_api_key(airtable_api_key)
-am.write_information(data)
+with open(json_path, "r") as f:
+    data = json.load(f)
+data["GitHub"] = github
+
+table = Table(write_api_key, base_id, table_name)
+table.create(data)
