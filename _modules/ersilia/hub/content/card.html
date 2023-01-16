@@ -436,6 +436,16 @@
                     <span class="n">data</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">data</span>
 
+    <span class="k">def</span> <span class="nf">_find_airtable_record_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rec_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">records</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span>
+            <span class="n">page_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_size</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rows</span>
+        <span class="p">):</span>
+            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">==</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]:</span>
+                    <span class="n">rec_id</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">rec_id</span>
+
 <div class="viewcode-block" id="AirtableMetadata.read_information"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableMetadata.read_information">[docs]</a>    <span class="k">def</span> <span class="nf">read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_record</span><span class="p">()</span>
         <span class="n">bi</span> <span class="o">=</span> <span class="n">BaseInformation</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
@@ -445,7 +455,13 @@
 <div class="viewcode-block" id="AirtableMetadata.write_information"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableMetadata.write_information">[docs]</a>    <span class="k">def</span> <span class="nf">write_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BaseInformation</span><span class="p">):</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;GitHub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">github</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div></div>
+        <span class="n">rec_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_airtable_record_id</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rec_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> does not exist in AirTable. Creating new record&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> exists in AirTable. Updating record&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">record_id</span><span class="o">=</span><span class="n">rec_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="n">d</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="MetadataCard"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.MetadataCard">[docs]</a><span class="k">class</span> <span class="nc">MetadataCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
