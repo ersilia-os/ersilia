@@ -114,7 +114,7 @@ class BaseInformation(ErsiliaBase):
 
     @description.setter
     def description(self, new_description):
-        if len(new_description) < 300:
+        if len(new_description) < 200:
             raise DescriptionBaseInformationError
         if new_description == self._title:
             raise DescriptionBaseInformationError
@@ -434,8 +434,16 @@ class ReadmeMetadata(ErsiliaBase):
         text += "* Ersilia contributor: [{0}](https://github.com/{0})\n\n".format(
             d["Contributor"]
         )
+        text += "## Citation\n\n"
+        text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)\n\n".format(
+            d["Publication"]
+        )
+        text += "## License\n\n"
+        text += "This package is licensed under a GPLv3 license. The model contained within this package is licensed under a {0} license. Please refer to the model license files if you use this model in your research.\n\n".format(
+            d["License"]
+        )
         text += "## About Us\n\n"
-        text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.\n"
+        text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.\n\n"
         text += "[Help us](https://www.ersilia.io/donate) achieve our mission!"
         if readme_path is None:
             return text

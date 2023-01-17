@@ -51,7 +51,7 @@ class TitleBaseInformationError(ErsiliaError):
 class DescriptionBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia description"
-        self.hints = "Description must be longer than 300 characters and different from the title"
+        self.hints = "Description must be longer than 200 characters and different from the title"
         super().__init__(self.message, self.hints)
 
 
