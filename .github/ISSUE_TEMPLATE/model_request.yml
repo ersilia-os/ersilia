@@ -30,7 +30,7 @@ body:
     id: slug
     attributes:
       label: Slug
-      description: "Please provide (or suggest) a 'slug' for your model. A slug is a short label for something, containing only letters, numbers, or hyphens. Ex: antimicrobial-activity-prediction"
+      description: "Please provide (or suggest) a 'slug' for your model. A slug is a short label for something, containing only letters, numbers, or hyphens"
       placeholder: "antimicrobial-activity-prediction"
     validations:
       required: true
@@ -39,26 +39,26 @@ body:
     id: tags
     attributes:
       label: Tags
-      description: "Please provide (or suggest) a 'tags' for your model. Tags are used to categorize your model. Tags should be short and appear as comma seperated items."
-      placeholder: "price,synthesis,generative"
+      description: "Please provide (or suggest) 'tags' for your model. Tags are used to categorize your model. Tags should be short and appear as comma separated items. Please check our [model repository](https://airtable.com/shrUcrUnd7jB9ChZV) to explore valid tags. At least one tag is required"
+      placeholder: "Malaria,P.falciparum,IC50"
 
-  - type: textarea
+  - type: input
     id: model-publication
     attributes:
       label: Publication
-      description: "Is there a link to a publication? (DOI, PMID, URL...)?"
+      description: "Is there a link to a publication?"
 
-  - type: textarea
+  - type: input
     id: model-code
     attributes:
       label: Code
-      description: "Is code available? If so, please provide link to repositor (GitHub, GitLab, BitBucket...)?"
+      description: "Is code available? If so, please provide link to repository (GitHub, GitLab, BitBucket...)?"
 
-  - type: textarea
+  - type: input
     id: model-license
     attributes:
       label: License
-      description: "If there is a license, please provide the name of the license (or None if there is no license specified)"
+      description: "If there is a license, please provide the name of the license (or None if there is no license specified). Please check our [model repository](https://airtable.com/shrUcrUnd7jB9ChZV) to explore valid licenses."
       placeholder: "MIT"
     validations:
       required: true
