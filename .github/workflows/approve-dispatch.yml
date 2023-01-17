@@ -80,12 +80,16 @@ jobs:
         id: sync-metadata-to-airtable
         env:
           REPO_NAME: ${{ steps.create-model-repo.outputs.repo_name }}
+          REPO: ersilia
+          OWNER: ersilia-os
+          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
           AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
         run: |
           source activate
+          ISSUE_CREATOR=$(gh api /repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
           python3 -m pip install pyairtable
           python3 -m pip install requests
-          python3 .github/scripts/insert_metadata_to_airtable.py $REPO_NAME $AIRTABLE_API_KEY
+          python3 .github/scripts/insert_metadata_to_airtable.py $REPO_NAME $ISSUE_CREATOR $AIRTABLE_API_KEY
 
       # find the creator of the issue
       - name: find original issue creator

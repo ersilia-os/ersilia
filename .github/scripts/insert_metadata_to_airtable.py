@@ -3,8 +3,9 @@ import json
 from pyairtable import Table
 import requests
 
-write_api_key = sys.argv[2]
+write_api_key = sys.argv[3]
 model_id = sys.argv[1]
+contributor_name = sys.argv[2]
 
 base_id = "appgxpCzCDNyGjWc8"
 table_name = "Models"
@@ -23,6 +24,7 @@ if r.status_code == 200:
 
 data["GitHub"] = github
 data["Status"] = "In progress"
+data["Contributor"] = contributor_name
 
 if data["Publication"] == "":
     del data["Publication"]
