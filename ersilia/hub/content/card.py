@@ -280,6 +280,7 @@ class BaseInformation(ErsiliaBase):
             "Publication": self.publication,
             "Source": self.source,
             "License": self.license,
+            "Contributor": self.contributor,
         }
         return data
 
@@ -299,6 +300,7 @@ class BaseInformation(ErsiliaBase):
         self.publication = data["Publication"]
         self.source = data["Source"]
         self.license = data["License"]
+        self.contributor = data["Contributor"]
 
 
 class RepoMetadataFile(ErsiliaBase):
@@ -399,6 +401,47 @@ class AirtableMetadata(AirtableInterface):
                 "Model {0} exists in AirTable. Updating record".format(self.model_id)
             )
             self.table.update(record_id=rec_id, fields=d)
+
+
+class ReadmeMetadata(ErsiliaBase):
+    def __init__(self, model_id, config_json=None):
+        self.model_id = model_id
+        ErsiliaBase.__init__(self, config_json=config_json)
+
+    def read_information(self):
+        self.logger.debug(
+            "Cannot read directly from README file. Using AirTable instead"
+        )
+        am = AirtableMetadata(model_id=self.model_id)
+        return am.read_information()
+
+    def write_information(self, data: BaseInformation, readme_path=None):
+        d = data.as_dict()
+        text = "# {0}\n\n".format(d["Title"])
+        text += "{0}\n\n".format(d["Description"].rstrip("\n"))
+        text += "## Identifiers\n\n"
+        text += "* EOS model ID: {0}\n".format(d["Identifier"])
+        text += "* Slug: {0}\n\n".format(d["Slug"])
+        text += "## Characteristics\n\n"
+        text += "* Input: {0}\n".format(", ".join(d["Input"]))
+        text += "* Input shape: {0}\n".format(d["Input Shape"])
+        text += "* Task: {0}\n".format(", ".join(d["Task"]))
+        text += "* Output: {0}\n".format(", ".join(d["Output"]))
+        text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
+        text += "## References\n\n"
+        text += "* [Publication]({0})\n".format(d["Publication"])
+        text += "* [Source]({0})\n".format(d["Source"])
+        text += "* Ersilia contributor: [{0}](https://github.com/{0})\n\n".format(
+            d["Contributor"]
+        )
+        text += "## About Us\n\n"
+        text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.\n"
+        text += "[Help us](https://www.ersilia.io/donate) achieve our mission!"
+        if readme_path is None:
+            return text
+        else:
+            with open(readme_path, "w") as f:
+                f.write(text)
 
 
 class MetadataCard(ErsiliaBase):

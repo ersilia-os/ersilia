@@ -97,7 +97,7 @@ class TaskBaseInformationError(ErsiliaError):
 class TagBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model tag"
-        self.hints = "Tags must be in list format"
+        self.hints = "Tags must be in list format and they must be accepted our team. This means that only tags that are already available in Ersilia are allowed. If you want to include a new tag, please open a pull request (PR) on the 'tag.txt' file from the Ersilia repository."
         super().__init__(self.message, self.hints)
 
 
