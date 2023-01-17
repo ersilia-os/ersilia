@@ -84,9 +84,11 @@ jobs:
           OWNER: ersilia-os
           ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
           AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           source activate
           ISSUE_CREATOR=$(gh api /repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
+          echo "issue_creator=${ISSUE_CREATOR}"
           python3 -m pip install pyairtable
           python3 -m pip install requests
           python3 .github/scripts/insert_metadata_to_airtable.py $REPO_NAME $ISSUE_CREATOR $AIRTABLE_API_KEY
