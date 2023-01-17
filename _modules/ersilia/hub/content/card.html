@@ -183,7 +183,7 @@
 
     <span class="nd">@description</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_description</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_description</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_description</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DescriptionBaseInformationError</span>
         <span class="k">if</span> <span class="n">new_description</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DescriptionBaseInformationError</span>
@@ -503,8 +503,16 @@
         <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Ersilia contributor: [</span><span class="si">{0}</span><span class="s2">](https://github.com/</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;Contributor&quot;</span><span class="p">]</span>
         <span class="p">)</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## Citation</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;If you use this model, please cite the [original authors](</span><span class="si">{0}</span><span class="s2">) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## License</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;This package is licensed under a GPLv3 license. The model contained within this package is licensed under a </span><span class="si">{0}</span><span class="s2"> license. Please refer to the model license files if you use this model in your research.</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;License&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## About Us</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;[Help us](https://www.ersilia.io/donate) achieve our mission!&quot;</span>
         <span class="k">if</span> <span class="n">readme_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">text</span>
