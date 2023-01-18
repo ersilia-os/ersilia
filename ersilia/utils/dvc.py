@@ -2,8 +2,13 @@ from . import terminal
 import h5py
 import os
 from ..default import H5_DATA_FILE, ISAURA_GDRIVE, ISAURA_TEAM_GDRIVE
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
+
+try:
+    from pydrive2.auth import GoogleAuth
+    from pydrive2.drive import GoogleDrive
+except:
+    GoogleAuth = None
+    GoogleDrive = None
 
 from .config import Secrets
 

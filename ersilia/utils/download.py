@@ -6,7 +6,12 @@ import requests
 import shutil
 import tempfile
 import uuid
-import pygit2
+
+try:
+    import pygit2
+except:
+    pygit2 = None
+
 from .terminal import run_command
 
 
@@ -94,12 +99,15 @@ class GitHubDownloader(object):
         self.overwrite = overwrite
         self.token = token
         auth_method = "x-access-token"
-        try:
-            self.pygit2_callbacks = pygit2.RemoteCallbacks(
-                pygit2.UserPass(auth_method, token)
-            )
-        except:
+        if pygit2 is None:
             self.pygit2_callbacks = None
+        else:
+            try:
+                self.pygit2_callbacks = pygit2.RemoteCallbacks(
+                    pygit2.UserPass(auth_method, token)
+                )
+            except:
+                self.pygit2_callbacks = None
 
     @staticmethod
     def _repo_url(org, repo):

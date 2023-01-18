@@ -21,60 +21,35 @@ version, cmdclass = get_version_and_cmdclass("ersilia")
 with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
-with open("requirements.txt") as f:
-    install_requires = [r for r in f.read().splitlines() if not r.startswith("#")]
-
-# Filter dependencies based on names and a larger list of requirements
-def _filter_requires(names, requires):
-    filt_reqs = []
-    for r in requires:
-        for n in names:
-            if n in r:
-                filt_reqs += [r]
-    return filt_reqs
-
-
 # Slim requirements
 slim = [
-    "bentoml",
-    "validators",
-    "PyYAML",
-    "virtualenv",
-    "dockerfile-parse",
-    "pygit2",
+    "git+https://github.com/ersilia-os/bentoml-ersilia",
+    "inputimeout",
     "emoji",
+    "validators",
+    "h5py",
     "loguru",
     "pyairtable",
-    "h5py",
-    "PyDrive2",
-    "inputimeout",
-    "protobuf",
-    "requests",
+    "PyYAML",
+    "dockerfile-parse",
     "tqdm",
 ]
-slim_requires = _filter_requires(slim, install_requires)
+slim_requires = slim
 
 # Lake requirements
-lake = ["isaura==0.1"]
-lake_requires = slim_requires + lake
+lake_requires = slim_requires + ["isaura==0.1"]
 
 # Doc builder requirements
-doc_builder = slim + ["sphinx", "jinja2"]
-doc_builder_requires = _filter_requires(doc_builder, install_requires)
+doc_builder_requires = slim + ["sphinx", "jinja2"]
 
 # Test requirements
-test = slim + ["pytest"]
-test_requires = _filter_requires(test, install_requires)
-
-# Development requires
-dev_requires = install_requires
+test_requires = slim + ["pytest"]
 
 # Define extras requires
 extras_require = {
     "lake": lake_requires,
     "doc_builder": doc_builder_requires,
     "test": test_requires,
-    "dev": dev_requires,
 }
 
 setup(
@@ -82,7 +57,7 @@ setup(
     version=version,
     cmdclass=cmdclass,
     author="Ersilia Open Source Initiative",
-    author_email="miquel@ersilia.io",
+    author_email="hello@ersilia.io",
     url="https://github.com/ersilia-os/ersilia",
     description="A hub of AI/ML models for open source drug discovery and global health",
     long_description=long_description,
@@ -95,6 +70,8 @@ setup(
     entry_points={"console_scripts": ["ersilia=ersilia.cli:cli"]},
     classifiers=[
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
