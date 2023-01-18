@@ -23,7 +23,7 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 # Slim requirements
 slim = [
-    "git+https://github.com/ersilia-os/bentoml-ersilia",
+    "bentoml @ git+https://github.com/ersilia-os/bentoml-ersilia.git",
     "inputimeout",
     "emoji",
     "validators",
@@ -51,6 +51,8 @@ extras_require = {
     "doc_builder": doc_builder_requires,
     "test": test_requires,
 }
+
+print(extras_require)
 
 setup(
     name="ersilia",
