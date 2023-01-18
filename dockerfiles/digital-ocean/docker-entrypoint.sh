@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Running Ersilla Setup..."
+echo "Running Ersilia Setup..."
 setup-ersilia
-echo "Erisilla Environment has been configured"
+echo "Ersilia environment has been configured"
 bash
