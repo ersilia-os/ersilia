@@ -40,9 +40,12 @@ class SetupBaseConda(object):
     def _install_command(self, org, tag):
         tag = self._parse_tag(tag)
         if self._is_bentoml(org):
-            cmd = "pip install bentoml=={0}".format(tag["ver"])
+            if tag["ver"] == "0.11.0":
+                cmd = "python -m pip install git+https://github.com/ersilia-os/ersilia-bentoml.git"
+            else:
+                cmd = "python -m pip install bentoml=={0}".format(tag["ver"])
         elif self._is_ersiliaos(org):
-            cmd = "pip install -e ."
+            cmd = "python -m pip install -e ."
         else:
             raise Exception
         return cmd
