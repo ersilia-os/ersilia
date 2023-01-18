@@ -72,8 +72,13 @@
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">H5_DATA_FILE</span><span class="p">,</span> <span class="n">ISAURA_GDRIVE</span><span class="p">,</span> <span class="n">ISAURA_TEAM_GDRIVE</span>
-<span class="kn">from</span> <span class="nn">pydrive2.auth</span> <span class="kn">import</span> <span class="n">GoogleAuth</span>
-<span class="kn">from</span> <span class="nn">pydrive2.drive</span> <span class="kn">import</span> <span class="n">GoogleDrive</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pydrive2.auth</span> <span class="kn">import</span> <span class="n">GoogleAuth</span>
+    <span class="kn">from</span> <span class="nn">pydrive2.drive</span> <span class="kn">import</span> <span class="n">GoogleDrive</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">GoogleAuth</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">GoogleDrive</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Secrets</span>
 

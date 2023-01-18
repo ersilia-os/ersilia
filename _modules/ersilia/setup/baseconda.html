@@ -109,9 +109,12 @@
     <span class="k">def</span> <span class="nf">_install_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_bentoml</span><span class="p">(</span><span class="n">org</span><span class="p">):</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;pip install bentoml==</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="s2">&quot;ver&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;ver&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0.11.0&quot;</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;python -m pip install git+https://github.com/ersilia-os/ersilia-bentoml.git&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;python -m pip install bentoml==</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="s2">&quot;ver&quot;</span><span class="p">])</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_ersiliaos</span><span class="p">(</span><span class="n">org</span><span class="p">):</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;pip install -e .&quot;</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;python -m pip install -e .&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span>
         <span class="k">return</span> <span class="n">cmd</span>
