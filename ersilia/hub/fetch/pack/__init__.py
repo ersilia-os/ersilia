@@ -131,7 +131,9 @@ class _Writer(ErsiliaBase):
                         r = " ".join(r[:3] + [dis_warn] + r[3:])
                 f.write("{0}{1}".format(r, os.linesep))
             if version["version"] == "0.11.0":
-                cmd = "python -m pip {1} install git+https://github.com/ersilia-os/bentoml-ersilia.git{0}".format(os.linesep, dis_warn)
+                cmd = "python -m pip {1} install git+https://github.com/ersilia-os/bentoml-ersilia.git{0}".format(
+                    os.linesep, dis_warn
+                )
             else:
                 cmd = "python -m pip {2} install bentoml=={0}{1}".format(
                     version["version"], os.linesep, dis_warn
