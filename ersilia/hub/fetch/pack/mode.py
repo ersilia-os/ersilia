@@ -18,6 +18,9 @@ class PackModeDecision(ErsiliaBase):
         self.versioner = Versioner(config_json=config_json)
 
     def _correct_protobuf(self, version, dockerfile, protobuf_version="3.19.5"):
+        if version["version"] == "0.11.0":
+            self.logger.debug("Custom Ersilia BentoML is used, no need for modifying protobuf version")
+            return dockerfile
         if "0.11" in version["version"]:
             dockerfile.append_run_command(
                 "pip install protobuf=={0}".format(protobuf_version)

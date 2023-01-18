@@ -79,7 +79,7 @@ jobs:
           command: |
               apt-get update
               source activate ersilia
-              pip install -r requirements.txt
+              pip install -e .[docs]
               apt-get -y install make
       - run:
           name: Install theme
