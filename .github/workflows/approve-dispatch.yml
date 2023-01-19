@@ -84,6 +84,7 @@ jobs:
         run: |
           git clone https://github.com/$OWNER/$REPO.git
           cd $REPO
+          git config user.name "ersilia-bot"
           git lfs install
           touch dummy.csv
           git lfs track dummy.csv
