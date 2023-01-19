@@ -85,9 +85,9 @@ jobs:
           git clone https://github.com/$OWNER/$REPO.git
           cd $REPO
           git lfs install
-          git lfs track data.h5
-          git add .gitattributes
-          git add data.h5
+          touch dummy.csv
+          git lfs track dummy.csv
+          git add .
           git commit -m "dummy lfs [skip ci]"
           git push
 
