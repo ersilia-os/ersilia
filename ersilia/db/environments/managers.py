@@ -14,11 +14,13 @@ from .localdb import EnvironmentDb
 
 from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, DEFAULT_DOCKER_PLATFORM
 
+
 BENTOML_DOCKERPORT = 5000
+INTERNAL_DOCKERPORT = 80
 
 
 class DockerManager(ErsiliaBase):
-    def __init__(self, config_json=None, preferred_port=None):
+    def __init__(self, config_json=None, preferred_port=None, with_bentoml=False):
         ErsiliaBase.__init__(self, config_json=config_json)
         self._eos_regex = Paths()._eos_regex()
         self._org_regex = re.compile(DOCKERHUB_ORG)
@@ -27,6 +29,7 @@ class DockerManager(ErsiliaBase):
         self.db = EnvironmentDb()
         self.db.table = "docker"
         self.preferred_port = preferred_port
+        self.with_bentoml = with_bentoml
 
     def is_inside_docker(self):
         return self.inside_docker
@@ -35,7 +38,7 @@ class DockerManager(ErsiliaBase):
         return DockerRequirement().is_installed()
 
     def image_exists(self, model_id):
-        if self._images_of_model(model_id, only_latest=True):
+        if self.images_of_model(model_id, only_latest=True):
             return True
         else:
             return False
@@ -86,7 +89,7 @@ class DockerManager(ErsiliaBase):
                 cnt_dict[k] = v
         return cnt_dict
 
-    def build(self, model_id, use_cache=True):
+    def build_with_bentoml(self, model_id, use_cache=True):
         bundle_path = self._get_bundle_location(model_id)
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "build.sh")
@@ -111,6 +114,48 @@ class DockerManager(ErsiliaBase):
             env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG),
         )
 
+    @property
+    def _model_deploy_dockerfiles_url(self):
+        return "https://raw.githubusercontent.com/ersilia-os/ersilia/master/dockerfiles/model-deploy"
+
+    def _build_ersilia_base(self):
+        self.logger.debug("Creating docker image of ersilia base")
+        path = tempfile.mkdtemp(prefix="ersilia-")
+        base_folder = os.path.join(path, "base")
+        os.mkdir(base_folder)
+        base_files= ["Dockerfile", "docker-entrypoint.sh", "nginx.conf"]
+        for f in base_files:
+            cmd = "cd {0}; wget {2}/base/{1}".format(base_folder, f, self._model_deploy_dockerfiles_url)
+            run_command(cmd)
+        cmd = "cd {0}; docker build -t {1}/base:{2} .".format(base_folder, DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG)
+        run_command(cmd)
+
+    def build_with_ersilia(self, model_id):
+        self.logger.debug("Creating docker image with ersilia incorporated")
+        if self.image_exists("base"):
+            pass
+        else:
+            self._build_ersilia_base()
+        path = tempfile.mkdtemp(prefix="ersilia-model")
+        model_folder = os.path.join(path, model_id)
+        os.mkdir(model_folder)
+        cmd = "cd {0}; wget {1}/model/Dockerfile".format(model_folder, self._model_deploy_dockerfiles_url)
+        run_command(cmd)
+        file_path = os.path.join(model_folder, "Dockerfile")
+        with open(file_path, "r") as f:
+            text = f.read()
+        text = text.replace("eos_identifier", model_id)
+        with open(file_path, "w") as f:
+            f.write(text)
+        cmd = "cd {0}; docker build -t {1}/{2}:{3} .".format(model_folder, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG)
+        run_command(cmd)
+
+    def build(self, model_id, use_cache=True):
+        if self.with_bentoml:
+            self.build_with_bentoml(model_id=model_id, use_cache=use_cache)
+        else:
+            self.build_with_ersilia(model_id=model_id)
+
     def remove(self, model_id):
         self.docker.delete(org=DOCKERHUB_ORG, img=model_id, tag=DOCKERHUB_LATEST_TAG)
         self.db.delete(
@@ -134,10 +179,14 @@ class DockerManager(ErsiliaBase):
             name_ = "{0}_{1}".format(model_id, si.encode())
             if not self.container_exists(name_):
                 name = name_
+        if self.with_bentoml:
+            dockerport = BENTOML_DOCKERPORT
+        else:
+            dockerport = INTERNAL_DOCKERPORT
         cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
             name,
             port,
-            BENTOML_DOCKERPORT,
+            dockerport,
             img,
             workers,
             mb_string,
