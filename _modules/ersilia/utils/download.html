@@ -203,9 +203,7 @@
 
     <span class="k">def</span> <span class="nf">_clone_with_gh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;gh&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;gh repo clone </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> </span><span class="si">{2}</span><span class="s2"> -- --depth=1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span>
-            <span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;gh repo clone </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> </span><span class="si">{2}</span><span class="s2"> --depth=1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
             <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
 
@@ -254,11 +252,11 @@
                 <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span>
-        <span class="n">is_done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone_with_pygit2</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
+        <span class="n">is_done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone_with_git</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_done</span><span class="p">:</span>
+            <span class="n">is_done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone_with_pygit2</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_done</span><span class="p">:</span>
             <span class="n">is_done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone_with_gh</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_done</span><span class="p">:</span>
-            <span class="n">is_done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone_with_git</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_done</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Download from </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> did not work&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_git_lfs</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
