@@ -74,6 +74,18 @@ jobs:
           JSON: ${{ steps.issue-parser.outputs.json }}
         run: python3 .github/scripts/update_metadata.py
 
+      # upload git-lfs object
+      - name: upload a mock git-lfs object to enable contributions
+        id: git-lfs-uploader
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+          OWNER: ersilia-os
+          REPO: ${{ steps.create-model-repo.outputs.repo_name }}
+        run: |
+          git add data.h5
+          git commit -m "Commit dummy lfs [skip ci]"
+          git push
+
       # sync metadata to airtable
       # now that the repo has been created, and the metadata.json file has been updated, we can sync the metadata to airtable
       - name: sync metadata to airtable

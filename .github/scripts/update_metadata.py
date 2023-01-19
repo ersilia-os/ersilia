@@ -133,7 +133,7 @@ class UpdateMetadata:
         # Write the metadata to the repo and commit
         repo.update_file(
             contents.path,
-            "Initialize metadata [skipo",
+            "Initialize metadata [skip ci]",
             metadata_string,
             contents.sha,
             branch=self.branch,
