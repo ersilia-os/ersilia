@@ -79,12 +79,13 @@ jobs:
         id: git-lfs-uploader
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
+          USER: ersilia-bot
           OWNER: ersilia-os
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
-          git clone git@github.com/$OWNER/$REPO.git
+          git clone git@github.com:$OWNER/$REPO.git
           cd $REPO
-          git config user.name "ersilia-bot"
+          git config --global user.name "$USER"
           git lfs install
           touch dummy.csv
           git lfs track dummy.csv
