@@ -48,7 +48,7 @@ test_requires = slim + ["pytest"]
 # Define extras requires
 extras_require = {
     "lake": lake_requires,
-    "doc_builder": doc_builder_requires,
+    "docs": doc_builder_requires,
     "test": test_requires,
 }
 

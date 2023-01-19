@@ -1,0 +1,72 @@
+import boto3
+import os
+import shutil
+import tempfile
+
+from ..utils.terminal import run_command
+from .. import ErsiliaBase
+from ..default import ERSILIA_MODELS_S3_BUCKET
+
+AWS_ACCOUNT_REGION = "eu-central-1"
+
+
+class S3BucketRepoUploader(ErsiliaBase):
+    def __init__(self, model_id, config_json=None):
+        self.model_id = model_id
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.cwd = os.getcwd()
+        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.aws_access_key_id = None
+        self.aws_secret_access_key = None
+
+    def set_credentials(self, aws_access_key_id, aws_secret_access_key):
+        self.aws_access_key_id = aws_access_key_id
+        self.aws_secret_access_key = aws_secret_access_key
+
+    def _clone(self):
+        self.logger.debug("Cloning model {0} from ersilia-os".format(self.model_id))
+        run_command(
+            "cd {0}; git clone https://github.com/ersilia-os/{1}; cd {2}".format(
+                self.tmp_folder, self.model_id, self.cwd
+            )
+        )
+
+    def _ungit(self, repo_path):
+        self.logger.debug("Removing git files")
+        dotgit_folder = os.path.join(repo_path, ".git")
+        gitignore_file = os.path.join(repo_path, ".gitignore")
+        if os.path.exists(dotgit_folder):
+            shutil.rmtree(dotgit_folder)
+        if os.path.exists(gitignore_file):
+            os.remove(gitignore_file)
+
+    def _upload_files(self, repo_path):
+        repo_path = os.path.abspath(repo_path)
+        session = boto3.Session(
+            aws_access_key_id=self.aws_access_key_id,
+            aws_secret_access_key=self.aws_secret_access_key,
+            region_name=AWS_ACCOUNT_REGION,
+        )
+        s3 = session.resource("s3")
+        bucket = s3.Bucket(ERSILIA_MODELS_S3_BUCKET)
+        model_id = self.model_id
+        for subdir, _, files in os.walk(repo_path):
+            for file in files:
+                full_path = os.path.join(subdir, file)
+                with open(full_path, "rb") as data:
+                    s = full_path.split(model_id)[1]
+                    key = model_id + s
+                    bucket.put_object(Key=key, Body=data)
+
+    def upload(self, repo_path=None):
+        if repo_path is not None:
+            repo_path = os.path.basename(os.path.abspath(repo_path))
+            self._ungit(repo_path=repo_path)
+        else:
+            repo_path = os.path.join(self.tmp_folder, self.model_id)
+            self._clone()
+            self._ungit(repo_path=repo_path)
+        self.logger.debug(
+            "Uploading model folder to S3 bucket {0}".format(ERSILIA_MODELS_S3_BUCKET)
+        )
+        self._upload_files(repo_path)
