@@ -41,7 +41,7 @@ class SetupBaseConda(object):
         tag = self._parse_tag(tag)
         if self._is_bentoml(org):
             if tag["ver"] == "0.11.0":
-                cmd = "python -m pip install git+https://github.com/ersilia-os/ersilia-bentoml.git"
+                cmd = "python -m pip install git+https://github.com/ersilia-os/bentoml-ersilia.git"
             else:
                 cmd = "python -m pip install bentoml=={0}".format(tag["ver"])
         elif self._is_ersiliaos(org):
