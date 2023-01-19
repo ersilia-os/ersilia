@@ -81,6 +81,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
+          git config --global user.name "ersilia-bot"
           git clone https://github.com/$OWNER/$REPO.git
           cd $REPO
           git lfs install
