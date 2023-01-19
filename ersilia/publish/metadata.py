@@ -24,7 +24,7 @@ class ReadmeUpdater(ErsiliaBase):
 
     def _git_push(self):
         run_command(
-            'cd {0}/{1}; git add .; git commit -m "Updating README file from AirTable"; git push; cd {2}'.format(
+            'cd {0}/{1}; git add .; git commit -m "Updating README file from AirTable [skip actions]"; git push; cd {2}'.format(
                 self.tmp_folder, self.model_id, self.cwd
             )
         )
@@ -54,7 +54,7 @@ class JsonUpdater(ErsiliaBase):
 
     def _git_push(self):
         run_command(
-            'cd {0}/{1}; git add .; git commit -m "Updating metadata.json file from AirTable"; git push; cd {2}'.format(
+            'cd {0}/{1}; git add .; git commit -m "Updating metadata file from AirTable [skip actions]"; git push; cd {2}'.format(
                 self.tmp_folder, self.model_id, self.cwd
             )
         )

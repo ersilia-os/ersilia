@@ -28,7 +28,9 @@ class ModelToolizer(BaseAction):
             return
         self.logger.debug("Dockerizing")
         tag = self.cfg.ENV.DOCKER.LATEST_TAG
-        cmd = "bentoml containerize {1}:{2} -t {0}/{1}:{2}".format(self.docker_org, model_id, tag)
+        cmd = "bentoml containerize {1}:{2} -t {0}/{1}:{2}".format(
+            self.docker_org, model_id, tag
+        )
         run_command(cmd)
         # store docker in the local environment database
         db = EnvironmentDb(config_json=self.config_json)

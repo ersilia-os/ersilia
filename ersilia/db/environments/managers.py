@@ -123,11 +123,15 @@ class DockerManager(ErsiliaBase):
         path = tempfile.mkdtemp(prefix="ersilia-")
         base_folder = os.path.join(path, "base")
         os.mkdir(base_folder)
-        base_files= ["Dockerfile", "docker-entrypoint.sh", "nginx.conf"]
+        base_files = ["Dockerfile", "docker-entrypoint.sh", "nginx.conf"]
         for f in base_files:
-            cmd = "cd {0}; wget {2}/base/{1}".format(base_folder, f, self._model_deploy_dockerfiles_url)
+            cmd = "cd {0}; wget {2}/base/{1}".format(
+                base_folder, f, self._model_deploy_dockerfiles_url
+            )
             run_command(cmd)
-        cmd = "cd {0}; docker build -t {1}/base:{2} .".format(base_folder, DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG)
+        cmd = "cd {0}; docker build -t {1}/base:{2} .".format(
+            base_folder, DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+        )
         run_command(cmd)
 
     def build_with_ersilia(self, model_id):
@@ -139,7 +143,9 @@ class DockerManager(ErsiliaBase):
         path = tempfile.mkdtemp(prefix="ersilia-model")
         model_folder = os.path.join(path, model_id)
         os.mkdir(model_folder)
-        cmd = "cd {0}; wget {1}/model/Dockerfile".format(model_folder, self._model_deploy_dockerfiles_url)
+        cmd = "cd {0}; wget {1}/model/Dockerfile".format(
+            model_folder, self._model_deploy_dockerfiles_url
+        )
         run_command(cmd)
         file_path = os.path.join(model_folder, "Dockerfile")
         with open(file_path, "r") as f:
@@ -147,7 +153,9 @@ class DockerManager(ErsiliaBase):
         text = text.replace("eos_identifier", model_id)
         with open(file_path, "w") as f:
             f.write(text)
-        cmd = "cd {0}; docker build -t {1}/{2}:{3} .".format(model_folder, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG)
+        cmd = "cd {0}; docker build -t {1}/{2}:{3} .".format(
+            model_folder, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
+        )
         run_command(cmd)
 
     def build(self, model_id, use_cache=True):
@@ -184,13 +192,7 @@ class DockerManager(ErsiliaBase):
         else:
             dockerport = INTERNAL_DOCKERPORT
         cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
-            name,
-            port,
-            dockerport,
-            img,
-            workers,
-            mb_string,
-            DEFAULT_DOCKER_PLATFORM,
+            name, port, dockerport, img, workers, mb_string, DEFAULT_DOCKER_PLATFORM
         )
         self.logger.debug(cmd)
         run_command(cmd)
