@@ -79,15 +79,8 @@ jobs:
         id: git-lfs-uploader
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          USER: ersilia-os
-          OWNER: ersilia-os
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
-          echo "User: $USER"
-          echo "Owner: $OWNER"
-          echo "Repo: $REPO"
-          git config --global user.name "$USER"
-          git config remote.origin.url 'https://{$GITHUB_TOKEN}@github.com/{$USER}/{$REPO}.git'
           git clone https://github.com/$OWNER/$REPO.git
           cd $REPO
           git lfs install
