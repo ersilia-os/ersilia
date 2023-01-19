@@ -133,9 +133,7 @@ class GitHubDownloader(object):
 
     def _clone_with_gh(self, org, repo, destination):
         if shutil.which("gh") is not None:
-            cmd = "gh repo clone {0}/{1} {2} -- --depth=1".format(
-                org, repo, destination
-            )
+            cmd = "gh repo clone {0}/{1} {2} --depth=1".format(org, repo, destination)
             run_command(cmd)
         return self._exists(destination)
 
@@ -184,11 +182,11 @@ class GitHubDownloader(object):
                 shutil.rmtree(destination)
             else:
                 return
-        is_done = self._clone_with_pygit2(org, repo, destination)
+        is_done = self._clone_with_git(org, repo, destination)
+        if not is_done:
+            is_done = self._clone_with_pygit2(org, repo, destination)
         if not is_done:
             is_done = self._clone_with_gh(org, repo, destination)
-        if not is_done:
-            is_done = self._clone_with_git(org, repo, destination)
         if not is_done:
             raise Exception("Download from {0}/{1} did not work".format(org, repo))
         self._git_lfs(destination)
