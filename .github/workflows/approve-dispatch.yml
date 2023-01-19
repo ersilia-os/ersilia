@@ -83,9 +83,10 @@ jobs:
           OWNER: ersilia-os
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
-          git clone git@github.com:$OWNER/$REPO.git
-          cd $REPO
           git config --global user.name "$USER"
+          git config remote.origin.url 'https://{$GITHUB_TOKEN}@github.com/{$USER}/{$REPO}.git'
+          git clone https://github.com/$OWNER/$REPO.git
+          cd $REPO
           git lfs install
           touch dummy.csv
           git lfs track dummy.csv
