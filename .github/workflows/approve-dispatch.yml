@@ -86,20 +86,19 @@ jobs:
         env:
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
-          echo "$REPO"
           cd $REPO
-          ls
           git lfs install
           touch mock.csv
           git lfs track mock.csv
           git add .
         
-      - name: Commit & Push changes
+      - name: commit and push changes
         uses: actions-js/push@master
         with:
-          author_name: $USER
+          author_name: "ersilia-bot"
           message: "mock lfs [skip ci]"
           directory: "."
+          repository: $REPO
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       # sync metadata to airtable
