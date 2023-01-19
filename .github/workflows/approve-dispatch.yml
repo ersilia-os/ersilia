@@ -92,15 +92,15 @@ jobs:
           git lfs install
           touch mock.csv
           git lfs track mock.csv
+          git add .
         
-      - name: add and commit a mock git lfs
-        id: add-and-commit
-        uses: EndBug/add-and-commit@v9
+      - name: Commit & Push changes
+        uses: actions-js/push@master
         with:
-          author_name: ersilia-bot
-          author_email: hello@ersilia.io
-          message: 'Mock git lfs [skip ci]'
-          add: '.'
+          author_name: $USER
+          message: "mock lfs [skip ci]"
+          directory: "."
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       # sync metadata to airtable
       # now that the repo has been created, and the metadata.json file has been updated, we can sync the metadata to airtable
