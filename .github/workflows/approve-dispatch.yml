@@ -79,7 +79,7 @@ jobs:
         id: git-lfs-uploader
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          USER: ersilia-bot
+          USER: ersilia-os
           OWNER: ersilia-os
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
@@ -94,10 +94,11 @@ jobs:
           touch dummy.csv
           git lfs track dummy.csv
         
-      - name: Commit changes
+      - name: add and commit a dummy git lfs
+        id: add-and-commit
         uses: EndBug/add-and-commit@v9
         with:
-          author_name: ersilia-bot
+          author_name: ersilia-os
           author_email: hello@ersilia.io
           message: 'Dummy git lfs [skip ci]'
           add: '.'
