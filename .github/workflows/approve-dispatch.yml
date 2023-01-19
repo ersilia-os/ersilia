@@ -86,7 +86,9 @@ jobs:
         env:
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
+          echo "$REPO"
           cd $REPO
+          ls
           git lfs install
           touch mock.csv
           git lfs track mock.csv
@@ -95,7 +97,7 @@ jobs:
         id: add-and-commit
         uses: EndBug/add-and-commit@v9
         with:
-          author_name: ersilia-os
+          author_name: ersilia-bot
           author_email: hello@ersilia.io
           message: 'Mock git lfs [skip ci]'
           add: '.'
