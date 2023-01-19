@@ -83,6 +83,9 @@ jobs:
           OWNER: ersilia-os
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
+          echo "User: $USER"
+          echo "Owner: $OWNER"
+          echo "Repo: $REPO"
           git config --global user.name "$USER"
           git config remote.origin.url 'https://{$GITHUB_TOKEN}@github.com/{$USER}/{$REPO}.git'
           git clone https://github.com/$OWNER/$REPO.git
@@ -90,9 +93,14 @@ jobs:
           git lfs install
           touch dummy.csv
           git lfs track dummy.csv
-          git add .
-          git commit -m "dummy lfs [skip ci]"
-          git push
+        
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: ersilia-bot
+          author_email: hello@ersilia.io
+          message: 'Dummy git lfs [skip ci]'
+          add: '.'
 
       # sync metadata to airtable
       # now that the repo has been created, and the metadata.json file has been updated, we can sync the metadata to airtable
