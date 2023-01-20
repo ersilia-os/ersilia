@@ -81,6 +81,10 @@ jobs:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
+      - name: remove ersilia repo
+        run: |
+          rm -rf *
+
       - name: clone the repository
         uses: GuillaumeFalourd/clone-github-repo-action@v2
         with:
@@ -92,7 +96,6 @@ jobs:
         env:
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
-          rm -rf *
           cd $REPO
           git lfs install
           touch mock.csv
