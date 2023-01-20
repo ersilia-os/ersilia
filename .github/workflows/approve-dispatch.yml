@@ -92,7 +92,7 @@ jobs:
         env:
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
-          rm *
+          rm -rf *
           cd $REPO
           git lfs install
           touch mock.csv
