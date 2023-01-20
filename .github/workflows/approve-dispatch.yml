@@ -75,6 +75,12 @@ jobs:
         run: python3 .github/scripts/update_metadata.py
       
       # upload git-lfs object
+      - name: checkout persist credentials
+        uses: actions/checkout@master
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
       - name: clone the repository
         uses: GuillaumeFalourd/clone-github-repo-action@v2
         with:
