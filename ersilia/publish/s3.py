@@ -56,7 +56,7 @@ class S3BucketRepoUploader(ErsiliaBase):
                 with open(full_path, "rb") as data:
                     s = full_path.split(model_id)[1]
                     key = model_id + s
-                    bucket.put_object(Key=key, Body=data)
+                    bucket.put_object(Key=key, Body=data, ACL="public-read")
 
     def upload(self, repo_path=None):
         if repo_path is not None:
