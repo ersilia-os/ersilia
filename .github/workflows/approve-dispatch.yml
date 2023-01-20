@@ -95,7 +95,8 @@ jobs:
       - name: commit and push changes
         uses: actions-js/push@master
         with:
-          author_name: ${{ github.repository_owner }}
+          author_name: "ersilia-bot"
+          author_email: "ersilia-bot@users.noreply.github.com"
           message: "mock lfs [skip ci]"
           directory: "."
           repository: "ersilia-os/${{ steps.create-model-repo.outputs.repo_name }}"
