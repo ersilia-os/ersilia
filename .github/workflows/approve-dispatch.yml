@@ -74,12 +74,6 @@ jobs:
           JSON: ${{ steps.issue-parser.outputs.json }}
         run: python3 .github/scripts/update_metadata.py
       
-      - name: checkout without persisting credentials
-      - uses: actions/checkout@master
-        with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
-
       # upload git-lfs object
       - name: clone the repository
         uses: GuillaumeFalourd/clone-github-repo-action@v2
@@ -106,7 +100,7 @@ jobs:
           message: "mock lfs [skip ci]"
           directory: "."
           repository: "ersilia-os/${{ steps.create-model-repo.outputs.repo_name }}"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT }}
           amend: true
           force: true
 
