@@ -92,6 +92,7 @@ jobs:
         env:
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
+          rm *
           cd $REPO
           git lfs install
           touch mock.csv
@@ -104,7 +105,7 @@ jobs:
           author_name: "ersilia-bot"
           author_email: "ersilia-bot@users.noreply.github.com"
           message: "mock lfs [skip ci]"
-          directory: "."
+          directory: ${{ steps.create-model-repo.outputs.repo_name }}
           repository: "ersilia-os/${{ steps.create-model-repo.outputs.repo_name }}"
           github_token: ${{ secrets.PAT }}
           amend: true
