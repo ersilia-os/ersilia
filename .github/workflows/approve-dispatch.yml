@@ -73,6 +73,12 @@ jobs:
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
           JSON: ${{ steps.issue-parser.outputs.json }}
         run: python3 .github/scripts/update_metadata.py
+      
+      - name: checkout without persisting credentials
+      - uses: actions/checkout@master
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       # upload git-lfs object
       - name: clone the repository
@@ -101,6 +107,8 @@ jobs:
           directory: "."
           repository: "ersilia-os/${{ steps.create-model-repo.outputs.repo_name }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          amend: true
+          force: true
 
       # sync metadata to airtable
       # now that the repo has been created, and the metadata.json file has been updated, we can sync the metadata to airtable
