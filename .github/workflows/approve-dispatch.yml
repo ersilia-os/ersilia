@@ -98,7 +98,7 @@ jobs:
           author_name: "ersilia-bot"
           message: "mock lfs [skip ci]"
           directory: "."
-          repository: "$REPO"
+          repository: ${{ steps.create-model-repo.outputs.repo_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       # sync metadata to airtable
