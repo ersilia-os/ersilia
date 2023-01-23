@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import time
+import sys
 
 from github import Github, GithubException
 
@@ -11,7 +12,7 @@ class UpdateMetadata:
     Class for reading the metadata file from a repo and updating it from the new model submission request
     """
 
-    def __init__(self):
+    def __init__(self, issue_creator=None):
         self.log = self.logger()
         self.metadata_filename = "metadata.json"
         self.retries = 9
@@ -20,6 +21,7 @@ class UpdateMetadata:
         self.owner = os.environ.get("OWNER")
         self.repo = os.environ.get("REPO")
         self.branch = os.environ.get("BRANCH", "main")
+        self.issue_creator = issue_creator
         self.metadata = None
         self.json_input = self.load_json_input()
         self.github = Github(self.token)
@@ -106,12 +108,16 @@ class UpdateMetadata:
             self.metadata["Description"] = self.json_input["model_description"]
         if self.metadata["Publication"] == "":
             self.metadata["Publication"] = self.json_input["publication"]
+        if self.metadata["Source"] == "":
+            self.metadata["Source"] = self.json_input["source"]
         if self.metadata["License"] == "":
             self.metadata["License"] = self.json_input["license"]
         if self.metadata["Tag"] == []:
             # split the tags into a list andremove any whitespace
             tags = [tag.strip() for tag in self.json_input["tags"].split(",")]
             self.metadata["Tag"] = tags
+        if self.metadata["Contributor"] == "":
+            self.metadata["Contributor"] == self.issue_creator
 
     def write_metadata(self):
         """
@@ -152,4 +158,5 @@ class UpdateMetadata:
 
 
 if __name__ == "__main__":
-    UpdateMetadata().run()
+    issue_creator = sys.argv[1]
+    UpdateMetadata(issue_creator=issue_creator).run()

@@ -19,6 +19,8 @@ from ...utils.exceptions_utils.card_exceptions import (
     InputBaseInformationError,
     InputShapeBaseInformationError,
     OutputBaseInformationError,
+    OutputTypeBaseInformationError,
+    OutputShapeBaseInformationError,
     TaskBaseInformationError,
     TagBaseInformationError,
     PublicationBaseInformationError,
@@ -40,12 +42,25 @@ from ...default import CARD_FILE, METADATA_JSON_FILE
 class BaseInformation(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self._github = None
         self._identifier = None
         self._slug = None
         self._status = None
         self._title = None
         self._description = None
-        self._github = None
+        self._mode = None
+        self._task = None
+        self._input = None
+        self._input_shape = None
+        self._output = None
+        self._output_type = None
+        self._output_shape = None
+        self._interpretation = None
+        self._tag = None
+        self._publication = None
+        self._source = None
+        self._license = None
+        self._contributor = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -179,6 +194,29 @@ class BaseInformation(ErsiliaBase):
         self._output = new_output
 
     @property
+    def output_type(self):
+        return self._output_type
+
+    @output_type.setter
+    def output(self, new_output_type):
+        default_output_type = self._read_default_fields("Output Type")
+        for no in new_output_type:
+            if no not in default_output_type:
+                raise OutputTypeBaseInformationError
+        self._output_type = new_output_type
+
+    @property
+    def output_shape(self):
+        return self._output_shape
+
+    @output_shape.setter
+    def output_shape(self, new_output_shape):
+        default_output_shape = self._read_default_fields("Output Shape")
+        if new_output_shape not in default_output_shape:
+            raise OutputShapeBaseInformationError
+        self._output_shape = new_output_shape
+
+    @property
     def interpretation(self):
         return self._interpretation
 
@@ -275,6 +313,8 @@ class BaseInformation(ErsiliaBase):
             "Input Shape": self.input_shape,
             "Task": self.task,
             "Output": self.output,
+            "Output Type": self.output_type,
+            "Output Shape": self.output_shape,
             "Interpretation": self.interpretation,
             "Tag": self.tag,
             "Publication": self.publication,
@@ -295,6 +335,8 @@ class BaseInformation(ErsiliaBase):
         self.input_shape = data["Input Shape"]
         self.task = data["Task"]
         self.output = data["Output"]
+        self.output_type = data["Output Type"]
+        self.output_shape = data["Output Shape"]
         self.interpretation = data["Interpretation"]
         self.tag = data["Tag"]
         self.publication = data["Publication"]

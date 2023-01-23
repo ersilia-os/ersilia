@@ -1,6 +1,17 @@
 from .exceptions import ErsiliaError
 from ...default import AIRTABLE_MODEL_HUB_VIEW_URL
 
+import os
+
+
+def _read_default_fields(field):
+    root = os.path.dirname(os.path.abspath(__file__))
+    filename = field.lower().replace(" ", "_")
+    file_path = os.path.join(root, "..", "..", "content", "metadata", filename + ".txt")
+    with open(file_path, "r") as f:
+        valid_field = f.read().split("\n")
+    return valid_field
+
 
 class CardErsiliaError(ErsiliaError):
     def __init__(self):
@@ -21,7 +32,7 @@ class BaseInformationError(ErsiliaError):
 class IdentifierBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model identifier"
-        self.hints = "Ersilia model identifiers are 7 alphanumeric characters. They always start with eos, followed by a digit. Check our current AirTable to see correct identifiers: {0}".format(
+        self.hints = "Ersilia model identifiers are 7 alphanumeric characters. They always start with eos, followed by a digit. The eos identifier coincides with the name of the repository. Check our current AirTable to see correct identifiers: {0}".format(
             AIRTABLE_MODEL_HUB_VIEW_URL
         )
         super().__init__(self.message, self.hints)
@@ -37,7 +48,9 @@ class SlugBaseInformationError(ErsiliaError):
 class StatusBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia status"
-        self.hints = "Only status allowed: Test, Ready, In progress, To do"
+        self.hints = "Only one of the following status is allowed: {}".format(
+            ", ".join(_read_default_fields("Status"))
+        )
         super().__init__(self.message, self.hints)
 
 
@@ -58,15 +71,26 @@ class DescriptionBaseInformationError(ErsiliaError):
 class ModeBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia mode"
-        self.hints = "Only modes allowed: Pretrained, Retrained, In-house, Online"
+        self.hints = "Only one of the following modes is allowed: {}".format(
+            ", ".join(_read_default_fields("Mode"))
+        )
+        super().__init__(self.message, self.hints)
+
+
+class TaskBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong Ersilia model task"
+        self.hints = "Only tasks allowed: {}. Tasks must be in list format".format(
+            ", ".join(_read_default_fields("Task"))
+        )
         super().__init__(self.message, self.hints)
 
 
 class InputBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia input"
-        self.hints = (
-            "Only inputs allowed: Compound, Protein, Text. Input must be in list format"
+        self.hints = "Only inputs allowed: {}. Input must be in list format".format(
+            ", ".join(_read_default_fields("Input"))
         )
         super().__init__(self.message, self.hints)
 
@@ -74,8 +98,8 @@ class InputBaseInformationError(ErsiliaError):
 class InputShapeBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia input shape"
-        self.hints = (
-            "Only shapes allowed: Single, Pair, List, Pair of Lists, List of Lists"
+        self.hints = "Only one of the following shapes is allowed: {}".format(
+            ", ".join(_read_default_fields("Input Shape"))
         )
         super().__init__(self.message, self.hints)
 
@@ -83,14 +107,27 @@ class InputShapeBaseInformationError(ErsiliaError):
 class OutputBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia output"
-        self.hints = "Only outputs allowed: Probability, Score, Compound, Descriptor, Vector, Toxicity, IC50"
+        self.hints = "Only one of the following outputs is allowed: {}".format(
+            ", ".join(_read_default_fields("Output"))
+        )
         super().__init__(self.message, self.hints)
 
 
-class TaskBaseInformationError(ErsiliaError):
+class OutputTypeBaseInformationError(ErsiliaError):
     def __init__(self):
-        self.message = "Wrong Ersilia model task"
-        self.hints = "Only tasks allowed: Classification, Regression, Generative, Embedding, Similarity, Clustering, Dimensionality reduction. Tasks must be in list format"
+        self.message = "Wrong Ersilia output type"
+        self.hints = "Only output types allowed: {}. More than one output type can be added in list format".format(
+            ", ".join(_read_default_fields("Output Type"))
+        )
+        super().__init__(self.message, self.hints)
+
+
+class OutputShapeBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong Ersilia output shape"
+        self.hints = "Only one of the following output shapes is allowed: {}".format(
+            ", ".join(_read_default_fields("Output Shape"))
+        )
         super().__init__(self.message, self.hints)
 
 
@@ -104,7 +141,9 @@ class TagBaseInformationError(ErsiliaError):
 class LicenseBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong license"
-        self.hints = "Listed licenses are:MIT, GPLv3, LGPL, Apache, BSD-2, BSD-3, Mozilla, CC, Proprietary, None"
+        self.hints = "Listed licenses are: {}. If the model has a license not in this list, please open a PR on the 'license.txt' file in the Ersilia repository".format(
+            ", ".join(_read_default_fields("License"))
+        )
         super().__init__(self.message, self.hints)
 
 
