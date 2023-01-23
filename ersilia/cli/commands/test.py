@@ -27,4 +27,3 @@ def test_cmd():
         mt.check_metadata()
         click.echo("Checking fetch")
         mt.check_fetch()
-
