@@ -23,6 +23,9 @@ if r.status_code == 200:
     data = json.loads(text)
 
 airtable_data = {}
+airtable_data["Identifier"] = data["Identifier"]
+airtable_data["Slug"] = data["Slug"]
+airtable_data["Title"] = data["Title"]
 airtable_data["GitHub"] = github
 airtable_data["Contributor"] = data["Contributor"]
 airtable_data["Status"] = "In progress"
