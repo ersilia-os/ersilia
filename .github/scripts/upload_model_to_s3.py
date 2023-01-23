@@ -11,5 +11,7 @@ else:
     repo_path = None
 
 ru = S3BucketRepoUploader(model_id=model_id)
-ru.set_credentials(aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+ru.set_credentials(
+    aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key
+)
 ru.upload(repo_path=repo_path)

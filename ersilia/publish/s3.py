@@ -35,20 +35,26 @@ class S3BucketRepoUploader(ErsiliaBase):
         self.logger.debug("Removing git files")
         dotgit_folder = os.path.join(repo_path, ".git")
         gitignore_file = os.path.join(repo_path, ".gitignore")
+        github_file = os.path.join(repo_path, ".github")
         if os.path.exists(dotgit_folder):
             shutil.rmtree(dotgit_folder)
         if os.path.exists(gitignore_file):
             os.remove(gitignore_file)
+        if os.path.exists(github_file):
+            shutil.rmtree(github_file)
 
     def _upload_files(self, repo_path):
+        self.logger.debug("Uploading repo files")
         repo_path = os.path.abspath(repo_path)
         session = boto3.Session(
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
             region_name=AWS_ACCOUNT_REGION,
         )
+        self.logger.debug(session)
         s3 = session.resource("s3")
         bucket = s3.Bucket(ERSILIA_MODELS_S3_BUCKET)
+        self._delete_model_from_s3(bucket)
         model_id = self.model_id
         for subdir, _, files in os.walk(repo_path):
             for file in files:
@@ -58,9 +64,12 @@ class S3BucketRepoUploader(ErsiliaBase):
                     key = model_id + s
                     bucket.put_object(Key=key, Body=data, ACL="public-read")
 
+    def _delete_model_from_s3(self, bucket):
+        bucket.objects.filter(Prefix="{0}/".format(self.model_id)).delete()
+
     def upload(self, repo_path=None):
         if repo_path is not None:
-            repo_path = os.path.basename(os.path.abspath(repo_path))
+            self.logger.debug("repo path is {0}".format(repo_path))
             self._ungit(repo_path=repo_path)
         else:
             repo_path = os.path.join(self.tmp_folder, self.model_id)
