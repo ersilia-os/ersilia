@@ -25,7 +25,7 @@ if r.status_code == 200:
 airtable_data = {}
 airtable_data["GitHub"] = github
 airtable_data["Contributor"] = data["Contributor"]
-airtable_data["Status"] = data["Status"]
+airtable_data["Status"] = "In progress"
 if data["Publication"] != "":
     airtable_data["Publication"] = data["Publication"]
 if data["Source Code"] != "":
