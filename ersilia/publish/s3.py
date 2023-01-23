@@ -47,6 +47,7 @@ class S3BucketRepoUploader(ErsiliaBase):
         self.logger.debug("Uploading repo files")
         repo_path = os.path.abspath(repo_path)
         basename = os.path.basename(repo_path)
+        self.logger.debug("Taking basename {0}".format(basename))
         session = boto3.Session(
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
@@ -62,7 +63,11 @@ class S3BucketRepoUploader(ErsiliaBase):
                 full_path = os.path.join(subdir, file)
                 with open(full_path, "rb") as data:
                     s = full_path.split(basename)[1]
+                    if not s.startswith("/"):
+                        s = "/" + s
+                    self.logger.debug(s)
                     key = model_id + s
+                    self.logger.debug(key)
                     bucket.put_object(Key=key, Body=data, ACL="public-read")
 
     def _delete_model_from_s3(self, bucket):
@@ -70,7 +75,7 @@ class S3BucketRepoUploader(ErsiliaBase):
 
     def upload(self, repo_path=None):
         if repo_path is not None:
-            self.logger.debug("repo path is {0}".format(repo_path))
+            self.logger.debug("Repo path is {0}".format(os.path.abspath(repo_path)))
             self._ungit(repo_path=repo_path)
         else:
             repo_path = os.path.join(self.tmp_folder, self.model_id)
