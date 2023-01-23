@@ -51,7 +51,7 @@ class ReadmeUpdater(ErsiliaBase):
     def update_local(self):
         rm = ReadmeMetadata(model_id=self.model_id)
         bi = rm.read_information()
-        readme_file = os.path.join(self.repo_path)
+        readme_file = os.path.join(self.repo_path, "README.md")
         rm.write_information(data=bi, readme_path=readme_file)
         self._git_push()
 
