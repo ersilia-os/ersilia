@@ -168,8 +168,8 @@ class PublicationBaseInformationError(ErsiliaError):
         super().__init__(self.message, self.hints)
 
 
-class SourceBaseInformationError(ErsiliaError):
+class SourceCodeBaseInformationError(ErsiliaError):
     def __init__(self):
-        self.message = "Source field error"
-        self.hints = "Source must be a valid URL"
+        self.message = "Source Code field error"
+        self.hints = "Source Code must be a valid URL"
         super().__init__(self.message, self.hints)

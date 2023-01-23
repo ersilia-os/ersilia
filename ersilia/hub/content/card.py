@@ -24,7 +24,7 @@ from ...utils.exceptions_utils.card_exceptions import (
     TaskBaseInformationError,
     TagBaseInformationError,
     PublicationBaseInformationError,
-    SourceBaseInformationError,
+    SourceCodeBaseInformationError,
     LicenseBaseInformationError,
     GithubBaseInformationError,
     BothIdentifiersBaseInformationError,
@@ -58,7 +58,7 @@ class BaseInformation(ErsiliaBase):
         self._interpretation = None
         self._tag = None
         self._publication = None
-        self._source = None
+        self._source_code = None
         self._license = None
         self._contributor = None
 
@@ -249,14 +249,14 @@ class BaseInformation(ErsiliaBase):
         self._publication = new_publication
 
     @property
-    def source(self):
-        return self._source
+    def source_code(self):
+        return self._source_code
 
-    @source.setter
-    def source(self, new_source):
-        if not self._is_valid_url(new_source):
-            raise SourceBaseInformationError
-        self._source = new_source
+    @source_code.setter
+    def source_code(self, new_source_code):
+        if not self._is_valid_url(new_source_code):
+            raise SourceCodeBaseInformationError
+        self._source_code = new_source_code
 
     @property
     def license(self):
@@ -318,7 +318,7 @@ class BaseInformation(ErsiliaBase):
             "Interpretation": self.interpretation,
             "Tag": self.tag,
             "Publication": self.publication,
-            "Source": self.source,
+            "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
         }
@@ -340,7 +340,7 @@ class BaseInformation(ErsiliaBase):
         self.interpretation = data["Interpretation"]
         self.tag = data["Tag"]
         self.publication = data["Publication"]
-        self.source = data["Source"]
+        self.source_code = data["Source Code"]
         self.license = data["License"]
         self.contributor = data["Contributor"]
 
@@ -472,7 +472,7 @@ class ReadmeMetadata(ErsiliaBase):
         text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
         text += "## References\n\n"
         text += "* [Publication]({0})\n".format(d["Publication"])
-        text += "* [Source]({0})\n".format(d["Source"])
+        text += "* [Source Code]({0})\n".format(d["Source Code"])
         text += "* Ersilia contributor: [{0}](https://github.com/{0})\n\n".format(
             d["Contributor"]
         )

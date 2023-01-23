@@ -108,8 +108,8 @@ class UpdateMetadata:
             self.metadata["Description"] = self.json_input["model_description"]
         if self.metadata["Publication"] == "":
             self.metadata["Publication"] = self.json_input["publication"]
-        if self.metadata["Source"] == "":
-            self.metadata["Source"] = self.json_input["source"]
+        if self.metadata["Source Code"] == "":
+            self.metadata["Source Code"] = self.json_input["source_code"]
         if self.metadata["License"] == "":
             self.metadata["License"] = self.json_input["license"]
         if self.metadata["Tag"] == []:
