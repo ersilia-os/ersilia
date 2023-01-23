@@ -46,6 +46,7 @@ class S3BucketRepoUploader(ErsiliaBase):
     def _upload_files(self, repo_path):
         self.logger.debug("Uploading repo files")
         repo_path = os.path.abspath(repo_path)
+        basename = os.path.basename(repo_path)
         session = boto3.Session(
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
@@ -60,7 +61,7 @@ class S3BucketRepoUploader(ErsiliaBase):
             for file in files:
                 full_path = os.path.join(subdir, file)
                 with open(full_path, "rb") as data:
-                    s = full_path.split(model_id)[1]
+                    s = full_path.split(basename)[1]
                     key = model_id + s
                     bucket.put_object(Key=key, Body=data, ACL="public-read")
 
