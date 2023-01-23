@@ -117,9 +117,9 @@ class UpdateMetadata:
             tags = [tag.strip() for tag in self.json_input["tag"].split(",")]
             self.metadata["Tag"] = tags
         if self.metadata["Contributor"] == "":
-            self.metadata["Contributor"] == self.issue_creator
+            self.metadata["Contributor"] = self.issue_creator
         if self.metadata["Status"] == "":
-            self.metadata["Status"] == "In progress"
+            self.metadata["Status"] = "In progress"
 
     def write_metadata(self):
         """
