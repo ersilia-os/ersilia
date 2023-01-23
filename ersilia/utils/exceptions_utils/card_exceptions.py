@@ -7,7 +7,7 @@ import os
 def _read_default_fields(field):
     root = os.path.dirname(os.path.abspath(__file__))
     filename = field.lower().replace(" ", "_")
-    file_path = os.path.join(root, "..", "..", "content", "metadata", filename + ".txt")
+    file_path = os.path.join(root, "..", "..","hub", "content", "metadata", filename + ".txt")
     with open(file_path, "r") as f:
         valid_field = f.read().split("\n")
     return valid_field

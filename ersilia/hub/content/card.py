@@ -481,7 +481,7 @@ class ReadmeMetadata(ErsiliaBase):
             d["Publication"]
         )
         text += "## License\n\n"
-        text += "This package is licensed under a GPLv3 license. The model contained within this package is licensed under a {0} license. Please refer to the model license files if you use this model in your research.\n\n".format(
+        text += "This package is licensed under a GPLv3 license. The model contained within this package is licensed under a {0} license. Disclaimer: Ersilia grants access to these models 'as is' provided by the original authors, please refer to the original code repository and/or publication if you use the model in your research.\n\n".format(
             d["License"]
         )
         text += "## About Us\n\n"

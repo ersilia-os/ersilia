@@ -71,11 +71,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }} # PAT for the ersilia-bot GitHub account
           OWNER: ersilia-os
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
-          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
           JSON: ${{ steps.issue-parser.outputs.json }}
         run: | 
-          ISSUE_CREATOR=$(gh api /repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
-          python3 .github/scripts/update_metadata.py $ISSUE_CREATOR 
+          python3 .github/scripts/update_metadata.py 
       
       # upload git-lfs object
       - name: checkout persist credentials
