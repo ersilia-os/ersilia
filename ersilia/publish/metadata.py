@@ -55,6 +55,12 @@ class ReadmeUpdater(ErsiliaBase):
         rm.write_information(data=bi, readme_path=readme_file)
         self._git_push()
 
+    def update(self):
+        if self.repo_path is None:
+            self.update_remote()
+        else:
+            self.update_local()
+
 
 class JsonUpdater(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
