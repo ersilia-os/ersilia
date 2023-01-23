@@ -9,8 +9,12 @@ from ..default import GITHUB_ORG
 
 
 class ReadmeUpdater(ErsiliaBase):
-    def __init__(self, model_id, config_json=None):
+    def __init__(self, model_id=None, repo_path=None, config_json=None):
         self.model_id = model_id
+        if repo_path is not None:
+            self.repo_path = os.path.abspath(repo_path)
+        else:
+            self.repo_path = None
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-os")
         self.cwd = os.getcwd()
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -23,18 +27,32 @@ class ReadmeUpdater(ErsiliaBase):
         )
 
     def _git_push(self):
-        run_command(
-            'cd {0}/{1}; git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {2}'.format(
-                self.tmp_folder, self.model_id, self.cwd
+        if self.repo_path is None:
+            run_command(
+                'cd {0}/{1}; git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {2}'.format(
+                    self.tmp_folder, self.model_id, self.cwd
+                )
             )
-        )
+        else:
+            run_command(
+                'cd {0}; git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {1}'.format(
+                    self.repo_path, self.cwd
+                )
+            )
 
-    def update(self):
+    def update_remote(self):
         self._git_clone()
         rm = ReadmeMetadata(model_id=self.model_id)
         bi = rm.read_information()
         tmp_file = os.path.join(self.tmp_folder, self.model_id, "README.md")
         rm.write_information(data=bi, readme_path=tmp_file)
+        self._git_push()
+
+    def update_local(self):
+        rm = ReadmeMetadata(model_id=self.model_id)
+        bi = rm.read_information()
+        readme_file = os.path.join(self.repo_path)
+        rm.write_information(data=bi, readme_path=readme_file)
         self._git_push()
 
 
