@@ -88,6 +88,8 @@
     <span class="n">InputBaseInformationError</span><span class="p">,</span>
     <span class="n">InputShapeBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputBaseInformationError</span><span class="p">,</span>
+    <span class="n">OutputTypeBaseInformationError</span><span class="p">,</span>
+    <span class="n">OutputShapeBaseInformationError</span><span class="p">,</span>
     <span class="n">TaskBaseInformationError</span><span class="p">,</span>
     <span class="n">TagBaseInformationError</span><span class="p">,</span>
     <span class="n">PublicationBaseInformationError</span><span class="p">,</span>
@@ -109,12 +111,25 @@
 <div class="viewcode-block" id="BaseInformation"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation">[docs]</a><span class="k">class</span> <span class="nc">BaseInformation</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_slug</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_is_valid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url_string</span><span class="p">)</span>
@@ -248,6 +263,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">new_output</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span>
+
+    <span class="nd">@output_type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_type</span><span class="p">):</span>
+        <span class="n">default_output_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">no</span> <span class="ow">in</span> <span class="n">new_output_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_type</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">OutputTypeBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="n">new_output_type</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span>
+
+    <span class="nd">@output_shape</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_shape</span><span class="p">):</span>
+        <span class="n">default_output_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_output_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">OutputShapeBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="n">new_output_shape</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span>
 
@@ -344,6 +382,8 @@
             <span class="s2">&quot;Input Shape&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span>
             <span class="s2">&quot;Task&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">,</span>
             <span class="s2">&quot;Output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+            <span class="s2">&quot;Output Type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span><span class="p">,</span>
+            <span class="s2">&quot;Output Shape&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_shape</span><span class="p">,</span>
             <span class="s2">&quot;Interpretation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpretation</span><span class="p">,</span>
             <span class="s2">&quot;Tag&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
             <span class="s2">&quot;Publication&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">publication</span><span class="p">,</span>
@@ -364,6 +404,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Task&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Output&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_shape</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">interpretation</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Interpretation&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Tag&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">publication</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">]</span>
