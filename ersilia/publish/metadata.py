@@ -9,12 +9,13 @@ from ..default import GITHUB_ORG
 
 
 class ReadmeUpdater(ErsiliaBase):
-    def __init__(self, model_id=None, repo_path=None, config_json=None):
+    def __init__(self, model_id=None, repo_path=None, commit=True, config_json=None):
         self.model_id = model_id
         if repo_path is not None:
             self.repo_path = os.path.abspath(repo_path)
         else:
             self.repo_path = None
+        self.commit = commit
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-os")
         self.cwd = os.getcwd()
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -46,14 +47,16 @@ class ReadmeUpdater(ErsiliaBase):
         bi = rm.read_information()
         tmp_file = os.path.join(self.tmp_folder, self.model_id, "README.md")
         rm.write_information(data=bi, readme_path=tmp_file)
-        self._git_push()
+        if self.commit:
+            self._git_push()
 
     def update_local(self):
         rm = ReadmeMetadata(model_id=self.model_id)
         bi = rm.read_information()
         readme_file = os.path.join(self.repo_path, "README.md")
         rm.write_information(data=bi, readme_path=readme_file)
-        self._git_push()
+        if self.commit:
+            self._git_push()
 
     def update(self):
         if self.repo_path is None:
