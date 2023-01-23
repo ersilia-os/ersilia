@@ -62,6 +62,7 @@ class S3BucketRepoUploader(ErsiliaBase):
         for subdir, _, files in os.walk(repo_path):
             for file in files:
                 if file in self.ignore:
+                    self.logger.debug("Ignoring {0}".format(file))
                     continue
                 full_path = os.path.join(subdir, file)
                 with open(full_path, "rb") as data:
