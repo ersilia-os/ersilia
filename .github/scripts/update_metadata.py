@@ -114,7 +114,7 @@ class UpdateMetadata:
             self.metadata["License"] = self.json_input["license"]
         if self.metadata["Tag"] == []:
             # split the tags into a list andremove any whitespace
-            tags = [tag.strip() for tag in self.json_input["tags"].split(",")]
+            tags = [tag.strip() for tag in self.json_input["tag"].split(",")]
             self.metadata["Tag"] = tags
         if self.metadata["Contributor"] == "":
             self.metadata["Contributor"] == self.issue_creator
