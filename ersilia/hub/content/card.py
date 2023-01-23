@@ -322,6 +322,7 @@ class BaseInformation(ErsiliaBase):
             "License": self.license,
             "Contributor": self.contributor,
         }
+        data = dict((k, v) for k, v in data.items() if v is not None)
         return data
 
     def from_dict(self, data):
@@ -342,7 +343,8 @@ class BaseInformation(ErsiliaBase):
         self.publication = data["Publication"]
         self.source_code = data["Source Code"]
         self.license = data["License"]
-        self.contributor = data["Contributor"]
+        if "Contributor" in data:
+            self.contributor = data["Contributor"]
 
 
 class RepoMetadataFile(ErsiliaBase):
