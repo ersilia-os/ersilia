@@ -28,8 +28,8 @@ data["Contributor"] = contributor_name
 
 if data["Publication"] == "":
     del data["Publication"]
-if data["Source"] == "":
-    del data["Source"]
+if data["Source Code"] == "":
+    del data["Source Code"]
 
 del data["Tag"]
 del data["Mode"]
