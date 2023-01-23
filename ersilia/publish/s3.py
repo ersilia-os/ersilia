@@ -62,7 +62,7 @@ class S3BucketRepoUploader(ErsiliaBase):
             for file in files:
                 full_path = os.path.join(subdir, file)
                 with open(full_path, "rb") as data:
-                    s = full_path.split(basename)[1]
+                    s = full_path.split(basename)[-1]
                     if not s.startswith("/"):
                         s = "/" + s
                     self.logger.debug(s)
