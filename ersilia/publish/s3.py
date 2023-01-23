@@ -18,6 +18,7 @@ class S3BucketRepoUploader(ErsiliaBase):
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         self.aws_access_key_id = None
         self.aws_secret_access_key = None
+        self.ignore = ["upload_model_to_s3.py"]
 
     def set_credentials(self, aws_access_key_id, aws_secret_access_key):
         self.aws_access_key_id = aws_access_key_id
@@ -60,6 +61,8 @@ class S3BucketRepoUploader(ErsiliaBase):
         model_id = self.model_id
         for subdir, _, files in os.walk(repo_path):
             for file in files:
+                if file in self.ignore:
+                    continue
                 full_path = os.path.join(subdir, file)
                 with open(full_path, "rb") as data:
                     s = full_path.split(basename)[-1]
