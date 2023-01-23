@@ -15,13 +15,14 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # Default variables
 from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE
 
+# Logger
+from .utils.logging import logger
+
+# Config
 if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
     from .utils.config import Checker
 
     Checker().config()
-
-# Logger
-from .utils.logging import logger
 
 # Exceptions
 from .utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
