@@ -198,7 +198,7 @@ class BaseInformation(ErsiliaBase):
         return self._output_type
 
     @output_type.setter
-    def output(self, new_output_type):
+    def output_type(self, new_output_type):
         default_output_type = self._read_default_fields("Output Type")
         for no in new_output_type:
             if no not in default_output_type:
