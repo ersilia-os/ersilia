@@ -643,18 +643,18 @@ class LakeCard(ErsiliaBase):
 class ModelCard(object):
     def __init__(self, config_json=None):
         self.lc = LocalCard(config_json=config_json)
-        self.ac = AirtableCard(config_json=config_json)
         self.mc = MetadataCard(config_json=config_json)
+        self.ac = AirtableCard(config_json=config_json)
         self.rc = ReadmeCard(config_json=config_json)
 
     def _get(self, model_id):
         card = self.lc.get(model_id)
         if card is not None:
             return card
-        card = self.ac.get(model_id)
+        card = self.mc.get(model_id)
         if card is not None:
             return card
-        card = self.mc.get(model_id)
+        card = self.ac.get(model_id)
         if card is not None:
             return card
         card = self.rc.get(model_id)
