@@ -118,6 +118,8 @@ class UpdateMetadata:
             self.metadata["Tag"] = tags
         if self.metadata["Contributor"] == "":
             self.metadata["Contributor"] == self.issue_creator
+        if self.metadata["Status"] == "":
+            self.metadata["Status"] == "In progress"
 
     def write_metadata(self):
         """
