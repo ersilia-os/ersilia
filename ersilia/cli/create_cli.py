@@ -17,6 +17,7 @@ def create_ersilia_cli():
     cmd.delete()
     cmd.example()
     cmd.fetch()
+    cmd.test()
 
     # TODO: publishing functionalities
     if is_contributor:

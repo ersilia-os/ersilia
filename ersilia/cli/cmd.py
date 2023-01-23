@@ -56,3 +56,7 @@ class Command(object):
     def setup(self):
         m = importlib.import_module("ersilia.cli.commands.setup")
         m.setup_cmd()
+
+    def test(self):
+        m = importlib.import_module("ersilia.cli.commands.test")
+        m.test_cmd()

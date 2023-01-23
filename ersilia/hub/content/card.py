@@ -348,7 +348,7 @@ class BaseInformation(ErsiliaBase):
 
 
 class RepoMetadataFile(ErsiliaBase):
-    def __init__(self, model_id, config_json=None):
+    def __init__(self, model_id=None, config_json=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
@@ -368,7 +368,6 @@ class RepoMetadataFile(ErsiliaBase):
         if r.status_code == 200:
             text = r.content
             data = json.loads(text)
-            print(data)
             return data
         else:
             return None
