@@ -101,13 +101,6 @@ class GitHubDownloader(object):
 
         self.overwrite = overwrite
         self.token = token
-        auth_method = "x-access-token"
-        try:
-            self.pygit2_callbacks = pygit2.RemoteCallbacks(
-                pygit2.UserPass(auth_method, token)
-            )
-        except:
-            self.pygit2_callbacks = None
 
     @staticmethod
     def _repo_url(org, repo):
