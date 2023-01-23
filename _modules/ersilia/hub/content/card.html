@@ -391,6 +391,7 @@
             <span class="s2">&quot;License&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">,</span>
             <span class="s2">&quot;Contributor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span><span class="p">,</span>
         <span class="p">}</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
 <div class="viewcode-block" id="BaseInformation.from_dict"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation.from_dict">[docs]</a>    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
@@ -411,7 +412,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">publication</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_code</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Source Code&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;License&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Contributor&quot;</span><span class="p">]</span></div></div>
+        <span class="k">if</span> <span class="s2">&quot;Contributor&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Contributor&quot;</span><span class="p">]</span></div></div>
 
 
 <div class="viewcode-block" id="RepoMetadataFile"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile">[docs]</a><span class="k">class</span> <span class="nc">RepoMetadataFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
