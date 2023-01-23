@@ -10,7 +10,7 @@ import requests
 import sys
 from ersilia.default import S3_BUCKET_URL
 import subprocess
-from ersilia.cli import echo
+from click import echo
 from .terminal import run_command
 from .. import logger
 
