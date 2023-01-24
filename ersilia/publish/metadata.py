@@ -22,7 +22,7 @@ class ReadmeUpdater(ErsiliaBase):
 
     def _git_clone(self):
         run_command(
-            "cd {0}; git clone https://github.com/{1}/{2}; cd {3}".format(
+            "cd {0}; GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/{1}/{2}; cd {3}".format(
                 self.tmp_folder, GITHUB_ORG, self.model_id, self.cwd
             )
         )
@@ -30,13 +30,13 @@ class ReadmeUpdater(ErsiliaBase):
     def _git_push(self):
         if self.repo_path is None:
             run_command(
-                'cd {0}/{1}; git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {2}'.format(
+                'cd {0}/{1}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {2}'.format(
                     self.tmp_folder, self.model_id, self.cwd
                 )
             )
         else:
             run_command(
-                'cd {0}; git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {1}'.format(
+                'cd {0}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {1}'.format(
                     self.repo_path, self.cwd
                 )
             )
@@ -74,14 +74,14 @@ class JsonUpdater(ErsiliaBase):
 
     def _git_clone(self):
         run_command(
-            "cd {0}; git clone https://github.com/{1}/{2}; cd {3}".format(
+            "cd {0}; GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/{1}/{2}; cd {3}".format(
                 self.tmp_folder, GITHUB_ORG, self.model_id, self.cwd
             )
         )
 
     def _git_push(self):
         run_command(
-            'cd {0}/{1}; git add .; git commit -m "Updating metadata file from AirTable [skip ci]"; git push; cd {2}'.format(
+            'cd {0}/{1}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating metadata file from AirTable [skip ci]"; git push; cd {2}'.format(
                 self.tmp_folder, self.model_id, self.cwd
             )
         )
