@@ -10,9 +10,13 @@ We are currently working on a model incorporation pipeline. Content in this page
 
 ## Anatomy of the Ersilia Model Template
 
-Each model in the Ersilia Model Hub is contained within an individual GitHub repository. The [**Ersilia Model Template**](https://github.com/ersilia-os/eos-template) repository is stored as a GitHub Template, so you can [create a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) based on it.
+Each model in the Ersilia Model Hub is contained within an individual GitHub repository. Each model repository is created using the [**Ersilia Model Template**](https://github.com/ersilia-os/eos-template) upon approval of the Model Request issue. When the new repository is created, please fork it and work on modifying the template from your own user. Open a pull request when the model is ready.
 
-Below, we describe the template files in detail. Note that we only explain the files that you need to modify; other files, like `pack.py`, do not need modification from the model contributor.
+{% hint style="danger" %}
+When have finished the model incorporation, please delete the fork from your own GitHub user. This will prevent abuses of the Git-LFS quota and outdated versions of the models&#x20;
+{% endhint %}
+
+Below, we describe the main files you will find in the newly created model repository. Note that some of them are automatically updated and you do not have to modify them (like the `README.MD`), and some others are ready to be used and do not need modification either (like `pack.py`)
 
 ### The `eos` identifier
 
@@ -29,56 +33,80 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 * three alphanumeric (`a-z` and `0-9`) characters.
 
 {% hint style="success" %}
-The list of `eos` identifiers is pre-coded, please reach out to one of the Ersilia Model Hub managers, and do not come up with your own identifier
+`eos` identifiers are automatically assigned at repository creation. Please do not modify them.
+{% endhint %}
+
+### The `metadata.json` file
+
+The metadata.json file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable Model Hub and the README file will automatically be updatd from the metadata.json upon merge of the Pull Request.
+
+The .json fields are constrained by certain parameters. If they do not adhere to the minimal quality standards, the Pull Request will be rejected and an explanatory message will be available on the GitHub Action. Below we try to provide a comprehensive overview of the metadata accepted:
+
+**Identifier:** he `eos` identifier described above. It will be automatically filled in. Do not modify.
+
+**Slug:** a one-word or multi-word (linked by a hypen) human-readable identifier to be used as an alternative to the EOS ID. It will be filled in from the Model Request issue. it can be modified afterwards.
+
+**Title:** a self-descriptive model title (less than 70 characters)
+
+**Description**: minimum information about model type, results and the training dataset.
+
+{% hint style="info" %}
+Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based **TL;DR** short description of many indexed papers.&#x20;
+{% endhint %}
+
+**Task**: the ML task performed by the model. The only accepted [tasks](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/task.txt) are: Regression, Classification, Generative, Representation, Similarity, Clustering and Dimensionality reduction.
+
+**Mode**: [mode](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/mode.txt) of training of the models: Pretrained (the checkpoints where downloaded directly from a third party), Retrained (the model was trained again using the same or a new dataset), In-house (if the model has been developed from scratch by Ersilia's contributors) or Online (if the model sends queries to an external server)
+
+**Input:** data format required by the model. Most chemistry related models, for example, will require compounds as input. Currently, the only accepted [inputs](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input.txt) by Ersilia are Compound, Protein or Text
+
+**Input Shape:** [format](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input\_shape.txt) of the input data. It can be Single (one compound), Pair (for example, two compounds), a List, a Pair of Lists or a List of Lists. Please note this refers to the minimum shape for the model to work. If a model predicts, for example, the antimalarial potential of a small molecule, the input shape is Single, regardless of the fact that you can pass several compounds in a list.
+
+**Output:** description of the model result. It is important to choose the right description. Is the model providing a probability? Is it a score? Is it a new compound? The only accepted output formats are: Boolean, Compound, Descriptor, Distance, Experimental value, Image, Other value, Probability, Protein, Score, Text.
+
+**Output Type:** the only accepted output [types](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_type.txt) are String, Float or Integer. More than one type can be added as a list if necessary.
+
+**Output Shape:** similar to the input shape, in what format is the endpoint returned? The only accepted output [shapes](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_shape.txt) are: Single, List, Flexible List, Matrix or Serializable Object.
+
+**Interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification.
+
+**Tag:** labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.falciparum_ as tag. Select between one and five relevant from the following categories:
+
+* Disease: AIDS, Alzheimer, Cancer, Cardiotoxicity, COVID19, Dengue, Malaria, Neglected tropical disease, Schistosomiasis, Tuberculosis.
+* Organism: A.baumannii, E.coli, E.faecium, HIV, Human, K.pneumoniae, Mouse, M.tuberculosis, P.aeruginosa, P.falciparum, Rat, Sars-CoV-2, S.aureus, ESKAPE.
+* Target: BACE, CYP450, hERG.
+* Experiment: Fraction bound, IC50, LogD, LogP, LogS, MIC90, Molecular weight, Papp, pKa.
+* Application: ADME, Antimicrobial activity, Antiviral activity, Bioactivity profile, Lipophilicity, Metabolism, Microsomal stability, Natural product Price Quantum properties, Side effects, Solubility, Synthetic accessibility, Target identification, Therapeutic indication, Toxicity.
+* Dataset: ChEMBL, DrugBank, MoleculeNet, Tox21, ToxCast, ZINC, TDCommons.
+* Chemoinformatics: Chemical graph model, Chemical language model, Chemical notation, Chemical synthesis, Compound generation, Descriptor, Drug-likeness, Embedding, Fingerprint, Similarity.
+
+**Publication:** link to the original publication. Please refer to the journal page whenever possible, instead of pubmed, research gate or other secondary webs.
+
+**Source Code:** link to the original code repository of the model. If this is an in-house model, please add here the link of the ML package used to train the model.
+
+**License:** the License of the original code. We have included the following OS licences: MIT, GPL-3.0, LGPL-3.0, AGPL-3.0, Apache-2.0, BSD-2.0, BSD-3.0, Mozilla, CC. You can also select Proprietary, Non-commercial or None if required. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code (such as adding the license file together with the original code).
+
+{% hint style="info" %}
+If the predetermined fields are not sufficient for your use case, you can open a pull request to include new ones to our [repository](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). Please do so only if strictly necessary (for example, if a disease is not already in the Tag field).
+
+Ersilia maintainers will review and approve / reject PRs for additions
+{% endhint %}
+
+{% hint style="danger" %}
+Note that these fields are filled in as Python strings, therefore misspellings or lower / uppercases will affect their recognition as valid values.
 {% endhint %}
 
 ### The [`README`](https://github.com/ersilia-os/eos-template/blob/main/README.md) file
 
-The `README.md` file is where we give basic information about the model. It must include the following fields:
+The `README.md` file is where we give basic information about the model. It reads from the metadata.json file and it will be automatically updated thanks to a GitHub Action once the Pull Request is approved.
 
-**Title:** a self-descriptive model title (less than 70 characters)
-
-**Model Identifiers:** a set of codes that identify the model
-
-* Ersilia identifier (EOS ID): the `eos` identifier described above. Use the assigned identifier.
-* Slug: a one-word or multi-word (linked by a hypen) human-readable identifier to be used as an alternative to the EOS ID.
-* Tags: labels to facilitate model search. For example, a model that predicts activity against malaria could have _Plasmodium falciparum_ as tag. Select three relevant tags.
-
-**Description**: minimum information about model type, results and the training dataset.
-
-* Input: data format required by the model. Most chemistry related models, for example, will require molecules in SMILES format. If special input types are required, please specify them.
-* Output: description of the model result. It is important to be precise in this description. Is the model providing a probability? Is it a score? Is it single-output or multi-output? etc.
-* Model type: regression, classification, embedding...
-* Training set: number of compounds and link to the training dataset, if available
-* Mode of training: pretrained (the checkpoints where downloaded directly from a third party) retrained (the model was trained again using the same or a new dataset), new (if the model has been developed from scratch by Ersilia's contributors)
-
-{% hint style="info" %}
-Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based **TL;DR** short description of many indexed papers. \
-\
-You can also try [ChatGPT](https://openai.com/blog/chatgpt/)!
-{% endhint %}
-
-**Results interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification.
-
-**Source code:** this section must contain _all_ relevant information about the original authors of the model, including a link to the publication if the model has been published in a peer reviewed journal or is in a preprint repository, a link to the source code (typically, GitHub, GitLab or BitBucket) and a link to the model checkpoints directly, when available.
-
-**License:** in addition to the `LICENSE` file, it is good practice to specify the licenses in the `README` file. All models in the Ersilia Model Hub are licensed under an open source license. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code. You can read more about how we deal with Open Source Licenses [here](https://ersilia.gitbook.io/ersilia-book/contributors/open-source-licences).
-
-**History:** a short, numbered explanation of the modifications made in the source code, including the date of download and any steps taken to embed the model within the Ersilia Model Hub infrastructure.&#x20;
-
-**About us:** all Ersilia repositories contain a final _About_ section, please keep the predefined version.
-
-{% hint style="info" %}
-The `README` file is written in [Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) language. Please respect the hierarchy of headings provided in the template. Headings are specified with one or multiple `#` characters.
-{% endhint %}
+Please do not modify it manually.
 
 ### The [`LICENSE`](https://github.com/ersilia-os/eos-template/blob/main/LICENSE) file
 
 By default, all code written in contribution to Ersilia should be licensed under a [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html). The main `LICENSE` file of the repository, therefore, will be a GPLv3 as specified by [GitHub.](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-license-to-a-repository)
 
-However, the license notices for code developed by **third parties** must be kept in the respective folders where the third-party code is found. Include an explanation in the `README` file, for example:
-
-> The GPLv3 license applies to all parts of the repository that are not externally maintained libraries. This repository uses the externally maintained library ChemProp library, located at `./model` and licensed under an [MIT License](https://github.com/ersilia-os/eos4e40/blob/main/model/LICENSE.md).
+However, the license notices for code developed by **third parties** must be kept in the respective folders where the third-party code is found.
 
 ### The [`Dockerfile`](https://github.com/ersilia-os/eos-template/blob/main/Dockerfile) file
 
@@ -128,15 +156,15 @@ The `model` folder **should not** contain anything other than the `framework` an
 Often, the separation between `framework` and `checkpoints` is not easy to determine. Sometimes, models obtained from third parties have model data embedded within the code or as part of the repository. In these cases, it is perfectly fine to keep model data in the `framework` subfolder, and leave the `checkpoints` subfolder empty.
 {% endhint %}
 
-The `framework` subfolder contains at least one Bash file, named `run_[API_NAME].sh`. Many models will have an API called `predict`, so `run_predict.sh`is frequently used. This file will run as follows:
+The `framework` subfolder contains at least one Bash file, named `run.sh`. This file will run as follows:
 
 ```bash
-bash run_predict.sh [FRAMEWORK_DIR] [DATA_FILE] [OUTPUT_FILE]
+bash run.sh [FRAMEWORK_DIR] [DATA_FILE] [OUTPUT_FILE]
 ```
 
-Unless strictly necessary, the `run_predict.sh` file should accept three and only three arguments, namely `FRAMEWORK_DIR`, `DATA_FILE` and `OUTPUT_FILE`. In the current template, we provide the following example:
+Unless strictly necessary, the `run.sh` file should accept three and only three arguments, namely `FRAMEWORK_DIR`, `DATA_FILE` and `OUTPUT_FILE`. In the current template, we provide the following example:
 
-{% code title="run_predict.sh" %}
+{% code title="run.sh" %}
 ```bash
 python $1/code/step.py -i $2 -o $3
 ```
@@ -204,7 +232,7 @@ Most of the work of the model contributor will be to work on this or similar scr
 
 To summarize, in the template, we provide a structure that follows this logic:
 
-1. The `run_predict.sh` script executes the Python `main.py` script.
+1. The `run.sh` script executes the Python `main.py` script.
 2. The `step.py` script:
    * Defines the model code.
    * Loads parameters from `checkpoints`.
@@ -241,7 +269,7 @@ There are three main classes in the `service` file, namely `Model`, `Artifact` a
 
 #### The `Model` class
 
-This class is simply a wrapper for the AI/ML model. Typically, when incorporating **external** (type 1) models, the `run_predict.sh` script will already capture the logic within the `Model` class, in which case the `Model` class is simply redundant. However, when incorporating **internally developed** (types 2 and 3) models into the hub, we can make use of the artifacts for standard modeling frameworks (e.g. sklearn, PyTorch, and Keras) provided by BentoML, and the `Model` class becomes necessary for BentoML compatibility. Hence, the `Model` class enables generalization between these types of model additions.
+This class is simply a wrapper for the AI/ML model. Typically, when incorporating **external** (type 1) models, the `run.sh` script will already capture the logic within the `Model` class, in which case the `Model` class is simply redundant. However, when incorporating **internally developed** (types 2 and 3) models into the hub, we can make use of the artifacts for standard modeling frameworks (e.g. sklearn, PyTorch, and Keras) provided by BentoML, and the `Model` class becomes necessary for BentoML compatibility. Hence, the `Model` class enables generalization between these types of model additions.
 
 Typically, the central method of the `Model` class is the `predict` method.
 
@@ -291,7 +319,7 @@ class Model(object):
         ...
 ```
 
-Now we already have the input file of the `run_predict.sh`script, located in the `model/framework/` directory, as specified [above](model-incorporation-guidelines.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](model-incorporation-guidelines.md#the-model-folder) that the `run_predict.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
+Now we already have the input file of the `run.sh`script, located in the `model/framework/` directory, as specified [above](model-incorporation-guidelines.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](model-incorporation-guidelines.md#the-model-folder) that the `run.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
 
 ```python
 class Model(object):
@@ -301,7 +329,7 @@ class Model(object):
         run_file = os.path.join(tmp_folder, self.RUN_FILE)
         with open(run_file, "w") as f:
             lines = [
-                "bash {0}/run_predict.sh {0} {1} {2}".format(
+                "bash {0}/run.sh {0} {1} {2}".format(
                     self.framework_dir,
                     data_file,
                     output_file
@@ -635,11 +663,11 @@ def readFragmentScores(name='fpscores'):
 ```
 {% endcode %}
 
-#### Write the `run_predict.sh` file
+#### Write the `run.sh` file
 
-We now have the input adapter, the model code and parameters, and the output adapter. Let's simply write this pipeline in the `run_predict.sh` file:
+We now have the input adapter, the model code and parameters, and the output adapter. Let's simply write this pipeline in the `run.sh` file:
 
-{% code title="run_predict.sh" %}
+{% code title="run.sh" %}
 ```bash
 python $1/code/input_adapter.py $2
 python $1/code/sascorer.py tmp_input.smi > tmp_output.csv
@@ -663,12 +691,12 @@ COC1=CC=C(C=C1)C(=O)CC(=O)C1=CC=C(C=C1)C(C)(C)C
 ```
 {% endcode %}
 
-To test the model, we simply have to execute the `run_predict.sh` script.
+To test the model, we simply have to execute the `run.sh` script.
 
 ```
 cd ~/Desktop
 FRAMEWORK_PATH="eos9ei3/model/framework/"
-bash $FRAMEWORK_PATH/run_predict.sh $FRAMEWORK_PATH molecules.csv output.csv
+bash $FRAMEWORK_PATH/run.sh $FRAMEWORK_PATH molecules.csv output.csv
 ```
 
 You should get the `output.csv` file in your `~/Desktop`. The output contains five predictions, corresponding to the five molecules in the `molecules.csv` file.
@@ -780,7 +808,7 @@ In summary, the steps to incorporate a model to the Ersilia Model Hub are the fo
 3. Create a new GitHub repository from the `eos-template`. Name this repository with the EOS ID available from the AirTable.
 4. Clone the new repository.
 5. Place model code in `model/framework` and model parameters in `model/checkpoints`.
-6. Write the necessary code to obtain a `run_predict.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
+6. Write the necessary code to obtain a `run.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
 7. Edit the `service.py` file, if necessary.
 8. Edit the `Dockerfile` file to reflect the installation steps followed in 2.
 9. Write the `README` file.
