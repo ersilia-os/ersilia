@@ -17,18 +17,16 @@ In this page, we focus on the first type of models, i.e. models developed by **t
 First, check our Model Hub Backend, which contains:
 
 * **Model Hub:** [models](https://airtable.com/shrNc3sTtTA3QeEZu/tblZGe2a2XeBxrEHP) that are already in the Hub or being incorporated at the moment. Each model should contain accurate information about its usage, source and any other relevant information.
-* **Model Suggestions:** Contains a [backlog](https://airtable.com/shrTpe45mLKqaHXsc) of models that could be of interest to Ersilia with minimal information about them. There is a _Selected_ tickbox that __ means that someone is already working on the model. Once a model is incorporated it is flitered out of this list. If you have a new model suggestion, please fill in this [form](https://airtable.com/shroQLlkcmDcC0xzm) with as much detail as possible.
+* **Model Suggestions:** Contains a [backlog](https://airtable.com/shrZdogkgUk8ICyO5) of models that could be of interest to Ersilia. This sheet contains minimal information about the models. There is an _Approved_ and a _Selected_ tickbox. _Approved_ means that Ersilia is willing to incorporate this model. _Selected_ means that someone is already working on the model or the model has been successfully incorporated in the Ersilia Model Hub.
 
 To start contributing:
 
-1. We only accept contributions through GitHub. Please make sure you have an account and are familiar with the basic git commands (clone, pull and push)
-2. Become a member of the **Ersilia Slack** Workspace. All our communications are centralised there. If you need a sign up link, please email us at hello@ersilia.io
-3. Join the **#model-contributors** channel in Slack and ask for edit permits for the Spreadsheet.
-4. Fill in models of interest in the **Model Suggestions** [list](https://airtable.com/shroQLlkcmDcC0xzm) (if you need some sources of inspiration, check below)
-5. Select a model of interest from the approved backlog and open a Model Request issue in the Ersilia [repository](https://github.com/ersilia-os/ersilia/issues/new/choose).
-6. Wait for the issue to be approved. This will trigger an automatic Action that will create a new repository for the model.
-7. Fork the repository.
-8. Start coding! Head to the [Model Incorporation Guidelines](../ersilia-model-hub/contribute-models/model-incorporation-guidelines.md) for more information.
+1. Become a member of the **Ersilia Slack** Workspace. All our communications are centralised there. If you need a sign up link, please email us at hello@ersilia.io
+2. Join the **#contributors** channel in Slack and ask for edit permits for the Spreadsheet.
+3. Fill in models of interest in the **Model Suggestions** list (if you need some sources of inspiration, check below)
+4. Wait for model to be **approved** (or select an already approved one) and notify everyone of your selection on the #contributors channel to avoid duplication.
+5. Fill in the information on the Model Hub sheet. Use the next available EOS ID and **do not** modify it.
+6. Start coding! Head to the [Model Incorporation Guidelines](../ersilia-model-hub/contribute-models/model-incorporation-guidelines.md) for more information.
 
 ### Know where to find models and get inspiration
 
@@ -43,3 +41,6 @@ Unfortunately, there is no centralized resource to find AI/ML models for drug di
 * Use Twitter: follow accounts like [@KevinKaichuang](https://twitter.com/KevinKaichuang), [@andrewwhite01](https://twitter.com/andrewwhite01), [@EricTopol](https://twitter.com/erictopol), [@iamtrask](https://twitter.com/iamtrask) and [@janjensen](https://twitter.com/janjensen). From Ersilia ([@ersiliaio](https://twitter.com/ersiliaio), [@mduranfrigola](https://twitter.com/mduranfrigola), [@TuronGemma](https://twitter.com/TuronGemma)) we tend to retweet relevant literature.
 * Use the `#literature` channel in the Ersilia Slack workspace to get inspiration.
 * Check the models backlog in the [Ersilia Model Hub](https://airtable.com/shrNc3sTtTA3QeEZu) to avoid duplications and get inspiration too.
+
+
+

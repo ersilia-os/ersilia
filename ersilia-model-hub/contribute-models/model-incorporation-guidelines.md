@@ -38,9 +38,9 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 
 ### The `metadata.json` file
 
-The metadata.json file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable Model Hub and the README file will automatically be updatd from the metadata.json upon merge of the Pull Request.
+The `metadata.json` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable Model Hub and the README file will automatically be updatd from the metadata.json upon merge of the Pull Request.
 
-The .json fields are constrained by certain parameters. If they do not adhere to the minimal quality standards, the Pull Request will be rejected and an explanatory message will be available on the GitHub Action. Below we try to provide a comprehensive overview of the metadata accepted:
+The `.json` fields are constrained by certain parameters. If they do not adhere to the minimal quality standards, the Pull Request will be rejected and an explanatory message will be available on the GitHub Action. Below we try to provide a comprehensive overview of the metadata accepted:
 
 **Identifier:** he `eos` identifier described above. It will be automatically filled in. Do not modify.
 
@@ -416,13 +416,9 @@ You can **rename the API** (for example, to `calculate`), following the `# EDIT`
 
 Now that we have an idea of the contents of the [Ersilia Model Template](https://github.com/ersilia-os/eos-template), we will follow the example of a simple but widely used model to calculate the **synthetic accessibility** of small molecule compounds. Synthetic accessibility measures the feasibility of synthesizing a molecule in the laboratory. In [2009, Peter Ertl presented the synthetic accessiblity (SA) score](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), based on measures of molecular complexity and occurrence of certain fragments in the small molecule structure. High (greater than 6) SA scores denote difficult-to-synthesize molecules, and low (lower than 3) SA scores suggest that the molecule will be easy to synthesize.
 
-### Include the model to the Ersilia Model Hub AirTable
+### Open a Model Request Issue
 
-The [Ersilia CLI](https://github.com/ersilia-os/ersilia) accesses data contained in the [Ersilia Model Hub AirTable](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP) database. Thus, the first step is to include the model entry in the database. You can follow the instruction in the [model selection](broken-reference) page. You will see that, in the Ersilia Model Hub, the current model has the EOS identifier `eos-9ei3` and the slug `sa-score`.
-
-{% hint style="info" %}
-Please contact **@Miquel** if your model is not included in the AirTable database.
-{% endhint %}
+We have an automated workflow that triggers all the necessary steps once the Model Request is approved. Please fill in the[ issue](https://github.com/ersilia-os/ersilia/issues/new?assignees=\&labels=new-model\&template=model\_request.yml\&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) fields as accurately as possible and wait for review and approval by one of the Ersilia maintainers.
 
 #### Read the publication
 
@@ -527,28 +523,15 @@ Many repositories give a clear description of the expected input format. For the
 
 ### Create the model repository from the Ersilia Model Template
 
-Now that we know that the code can run in our local machine, we can create the corresponding respository in the Ersilia GitHub organization.
-
-#### Use the eos-template
-
-The easiest way to create the repository is to visit the `eos-template` [GitHub repository page](https://github.com/ersilia-os/eos-template). In green (top-right), you will find the **Use this template** button.
-
-A page to create a new repository from `eos-template` will open:
-
-* Set the **Owner** to `ersilia-os`.
-* In the **Repository name**, enter the EOS identifier. In this case, `eos9ei3`.
-* Use the **Description** provided in the [Ersilia Model Hub AirTable](https://airtable.com/shrUcrUnd7jB9ChZV/tblZGe2a2XeBxrEHP).
-* Keep the repository **Public**.
-
-Click **Create repository from template**.
+Now that we know that the code can run in our local machine, we can fork the model template created by the workflow and start working on it.
 
 #### Clone the new repository
 
-We can now clone the repository in our local machine. Let's do it in the `~/Desktop`:
+Once we have forked it, we can clone the repository in our local machine. Let's do it in the `~/Desktop`:
 
 ```bash
 cd ~/Desktop
-git clone https://github.com/ersilia-os/eos9ei3.git
+git clone https://github.com/user-github/eos9ei3.git
 cd eos9ei3
 ```
 
@@ -736,13 +719,13 @@ COPY . /repo
 ```
 {% endcode %}
 
-### Write the `README` file
+### Write the `metadata.json` file
 
-Don't forget document the model. Read the [instructions to write the `README` file](model-incorporation-guidelines.md#the-readme-file) page. Feel free to ask for help in the Slack `#internships` channel.
+Don't forget to document the model. Read the [instructions to write the `metadata` file](model-incorporation-guidelines.md#the-metadata.json-file) page. Feel free to ask for help in the Slack `#internships` channel.
 
 ### Commit changes to the repository
 
-We are ready to commit changes and push them to the Ersilia Model Hub.
+We are ready to commit changes, first to our fork
 
 #### Check the `.gitattributes` file
 
@@ -765,6 +748,12 @@ git add .
 git commit -m "first major commit"
 git push
 ```
+
+#### Open a pull request
+
+Once the model is ready, open a pull request to merge your changes back into the main repository. This will trigger a series of checks to ensure that the metadata is correct and that the model is running.
+
+If the Actions at Pull request fail, please check them and work on debugging them before making a new pull request. Ersilia maintainers will only merge PR's that have passed all the checks.
 
 You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-os/eos9ei3) and check that your work is publicly available.
 
@@ -805,17 +794,15 @@ In summary, the steps to incorporate a model to the Ersilia Model Hub are the fo
 
 1. Download the model from a third party repository to your local machine.
 2. Install the model in a dedicated Conda environment and make sure you can run it.
-3. Create a new GitHub repository from the `eos-template`. Name this repository with the EOS ID available from the AirTable.
-4. Clone the new repository.
+3. Open a Model Request issue in the Ersilia Model Hub code repository. Wait for approval to automatically obtain a new model repository from the `eos-template`
+4. Fork the new repository.
 5. Place model code in `model/framework` and model parameters in `model/checkpoints`.
 6. Write the necessary code to obtain a `run.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
 7. Edit the `service.py` file, if necessary.
 8. Edit the `Dockerfile` file to reflect the installation steps followed in 2.
-9. Write the `README` file.
+9. Update the `metadata.json` following the guidelines
 10. Make sure that `.gitattributes` tracks your model parameters.
-11. Add, commit and push changes to the model repository.
-12. Activate the Ersilia CLI and fetch the model.
+11. Open a PR to the the model repository, and check that all tests are passed. If not, try to identify the bug to solve it.
+12. Once the PR passes all the tests and is merged, activate the Ersilia CLI and fetch the model.
 13. Serve the model and run the default API.
-
-
-
+14. Delete your fork
