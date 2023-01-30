@@ -38,11 +38,11 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 
 ### The `metadata.json` file
 
-The `metadata.json` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable Model Hub and the README file will automatically be updatd from the metadata.json upon merge of the Pull Request.
+The `metadata.json` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable Model Hub and the README file will automatically be updatd from the `metadata.json` upon merge of the Pull Request.
 
 The `.json` fields are constrained by certain parameters. If they do not adhere to the minimal quality standards, the Pull Request will be rejected and an explanatory message will be available on the GitHub Action. Below we try to provide a comprehensive overview of the metadata accepted:
 
-**Identifier:** he `eos` identifier described above. It will be automatically filled in. Do not modify.
+**Identifier:** the `eos` identifier described above. It will be automatically filled in. _Do not modify._
 
 **Slug:** a one-word or multi-word (linked by a hypen) human-readable identifier to be used as an alternative to the EOS ID. It will be filled in from the Model Request issue. it can be modified afterwards.
 
@@ -54,42 +54,42 @@ The `.json` fields are constrained by certain parameters. If they do not adhere 
 Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based **TL;DR** short description of many indexed papers.&#x20;
 {% endhint %}
 
-**Task**: the ML task performed by the model. The only accepted [tasks](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/task.txt) are: Regression, Classification, Generative, Representation, Similarity, Clustering and Dimensionality reduction.
+**Task**: the ML task performed by the model. The only accepted [tasks](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/task.txt) are: `Regression`, `Classification`, `Generative`, `Representation`, `Similarity`, `Clustering` and `Dimensionality reduction`.
 
-**Mode**: [mode](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/mode.txt) of training of the models: Pretrained (the checkpoints where downloaded directly from a third party), Retrained (the model was trained again using the same or a new dataset), In-house (if the model has been developed from scratch by Ersilia's contributors) or Online (if the model sends queries to an external server)
+**Mode**: [mode](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/mode.txt) of training of the models: `Pretrained` (the checkpoints where downloaded directly from a third party), Retrained (the model was trained again using the same or a new dataset), In-house (if the model has been developed from scratch by Ersilia's contributors) or Online (if the model sends queries to an external server)
 
-**Input:** data format required by the model. Most chemistry related models, for example, will require compounds as input. Currently, the only accepted [inputs](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input.txt) by Ersilia are Compound, Protein or Text
+**Input:** data format required by the model. Most chemistry related models, for example, will require compounds as input. Currently, the only accepted [inputs](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input.txt) by Ersilia are `Compound`, `Protein` or `Text`.
 
-**Input Shape:** [format](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input\_shape.txt) of the input data. It can be Single (one compound), Pair (for example, two compounds), a List, a Pair of Lists or a List of Lists. Please note this refers to the minimum shape for the model to work. If a model predicts, for example, the antimalarial potential of a small molecule, the input shape is Single, regardless of the fact that you can pass several compounds in a list.
+**Input Shape:** [format](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input\_shape.txt) of the input data. It can be `Single` (one compound), `Pair` (for example, two compounds), a `List`, a Pair of Lists or a `List of Lists`. Please note this refers to the minimum shape for the model to work. If a model predicts, for example, the antimalarial potential of a small molecule, the input shape is Single, regardless of the fact that you can pass several compounds in a list.
 
-**Output:** description of the model result. It is important to choose the right description. Is the model providing a probability? Is it a score? Is it a new compound? The only accepted output formats are: Boolean, Compound, Descriptor, Distance, Experimental value, Image, Other value, Probability, Protein, Score, Text.
+**Output:** description of the model result. It is important to choose the right description. Is the model providing a probability? Is it a score? Is it a new compound? The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`.
 
-**Output Type:** the only accepted output [types](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_type.txt) are String, Float or Integer. More than one type can be added as a list if necessary.
+**Output Type:** the only accepted output [types](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_type.txt) are `String`, `Float` or `Integer`. More than one type can be added as a list if necessary.
 
-**Output Shape:** similar to the input shape, in what format is the endpoint returned? The only accepted output [shapes](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_shape.txt) are: Single, List, Flexible List, Matrix or Serializable Object.
+**Output Shape:** similar to the input shape, in what format is the endpoint returned? The only accepted output [shapes](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_shape.txt) are: `Single`, `List`, `Flexible List`, `Matrix` or `Serializable Object`.
 
 **Interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification.
 
 **Tag:** labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.falciparum_ as tag. Select between one and five relevant from the following categories:
 
-* Disease: AIDS, Alzheimer, Cancer, Cardiotoxicity, COVID19, Dengue, Malaria, Neglected tropical disease, Schistosomiasis, Tuberculosis.
-* Organism: A.baumannii, E.coli, E.faecium, HIV, Human, K.pneumoniae, Mouse, M.tuberculosis, P.aeruginosa, P.falciparum, Rat, Sars-CoV-2, S.aureus, ESKAPE.
-* Target: BACE, CYP450, hERG.
-* Experiment: Fraction bound, IC50, LogD, LogP, LogS, MIC90, Molecular weight, Papp, pKa.
-* Application: ADME, Antimicrobial activity, Antiviral activity, Bioactivity profile, Lipophilicity, Metabolism, Microsomal stability, Natural product Price Quantum properties, Side effects, Solubility, Synthetic accessibility, Target identification, Therapeutic indication, Toxicity.
-* Dataset: ChEMBL, DrugBank, MoleculeNet, Tox21, ToxCast, ZINC, TDCommons.
-* Chemoinformatics: Chemical graph model, Chemical language model, Chemical notation, Chemical synthesis, Compound generation, Descriptor, Drug-likeness, Embedding, Fingerprint, Similarity.
+* Disease: `AIDS`, `Alzheimer`, `Cancer`, `Cardiotoxicity`, `COVID19`, `Dengue`, `Malaria`, `Neglected tropical disease`, `Schistosomiasis`, `Tuberculosis`.
+* Organism: `A.baumannii`, `E.coli`, `E.faecium`, `HIV`, `Human`, `K.pneumoniae`, `Mouse`, `M.tuberculosis`, `P.aeruginosa`, `P.falciparum`, `Rat`, `Sars-CoV-2`, `S.aureus`, `ESKAPE`.
+* Target: `BACE`, `CYP450`, `hERG`.
+* Experiment: `Fraction bound`, `IC50`, `LogD`, `LogP`, `LogS`, `MIC90`, `Molecular weight`, `Papp`, `pKa`.
+* Application: `ADME`, `Antimicrobial activity`, `Antiviral activity`, `Bioactivity profile`, `Lipophilicity`, `Metabolism`, `Microsomal stability`, `Natural product`, `Price`, `Quantum properties`, `Side effects`, `Solubility`, `Synthetic accessibility`, `Target identification`, `Therapeutic indication`, `Toxicity`.
+* Dataset: `ChEMBL`, `DrugBank`, `MoleculeNet`, `Tox21`, `ToxCast`, `ZINC`, `TDCommons`.
+* Chemoinformatics: `Chemical graph model`, `Chemical language model`, `Chemical notation`, `Chemical synthesis`, `Compound generation`, `Descriptor`, `Drug-likeness`, `Embedding`, `Fingerprint`, `Similarity`.
 
-**Publication:** link to the original publication. Please refer to the journal page whenever possible, instead of pubmed, research gate or other secondary webs.
+**Publication:** link to the original publication. Please refer to the journal page whenever possible, instead of Pubmed, Researchgate or other secondary webs.
 
 **Source Code:** link to the original code repository of the model. If this is an in-house model, please add here the link of the ML package used to train the model.
 
-**License:** the License of the original code. We have included the following OS licences: MIT, GPL-3.0, LGPL-3.0, AGPL-3.0, Apache-2.0, BSD-2.0, BSD-3.0, Mozilla, CC. You can also select Proprietary, Non-commercial or None if required. Please make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code (such as adding the license file together with the original code).
+**License:** the License of the original code. We have included the following OS licences: `MIT`, `GPL-3.0`, `LGPL-3.0`, `AGPL-3.0`, `Apache-2.0`, `BSD-2.0`, `BSD-3.0`, `Mozilla`, `CC`. You can also select `Proprietary or` `Non-commercial` if the authors have included their own license notice (for example restricting commercial usage). If the code was released without a license, please add `None` in this field. Make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code (such as adding the license file together with the original code).
 
 {% hint style="info" %}
 If the predetermined fields are not sufficient for your use case, you can open a pull request to include new ones to our [repository](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). Please do so only if strictly necessary (for example, if a disease is not already in the Tag field).
 
-Ersilia maintainers will review and approve / reject PRs for additions
+Ersilia maintainers will review and approve / reject PRs for additions to the exsting lists of approved items.
 {% endhint %}
 
 {% hint style="danger" %}
