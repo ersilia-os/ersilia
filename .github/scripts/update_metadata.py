@@ -92,7 +92,7 @@ class UpdateMetadata:
         self.log.info(
             f"populating {self.metadata_filename} with new model submission request data"
         )
-
+        print(self.json_input)
         # Match the metadata keys to the JSON input keys
         # We will only populate the metadata file with the JSON input if the metadata file is empty ("" or [])
         # This is gross, sorry
