@@ -101,7 +101,9 @@ jobs:
           git lfs install
           touch mock.csv
           git lfs track mock.csv
-          git add .
+          git add .gitattributes
+          git add mock.csv
+          git lfs ls-files
         
       - name: commit and push changes
         uses: actions-js/push@master
