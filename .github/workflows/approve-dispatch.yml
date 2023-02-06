@@ -99,10 +99,10 @@ jobs:
         run: |
           cd $REPO
           git lfs install
-          touch mock.csv
-          git lfs track mock.csv
+          echo "This is a mock git lfs file" mock.txt
+          git lfs track mock.txt
           git add .gitattributes
-          git add mock.csv
+          git add mock.txt
           git lfs ls-files
         
       - name: commit and push changes
