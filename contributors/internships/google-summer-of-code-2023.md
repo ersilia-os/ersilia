@@ -1,0 +1,15 @@
+---
+description: >-
+  This page lists all the necessary documentation to apply to Google Summer of
+  Code 2023 with Ersilia
+---
+
+# Google Summer of Code 2023
+
+## Ideas List
+
+
+
+
+
+## Contributor Guidance
