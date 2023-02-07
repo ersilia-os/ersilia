@@ -44,13 +44,13 @@ Please check the package requirements in the [Installation Guide](https://ersili
 1. Once the Ersilia Model Hub is installed, you can use the CLI to run predictions. First, select a model from the [Ersilia Model Hub](https://ersilia.io/model-hub/) and **fetch** it:
 
     ```bash
-    ersilia fetch chemprop-antibiotic
+    ersilia fetch retrosynthetic-accessibility
     ```
 
 1. Generate a few (5) example molecules, to be used as input. The **example** command will generate the adequate input for the model in use
 
     ```bash
-    ersilia example chemprop-antibiotic -n 5 -f my_molecules.csv
+    ersilia example retrosynthetic-accessibility -n 5 -f my_molecules.csv
     ```
 
 1. Then, **serve** your model:
