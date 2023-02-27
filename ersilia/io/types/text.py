@@ -1,7 +1,7 @@
 import os
 import random
 import csv
-from ...utils.identifiers.protein import TextIdentifier 
+from ...utils.identifiers.text import TextIdentifier 
 from . import EXAMPLES_FOLDER
 
 EXAMPLES = "text.tsv"
