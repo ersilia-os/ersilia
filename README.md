@@ -56,7 +56,7 @@ Please check the package requirements in the [Installation Guide](https://ersili
 1. Then, **serve** your model:
 
     ```bash
-    ersilia serve chemprop-antibiotic
+    ersilia serve retrosynthetic-accessibility
     ```
 
 1. And run the prediction **API**:
