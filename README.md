@@ -93,7 +93,7 @@ After submitting your model request via an issue (suggested), a maintainer will 
 ## License and Citation
 
 This repository is open-sourced under the [GPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
-Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it!
 
 ## About Us
 
