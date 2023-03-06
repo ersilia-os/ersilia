@@ -27,7 +27,7 @@ from ..lake.base import LakeBase
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
-from ..default import DEFAULT_BATCH_SIZE
+from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
 
 try:
     import pandas as pd
@@ -138,7 +138,7 @@ class ErsiliaModel(ErsiliaBase):
 
     def _set_apis(self):
         apis_list = os.path.join(
-            self._get_bundle_location(self.model_id), "apis_list.txt"
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
         )
         api_names = []
         if os.path.exists(apis_list):
@@ -428,3 +428,10 @@ class ErsiliaModel(ErsiliaBase):
     def example(self, n_samples, file_name=None, simple=True):
         eg = ExampleGenerator(model_id=self.model_id, config_json=self.config_json)
         return eg.example(n_samples=n_samples, file_name=file_name, simple=simple)
+
+    def info(self):
+        information_file = os.path.join(
+            self._model_path(self.model_id), INFORMATION_FILE
+        )
+        with open(information_file, "r") as f:
+            return json.load(f)

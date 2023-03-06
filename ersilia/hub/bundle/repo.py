@@ -69,6 +69,23 @@ class ServiceFile(object):
         with open(file_name, "w") as f:
             f.write(text)
 
+    def add_info_api(self, information_file):
+        """Adds and info api to the service"""
+        file_name = self.get_file()
+        with open(file_name, "r") as f:
+            text = f.read()
+        splitter_string = "Service.__name__"
+        text = text.split(splitter_string)
+        a = text[0]
+        b = text[1]
+        a += "    @api(input=JsonInput(), batch=True)\n"
+        a += "    def info(self, input=None):\n"
+        a += "        data = json.load(open('{0}', 'r'))\n".format(information_file)
+        a += "        return [data]\n\n"
+        with open(file_name, "w") as f:
+            s = a + splitter_string + b
+            f.write(s)
+
     def check(self):
         """checks if the service.py contains the Service Class"""
         return self._has_service_class()

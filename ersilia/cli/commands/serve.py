@@ -46,3 +46,6 @@ def serve_cmd():
         apis = mdl.get_apis()
         for api in apis:
             echo("   - {0}".format(api), fg="blue")
+        echo("")
+        echo(":person_tipping_hand: Information:", fg="blue")
+        echo("   - info", fg="blue")

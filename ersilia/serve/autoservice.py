@@ -14,7 +14,7 @@ from ..db.environments.managers import DockerManager
 from .. import ErsiliaBase
 from ..utils import tmp_pid_file
 
-from ..default import DEFAULT_BATCH_SIZE
+from ..default import DEFAULT_BATCH_SIZE, SERVICE_CLASS_FILE, APIS_LIST_FILE
 
 DEFAULT_OUTPUT = None
 
@@ -32,7 +32,7 @@ class AutoService(ErsiliaBase):
         if service_class is None:
             self.logger.debug("No service class provided, deciding automatically")
             service_class_file = os.path.join(
-                self._get_bundle_location(model_id), "service_class.txt"
+                self._get_bundle_location(model_id), SERVICE_CLASS_FILE
             )
             if os.path.exists(service_class_file):
                 self.logger.debug(
@@ -145,7 +145,7 @@ class AutoService(ErsiliaBase):
         if self.service is None:
             return
         apis_list = os.path.join(
-            self._get_bundle_location(self.model_id), "apis_list.txt"
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
         )
         if os.path.exists(apis_list):
             with open(apis_list, "r") as f:

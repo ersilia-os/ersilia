@@ -17,8 +17,10 @@ from .actions.toolize import ModelToolizer
 from .actions.content import CardGetter
 from .actions.check import ModelChecker
 from .actions.sniff import ModelSniffer
+from .actions.inform import ModelInformer
 
 from . import STATUS_FILE, DONE_TAG
+from ...default import INFORMATION_FILE
 
 
 class ModelFetcher(ErsiliaBase):
@@ -90,6 +92,10 @@ class ModelFetcher(ErsiliaBase):
     def _sniff(self):
         sn = ModelSniffer(self.model_id, self.config_json)
         sn.sniff()
+
+    def _inform(self):
+        mi = ModelInformer(self.model_id, self.config_json)
+        mi.inform()
 
     def _success(self):
         done = {DONE_TAG: True}
@@ -166,6 +172,7 @@ class ModelFetcher(ErsiliaBase):
                 self.progress["step8_seconds"] - self.progress["step7_seconds"]
             )
         )
+        self._inform()
         self._success()
         progress_bar.close()
         end = timer()

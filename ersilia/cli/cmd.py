@@ -37,6 +37,10 @@ class Command(object):
         m = importlib.import_module("ersilia.cli.commands.example")
         m.example_cmd()
 
+    def info(self):
+        m = importlib.import_module("ersilia.cli.commands.info")
+        m.info_cmd()
+
     def fetch(self):
         m = importlib.import_module("ersilia.cli.commands.fetch")
         m.fetch_cmd()
