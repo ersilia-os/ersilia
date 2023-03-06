@@ -75,9 +75,11 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">I</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">Paths</span>
 <span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDockerfileParser</span>
 <span class="kn">from</span> <span class="nn">...utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
+<span class="kn">from</span> <span class="nn">...utils.system</span> <span class="kn">import</span> <span class="n">SystemChecker</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span>
     <span class="n">DOCKER_BENTO_PATH</span><span class="p">,</span>
@@ -226,6 +228,23 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">None</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;slim&quot;</span><span class="p">:</span> <span class="n">slim</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]}</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;py30&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py31&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py32&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py33&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py34&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py35&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py36&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py37&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py38&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;py39&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">if</span> <span class="n">SystemChecker</span><span class="p">()</span><span class="o">.</span><span class="n">is_arm64</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;py310&quot;</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="DockerfileFile.has_runs"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.has_runs">[docs]</a>    <span class="k">def</span> <span class="nf">has_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -254,8 +273,10 @@
         <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">needs_conda</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">needs_conda</span><span class="p">()</span>
-        <span class="n">runs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">get_conda_and_pip_install_commands_from_dockerfile_if_exclusive</span><span class="p">(</span>
-            <span class="n">fn</span>
+        <span class="n">runs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">get_conda_and_pip_install_commands_from_dockerfile_if_exclusive</span><span class="p">(</span>
+                <span class="n">fn</span>
+            <span class="p">)</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">runs</span><span class="p">:</span>
             <span class="n">exclusive_conda_and_pip</span> <span class="o">=</span> <span class="kc">True</span>
