@@ -3,7 +3,7 @@ import shutil
 from . import BaseAction
 from ....utils.download import GitHubDownloader
 from ....utils.paths import Paths
-from ...bundle.repo import PackFile
+from ...bundle.repo import PackFile, DockerfileFile
 from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.exceptions_utils.fetch_exceptions import FolderNotFoundError
 
@@ -41,6 +41,28 @@ class ModelRepositoryGetter(BaseAction):
     def _copy_from_github(self, dst):
         self.github_down.clone(org=self.org, repo=self.model_id, destination=dst)
 
+    def _change_py_version_in_dockerfile_if_necessary(self):
+        path = self._model_path(model_id=self.model_id)
+        df = DockerfileFile(path=path)
+        version = df.get_bentoml_version()
+        self.logger.debug(version)
+        dockerfile_path = os.path.join(path, "Dockerfile")
+        with open(dockerfile_path, "r") as f:
+            R = f.readlines()
+        S = []
+        for r in R:
+            if r.startswith("FROM "):
+                r = r.split("-")
+                if r[-1].startswith("py"):
+                    p = version["python"]
+                    r = "-".join(r[:-1] + [p])
+                else:
+                    r = "-".join(r)
+            S += [r]
+        with open(dockerfile_path, "w") as f:
+            for s in S:
+                f.write(s + os.linesep)
+
     def get(self):
         """Copy model repository from local or download from GitHub"""
         folder = self._model_path(self.model_id)
@@ -53,6 +75,7 @@ class ModelRepositoryGetter(BaseAction):
         else:
             self.logger.debug("Cloning from github to {0}".format(folder))
             self._copy_from_github(folder)
+        self._change_py_version_in_dockerfile_if_necessary()
 
 
 #  TODO: work outside GIT LFS

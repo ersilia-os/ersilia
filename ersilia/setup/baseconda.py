@@ -7,6 +7,8 @@ from ..utils.terminal import run_command
 from ..utils.versioning import Versioner
 from .utils.clone import ErsiliaCloner
 
+from .. import logger
+
 
 class SetupBaseConda(object):
     def __init__(self, config_json=None):
@@ -41,8 +43,10 @@ class SetupBaseConda(object):
         tag = self._parse_tag(tag)
         if self._is_bentoml(org):
             if tag["ver"] == "0.11.0":
+                logger.debug("Installing from ersilia's custom BentoML")
                 cmd = "python -m pip install git+https://github.com/ersilia-os/bentoml-ersilia.git"
             else:
+                logger.debug("Installing from BentoML directly")
                 cmd = "python -m pip install bentoml=={0}".format(tag["ver"])
         elif self._is_ersiliaos(org):
             cmd = "python -m pip install -e ."
@@ -81,7 +85,7 @@ class SetupBaseConda(object):
         return ".".join(kept[0].split(".")[:2])
 
     def setup(self, org, tag):
-        """Creates a conda enviornment to be used as base environment to be used as model server.
+        """Creates a conda environment to be used as base environment for the model server.
 
         Args:
             org: organisation (bentoml or ersiliaos)

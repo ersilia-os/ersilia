@@ -7,6 +7,7 @@ from ... import ModelBase
 
 def test_cmd():
     """Test a model"""
+
     # Example usage: ersilia test {MODEL} [--repo_path {DIRECTORY}]
     @ersilia_cli.command(
         short_help="Test a model",

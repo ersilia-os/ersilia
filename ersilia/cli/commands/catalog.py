@@ -9,6 +9,7 @@ from ...hub.content.table_update import table
 
 def catalog_cmd():
     """Creates catalog command"""
+
     # Example usage: ersilia catalog
     @ersilia_cli.command(help="List a catalog of models")
     @click.option(
@@ -41,7 +42,6 @@ def catalog_cmd():
     def catalog(
         local=False, search=None, text=None, mode=None, next=False, previous=False
     ):
-
         mc = ModelCatalog()
         if not (local or text or mode):
             catalog = mc.hub()

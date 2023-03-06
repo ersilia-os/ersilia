@@ -30,7 +30,6 @@ class table(object):
         return CatalogTable(data=R, columns=self.catalog.columns)
 
     def next_table(self):
-
         table_no = counter
         data = self.catalog.data
         page_size = self.page_size

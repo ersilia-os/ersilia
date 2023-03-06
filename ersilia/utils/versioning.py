@@ -63,6 +63,6 @@ class Versioner(ErsiliaBase):
 
     @staticmethod
     def reformat_py(v):
-        if len(v) != 4:
+        if len(v) < 4:
             raise Exception
-        return "{0}.{1}".format(v[2], v[3])
+        return "{0}.{1}".format(v[2], v[3:])

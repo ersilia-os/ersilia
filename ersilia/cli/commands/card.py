@@ -7,6 +7,7 @@ from ... import ModelBase
 
 def card_cmd():
     """Creates card command"""
+
     # Example usage: ersilia card {MODEL}
     @ersilia_cli.command(
         short_help="Get model info card",

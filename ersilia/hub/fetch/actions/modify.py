@@ -12,6 +12,7 @@ from ...bundle.bundle import (
     BundleDockerfileFile,
     BundleRequirementsFile,
 )
+from ...bundle.repo import DockerfileFile
 
 
 class ModelModifier(BaseAction):

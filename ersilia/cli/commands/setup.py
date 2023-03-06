@@ -6,6 +6,7 @@ from ...utils.installers import base_installer, full_installer
 
 def setup_cmd():
     """Creates setup command"""
+
     # Example usage: ersilia setup
     @ersilia_cli.command(
         short_help="Setup ersilia",

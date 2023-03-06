@@ -35,9 +35,7 @@ class ModelSearcher(object):
         for col in range(1, cols):
             for row in range(1, rows):
                 if s[row - 1] == t[col - 1]:
-                    cost = (
-                        0
-                    )  # If the characters are the same in the two strings in a given position [i,j] then the cost is 0
+                    cost = 0  # If the characters are the same in the two strings in a given position [i,j] then the cost is 0
                 else:
                     cost = 2
 

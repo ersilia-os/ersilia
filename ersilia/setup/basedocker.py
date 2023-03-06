@@ -5,6 +5,7 @@ from ..utils.versioning import Versioner
 from .. import ErsiliaBase
 from .utils.clone import ErsiliaCloner
 
+
 # TODO: Make sure it is used.
 class SetupBaseDocker(ErsiliaBase):
     def __init__(self, config_json=None):

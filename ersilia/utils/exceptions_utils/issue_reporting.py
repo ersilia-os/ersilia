@@ -11,7 +11,6 @@ AUTH_TOKEN = None
 
 
 def send_exception_issue(E: Exception, lastinput: str):
-
     subprocess.run(["gh", "auth", "login"])  # user login
     auth_out = subprocess.run(
         ["gh", "auth", "status", "-t"], capture_output=True

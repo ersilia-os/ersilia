@@ -7,6 +7,7 @@ from ..messages import ModelNotFound
 
 def serve_cmd():
     """Creates serve command"""
+
     # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)

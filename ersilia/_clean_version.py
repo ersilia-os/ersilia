@@ -22,7 +22,8 @@ script_path = os.path.dirname(os.path.abspath(__file__))
 clean_version_file = os.path.join(script_path, STATIC_VERSION_FILE)
 with open(clean_version_file, "r") as f:
     for l in f:
-        if l.startswith("#"): continue
+        if l.startswith("#"):
+            continue
         version = l.split('"')[1]
 
 __version__ = version

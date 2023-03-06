@@ -55,8 +55,10 @@ class InvalidModelIdentifierError(ErsiliaError):
 class ModelNotAvailableLocallyError(ErsiliaError):
     def __init__(self, model):
         self.model = model
-        self.message = "Model {0} is not available locally, so it cannot be served".format(
-            self.model
+        self.message = (
+            "Model {0} is not available locally, so it cannot be served".format(
+                self.model
+            )
         )
         self.hints = "Fetch the model using the CLI. Simply run:\n"
         self.hints += "$ ersilia fetch {0}".format(self.model)
