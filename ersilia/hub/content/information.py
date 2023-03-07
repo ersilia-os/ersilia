@@ -11,7 +11,6 @@ from ...default import (
     SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
 )
-from ..fetch import STATUS_FILE
 
 
 class Information(ErsiliaBase):
