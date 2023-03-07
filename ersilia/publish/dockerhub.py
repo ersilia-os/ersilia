@@ -1,12 +1,7 @@
-import sys
-
 from .. import ErsiliaBase
 from ..db.environments.managers import DockerManager
 from ..utils.terminal import run_command
 from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
-
-docker_pwd = sys.argv[1]
-docker_user = sys.argv[2]
 
 
 class DockerHubUploader(ErsiliaBase):
