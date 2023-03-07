@@ -142,6 +142,23 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="ServiceFile.add_info_api"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile.add_info_api">[docs]</a>    <span class="k">def</span> <span class="nf">add_info_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">information_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds and info api to the service&quot;&quot;&quot;</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">splitter_string</span> <span class="o">=</span> <span class="s2">&quot;Service.__name__&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">splitter_string</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">a</span> <span class="o">+=</span> <span class="s2">&quot;    @api(input=JsonInput(), batch=True)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">a</span> <span class="o">+=</span> <span class="s2">&quot;    def info(self, input=None):</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">a</span> <span class="o">+=</span> <span class="s2">&quot;        data = json.load(open(&#39;</span><span class="si">{0}</span><span class="s2">&#39;, &#39;r&#39;))</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">information_file</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">+=</span> <span class="s2">&quot;        return [data]</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">splitter_string</span> <span class="o">+</span> <span class="n">b</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="ServiceFile.check"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;checks if the service.py contains the Service Class&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_service_class</span><span class="p">()</span></div></div>
