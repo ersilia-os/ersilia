@@ -34,6 +34,15 @@ Once you have identified an issue to tackle, follow the next steps:
 4. Make any required changes to the PR
 5. Once the PR has been merged, you can continue working on a new issue or delete the fork!
 
+## Landing your Pull Requests
+
+To land a good contribution, follow the standadrd Git and Github workflow.
+
+Recommmended:
+
+- Link the corresponding issue to your Pull request.
+- Your PR should demonstrate that the changes work.
+
 ## Other Contributing Suggestions
 
 * Support already existing contributors with comments on the issues they might be tackling
