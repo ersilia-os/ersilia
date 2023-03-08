@@ -2,7 +2,7 @@ name: Approve Command Dispatch
 
 on:
   repository_dispatch:
-    types: [approve-command]
+    types: [ approve-command ]
 
 permissions:
   issues: write
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # pin@v3.3.0
 
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
@@ -76,12 +76,12 @@ jobs:
           OWNER: ersilia-os
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
           JSON: ${{ steps.issue-parser.outputs.json }}
-        run: | 
+        run: |
           python3 .github/scripts/update_metadata.py 
-      
+
       # upload git-lfs object
       - name: checkout persist credentials
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # pin@v3.3.0
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
@@ -91,7 +91,7 @@ jobs:
           rm -rf *
 
       - name: clone the repository
-        uses: GuillaumeFalourd/clone-github-repo-action@v2
+        uses: GuillaumeFalourd/clone-github-repo-action@8e2d67e601742dcfd167324473bb9ae3f05d203e # pin@v2
         with:
           owner: 'ersilia-os'
           repository: ${{ steps.create-model-repo.outputs.repo_name }}
@@ -108,9 +108,9 @@ jobs:
           git add .gitattributes
           git add mock.txt
           git lfs ls-files
-        
+
       - name: commit and push changes
-        uses: actions-js/push@v1.4
+        uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # pin@v1.4
         with:
           author_name: "ersilia-bot"
           author_email: "ersilia-bot@users.noreply.github.com"
@@ -139,7 +139,7 @@ jobs:
           python3 -m pip install pyairtable
           python3 -m pip install requests
           python3 .github/scripts/insert_metadata_to_airtable.py $REPO_NAME $ISSUE_CREATOR $AIRTABLE_API_KEY
-      
+
       # find the creator of the issue
       - name: find original issue creator
         id: issue-creator
