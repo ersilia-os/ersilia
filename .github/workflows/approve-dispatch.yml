@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [approve-command]
 
+permissions:
+  issues: write
+  contents: read
+
 jobs:
   approve-command-dispatch:
     runs-on: ubuntu-latest
