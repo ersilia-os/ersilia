@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        uses: actions/checkout@v3.3.0
 
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
@@ -81,7 +81,7 @@ jobs:
       
       # upload git-lfs object
       - name: checkout persist credentials
-        uses: actions/checkout@master
+        uses: actions/checkout@v3.3.0
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
@@ -110,7 +110,7 @@ jobs:
           git lfs ls-files
         
       - name: commit and push changes
-        uses: actions-js/push@master
+        uses: actions-js/push@v1.4
         with:
           author_name: "ersilia-bot"
           author_email: "ersilia-bot@users.noreply.github.com"
