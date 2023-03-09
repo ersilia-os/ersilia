@@ -94,7 +94,7 @@ git-lfs install
 We highly recommend installation of the [Isaura](https://github.com/ersilia-os/isaura) data lake. With Isaura, you will be able to cache your model predictions (i.e. store them in your local computer). Isaura is a relatively light Python package:
 
 ```
-#activate ersilia's conda environment
+#activate ersilia's conda environment (see instructions below to create it)
 conda activate ersilia
 python -m pip install isaura==0.1
 ```
