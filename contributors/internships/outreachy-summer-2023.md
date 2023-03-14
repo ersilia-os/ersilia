@@ -163,6 +163,10 @@ We propose one of the following models to be implemented. Please select one and 
 * SARS-CoV2 activity (Image Mol): [https://github.com/HongxinXiang/ImageMol](https://github.com/HongxinXiang/ImageMol)
 * STOUT (SMILES to IUPAC):: [https://github.com/Kohulan/Smiles-TO-iUpac-Translator](https://github.com/Kohulan/Smiles-TO-iUpac-Translator)
 
+{% hint style="warning" %}
+These are Open Source models developed by academics mostly, and they have nothing to do with Ersilia or the Outreachy program, so please refrain from contacting the original authors without asking one of the Ersilia mentors first.
+{% endhint %}
+
 #### Task 2: install the model
 
 Follow the instructions on the specific model repository to install and run the model in your system. Report the issues you find along the process and how you solve them in the GitHub issue.
