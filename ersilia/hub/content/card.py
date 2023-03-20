@@ -401,6 +401,7 @@ class AirtableMetadata(AirtableInterface):
     def __init__(self, model_id, config_json=None):
         self.model_id = model_id
         AirtableInterface.__init__(self, config_json=config_json)
+        self._warning_empty_row_message = "The AirTable field Identifier was not found! Please check that there are not empty rows."
 
     def _find_record(self):
         data = None
@@ -408,8 +409,12 @@ class AirtableMetadata(AirtableInterface):
             page_size=self.page_size, max_records=self.max_rows
         ):
             for record in records:
-                if self.model_id == record["fields"]["Identifier"]:
-                    data = record["fields"]
+                try:
+                    if self.model_id == record["fields"]["Identifier"]:
+                        data = record["fields"]
+                except:
+                    self.logger.warning(self._warning_empty_row_message)
+
         return data
 
     def _find_airtable_record_id(self):
@@ -418,8 +423,11 @@ class AirtableMetadata(AirtableInterface):
             page_size=self.page_size, max_records=self.max_rows
         ):
             for record in records:
-                if self.model_id == record["fields"]["Identifier"]:
-                    rec_id = record["id"]
+                try:
+                    if self.model_id == record["fields"]["Identifier"]:
+                        rec_id = record["id"]
+                except:
+                    self.logger.warning(self._warning_empty_row_message)
         return rec_id
 
     def read_information(self):
