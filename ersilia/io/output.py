@@ -12,7 +12,7 @@ from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..default import FEATURE_MERGE_PATTERN
-
+from ..db.hubdata.interfaces import AirtableInterface
 
 class DataFrame(object):
     def __init__(self, data, columns):
@@ -212,8 +212,21 @@ class GenericOutputAdapter(ResponseRefactor):
             else:
                 output_keys_expanded += [ok]
         return output_keys_expanded
+    
+    def _get_outputshape_from_airtable(self, model_id):
+        airtable_interface = AirtableInterface(config_json=self.config_json)
+        output_shape=" "
+        for record in airtable_interface.items():
+            model_idi= record["fields"]["Identifier"]
+            try:
+                if model_idi == model_id:
+                    output_shape= record["fields"]["Output Shape"]
+            except KeyError:
+                self.logger.warning("The Output Shape field is empty")
+        return output_shape
 
-    def _to_dataframe(self, result):
+    def _to_dataframe(self, result, model_id):
+        output_shape=self._get_outputshape_from_airtable(model_id)
         result = json.loads(result)
         R = []
         output_keys = None
@@ -221,13 +234,17 @@ class GenericOutputAdapter(ResponseRefactor):
         for r in result:
             inp = r["input"]
             out = r["output"]
-            if output_keys is None:
-                output_keys = [k for k in out.keys()]
-            vals = [out[k] for k in output_keys]
-            dtypes = [self.__pure_dtype(k) for k in output_keys]
-            if output_keys_expanded is None:
-                output_keys_expanded = self.__expand_output_keys(vals, output_keys)
-            vals = self.__cast_values(vals, dtypes, output_keys)
+            if output_shape== "Flexible List":
+                vals=[json.dumps(out)]
+                output_keys_expanded =["outcome"]
+            else:
+                if output_keys is None:
+                    output_keys = [k for k in out.keys()]
+                vals = [out[k] for k in output_keys]
+                dtypes = [self.__pure_dtype(k) for k in output_keys]
+                if output_keys_expanded is None:
+                    output_keys_expanded = self.__expand_output_keys(vals, output_keys)
+                vals = self.__cast_values(vals, dtypes, output_keys)
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)
@@ -280,13 +297,13 @@ class GenericOutputAdapter(ResponseRefactor):
             with open(output, "w") as f:
                 json.dump(data, f, indent=4)
         if self._has_extension(output, "csv"):
-            df = self._to_dataframe(result)
+            df = self._to_dataframe(result, model_id)
             df.write(output)
         if self._has_extension(output, "tsv"):
-            df = self._to_dataframe(result)
+            df = self._to_dataframe(result, model_id)
             df.write(output, delimiter="\t")
         if self._has_extension(output, "h5"):
-            df = self._to_dataframe(result)
+            df = self._to_dataframe(result, model_id)
             df.write(output)
         return result
 
