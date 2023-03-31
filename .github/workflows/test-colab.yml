@@ -3,12 +3,12 @@ name: Test Colab Notebook
 on:
   push:
   workflow_dispatch:
-  
+
 jobs:
   test-colab-notebook:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3
+      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # pin@v3.5.0
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
 
@@ -21,7 +21,7 @@ jobs:
           conda init
           conda install google-colab -c conda-forge
           jupyter --version
-          
+
       - name: Test Google Colab Notebook with CLI shell commands
         run: jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-cli.ipynb --output=output-cli.ipynb --ExecutePreprocessor.timeout=-1
 
@@ -29,14 +29,14 @@ jobs:
         run: jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-python-api.ipynb --output=output-python-api.ipynb --ExecutePreprocessor.timeout=-1
 
       - name: Upload Output of the Google Colab Notebook CLI
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # pin@v3.1.2
         with:
           name: output-cli.ipynb
           path: notebooks/output-cli.ipynb
           retention-days: 7
 
       - name: Upload Output of the Google Colab Notebook Python API
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # pin@v3.1.2
         with:
           name: output-python-api.ipynb
           path: notebooks/output-python-api.ipynb
