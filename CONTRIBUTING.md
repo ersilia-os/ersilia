@@ -32,8 +32,8 @@ Once you have identified an issue to tackle, follow the next steps:
 2. Make changes in your fork (or in a branch of your fork)
 3. Create a Pull Request (PR) with a description of the changes made. A good description really helps the community managers. Link the issue the PR is related to as well.
 4. PR's have automated tests. If the tests fail, please make the necessary changes. Ersilia maintainers will only work on PRs that pass the tests.
-6. Once the PR has been merged, delete your fork of the repository. Our Git-LFS quota also takes into account forks, so having unused forks sitting around is eating up our space in Git LFS. Thanks for taking care of the community.
-7. Look for a new issue to work on!
+5. Once the PR has been merged, delete your fork of the repository. Our Git-LFS quota also takes into account forks, so having unused forks sitting around is eating up our space in Git LFS. Thanks for taking care of the community.
+6. Look for a new issue to work on!
 
 ## Other Contributing Suggestions
 
