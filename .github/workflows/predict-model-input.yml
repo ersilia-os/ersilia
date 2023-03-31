@@ -7,10 +7,13 @@ on:
         description: Model ID
         required: true
         type: string
-  
+
+permissions:
+  contents: read
+
 env:
   MODEL_ID: ${{ github.event.inputs.model_id }}
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,7 +41,7 @@ jobs:
           echo "After conda init"
           conda init
           python -m pip install -e .[test]
-  
+
       - name: Predict output
         run: |
           source activate

@@ -3,7 +3,10 @@ on:
   # run the workflow every 2 hours
   schedule:
     - cron: '30 */2 * * *'
-  
+
+permissions:
+  contents: read
+
 jobs:
   build:
     strategy:
@@ -35,7 +38,7 @@ jobs:
           echo "After conda init"
           conda init
           python -m pip install -e .[test]
-  
+
       - name: Predict output
         run: |
           source activate
