@@ -50,7 +50,7 @@ jobs:
 
       - name: Upload log output
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # pin@v3.1.2
         with:
           name: ersilia-predict-logs
           path: /home/runner/eos/console.log
