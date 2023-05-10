@@ -101,6 +101,7 @@ class PackModeDecision(ErsiliaBase):
             )
             self.logger.debug("Mode: docker")
             dockerreq = DockerRequirement()
-            assert not dockerreq.is_inside_docker()
+            if dockerreq.is_inside_docker():
+                return "conda"
             assert dockerreq.is_installed()
             return "docker"
