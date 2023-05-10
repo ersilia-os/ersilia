@@ -1,4 +1,5 @@
 import platform
+import os
 
 
 class SystemChecker(object):
@@ -11,3 +12,9 @@ class SystemChecker(object):
         if "arm64" in self.uname.version.lower():
             return True
         return False
+    
+    def is_github_action(self):
+        if os.environ.get('GITHUB_ACTIONS') == 'true':
+            return True
+        else:
+            return False
