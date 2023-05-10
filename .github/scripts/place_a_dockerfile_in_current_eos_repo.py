@@ -1,11 +1,12 @@
 import os
 import sys
 import requests
+import shutil
 
 model_id = sys.argv[1]
 
 if os.path.exists("Dockerfile"):
-    os.move("Dockerfile", "Dockerfile_legacy")
+    shutil.move("Dockerfile", "Dockerfile_legacy")
 
 def download_file(url, filename):
     r = requests.get(url, allow_redirects=True)
