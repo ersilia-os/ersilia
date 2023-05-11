@@ -12,7 +12,7 @@ def download_file(url, filename):
     r = requests.get(url, allow_redirects=True)
     open(filename, 'wb').write(r.content)
 
-url = "https://raw.githubusercontent.com/ersilia-os/ersilia/master/dockerfiles/model-deploy/mdoel/Dockerfile"
+url = "https://raw.githubusercontent.com/ersilia-os/ersilia/master/dockerfiles/model-deploy/model/Dockerfile"
 filename = "Dockerfile"
 download_file(url, filename)
 
