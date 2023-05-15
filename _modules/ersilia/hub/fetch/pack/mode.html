@@ -177,8 +177,10 @@
             <span class="n">dockerreq</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">dockerreq</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
                 <span class="k">return</span> <span class="s2">&quot;conda&quot;</span>
-            <span class="k">assert</span> <span class="n">dockerreq</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span>
-            <span class="k">return</span> <span class="s2">&quot;docker&quot;</span></div></div>
+            <span class="k">if</span> <span class="n">dockerreq</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
+                <span class="k">return</span> <span class="s2">&quot;docker&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;conda&quot;</span></div></div>
 </pre></div>
 
            </div>
