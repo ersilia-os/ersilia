@@ -1,6 +1,9 @@
 name: Upload Ersilia base image to DockerHub
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   upload_ersilia_base_to_dockerhub:
