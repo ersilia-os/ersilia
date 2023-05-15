@@ -80,6 +80,7 @@ class ServiceFile(object):
         b = text[1]
         a += "    @api(input=JsonInput(), batch=True)\n"
         a += "    def info(self, input=None):\n"
+        a += "        import json\n"
         a += "        data = json.load(open('{0}', 'r'))\n".format(information_file)
         a += "        return [data]\n\n"
         with open(file_name, "w") as f:
