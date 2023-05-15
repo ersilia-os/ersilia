@@ -14,6 +14,7 @@ from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..default import FEATURE_MERGE_PATTERN
 from ..db.hubdata.interfaces import AirtableInterface
 
+
 class DataFrame(object):
     def __init__(self, data, columns):
         self.data = data
@@ -212,21 +213,21 @@ class GenericOutputAdapter(ResponseRefactor):
             else:
                 output_keys_expanded += [ok]
         return output_keys_expanded
-    
+
     def _get_outputshape_from_airtable(self, model_id):
         airtable_interface = AirtableInterface(config_json=self.config_json)
-        output_shape=" "
+        output_shape = " "
         for record in airtable_interface.items():
-            model_idi= record["fields"]["Identifier"]
+            model_idi = record["fields"]["Identifier"]
             try:
                 if model_idi == model_id:
-                    output_shape= record["fields"]["Output Shape"]
+                    output_shape = record["fields"]["Output Shape"]
             except KeyError:
                 self.logger.warning("The Output Shape field is empty")
         return output_shape
 
     def _to_dataframe(self, result, model_id):
-        output_shape=self._get_outputshape_from_airtable(model_id)
+        output_shape = self._get_outputshape_from_airtable(model_id)
         result = json.loads(result)
         R = []
         output_keys = None
@@ -234,9 +235,9 @@ class GenericOutputAdapter(ResponseRefactor):
         for r in result:
             inp = r["input"]
             out = r["output"]
-            if output_shape== "Flexible List":
-                vals=[json.dumps(out)]
-                output_keys_expanded =["outcome"]
+            if output_shape == "Flexible List":
+                vals = [json.dumps(out)]
+                output_keys_expanded = ["outcome"]
             else:
                 if output_keys is None:
                     output_keys = [k for k in out.keys()]

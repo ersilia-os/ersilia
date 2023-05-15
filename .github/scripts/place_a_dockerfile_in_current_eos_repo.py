@@ -8,9 +8,11 @@ model_id = sys.argv[1]
 if os.path.exists("Dockerfile"):
     shutil.move("Dockerfile", "Dockerfile_legacy")
 
+
 def download_file(url, filename):
     r = requests.get(url, allow_redirects=True)
-    open(filename, 'wb').write(r.content)
+    open(filename, "wb").write(r.content)
+
 
 url = "https://raw.githubusercontent.com/ersilia-os/ersilia/master/dockerfiles/model-deploy/model/Dockerfile"
 filename = "Dockerfile"

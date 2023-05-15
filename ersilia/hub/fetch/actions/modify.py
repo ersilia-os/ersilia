@@ -150,7 +150,9 @@ class ModelModifier(BaseAction):
         with open(run_file, "r") as f:
             for l in f:
                 if l.startswith("conda activate"):
-                    self.logger.debug("A conda activate statement has been found. It is not advised to modify the conda path in this bash file.")
+                    self.logger.debug(
+                        "A conda activate statement has been found. It is not advised to modify the conda path in this bash file."
+                    )
                     return
         python_exec = SimpleConda().get_python_path_env(model_id)
         self.logger.debug("Python executable: {0}".format(python_exec))
