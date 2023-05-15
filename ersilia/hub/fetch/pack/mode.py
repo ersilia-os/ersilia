@@ -103,5 +103,7 @@ class PackModeDecision(ErsiliaBase):
             dockerreq = DockerRequirement()
             if dockerreq.is_inside_docker():
                 return "conda"
-            assert dockerreq.is_installed()
-            return "docker"
+            if dockerreq.is_installed():
+                return "docker"
+            else:
+                return "conda"

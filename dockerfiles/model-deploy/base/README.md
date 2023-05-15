@@ -5,3 +5,4 @@ This image is used as a base for models deployed in the [Ersilia Model Hub](http
 ## Tags
 
 - Tagging is done automatically with the [Docker Metadata Action](https://github.com/marketplace/actions/docker-metadata-action#basic) (`docker-metadata-action`).
+- A `latest` tag will only be created if a `git tag` is added.
