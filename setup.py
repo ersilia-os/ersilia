@@ -20,7 +20,6 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 # Slim requirements
 slim = [
-    "bentoml @ git+https://github.com/ersilia-os/bentoml-ersilia.git",
     "inputimeout",
     "emoji",
     "validators",
@@ -81,3 +80,23 @@ setup(
     package_data={"ersilia": ["hub/content/metadata/*.txt"]},
     include_package_data=True,
 )
+
+
+# Install bentoml if necessary
+def check_bentoml(package_path):
+    import os
+    from importlib.util import module_from_spec, spec_from_file_location
+
+    spec = spec_from_file_location(
+        "bentoml_requirement",
+        os.path.join(package_path, "setup", "requirements", "bentoml.py"),
+    )
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    req = module.BentoMLRequirement()
+    if not req.is_installed():
+        req.install()
+    return version
+
+
+check_bentoml("ersilia")
