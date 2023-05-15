@@ -61,6 +61,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../../ersilia.html">ersilia</a></li>
           <li class="breadcrumb-item"><a href="../pack.html">ersilia.hub.fetch.pack</a></li>
       <li class="breadcrumb-item active">ersilia.hub.fetch.pack.mode</li>
       <li class="wy-breadcrumbs-aside">
@@ -130,7 +131,9 @@
 <div class="viewcode-block" id="PackModeDecision.decide"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.mode.PackModeDecision.decide">[docs]</a>    <span class="k">def</span> <span class="nf">decide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="n">SystemChecker</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">is_github_action</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Code is being run inside a GitHub Actions workflow. Use conda as a by-default mode.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Code is being run inside a GitHub Actions workflow. Use conda as a by-default mode.&quot;</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;conda&quot;</span>
         <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decide_from_config_file_if_available</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

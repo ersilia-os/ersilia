@@ -61,6 +61,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../../ersilia.html">ersilia</a></li>
           <li class="breadcrumb-item"><a href="../actions.html">ersilia.hub.fetch.actions</a></li>
       <li class="breadcrumb-item active">ersilia.hub.fetch.actions.modify</li>
       <li class="wy-breadcrumbs-aside">
@@ -224,7 +225,9 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;conda activate&quot;</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;A conda activate statement has been found. It is not advised to modify the conda path in this bash file.&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="s2">&quot;A conda activate statement has been found. It is not advised to modify the conda path in this bash file.&quot;</span>
+                    <span class="p">)</span>
                     <span class="k">return</span>
         <span class="n">python_exec</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span><span class="o">.</span><span class="n">get_python_path_env</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Python executable: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">python_exec</span><span class="p">))</span>
