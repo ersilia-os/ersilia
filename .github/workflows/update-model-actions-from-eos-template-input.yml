@@ -16,10 +16,20 @@ jobs:
   update-workflows:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # pin@v3.5.0
+      - name: Checkout persist credentials
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # pin@v3.5.2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+          lfs: 'true'
 
       - name: Update model workflows using script
+        env:
+          GITHUB_USERNAME: ${{ secrets.GITHUB_ }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/update_model_workflows_from_template.py
           git lfs install
+          git config --global github.user ${{ github.actor }}
+          git config --global github.token $GITHUB_TOKEN
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/update_model_workflows_from_template.py
           python update_model_workflows_from_template.py $MODEL_ID
