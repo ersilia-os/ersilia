@@ -1,29 +1,25 @@
 from setuptools import setup, find_packages
 
 
-def get_version_and_cmdclass(package_path):
-    """Load version.py module without importing the whole package.
-    Template code from miniver
-    """
+def get_version(package_path):
     import os
     from importlib.util import module_from_spec, spec_from_file_location
 
-    spec = spec_from_file_location(
-        "version", os.path.join(package_path, "_clean_version.py")
-    )
+    spec = spec_from_file_location("version", os.path.join(package_path, "_version.py"))
     module = module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.__version__, module.cmdclass
+    version = module.get_version_for_setup()
+    return version
 
 
-version, cmdclass = get_version_and_cmdclass("ersilia")
+version = get_version("ersilia")
+
 
 with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
 # Slim requirements
 slim = [
-    "bentoml @ git+https://github.com/ersilia-os/bentoml-ersilia.git",
     "inputimeout",
     "emoji",
     "validators",
@@ -52,12 +48,9 @@ extras_require = {
     "test": test_requires,
 }
 
-print(extras_require)
-
 setup(
     name="ersilia",
     version=version,
-    cmdclass=cmdclass,
     author="Ersilia Open Source Initiative",
     author_email="hello@ersilia.io",
     url="https://github.com/ersilia-os/ersilia",
@@ -87,3 +80,23 @@ setup(
     package_data={"ersilia": ["hub/content/metadata/*.txt"]},
     include_package_data=True,
 )
+
+
+# Install bentoml if necessary
+def check_bentoml(package_path):
+    import os
+    from importlib.util import module_from_spec, spec_from_file_location
+
+    spec = spec_from_file_location(
+        "bentoml_requirement",
+        os.path.join(package_path, "setup", "requirements", "bentoml.py"),
+    )
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    req = module.BentoMLRequirement()
+    if not req.is_installed():
+        req.install()
+    return version
+
+
+check_bentoml("ersilia")

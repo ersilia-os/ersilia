@@ -20,7 +20,6 @@ from .actions.sniff import ModelSniffer
 from .actions.inform import ModelInformer
 
 from . import STATUS_FILE, DONE_TAG
-from ...default import INFORMATION_FILE
 
 
 class ModelFetcher(ErsiliaBase):

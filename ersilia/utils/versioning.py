@@ -27,7 +27,7 @@ class Versioner(ErsiliaBase):
         return ver
 
     def ersilia_version_from_path(self, path):
-        static_version_file = "_clean_static_version.py"
+        static_version_file = "_static_version.py"
         fn = os.path.join(path, "ersilia", static_version_file)
         if not os.path.exists(fn):
             fn = os.path.join(path, static_version_file)

@@ -56,7 +56,9 @@ class PackModeDecision(ErsiliaBase):
     def decide(self):
         sc = SystemChecker()
         if sc.is_github_action():
-            self.logger.debug("Code is being run inside a GitHub Actions workflow. Use conda as a by-default mode.")
+            self.logger.debug(
+                "Code is being run inside a GitHub Actions workflow. Use conda as a by-default mode."
+            )
             return "conda"
         mode = self.decide_from_config_file_if_available()
         if mode is not None:
@@ -103,5 +105,7 @@ class PackModeDecision(ErsiliaBase):
             dockerreq = DockerRequirement()
             if dockerreq.is_inside_docker():
                 return "conda"
-            assert dockerreq.is_installed()
-            return "docker"
+            if dockerreq.is_installed():
+                return "docker"
+            else:
+                return "conda"
