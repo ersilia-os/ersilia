@@ -31,7 +31,7 @@ Please note that Topics of the Week should be taken as a **soft guideline**. Dis
 
 In the Slack `#internships` channel, one person (for example **@Miquel**) will write a message like this:
 
-****:calendar: **@channel** This is the topic of the week!\
+:calendar: **@channel** This is the topic of the week!\
 :robot: Topic: Antimalarial activity prediction\
 :thinking: Why? We are currently working with [Medicines for Malaria Venture](https://mmv.org) and they have asked for predictions on some antimalarial candidates.\
 :track\_next: Next: **@Gemma**
@@ -54,7 +54,7 @@ It is important that you communicate your research to the rest of the team. We s
 
 #### Ersilia Slack `#literature`channel
 
-First, write a quick note in the **Ersilia Slack** `#literature` channel. Simply copy the link to the publication as soon as you discover the model, or even a link to a tweet. Before the link, add the :robot: emoji so that we know it is about a model. For example: :robot: _Compound price prediction with deep learning!_ [_\[link\]_](https://chemrxiv.org/engage/chemrxiv/article-details/621cf4bace899be245a72621)__
+First, write a quick note in the **Ersilia Slack** `#literature` channel. Simply copy the link to the publication as soon as you discover the model, or even a link to a tweet. Before the link, add the :robot: emoji so that we know it is about a model. For example: :robot: _Compound price prediction with deep learning!_ [_\[link\]_](https://chemrxiv.org/engage/chemrxiv/article-details/621cf4bace899be245a72621)
 
 {% hint style="info" %}
 The Slack `#literature` channel contains models :robot: and much more. We encourage you to check this channel regularly and be active in it! This is the best way to share our collective knowledge and avoid duplication of efforts. Naturally, this channel will not be very structured, and we feel it shouldn't be. Rather, it should be a space to quickly share findings and find inspiration for your research.
@@ -119,4 +119,4 @@ In brief, this is a suggested routine that you can follow:
 6. Select an approved model.
 7. Move to the **Hub** sheet of the Spreadsheet and [fill in as much information as you can](outreachy-summer-2022.md#ersilia-model-hub-spreadsheet). For now, set the _Status_ to _To do_.
 8. When you are ready to [start coding](../incorporate-models.md), change the _Status_ to _In progress_.
-9. When the model is successfully added, change the _Status_ to _Done_! __ :tada:__
+9. When the model is successfully added, change the _Status_ to _Done_! :tada:

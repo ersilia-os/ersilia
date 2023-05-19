@@ -39,7 +39,7 @@ We have planned the growth of the [Ersilia Model Hub](https://ersilia.io/model-h
 
 Within each face, we find models of three types:
 
-* **Type A:** Models developed by others. ****&#x20;
+* **Type A:** Models developed by others.&#x20;
 * **Type B:** Models developed by Ersilia based on publicly available data.
 * **Type C:** Models developed by Ersilia based on data from collaborators.
 

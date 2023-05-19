@@ -10,7 +10,7 @@
 * [Inputs](ersilia-model-hub/inputs-and-outputs.md)
 * [Contribute models](contributors/incorporate-models.md)
   * [Model Incorporation Guidelines](ersilia-model-hub/contribute-models/model-incorporation-guidelines.md)
-  * [Example of the model incorporation workflow](ersilia-model-hub/contribute-models/example-of-the-model-incorporation-workflow.md)
+  * [Model incorporation workflow](ersilia-model-hub/contribute-models/model-incorporation-workflow.md)
   * [Open source licences](ersilia-model-hub/contribute-models/open-source-licences.md)
 
 ## 🙌 Contributors

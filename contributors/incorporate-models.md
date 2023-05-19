@@ -17,7 +17,7 @@ In this page, we focus on the first type of models, i.e. models developed by **t
 First, check our Model Hub Backend, which contains:
 
 * **Model Hub:** [models](https://airtable.com/shrNc3sTtTA3QeEZu/tblZGe2a2XeBxrEHP) that are already in the Hub or being incorporated at the moment. Each model should contain accurate information about its usage, source and any other relevant information.
-* **Model Suggestions:** Contains a [backlog](https://airtable.com/shrTpe45mLKqaHXsc) of models that could be of interest to Ersilia with minimal information about them. There is a _Selected_ tickbox that __ means that someone is already working on the model. Once a model is incorporated it is flitered out of this list. If you have a new model suggestion, please fill in this [form](https://airtable.com/shroQLlkcmDcC0xzm) with as much detail as possible.
+* **Model Suggestions:** Contains a [backlog](https://airtable.com/shrTpe45mLKqaHXsc) of models that could be of interest to Ersilia with minimal information about them. There is a _Selected_ tickbox that means that someone is already working on the model. Once a model is incorporated it is flitered out of this list. If you have a new model suggestion, please fill in this [form](https://airtable.com/shroQLlkcmDcC0xzm) with as much detail as possible.
 
 To start contributing:
 
