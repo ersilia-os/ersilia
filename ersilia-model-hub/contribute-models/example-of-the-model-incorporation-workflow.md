@@ -4,6 +4,16 @@ description: Step by step for the incorporation of models in the Ersilia Model H
 
 # Model incorporation workflow
 
+{% hint style="info" %}
+This page is **under construction** :construction\_worker:.
+{% endhint %}
+
+## A toy example
+
+
+
+## A real-world example
+
 ## **Model example: Prediction and Optimization of Human Plasma Protein Binding (PPB) of Compounds**
 
 ### **1.  Choose the model to incorporate into the Ersilia model Hub.**
@@ -243,7 +253,7 @@ remained_df.to_csv('temp.csv')
 After the previous inspection of the main code to execute the model. We found that this model is coded to run on the **GPU**.&#x20;
 
 {% hint style="warning" %}
-In this case, **Ersilia** (according to the [requirements](model-incorporation-workflow.md#4.3.-install-dependencies.)) only allows it to be executed on the **CPU**, and the PyTorch library was installed by specifying the **CPU**.&#x20;
+In this case, **Ersilia** (according to the [requirements](example-of-the-model-incorporation-workflow.md#4.3.-install-dependencies.)) only allows it to be executed on the **CPU**, and the PyTorch library was installed by specifying the **CPU**.&#x20;
 {% endhint %}
 
 At this point, if we run the model in this way, we would have an error like:
@@ -341,7 +351,7 @@ The result produces an output file with the smiles string and the predicted valu
 
 #### 4.9.  Run the model with the input file provided by Ersilia.
 
-The input file that Ersilia provides to test the models is the .csv file called "[eml\_canonical.csv](https://raw.githubusercontent.com/ersilia-os/ersilia/master/notebooks/eml\_canonical.csv)". This file has a header, and three columns like this: drugs, smiles, and can\_smiles. Unlike the sample model file, which contains a column named "cano\_smiles". \[[see point 4.6](model-incorporation-workflow.md#4.6.1.-read-the-input-file)] Regarding the way the author codes to read the input from the file, if we directly pass the input file "eml\_canonical.csv" an “Attribute error” will be thrown, indicating that it does not have a “cano\_smiles” attribute.&#x20;
+The input file that Ersilia provides to test the models is the .csv file called "[eml\_canonical.csv](https://raw.githubusercontent.com/ersilia-os/ersilia/master/notebooks/eml\_canonical.csv)". This file has a header, and three columns like this: drugs, smiles, and can\_smiles. Unlike the sample model file, which contains a column named "cano\_smiles". \[[see point 4.6](example-of-the-model-incorporation-workflow.md#4.6.1.-read-the-input-file)] Regarding the way the author codes to read the input from the file, if we directly pass the input file "eml\_canonical.csv" an “Attribute error” will be thrown, indicating that it does not have a “cano\_smiles” attribute.&#x20;
 
 To avoid changing the code and modifying the input file, we can add the following code:
 
@@ -413,7 +423,7 @@ cd ~/Desktop
 cp -r IDL-PPBopt/Code/ eos22io/model/framework/code/.
 ```
 
-Now we have the corresponding code to make the predictions, and additionally, we have the **IDL-PPB.py** file that was modified in the [previous steps](model-incorporation-workflow.md#4.7.-debugging-the-idl-ppb-model-to-run-with-cpu.) (4.7) to run the model with the **CPU** and not with **CUDA** as it was originally coded.&#x20;
+Now we have the corresponding code to make the predictions, and additionally, we have the **IDL-PPB.py** file that was modified in the [previous steps](example-of-the-model-incorporation-workflow.md#4.7.-debugging-the-idl-ppb-model-to-run-with-cpu.) (4.7) to run the model with the **CPU** and not with **CUDA** as it was originally coded.&#x20;
 
 To organize the code, a folder "`idl_ppb_`" was created to store the original script and the script that was modified (**IDL-PPB.py**), additionally, the text files used as examples for the model inputs were saved in that folder.
 
@@ -432,7 +442,7 @@ cp IDL-PPBopt/Code/saved_models/model_ppb_3922_Tue_Dec_22_22-23-22_2020_54.pt eo
 
 As seen in the previous steps, the file we used to run the model from the command console was the **IDL-PPB.py** file, but the Ersilia template provides us with the **main.py** file, which is the main file to run the model.&#x20;
 
-In this example, we have decided to copy from the IDL-PPB.py file the functions to load the model and calculate the predictions (since it contains all the modifications so that the model runs without errors, [see point 4.7)](model-incorporation-workflow.md#4.7.-debugging-the-idl-ppb-model-to-run-with-cpu.), leaving this file (**IDL-PPB.py**) only with the functions that we are going to call from other modules of the project. The rest of the functions can be called through the imports in the **main.py**.&#x20;
+In this example, we have decided to copy from the IDL-PPB.py file the functions to load the model and calculate the predictions (since it contains all the modifications so that the model runs without errors, [see point 4.7)](example-of-the-model-incorporation-workflow.md#4.7.-debugging-the-idl-ppb-model-to-run-with-cpu.), leaving this file (**IDL-PPB.py**) only with the functions that we are going to call from other modules of the project. The rest of the functions can be called through the imports in the **main.py**.&#x20;
 
 The **main.py** is as follows:
 
@@ -570,7 +580,7 @@ def my_model(smiles_list):
     remained_df['Predicted_values'] = remain_pred_list
 ```
 
-Taking into account what was mentioned in [previous steps](model-incorporation-workflow.md#4.10.-verify-the-model-output.) ([step 4.10](model-incorporation-workflow.md#4.10.-verify-the-model-output.)), for some compounds such as salts and inorganics that do not predict the PPB values, it was decided that for these compounds the output should be Null. Therefore, the following function is implemented:
+Taking into account what was mentioned in [previous steps](example-of-the-model-incorporation-workflow.md#4.10.-verify-the-model-output.) ([step 4.10](example-of-the-model-incorporation-workflow.md#4.10.-verify-the-model-output.)), for some compounds such as salts and inorganics that do not predict the PPB values, it was decided that for these compounds the output should be Null. Therefore, the following function is implemented:
 
 ```python
 #making sure it returns all values.For the compounds that it is not possible to calculate the features the output is null
@@ -608,7 +618,7 @@ In this case, the PPB values are of Float type. And in the service.py file, the 
 
 With all the dependencies required to run the model. This is essential for the successful incorporation of the model into Ersilia.
 
-We will copy the same dependencies used in [step 4.3](model-incorporation-workflow.md#4.3.-install-dependencies.):
+We will copy the same dependencies used in [step 4.3](example-of-the-model-incorporation-workflow.md#4.3.-install-dependencies.):
 
 ```docker
 FROM bentoml/model-server:0.11.0-py37
@@ -670,7 +680,7 @@ Edit the **README** file in the `model/framework/code` directory to outline the 
 
 Use a sample input file to generate an example output file with the data from the model.
 
-First, **we must activate the conda environment,** where all the installed model dependencies are located ([see step 4.2](model-incorporation-workflow.md#4.2.-create-a-development-environment-on-your-local-machine.)).
+First, **we must activate the conda environment,** where all the installed model dependencies are located ([see step 4.2](example-of-the-model-incorporation-workflow.md#4.2.-create-a-development-environment-on-your-local-machine.)).
 
 ```python
 cd model/framework/code
