@@ -4,14 +4,13 @@ description: We present ZairaChem, Ersilia's modeling pipeline for chemistry dat
 
 # Accurate AutoML with ZairaChem
 
-[ZairaChem](https://github.com/ersilia-os/zaira-chem) is [Ersilia](https://ersilia.io)'s AutoML tool for supervised learning of small molecule property data. In the field of computer-aided drug discovery, this task is known as Quantitiative Structure Activity/Property Relationship Modeling (QSAR/QSPR).
+[ZairaChem](https://github.com/ersilia-os/zaira-chem) is [Ersilia](https://ersilia.io)'s **AutoML** tool for supervised learning of small molecule activity and property data. In the field of computer-aided drug discovery, this task is known as Quantitiative Structure Activity/Property Relationship Modeling (**QSAR/QSPR**).
 
-ZairaChem offers a relatively complex modeling pipeline, offering robust performance over a wide set of tasks. If, instead, you want to build quick baseline models, we recommend to check [LazyQSAR](https://github.com/ersilia-os/lazy-qsar), the light-weight modeling tool of Ersilia.
+ZairaChem offers a relatively complex **ensemble modeling** pipeline, showing robust performance over a wide set of tasks. If, instead, you want to build quick baseline models, we recommend to check [LazyQSAR](https://github.com/ersilia-os/lazy-qsar), the light-weight modeling tool of Ersilia.
 
-At the moment, ZairaChem works in these two simple types of tasks:
+Currently, ZairaChem is focused on **binary classification** tasks. We presented ZairaChem in a joint publication with the [H3D Centre](http://www.h3d.uct.ac.za/) (South Africa). Please cite: [Turon\*, Hlozek\* et al, BioRXiV, 2022](https://www.biorxiv.org/content/10.1101/2022.12.13.520154v1).
 
-* Single binary classification
-* Single regression
+In brief, in ZairaChem molecules are represented numerically using a combination of distinct **descriptors**, including physicochemical parameters ([Mordred](https://jcheminf.biomedcentral.com/articles/10.1186/s13321-018-0258-y)), 2D structural fingerprints ([ECFP](https://www.rdkit.org/docs/GettingStartedInPython.html)), inferred bioactivity profiles ([Chemical Checker](https://www.nature.com/articles/s41587-020-0502-7)), graph-based embeddings ([GROVER](https://arxiv.org/pdf/2007.02835.pdf)), and chemical language models ([ChemGPT](https://huggingface.co/ncfrey/ChemGPT-4.7M)). Any other descriptor from the [Ersilia Model Hub](https://ersilia.io/model-hub) can be selected. The rationale is that combining multiple descriptors will enhance applicability over a broad range of tasks, ranging from aqueous solubility predictions to phenotypic outcomes. Subsequently, an array of AI/ML algorithms is applied using modern AutoML techniques aimed at yielding accurate models without the need for human intervention (i.e. algorithm choice, hyperparameter tuning, etc.). The **AutoML frameworks** [FLAML](https://microsoft.github.io/FLAML/), [AutoGluon](https://auto.gluon.ai/stable/index.html), [Keras Tuner](https://keras.io/keras\_tuner/), [TabPFN](https://github.com/automl/TabPFN) and [MolMapNet](https://github.com/shenwanxiang/bidd-molmap) are incorporated, covering mostly tree-based methods (Random Forest, XGBoost, etc.) and neural network architectures.
 
 ## Installation
 
@@ -73,16 +72,16 @@ ZairaChem will run predictions using the checkpoints stored in `model` and store
 
 ## Pipeline steps
 
-The ZairaChem pipeline consists of the following steps:
+Internally, the ZairaChem pipeline consists of the following steps:
 
-1. Session
-2. Setup
-3. Describe
-4. Estimate
-5. Pool
-6. Report
-7. Distill (mainly based on the [Olinda](https://github.com/ersilia-os/olinda) package; integration in progress)
-8. Finish
+1. `session`: a session is initialized pointing to the necessary system paths.
+2. `setup`: data is processed and stored in a cleaned form.
+3. `describe`: molecular descriptors are calculated.
+4. `estimate`: models are trained or predictions are done on trained models.
+5. `pool`: results from multiple models from the ensemble are aggregated.
+6. `report`: output data is assembled in a spreadsheet, and plots are created for easy inpection of results.
+7. `distill` (mainly based on the [Olinda](https://github.com/ersilia-os/olinda) package; integration in progress :construction\_worker:): lightweight versions of the models are created for quick prediction.
+8. `finish`: the session is closed and residual files are deleted.
 
 ### Session
 
