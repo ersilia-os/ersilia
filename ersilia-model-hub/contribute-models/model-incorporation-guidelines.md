@@ -2,7 +2,7 @@
 description: This tutorial explains how to incorporate models in the Ersilia Model Hub
 ---
 
-# Model Incorporation Guidelines
+# Model incorporation guidelines
 
 {% hint style="danger" %}
 We are currently working on a model incorporation pipeline. Content in this page is therefore slightly outdated.
@@ -792,17 +792,17 @@ Debugging the `fetch` and the `api` commands of Ersilia can be very complicated.
 
 In summary, the steps to incorporate a model to the Ersilia Model Hub are the following. We are assuming that the model can be installed in a Conda environment.
 
-1. Download the model from a third party repository to your local machine.
-2. Install the model in a dedicated Conda environment and make sure you can run it.
-3. Open a Model Request issue in the Ersilia Model Hub code repository. Wait for approval to automatically obtain a new model repository from the `eos-template`
-4. Fork the new repository.
-5. Place model code in `model/framework` and model parameters in `model/checkpoints`.
-6. Write the necessary code to obtain a `run.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
-7. Edit the `service.py` file, if necessary.
-8. Edit the `Dockerfile` file to reflect the installation steps followed in 2.
-9. Update the `metadata.json` following the guidelines
-10. Make sure that `.gitattributes` tracks your model parameters.
-11. Open a PR to the the model repository, and check that all tests are passed. If not, try to identify the bug to solve it.
-12. Once the PR passes all the tests and is merged, activate the Ersilia CLI and fetch the model.
-13. Serve the model and run the default API.
-14. Delete your fork
+* Download the model from a third party repository to your local machine.
+* Install the model in a dedicated Conda environment and make sure you can run it.
+* Open a Model Request issue in the Ersilia Model Hub code repository. Wait for approval to automatically obtain a new model repository from the `eos-template`
+* Fork the new repository.
+* Place model code in `model/framework` and model parameters in `model/checkpoints`.
+* Write the necessary code to obtain a `run.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
+* Edit the `service.py` file, if necessary.
+* Edit the `Dockerfile` file to reflect the installation steps followed in 2.
+* Update the `metadata.json` following the guidelines
+* Make sure that `.gitattributes` tracks your model parameters.
+* Open a PR to the the model repository, and check that all tests are passed. If not, try to identify the bug to solve it.
+* Once the PR passes all the tests and is merged, activate the Ersilia CLI and fetch the model.
+* Serve the model and run the default API.
+* Delete your fork
