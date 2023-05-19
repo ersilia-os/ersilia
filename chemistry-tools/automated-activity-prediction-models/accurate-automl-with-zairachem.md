@@ -148,7 +148,7 @@ All of the above can be performed by running the following command:
 zairachem describe
 ```
 
-Please note that calculating some descriptors (for example, Grover) may be a slow procedure. However, the Ersilia backend is linked to an in-house caching library called [Isaura](https://github.com/ersilia-os/isaura) that is able to access pre-calculated data. At the moment, Isaura works on local caching. However, we are currently setting up a cloud-based database in order to facilite access to pre-calculations stored online.
+Please note that calculating some descriptors (for example, GROVER) may be a slow procedure. However, the Ersilia backend is linked to an in-house caching library called [Isaura](https://github.com/ersilia-os/isaura) that is able to access pre-calculated data. At the moment, Isaura works on local caching. However, we are currently setting up a cloud-based database in order to facilite access to pre-calculations stored online.
 
 ### Estimate
 
