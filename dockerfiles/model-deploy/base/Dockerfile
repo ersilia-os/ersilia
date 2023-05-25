@@ -6,7 +6,7 @@ ENV PATH=$PATH:/usr/bin/conda/bin
 COPY download-miniconda.sh /root/download-miniconda.sh
 RUN chmod + /root/download-miniconda.sh
 RUN bash /root/download-miniconda.sh && \
-    apt-get install -y build-essential curl git nginx && \
+    apt-get install -y libxrender1 build-essential curl git nginx && \
     pip install gh && \
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
     apt-get install git-lfs && \
