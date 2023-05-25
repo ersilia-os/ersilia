@@ -14,6 +14,7 @@ DOCKERFILE_FILE = "Dockerfile"
 GITHUB_ORG = "ersilia-os"
 GITHUB_ERSILIA_REPO = "ersilia"
 ERSILIA_MODELS_S3_BUCKET = "ersilia-models"
+ERSILIA_MODELS_ZIP_S3_BUCKET = "ersilia-models-zipped"
 CONFIG_JSON = "config.json"
 CREDENTIALS_JSON = "credentials.json"
 INSTALL_STATUS_FILE = ".install.status"
@@ -53,7 +54,6 @@ ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
 FEATURE_MERGE_PATTERN = "---"
 
 # Airtable
-AIRTABLE_READONLY_API_KEY = "keyVMAlJFOvu7vgMR"
 AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
 AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 
@@ -62,6 +62,7 @@ ERSILIA_WEB_URL = "https://ersilia.io"
 ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
 AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/shrNc3sTtTA3QeEZu"
 S3_BUCKET_URL = "https://ersilia-models.s3.eu-central-1.amazonaws.com"
+S3_BUCKET_URL_ZIP = "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

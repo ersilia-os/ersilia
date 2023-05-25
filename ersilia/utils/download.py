@@ -13,7 +13,7 @@ from click import echo
 from .terminal import run_command
 from .. import logger
 
-from ..default import S3_BUCKET_URL
+from ..default import S3_BUCKET_URL, S3_BUCKET_URL_ZIP
 
 
 class PseudoDownloader(object):
@@ -320,3 +320,12 @@ class GitHubDownloader(object):
                     shutil.copytree(source, destination)
             shutil.rmtree(tmpdir)
         return self._exists(destination)
+
+
+class S3Downloader(object):
+    def __init__(self):
+        pass #TODO
+    
+    def download_from_s3(self, repo, destination):
+        s3_url = S3_BUCKET_URL_ZIP + "/" + repo
+        pass #TODO

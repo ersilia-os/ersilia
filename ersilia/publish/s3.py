@@ -2,10 +2,11 @@ import boto3
 import os
 import shutil
 import tempfile
+import zipfile
 
 from ..utils.terminal import run_command
 from .. import ErsiliaBase
-from ..default import ERSILIA_MODELS_S3_BUCKET
+from ..default import ERSILIA_MODELS_S3_BUCKET, ERSILIA_MODELS_ZIP_S3_BUCKET
 
 AWS_ACCOUNT_REGION = "eu-central-1"
 
@@ -16,6 +17,7 @@ class S3BucketRepoUploader(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.cwd = os.getcwd()
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.tmp_zip_folder = tempfile.mkdtemp(prefix="ersilia-")
         self.aws_access_key_id = None
         self.aws_secret_access_key = None
         self.ignore = ["upload_model_to_s3.py"]
@@ -89,3 +91,41 @@ class S3BucketRepoUploader(ErsiliaBase):
             "Uploading model folder to S3 bucket {0}".format(ERSILIA_MODELS_S3_BUCKET)
         )
         self._upload_files(repo_path)
+
+    @staticmethod
+    def zipdir(repo_path, ziph):
+        for root, dirs, files in os.walk(repo_path):
+            for file in files:
+                ziph.write(os.path.join(root, file), 
+                        os.path.relpath(os.path.join(root, file), 
+                                        os.path.join(repo_path, '..')))
+
+    def _zip_model(self, repo_path):
+        repo_path = os.path.abspath(repo_path)
+        self.zip_model_file = os.path.join(self.tmp_zip_folder, self.model_id+".zip")
+        zipf = zipfile.ZipFile(self.zip_model_file, 'w', zipfile.ZIP_DEFLATED)
+        self.zipdir(repo_path, zipf)
+        zipf.close()
+
+    def upload_zip(self, repo_path = None):
+        if repo_path is not None:
+            self.logger.debug("Repo path is {0}".format(os.path.abspath(repo_path)))
+            self._ungit(repo_path=repo_path)
+        else:
+            repo_path = os.path.join(self.tmp_folder, self.model_id)
+            self._clone()
+            self._ungit(repo_path=repo_path)
+        self.logger.debug(
+            "Uploading zipped model folder to S3 bucket {0}".format(ERSILIA_MODELS_S3_BUCKET)
+        )
+        self._zip_model(repo_path)
+        session = boto3.Session(
+            aws_access_key_id=self.aws_access_key_id,
+            aws_secret_access_key=self.aws_secret_access_key,
+            region_name=AWS_ACCOUNT_REGION,
+        )
+        self.logger.debug(session)
+        s3 = session.client("s3")
+        key = self.model_id
+        self.logger.debug(key)
+        s3.upload_file(self.zip_model_file, ERSILIA_MODELS_ZIP_S3_BUCKET, self.model_id+".zip", ExtraArgs={'ACL':'public-read'})
