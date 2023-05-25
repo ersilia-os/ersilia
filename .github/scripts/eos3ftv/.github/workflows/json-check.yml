@@ -1,0 +1,18 @@
+name: json syntax check
+
+on:
+  push:
+    paths:
+      - "**.json"
+  pull_request:
+
+jobs:
+  json-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # pin@v3.5.2
+
+      - name: json syntax check
+        id: json-yaml-validate
+        uses: GrantBirki/json-yaml-validate@87b2d309a02f4942c5e602183eeea11008a640f9 # pin@v1.4.0
