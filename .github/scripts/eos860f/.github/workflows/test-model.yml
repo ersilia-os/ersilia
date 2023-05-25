@@ -1,0 +1,117 @@
+name: Model Test on push
+
+on:
+  push: 
+    branches: ['main']
+  workflow_dispatch:
+
+jobs:
+  test:
+    if: github.repository != 'ersilia-os/eos-template'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout persist credentials
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # pin@v3.5.2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+          lfs: 'true'
+      
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+      
+      - name: Source conda
+        run: source $CONDA/etc/profile.d/conda.sh
+
+      - name: Install dependencies
+        run: |
+          source activate
+          conda init
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+
+      - name: Install ersilia
+        run: |
+          source activate
+          python --version
+          echo "After conda init"
+          conda init
+          python -m pip install git+https://github.com/ersilia-os/ersilia.git
+  
+      - name: Update metadata to AirTable
+        id: update-metadata-to-airtable
+        env:
+          USER_NAME: ${{ github.repository_owner }}
+          BRANCH: "main"
+          REPO_NAME: ${{ github.event.repository.name }}
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+        run: |
+          source activate
+          echo "Updating metadata to AirTable looking at owner: $USER_NAME"
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/update_metadata_to_airtable.py
+          python3 update_metadata_to_airtable.py $USER_NAME $REPO_NAME $BRANCH $AIRTABLE_API_KEY
+          rm update_metadata_to_airtable.py
+
+      - name: Update README file
+        id: update-readme-file
+        env:
+          MODEL_ID: ${{ github.event.repository.name }}
+        run: |
+          source activate
+          echo "Updating README file with AirTable metadata for model: $MODEL_ID"
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/update_readme_from_airtable.py
+          python3 update_readme_from_airtable.py $MODEL_ID .
+          rm update_readme_from_airtable.py
+          less README.md
+
+      - name: Commit and push changes done to the README file
+        uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # pin@v1.4
+        with:
+          author_name: "ersilia-bot"
+          author_email: "ersilia-bot@users.noreply.github.com"
+          message: "updating readme [skip ci]"
+          repository: "ersilia-os/${{ github.event.repository.name }}"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          amend: true
+          force: true
+      
+      - name: Predict output
+        env:
+          MODEL_ID: ${{ github.event.repository.name }}
+        run: |
+          source activate
+          echo "Sample model id selected: $MODEL_ID"
+          ersilia -v fetch $MODEL_ID --repo_path .
+          ersilia -v serve $MODEL_ID
+          ersilia sample -n 5 -f input.csv
+          ersilia -v api -i input.csv
+          ersilia close
+          
+      - name: Upload log output
+        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb #pin v3.1.1
+        with:
+          name: debug-logs
+          retention-days: 1
+          path: /home/runner/eos/console.log
+          
+      - name: Shuffle assignees
+        id: shuffle
+        run: |
+          export assignees=$(echo "${{ vars.assignees }}" | awk 'BEGIN {FS=","}; {srand();split($0,a,FS); print a[int(rand()*NF+1)]}')
+          echo "$assignees" >> $GITHUB_STEP_SUMMARY
+          echo "shuffled_assignee=$assignees" >> $GITHUB_OUTPUT
+          echo "shuffled_assignee=$assignees" >> $GITHUB_ENV
+          
+      - name: Create a Test issue
+        uses: actions-ecosystem/action-create-issue@b63bc2bbacb6a838dfe4a9f70da6665ae0962a49
+        id: create_issue 
+        with:
+          github_token: ${{ secrets.github_token }}
+          title: ${{ vars.test_issue_title }}
+          assignees: |
+            ${{ steps.shuffle.outputs.shuffled_assignee }}
+          body: |
+            This model is ready for testing. If you are assigned to this issue, please try it out both on the CLI and Google Colab and let us know if it works!
+          labels: |
+            test
