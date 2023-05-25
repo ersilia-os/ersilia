@@ -1,11 +1,15 @@
 import os
 import shutil
+import tempfile
+import zipfile
 from . import BaseAction
-from ....utils.download import GitHubDownloader
+from ....utils.download import GitHubDownloader, S3Downloader
 from ....utils.paths import Paths
 from ...bundle.repo import PackFile, DockerfileFile
 from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.exceptions_utils.fetch_exceptions import FolderNotFoundError
+
+from ....default import S3_BUCKET_URL_ZIP
 
 MODEL_DIR = "model"
 
@@ -17,6 +21,7 @@ class ModelRepositoryGetter(BaseAction):
         )
         self.token = self.cfg.HUB.TOKEN
         self.github_down = GitHubDownloader(self.token)
+        self.s3_down = S3Downloader()
         self.org = self.cfg.HUB.ORG
 
     def _dev_model_path(self):
@@ -41,6 +46,16 @@ class ModelRepositoryGetter(BaseAction):
     def _copy_from_github(self, dst):
         self.github_down.clone(org=self.org, repo=self.model_id, destination=dst)
 
+    def _copy_zip_from_s3(self, dst):
+        self.logger.debug("Downloading model from S3 in zipped format")
+        tmp_file = os.path.join(tempfile.mkdtemp("ersilia-"), "model.zip")
+        self.s3_down.download_from_s3(bucket_url = S3_BUCKET_URL_ZIP, file_name = self.model_id+".zip", destination=tmp_file)
+        self.logger.debug("Extracting model from {0}".format(tmp_file))
+        dst = "/".join(dst.split("/")[:-1])
+        self.logger.debug("...to {0}".format(dst))
+        with zipfile.ZipFile(tmp_file, 'r') as zip_ref:
+            zip_ref.extractall(dst)
+
     def _change_py_version_in_dockerfile_if_necessary(self):
         path = self._model_path(model_id=self.model_id)
         df = DockerfileFile(path=path)
@@ -64,7 +79,7 @@ class ModelRepositoryGetter(BaseAction):
                 f.write(s + os.linesep)
 
     def get(self):
-        """Copy model repository from local or download from GitHub"""
+        """Copy model repository from local or download from S3 or GitHub"""
         folder = self._model_path(self.model_id)
         dev_model_path = self._dev_model_path()
         if dev_model_path is not None:
@@ -73,8 +88,12 @@ class ModelRepositoryGetter(BaseAction):
             )
             self._copy_from_local(dev_model_path, folder)
         else:
-            self.logger.debug("Cloning from github to {0}".format(folder))
-            self._copy_from_github(folder)
+            try:
+                self.logger.debug("Trying to download from S3")
+                self._copy_zip_from_s3(folder)
+            except:
+                self.logger.debug("Could not download in zip format in S3. Downloading from GitHub repository.")
+                self._copy_from_github(folder)
         self._change_py_version_in_dockerfile_if_necessary()
 
 
@@ -116,6 +135,7 @@ class ModelGetter(BaseAction):
         self.repo_path = repo_path
         self.mrg = ModelRepositoryGetter(model_id=model_id, config_json=config_json)
         self.mpg = ModelParametersGetter(model_id=model_id, config_json=config_json)
+        self.s3_down = S3Downloader()
 
     def _get_repository(self):
         self.mrg.get()

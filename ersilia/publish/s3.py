@@ -92,10 +92,11 @@ class S3BucketRepoUploader(ErsiliaBase):
         )
         self._upload_files(repo_path)
 
-    @staticmethod
-    def zipdir(repo_path, ziph):
+    def zipdir(self, repo_path, ziph):
         for root, dirs, files in os.walk(repo_path):
             for file in files:
+                if file in self.ignore:
+                    continue
                 ziph.write(os.path.join(root, file), 
                         os.path.relpath(os.path.join(root, file), 
                                         os.path.join(repo_path, '..')))

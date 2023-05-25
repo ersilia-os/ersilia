@@ -165,7 +165,7 @@ class GitHubDownloader(object):
 
     def _download_s3_files(self, filename, repo, destination):
         # This function takes S3 filename as input and tries to download it
-        # from a location given in S3_BUCKET_URL at config.py
+        # from a location given in S3_BUCKET_URL at default.py
 
         file_url = S3_BUCKET_URL + "/" + repo + "/" + filename
         local_filename = destination + "/" + filename
@@ -324,8 +324,11 @@ class GitHubDownloader(object):
 
 class S3Downloader(object):
     def __init__(self):
-        pass #TODO
+        pass
     
-    def download_from_s3(self, repo, destination):
-        s3_url = S3_BUCKET_URL_ZIP + "/" + repo
-        pass #TODO
+    def download_from_s3(self, bucket_url, file_name, destination):
+        s3_url = bucket_url + "/" + file_name
+        response = requests.get(s3_url)
+        response.raise_for_status()
+        with open(destination, 'wb') as f:
+            f.write(response.content)
