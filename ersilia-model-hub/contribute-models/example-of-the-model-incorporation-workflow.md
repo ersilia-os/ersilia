@@ -19,7 +19,7 @@ This example has been extracted from the [Ersilia Demo Repository](https://githu
 1. Go to the Ersilia main repository [issues page](https://github.com/ersilia-os/ersilia/issues).
 2. Click on **New issue**. Then 🦠 **Model Request** (**Get started**)
 3. For the purpose of this demo, you can use the following information:
-   * 🦠 Model Request: Demo Malaria Model
+   * 🦠 **Model Request**: Demo Malaria Model
    * **Model Name**: Demo Malaria Model
    * **Model Description**: Prediction of the antimalarial potential of small molecules. This model was originally trained on proprietary data from various sources, up to a total of >7M compounds. The training sets belong to Evotec, Johns Hopkins, MRCT, MMV - St. Jude, AZ, GSK, and St. Jude Vendor Library. In this implementation, we have used a teacher-student approach to train a surrogate model based on ChEMBL data (2M molecules) to provide a lite downloadable version of the original MAIP.
    * **Slug**: demo-malaria-model

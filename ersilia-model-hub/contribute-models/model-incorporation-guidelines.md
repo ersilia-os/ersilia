@@ -4,16 +4,12 @@ description: This tutorial explains how to incorporate models in the Ersilia Mod
 
 # Model incorporation guidelines
 
-{% hint style="danger" %}
-We are currently working on a model incorporation pipeline. Content in this page is therefore slightly outdated.
-{% endhint %}
-
 ## Anatomy of the Ersilia Model Template
 
 Each model in the Ersilia Model Hub is contained within an individual GitHub repository. Each model repository is created using the [**Ersilia Model Template**](https://github.com/ersilia-os/eos-template) upon approval of the Model Request issue. When the new repository is created, please fork it and work on modifying the template from your own user. Open a pull request when the model is ready.
 
 {% hint style="danger" %}
-When have finished the model incorporation, please delete the fork from your own GitHub user. This will prevent abuses of the Git-LFS quota and outdated versions of the models&#x20;
+When you have finished the model incorporation, please delete the fork from your own GitHub user. This will prevent abuses of the Git-LFS quota and outdated versions of the models.
 {% endhint %}
 
 Below, we describe the main files you will find in the newly created model repository. Note that some of them are automatically updated and you do not have to modify them (like the `README.MD`), and some others are ready to be used and do not need modification either (like `pack.py`)
@@ -56,11 +52,11 @@ Some contributors may find it difficult to come up with a good description for t
 
 **Task**: the ML task performed by the model. The only accepted [tasks](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/task.txt) are: `Regression`, `Classification`, `Generative`, `Representation`, `Similarity`, `Clustering` and `Dimensionality reduction`.
 
-**Mode**: [mode](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/mode.txt) of training of the models: `Pretrained` (the checkpoints where downloaded directly from a third party), Retrained (the model was trained again using the same or a new dataset), In-house (if the model has been developed from scratch by Ersilia's contributors) or Online (if the model sends queries to an external server)
+**Mode**: [mode](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/mode.txt) of training of the models: `Pretrained` (the checkpoints where downloaded directly from a third party), `Retrained` (the model was trained again using the same or a new dataset), `In-house` (if the model has been developed from scratch by Ersilia's contributors) or `Online` (if the model sends queries to an external server)
 
 **Input:** data format required by the model. Most chemistry related models, for example, will require compounds as input. Currently, the only accepted [inputs](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input.txt) by Ersilia are `Compound`, `Protein` or `Text`.
 
-**Input Shape:** [format](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input\_shape.txt) of the input data. It can be `Single` (one compound), `Pair` (for example, two compounds), a `List`, a Pair of Lists or a `List of Lists`. Please note this refers to the minimum shape for the model to work. If a model predicts, for example, the antimalarial potential of a small molecule, the input shape is Single, regardless of the fact that you can pass several compounds in a list.
+**Input Shape:** [format](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input\_shape.txt) of the input data. It can be `Single` (one compound), `Pair` (for example, two compounds), a `List`, a `Pair of Lists` or a `List of Lists`. Please note this refers to the _minimum_ shape for the model to work. If a model predicts, for example, the antimalarial potential of a small molecule, the input shape is `Single`, regardless of the fact that you can pass several compounds in a list.
 
 **Output:** description of the model result. It is important to choose the right description. Is the model providing a probability? Is it a score? Is it a new compound? The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`.
 
@@ -72,10 +68,10 @@ Some contributors may find it difficult to come up with a good description for t
 
 **Tag:** labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.falciparum_ as tag. Select between one and five relevant from the following categories:
 
-* Disease: `AIDS`, `Alzheimer`, `Cancer`, `Cardiotoxicity`, `COVID19`, `Dengue`, `Malaria`, `Neglected tropical disease`, `Schistosomiasis`, `Tuberculosis`.
-* Organism: `A.baumannii`, `E.coli`, `E.faecium`, `HIV`, `Human`, `K.pneumoniae`, `Mouse`, `M.tuberculosis`, `P.aeruginosa`, `P.falciparum`, `Rat`, `Sars-CoV-2`, `S.aureus`, `ESKAPE`.
-* Target: `BACE`, `CYP450`, `hERG`.
-* Experiment: `Fraction bound`, `IC50`, `LogD`, `LogP`, `LogS`, `MIC90`, `Molecular weight`, `Papp`, `pKa`.
+* Disease: `AIDS`, `Alzheimer`, `Cancer`, `Cardiotoxicity`, `Cytotoxicity`, `COVID19`, `Dengue`, `Malaria`, `Neglected tropical disease`, `Schistosomiasis`, `Tuberculosis`.
+* Organism: `A.baumannii`, `E.coli`, `E.faecium`, `HBV`, `HIV`, `Human`, `K.pneumoniae`, `Mouse`, `M.tuberculosis`, `P.aeruginosa`, `P.falciparum`, `Rat`, `Sars-CoV-2`,  `S.aureus`, `ESKAPE`.
+* Target: `BACE`, `CYP450`, `GPCR`, `hERG`,.&#x20;
+* Experiment: `Fraction bound`, `IC50`, `Half-life`, `LogD`, `LogP`, `LogS`, `MIC90`, `Molecular weight`, `Papp`, `pKa`.
 * Application: `ADME`, `Antimicrobial activity`, `Antiviral activity`, `Bioactivity profile`, `Lipophilicity`, `Metabolism`, `Microsomal stability`, `Natural product`, `Price`, `Quantum properties`, `Side effects`, `Solubility`, `Synthetic accessibility`, `Target identification`, `Therapeutic indication`, `Toxicity`.
 * Dataset: `ChEMBL`, `DrugBank`, `MoleculeNet`, `Tox21`, `ToxCast`, `ZINC`, `TDCommons`.
 * Chemoinformatics: `Chemical graph model`, `Chemical language model`, `Chemical notation`, `Chemical synthesis`, `Compound generation`, `Descriptor`, `Drug-likeness`, `Embedding`, `Fingerprint`, `Similarity`.
@@ -89,7 +85,7 @@ Some contributors may find it difficult to come up with a good description for t
 {% hint style="info" %}
 If the predetermined fields are not sufficient for your use case, you can open a pull request to include new ones to our [repository](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). Please do so only if strictly necessary (for example, if a disease is not already in the Tag field).
 
-Ersilia maintainers will review and approve / reject PRs for additions to the exsting lists of approved items.
+Ersilia maintainers will review and approve / reject PRs for additions to the existing lists of approved items.
 {% endhint %}
 
 {% hint style="danger" %}
@@ -135,7 +131,7 @@ In this case, a Conda environment will be preferentially used to isolate the mod
 
 In this example, the `rdkit` library will be installed using `conda`, and `joblib` will be installed using `pip`.
 
-The `Dockerfile` can contain as many `RUN` commands as necessary, between the `MAINTAINER` and the `WORKDIR` lines.
+The `Dockerfile` can contain as many `RUN` commands as necessary, between the `MAINTAINER` and the `WORKDIR` lines. Please limit the packages to the bare minimmum required, sometimes models have additional packages for extra functionalities that are not required to run the model. It is good practice to trim to the minimmum the package dependencies to avoid conflicts. Whenever possible, pin the version of the package.
 
 {% hint style="warning" %}
 The `Dockerfile` contains the installation instructions of the model. Therefore, the content of this file can be very variable, since each model will have its own dependencies.
@@ -243,7 +239,7 @@ To summarize, in the template, we provide a structure that follows this logic:
 {% hint style="info" %}
 In the template, the example provided is very simple. Depending on the model being incorporated, the logic may be different. For example, many third party models already contain a command-line option, with a specific syntax. In these cases, you may want to write scripts to adapt the input and the output, and then execute the model as-is.
 
-Each script will be one step.py file, we can create as many as necessary and rename them appropriately (see below for examples)
+Each script will be one `step.py` file, we can create as many as necessary and rename them appropriately (see below for examples)
 {% endhint %}
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
@@ -280,7 +276,7 @@ class Model (object):
         ...
 ```
 
-In this case, the model takes as input a list of molecules represented as SMILES strings. This is the standard input type for [Type A](broken-reference) models, focussed on chemistry data as input.
+In this case, the model takes as input a list of molecules represented as SMILES strings. This is the standard input type for [Type A](broken-reference) models, focused on chemistry data as input.
 
 {% hint style="info" %}
 You can always rename the `predict` method to something else if your model does not do predictions, strictly. For example, for some models it is more appropriate to rename this method to `calculate`.
@@ -391,7 +387,7 @@ class Artifact(BentoServiceArtifact):
         ...
 ```
 
-You **don't have to modify** this class.
+You <mark style="color:red;">**don't have to modify**</mark> this class.
 
 #### The `Service` class
 
@@ -410,9 +406,9 @@ class Service(BentoService):
 
 The `Service`class can have multiple APIs, each of them specified with the `@api` decorator. By default, Ersilia works with JSON inputs, which are deserialized as a SMILES list inside the API, in this case.
 
-You can **rename the API** (for example, to `calculate`), following the `# EDIT` tags in the template.
+The deafult API is run. The general rule is, <mark style="color:red;">**do not modify**</mark> it.
 
-## Steps for model incorporation
+## A Model Incorporation example
 
 Now that we have an idea of the contents of the [Ersilia Model Template](https://github.com/ersilia-os/eos-template), we will follow the example of a simple but widely used model to calculate the **synthetic accessibility** of small molecule compounds. Synthetic accessibility measures the feasibility of synthesizing a molecule in the laboratory. In [2009, Peter Ertl presented the synthetic accessiblity (SA) score](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), based on measures of molecular complexity and occurrence of certain fragments in the small molecule structure. High (greater than 6) SA scores denote difficult-to-synthesize molecules, and low (lower than 3) SA scores suggest that the molecule will be easy to synthesize.
 
@@ -537,7 +533,7 @@ cd eos9ei3
 
 ### Migrate code and parameters
 
-Let's now place the code and the parameters in the `model` folder (in the `framework` and `checkpoints` subfolders, respectively):
+Let's now place the code and the parameters in the `model` folder (in the `framework` and `checkpoints` sub folders, respectively):
 
 ```bash
 cd ~/Desktop
@@ -546,11 +542,11 @@ cp SA_Score/fpscores.pkl.gz eos9ei3/model/checkpoints/.
 ```
 
 {% hint style="info" %}
-The checkpoints contains a dummy checkpoints.joblib that can be deleted
+The checkpoints contains a dummy `checkpoints.joblib` that can be deleted.
 {% endhint %}
 
 {% hint style="danger" %}
-Note that here we are migrating code and parameters to different folders. This may cause critical errors if code expects to find parameters at a certain relative location. Try to locate the pointers to the model parameters and change the paths. Only, and exceptionally, if the model architecture is too complex we can keep code and parameters in the /framework folder. Please ask for permission to Ersilia's team before doing it.
+Note that here we are migrating code and parameters to different folders. This may cause critical errors if code expects to find parameters at a certain relative location. Try to locate the pointers to the model parameters and change the paths. Only, and exceptionally, if the model architecture is too complex we can keep code and parameters in the `/framework` folder. Please ask for permission to Ersilia's team before doing it.
 {% endhint %}
 
 ### Write framework code
@@ -759,7 +755,7 @@ You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-o
 
 ### Fetch and serve the model with Ersilia
 
-We are ready to test the model in the context of the Ersilia CLI. To run the model on Caffeine, simply run:
+We are ready to test the model in the context of the Ersilia CLI. To run the model, simply run:
 
 ```bash
 ersilia fetch eos9ei3
@@ -767,7 +763,7 @@ ersilia serve eos9ei3
 ersilia api -i "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
 ```
 
-The input output should lool like this:
+The input output should look like this:
 
 ```json
 {
