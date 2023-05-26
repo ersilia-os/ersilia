@@ -1,8 +1,10 @@
 ---
-description: This tutorial explains how to incorporate models in the Ersilia Model Hub
+description: >-
+  This pages provides a deep dive into the structure of the model template for
+  new model incorporation
 ---
 
-# Model incorporation guidelines
+# Model Template
 
 ## Anatomy of the Ersilia Model Template
 
@@ -315,7 +317,7 @@ class Model(object):
         ...
 ```
 
-Now we already have the input file of the `run.sh`script, located in the `model/framework/` directory, as specified [above](model-incorporation-guidelines.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](model-incorporation-guidelines.md#the-model-folder) that the `run.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
+Now we already have the input file of the `run.sh`script, located in the `model/framework/` directory, as specified [above](model-template.md#the-model-folder). The following creates a dummy Bash script in the temporary directory and runs the command from there. The output is saved in the temporary directory too. [Remember](model-template.md#the-model-folder) that the `run.sh` script expects three arguments, `FRAMEWORK_DIR`_,_ `DATA_FILE` and `OUTPUT_FILE`.
 
 ```python
 class Model(object):
@@ -551,7 +553,7 @@ Note that here we are migrating code and parameters to different folders. This m
 
 #### Write framework code
 
-Now it is time to write some code. Here we will follow the description of the `model` folder [given above](model-incorporation-guidelines.md#the-model-folder):
+Now it is time to write some code. Here we will follow the description of the `model` folder [given above](model-template.md#the-model-folder):
 
 **Write input and output adapters**
 
@@ -566,7 +568,7 @@ cd model
 rm framework/code/step.py
 ```
 
-By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](model-incorporation-guidelines.md#the-service-file)). However, the `sascorer.py` [expects](model-incorporation-guidelines.md#test-the-model) a two-column file. Let's write an **input** adapter:
+By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](model-template.md#the-service-file)). However, the `sascorer.py` [expects](model-template.md#test-the-model) a two-column file. Let's write an **input** adapter:
 
 {% code title="code/input_adapter.py" %}
 ```python
@@ -619,7 +621,7 @@ Note that we are reading from a `tmp_output.csv`. We then write a one-column out
 
 **Make sure that parameters are read**
 
-So far, we haven't pointed to the model parameters. When [migrating code and parameters](model-incorporation-guidelines.md#migrate-code-and-parameters), we separated the `sascore.py` file and the `fpscores.pkl.gz` file.
+So far, we haven't pointed to the model parameters. When [migrating code and parameters](model-template.md#migrate-code-and-parameters), we separated the `sascore.py` file and the `fpscores.pkl.gz` file.
 
 Let's inspect `sascore.py` to understand how parameters are read. There is a `readFragmentScore` function that does this job. We need to modify it to point to the `checkpoints` folder:
 
@@ -717,7 +719,7 @@ COPY . /repo
 
 #### Write the `metadata.json` file
 
-Don't forget to document the model. Read the [instructions to write the `metadata` file](model-incorporation-guidelines.md#the-metadata.json-file) page. Feel free to ask for help in the Slack `#internships` channel.
+Don't forget to document the model. Read the [instructions to write the `metadata` file](model-template.md#the-metadata.json-file) page. Feel free to ask for help in the Slack `#internships` channel.
 
 ### 5. Run the local model inside Ersilia
 
@@ -766,7 +768,7 @@ git push
 
 Once the model is ready, open a pull request to merge your changes back into the main repository. This will trigger a series of checks to ensure that the metadata is correct and that the model is running.
 
-If the Actions at Pull request fail, please check them and work on debugging them before making a new pull request. Ersilia maintainers will only merge PR's that have passed all the checks.
+If the Actions at Pull request fail, please check them and work on debugging them before making a new pull request. <mark style="color:purple;">**Ersilia maintainers will only merge PR's that have passed all the checks.**</mark>
 
 You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-os/eos9ei3) and check that your work is publicly available.
 
@@ -801,6 +803,12 @@ The input output should look like this:
 Debugging the `fetch` and the `api` commands of Ersilia can be very complicated. Please reach out to **@Miquel** directly if you find problems at this step.
 {% endhint %}
 
+The workflow will also trigger a request for model testing to members of the Ersilia community via a GitHub issue in the same repository. The original model contributor should make sure the modle is working for different users and answer any questions or issues that might arise during model testing. If amends must be made, the original model contributor should work on those
+
+#### 8. Clean up
+
+Please, help us keep a healthy environment and avoid duplication of files and consumming of our Git LFS quota. Delete the repository fork after the model has been successfully incorporated.
+
 ## TL;DR
 
 In summary, the steps to incorporate a model to the Ersilia Model Hub are the following. We are assuming that the model can be installed in a Conda environment.
@@ -818,4 +826,5 @@ In summary, the steps to incorporate a model to the Ersilia Model Hub are the fo
 * Open a PR to the the model repository, and check that all tests are passed. If not, try to identify the bug to solve it.
 * Once the PR passes all the tests and is merged, activate the Ersilia CLI and fetch the model.
 * Serve the model and run the default API.
-* Delete your fork
+* Check other users can also run the model.
+* Delete your fork.

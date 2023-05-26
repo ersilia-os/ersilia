@@ -28,7 +28,7 @@ To start contributing:
 5. Select a model of interest from the approved backlog and open a Model Request issue in the Ersilia [repository](https://github.com/ersilia-os/ersilia/issues/new/choose).
 6. Wait for the issue to be approved. This will trigger an automatic Action that will create a new repository for the model.
 7. Fork the repository.
-8. Start coding! Head to the [Model Incorporation Guidelines](../ersilia-model-hub/contribute-models/model-incorporation-guidelines.md) for more information.
+8. Start coding! Head to the [Model Incorporation Guidelines](../ersilia-model-hub/contribute-models/model-template.md) for more information.
 
 ### Know where to find models and get inspiration
 

@@ -8,15 +8,7 @@ description: Here we describe the types of valid inputs while running Ersilia mo
 
 Small molecule structures are typically expressed in the well known [SMILES](https://en.wikipedia.org/wiki/Simplified\_molecular-input\_line-entry\_system) format. Below are the SMILES strings of a few drug molecules:
 
-| Drug         | SMILES                                        |
-| ------------ | --------------------------------------------- |
-| Artemisin    | CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O         |
-| Isoniazid    | C1=CN=CC=C1C(=O)NN                            |
-| Tenofovir    | CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O          |
-| Aspirin      | CC(=O)OC1=CC=CC=C1C(=O)O                      |
-| Ibuprofen    | CC(C)CC1=CC=C(C=C1)C(C)C(=O)O                 |
-| Remdesivir   | CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C |
-| Cephalotaxin | COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5       |
+<table><thead><tr><th width="166">Drug</th><th>SMILES</th></tr></thead><tbody><tr><td>Artemisin</td><td>CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O</td></tr><tr><td>Isoniazid</td><td>C1=CN=CC=C1C(=O)NN</td></tr><tr><td>Tenofovir</td><td>CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O</td></tr><tr><td>Aspirin</td><td>CC(=O)OC1=CC=CC=C1C(=O)O</td></tr><tr><td>Ibuprofen</td><td>CC(C)CC1=CC=C(C=C1)C(C)C(=O)O</td></tr><tr><td>Remdesivir</td><td>CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C</td></tr><tr><td>Cephalotaxin</td><td>COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5</td></tr></tbody></table>
 
 In the most common case, each input sample corresponds to a **single molecule**. However, some models expect a **list of molecules** as input, and some even expect more complex inputs such as **pairs of lists of molecules**. Multiple molecules (lists) can be serialized to strings in the SMILES notation with the dot (`.`) character.
 
