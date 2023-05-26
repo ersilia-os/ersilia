@@ -412,7 +412,7 @@ The deafult API is run. The general rule is, <mark style="color:red;">**do not m
 
 Now that we have an idea of the contents of the [Ersilia Model Template](https://github.com/ersilia-os/eos-template), we will follow the example of a simple but widely used model to calculate the **synthetic accessibility** of small molecule compounds. Synthetic accessibility measures the feasibility of synthesizing a molecule in the laboratory. In [2009, Peter Ertl presented the synthetic accessiblity (SA) score](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), based on measures of molecular complexity and occurrence of certain fragments in the small molecule structure. High (greater than 6) SA scores denote difficult-to-synthesize molecules, and low (lower than 3) SA scores suggest that the molecule will be easy to synthesize.
 
-### Open a Model Request Issue
+### 1. Open a Model Request Issue
 
 We have an automated workflow that triggers all the necessary steps once the Model Request is approved. Please fill in the[ issue](https://github.com/ersilia-os/ersilia/issues/new?assignees=\&labels=new-model\&template=model\_request.yml\&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) fields as accurately as possible and wait for review and approval by one of the Ersilia maintainers.
 
@@ -428,7 +428,7 @@ Code to calculate the SA score does not seem to be available from the publicatio
 Both the link to the code and to the original publication are accessible from the Ersilia Model Hub AirTable database.
 {% endhint %}
 
-### Run the code outside Ersilia
+### 2. Run the code outside Ersilia
 
 Before incorporating the `sa-score` model to the Ersilia Model Hub, we need to make sure that we can actually run the code provided by the third party. [In this case](https://github.com/rdkit/rdkit/tree/master/Contrib/SA\_Score), upon quick inspection, two elements seem to be central in the repository:
 
@@ -517,7 +517,7 @@ Reading took 0.21 seconds. Calculating took 0.00 seconds
 Many repositories give a clear description of the expected input format. For the SA scorer, the expected input was not clearly specified, and previous knowledge of the `Chem.SmilesMolSupplier` method was necessary.
 {% endhint %}
 
-### Create the model repository from the Ersilia Model Template
+### 3. Create the model repository from the Ersilia Model Template
 
 Now that we know that the code can run in our local machine, we can fork the model template created by the workflow and start working on it.
 
@@ -531,7 +531,7 @@ git clone https://github.com/user-github/eos9ei3.git
 cd eos9ei3
 ```
 
-### Migrate code and parameters
+#### Migrate code and parameters
 
 Let's now place the code and the parameters in the `model` folder (in the `framework` and `checkpoints` sub folders, respectively):
 
@@ -549,11 +549,11 @@ The checkpoints contains a dummy `checkpoints.joblib` that can be deleted.
 Note that here we are migrating code and parameters to different folders. This may cause critical errors if code expects to find parameters at a certain relative location. Try to locate the pointers to the model parameters and change the paths. Only, and exceptionally, if the model architecture is too complex we can keep code and parameters in the `/framework` folder. Please ask for permission to Ersilia's team before doing it.
 {% endhint %}
 
-### Write framework code
+#### Write framework code
 
-Now it is time to write some code. Here we will follow the description of the `model` folder [given above](model-incorporation-guidelines.md#the-model-folder).
+Now it is time to write some code. Here we will follow the description of the `model` folder [given above](model-incorporation-guidelines.md#the-model-folder):
 
-#### Write input and output adapters
+**Write input and output adapters**
 
 The `eos-template` provides an exemplary `step.py` that is not useful here. We will actually need to use three steps:
 
@@ -617,7 +617,7 @@ with open(output_file, "w") as f:
 
 Note that we are reading from a `tmp_output.csv`. We then write a one-column output.
 
-#### Make sure that parameters are read
+**Make sure that parameters are read**
 
 So far, we haven't pointed to the model parameters. When [migrating code and parameters](model-incorporation-guidelines.md#migrate-code-and-parameters), we separated the `sascore.py` file and the `fpscores.pkl.gz` file.
 
@@ -642,7 +642,7 @@ def readFragmentScores(name='fpscores'):
 ```
 {% endcode %}
 
-#### Write the `run.sh` file
+**Write the `run.sh` file**
 
 We now have the input adapter, the model code and parameters, and the output adapter. Let's simply write this pipeline in the `run.sh` file:
 
@@ -655,7 +655,7 @@ rm tmp_input.smi tmp_output.csv
 ```
 {% endcode %}
 
-### Run predictions
+### 4. Run the model locally
 
 Let's now check that the scripts run as expected. Eventually, Ersilia will run this code from an arbitrary location, so it is best to test it outside the `framework` folder. We can create an input file in the `~/Desktop`.
 
@@ -691,7 +691,7 @@ sa_score
 ```
 {% endcode %}
 
-### Edit the `service.py` file, if necessary
+#### Edit the `service.py` file, if necessary
 
 The `service.py` file provided by default in the template manages chemistry inputs and expects tabular outputs. Therefore, in principle, you do not have to modify this file.
 
@@ -699,7 +699,7 @@ The `service.py` file provided by default in the template manages chemistry inpu
 Modifying the `service.py` file is intended for advanced users only. Please use the Slack `#internships` channel if you think your model of interest requires modification of this file.
 {% endhint %}
 
-### Edit the `Dockerfile` file
+#### Edit the `Dockerfile` file
 
 The `Dockerfile` file should include all the installation steps that you run after creating the working Conda environment. In the case of `sa-score`, we only installed RDKit:
 
@@ -715,13 +715,30 @@ COPY . /repo
 ```
 {% endcode %}
 
-### Write the `metadata.json` file
+#### Write the `metadata.json` file
 
 Don't forget to document the model. Read the [instructions to write the `metadata` file](model-incorporation-guidelines.md#the-metadata.json-file) page. Feel free to ask for help in the Slack `#internships` channel.
 
-### Commit changes to the repository
+### 5. Run the local model inside Ersilia
 
-We are ready to commit changes, first to our fork
+Before committing our new model to Ersilia, we must check it will work within the Ersilia environment. To do so, we have a very convenient option at model fetch time, `--repo_path` that allows us to specify a local path to the model we are fetching (so, instead of looking for it online it will use the local folder). <mark style="color:purple;">**It is crucial to complete this step**</mark> before committing the model to GitHub.
+
+```
+conda activate ersilia
+ersilia -v fetch eos9ei3 --repo_path ~/Desktop/eos9ei3
+ersilia serve eos9ei3
+ersilia predict -i molecules.csv -o output.csv
+```
+
+If this runs without issues, the model is ready to be incorporated! If not, please go back to step 4 and revise the model indeed is running without issues.
+
+### 6. Commit changes to the repository
+
+We are ready to commit changes, first to our fork, and then to the main Ersilia repository by opening a pull request.
+
+#### Cleanup mock files
+
+Probably, there is a few files, such as `mock.csv`, that are no longer needed (this is used solely to initialize Git-LFS). Please remove them before commiting and also eliminate the Git-LFS tracking from .gitattributes (see below for more on Git-LFS)
 
 #### Check the `.gitattributes` file
 
@@ -753,7 +770,7 @@ If the Actions at Pull request fail, please check them and work on debugging the
 
 You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-os/eos9ei3) and check that your work is publicly available.
 
-### Fetch and serve the model with Ersilia
+### 7. Fetch and serve the model with Ersilia
 
 We are ready to test the model in the context of the Ersilia CLI. To run the model, simply run:
 
