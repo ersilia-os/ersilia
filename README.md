@@ -1,7 +1,7 @@
 <div id="top"></div>
 <img src="https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png" height="70">
 
-# Welcome to the Ersilia Model Hub!
+# Welcome to the Ersilia Model Hub
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/agpl-3.0) [![DOI](https://zenodo.org/badge/277068989.svg)](https://zenodo.org/badge/latestdoi/277068989)
 
