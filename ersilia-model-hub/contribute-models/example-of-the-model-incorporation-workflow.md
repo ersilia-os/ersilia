@@ -202,29 +202,30 @@ Note that here we are migrating code and parameters to different folders. This m
 
 #### Write framework code
 
-Now it is time to write some code. Here we will follow the description of the `model` folder [given above](example-of-the-model-incorporation-workflow.md#the-model-folder):
+Now it is time to write some code. Here we will follow the description of the `model` folder given in the [Model Template page](model-template.md#the-model-folder).
 
-**Write input and output adapters**
+The `eos-template` provides a `main.py` that will guide us through the deployment steps. We will adapt the `main.py` to our specific needs, and run it from the `run.sh` file present in the /model directory. The arguments are, respectively, the path to the file, the input and the output. Ersilia takes care of passing the right arguments to the `run.sh` file. Please do not modify it.
 
-The `eos-template` provides an exemplary `step.py` that is not useful here. We will actually need to use three steps:
+```bash
+python $1/code/main.py $2 $3
+```
+
+Going back to our model of interest, we have identified three necessary steps to run the model:
 
 1. Input adapter
 2. SAScorer (in this case, the `sascorer.py` which is already written)
 3. Output adapter
 
-```bash
-cd model
-rm framework/code/step.py
-```
+**Write the input adapter**
 
-By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` file [above](example-of-the-model-incorporation-workflow.md#the-service-file)). However, the `sascorer.py` [expects](example-of-the-model-incorporation-workflow.md#test-the-model) a two-column file. Let's write an **input** adapter:
+By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` [file](model-template.md#the-service-file)). However, the `sascorer.py` [expects](example-of-the-model-incorporation-workflow.md#test-the-model) a two-column file. Let's write an **input** **adapter**:
 
-{% code title="code/input_adapter.py" %}
+{% code title="input_adapter.py" %}
 ```python
 import sys
 import csv
 
-input_file = sys.argv[1]
+input_file = sys.argv[1] 
 smiles_list = []
 with open(input_file, "r") as f:
     reader = csv.reader(f)
@@ -240,33 +241,25 @@ with open("tmp_input.smi", "w") as f:
 ```
 {% endcode %}
 
-The script creates an intermediate `tmp_input.smi` file that can be used as input for `sascorer.py`.
+The script creates an intermediate `tmp_input.smi` file that can be used as input for `sascorer.py`. We can keep this as a separate file under /code, but since it is a small function, we will write it inside the `main.py` file:
 
-Likewise, the **output** is expected to be just one column containing the SA score, in this case. The output provided by `sascorer.py` has three columns (tab-separated), so we need to adapt it.
-
-{% code title="code/output_adapter.py" %}
+{% code title="code/main.py from line 20" %}
 ```python
-import sys
-import csv
-
-output_file = sys.argv[1]
-
-sascores = []
-with open("tmp_output.csv", "r") as f:
-    reader = csv.reader(f, delimiter="\t")
+# read SMILES from .csv file, assuming one column with header
+smiles_list = []
+with open(input_file, "r") as f:
+    reader = csv.reader(f)
     next(reader) # skip header
     for r in reader:
-        sascores += [r[-1]]
+        smiles_list += [r[0]]
 
-with open(output_file, "w") as f:
-    writer = csv.writer(f)
-    writer.writerow(["sa_score"]) # header
-    for sa in sascores:
-        writer.writerow([sa])
+with open("tmp_input.smi", "w") as f:
+    writer = csv.writer(f, delimiter=" ")
+    writer.writerow(["smiles", "identifier"]) # header
+    for i, smi in enumerate(smiles_list):
+        writer.writerow([smi, "mol{0}".format(i)])
 ```
 {% endcode %}
-
-Note that we are reading from a `tmp_output.csv`. We then write a one-column output.
 
 **Make sure that parameters are read**
 
@@ -293,18 +286,118 @@ def readFragmentScores(name='fpscores'):
 ```
 {% endcode %}
 
-**Write the `run.sh` file**
+**Run the model inside main.py**
 
-We now have the input adapter, the model code and parameters, and the output adapter. Let's simply write this pipeline in the `run.sh` file:
+We now have the input adapter and the model code and parameters. We simply need to run the model in main.py by calling the `sascorer.py.`
 
-{% code title="run.sh" %}
-```bash
-python $1/code/input_adapter.py $2
-python $1/code/sascorer.py tmp_input.smi > tmp_output.csv
-python $1/code/output_adapter.py $3
-rm tmp_input.smi tmp_output.csv
+We first make sure to import the necessary packages and delete the non-necessayr (in this case, the MW by rdkit). The sascorer uses time to measue how long did the model take, as well as the functions readFragmentScores and processMols.
+
+The input file is no longer passed as a sys.argv, so we modify it with the temporal input file we just created
+
+{% code title="code/main.py" %}
+```python
+# imports
+import os
+import csv
+import sys
+import time
+from rdkit import Chem
+from sascorer import readFragmentScores, processMols
+
+# parse arguments
+input_file = sys.argv[1]
+output_file = sys.argv[2]
+
+# current file directory
+root = os.path.dirname(os.path.abspath(__file__))
+
+# read SMILES from .csv file, assuming one column with header
+smiles_list = []
+with open(input_file, "r") as f:
+    reader = csv.reader(f)
+    next(reader) # skip header
+    for r in reader:
+        smiles_list += [r[0]]
+
+with open("tmp_input.smi", "w") as f:
+    writer = csv.writer(f, delimiter=" ")
+    writer.writerow(["smiles", "identifier"]) # header
+    for i, smi in enumerate(smiles_list):
+        writer.writerow([smi, "mol{0}".format(i)])
+
+# run model
+t1 = time.time()
+readFragmentScores("fpscores")
+t2 = time.time()
+
+suppl = Chem.SmilesMolSupplier("tmp_input.smi")
+t3 = time.time()
+R = processMols(suppl)
+t4 = time.time()
+
+print('Reading took %.2f seconds. Calculating took %.2f seconds' % ((t2 - t1), (t4 - t3)),
+        file=sys.stderr)
+
+
 ```
 {% endcode %}
+
+The `processMols()` function was simply printing the output without saving the results, so we have modified it in the `sascorer.py` to get the output:
+
+```python
+def processMols(mols):
+    print('smiles\tName\tsa_score')
+    R = []
+    for i, m in enumerate(mols):
+        if m is None:
+            continue
+        s = calculateScore(m)
+        smiles = Chem.MolToSmiles(m)
+        print(smiles + "\t" + m.GetProp('_Name') + "\t%3f" % s)
+        R += [[smiles, m.GetProp("_Name"), "\t%3f" % s]]
+    return R
+```
+
+#### Write the output adapters
+
+We need to understand the output of the model in order to collect it correctly. The easiest will be to add a print(R) statement in main.py and run the `run.sh` file with a mock test file.
+
+```bash
+cd model/framework
+python run.sh . ~/test.csv ~/output.csv
+```
+
+We observe that the output provided by `sascorer.py` has three columns (tab-separated), so we need to adapt it.
+
+<table><thead><tr><th width="462.3333333333333">smiles</th><th>Name</th><th>sa_score</th></tr></thead><tbody><tr><td>C(F)Oc1ccc(-c2nnc3cncc(Oc4ccc5ccsc5c4)n23)cc1</td><td>mol0</td><td>2.823995</td></tr><tr><td>C(F)Oc1ccc(-c2nnc3cncc(OCC[C]4BBBBBBBBBB[CH]4)n23)cc1</td><td>mol1</td><td>5.757383</td></tr><tr><td>Cn1cc2ccc(Oc3cncc4nnc(-c5ccc(OC(F)F)cc5)n34)cc2n1</td><td>mol2</td><td>2.910502</td></tr></tbody></table>
+
+Likewise, we can subsitute this piece of code in `main.py`:
+
+{% code title="code/main.py  template line29" %}
+```python
+outputs = []
+for r in R:
+    outputs += [r[-1].strip()]
+        
+#check input and output have the same lenght
+input_len = len(smiles_list)
+output_len = len(outputs)
+assert input_len == output_len
+
+# write output in a .csv file
+with open(output_file, "w") as f:
+    writer = csv.writer(f)
+    writer.writerow(["sa_score"])  # header
+    for o in outputs:
+        writer.writerow([o])
+```
+{% endcode %}
+
+Finally, let's add one more line to main.py to clean up the temporary files we have created:
+
+```python
+os.remove("tmp_input.smi")
+```
 
 ### 4. Run the model locally
 
@@ -424,7 +517,7 @@ We are now ready to commit changes, first to our fork, and then to the main Ersi
 
 #### Cleanup mock files
 
-Probably, there is a few files, such as `mock.csv`, that are no longer needed (this is used solely to initialize Git-LFS). Please remove them before commiting and also eliminate the Git-LFS tracking from .gitattributes (see below for more on Git-LFS)
+Probably, there is a few files, such as `mock.csv`, that are no longer needed (this is used solely to initialize Git-LFS). Please remove them before committing and also eliminate the Git-LFS tracking from `.gitattributes` (see below for more on Git-LFS)
 
 #### Check the `.gitattributes` file
 

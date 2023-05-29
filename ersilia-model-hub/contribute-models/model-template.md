@@ -164,7 +164,7 @@ Unless strictly necessary, the `run.sh` file should accept three and only three 
 
 {% code title="run.sh" %}
 ```bash
-python $1/code/step.py -i $2 -o $3
+python $1/code/main.py -i $2 -o $3
 ```
 {% endcode %}
 
@@ -172,7 +172,7 @@ In this case, a Python file located in the `[FRAMEWORK_DIR]/src` folder is execu
 
 To understand this further, we now need to inspect the step`.py`file in more detail. The current template proposes the following script:&#x20;
 
-{% code title="code/step.py" %}
+{% code title="code/main.py" %}
 ```python
 # imports
 import os
@@ -231,7 +231,7 @@ Most of the work of the model contributor will be to work on this or similar scr
 To summarize, in the template, we provide a structure that follows this logic:
 
 1. The `run.sh` script executes the Python `main.py` script.
-2. The `step.py` script:
+2. The `main.py` script:
    * Defines the model code.
    * Loads parameters from `checkpoints`.
    * Reads an input file containing SMILES (with header).
@@ -241,7 +241,7 @@ To summarize, in the template, we provide a structure that follows this logic:
 {% hint style="info" %}
 In the template, the example provided is very simple. Depending on the model being incorporated, the logic may be different. For example, many third party models already contain a command-line option, with a specific syntax. In these cases, you may want to write scripts to adapt the input and the output, and then execute the model as-is.
 
-Each script will be one `step.py` file, we can create as many as necessary and rename them appropriately (see below for examples)
+Each script will be one `main.py` file, we can create as many as necessary and rename them appropriately (see below for examples)
 {% endhint %}
 
 ### The [`.gitattributes`](https://github.com/ersilia-os/eos-template/blob/main/.gitattributes) file
@@ -269,23 +269,19 @@ There are three main classes in the `service` file, namely `Model`, `Artifact` a
 
 This class is simply a wrapper for the AI/ML model. Typically, when incorporating **external** (type 1) models, the `run.sh` script will already capture the logic within the `Model` class, in which case the `Model` class is simply redundant. However, when incorporating **internally developed** (types 2 and 3) models into the hub, we can make use of the artifacts for standard modeling frameworks (e.g. sklearn, PyTorch, and Keras) provided by BentoML, and the `Model` class becomes necessary for BentoML compatibility. Hence, the `Model` class enables generalization between these types of model additions.
 
-Typically, the central method of the `Model` class is the `predict` method.
+Typically, the central method of the `Model` class is the `run` method.
 
 ```python
 class Model (object):
     ...
-    def predict(self, smiles_list):
+    def run(self, smiles_list):
         ...
 ```
 
 In this case, the model takes as input a list of molecules represented as SMILES strings. This is the standard input type for [Type A](broken-reference) models, focused on chemistry data as input.
 
-{% hint style="info" %}
-You can always rename the `predict` method to something else if your model does not do predictions, strictly. For example, for some models it is more appropriate to rename this method to `calculate`.
-{% endhint %}
-
-{% hint style="success" %}
-Multiple methods are allowed. For example, a model may have a `predict` and an `explain`method.
+{% hint style="warning" %}
+Multiple methods are no longer allowed. We are reformating all the old models to adapt to the run method only
 {% endhint %}
 
 In its simplest form, the `Model` class just points Ersilia to the `model` directory and then creates a Bash file to execute the necessary commands to run the model. It is actually a very simple class, although it may look overwhelming at first. We break it down below:
@@ -295,7 +291,7 @@ First, a temporary directory is created:
 ```python
  class Model(object):
     ...
-    def predict(self, smiles_list):
+    def run(self, smiles_list):
         tmp_folder = tempfile.mkdtemp(prefix="eos-")
         data_file = os.path.join(tmp_folder, self.DATA_FILE)
         output_file = os.path.join(tmp_folder, self.OUTPUT_FILE)
@@ -308,7 +304,7 @@ Then, a data file is created in the temporary directory. In this example, it is 
 ```python
 class Model(object):
     ...
-    def predict(self, smiles_list):
+    def run(self, smiles_list):
         ...
         with open(data_file, "w") as f:
             f.write("smiles"+os.linesep)
@@ -322,7 +318,7 @@ Now we already have the input file of the `run.sh`script, located in the `model/
 ```python
 class Model(object):
     ...
-    def predict(self, smiles_list):
+    def run(self, smiles_list):
         ...
         run_file = os.path.join(tmp_folder, self.RUN_FILE)
         with open(run_file, "w") as f:
@@ -347,7 +343,7 @@ The last step is to read from the output in the temporary directory and return i
 ```python
 class Model(object):
     ...
-    def predict(self, smiles_list):
+    def run(self, smiles_list):
         ...
         with open(output_file, "r") as f:
             reader = csv.reader(f)
@@ -366,7 +362,7 @@ class Model(object):
         return result
 ```
 
-You will see that, in the template, pointers to potential edits are highlighted with the tag `# EDIT` . Necessary edits relate to the appropriate naming of the API, the format of the input data, or the serialization to JSON format from the output data.
+You will see that, in the template, pointers to potential edits are highlighted with the tag `# EDIT` . Necessary edits relate to the the format of the input data, or the serialization to JSON format from the output data.
 
 {% hint style="info" %}
 Advanced contributors may want to modify the `Model` class to load a model in-place (for example, a Scikit-Learn model) instead of executing a Bash command in the `model/framework/` directory.
@@ -393,19 +389,17 @@ You <mark style="color:red;">**don't have to modify**</mark> this class.
 
 #### The `Service` class
 
-This class is used to create the service. The service exposes at least one API, typically `predict`:&#x20;
+This class is used to create the service. The service exposes the `run` API:&#x20;
 
 ```python
 @artifacts([Artifact("model")])
 class Service(BentoService):
     @api(input=JsonInput(), batch=True)
-    def predict(self, input: List[JsonSerializable]):
+    def run(self, input: List[JsonSerializable]):
         input = input[0]
         smiles_list = [inp["input"] for inp in input]
-        output = self.artifacts.model.predict(smiles_list)
+        output = self.artifacts.model.run(smiles_list)
         return [output]
 ```
 
-The `Service`class can have multiple APIs, each of them specified with the `@api` decorator. By default, Ersilia works with JSON inputs, which are deserialized as a SMILES list inside the API, in this case.
-
-The deafult API is run. The general rule is, <mark style="color:red;">**do not modify**</mark> it.
+By default, Ersilia works with JSON inputs, which are deserialized as a SMILES list inside the API, in this case. The deafult API is `run`. The general rule is, <mark style="color:red;">**do not modify**</mark> it.
