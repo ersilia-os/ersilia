@@ -325,10 +325,10 @@ class GitHubDownloader(object):
 class S3Downloader(object):
     def __init__(self):
         pass
-    
+
     def download_from_s3(self, bucket_url, file_name, destination):
         s3_url = bucket_url + "/" + file_name
         response = requests.get(s3_url)
         response.raise_for_status()
-        with open(destination, 'wb') as f:
+        with open(destination, "wb") as f:
             f.write(response.content)

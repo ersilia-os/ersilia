@@ -19,7 +19,30 @@ from .actions.check import ModelChecker
 from .actions.sniff import ModelSniffer
 from .actions.inform import ModelInformer
 
+from ..pull.pull import ModelPuller
+from ...setup.requirements.docker import DockerRequirement
+
 from . import STATUS_FILE, DONE_TAG
+
+
+class ModelDockerHubFetcher(ErsiliaBase):
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+
+    def is_docker_installed(self):
+        return DockerRequirement().is_installed()
+
+    def is_available(self, model_id):
+        mp = ModelPuller(model_id=model_id, config_json=self.config_json)
+        if mp.is_available_locally():
+            return True
+        if mp.is_available_in_dockerhub():
+            return True
+        return False
+
+    def fetch(self, model_id):
+        mp = ModelPuller(model_id=model_id, config_json=self.config_json)
+        mp.pull()
 
 
 class ModelFetcher(ErsiliaBase):
@@ -32,6 +55,9 @@ class ModelFetcher(ErsiliaBase):
         mode=None,
         pip=False,
         dockerize=False,
+        force_from_github=False,
+        force_from_s3=False,
+        force_from_dockerhub=False,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -45,6 +71,13 @@ class ModelFetcher(ErsiliaBase):
             dockerize = True
         self.do_docker = dockerize
         self.progress = {}
+        self.model_dockerhub_fetcher = ModelDockerHubFetcher(
+            config_json=self.config_json
+        )
+        self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
+        self.force_from_github = force_from_github
+        self.force_from_s3 = force_from_s3
+        self.force_from_dockerhub = force_from_dockerhub
 
     def _setup_check(self):
         sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
@@ -63,6 +96,7 @@ class ModelFetcher(ErsiliaBase):
             model_id=self.model_id,
             repo_path=self.repo_path,
             config_json=self.config_json,
+            force_from_gihtub=self.force_from_github,
         )
         mg.get()
 
@@ -102,7 +136,7 @@ class ModelFetcher(ErsiliaBase):
         with open(status_file, "w") as f:
             json.dump(done, f, indent=4)
 
-    def fetch(self, model_id):
+    def _fetch_not_from_dockerhub(self, model_id):
         progress_bar = tqdm(total=8, position=0, leave=True, colour="BLUE")
         start = timer()
         self.model_id = model_id
@@ -176,8 +210,35 @@ class ModelFetcher(ErsiliaBase):
         progress_bar.close()
         end = timer()
         elapsed_time = timedelta(seconds=end - start)
-        print("Fetching {0} done in time: {1}s".format(model_id, abs(elapsed_time)))
-
+        self.logger.debug(
+            "Fetching {0} done in time: {1}s".format(model_id, abs(elapsed_time))
+        )
         self.logger.info(
             "Fetching {0} done successfully: {1}".format(model_id, elapsed_time)
         )
+
+    def _fetch_from_dockerhub(self, model_id):
+        self.logger.debug("Fetching from DockerHub")
+        self.model_dockerhub_fetcher.fetch(model_id=model_id)
+
+    def _decide_if_use_dockerhub(self, model_id):
+        if self.force_from_dockerhub:
+            return True
+        if self.force_from_s3:
+            return False
+        if self.force_from_github:
+            return False
+        if not self.is_docker_installed:
+            self.logger.debug("Docker is not installed in your local")
+            return False
+        if not self.model_dockerhub_fetcher.is_available(model_id=model_id):
+            self.logger.debug("Docker image of this model doesn't seem to be available")
+            return False
+        return True
+
+    def fetch(self, model_id):
+        do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
+        if do_dockerhub:
+            self._fetch_from_dockerhub(model_id=model_id)
+        else:
+            self._fetch_not_from_dockerhub(model_id=model_id)

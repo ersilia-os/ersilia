@@ -97,18 +97,21 @@ class S3BucketRepoUploader(ErsiliaBase):
             for file in files:
                 if file in self.ignore:
                     continue
-                ziph.write(os.path.join(root, file), 
-                        os.path.relpath(os.path.join(root, file), 
-                                        os.path.join(repo_path, '..')))
+                ziph.write(
+                    os.path.join(root, file),
+                    os.path.relpath(
+                        os.path.join(root, file), os.path.join(repo_path, "..")
+                    ),
+                )
 
     def _zip_model(self, repo_path):
         repo_path = os.path.abspath(repo_path)
-        self.zip_model_file = os.path.join(self.tmp_zip_folder, self.model_id+".zip")
-        zipf = zipfile.ZipFile(self.zip_model_file, 'w', zipfile.ZIP_DEFLATED)
+        self.zip_model_file = os.path.join(self.tmp_zip_folder, self.model_id + ".zip")
+        zipf = zipfile.ZipFile(self.zip_model_file, "w", zipfile.ZIP_DEFLATED)
         self.zipdir(repo_path, zipf)
         zipf.close()
 
-    def upload_zip(self, repo_path = None):
+    def upload_zip(self, repo_path=None):
         if repo_path is not None:
             self.logger.debug("Repo path is {0}".format(os.path.abspath(repo_path)))
             self._ungit(repo_path=repo_path)
@@ -117,7 +120,9 @@ class S3BucketRepoUploader(ErsiliaBase):
             self._clone()
             self._ungit(repo_path=repo_path)
         self.logger.debug(
-            "Uploading zipped model folder to S3 bucket {0}".format(ERSILIA_MODELS_S3_BUCKET)
+            "Uploading zipped model folder to S3 bucket {0}".format(
+                ERSILIA_MODELS_S3_BUCKET
+            )
         )
         self._zip_model(repo_path)
         session = boto3.Session(
@@ -129,4 +134,9 @@ class S3BucketRepoUploader(ErsiliaBase):
         s3 = session.client("s3")
         key = self.model_id
         self.logger.debug(key)
-        s3.upload_file(self.zip_model_file, ERSILIA_MODELS_ZIP_S3_BUCKET, self.model_id+".zip", ExtraArgs={'ACL':'public-read'})
+        s3.upload_file(
+            self.zip_model_file,
+            ERSILIA_MODELS_ZIP_S3_BUCKET,
+            self.model_id + ".zip",
+            ExtraArgs={"ACL": "public-read"},
+        )
