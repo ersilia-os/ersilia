@@ -7,7 +7,10 @@ from ....utils.download import GitHubDownloader, S3Downloader
 from ....utils.paths import Paths
 from ...bundle.repo import PackFile, DockerfileFile
 from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
-from ....utils.exceptions_utils.fetch_exceptions import FolderNotFoundError
+from ....utils.exceptions_utils.fetch_exceptions import (
+    FolderNotFoundError,
+    S3DownloaderError,
+)
 
 from ....default import S3_BUCKET_URL_ZIP
 
@@ -15,7 +18,7 @@ MODEL_DIR = "model"
 
 
 class ModelRepositoryGetter(BaseAction):
-    def __init__(self, model_id, config_json, force_from_github):
+    def __init__(self, model_id, config_json, force_from_github, force_from_s3):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
@@ -24,6 +27,7 @@ class ModelRepositoryGetter(BaseAction):
         self.s3_down = S3Downloader()
         self.org = self.cfg.HUB.ORG
         self.force_from_github = force_from_github
+        self.force_from_s3 = force_from_s3
 
     def _dev_model_path(self):
         pt = Paths()
@@ -83,6 +87,7 @@ class ModelRepositoryGetter(BaseAction):
             for s in S:
                 f.write(s + os.linesep)
 
+    @throw_ersilia_exception
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
         folder = self._model_path(self.model_id)
@@ -103,7 +108,10 @@ class ModelRepositoryGetter(BaseAction):
                     self.logger.debug(
                         "Could not download in zip format in S3. Downloading from GitHub repository."
                     )
-                    self._copy_from_github(folder)
+                    if self.force_from_s3:
+                        raise S3DownloaderError(model_id=self.model_id)
+                    else:
+                        self._copy_from_github(folder)
         self._change_py_version_in_dockerfile_if_necessary()
 
 
@@ -137,7 +145,9 @@ class ModelParametersGetter(BaseAction):
 
 
 class ModelGetter(BaseAction):
-    def __init__(self, model_id, repo_path, config_json, force_from_gihtub):
+    def __init__(
+        self, model_id, repo_path, config_json, force_from_gihtub, force_from_s3
+    ):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
@@ -147,6 +157,7 @@ class ModelGetter(BaseAction):
             model_id=model_id,
             config_json=config_json,
             force_from_github=force_from_gihtub,
+            force_from_s3=force_from_s3,
         )
         self.mpg = ModelParametersGetter(model_id=model_id, config_json=config_json)
 

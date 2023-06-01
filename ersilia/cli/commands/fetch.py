@@ -40,7 +40,7 @@ def fetch_cmd():
         help="Force fetch from DockerHub",
     )
     @click.option(
-        "--from_s3", is_flag=True, default=False, help="Force fetch from AWS S3"
+        "--from_s3", is_flag=True, default=False, help="Force fetch from AWS S3 bucket"
     )
     def fetch(
         model,
@@ -66,7 +66,9 @@ def fetch_cmd():
             mode=mode,
             dockerize=dockerize,
             overwrite=overwrite,
-            force_from_github=from_github,  # force_from_s3=from_s3, force_from_dockerhub=from_dockerhub
+            force_from_github=from_github,
+            force_from_s3=from_s3,
+            force_from_dockerhub=from_dockerhub,
         )
         _fetch(mf, model_id)
         echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")

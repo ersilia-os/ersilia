@@ -97,6 +97,7 @@ class ModelFetcher(ErsiliaBase):
             repo_path=self.repo_path,
             config_json=self.config_json,
             force_from_gihtub=self.force_from_github,
+            force_from_s3=self.force_from_s3,
         )
         mg.get()
 
