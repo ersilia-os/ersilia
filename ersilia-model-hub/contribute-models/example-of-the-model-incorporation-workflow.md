@@ -93,7 +93,7 @@ No installation instructions are provided for this model. However, the `sascorer
 ```bash
 conda create -n sa-score python=3.7
 conda activate sa-score
-conda install -c conda-forge rdkit=2021.03
+pip install rdkit
 ```
 
 #### Download code and parameters
@@ -288,11 +288,11 @@ def readFragmentScores(name='fpscores'):
 
 **Run the model inside main.py**
 
-We now have the input adapter and the model code and parameters. We simply need to run the model in main.py by calling the `sascorer.py.`
+We now have the input adapter and the model code and parameters. We simply need to run the model in `main.py` by calling the `sascorer.py.`
 
-We first make sure to import the necessary packages and delete the non-necessayr (in this case, the MW by rdkit). The sascorer uses time to measue how long did the model take, as well as the functions readFragmentScores and processMols.
+We first make sure to import the necessary packages and delete the non-necessary ones (in this case, the MW by RDKit). The sa-scorer uses `time` to measure how long did the model take, as well as the functions `readFragmentScores` and `processMols`.
 
-The input file is no longer passed as a sys.argv, so we modify it with the temporal input file we just created
+The input file is no longer passed as a `sys.argv`, so we modify it with the temporal input file we just created
 
 {% code title="code/main.py" %}
 ```python
@@ -445,14 +445,14 @@ Modifying the `service.py` file is intended for advanced users only. Please use 
 
 #### Edit the `Dockerfile` file
 
-The `Dockerfile` file should include all the installation steps that you run after creating the working Conda environment. In the case of `sa-score`, we only installed RDKit:
+The `Dockerfile` file should include all the installation steps that you run after creating the working Conda environment. In the case of `sa-scorer`, we only installed RDKit:
 
 {% code title="Dockerfile" %}
 ```docker
 FROM bentoml/model-server:0.11.0-py37
 MAINTAINER ersilia
 
-RUN conda install -c conda-forge rdkit=2021.03.4
+RUN pip install rdkit
 
 WORKDIR /repo
 COPY . /repo
@@ -552,13 +552,13 @@ Once the model is ready, open a pull request to merge your changes back into the
 If the Actions at Pull request fail, please check them and work on debugging them before making a new pull request. <mark style="color:purple;">**Ersilia maintainers will only merge PR's that have passed all the checks.**</mark> Once the PR has the three green checks, the PR will be merged. This triggers a <mark style="color:green;">Model Test on Push</mark> action that will:
 
 * Test the model once more
-* Update the README.md and AirTable metadata&#x20;
+* Update the `README.md` and AirTable metadata&#x20;
 * Open a new issue requesting two Ersilia Community members to test the model.
 
 This workflow is also triggered each time there is a push to the repository, to ensure changes to the code do maintain model functionality and metadata is not outdated. If the model testing works, two final actions will be triggered:
 
 * <mark style="color:green;">Upload model to Dockerhub</mark>: the model will be packaged in a docker image and made available via the [Ersilia DockerHub](https://hub.docker.com/orgs/ersiliaos) page
-* <mark style="color:green;">Upload model to S3</mark>: the model is zipped and uploaded to S3, to facilitate upload and download from the CLI and avoid incurring Git-LFS bandwith problems.
+* <mark style="color:green;">Upload model to S3</mark>: the model is zipped and uploaded to S3, to facilitate upload and download from the CLI and avoid incurring Git-LFS bandwidth problems.
 
 You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-os/eos9ei3) and check that your work is publicly available.
 
@@ -616,5 +616,6 @@ In summary, the steps to incorporate a model to the Ersilia Model Hub are the fo
 * Open a PR to the the model repository, and check that all tests are passed. If not, try to identify the bug to solve it.
 * Once the PR passes all the tests and is merged, activate the Ersilia CLI and fetch the model.
 * Serve the model and run the default API.
+* Check that the model can be run from DockerHub.
 * Check other users can also run the model.
 * Delete your fork.
