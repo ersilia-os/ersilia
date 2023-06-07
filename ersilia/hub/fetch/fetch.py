@@ -223,6 +223,8 @@ class ModelFetcher(ErsiliaBase):
         self.model_dockerhub_fetcher.fetch(model_id=model_id)
 
     def _decide_if_use_dockerhub(self, model_id):
+        if self.repo_path is not None:
+            return False
         if self.force_from_dockerhub:
             return True
         if self.force_from_s3:
