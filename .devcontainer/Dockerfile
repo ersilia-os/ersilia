@@ -11,8 +11,8 @@ RUN bash Miniconda3-py37_4.11.0-Linux-x86_64.sh -b
 
 # Setup git-lfs
 RUN eval "$(/root/miniconda3/bin/conda shell.bash hook)" && \
-    conda install git-lfs -c conda-forge
-RUN git lfs install
+    conda install git-lfs -c conda-forge && \
+    git lfs install
 
 RUN eval "$(/root/miniconda3/bin/conda shell.bash hook)" && \
     conda create -y -n ersilia python=3.7 && \
