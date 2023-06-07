@@ -10,7 +10,7 @@ RUN chmod +x Miniconda3-py37_4.11.0-Linux-x86_64.sh
 RUN bash Miniconda3-py37_4.11.0-Linux-x86_64.sh -b
 
 # Setup git-lfs
-RUN eval "$(/root/miniconda3/bin/conda shell.bash hook)" &&\
+RUN eval "$(/root/miniconda3/bin/conda shell.bash hook)" && \
 conda install git-lfs -c conda-forge
 RUN git lfs install
 
