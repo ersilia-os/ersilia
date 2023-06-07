@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+FROM python:3.7
 
-RUN apt-get update
+RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y tzdata
 RUN apt-get install -y build-essential wget git curl zip docker
