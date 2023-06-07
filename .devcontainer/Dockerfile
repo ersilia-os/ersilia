@@ -1,13 +1,13 @@
-FROM python:3.7
+FROM python:3.10
 
 RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y tzdata
 RUN apt-get install -y build-essential wget git curl zip docker
 
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.11.0-Linux-x86_64.sh
-RUN chmod +x Miniconda3-py37_4.11.0-Linux-x86_64.sh
-RUN bash Miniconda3-py37_4.11.0-Linux-x86_64.sh -b
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py310_4.11.0-Linux-x86_64.sh
+RUN chmod +x Miniconda3-py310_4.11.0-Linux-x86_64.sh
+RUN bash Miniconda3-py310_4.11.0-Linux-x86_64.sh -b
 
 # Setup git-lfs
 RUN eval "$(/root/miniconda3/bin/conda shell.bash hook)" && \
@@ -15,7 +15,7 @@ RUN eval "$(/root/miniconda3/bin/conda shell.bash hook)" && \
     git lfs install
 
 RUN eval "$(/root/miniconda3/bin/conda shell.bash hook)" && \
-    conda create -y -n ersilia python=3.7 && \
+    conda create -y -n ersilia python=3.10 && \
     conda activate ersilia
 
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
