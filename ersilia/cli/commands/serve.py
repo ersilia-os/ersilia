@@ -42,10 +42,15 @@ def serve_cmd():
         echo("   PID: {0}".format(mdl.pid), fg="yellow")
         echo("   SRV: {0}".format(mdl.scl), fg="yellow")
         echo("")
-        echo(":backhand_index_pointing_right: Available APIs:", fg="blue")
+        echo(":backhand_index_pointing_right: To run model:", fg="blue")
+        echo("   - run", fg="blue")
         apis = mdl.get_apis()
-        for api in apis:
-            echo("   - {0}".format(api), fg="blue")
+        if apis != ["run"]:
+            echo("")
+            echo("   These APIs are also valid:", fg="blue")
+            for api in apis:
+                if api != "run":
+                    echo("   - {0}".format(api), fg="blue")
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")

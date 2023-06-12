@@ -11,7 +11,7 @@ import csv
 from .. import logger
 from .base import ErsiliaBase
 from .modelbase import ModelBase
-from .session import Session
+from .session import Session, RunLogger
 from ..serve.autoservice import AutoService
 from ..serve.schema import ApiSchema
 from ..serve.api import Api
@@ -46,6 +46,7 @@ class ErsiliaModel(ErsiliaBase):
         verbose=None,
         fetch_if_not_available=True,
         preferred_port=None,
+        log_runs=True,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -119,6 +120,12 @@ class ErsiliaModel(ErsiliaBase):
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
+        if log_runs:
+            self._run_logger = RunLogger(
+                model_id=self.model_id, config_json=self.config_json
+            )
+        else:
+            self._run_logger = None
 
     def __enter__(self):
         self.serve()
@@ -391,6 +398,15 @@ class ErsiliaModel(ErsiliaBase):
     def get_apis(self):
         return self.autoservice.get_apis()
 
+    def run(self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
+        api_name = self.get_apis()[0]
+        result = self.api(
+            api_name=api_name, input=input, output=output, batch_size=batch_size
+        )
+        if self._run_logger is not None:
+            self._run_logger.log(result=result, meta=self._model_info)
+        return result
+
     @property
     def paths(self):
         p = {
@@ -435,3 +451,7 @@ class ErsiliaModel(ErsiliaBase):
         )
         with open(information_file, "r") as f:
             return json.load(f)
+
+    @property
+    def _model_info(self):
+        return self.info()

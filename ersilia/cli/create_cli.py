@@ -26,6 +26,7 @@ def create_ersilia_cli():
 
     cmd.sample()
     cmd.serve()
+    cmd.run()
 
     # TODO: functions only for contributors
     # Functions only for contributors
