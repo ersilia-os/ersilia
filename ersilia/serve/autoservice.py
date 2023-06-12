@@ -123,7 +123,6 @@ class AutoService(ErsiliaBase):
                         )
         else:
             self.logger.info("Service class provided")
-            # predefined service class
             service_class = self._service_class_loader(service_class)
             if service_class(
                 model_id, config_json=config_json, preferred_port=preferred_port

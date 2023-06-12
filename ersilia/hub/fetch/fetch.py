@@ -6,6 +6,8 @@ from timeit import default_timer as timer
 from datetime import timedelta
 import time
 from tqdm import tqdm
+import datetime
+import shutil
 
 from ... import ErsiliaBase
 from .actions.setup import SetupChecker
@@ -23,6 +25,56 @@ from ..pull.pull import ModelPuller
 from ...setup.requirements.docker import DockerRequirement
 
 from . import STATUS_FILE, DONE_TAG
+from ... import EOS
+from ...default import IS_FETCHED_FROM_DOCKERHUB_FILE
+
+
+class ModelRegisterer(ErsiliaBase):
+    def __init__(self, model_id, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.model_id = model_id
+
+    def register_from_dockerhub(self):
+        data = {"docker_hub": True}
+        self.logger.debug(
+            "Registering model {0} in the file system".format(self.model_id)
+        )
+        path = os.path.join(EOS, "dest", self.model_id)
+        self.logger.debug(path)
+        if os.path.exists(path):
+            shutil.rmtree(path)
+        os.mkdir(path)
+        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        self.logger.debug(file_name)
+        with open(file_name, "w") as f:
+            json.dump(data, f)
+        current_time = datetime.datetime.now()
+        folder_name = current_time.strftime("%Y%m%d%H%M%S")
+        path = os.path.join(EOS, "repository", self.model_id)
+        if os.path.exists(path):
+            shutil.rmtree(path)
+        path = os.path.join(path, folder_name)
+        os.makedirs(path)
+        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        with open(file_name, "w") as f:
+            json.dump(data, f)
+
+    def register_not_from_dockerhub(self):
+        data = {"docker_hub": False}
+        path = self._model_path(self.model_id)
+        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        with open(file_name, "w") as f:
+            json.dump(data, f)
+        path = self._get_bundle_location(model_id=self.model_id)
+        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        with open(file_name, "w") as f:
+            json.dump(data, f)
+
+    def register(self, is_from_dockerhub):
+        if is_from_dockerhub:
+            self.register_from_dockerhub()
+        else:
+            self.register_not_from_dockerhub()
 
 
 class ModelDockerHubFetcher(ErsiliaBase):
@@ -43,6 +95,8 @@ class ModelDockerHubFetcher(ErsiliaBase):
     def fetch(self, model_id):
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         mp.pull()
+        mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
+        mr.register(is_from_dockerhub=True)
 
 
 class ModelFetcher(ErsiliaBase):
@@ -136,6 +190,8 @@ class ModelFetcher(ErsiliaBase):
         status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         with open(status_file, "w") as f:
             json.dump(done, f, indent=4)
+        mr = ModelRegisterer(self.model_id, config_json=self.config_json)
+        mr.register(is_from_dockerhub=False)
 
     def _fetch_not_from_dockerhub(self, model_id):
         progress_bar = tqdm(total=8, position=0, leave=True, colour="BLUE")
