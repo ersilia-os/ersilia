@@ -103,6 +103,7 @@
 
     <span class="k">def</span> <span class="nf">_log_to_current_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">current_log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">CURRENT_LOGGING_FILE</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">current_log_file</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">current_log_file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
