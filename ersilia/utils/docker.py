@@ -140,7 +140,12 @@ class SimpleDocker(object):
 
     @staticmethod
     def kill(name):
-        cmd = "docker kill %s" % name
+        cmd = "docker kill {0}".format(name)
+        run_command(cmd)
+
+    @staticmethod
+    def remove(name):
+        cmd = "docker rm -f {0}".format(name)
         run_command(cmd)
 
     @staticmethod
@@ -152,7 +157,7 @@ class SimpleDocker(object):
     def cp_from_image(self, img_path, local_path, org, img, tag):
         name = self.run(org, img, tag, name=None)
         self.cp_from_container(name, img_path, local_path)
-        self.kill(name)
+        self.remove(name)
 
     @staticmethod
     def exec_container(name, cmd):

@@ -24,10 +24,16 @@ from .actions.inform import ModelInformer
 from ..pull.pull import ModelPuller
 from ...serve.services import PulledDockerImageService
 from ...setup.requirements.docker import DockerRequirement
+from ...utils.docker import SimpleDocker
 
 from . import STATUS_FILE, DONE_TAG
 from ... import EOS
-from ...default import IS_FETCHED_FROM_DOCKERHUB_FILE, SERVICE_CLASS_FILE
+from ...default import (
+    IS_FETCHED_FROM_DOCKERHUB_FILE,
+    SERVICE_CLASS_FILE,
+    DOCKERHUB_ORG,
+    DOCKERHUB_LATEST_TAG,
+)
 
 
 class ModelRegisterer(ErsiliaBase):
@@ -85,6 +91,7 @@ class ModelRegisterer(ErsiliaBase):
 class ModelDockerHubFetcher(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.simple_docker = SimpleDocker()
 
     def is_docker_installed(self):
         return DockerRequirement().is_installed()
@@ -105,12 +112,24 @@ class ModelDockerHubFetcher(ErsiliaBase):
         di.serve()
         di.close()
 
+    def copy_information(self, model_id):
+        fr_file = "/root/eos/dest/{0}/information.json".format(model_id)
+        to_file = "{0}/dest/{1}/information.json".format(EOS, model_id)
+        self.simple_docker.cp_from_image(
+            img_path=fr_file,
+            local_path=to_file,
+            org=DOCKERHUB_ORG,
+            img=model_id,
+            tag=DOCKERHUB_LATEST_TAG,
+        )
+
     def fetch(self, model_id):
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         mp.pull()
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
         mr.register(is_from_dockerhub=True)
         self.write_apis(model_id)
+        self.copy_information(model_id)
 
 
 class ModelFetcher(ErsiliaBase):
