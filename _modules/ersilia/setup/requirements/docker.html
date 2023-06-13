@@ -74,9 +74,7 @@
   <h1>Source code for ersilia.setup.requirements.docker</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">ersilia.default</span> <span class="kn">import</span> <span class="n">DEFAULT_DOCKER_PLATFORM</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command_check_output</span>
-<span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">is_inside_docker</span>
-
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DEFAULT_DOCKER_PLATFORM</span>
+<span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">is_inside_docker</span><span class="p">,</span> <span class="n">resolve_platform</span>
 
 
 <div class="viewcode-block" id="DockerRequirement"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement">[docs]</a><span class="k">class</span> <span class="nc">DockerRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -87,7 +85,7 @@
         <span class="k">return</span> <span class="n">is_inside_docker</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DockerRequirement.is_installed"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run --platform </span><span class="si">{0}</span><span class="s2"> hello-world&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DEFAULT_DOCKER_PLATFORM</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run --platform </span><span class="si">{0}</span><span class="s2"> hello-world&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">resolve_platform</span><span class="p">())</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;Hello from Docker!&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>

@@ -96,11 +96,12 @@
 <span class="kn">from</span> <span class="nn">.actions.inform</span> <span class="kn">import</span> <span class="n">ModelInformer</span>
 
 <span class="kn">from</span> <span class="nn">..pull.pull</span> <span class="kn">import</span> <span class="n">ModelPuller</span>
+<span class="kn">from</span> <span class="nn">...serve.services</span> <span class="kn">import</span> <span class="n">PulledDockerImageService</span>
 <span class="kn">from</span> <span class="nn">...setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span><span class="p">,</span> <span class="n">DONE_TAG</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">EOS</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">,</span> <span class="n">SERVICE_CLASS_FILE</span>
 
 
 <div class="viewcode-block" id="ModelRegisterer"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelRegisterer">[docs]</a><span class="k">class</span> <span class="nc">ModelRegisterer</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -131,7 +132,11 @@
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">SERVICE_CLASS_FILE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing service class pulled_docker </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">))</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;pulled_docker&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelRegisterer.register_not_from_dockerhub"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelRegisterer.register_not_from_dockerhub">[docs]</a>    <span class="k">def</span> <span class="nf">register_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
@@ -166,11 +171,20 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
+<div class="viewcode-block" id="ModelDockerHubFetcher.write_apis"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.write_apis">[docs]</a>    <span class="k">def</span> <span class="nf">write_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing APIs&quot;</span><span class="p">)</span>
+        <span class="n">di</span> <span class="o">=</span> <span class="n">PulledDockerImageService</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">di</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+        <span class="n">di</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="ModelDockerHubFetcher.fetch"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">mp</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModelRegisterer</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+        <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_apis</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ModelFetcher"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher">[docs]</a><span class="k">class</span> <span class="nc">ModelFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>

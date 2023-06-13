@@ -148,6 +148,7 @@
             <span class="s2">&quot;venv&quot;</span><span class="p">,</span>
             <span class="s2">&quot;conda&quot;</span><span class="p">,</span>
             <span class="s2">&quot;docker&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pulled_docker&quot;</span><span class="p">,</span>
         <span class="p">],</span> <span class="s2">&quot;Wrong service class&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service_class</span> <span class="o">=</span> <span class="n">service_class</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -230,7 +231,9 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">api_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No apis found. Writing...&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">apis_list</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_get_apis_from_bento</span><span class="p">():</span>
+                <span class="k">for</span> <span class="p">(</span>
+                    <span class="n">api_name</span>
+                <span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_get_apis_from_where_available</span><span class="p">():</span>
                     <span class="n">api_names</span> <span class="o">+=</span> <span class="p">[</span><span class="n">api_name</span><span class="p">]</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">api_name</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="n">api_names</span><span class="p">:</span>

@@ -75,6 +75,7 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">json</span>
 
 <span class="kn">from</span> <span class="nn">.services</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">SystemBundleService</span><span class="p">,</span>
@@ -82,13 +83,19 @@
     <span class="n">CondaEnvironmentService</span><span class="p">,</span>
     <span class="n">DockerImageService</span><span class="p">,</span>
     <span class="n">DummyService</span><span class="p">,</span>
+    <span class="n">PulledDockerImageService</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.api</span> <span class="kn">import</span> <span class="n">Api</span>
 <span class="kn">from</span> <span class="nn">..db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
 
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span> <span class="n">APIS_LIST_FILE</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
+    <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
+    <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">DEFAULT_OUTPUT</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -134,6 +141,10 @@
                     <span class="p">)</span>
                 <span class="k">elif</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;docker&quot;</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">DockerImageService</span><span class="p">(</span>
+                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">PulledDockerImageService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -188,6 +199,17 @@
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;docker&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: docker&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
+                    <span class="k">elif</span> <span class="n">PulledDockerImageService</span><span class="p">(</span>
+                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">PulledDockerImageService</span><span class="p">(</span>
+                            <span class="n">model_id</span><span class="p">,</span>
+                            <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
+                            <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;pulled_docker&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: pulled_docker&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;pulled_docker&quot;</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: dummy&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">DummyService</span><span class="p">(</span>
@@ -208,6 +230,16 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_apis</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_was_fetched_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">from_dockerhub_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">from_dockerhub_file</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">from_dockerhub_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="nf">_set_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">_method</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">DEFAULT_OUTPUT</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
@@ -227,7 +259,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_set_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">apis_list</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_get_apis_from_bento</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_get_apis_from_where_available</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_set_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">)</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">api_name</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">apis_list</span> <span class="o">=</span> <span class="n">apis_list</span>
@@ -245,6 +277,9 @@
         <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">service_class</span><span class="p">)</span> <span class="ow">is</span> <span class="n">DockerImageService</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
             <span class="k">return</span> <span class="n">service_class</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">service_class</span><span class="p">)</span> <span class="ow">is</span> <span class="n">PulledDockerImageService</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;pulled_docker&quot;</span>
+            <span class="k">return</span> <span class="n">service_class</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="n">service_class</span>
             <span class="k">if</span> <span class="n">service_class</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
@@ -255,6 +290,8 @@
                 <span class="k">return</span> <span class="n">CondaEnvironmentService</span>
             <span class="k">elif</span> <span class="n">service_class</span> <span class="o">==</span> <span class="s2">&quot;docker&quot;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">DockerImageService</span>
+            <span class="k">elif</span> <span class="n">service_class</span> <span class="o">==</span> <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">PulledDockerImageService</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">()</span>
 
 <div class="viewcode-block" id="AutoService.get_apis"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.get_apis">[docs]</a>    <span class="k">def</span> <span class="nf">get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

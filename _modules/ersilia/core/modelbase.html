@@ -78,11 +78,9 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..hub.content.slug</span> <span class="kn">import</span> <span class="n">Slug</span>
 <span class="kn">from</span> <span class="nn">..hub.fetch</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span><span class="p">,</span> <span class="n">DONE_TAG</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
 
-<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">InvalidModelIdentifierError</span><span class="p">,</span>
-    <span class="n">ModelNotAvailableLocallyError</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.exceptions</span> <span class="kn">import</span> <span class="n">InvalidModelIdentifierError</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 
 
@@ -142,7 +140,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="ModelBase.is_available_locally"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_available_locally">[docs]</a>    <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_is_available_locally_from_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">fetch_status_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fetch_status_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No status file exists&quot;</span><span class="p">)</span>
@@ -152,7 +150,34 @@
                 <span class="n">status</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">is_fetched</span> <span class="o">=</span> <span class="n">status</span><span class="p">[</span><span class="n">DONE_TAG</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Is fetched: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">is_fetched</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">is_fetched</span></div></div>
+        <span class="k">return</span> <span class="n">is_fetched</span>
+
+    <span class="k">def</span> <span class="nf">_is_available_locally_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">from_dockerhub_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">from_dockerhub_file</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="ModelBase.is_available_locally"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_available_locally">[docs]</a>    <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_status</span><span class="p">()</span>
+        <span class="n">bd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_dockerhub</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">bs</span> <span class="ow">or</span> <span class="n">bd</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="ModelBase.was_fetched_from_dockerhub"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub">[docs]</a>    <span class="k">def</span> <span class="nf">was_fetched_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">from_dockerhub_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">from_dockerhub_file</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">from_dockerhub_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">]</span></div></div>
 </pre></div>
 
            </div>
