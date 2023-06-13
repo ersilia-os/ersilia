@@ -98,10 +98,16 @@
 <span class="kn">from</span> <span class="nn">..pull.pull</span> <span class="kn">import</span> <span class="n">ModelPuller</span>
 <span class="kn">from</span> <span class="nn">...serve.services</span> <span class="kn">import</span> <span class="n">PulledDockerImageService</span>
 <span class="kn">from</span> <span class="nn">...setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
+<span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span><span class="p">,</span> <span class="n">DONE_TAG</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">EOS</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">,</span> <span class="n">SERVICE_CLASS_FILE</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">,</span>
+    <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
+    <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
+    <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="ModelRegisterer"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelRegisterer">[docs]</a><span class="k">class</span> <span class="nc">ModelRegisterer</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -159,6 +165,7 @@
 <div class="viewcode-block" id="ModelDockerHubFetcher"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher">[docs]</a><span class="k">class</span> <span class="nc">ModelDockerHubFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_docker_installed"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.is_docker_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_docker_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
@@ -179,12 +186,24 @@
         <span class="n">di</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="n">di</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="ModelDockerHubFetcher.copy_information"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.copy_information">[docs]</a>    <span class="k">def</span> <span class="nf">copy_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">fr_file</span> <span class="o">=</span> <span class="s2">&quot;/root/eos/dest/</span><span class="si">{0}</span><span class="s2">/information.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">to_file</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/dest/</span><span class="si">{1}</span><span class="s2">/information.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">cp_from_image</span><span class="p">(</span>
+            <span class="n">img_path</span><span class="o">=</span><span class="n">fr_file</span><span class="p">,</span>
+            <span class="n">local_path</span><span class="o">=</span><span class="n">to_file</span><span class="p">,</span>
+            <span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
+            <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="ModelDockerHubFetcher.fetch"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">mp</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModelRegisterer</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write_apis</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_apis</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_information</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ModelFetcher"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher">[docs]</a><span class="k">class</span> <span class="nc">ModelFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
