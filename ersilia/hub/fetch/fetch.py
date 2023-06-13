@@ -22,11 +22,12 @@ from .actions.sniff import ModelSniffer
 from .actions.inform import ModelInformer
 
 from ..pull.pull import ModelPuller
+from ...serve.services import PulledDockerImageService
 from ...setup.requirements.docker import DockerRequirement
 
 from . import STATUS_FILE, DONE_TAG
 from ... import EOS
-from ...default import IS_FETCHED_FROM_DOCKERHUB_FILE
+from ...default import IS_FETCHED_FROM_DOCKERHUB_FILE, SERVICE_CLASS_FILE
 
 
 class ModelRegisterer(ErsiliaBase):
@@ -58,6 +59,10 @@ class ModelRegisterer(ErsiliaBase):
         file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
         with open(file_name, "w") as f:
             json.dump(data, f)
+        file_name = os.path.join(path, SERVICE_CLASS_FILE)
+        self.logger.debug("Writing service class pulled_docker {0}".format(file_name))
+        with open(file_name, "w") as f:
+            f.write("pulled_docker")
 
     def register_not_from_dockerhub(self):
         data = {"docker_hub": False}
@@ -92,11 +97,20 @@ class ModelDockerHubFetcher(ErsiliaBase):
             return True
         return False
 
+    def write_apis(self, model_id):
+        self.logger.debug("Writing APIs")
+        di = PulledDockerImageService(
+            model_id=model_id, config_json=self.config_json, preferred_port=None
+        )
+        di.serve()
+        di.close()
+
     def fetch(self, model_id):
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         mp.pull()
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
         mr.register(is_from_dockerhub=True)
+        self.write_apis(model_id)
 
 
 class ModelFetcher(ErsiliaBase):

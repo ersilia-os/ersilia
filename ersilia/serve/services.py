@@ -4,6 +4,8 @@ import json
 import time
 import importlib
 import requests
+import uuid
+import docker
 from .. import ErsiliaBase
 from ..utils.terminal import run_command
 from ..utils.ports import find_free_port
@@ -13,7 +15,8 @@ from ..utils.conda import SimpleConda
 from ..utils.docker import SimpleDocker
 from ..utils.venv import SimpleVenv
 from ..default import DEFAULT_VENV
-from ..default import PACKMODE_FILE
+from ..default import PACKMODE_FILE, APIS_LIST_FILE
+from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -46,8 +49,36 @@ class BaseServing(ErsiliaBase):
         """Get APIs available for the model, according to the info Bento"""
         self.logger.debug("Getting APIs from Bento")
         info = self._get_info_from_bento()
+        apis_list = []
         for item in info["apis"]:
-            yield item["name"]
+            apis_list += [item["name"]]
+        return apis_list
+
+    def _get_apis_from_apis_list(self):
+        self.logger.debug("Getting APIs from list file")
+        file_name = os.path.join(
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
+        )
+        if not os.path.exists(file_name):
+            return None
+        with open(file_name, "r") as f:
+            apis_list = []
+            for l in f:
+                apis_list += [l.rstrip()]
+        print(apis_list)
+        if len(apis_list) > 0:
+            return apis_list
+        else:
+            return None
+
+    def _get_apis_from_where_available(self):
+        apis_list = self._get_apis_from_apis_list()
+        if apis_list is None:
+            apis_list = self._get_apis_from_bento()
+        if apis_list is None:
+            apis_list = []
+        for api in apis_list:
+            yield api
 
     def _api_with_url(self, api_name, input):
         if self.url is None:
@@ -410,3 +441,141 @@ class DummyService(BaseServing):
 
     def api(self, api_name, input):
         return self._api_with_url(api_name, input)
+
+
+class PulledDockerImageService(BaseServing):
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
+        self.client = docker.from_env()
+        if preferred_port is None:
+            self.port = find_free_port()
+        else:
+            self.port = preferred_port
+        self.logger.debug("Using port {0}".format(self.port))
+        self.image_name = "{0}/{1}:{2}".format(
+            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+        )
+        self.logger.debug("Staring Docker Daemon service")
+        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.logger.debug(
+            "Creating temporary folder {0} and mounting as volume in container".format(
+                self.tmp_folder
+            )
+        )
+        self.simple_docker = SimpleDocker()
+        self.pid = -1
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
+    def _api_with_url(self, api_name, input):
+        if self.url is None:
+            return
+        self.logger.debug("Using URL: {0}".format(self.url))
+        response = requests.post("{0}/{1}".format(self.url, api_name), json=input)
+        return response.json()
+
+    def is_available(self):
+        is_available = self.simple_docker.exists(
+            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+        )
+        if is_available:
+            self.logger.debug("Image {0} is available locally".format(self.image_name))
+            return True
+        else:
+            self.logger.debug(
+                "Image {0} is not available locally".format(self.image_name)
+            )
+            return False
+
+    def _stop_all_containers_of_image(self):
+        self.logger.debug(
+            "Stopping all containers related to model {0}".format(self.model_id)
+        )
+        containers = self.client.containers.list(all=True)
+        for container in containers:
+            if container.name.startswith(self.model_id):
+                self.logger.debug(
+                    "Stopping and removing container {0}".format(container.name)
+                )
+                container.stop()
+                container.remove()
+
+    def _get_apis(self):
+        file_name = os.path.join(
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
+        )
+        self.logger.debug("Getting APIs")
+        if os.path.exists(file_name):
+            with open(file_name, "r") as f:
+                apis_list = []
+                for l in f:
+                    apis_list += [l.rstrip()]
+            if len(apis_list) > 0:
+                return apis_list
+        self.logger.debug("Getting them using info endpoint")
+        url = "{0}/info".format(self.url)
+        self.logger.debug("Using URL: {0}".format(url))
+        data = "{}"
+        apis_list = json.loads(requests.post(url, data=data).text)["apis_list"]
+        self.logger.debug("Writing file {0}".format(file_name))
+        with open(file_name, "w") as f:
+            for api in apis_list:
+                f.write(api + os.linesep)
+        return apis_list
+
+    def is_url_available(self, url):
+        try:
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+        except requests.HTTPError as http_err:
+            return False
+        except Exception as err:
+            return False
+        else:
+            return True
+
+    def _wait_until_container_is_running(self):
+        while True:
+            if self.is_url_available(self.url):
+                break
+            else:
+                self.logger.debug("Container in {0} is not ready yet".format(self.url))
+            time.sleep(1)
+
+    def serve(self):
+        self._stop_all_containers_of_image()
+        self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
+        self.volumes = {self.tmp_folder: {"bind": "/ersilia_tmp", "mode": "rw"}}
+        self.container = self.client.containers.run(
+            self.image_name,
+            name=self.container_name,
+            detach=True,
+            ports={"80/tcp": self.port},
+            volumes=self.volumes,
+        )
+        self.logger.debug("Serving container {0}".format(self.container_name))
+        self.container_id = self.container.id
+        self.logger.debug("Running container {0}".format(self.container_id))
+        self.url = "http://0.0.0.0:{0}".format(self.port)
+        self._wait_until_container_is_running()
+        self._apis_list = self._get_apis()
+        self.logger.debug(self._apis_list)
+
+    def api(self, api_name, input):
+        return self._api_with_url(api_name=api_name, input=input)
+
+    def close(self):
+        self.logger.debug(
+            "Stopping and removing container {0}".format(self.container_id)
+        )
+        self.container.stop()
+        self.container.remove()

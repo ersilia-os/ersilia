@@ -6,6 +6,7 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 from ..default import DEFAULT_DOCKER_PLATFORM
+from ..utils.system import SystemChecker
 
 
 def is_inside_docker():
@@ -13,6 +14,13 @@ def is_inside_docker():
         return True
     else:
         return False
+
+
+def resolve_platform():
+    if SystemChecker().is_arm64():
+        return "linux/arm64"
+    else:
+        return DEFAULT_DOCKER_PLATFORM
 
 
 class SimpleDocker(object):
@@ -125,7 +133,7 @@ class SimpleDocker(object):
         if name is None:
             name = self.identifier.encode()
         cmd = "docker run -it -d --platform {0} --name {1} {2} bash".format(
-            DEFAULT_DOCKER_PLATFORM, name, self._image_name(org, img, tag)
+            resolve_platform(), name, self._image_name(org, img, tag)
         )
         run_command(cmd)
         return name

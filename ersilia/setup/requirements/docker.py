@@ -1,8 +1,6 @@
 from ersilia.default import DEFAULT_DOCKER_PLATFORM
 from ...utils.terminal import run_command_check_output
-from ...utils.docker import is_inside_docker
-
-from ...default import DEFAULT_DOCKER_PLATFORM
+from ...utils.docker import is_inside_docker, resolve_platform
 
 
 class DockerRequirement(object):
@@ -13,7 +11,7 @@ class DockerRequirement(object):
         return is_inside_docker()
 
     def is_installed(self):
-        cmd = "docker run --platform {0} hello-world".format(DEFAULT_DOCKER_PLATFORM)
+        cmd = "docker run --platform {0} hello-world".format(resolve_platform())
         output = run_command_check_output(cmd)
         if "Hello from Docker!" in output:
             return True

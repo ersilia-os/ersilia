@@ -74,6 +74,7 @@ class ErsiliaModel(ErsiliaBase):
             "venv",
             "conda",
             "docker",
+            "pulled_docker",
         ], "Wrong service class"
         self.service_class = service_class
         mdl = ModelBase(model)
@@ -156,7 +157,9 @@ class ErsiliaModel(ErsiliaBase):
         if len(api_names) == 0:
             self.logger.debug("No apis found. Writing...")
             with open(apis_list, "w") as f:
-                for api_name in self.autoservice.service._get_apis_from_bento():
+                for (
+                    api_name
+                ) in self.autoservice.service._get_apis_from_where_available():
                     api_names += [api_name]
                     f.write(api_name + os.linesep)
         for api_name in api_names:
