@@ -45,4 +45,4 @@ jobs:
           ersilia -v fetch molecular-weight --from_github
           echo "Serving molecular-weight model."
           ersilia serve molecular-weight
-          ersilia api calculate -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
+          ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
