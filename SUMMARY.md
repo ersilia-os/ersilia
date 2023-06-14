@@ -12,6 +12,8 @@
   * [Model Template](ersilia-model-hub/contribute-models/model-template.md)
   * [Model incorporation workflow](ersilia-model-hub/contribute-models/example-of-the-model-incorporation-workflow.md)
   * [Troubleshooting models](ersilia-model-hub/contribute-models/troubleshooting-models.md)
+* [More for contributors](ersilia-model-hub/more-for-contributors/README.md)
+  * [Versioning](ersilia-model-hub/more-for-contributors/versioning.md)
 
 ## 🙌 Contributors
 
