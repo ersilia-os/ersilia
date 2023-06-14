@@ -282,7 +282,9 @@ class AutoService(ErsiliaBase):
                 try:
                     shutil.rmtree(d)
                 except:
-                    self.logger.warning("Could not remove temporary directory {0}".format(d))
+                    self.logger.warning(
+                        "Could not remove temporary directory {0}".format(d)
+                    )
 
     def clean_docker_containers(self):
         self.logger.debug("Silencing docker containers if necessary")
