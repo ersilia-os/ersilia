@@ -279,7 +279,10 @@ class AutoService(ErsiliaBase):
             if "ersilia-" in d:
                 d = os.path.join(tmp_folder, d)
                 self.logger.debug("Flushing temporary directory {0}".format(d))
-                shutil.rmtree(d)
+                try:
+                    shutil.rmtree(d)
+                except:
+                    self.logger.warning("Could not remove temporary directory {0}".format(d))
 
     def clean_docker_containers(self):
         self.logger.debug("Silencing docker containers if necessary")
