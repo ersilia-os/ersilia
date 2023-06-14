@@ -18,6 +18,9 @@ class ErsiliaCloner(ErsiliaBase):
         path_repo = os.path.join(path, self.cfg.HUB.PACKAGE)
         if self.development_path is not None:
             path_version = Versioner().ersilia_version_from_path(self.development_path)
+            if path_version is None:
+                shutil.copytree(self.development_path, path_repo)
+                return path_repo
             if path_version == version:
                 shutil.copytree(self.development_path, path_repo)
                 return path_repo

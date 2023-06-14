@@ -8,7 +8,7 @@ def get_version(package_path):
     spec = spec_from_file_location("version", os.path.join(package_path, "_version.py"))
     module = module_from_spec(spec)
     spec.loader.exec_module(module)
-    version = module.get_version_for_setup()
+    version = module.get_version_from_static()
     return version
 
 

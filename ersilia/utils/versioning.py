@@ -32,7 +32,7 @@ class Versioner(ErsiliaBase):
         if not os.path.exists(fn):
             fn = os.path.join(path, static_version_file)
         if not os.path.exists(fn):
-            raise Exception
+            return None
         with open(fn, "r") as f:
             text = f.read()
             ver = text.split('"')[1]
