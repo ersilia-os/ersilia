@@ -4,11 +4,10 @@
 name: Upload Python Package
 
 on:
-  push:
-    tags:
-      - '*'
-  
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Tag to version"]
+    types:
+      - completed
 
 jobs:
   deploy:
@@ -23,6 +22,11 @@ jobs:
         with:
           python-version: '3.7'
           # cache: 'pip' # caching pip dependencies
+
+      - name: Get version
+        run: |
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
+          mv _static_version.py ersilia/.
 
       - name: Install dependencies
         run: |
