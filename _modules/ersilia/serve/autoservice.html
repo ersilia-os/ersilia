@@ -356,7 +356,9 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
                 <span class="k">except</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not remove temporary directory </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">))</span></div>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Could not remove temporary directory </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                    <span class="p">)</span></div>
 
 <div class="viewcode-block" id="AutoService.clean_docker_containers"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_docker_containers">[docs]</a>    <span class="k">def</span> <span class="nf">clean_docker_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Silencing docker containers if necessary&quot;</span><span class="p">)</span>
