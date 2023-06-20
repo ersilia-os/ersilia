@@ -101,6 +101,9 @@
     <span class="n">SourceCodeBaseInformationError</span><span class="p">,</span>
     <span class="n">LicenseBaseInformationError</span><span class="p">,</span>
     <span class="n">GithubBaseInformationError</span><span class="p">,</span>
+    <span class="n">DockerhubBaseInformationError</span><span class="p">,</span>
+    <span class="n">DockerArchitectureInformationError</span><span class="p">,</span>
+    <span class="n">S3BaseInformationError</span><span class="p">,</span>
     <span class="n">BothIdentifiersBaseInformationError</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">...utils.identifiers.model</span> <span class="kn">import</span> <span class="n">ModelIdentifier</span>
@@ -135,6 +138,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_is_valid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url_string</span><span class="p">)</span>
@@ -367,6 +373,39 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_github</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span>
+
+    <span class="nd">@dockerhub</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dockerhub_url</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_dockerhub_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://hub.docker.com/r/ersiliaos/&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DockerhubBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="n">new_dockerhub_url</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span>
+
+    <span class="nd">@docker_architecture</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_docker_architecture</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">new_docker_architecture</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DockerArchitectureInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="n">new_docker_architecture</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span>
+
+    <span class="nd">@s3</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_s3_url</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_s3_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+            <span class="s2">&quot;https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/&quot;</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">S3BaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="n">new_s3_url</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">both_identifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
         <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span>
@@ -395,6 +434,9 @@
             <span class="s2">&quot;Source Code&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_code</span><span class="p">,</span>
             <span class="s2">&quot;License&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">,</span>
             <span class="s2">&quot;Contributor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span><span class="p">,</span>
+            <span class="s2">&quot;DockerHub&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span><span class="p">,</span>
+            <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span><span class="p">,</span>
+            <span class="s2">&quot;S3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
@@ -418,7 +460,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">source_code</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Source Code&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;License&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s2">&quot;Contributor&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Contributor&quot;</span><span class="p">]</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Contributor&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;DockerHub&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;Docker Architecture&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;S3&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">]</span></div></div>
 
 
 <div class="viewcode-block" id="RepoMetadataFile"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile">[docs]</a><span class="k">class</span> <span class="nc">RepoMetadataFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -563,6 +611,15 @@
         <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Ersilia contributor: [</span><span class="si">{0}</span><span class="s2">](https://github.com/</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;Contributor&quot;</span><span class="p">]</span>
         <span class="p">)</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## Ersilia model URLs</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* [GitHub](</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">github</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* [AWS S3](</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* [DockerHub](</span><span class="si">{0}</span><span class="s2">) (</span><span class="si">{1}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">],</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## Citation</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;If you use this model, please cite the [original authors](</span><span class="si">{0}</span><span class="s2">) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">d</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">]</span>

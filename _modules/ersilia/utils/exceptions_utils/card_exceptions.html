@@ -231,6 +231,29 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="DockerhubBaseInformationError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.card_exceptions.DockerhubBaseInformationError">[docs]</a><span class="k">class</span> <span class="nc">DockerhubBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia DockerHub URL&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;The model does not seem to be publicly available in Ersilia&#39;s DockerHub organization profile (ersiliaos). Make sure that a model identifier has been set.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DockerArchitectureInformationError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.card_exceptions.DockerArchitectureInformationError">[docs]</a><span class="k">class</span> <span class="nc">DockerArchitectureInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Docker architecture&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Listed Docker architectures are: </span><span class="si">{}</span><span class="s2">. If you are considering a Docker architecture that is not in this list, please open a PR on the &#39;docker_architecture.txt&#39; file in the Ersilia repository&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="S3BaseInformationError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.card_exceptions.S3BaseInformationError">[docs]</a><span class="k">class</span> <span class="nc">S3BaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia AWS S3 URL&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;The model does not seem to be publicly available in Ersilia&#39;s AWS S3 bucket for zipped models. Make sure that a model identifier has been set.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="BothIdentifiersBaseInformationError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.card_exceptions.BothIdentifiersBaseInformationError">[docs]</a><span class="k">class</span> <span class="nc">BothIdentifiersBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Both identifiers field error&quot;</span>

@@ -208,6 +208,17 @@
             <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
         <span class="p">)</span></div>
 
+<div class="viewcode-block" id="ModelDockerHubFetcher.copy_status"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.copy_status">[docs]</a>    <span class="k">def</span> <span class="nf">copy_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">fr_file</span> <span class="o">=</span> <span class="s2">&quot;/root/eos/dest/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
+        <span class="n">to_file</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/dest/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">cp_from_image</span><span class="p">(</span>
+            <span class="n">img_path</span><span class="o">=</span><span class="n">fr_file</span><span class="p">,</span>
+            <span class="n">local_path</span><span class="o">=</span><span class="n">to_file</span><span class="p">,</span>
+            <span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
+            <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="ModelDockerHubFetcher.fetch"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">mp</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
@@ -215,7 +226,8 @@
         <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write_apis</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">copy_information</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">copy_metadata</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_metadata</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_status</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ModelFetcher"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher">[docs]</a><span class="k">class</span> <span class="nc">ModelFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
