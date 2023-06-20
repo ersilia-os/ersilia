@@ -577,5 +577,4 @@ class PulledDockerImageService(BaseServing):
         self.logger.debug(
             "Stopping and removing container {0}".format(self.container_id)
         )
-        self.container.stop()
-        self.container.remove()
+        self._stop_all_containers_of_image()

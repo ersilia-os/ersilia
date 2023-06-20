@@ -134,6 +134,17 @@ class ModelDockerHubFetcher(ErsiliaBase):
             tag=DOCKERHUB_LATEST_TAG,
         )
 
+    def copy_status(self, model_id):
+        fr_file = "/root/eos/dest/{0}/{1}".format(model_id, STATUS_FILE)
+        to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, STATUS_FILE)
+        self.simple_docker.cp_from_image(
+            img_path=fr_file,
+            local_path=to_file,
+            org=DOCKERHUB_ORG,
+            img=model_id,
+            tag=DOCKERHUB_LATEST_TAG,
+        )
+
     def fetch(self, model_id):
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         mp.pull()
@@ -142,6 +153,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         self.write_apis(model_id)
         self.copy_information(model_id)
         self.copy_metadata(model_id)
+        self.copy_status(model_id)
 
 
 class ModelFetcher(ErsiliaBase):

@@ -156,6 +156,29 @@ class GithubBaseInformationError(ErsiliaError):
         super().__init__(self.message, self.hints)
 
 
+class DockerhubBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong Ersilia DockerHub URL"
+        self.hints = "The model does not seem to be publicly available in Ersilia's DockerHub organization profile (ersiliaos). Make sure that a model identifier has been set."
+        super().__init__(self.message, self.hints)
+
+
+class DockerArchitectureInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong Docker architecture"
+        self.hints = "Listed Docker architectures are: {}. If you are considering a Docker architecture that is not in this list, please open a PR on the 'docker_architecture.txt' file in the Ersilia repository".format(
+            ", ".join(_read_default_fields("Docker Architecture"))
+        )
+        super().__init__(self.message, self.hints)
+
+
+class S3BaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong Ersilia AWS S3 URL"
+        self.hints = "The model does not seem to be publicly available in Ersilia's AWS S3 bucket for zipped models. Make sure that a model identifier has been set."
+        super().__init__(self.message, self.hints)
+
+
 class BothIdentifiersBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Both identifiers field error"
