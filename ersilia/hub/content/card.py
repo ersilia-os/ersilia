@@ -539,9 +539,9 @@ class ReadmeMetadata(ErsiliaBase):
         )
         text += "## Ersilia model URLs\n"
         text += "* [GitHub]({0})\n".format(data.github)
-        if d["S3"] in d:
+        if "S3" in d:
             text += "* [AWS S3]({0})\n".format(d["S3"])
-        if d["DockerHub"] in d:
+        if "DockerHub" in d:
             text += "* [DockerHub]({0}) ({1})\n".format(
                 d["DockerHub"], ", ".join(d["Docker Architecture"])
             )
