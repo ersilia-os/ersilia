@@ -94,7 +94,7 @@ def check_bentoml(package_path):
     module = module_from_spec(spec)
     spec.loader.exec_module(module)
     req = module.BentoMLRequirement()
-    if not req.is_installed():
+    if not req.is_bentoml_ersilia_version():
         req.install()
     return version
 
