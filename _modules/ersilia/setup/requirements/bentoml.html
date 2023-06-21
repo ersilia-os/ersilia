@@ -88,9 +88,12 @@
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
+<div class="viewcode-block" id="BentoMLRequirement.is_bentoml_ersilia_version"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement.is_bentoml_ersilia_version">[docs]</a>    <span class="k">def</span> <span class="nf">is_bentoml_ersilia_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
 <div class="viewcode-block" id="BentoMLRequirement.install"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing bentoml (the ersilia version)&quot;</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> -m pip install git+https://github.com/ersilia-os/bentoml-ersilia.git&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> -m pip install -U git+https://github.com/ersilia-os/bentoml-ersilia.git&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
         <span class="p">)</span>
         <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div></div>
