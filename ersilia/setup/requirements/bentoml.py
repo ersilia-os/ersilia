@@ -6,10 +6,9 @@ class BentoMLRequirement(object):
     def __init__(self):
         pass
 
-    def is_installed(self):
+    def _is_installed(self):
         try:
             import bentoml
-
             return True
         except ImportError:
             return False
