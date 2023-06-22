@@ -15,9 +15,9 @@ class BentoMLRequirement(object):
             return False
 
     def is_bentoml_ersilia_version(self):
-        if not self._is_installed():
+        if not self.is_installed():
             return False
-        pass
+        return False
 
     def install(self):
         print("Installing bentoml (the ersilia version)")
