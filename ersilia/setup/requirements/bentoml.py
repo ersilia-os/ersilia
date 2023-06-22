@@ -1,5 +1,8 @@
 import subprocess
 import sys
+import tempfile
+import os
+import shutil
 
 
 class BentoMLRequirement(object):
@@ -17,7 +20,17 @@ class BentoMLRequirement(object):
     def is_bentoml_ersilia_version(self):
         if not self.is_installed():
             return False
-        return False
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_file = os.path.join(tmp_folder, "version.txt")
+        cmd = "bentoml --version > {0}".format(tmp_file)
+        subprocess.Popen(cmd, shell=True).wait()
+        with open(tmp_file, "r") as f:
+            text = f.read()
+        if "0.11.0" in text:
+            return True
+        else:
+            return False
+        shutil.rmtree(tmp_folder)
 
     def install(self):
         print("Installing bentoml (the ersilia version)")
