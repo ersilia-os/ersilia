@@ -2,9 +2,12 @@ import docker
 import requests
 
 from ... import ErsiliaBase
-from ...utils.terminal import yes_no_input
+from ...utils.terminal import yes_no_input, run_command
 from ... import throw_ersilia_exception
-from ...utils.exceptions_utils.pull_exceptions import DockerImageNotAvailableError
+from ...utils.exceptions_utils.pull_exceptions import (
+    DockerImageNotAvailableError,
+    DockerImageArchitectureNotAvailableError,
+)
 
 from ...utils.docker import SimpleDocker
 from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
@@ -78,11 +81,24 @@ class ModelPuller(ErsiliaBase):
             self.logger.debug(
                 "Pulling image {0} from DockerHub...".format(self.image_name)
             )
-            self.client.images.pull(
-                "{0}/{1}".format(DOCKERHUB_ORG, self.model_id),
-                tag=DOCKERHUB_LATEST_TAG,
-                decode=True,
-            )
+            try:
+                self.client.images.pull(
+                    "{0}/{1}".format(DOCKERHUB_ORG, self.model_id),
+                    tag=DOCKERHUB_LATEST_TAG,
+                    decode=True,
+                )
+                self.logger.debug("Image pulled succesfully!")
+            except:
+                self.logger.warning(
+                    "Conventional pull did not work, Ersilia is now forcing linux/amd64 architecture"
+                )
+                run_command(
+                    "docker pull {0}/{1}:{2} --platform linux/amd64".format(
+                        DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+                    )
+                )
+            # except:
+            #    raise DockerImageArchitectureNotAvailableError(model=self.model_id)
         else:
             self.logger.info("Image {0} is not available".format(self.image_name))
             raise DockerImageNotAvailableError(model=self.model_id)

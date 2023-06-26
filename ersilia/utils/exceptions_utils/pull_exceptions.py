@@ -10,3 +10,12 @@ class DockerImageNotAvailableError(ErsiliaError):
             model
         )
         super().__init__(self.message, self.hints)
+
+
+class DockerImageArchitectureNotAvailableError(ErsiliaError):
+    def __init__(self, model):
+        self.message = "It was not possible to pull model {0} from Ersilia's DockerHub repository.".format(
+            model
+        )
+        self.hints = "If you are using an Apple M1/M2 chip, it is possible that this model is not supported for your architecture, unfortunately.\nOne possible alternative is to use GitHub Codespaces to run Ersilia on the cloud, and fetch the model from there. If you absolutely want this model to run on a Mac, please reach out to us and we will try to help."
+        super().__init__(self.message, self.hints)

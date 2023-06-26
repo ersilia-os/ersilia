@@ -555,6 +555,7 @@ class PulledDockerImageService(BaseServing):
         self._stop_all_containers_of_image()
         self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
         self.volumes = {self.tmp_folder: {"bind": "/ersilia_tmp", "mode": "rw"}}
+        self.logger.debug("Trying to run container")
         self.container = self.client.containers.run(
             self.image_name,
             name=self.container_name,
