@@ -85,6 +85,15 @@
             <span class="n">model</span>
         <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DockerImageArchitectureNotAvailableError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.pull_exceptions.DockerImageArchitectureNotAvailableError">[docs]</a><span class="k">class</span> <span class="nc">DockerImageArchitectureNotAvailableError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;It was not possible to pull model </span><span class="si">{0}</span><span class="s2"> from Ersilia&#39;s DockerHub repository.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;If you are using an Apple M1/M2 chip, it is possible that this model is not supported for your architecture, unfortunately.</span><span class="se">\n</span><span class="s2">One possible alternative is to use GitHub Codespaces to run Ersilia on the cloud, and fetch the model from there. If you absolutely want this model to run on a Mac, please reach out to us and we will try to help.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
