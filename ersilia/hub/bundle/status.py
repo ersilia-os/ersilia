@@ -34,7 +34,7 @@ class ModelStatus(ErsiliaBase):
             if docker.exists(self.cfg.EXT.DOCKERHUB_ORG, img, tag):
                 return True
         return False
-    
+
     def is_pulled_docker(self, model_id):
         model_dir = os.path.join(self._model_path(model_id=model_id))
         json_file = os.path.join(model_dir, IS_FETCHED_FROM_DOCKERHUB_FILE)
