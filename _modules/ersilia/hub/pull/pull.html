@@ -171,7 +171,7 @@
                         <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="c1"># except:</span>
+            <span class="c1"># except: #TODO add better error</span>
             <span class="c1">#    raise DockerImageArchitectureNotAvailableError(model=self.model_id)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Image </span><span class="si">{0}</span><span class="s2"> is not available&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_name</span><span class="p">))</span>

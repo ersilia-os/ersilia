@@ -74,11 +74,13 @@
   <h1>Source code for ersilia.hub.bundle.status</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">json</span>
 
 <span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
 <span class="kn">from</span> <span class="nn">...utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span> <span class="nn">...db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
 
 
 <div class="viewcode-block" id="ModelStatus"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus">[docs]</a><span class="k">class</span> <span class="nc">ModelStatus</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -106,6 +108,15 @@
             <span class="k">if</span> <span class="n">docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="ModelStatus.is_pulled_docker"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_pulled_docker">[docs]</a>    <span class="k">def</span> <span class="nf">is_pulled_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">json_file</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="ModelStatus.is_conda"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_conda">[docs]</a>    <span class="k">def</span> <span class="nf">is_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
@@ -151,6 +162,7 @@
             <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bundle</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="s2">&quot;docker&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pulled_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="s2">&quot;conda&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_conda</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="s2">&quot;pip&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pip</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
         <span class="p">}</span>
