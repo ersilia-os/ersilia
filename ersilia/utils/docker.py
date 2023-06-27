@@ -149,14 +149,25 @@ class SimpleDocker(object):
         run_command(cmd)
 
     @staticmethod
-    def cp_from_container(name, img_path, local_path):
+    def cp_from_container(name, img_path, local_path, org=None, img=None, tag=None):
         local_path = os.path.abspath(local_path)
-        cmd = "docker cp %s:%s %s" % (name, img_path, local_path)
+        tmp_file = os.path.join(tempfile.mkdtemp(prefix="ersilia-"), "tmp.txt")
+        cmd = "docker cp %s:%s %s &> %s" % (name, img_path, local_path, tmp_file)
         run_command(cmd)
+        with open(tmp_file, "r") as f:
+            output = f.read()
+        if "No such container" in output:
+            img_name = "{0}/{1}:{2}".format(org, img, tag)
+            cmd = "docker run --platform linux/amd64 -d --name={0} {1}".format(
+                name, img_name
+            )
+            run_command(cmd)
+            cmd = "docker cp %s:%s %s" % (name, img_path, local_path)
+            run_command(cmd)
 
     def cp_from_image(self, img_path, local_path, org, img, tag):
         name = self.run(org, img, tag, name=None)
-        self.cp_from_container(name, img_path, local_path)
+        self.cp_from_container(name, img_path, local_path, org=org, img=img, tag=tag)
         self.remove(name)
 
     @staticmethod
