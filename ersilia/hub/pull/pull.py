@@ -97,7 +97,7 @@ class ModelPuller(ErsiliaBase):
                         DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
                     )
                 )
-            # except:
+            # except: #TODO add better error
             #    raise DockerImageArchitectureNotAvailableError(model=self.model_id)
         else:
             self.logger.info("Image {0} is not available".format(self.image_name))

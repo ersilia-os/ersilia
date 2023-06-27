@@ -290,8 +290,10 @@ class AutoService(ErsiliaBase):
         self.logger.debug("Silencing docker containers if necessary")
         dm = DockerManager(config_json=self.config_json)
         if dm.is_inside_docker():
+            self.logger.debug("It is inside docker")
             return
         if dm.is_installed():
+            self.logger.debug("It is not inside docker")
             dm.stop_containers(self.model_id)
 
     def serve(self):
@@ -311,6 +313,7 @@ class AutoService(ErsiliaBase):
             os.remove(tmp_file)
         self.clean_temp_dir()
         self.clean_docker_containers()
+        self.service.close()
 
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE

@@ -460,7 +460,7 @@ class PulledDockerImageService(BaseServing):
         self.image_name = "{0}/{1}:{2}".format(
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
-        self.logger.debug("Staring Docker Daemon service")
+        self.logger.debug("Starting Docker Daemon service")
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         self.logger.debug(
             "Creating temporary folder {0} and mounting as volume in container".format(
@@ -507,7 +507,9 @@ class PulledDockerImageService(BaseServing):
                     "Stopping and removing container {0}".format(container.name)
                 )
                 container.stop()
+                self.logger.debug("Container stopped")
                 container.remove()
+                self.logger.debug("Container removed")
 
     def _get_apis(self):
         file_name = os.path.join(
@@ -575,7 +577,5 @@ class PulledDockerImageService(BaseServing):
         return self._api_with_url(api_name=api_name, input=input)
 
     def close(self):
-        self.logger.debug(
-            "Stopping and removing container {0}".format(self.container_id)
-        )
+        self.logger.debug("Stopping and removing container")
         self._stop_all_containers_of_image()
