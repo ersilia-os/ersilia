@@ -313,7 +313,10 @@ class AutoService(ErsiliaBase):
             os.remove(tmp_file)
         self.clean_temp_dir()
         self.clean_docker_containers()
-        self.service.close()
+        try:
+            self.service.close()
+        except:  # TODO: capture the error
+            pass
 
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE
