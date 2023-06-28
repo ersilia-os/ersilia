@@ -189,6 +189,9 @@ class BaseTabularFile(object):
             reader = csv.reader(f, delimiter=self._column_delimiter)
             N = 0
             for i, r in enumerate(reader):
+                if len(r) == 1:
+                    self.matching = {"input": [0], "key": None}
+                    return self.matching
                 if i > self.sniff_line_limit:
                     self.logger.debug("Stopping sniffer for resolving column types")
                     break
