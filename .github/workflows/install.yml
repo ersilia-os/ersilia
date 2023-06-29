@@ -1,4 +1,4 @@
-name: Run PyTest
+name: Install Ersilia
 
 on:
   pull_request:
@@ -9,7 +9,10 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # pin@v3.5.2
 
@@ -27,16 +30,14 @@ jobs:
           git-lfs install
           conda install gh -c conda-forge
 
-      - name: Install ersilia
+      - name: Install ersilia from source
         run: |
           source activate
           python --version
           echo "After conda init"
           conda init
-          python -m pip install -e .[test]
+          python -m pip install -e .
 
-      - name: Run pytest
+      - name: Ersilia help
         run: |
-          source activate          
-          pip install pytest
-          pytest
+          ersilia --help
