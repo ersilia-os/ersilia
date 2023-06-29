@@ -15,26 +15,53 @@ jobs:
       - name: Checkout persist credentials
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # pin@v3.5.2
         with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+          persist-credentials: false 
+          fetch-depth: 0 
 
-      - name: Make a change and commit
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          
+      - name: Make a change
         run: |
           wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/static_version_writer.py
           python static_version_writer.py
           rm static_version_writer.py
 
-      - name: Commit and push changes done to the static version file
-        uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # pin@v1.4
+      - name: Create new branch and commit changes
+        run: |
+          git config --local user.email "ersilia-bot@users.noreply.github.com"
+          git config --local user.name "ersilia-bot"
+          git checkout -b version-update-${{ github.run_id }}
+          git add .
+          git commit -m "Update version [skip ci]"
+          git push origin version-update-${{ github.run_id }}
+
+      - name: Create Pull Request
+        id: create_pr
+        uses: repo-sync/pull-request@v2
         with:
-          author_name: "ersilia-bot"
-          author_email: "ersilia-bot@users.noreply.github.com"
-          message: "update version [skip ci]"
-          repository: "ersilia-os/${{ github.event.repository.name }}"
+          source_branch: "version-update-${{ github.run_id }}"
+          destination_branch: "master"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          amend: true
-          force: true
-          branch: "master"
+          pr_title: "Version update"
+          pr_body: "Automated version update"
+          pr_label: "automerge"
+
+      - name: Enable auto-merge
+        uses: pascalgn/automerge-action@v0.14.3
+        if: steps.create_pr.outputs.pull-request-number != ''
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: "automerge,!work in progress"
+          MERGE_METHOD: "squash"
+          MERGE_COMMIT_MESSAGE: "automatic"
+          MERGE_FORKS: "false"
+          UPDATE_LABELS: ""
+          MERGE_RETRIES: "6"
+          MERGE_RETRY_SLEEP: "10000"
+          MERGE_REMOVE_LABELS: "automerge"
 
       - name: Fetch tags
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
@@ -53,8 +80,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref.replace('refs/tags/', '') }}
+          release_name: Ersilia ${{ github.ref.replace('refs/tags/', '') }}
           body: ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
