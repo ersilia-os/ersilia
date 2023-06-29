@@ -1,13 +1,13 @@
 Build container:
 
 ```bash
-docker build -t ersilia .
+docker pull ersiliaos/shell
 ```
 
 Run in detached mode:
 
 ```bash
-docker run -d --name ersilia_docker ersilia --entrypoint /bin/bash
+docker run -d --name ersilia_shell ersiliaos/shell
 ```
 
 To enter docker container, just run:

@@ -27,4 +27,6 @@ ENV PATH "$PATH:$PATH:/root/miniconda3/envs/ersilia/bin"
 RUN mv /root/miniconda3/envs/ersilia/bin/ersilia /root/miniconda3/envs/ersilia/bin/ersilia_exec
 COPY ./required_files/ersilia /root/miniconda3/envs/ersilia/bin/
 RUN chmod +x /root/miniconda3/envs/ersilia/bin/ersilia
+RUN echo 'source /root/miniconda3/etc/profile.d/conda.sh' >> /root/.bashrc
+RUN echo 'conda activate ersilia' >> /root/.bashrc
 ENTRYPOINT ["tail", "-f", "/dev/null"]
