@@ -73,32 +73,51 @@
              
   <h1>Source code for ersilia.publish.test</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 
-<span class="kn">from</span> <span class="nn">..hub.content.card</span> <span class="kn">import</span> <span class="n">RepoMetadataFile</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">METADATA_JSON_FILE</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">INFORMATION_FILE</span>
 
 
-<div class="viewcode-block" id="LocalModelTester"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.LocalModelTester">[docs]</a><span class="k">class</span> <span class="nc">LocalModelTester</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelTester"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester">[docs]</a><span class="k">class</span> <span class="nc">ModelTester</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_information</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_info</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">][</span><span class="s2">&quot;Input&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_input_files</span><span class="p">()</span>
 
-<div class="viewcode-block" id="LocalModelTester.check_metadata"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.LocalModelTester.check_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">check_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
-        <span class="n">rm</span> <span class="o">=</span> <span class="n">RepoMetadataFile</span><span class="p">()</span>
-        <span class="n">rm</span><span class="o">.</span><span class="n">read_information</span><span class="p">(</span><span class="n">json_path</span><span class="o">=</span><span class="n">json_file</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">&quot;Metadata check successful&quot;</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">_read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading model information from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">json_file</span><span class="p">))</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
 
-<div class="viewcode-block" id="LocalModelTester.check_fetch"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.LocalModelTester.check_fetch">[docs]</a>    <span class="k">def</span> <span class="nf">check_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>  <span class="c1"># TODO</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">&quot;Fetch check successful&quot;</span><span class="p">)</span></div></div>
+    <span class="k">def</span> <span class="nf">_prepare_input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Preparing input files for testing purposes...&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
 
+    <span class="nd">@throw_ersilia_exception</span>
+    <span class="k">def</span> <span class="nf">check_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking that model information is correct&quot;</span><span class="p">)</span>
+        <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">json</span>
 
-<div class="viewcode-block" id="RemoteModelTester"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.RemoteModelTester">[docs]</a><span class="k">class</span> <span class="nc">RemoteModelTester</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">pass</span>  <span class="c1"># TODO</span></div>
+    <span class="nd">@throw_ersilia_exception</span>
+    <span class="k">def</span> <span class="nf">check_single_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking single input&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="ModelTester.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_information</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_single_input</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>
