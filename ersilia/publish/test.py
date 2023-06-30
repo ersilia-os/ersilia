@@ -5,6 +5,8 @@ import tempfile
 from .. import ErsiliaBase
 from .. import throw_ersilia_exception
 
+from ..utils.exceptions_utils import test_exceptions as texc
+
 from ..default import INFORMATION_FILE
 
 
@@ -33,8 +35,10 @@ class ModelTester(ErsiliaBase):
         self.logger.debug("Checking that model information is correct")
         json_file = os.path.join(self._dest_dir, self.model_id, INFORMATION_FILE)
         with open(json_file, "r") as f:
-            json.load(f)
-        return json
+            data = json.load(f)
+        if data['card']['Identifier'] != self.model_id:
+            raise texc.WrongCardIdentifierError(self.model_id)
+        return data
 
     @throw_ersilia_exception
     def check_single_input(self):
