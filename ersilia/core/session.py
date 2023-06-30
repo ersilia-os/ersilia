@@ -9,6 +9,8 @@ from .base import ErsiliaBase
 from ..io.output_logger import TabularResultLogger
 from ..default import EOS
 
+ERSILIA_RUNS_FOLDER = "ersilia_runs"
+
 
 class Session(ErsiliaBase):
     def __init__(self, config_json):
@@ -65,7 +67,7 @@ class RunLogger(ErsiliaBase):
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
-        self.ersilia_runs_folder = os.path.join(EOS, "ersilia_runs")
+        self.ersilia_runs_folder = os.path.join(EOS, ERSILIA_RUNS_FOLDER)
         if not os.path.exists(self.ersilia_runs_folder):
             os.mkdir(self.ersilia_runs_folder)
         self.metadata_folder = os.path.join(self.ersilia_runs_folder, "metadata")
