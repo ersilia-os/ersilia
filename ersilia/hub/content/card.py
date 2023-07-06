@@ -27,6 +27,9 @@ from ...utils.exceptions_utils.card_exceptions import (
     SourceCodeBaseInformationError,
     LicenseBaseInformationError,
     GithubBaseInformationError,
+    DockerhubBaseInformationError,
+    DockerArchitectureInformationError,
+    S3BaseInformationError,
     BothIdentifiersBaseInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
@@ -61,6 +64,9 @@ class BaseInformation(ErsiliaBase):
         self._source_code = None
         self._license = None
         self._contributor = None
+        self._dockerhub = None
+        self._docker_architecture = None
+        self._s3 = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -293,6 +299,39 @@ class BaseInformation(ErsiliaBase):
         return self._github
 
     @property
+    def dockerhub(self):
+        return self._dockerhub
+
+    @dockerhub.setter
+    def dockerhub(self, new_dockerhub_url):
+        if not new_dockerhub_url.startswith("https://hub.docker.com/r/ersiliaos/"):
+            raise DockerhubBaseInformationError
+        self._dockerhub = new_dockerhub_url
+
+    @property
+    def docker_architecture(self):
+        return self._docker_architecture
+
+    @docker_architecture.setter
+    def docker_architecture(self, new_docker_architecture):
+        for d in new_docker_architecture:
+            if d not in self._read_default_fields("Docker Architecture"):
+                raise DockerArchitectureInformationError
+        self._docker_architecture = new_docker_architecture
+
+    @property
+    def s3(self):
+        return self._s3
+
+    @s3.setter
+    def s3(self, new_s3_url):
+        if not new_s3_url.startswith(
+            "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/"
+        ):
+            raise S3BaseInformationError
+        self._s3 = new_s3_url
+
+    @property
     def both_identifiers(self):
         model_id = self.identifier
         slug = self.slug
@@ -321,6 +360,9 @@ class BaseInformation(ErsiliaBase):
             "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
+            "DockerHub": self.dockerhub,
+            "Docker Architecture": self.docker_architecture,
+            "S3": self.s3,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -345,6 +387,12 @@ class BaseInformation(ErsiliaBase):
         self.license = data["License"]
         if "Contributor" in data:
             self.contributor = data["Contributor"]
+        if "DockerHub" in data:
+            self.dockerhub = data["DockerHub"]
+        if "Docker Architecture" in data:
+            self.docker_architecture = data["Docker Architecture"]
+        if "S3" in data:
+            self.s3 = data["S3"]
 
 
 class RepoMetadataFile(ErsiliaBase):
@@ -489,6 +537,15 @@ class ReadmeMetadata(ErsiliaBase):
         text += "* Ersilia contributor: [{0}](https://github.com/{0})\n\n".format(
             d["Contributor"]
         )
+        text += "## Ersilia model URLs\n"
+        text += "* [GitHub]({0})\n".format(data.github)
+        if "S3" in d:
+            text += "* [AWS S3]({0})\n".format(d["S3"])
+        if "DockerHub" in d:
+            text += "* [DockerHub]({0}) ({1})\n".format(
+                d["DockerHub"], ", ".join(d["Docker Architecture"])
+            )
+        text += "\n"
         text += "## Citation\n\n"
         text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).\n\n".format(
             d["Publication"]

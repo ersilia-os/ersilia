@@ -28,6 +28,7 @@ class Logger(object):
 
     def _log_to_current_file(self):
         current_log_file = os.path.join(EOS, CURRENT_LOGGING_FILE)
+
         if os.path.exists(current_log_file):
             os.remove(current_log_file)
         self._current_file = self.logger.add(

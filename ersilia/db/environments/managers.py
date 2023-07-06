@@ -6,13 +6,13 @@ import shutil
 from ...core.base import ErsiliaBase
 from ...setup.requirements.docker import DockerRequirement
 from ...utils.paths import Paths
-from ...utils.terminal import run_command, run_command_check_output
-from ...utils.docker import SimpleDocker, is_inside_docker
+from ...utils.terminal import run_command
+from ...utils.docker import SimpleDocker, is_inside_docker, resolve_platform
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
 from .localdb import EnvironmentDb
 
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, DEFAULT_DOCKER_PLATFORM
+from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 
 
 BENTOML_DOCKERPORT = 5000
@@ -192,7 +192,7 @@ class DockerManager(ErsiliaBase):
         else:
             dockerport = INTERNAL_DOCKERPORT
         cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
-            name, port, dockerport, img, workers, mb_string, DEFAULT_DOCKER_PLATFORM
+            name, port, dockerport, img, workers, mb_string, resolve_platform()
         )
         self.logger.debug(cmd)
         run_command(cmd)

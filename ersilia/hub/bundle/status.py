@@ -1,10 +1,12 @@
 import os
 import importlib
+import json
 
 from ...utils.docker import SimpleDocker
 from ...utils.conda import SimpleConda
 from ...db.environments.localdb import EnvironmentDb
 from ... import ErsiliaBase
+from ...default import IS_FETCHED_FROM_DOCKERHUB_FILE
 
 
 class ModelStatus(ErsiliaBase):
@@ -32,6 +34,15 @@ class ModelStatus(ErsiliaBase):
             if docker.exists(self.cfg.EXT.DOCKERHUB_ORG, img, tag):
                 return True
         return False
+
+    def is_pulled_docker(self, model_id):
+        model_dir = os.path.join(self._model_path(model_id=model_id))
+        json_file = os.path.join(model_dir, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        if not os.path.exists(json_file):
+            return False
+        with open(json_file, "r") as f:
+            data = json.load(f)
+        return data["docker_hub"]
 
     def is_conda(self, model_id):
         db = EnvironmentDb(config_json=self.config_json)
@@ -77,6 +88,7 @@ class ModelStatus(ErsiliaBase):
             "bentoml": self.is_bentoml(model_id),
             "bundle": self.is_bundle(model_id),
             "docker": self.is_docker(model_id),
+            "pulled_docker": self.is_pulled_docker(model_id),
             "conda": self.is_conda(model_id),
             "pip": self.is_pip(model_id),
         }

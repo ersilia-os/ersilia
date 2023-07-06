@@ -9,6 +9,18 @@ class FetchErsiliaError(ErsiliaError):
         super().__init__(self.message, self.hints)
 
 
+class S3DownloaderError(ErsiliaError):
+    def __init__(self, model_id):
+        self.model_id = model_id
+        self.message = "Error occured while fetching model from S3: {0}".format(
+            self.model_id
+        )
+        self.hints = (
+            "Make sure that this model is actually in Ersilia Model Hub's S3 bucket"
+        )
+        super().__init__(self.message, self.hints)
+
+
 class GetFetchErsiliaError(ErsiliaError):
     def __init__(self, model_id):
         self.model_id = model_id

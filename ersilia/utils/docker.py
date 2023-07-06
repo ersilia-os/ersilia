@@ -6,6 +6,7 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 from ..default import DEFAULT_DOCKER_PLATFORM
+from ..utils.system import SystemChecker
 
 
 def is_inside_docker():
@@ -13,6 +14,13 @@ def is_inside_docker():
         return True
     else:
         return False
+
+
+def resolve_platform():
+    if SystemChecker().is_arm64():
+        return "linux/arm64"
+    else:
+        return DEFAULT_DOCKER_PLATFORM
 
 
 class SimpleDocker(object):
@@ -125,26 +133,42 @@ class SimpleDocker(object):
         if name is None:
             name = self.identifier.encode()
         cmd = "docker run -it -d --platform {0} --name {1} {2} bash".format(
-            DEFAULT_DOCKER_PLATFORM, name, self._image_name(org, img, tag)
+            resolve_platform(), name, self._image_name(org, img, tag)
         )
         run_command(cmd)
         return name
 
     @staticmethod
     def kill(name):
-        cmd = "docker kill %s" % name
+        cmd = "docker kill {0}".format(name)
         run_command(cmd)
 
     @staticmethod
-    def cp_from_container(name, img_path, local_path):
-        local_path = os.path.abspath(local_path)
-        cmd = "docker cp %s:%s %s" % (name, img_path, local_path)
+    def remove(name):
+        cmd = "docker rm -f {0}".format(name)
         run_command(cmd)
+
+    @staticmethod
+    def cp_from_container(name, img_path, local_path, org=None, img=None, tag=None):
+        local_path = os.path.abspath(local_path)
+        tmp_file = os.path.join(tempfile.mkdtemp(prefix="ersilia-"), "tmp.txt")
+        cmd = "docker cp %s:%s %s &> %s" % (name, img_path, local_path, tmp_file)
+        run_command(cmd)
+        with open(tmp_file, "r") as f:
+            output = f.read()
+        if "No such container" in output:
+            img_name = "{0}/{1}:{2}".format(org, img, tag)
+            cmd = "docker run --platform linux/amd64 -d --name={0} {1}".format(
+                name, img_name
+            )
+            run_command(cmd)
+            cmd = "docker cp %s:%s %s" % (name, img_path, local_path)
+            run_command(cmd)
 
     def cp_from_image(self, img_path, local_path, org, img, tag):
         name = self.run(org, img, tag, name=None)
-        self.cp_from_container(name, img_path, local_path)
-        self.kill(name)
+        self.cp_from_container(name, img_path, local_path, org=org, img=img, tag=tag)
+        self.remove(name)
 
     @staticmethod
     def exec_container(name, cmd):

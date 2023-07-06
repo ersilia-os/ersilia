@@ -14,6 +14,7 @@ def create_ersilia_cli():
     cmd.catalog()
     cmd.clear()
     cmd.close()
+    cmd.current()
     cmd.delete()
     cmd.example()
     cmd.fetch()
@@ -26,6 +27,7 @@ def create_ersilia_cli():
 
     cmd.sample()
     cmd.serve()
+    cmd.run()
 
     # TODO: functions only for contributors
     # Functions only for contributors

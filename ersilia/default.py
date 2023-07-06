@@ -40,6 +40,7 @@ METADATA_JSON_FILE = "metadata.json"
 SERVICE_CLASS_FILE = "service_class.txt"
 APIS_LIST_FILE = "apis_list.txt"
 INFORMATION_FILE = "information.json"
+IS_FETCHED_FROM_DOCKERHUB_FILE = "from_dockerhub.json"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"

@@ -1,6 +1,7 @@
 import os
 import tempfile
 import shutil
+import json
 
 from .services import (
     SystemBundleService,
@@ -8,13 +9,19 @@ from .services import (
     CondaEnvironmentService,
     DockerImageService,
     DummyService,
+    PulledDockerImageService,
 )
 from .api import Api
 from ..db.environments.managers import DockerManager
 from .. import ErsiliaBase
 from ..utils import tmp_pid_file
 
-from ..default import DEFAULT_BATCH_SIZE, SERVICE_CLASS_FILE, APIS_LIST_FILE
+from ..default import (
+    DEFAULT_BATCH_SIZE,
+    SERVICE_CLASS_FILE,
+    APIS_LIST_FILE,
+    IS_FETCHED_FROM_DOCKERHUB_FILE,
+)
 
 DEFAULT_OUTPUT = None
 
@@ -60,6 +67,10 @@ class AutoService(ErsiliaBase):
                     )
                 elif s == "docker":
                     self.service = DockerImageService(
+                        model_id, config_json=config_json, preferred_port=preferred_port
+                    )
+                elif s == "pulled_docker":
+                    self.service = PulledDockerImageService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     )
                 else:
@@ -114,6 +125,17 @@ class AutoService(ErsiliaBase):
                         f.write("docker")
                         self.logger.debug("Service class: docker")
                         self._service_class = "docker"
+                    elif PulledDockerImageService(
+                        model_id, config_json=config_json, preferred_port=preferred_port
+                    ).is_available():
+                        self.service = PulledDockerImageService(
+                            model_id,
+                            config_json=config_json,
+                            preferred_port=preferred_port,
+                        )
+                        f.write("pulled_docker")
+                        self.logger.debug("Service class: pulled_docker")
+                        self._service_class = "pulled_docker"
                     else:
                         self.logger.debug("Service class: dummy")
                         self.service = DummyService(
@@ -123,7 +145,6 @@ class AutoService(ErsiliaBase):
                         )
         else:
             self.logger.info("Service class provided")
-            # predefined service class
             service_class = self._service_class_loader(service_class)
             if service_class(
                 model_id, config_json=config_json, preferred_port=preferred_port
@@ -134,6 +155,16 @@ class AutoService(ErsiliaBase):
             else:
                 self.service = None
         self._set_apis()
+
+    def _was_fetched_from_dockerhub(self):
+        from_dockerhub_file = os.path.join(
+            self._dest_dir, self.model_id, IS_FETCHED_FROM_DOCKERHUB_FILE
+        )
+        if not os.path.exists(from_dockerhub_file):
+            return False
+        with open(from_dockerhub_file, "r") as f:
+            data = json.load(f)
+            return data["docker_hub"]
 
     def _set_api(self, api_name):
         def _method(input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE):
@@ -154,7 +185,7 @@ class AutoService(ErsiliaBase):
                     self._set_api(api_name)
         else:
             with open(apis_list, "w") as f:
-                for api_name in self.service._get_apis_from_bento():
+                for api_name in self.service._get_apis_from_where_available():
                     self._set_api(api_name)
                     f.write(api_name + os.linesep)
         self.apis_list = apis_list
@@ -172,6 +203,9 @@ class AutoService(ErsiliaBase):
         elif type(service_class) is DockerImageService:
             self._service_class = "docker"
             return service_class
+        elif type(service_class) is PulledDockerImageService:
+            self._service_class = "pulled_docker"
+            return service_class
         else:
             self._service_class = service_class
             if service_class == "system":
@@ -182,6 +216,8 @@ class AutoService(ErsiliaBase):
                 return CondaEnvironmentService
             elif service_class == "docker":
                 return DockerImageService
+            elif service_class == "pulled_docker":
+                return PulledDockerImageService
             raise Exception()
 
     def get_apis(self):
@@ -243,14 +279,21 @@ class AutoService(ErsiliaBase):
             if "ersilia-" in d:
                 d = os.path.join(tmp_folder, d)
                 self.logger.debug("Flushing temporary directory {0}".format(d))
-                shutil.rmtree(d)
+                try:
+                    shutil.rmtree(d)
+                except:
+                    self.logger.warning(
+                        "Could not remove temporary directory {0}".format(d)
+                    )
 
     def clean_docker_containers(self):
         self.logger.debug("Silencing docker containers if necessary")
         dm = DockerManager(config_json=self.config_json)
         if dm.is_inside_docker():
+            self.logger.debug("It is inside docker")
             return
         if dm.is_installed():
+            self.logger.debug("It is not inside docker")
             dm.stop_containers(self.model_id)
 
     def serve(self):
@@ -270,6 +313,10 @@ class AutoService(ErsiliaBase):
             os.remove(tmp_file)
         self.clean_temp_dir()
         self.clean_docker_containers()
+        try:
+            self.service.close()
+        except:  # TODO: capture the error
+            pass
 
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE

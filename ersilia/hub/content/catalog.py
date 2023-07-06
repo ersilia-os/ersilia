@@ -3,6 +3,8 @@
 import subprocess
 import requests
 import os
+import json
+import csv
 from .card import ModelCard
 from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
@@ -20,40 +22,50 @@ try:
 except ModuleNotFoundError as err:
     Github = None
 
-try:
-    from tabulate import tabulate
-except ModuleNotFoundError as err:
-    tabulate = None
-
 
 class CatalogTable(object):
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
 
-    def as_table(self):
-        if not tabulate:
-            return None
-        else:
-            return tabulate(
-                self.data,
-                headers=self.columns,
-                tablefmt="fancy_grid",
-                colalign=("center", "center", "center"),
-            )
+    def as_list_of_dicts(self):
+        R = []
+        for r in self.data:
+            d = {}
+            for i, c in enumerate(self.columns):
+                d[c] = r[i]
+            R += [d]
+        return R
+
+    def as_json(self):
+        R = self.as_list_of_dicts()
+        return json.dumps(R, indent=4)
+
+    def write(self, file_name):
+        with open(file_name, "w") as f:
+            if file_name.endswith(".csv"):
+                delimiter = ","
+            elif file_name.endswith(".tsv"):
+                delimiter = "\t"
+            else:
+                return None
+            writer = csv.writer(f, delimiter=delimiter)
+            writer.writerow(self.columns)
+            for r in self.data:
+                writer.writerow(r)
 
     def __str__(self):
-        return self.as_table()
+        return self.as_json()
 
     def __repr__(self):
         return self.__str__()
 
 
 class ModelCatalog(ErsiliaBase):
-    def __init__(self, tabular_view=True, config_json=None):
+    def __init__(self, config_json=None, only_identifier=True):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mi = ModelIdentifier()
-        self.tabular_view = tabular_view
+        self.only_identifier = only_identifier
 
     def _is_eos(self, s):
         if self.mi.is_valid(s):
@@ -75,21 +87,21 @@ class ModelCatalog(ErsiliaBase):
             return card["Slug"]
         return None
 
-    def _get_mode(self, card):
-        if "mode" in card:
-            return card["mode"]
-        if "Mode" in card:
-            return card["Mode"]
-
     def airtable(self):
         """List models available in AirTable Ersilia Model Hub base"""
-        if webbrowser:  # TODO: explore models online
-            if not self.tabular_view:
-                webbrowser.open(
-                    "https://airtable.com/shr9sYjL70nnHOUrP/tblZGe2a2XeBxrEHP"
-                )
+        if webbrowser:
+            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")
+
+    def _get_all_github_public_repos(self):
+        url = "https://api.github.com/users/{0}/repos".format(GITHUB_ORG)
+        while url:
+            response = requests.get(url, params={"per_page": 100})
+            response.raise_for_status()
+            yield from response.json()
+            if "next" in response.links:
+                url = response.links["next"]["url"]  # get the next page
             else:
-                webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")
+                break  # no more pages, stop the loop
 
     def github(self):
         """List models available in the GitHub model hub repository"""
@@ -101,6 +113,7 @@ class ModelCatalog(ErsiliaBase):
             "Looking for model repositories in {0} organization".format(GITHUB_ORG)
         )
         if token:
+            self.logger.debug("Token provided: ***")
             g = Github(token)
             repo_list = [i for i in g.get_user().get_repos()]
             repos = []
@@ -110,11 +123,10 @@ class ModelCatalog(ErsiliaBase):
                     continue
                 repos += [name]
         else:
+            self.logger.debug("Token not provided!")
             repos = []
-            url = "https://api.github.com/users/{0}/repos".format(GITHUB_ORG)
-            results = requests.get(url).json()
-            for r in results:
-                repos += [r["name"]]
+            for repo in self._get_all_github_public_repos():
+                repos += [repo["name"]]
         models = []
         for repo in repos:
             if self._is_eos(repo):
@@ -126,34 +138,47 @@ class ModelCatalog(ErsiliaBase):
         """List models available in Ersilia model hub repository"""
         mc = ModelCard()
         models = self.github()
-        R = []
-        for model_id in models:
-            card = mc.get(model_id)
-            if card is None:
-                continue
-            slug = self._get_slug(card)
-            title = self._get_title(card)
-            mode = self._get_mode(card)
-            R += [[model_id, slug, title, mode]]
-        return CatalogTable(R, columns=["MODEL_ID", "SLUG", "TITLE", "MODE"])
+        if self.only_identifier:
+            R = []
+            for model_id in models:
+                R += [[model_id]]
+            return CatalogTable(R, columns=["Identifier"])
+        else:
+            R = []
+            for model_id in models:
+                card = mc.get(model_id)
+                if card is None:
+                    continue
+                slug = self._get_slug(card)
+                title = self._get_title(card)
+                R += [[model_id, slug, title]]
+            return CatalogTable(R, columns=["Identifier", "Slug", "Title"])
 
     def local(self):
         """List models available locally"""
         mc = ModelCard()
         R = []
         logger.debug("Looking for models in {0}".format(self._bundles_dir))
-        for model_id in os.listdir(self._bundles_dir):
-            if not self._is_eos(model_id):
-                continue
-            card = mc.get(model_id)
-            slug = self._get_slug(card)
-            title = self._get_title(card)
-            mode = self._get_mode(card)
-            R += [[model_id, slug, title, mode]]
+        if self.only_identifier:
+            R = []
+            for model_id in os.listdir(self._bundles_dir):
+                if not self._is_eos(model_id):
+                    continue
+                R += [[model_id]]
+            columns = ["Identifier"]
+        else:
+            for model_id in os.listdir(self._bundles_dir):
+                if not self._is_eos(model_id):
+                    continue
+                card = mc.get(model_id)
+                slug = self._get_slug(card)
+                title = self._get_title(card)
+                R += [[model_id, slug, title]]
+            columns = ["Identifier", "Slug", "Title"]
         logger.info("Found {0} models".format(len(R)))
         if len(R) == 0:
             return None
-        return CatalogTable(data=R, columns=["MODEL_ID", "SLUG", "TITLE", "MODE"])
+        return CatalogTable(data=R, columns=columns)
 
     def bentoml(self):
         """List models available as BentoServices"""
@@ -175,5 +200,5 @@ class ModelCatalog(ErsiliaBase):
             for i, idx in enumerate(zip(cut_idxs, cut_idxs[1:] + [None])):
                 r += [row[idx[0] : idx[1]].rstrip()]
             R += [[r[0].split(":")[0]] + r]
-        columns = ["MODEL_ID"] + columns
+        columns = ["Identifier"] + columns
         return CatalogTable(data=R, columns=columns)

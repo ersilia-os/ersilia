@@ -1,12 +1,14 @@
-name: Upload Ersilia base image to DockerHub
+name: Upload Ersilia installer to DockerHub
 on:
   workflow_run:
     workflows: ["Tag to version"]
     types:
       - completed
+
+  workflow_dispatch:
       
 jobs:
-  upload_ersilia_base_to_dockerhub:
+  upload_ersilia_installer_to_dockerhub:
     runs-on: ubuntu-latest
     steps:
       # https://github.com/docker/setup-qemu-action
@@ -39,7 +41,9 @@ jobs:
 
       - name: Copy Dockerfile to base directory
         run: |
-          cp dockerfiles/model-deploy/base/* .
+          cp dockerfiles/installer/Dockerfile .
+          cp -r dockerfiles/installer/required_files .
+          cp dockerfiles/installer/download-miniconda.sh .
             
       - name: Docker meta
         id: docker_meta
@@ -47,7 +51,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            ersiliaos/base
+            ersiliaos/shell
           # Docker tags based on the following events/attributes
           tags: |
             type=raw,value=latest

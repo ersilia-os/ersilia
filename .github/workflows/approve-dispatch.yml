@@ -17,7 +17,7 @@ jobs:
 
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
-        uses: GrantBirki/issue-template-parser@96ade3338da4a4b5e512f9ef6c7037dcf4ea1dd0 # pin@v5.0.2
+        uses: GrantBirki/issue-template-parser@v6.0.0
         id: issue-parser
         with:
           body: ${{ github.event.client_payload.github.payload.issue.body }}
@@ -30,7 +30,7 @@ jobs:
 
       # setup python
       - name: setup python
-        uses: actions/setup-python@57ded4d7d5e986d7296eab16560982c6dd7c923b # pin@v4.6.0
+        uses: actions/setup-python@bd6b4b6205c4dbad673328db7b31b7fab9e241c0 # pin@v4.6.1
         with:
           python-version: "3.10"
           # cache: 'pip' # caching pip dependencies
@@ -154,7 +154,7 @@ jobs:
 
       # comment on the issue comment with further instructions for the user
       - name: comment
-        uses: GrantBirki/comment@1e9986de26cf23e6c4350276234c91705c540fef # pin@v2.0.3
+        uses: GrantBirki/comment@462538298fbbd513aea4492f82d6582060b997ec # pin@v2.0.5
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/new-model.md

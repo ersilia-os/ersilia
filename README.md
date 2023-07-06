@@ -17,7 +17,7 @@
 
 ## Project Description
 
-The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infectious and neglected disease research. The end goal is to provide an open-source, no-code solution to access AI/ML models to accelerate drug discovery. The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors.
+The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infectious and neglected disease research. The end goal is to provide an open-source, low-code solution to access AI/ML models for **drug discovery**. The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors.
 
 * Read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/)
@@ -29,7 +29,7 @@ Please check the package requirements in the [Installation Guide](https://ersili
 1. Create a conda environment and activate it
 
     ```bash
-    conda create -n ersilia python=3.7
+    conda create -n ersilia python=3.10
     conda activate ersilia
     ```
 
@@ -59,10 +59,10 @@ Please check the package requirements in the [Installation Guide](https://ersili
     ersilia serve retrosynthetic-accessibility
     ```
 
-1. And run the prediction **API**:
+1. And **run** the model:
 
     ```bash
-    ersilia api -i my_molecules.csv -o my_predictions.csv
+    ersilia run -i my_molecules.csv -o my_predictions.csv
     ```
 
 1. Finally, **close** the service when you are done.
@@ -70,6 +70,13 @@ Please check the package requirements in the [Installation Guide](https://ersili
     ```bash
     ersilia close
     ```
+
+1. If you no longer want to use the model, you can **delete** it.
+
+```bash
+ersilia delete retrosynthetic-accessibility
+```
+
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
 

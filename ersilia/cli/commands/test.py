@@ -1,30 +1,22 @@
 import click
 
 from . import ersilia_cli
-from ...publish.test import LocalModelTester, RemoteModelTester
+from ...publish.test import ModelTester
 from ... import ModelBase
 
 
 def test_cmd():
     """Test a model"""
 
-    # Example usage: ersilia test {MODEL} [--repo_path {DIRECTORY}]
+    # Example usage: ersilia test {MODEL}
     @ersilia_cli.command(
         short_help="Test a model",
-        help="Check that a model will work in the local device",
+        help="Test a model and obtain performance metrics",
     )
     @click.argument("model", type=click.STRING)
-    @click.option(
-        "--repo_path", default=None, help="Local folder where the model is stored"
-    )
-    def test(model, repo_path):
+    def test(model):
         mdl = ModelBase(model)
         model_id = mdl.model_id
-        if repo_path is not None:
-            mt = LocalModelTester(model_id=model_id, repo_path=repo_path)
-        else:
-            mt = RemoteModelTester(model_id=model_id)
-        click.echo("Checking metadata")
-        mt.check_metadata()
-        click.echo("Checking fetch")
-        mt.check_fetch()
+        mt = ModelTester(model_id=model_id)
+        click.echo("Checking model information")
+        mt.run()
