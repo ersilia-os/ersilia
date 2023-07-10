@@ -89,15 +89,16 @@ class ModelRegisterer(ErsiliaBase):
 
 
 class ModelDockerHubFetcher(ErsiliaBase):
-    def __init__(self, config_json=None):
+    def __init__(self, overwrite=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
+        self.overwrite = overwrite
 
     def is_docker_installed(self):
         return DockerRequirement().is_installed()
 
     def is_available(self, model_id):
-        mp = ModelPuller(model_id=model_id, config_json=self.config_json)
+        mp = ModelPuller(model_id=model_id,overwrite=self.overwrite, config_json=self.config_json)
         if mp.is_available_locally():
             return True
         if mp.is_available_in_dockerhub():
@@ -161,7 +162,7 @@ class ModelFetcher(ErsiliaBase):
         self,
         config_json=None,
         credentials_json=None,
-        overwrite=True,
+        overwrite=None,
         repo_path=None,
         mode=None,
         pip=False,
@@ -181,8 +182,8 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("When packing mode is docker, dockerization is mandatory")
             dockerize = True
         self.do_docker = dockerize
-        self.progress = {}
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
+            overwrite=self.overwrite,
             config_json=self.config_json
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
@@ -251,77 +252,18 @@ class ModelFetcher(ErsiliaBase):
         mr.register(is_from_dockerhub=False)
 
     def _fetch_not_from_dockerhub(self, model_id):
-        progress_bar = tqdm(total=8, position=0, leave=True, colour="BLUE")
         start = timer()
         self.model_id = model_id
-        self.progress["step0_seconds"] = time.time()
         self._setup_check()
-        self.progress["step1_seconds"] = time.time()
-        progress_bar.update(1)
-        tqdm.write(
-            "Checking setup: {0:.3f}s".format(
-                self.progress["step1_seconds"] - self.progress["step0_seconds"]
-            )
-        )
         self._prepare()
-        self.progress["step2_seconds"] = time.time()
-        progress_bar.update(1)
-        tqdm.write(
-            "Preparing model: {}s".format(
-                self.progress["step2_seconds"] - self.progress["step1_seconds"]
-            )
-        )
         self._get()
-        self.progress["step3_seconds"] = time.time()
-        progress_bar.update(1)
-        tqdm.write(
-            "Getting model: {}s".format(
-                self.progress["step3_seconds"] - self.progress["step2_seconds"]
-            )
-        )
         self._pack()
-        self.progress["step4_seconds"] = time.time()
-        progress_bar.update(1)
-        tqdm.write(
-            "Packing model: {}s".format(
-                self.progress["step4_seconds"] - self.progress["step3_seconds"]
-            )
-        )
         self._toolize()
-        self.progress["step5_seconds"] = time.time()
-        progress_bar.update(1)
-        tqdm.write(
-            "Checking if model needs to be integrated to a tool: {}s".format(
-                self.progress["step5_seconds"] - self.progress["step4_seconds"]
-            )
-        )
         self._content()
-        self.progress["step6_seconds"] = time.time()
-        progress_bar.update(1)
-        tqdm.write(
-            "Getting model card: {}s".format(
-                self.progress["step6_seconds"] - self.progress["step5_seconds"]
-            )
-        )
         self._check()
-        self.progress["step7_seconds"] = time.time()
-        progress_bar.update(1)
-        tqdm.write(
-            "Checking that autoservice works: {}s".format(
-                self.progress["step7_seconds"] - self.progress["step6_seconds"]
-            )
-        )
         self._sniff()
-        self.progress["step8_seconds"] = time.time()
-        progress_bar.update(1)
-        tqdm.write(
-            "Sniffing model: {}s".format(
-                self.progress["step8_seconds"] - self.progress["step7_seconds"]
-            )
-        )
         self._inform()
         self._success()
-        progress_bar.close()
         end = timer()
         elapsed_time = timedelta(seconds=end - start)
         self.logger.debug(
@@ -357,4 +299,6 @@ class ModelFetcher(ErsiliaBase):
         if do_dockerhub:
             self._fetch_from_dockerhub(model_id=model_id)
         else:
+            if self.overwrite is None:
+                self.overwrite = True
             self._fetch_not_from_dockerhub(model_id=model_id)

@@ -4,6 +4,7 @@ WORKDIR /root
 RUN apt-get update
 RUN apt-get install -y tzdata
 RUN apt-get install -y build-essential wget git curl zip docker
+RUN apt-get install -y docker.io
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh
 COPY download-miniconda.sh /root/download-miniconda.sh
 RUN chmod +x /root/download-miniconda.sh
@@ -29,4 +30,5 @@ COPY ./required_files/ersilia /root/miniconda3/envs/ersilia/bin/
 RUN chmod +x /root/miniconda3/envs/ersilia/bin/ersilia
 RUN echo 'source /root/miniconda3/etc/profile.d/conda.sh' >> /root/.bashrc
 RUN echo 'conda activate ersilia' >> /root/.bashrc
+RUN echo "ersilia --help"
 ENTRYPOINT ["tail", "-f", "/dev/null"]

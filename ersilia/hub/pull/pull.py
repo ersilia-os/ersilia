@@ -14,7 +14,7 @@ from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 
 
 class ModelPuller(ErsiliaBase):
-    def __init__(self, model_id, config_json=None):
+    def __init__(self, model_id, overwrite=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.model_id = model_id
@@ -22,6 +22,7 @@ class ModelPuller(ErsiliaBase):
         self.image_name = "{0}/{1}:{2}".format(
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
+        self.overwrite = overwrite
 
     def is_available_locally(self):
         is_available = self.simple_docker.exists(
@@ -65,12 +66,17 @@ class ModelPuller(ErsiliaBase):
     @throw_ersilia_exception
     def pull(self):
         if self.is_available_locally():
-            do_pull = yes_no_input(
-                "Requested image {0} is available locally. Do you still want to fetch it? [Y/n]".format(
-                    self.model_id
-                ),
-                default_answer="Y",
-            )
+            if self.overwrite is None:
+                do_pull = yes_no_input(
+                    "Requested image {0} is available locally. Do you still want to fetch it? [Y/n]".format(
+                        self.model_id
+                    ),
+                    default_answer="Y",
+                )
+            elif self.overwrite:
+                do_pull = True
+            else:
+                do_pull = False
             if not do_pull:
                 self.logger.info("Skipping pulling the image")
                 return
