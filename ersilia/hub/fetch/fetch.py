@@ -13,6 +13,7 @@ from ... import ErsiliaBase
 from .actions.setup import SetupChecker
 from .actions.prepare import ModelPreparer
 from .actions.get import ModelGetter
+from .actions.template_prepare import TemplatePreparer
 from .actions.lake import LakeGetter
 from .actions.pack import ModelPacker
 from .actions.toolize import ModelToolizer
@@ -213,6 +214,13 @@ class ModelFetcher(ErsiliaBase):
         )
         mg.get()
 
+    def _prepare_template(self):
+        tp = TemplatePreparer(
+            model_id=self.model_id,
+            config_json=self.config_json
+        )
+        tp.prepare()
+
     def _lake(self):
         ml = LakeGetter(model_id=self.model_id, config_json=self.config_json)
         ml.get()
@@ -257,6 +265,7 @@ class ModelFetcher(ErsiliaBase):
         self._setup_check()
         self._prepare()
         self._get()
+        self._prepare_template()
         self._pack()
         self._toolize()
         self._content()
