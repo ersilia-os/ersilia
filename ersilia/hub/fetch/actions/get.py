@@ -89,13 +89,13 @@ class ModelRepositoryGetter(BaseAction):
                 f.write(s + os.linesep)
 
     @staticmethod
-    def _is_sudo():
+    def _is_root_user():
         return os.geteuid() == 0
 
     def _remove_sudo_if_root(self):
         path = self._model_path(model_id=self.model_id)
         dockerfile_path = os.path.join(path, "Dockerfile")
-        if self.is_sudo():
+        if self._is_root_user():
             self.logger.debug("User is root! Removing sudo commands")
             with open(dockerfile_path, "r") as f:
                 content = f.read()
