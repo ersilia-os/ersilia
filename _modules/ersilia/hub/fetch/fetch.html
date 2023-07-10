@@ -87,6 +87,7 @@
 <span class="kn">from</span> <span class="nn">.actions.setup</span> <span class="kn">import</span> <span class="n">SetupChecker</span>
 <span class="kn">from</span> <span class="nn">.actions.prepare</span> <span class="kn">import</span> <span class="n">ModelPreparer</span>
 <span class="kn">from</span> <span class="nn">.actions.get</span> <span class="kn">import</span> <span class="n">ModelGetter</span>
+<span class="kn">from</span> <span class="nn">.actions.template_prepare</span> <span class="kn">import</span> <span class="n">TemplatePreparer</span>
 <span class="kn">from</span> <span class="nn">.actions.lake</span> <span class="kn">import</span> <span class="n">LakeGetter</span>
 <span class="kn">from</span> <span class="nn">.actions.pack</span> <span class="kn">import</span> <span class="n">ModelPacker</span>
 <span class="kn">from</span> <span class="nn">.actions.toolize</span> <span class="kn">import</span> <span class="n">ModelToolizer</span>
@@ -287,6 +288,13 @@
         <span class="p">)</span>
         <span class="n">mg</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_prepare_template</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tp</span> <span class="o">=</span> <span class="n">TemplatePreparer</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
+        <span class="p">)</span>
+        <span class="n">tp</span><span class="o">.</span><span class="n">prepare</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">_lake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">ml</span> <span class="o">=</span> <span class="n">LakeGetter</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">ml</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
@@ -331,6 +339,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_check</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_template</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pack</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_toolize</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">()</span>
