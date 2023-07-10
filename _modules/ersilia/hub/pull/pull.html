@@ -88,7 +88,7 @@
 
 
 <div class="viewcode-block" id="ModelPuller"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller">[docs]</a><span class="k">class</span> <span class="nc">ModelPuller</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -96,6 +96,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">image_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
 
 <div class="viewcode-block" id="ModelPuller.is_available_locally"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller.is_available_locally">[docs]</a>    <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">is_available</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
@@ -139,12 +140,17 @@
     <span class="nd">@throw_ersilia_exception</span>
     <span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_available_locally</span><span class="p">():</span>
-            <span class="n">do_pull</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
-                <span class="s2">&quot;Requested image </span><span class="si">{0}</span><span class="s2"> is available locally. Do you still want to fetch it? [Y/n]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
-                <span class="p">),</span>
-                <span class="n">default_answer</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">do_pull</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
+                    <span class="s2">&quot;Requested image </span><span class="si">{0}</span><span class="s2"> is available locally. Do you still want to fetch it? [Y/n]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+                    <span class="p">),</span>
+                    <span class="n">default_answer</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
+                <span class="n">do_pull</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">do_pull</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">do_pull</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Skipping pulling the image&quot;</span><span class="p">)</span>
                 <span class="k">return</span>

@@ -163,15 +163,16 @@
 
 
 <div class="viewcode-block" id="ModelDockerHubFetcher"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher">[docs]</a><span class="k">class</span> <span class="nc">ModelDockerHubFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_docker_installed"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.is_docker_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_docker_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_available"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelDockerHubFetcher.is_available">[docs]</a>    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span><span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mp</span><span class="o">.</span><span class="n">is_available_locally</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">mp</span><span class="o">.</span><span class="n">is_available_in_dockerhub</span><span class="p">():</span>
@@ -235,7 +236,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">pip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -255,8 +256,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;When packing mode is docker, dockerization is mandatory&quot;</span><span class="p">)</span>
             <span class="n">dockerize</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_docker</span> <span class="o">=</span> <span class="n">dockerize</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span> <span class="o">=</span> <span class="n">ModelDockerHubFetcher</span><span class="p">(</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
             <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_installed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span><span class="o">.</span><span class="n">is_docker_installed</span><span class="p">()</span>
@@ -325,77 +326,18 @@
         <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">progress_bar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;BLUE&quot;</span><span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step0_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_check</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step1_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Checking setup: </span><span class="si">{0:.3f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step1_seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step0_seconds&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step2_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Preparing model: </span><span class="si">{}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step2_seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step1_seconds&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step3_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Getting model: </span><span class="si">{}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step3_seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step2_seconds&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pack</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step4_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Packing model: </span><span class="si">{}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step4_seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step3_seconds&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_toolize</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step5_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Checking if model needs to be integrated to a tool: </span><span class="si">{}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step5_seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step4_seconds&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step6_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Getting model card: </span><span class="si">{}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step6_seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step5_seconds&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step7_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Checking that autoservice works: </span><span class="si">{}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step7_seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step6_seconds&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sniff</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step8_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s2">&quot;Sniffing model: </span><span class="si">{}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step8_seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s2">&quot;step7_seconds&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inform</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_success</span><span class="p">()</span>
-        <span class="n">progress_bar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">end</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
         <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -431,6 +373,8 @@
         <span class="k">if</span> <span class="n">do_dockerhub</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span></div></div>
 </pre></div>
 
