@@ -211,7 +211,7 @@ class ModelRepositoryGetter(BaseAction):
             self.logger.debug("User is not root")
 
     def _prepare_inner_template(self):
-        TemplatePreparer(model_id=self.model_id, config_json=self.config_json).run()
+        TemplatePreparer(model_id=self.model_id, config_json=self.config_json).prepare()
 
     @throw_ersilia_exception
     def get(self):
