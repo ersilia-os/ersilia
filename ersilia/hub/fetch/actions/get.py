@@ -172,6 +172,7 @@ class ModelRepositoryGetter(BaseAction):
             zip_ref.extractall(dst)
 
     def _change_py_version_in_dockerfile_if_necessary(self):
+        self.logger.debug("Changing python version if necessary")
         path = self._model_path(model_id=self.model_id)
         df = DockerfileFile(path=path)
         version = df.get_bentoml_version()
@@ -211,6 +212,7 @@ class ModelRepositoryGetter(BaseAction):
             self.logger.debug("User is not root")
 
     def _prepare_inner_template(self):
+        self.logger.debug("Preparing inner template if necessary")
         TemplatePreparer(model_id=self.model_id, config_json=self.config_json).prepare()
 
     @throw_ersilia_exception
