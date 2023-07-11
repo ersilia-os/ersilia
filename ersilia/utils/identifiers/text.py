@@ -29,7 +29,7 @@ class TextIdentifier(object):
             return True
         else:
             return False
-    
+
     def _is_smiles(self, text):
         if self.Chem is None:
             if self._pubchem_smiles_to_inchikey(text) is not None:
@@ -90,7 +90,6 @@ class TextIdentifier(object):
             return None
         return req.text.split("=")[1]
 
-
     @staticmethod
     def _pubchem_iupac_name_to_inchikey(iupac_name):
         """Returns inchi key string of a given identifier, using PubChem"""
@@ -114,7 +113,6 @@ class TextIdentifier(object):
         if req.status_code != 200:
             return None
         return req.text
-    
 
     def encode(self, iupac_name):
         """Get InChIKey of compound based on iupac name string"""

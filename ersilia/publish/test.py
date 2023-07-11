@@ -36,7 +36,7 @@ class ModelTester(ErsiliaBase):
         json_file = os.path.join(self._dest_dir, self.model_id, INFORMATION_FILE)
         with open(json_file, "r") as f:
             data = json.load(f)
-        if data['card']['Identifier'] != self.model_id:
+        if data["card"]["Identifier"] != self.model_id:
             raise texc.WrongCardIdentifierError(self.model_id)
         return data
 

@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import zipfile
 from . import BaseAction
+from .... import ErsiliaBase
 from ....utils.download import GitHubDownloader, S3Downloader
 from ....utils.paths import Paths
 from ...bundle.repo import PackFile, DockerfileFile
@@ -15,10 +16,114 @@ from ....utils.exceptions_utils.fetch_exceptions import (
 from ....default import S3_BUCKET_URL_ZIP
 
 MODEL_DIR = "model"
+ROOT = os.path.basename(os.path.abspath(__file__))
+
+
+class PackCreator(ErsiliaBase):
+    def __init__(self, model_id, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.model_id = model_id
+        self.dest_dir = self._model_path(self.model_id)
+
+    def run(self):
+        self.logger.debug("Copying pack creator")
+        os.copy(
+            os.path.join(ROOT, "..", "inner_template", "pack.py"),
+            os.path.join(self.dest_dir, "pack.py"),
+        )
+
+
+class ServiceCreator(ErsiliaBase):
+    def __init__(self, model_id, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.model_id = model_id
+        self.dest_dir = self._model_path(self.model_id)
+
+    def run(self):
+        self.logger.debug("Creating service.py file")
+        src_dir = os.path.join(self.dest_dir, "src")
+        if not os.path.exists(src_dir):
+            os.mkdir(src_dir)
+        os.copy(
+            os.path.join(ROOT, "..", "inner_template", "src", "service.py"),
+            os.path.join(src_dir, "service.py"),
+        )
+
+
+class DockerfileCreator(ErsiliaBase):
+    def __init__(self, model_id, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.model_id = model_id
+        self.dest_dir = self._model_path(self.model_id)
+
+    def run(self):
+        self.logger.debug(
+            "Creating Dockerfile for internal usage from a config.yml file"
+        )
+        dockerfile = os.path.join(self.dest_dir, "Dockerfile")
+        configfile = os.path.join(self.dest_dir, "config.yml")
+        # read run commands from config file
+        run_commands = []
+        with open(configfile, "r") as f:
+            pass  # TODO
+        # reflect run commands to dockerfile
+        with open(dockerfile, "w") as f:
+            s = "FROM bentoml/model-server:0.11.0-py37\n"
+            s += "MAINTAINER ersilia\n\n"
+            for r in run_commands:
+                s += "RUN {0}\n".format(r)
+            s += "\nWORKDIR /repo\n"
+            s += "COPY . /repo"
+            f.write(f)
+
+
+class TemplatePreparer(BaseAction):
+    def __init__(self, model_id, config_json):
+        BaseAction.__init__(
+            self, model_id=model_id, config_json=config_json, credentials_json=None
+        )
+        self.dest_dir = self._model_path(self.model_id)
+
+    def _create_pack(self):
+        pack_file = os.path.join(self.dest_dir, "pack.py")
+        if os.path.exists(pack_file):
+            self.logger.debug("The pack.py file already exists")
+            return
+        PackCreator(model_id=self.model_id, config_json=self.config_json).run()
+
+    def _create_service(self):
+        src_folder = os.path.join(self.dest_dir, "src")
+        if os.path.exists(src_folder):
+            self.logger.debug("The src folder already exists")
+            return
+        service_file = os.path.join(src_folder, "service.py")
+        if os.path.exists(service_file):
+            self.logger.debug("The service.py file already exists")
+            return
+        if not os.path.exists(self.dest_dir, "model", "framework", "run.sh"):
+            self.logger.debug(
+                "The run.sh file, which is assumed by service.py, does not exist"
+            )
+            return
+        ServiceCreator(model_id=self.model_id, config_json=self.config_json).run()
+
+    def _create_dockerfile(self):
+        dockerfile_file = os.path.join(self.dest_dir, "Dockerfile")
+        if os.path.exists(dockerfile_file):
+            self.logger.debug("The Dockerfile file already exists")
+            return
+        DockerfileCreator(model_id=self.model_id, config_json=self.config_json).run()
+
+    def prepare(self):
+        self._create_pack()
+        self._create_dockerfile()
+        self._create_service()
 
 
 class ModelRepositoryGetter(BaseAction):
-    def __init__(self, model_id, config_json, force_from_github, force_from_s3, repo_path):
+    def __init__(
+        self, model_id, config_json, force_from_github, force_from_s3, repo_path
+    ):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
@@ -105,6 +210,9 @@ class ModelRepositoryGetter(BaseAction):
         else:
             self.logger.debug("User is not root")
 
+    def _prepare_inner_template(self):
+        TemplatePreparer(model_id=self.model_id, config_json=self.config_json).run()
+
     @throw_ersilia_exception
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
@@ -133,6 +241,7 @@ class ModelRepositoryGetter(BaseAction):
                             raise S3DownloaderError(model_id=self.model_id)
                         else:
                             self._copy_from_github(folder)
+        self._prepare_inner_template()
         self._change_py_version_in_dockerfile_if_necessary()
         self._remove_sudo_if_root()
 
@@ -180,7 +289,7 @@ class ModelGetter(BaseAction):
             config_json=config_json,
             force_from_github=force_from_gihtub,
             force_from_s3=force_from_s3,
-            repo_path=repo_path
+            repo_path=repo_path,
         )
         self.mpg = ModelParametersGetter(model_id=model_id, config_json=config_json)
 

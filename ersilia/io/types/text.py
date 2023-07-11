@@ -16,6 +16,7 @@ from . import EXAMPLES_FOLDER
 
 EXAMPLES = "compound.tsv"
 
+
 class IO(object):
     def __init__(self, input_shape):
         self.logger = logger
@@ -33,7 +34,7 @@ class IO(object):
             self._example = self._example_single
             self._parser = self._parse_single
             self._test = test_examples.input_shape_single_text
-        
+
         if type(self.input_shape) is InputShapeList:
             self.logger.debug("InputShapeList shape: {0}".format(self.input_shape.name))
             self._example = self._example_list
@@ -95,7 +96,7 @@ class IO(object):
         if text_type == "iupac_name":
             inp = text
         else:
-            inp= self.identifier.chemical_identifier_resolver(text)
+            inp = self.identifier.chemical_identifier_resolver(text)
         if key is None:
             key = self.identifier.encode(inp)
         result = {"key": key, "input": inp, "text": text}

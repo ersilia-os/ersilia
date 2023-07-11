@@ -28,7 +28,9 @@ class S3Logger(ErsiliaBase):
 
     def upload(self):
         if self.aws_access_key_id is None or self.aws_secret_access_key is None:
-            self.logger.warning("It was not possible to upload to S3. AWS access key or secret access key was not provided. Please use the set_credentials method.")
+            self.logger.warning(
+                "It was not possible to upload to S3. AWS access key or secret access key was not provided. Please use the set_credentials method."
+            )
         self._upload_log()
         self._upload_lake()
         self._upload_meta()

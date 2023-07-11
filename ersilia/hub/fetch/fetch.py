@@ -13,7 +13,6 @@ from ... import ErsiliaBase
 from .actions.setup import SetupChecker
 from .actions.prepare import ModelPreparer
 from .actions.get import ModelGetter
-from .actions.template_prepare import TemplatePreparer
 from .actions.lake import LakeGetter
 from .actions.pack import ModelPacker
 from .actions.toolize import ModelToolizer
@@ -99,7 +98,9 @@ class ModelDockerHubFetcher(ErsiliaBase):
         return DockerRequirement().is_installed()
 
     def is_available(self, model_id):
-        mp = ModelPuller(model_id=model_id,overwrite=self.overwrite, config_json=self.config_json)
+        mp = ModelPuller(
+            model_id=model_id, overwrite=self.overwrite, config_json=self.config_json
+        )
         if mp.is_available_locally():
             return True
         if mp.is_available_in_dockerhub():
@@ -184,8 +185,7 @@ class ModelFetcher(ErsiliaBase):
             dockerize = True
         self.do_docker = dockerize
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
-            overwrite=self.overwrite,
-            config_json=self.config_json
+            overwrite=self.overwrite, config_json=self.config_json
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
         self.force_from_github = force_from_github
@@ -213,13 +213,6 @@ class ModelFetcher(ErsiliaBase):
             force_from_s3=self.force_from_s3,
         )
         mg.get()
-
-    def _prepare_template(self):
-        tp = TemplatePreparer(
-            model_id=self.model_id,
-            config_json=self.config_json
-        )
-        tp.prepare()
 
     def _lake(self):
         ml = LakeGetter(model_id=self.model_id, config_json=self.config_json)
@@ -265,7 +258,6 @@ class ModelFetcher(ErsiliaBase):
         self._setup_check()
         self._prepare()
         self._get()
-        self._prepare_template()
         self._pack()
         self._toolize()
         self._content()
