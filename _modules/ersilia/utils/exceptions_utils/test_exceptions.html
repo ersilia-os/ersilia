@@ -78,8 +78,14 @@
 
 <div class="viewcode-block" id="WrongCardIdentifierError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.WrongCardIdentifierError">[docs]</a><span class="k">class</span> <span class="nc">WrongCardIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The model identifier in the model card is not correct: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Check the model information, usually available in a metadata.json file.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;The model identifier in the model card is not correct: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model_id</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;Check the model information, usually available in a metadata.json file.&quot;</span>
+        <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 </pre></div>
 

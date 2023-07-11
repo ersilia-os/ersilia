@@ -102,7 +102,9 @@
 
 <div class="viewcode-block" id="S3Logger.upload"><a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.s3_logger.S3Logger.upload">[docs]</a>    <span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aws_access_key_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">aws_secret_access_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;It was not possible to upload to S3. AWS access key or secret access key was not provided. Please use the set_credentials method.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;It was not possible to upload to S3. AWS access key or secret access key was not provided. Please use the set_credentials method.&quot;</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_upload_log</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_upload_lake</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_upload_meta</span><span class="p">()</span></div></div>

@@ -104,7 +104,7 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-    
+
     <span class="k">def</span> <span class="nf">_is_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -165,7 +165,6 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
-
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_pubchem_iupac_name_to_inchikey</span><span class="p">(</span><span class="n">iupac_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns inchi key string of a given identifier, using PubChem&quot;&quot;&quot;</span>
@@ -189,7 +188,6 @@
         <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span></div>
-    
 
 <div class="viewcode-block" id="TextIdentifier.encode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.text.TextIdentifier.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iupac_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get InChIKey of compound based on iupac name string&quot;&quot;&quot;</span>
