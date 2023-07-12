@@ -8,12 +8,6 @@ import numpy as np
 from ..shape import InputShape
 from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 
-from ... import throw_ersilia_exception
-from ...utils.exceptions_utils.io_exceptions import (
-    EmptyInputError,
-    ColumnIndexInputError,
-)
-
 from ... import logger
 
 MIN_COLUMN_VALIDITY = 0.8
@@ -291,7 +285,6 @@ class BaseTabularFile(object):
             self._has_header = True
         return self._has_header
 
-    @throw_ersilia_exception
     def read_input_columns(self):
         if self._data is not None:
             return self._data
@@ -308,12 +301,7 @@ class BaseTabularFile(object):
             for l in reader:
                 r = []
                 for i in input:
-                    if len(l) == 0:
-                        raise EmptyInputError
-                    try:
-                        r += [l[i]]
-                    except:
-                        raise ColumnIndexInputError
+                    r += [l[i]]
                 R += [r]
         self._data = R
         return self._data

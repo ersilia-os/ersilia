@@ -9,7 +9,6 @@ from .. import ErsiliaBase
 from .. import throw_ersilia_exception
 
 from ..utils.exceptions_utils.exceptions import NullModelIdentifierError
-from ..utils.exceptions_utils.io_exceptions import EmptyInputError
 
 from .shape import InputShape
 from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
@@ -141,14 +140,9 @@ class _GenericAdapter(object):
         if self._is_python_instance(inp):
             return self._py_input_reader(inp)
 
-    @throw_ersilia_exception
     def adapt(self, inp):
-        data_ = self._adapt(inp)
-        data = []
-        for d in data_:
-            if d is None or d == "":
-                raise EmptyInputError
-            data += [self.IO.parse(d)]
+        data = self._adapt(inp)
+        data = [self.IO.parse(d) for d in data]
         return data
 
 
