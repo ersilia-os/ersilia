@@ -1,11 +1,16 @@
 import os
 import json
+import click
 import tempfile
+import types
+from ..cli import echo
 
 from .. import ErsiliaBase
 from .. import throw_ersilia_exception
+from .. import ErsiliaModel
 
 from ..utils.exceptions_utils import test_exceptions as texc
+from ..core.session import Session
 
 from ..default import INFORMATION_FILE
 
@@ -42,9 +47,27 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def check_single_input(self):
-        self.logger.debug("Checking single input")
-        pass
+        self.logger.debug("Testing model on the following single smiles input:  COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1")
+        click.echo("Testing model on the following single smiles input:  COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1...")
+
+        session = Session(config_json=None)
+        service_class = session.current_service_class()
+
+        input = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
+        mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
+        result = mdl.run(input=input, output=None, batch_size=100)
+
+        if isinstance(result, types.GeneratorType):
+            for result in mdl.run(input=input, output=None, batch_size=100):
+                if result is not None:
+                    echo(json.dumps(result, indent=4))
+                else:
+                    echo("Something went wrong", fg="red")
+        else:
+            echo(result)
+
 
     def run(self):
         self.check_information()
         self.check_single_input()
+        print('all tested!')
