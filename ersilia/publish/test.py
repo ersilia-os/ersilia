@@ -5,6 +5,7 @@ import tempfile
 import types
 from ..cli import echo
 
+from ..io.input import ExampleGenerator
 from .. import ErsiliaBase
 from .. import throw_ersilia_exception
 from .. import ErsiliaModel
@@ -46,28 +47,34 @@ class ModelTester(ErsiliaBase):
         return data
 
     @throw_ersilia_exception
-    def check_single_input(self):
-        self.logger.debug("Testing model on the following single smiles input:  COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1")
-        click.echo("Testing model on the following single smiles input:  COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1...")
+    def check_single_input(self, output):
+        # self.logger.debug("Testing model on custom example input with 10 smiles...")
+        click.echo("Testing model on custom example input with 5 smiles...")
 
         session = Session(config_json=None)
         service_class = session.current_service_class()
 
-        input = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
+        eg = ExampleGenerator(model_id=self.model_id)
+        input = eg.example(n_samples=5, file_name=None, simple=True)
+
         mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
-        result = mdl.run(input=input, output=None, batch_size=100)
+        result = mdl.run(input=input, output=output, batch_size=100)
 
         if isinstance(result, types.GeneratorType):
-            for result in mdl.run(input=input, output=None, batch_size=100):
+            for result in mdl.run(input=input, output=output, batch_size=100):
                 if result is not None:
                     echo(json.dumps(result, indent=4))
                 else:
                     echo("Something went wrong", fg="red")
+            # print('all tested!')
         else:
             echo(result)
 
+            # need to adjust it to actually put the output into the output file if specified
 
-    def run(self):
+            print('all tested!')
+
+
+    def run(self, output):
         self.check_information()
-        self.check_single_input()
-        print('all tested!')
+        self.check_single_input(output)

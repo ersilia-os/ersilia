@@ -29,7 +29,10 @@ def test_cmd():
         help="Test a model and obtain performance metrics",
     )
     @click.argument("model", type=click.STRING)
-    def test(model):
+    @click.option(
+        "-o", "--output", "output", required=False, default=None, type=click.STRING)
+
+    def test(model, output):
         mdl = ModelTester(model)
         model_id = mdl.model_id
 
@@ -42,4 +45,4 @@ def test_cmd():
 
         mt = ModelTester(model_id=model_id)
         # click.echo("Checking model information")
-        mt.run()    # pass in the input here 
+        mt.run(output)    # pass in the output here 
