@@ -48,8 +48,30 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def check_single_input(self, output):
+        session = Session(config_json=None)
+        service_class = session.current_service_class()
+
+        click.echo("Testing model on single smiles input...\n")
+
+        input = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
+        mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
+        result = mdl.run(input=input, output=output, batch_size=100)
+
+        if isinstance(result, types.GeneratorType):
+            for result in mdl.run(input=input, output=output, batch_size=100):
+                if result is not None:
+                    echo(json.dumps(result, indent=4))
+                else:
+                    echo("Something went wrong", fg="red")
+        else:
+            echo(result)
+
+
+
+    @throw_ersilia_exception
+    def check_example_input(self, output):
         # self.logger.debug("Testing model on custom example input with 10 smiles...")
-        click.echo("Testing model on custom example input with 5 smiles...")
+        click.echo("\nTesting model on input of 5 smiles given by 'ersilia example' output...\n")
 
         session = Session(config_json=None)
         service_class = session.current_service_class()
@@ -66,15 +88,19 @@ class ModelTester(ErsiliaBase):
                     echo(json.dumps(result, indent=4))
                 else:
                     echo("Something went wrong", fg="red")
-            # print('all tested!')
         else:
             echo(result)
 
-            # need to adjust it to actually put the output into the output file if specified
 
-            print('all tested!')
-
+    def check_outputs(self): 
+        pass
 
     def run(self, output):
         self.check_information()
         self.check_single_input(output)
+        self.check_example_input(output)
+
+# To do: 
+# When it currently prints to an output file, it writes the single output result, then deletes that, then prints the result for the example input. Fix this
+# test it with normal run and then try the bash run.sh, comparing the two outputs 
+# run the same file twice and see if it's similar or the same 

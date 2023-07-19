@@ -3,6 +3,7 @@ import click
 import json
 import tempfile
 
+from ...cli import echo
 from . import ersilia_cli
 from ersilia.cli.commands.run import run_cmd
 from ersilia.core.base import ErsiliaBase
@@ -29,18 +30,14 @@ def test_cmd():
         help="Test a model and obtain performance metrics",
     )
     @click.argument("model", type=click.STRING)
-    @click.option(
-        "-o", "--output", "output", required=False, default=None, type=click.STRING)
+    @click.option("-o", "--output", "output", required=False, default=None, type=click.STRING)
 
     def test(model, output):
         mdl = ModelTester(model)
         model_id = mdl.model_id
 
         if model_id is None:
-            echo(
-                "No model seems to be served. Please run 'ersilia serve ...' before.",
-                fg="red",
-            )
+            echo("No model seems to be served. Please run 'ersilia serve ...' before.", fg="red")
             return
 
         mt = ModelTester(model_id=model_id)
