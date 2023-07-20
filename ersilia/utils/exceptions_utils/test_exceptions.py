@@ -25,3 +25,11 @@ class InformationFileNotExist(ErsiliaError):
             "Try fetching and serving the model first."
         )
         super().__init__(self.message, self.hints)
+
+
+class MissingOutputs(ErsiliaError): 
+    def __init__(self, model_id):
+        self.message = ("There are not as many outputs as there are inputs. They must be the same.\n")
+        self.hints = ("Check whether or not the code for the model is skipping a header, or if any of the smiles used are not working correctly.")
+        super().__init__(self.message, self.hints)
+
