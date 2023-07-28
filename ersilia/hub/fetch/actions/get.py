@@ -36,6 +36,7 @@ class PackCreator(ErsiliaBase):
             os.path.join(self.dest_dir, "pack.py"),
         )
 
+
 class ServiceCreator(ErsiliaBase):
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -47,56 +48,65 @@ class ServiceCreator(ErsiliaBase):
         src_dir = os.path.join(self.dest_dir, "src")
         if not os.path.exists(src_dir):
             os.mkdir(src_dir)
-        content= read_file_from_path(os.path.join(ROOT, "..", "inner_template", "src", "service.py"))
-        output_type= read_metadata_section("Output Type")
+        content = read_file_from_path(
+            os.path.join(ROOT, "..", "inner_template", "src", "service.py")
+        )
+        output_type = read_metadata_section("Output Type")
         outcome_line_index = -1
-        splited= content.splitlines()
+        splited = content.splitlines()
         for i, line in enumerate(splited):
             if "outcome" in line:
                 outcome_line_index = i
                 break
-        output=None 
-        if(output_type=="String"):
-            splited[outcome_line_index]= splited[outcome_line_index].replace("Float","String")
-        output="\n".join(splited)
-        write_content(output, "src/service.py")  
+        output = None
+        if output_type == "String":
+            splited[outcome_line_index] = splited[outcome_line_index].replace(
+                "Float", "String"
+            )
+        output = "\n".join(splited)
+        write_content(output, "src/service.py")
+
 
 class DockerfileCreator(ErsiliaBase):
     def __init__(self, model_id, config_json, commands):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.dest_dir = self._model_path(self.model_id)
-    def run(self):    
+
+    def run(self):
         self.logger.debug(
             "Creating Dockerfile for internal usage from a config.yml file"
         )
         read_metadata_section
-        docker_file= read_file_from_path("Dockerfile")
-        updated= self._append_commands_to_dockerfile(self.commands, docker_file)
+        docker_file = read_file_from_path("Dockerfile")
+        updated = self._append_commands_to_dockerfile(self.commands, docker_file)
         write_content("Docker", updated)
-        
-        
-        
+
     def _append_commands_to_dockerfile(self, commands, dockerfile_content):
         run_section_end_line = -1
-        sanitized= []
+        sanitized = []
         for i, line in enumerate(dockerfile_content.splitlines()):
-            line= line.strip()
-            if line.startswith("MAINTAINER") and line.endswith('ersilia') :
+            line = line.strip()
+            if line.startswith("MAINTAINER") and line.endswith("ersilia"):
                 run_section_end_line = i
-            if(line !=''):
-                sanitized.append(line)    
+            if line != "":
+                sanitized.append(line)
         print(sanitized, run_section_end_line)
-        if sanitized[run_section_end_line+2].startswith("RUN"):
-            raise BaseException("There are more instalation than the standard 'RUN pip install rdkit'")
-            
+        if sanitized[run_section_end_line + 2].startswith("RUN"):
+            raise BaseException(
+                "There are more instalation than the standard 'RUN pip install rdkit'"
+            )
+
         if run_section_end_line != -1:
-            index= run_section_end_line + 2
-            for i , command in enumerate(commands):
-                 sanitized.insert(index+i, f"RUN {command}")
+            index = run_section_end_line + 2
+            for i, command in enumerate(commands):
+                sanitized.insert(index + i, f"RUN {command}")
             return "\n".join(sanitized)
         else:
-            BaseException("Error: Unable to locate the end of the RUN section in the Dockerfile.")
+            BaseException(
+                "Error: Unable to locate the end of the RUN section in the Dockerfile."
+            )
+
 
 class TemplatePreparer(BaseAction):
     def __init__(self, model_id, config_json):
@@ -104,7 +114,8 @@ class TemplatePreparer(BaseAction):
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
         self.dest_dir = self._model_path(self.model_id)
-        self.config_yaml_path= 'config.yml'
+        self.config_yaml_path = "config.yml"
+
     def _create_pack(self):
         pack_file = os.path.join(self.dest_dir, "pack.py")
         if os.path.exists(pack_file):
@@ -139,41 +150,38 @@ class TemplatePreparer(BaseAction):
         self._create_pack()
         self._create_dockerfile()
         self._create_service()
-    
-   
-     
+
+
 def read_metadata_section(key):
-    metadata_file= "metadata.json"
+    metadata_file = "metadata.json"
     ##TODO. Ask when where to locate the metadata.
-    with open(metadata_file, 'r') as file:
+    with open(metadata_file, "r") as file:
         data = json.load(file)
     if key not in data:
         raise BaseException(f"The key {key} does not exist in the metadata")
     return data[key]
+
+
 def read_config_yaml_section(key):
-    #TODO. Ask where to located the config.yml
-    yaml_file= "config.yaml"
-    with open(yaml_file, 'r') as file:
+    # TODO. Ask where to located the config.yml
+    yaml_file = "config.yaml"
+    with open(yaml_file, "r") as file:
         data = yaml.safe_load(file)
-    if(key not in data):
+    if key not in data:
         raise BaseException(f"The key {key} is not in the metadata ")
     return data[key]
 
+
 ##TODO - Ask where to put the files. Do we create a class for them?
 def read_file_from_path(file_path):
-        with open(os.path.join(ROOT,file_path), 'r') as file:
-            content = file.read()
-        return content
-    
+    with open(os.path.join(ROOT, file_path), "r") as file:
+        content = file.read()
+    return content
+
+
 def write_content(file_path, content):
     with open(os.path.abspath(file_path), "w") as file:
-            file.writelines(content)
-  
-
- 
-        
-        
-    
+        file.writelines(content)
 
 
 class ModelRepositoryGetter(BaseAction):

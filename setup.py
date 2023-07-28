@@ -100,4 +100,4 @@ def check_bentoml(package_path):
     return version
 
 
-check_bentoml("ersilia")
+# check_bentoml("ersilia")
