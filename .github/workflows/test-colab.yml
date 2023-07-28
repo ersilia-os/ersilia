@@ -15,6 +15,10 @@ jobs:
       - name: Source conda
         run: source $CONDA/etc/profile.d/conda.sh
 
+      - name: Set Python to 3.10.10
+        run:
+         conda install -y python=3.10.10 
+
       - name: Install dependencies
         run: |
           source activate
