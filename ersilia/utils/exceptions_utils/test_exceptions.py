@@ -11,4 +11,4 @@ class WrongCardIdentifierError(ErsiliaError):
         self.hints = (
             "Check the model information, usually available in a metadata.json file."
         )
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self.message, self.hints)

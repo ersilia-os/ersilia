@@ -17,7 +17,6 @@ except:
 
 class TextIdentifier(object):
     def __init__(self, local=True):
-        super().__init__()
         if local:
             self.Chem = Chem
         else:

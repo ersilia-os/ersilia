@@ -30,7 +30,7 @@ class ErsiliaCommandGroup(click.Group):
                 func.__click_params__[-self.NUMBER_OF_COMMON_PARAMS :]
                 + func.__click_params__[: -self.NUMBER_OF_COMMON_PARAMS]
             )
-            return super(ErsiliaCommandGroup, self).command(*args, **kwargs)(func)
+            return click.Group.command(self, *args, **kwargs)(func)
 
         return wrapper
 
@@ -53,7 +53,7 @@ class ErsiliaCommandGroup(click.Group):
 )
 def ersilia_cli(verbose, silent):
     """
-    Welcome to Ersilia!
+    🦠 Welcome to Ersilia! 💊
     """
     if verbose:
         logger.set_verbosity(1)

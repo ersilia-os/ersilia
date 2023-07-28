@@ -7,7 +7,7 @@ from ..terminal import run_command_check_output
 
 class ModelIdentifier(object):
     def __init__(self):
-        super().__init__()
+        pass
         self.letters = string.ascii_lowercase
         self.numbers = "0123456789"
 

@@ -16,7 +16,6 @@ LENGTH = 8
 
 class ShortIdentifier(object):
     def __init__(self):
-        super().__init__()
         if Hashids is None:
             self.hashids = None
         else:
