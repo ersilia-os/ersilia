@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ersilia.tools.bentoml.configuration &mdash; Ersilia  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Ersilia
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/package.html">Package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/devel.html">For developers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Ersilia</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../ersilia.html">ersilia</a></li>
+      <li class="breadcrumb-item active">ersilia.tools.bentoml.configuration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ersilia.tools.bentoml.configuration</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2019 Atalaya Tech, Inc.</span>
+
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">bentoml</span> <span class="kn">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">_version</span> <span class="k">as</span> <span class="n">version_mod</span>
+<span class="kn">from</span> <span class="nn">bentoml.exceptions</span> <span class="kn">import</span> <span class="n">BentoMLConfigException</span>
+<span class="kn">from</span> <span class="nn">bentoml.configuration.configparser</span> <span class="kn">import</span> <span class="n">BentoMLConfigParser</span>
+
+<span class="c1"># Note this file is loaded prior to logging being configured, thus logger is only</span>
+<span class="c1"># used within functions in this file</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="c1"># Default bentoml config comes with the library bentoml/config/default_bentoml.cfg</span>
+<span class="n">DEFAULT_CONFIG_FILE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;default_bentoml.cfg&quot;</span><span class="p">)</span>
+
+<span class="n">CONFIG_FILE_ENCODING</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>
+
+
+<div class="viewcode-block" id="expand_env_var"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html#ersilia.tools.bentoml.configuration.expand_env_var">[docs]</a><span class="k">def</span> <span class="nf">expand_env_var</span><span class="p">(</span><span class="n">env_var</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expands potentially nested env var by repeatedly applying `expandvars` and</span>
+<span class="sd">    `expanduser` until interpolation stops having any effect.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">env_var</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">env_var</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">interpolated</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">env_var</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">interpolated</span> <span class="o">==</span> <span class="n">env_var</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">interpolated</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">env_var</span> <span class="o">=</span> <span class="n">interpolated</span></div>
+
+
+<div class="viewcode-block" id="parameterized_config"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html#ersilia.tools.bentoml.configuration.parameterized_config">[docs]</a><span class="k">def</span> <span class="nf">parameterized_config</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates a configuration from the provided template + variables defined in</span>
+<span class="sd">    current scope</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :param template: a config content templated with {{variables}}</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        string: config content after templated with locals() and globals()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_vars</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">()]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">all_vars</span><span class="p">)</span></div>
+
+
+<span class="n">DEFAULT_BENTOML_HOME</span> <span class="o">=</span> <span class="n">expand_env_var</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BENTOML_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/bentoml&quot;</span><span class="p">))</span>
+<span class="n">BENTOML_HOME</span> <span class="o">=</span> <span class="n">DEFAULT_BENTOML_HOME</span>
+
+<span class="c1"># This is used as default for config(&#39;core&#39;, &#39;bentoml_deploy_version&#39;) - which is used</span>
+<span class="c1"># for getting the BentoML PyPI version string or the URL to a BentoML sdist, indicating</span>
+<span class="c1"># the BentoML module to be used when loading and using a saved BentoService bundle.</span>
+<span class="c1"># This is useful when using customized BentoML fork/branch or when working with</span>
+<span class="c1"># development branches of BentoML</span>
+<span class="n">BENTOML_VERSION</span> <span class="o">=</span> <span class="n">__version__</span>
+<span class="c1"># e.g. from &#39;0.4.2+5.g6cac97f.dirty&#39; to &#39;0.4.2&#39;</span>
+<span class="n">LAST_PYPI_RELEASE_VERSION</span> <span class="o">=</span> <span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_is_pip_installed_bentoml</span><span class="p">():</span>
+    <span class="n">is_installed_package</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">version_mod</span><span class="p">,</span> <span class="s2">&quot;version_json&quot;</span><span class="p">)</span>
+    <span class="n">is_tagged</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;0+untagged&quot;</span><span class="p">)</span>
+    <span class="n">is_clean</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">version_mod</span><span class="o">.</span><span class="n">get_versions</span><span class="p">()[</span><span class="s2">&quot;dirty&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">is_installed_package</span> <span class="ow">and</span> <span class="n">is_tagged</span> <span class="ow">and</span> <span class="n">is_clean</span>
+
+
+<div class="viewcode-block" id="get_local_config_file"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html#ersilia.tools.bentoml.configuration.get_local_config_file">[docs]</a><span class="k">def</span> <span class="nf">get_local_config_file</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s2">&quot;BENTOML_CONFIG&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="c1"># User local config file for customizing bentoml</span>
+        <span class="k">return</span> <span class="n">expand_env_var</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BENTOML_CONFIG&quot;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BENTOML_HOME</span><span class="p">,</span> <span class="s2">&quot;bentoml.cfg&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_config"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html#ersilia.tools.bentoml.configuration.load_config">[docs]</a><span class="k">def</span> <span class="nf">load_config</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">BENTOML_HOME</span>  <span class="c1"># pylint: disable=global-statement</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">BENTOML_HOME</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">BentoMLConfigException</span><span class="p">(</span>
+            <span class="s2">&quot;Error creating bentoml home directory &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">BENTOML_HOME</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">strerror</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">DEFAULT_CONFIG_FILE</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">CONFIG_FILE_ENCODING</span><span class="p">)</span>
+
+    <span class="n">loaded_config</span> <span class="o">=</span> <span class="n">BentoMLConfigParser</span><span class="p">(</span>
+        <span class="n">default_config</span><span class="o">=</span><span class="n">parameterized_config</span><span class="p">(</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">local_config_file</span> <span class="o">=</span> <span class="n">get_local_config_file</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">local_config_file</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading local BentoML config file: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">local_config_file</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_config_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">loaded_config</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span>
+                <span class="n">parameterized_config</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">CONFIG_FILE_ENCODING</span><span class="p">))</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No local BentoML config file found, using default configurations&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">loaded_config</span></div>
+
+
+<span class="n">_config</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">_reset_bentoml_home</span><span class="p">(</span><span class="n">new_bentoml_home_directory</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">_config</span>  <span class="c1"># pylint: disable=global-statement</span>
+    <span class="k">global</span> <span class="n">DEFAULT_BENTOML_HOME</span><span class="p">,</span> <span class="n">BENTOML_HOME</span>  <span class="c1"># pylint: disable=global-statement</span>
+
+    <span class="n">DEFAULT_BENTOML_HOME</span> <span class="o">=</span> <span class="n">new_bentoml_home_directory</span>
+    <span class="n">BENTOML_HOME</span> <span class="o">=</span> <span class="n">new_bentoml_home_directory</span>
+
+    <span class="c1"># reload config</span>
+    <span class="n">_config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+
+    <span class="c1"># re-config logging</span>
+    <span class="kn">from</span> <span class="nn">bentoml</span> <span class="kn">import</span> <span class="n">configure_logging</span>
+
+    <span class="n">root</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+    <span class="nb">map</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">,</span> <span class="n">root</span><span class="o">.</span><span class="n">handlers</span><span class="p">[:])</span>
+    <span class="nb">map</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">removeFilter</span><span class="p">,</span> <span class="n">root</span><span class="o">.</span><span class="n">filters</span><span class="p">[:])</span>
+    <span class="n">configure_logging</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_get_bentoml_home</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">BENTOML_HOME</span>
+
+
+<div class="viewcode-block" id="config"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html#ersilia.tools.bentoml.configuration.config">[docs]</a><span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="n">section</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">_config</span>  <span class="c1"># pylint: disable=global-statement</span>
+
+    <span class="k">if</span> <span class="n">_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_config</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_config</span></div>
+
+
+<div class="viewcode-block" id="get_bentoml_deploy_version"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html#ersilia.tools.bentoml.configuration.get_bentoml_deploy_version">[docs]</a><span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_bentoml_deploy_version</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    BentoML version to use for generated docker image or serverless function bundle to</span>
+<span class="sd">    be deployed, this can be changed to an url to your fork of BentoML on github, or an</span>
+<span class="sd">    url to your custom BentoML build, for example:</span>
+
+<span class="sd">    bentoml_deploy_version = git+https://github.com/{username}/bentoml.git@{branch}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bentoml_deploy_version</span> <span class="o">=</span> <span class="n">config</span><span class="p">(</span><span class="s2">&quot;core&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bentoml_deploy_version&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bentoml_deploy_version</span> <span class="o">!=</span> <span class="n">LAST_PYPI_RELEASE_VERSION</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting BentoML deploy version to &#39;</span><span class="si">{</span><span class="n">bentoml_deploy_version</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">LAST_PYPI_RELEASE_VERSION</span> <span class="o">!=</span> <span class="n">BENTOML_VERSION</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_is_pip_installed_bentoml</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Using BentoML not from official PyPI release. In order to find the &quot;</span>
+                <span class="s2">&quot;same version of BentoML when deploying your BentoService, you must &quot;</span>
+                <span class="s2">&quot;set the &#39;core/bentoml_deploy_version&#39; config to a http/git location &quot;</span>
+                <span class="s2">&quot;of your BentoML fork, e.g.: &#39;bentoml_deploy_version = &quot;</span>
+                <span class="s2">&quot;git+https://github.com/</span><span class="si">{username}</span><span class="s2">/bentoml.git@</span><span class="si">{branch}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Using BentoML installed in `editable` model, the local BentoML &quot;</span>
+                <span class="s2">&quot;repository including all code changes will be packaged together with &quot;</span>
+                <span class="s2">&quot;saved bundle created, under the &#39;./bundled_pip_dependencies&#39; &quot;</span>
+                <span class="s2">&quot;directory of the saved bundle.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">bentoml_deploy_version</span></div>
+
+
+<div class="viewcode-block" id="get_debug_mode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html#ersilia.tools.bentoml.configuration.get_debug_mode">[docs]</a><span class="k">def</span> <span class="nf">get_debug_mode</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">config</span><span class="p">()</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s2">&quot;core&quot;</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_debug_mode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html#ersilia.tools.bentoml.configuration.set_debug_mode">[docs]</a><span class="k">def</span> <span class="nf">set_debug_mode</span><span class="p">(</span><span class="n">debug_mode_on</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">config</span><span class="p">()</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;core&quot;</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">debug_mode_on</span><span class="p">))</span>
+
+    <span class="kn">from</span> <span class="nn">bentoml.utils.log</span> <span class="kn">import</span> <span class="n">configure_logging</span>
+
+    <span class="n">configure_logging</span><span class="p">()</span>  <span class="c1"># reconfigure logging and set log level to debug</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Setting debug mode: </span><span class="si">{</span><span class="s1">&#39;ON&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">debug_mode_on</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;OFF&#39;</span><span class="si">}</span><span class="s2"> for current session&quot;</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
