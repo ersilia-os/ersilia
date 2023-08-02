@@ -29,6 +29,7 @@ slim = [
     "PyYAML",
     "dockerfile-parse",
     "tqdm",
+    "click",
 ]
 slim_requires = slim
 
