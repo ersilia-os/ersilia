@@ -270,6 +270,10 @@ class ModelRepositoryGetter(BaseAction):
             with open(dockerfile_path, "r") as f:
                 content = f.read()
                 content = content.replace("RUN sudo ", "RUN ")
+                content = content.replace(" sudo ", " ")
+                content = content.replace(";sudo ", "; ")
+                content = content.replace("&sudo ", "& ")
+                content = content.replace("|sudo ", "| ")
             with open(dockerfile_path, "w") as f:
                 f.write(content)
         else:
