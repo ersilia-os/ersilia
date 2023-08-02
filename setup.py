@@ -30,6 +30,7 @@ slim = [
     "dockerfile-parse",
     "tqdm",
     "click",
+    "docker",
 ]
 slim_requires = slim
 
