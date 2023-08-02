@@ -6,7 +6,7 @@ class FetchErsiliaError(ErsiliaError):
         self.model_id = model_id
         self.message = "Error occured while fetching model: {0}".format(self.model_id)
         self.hints = ""
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class S3DownloaderError(ErsiliaError):
@@ -18,7 +18,7 @@ class S3DownloaderError(ErsiliaError):
         self.hints = (
             "Make sure that this model is actually in Ersilia Model Hub's S3 bucket"
         )
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class GetFetchErsiliaError(ErsiliaError):
@@ -26,7 +26,7 @@ class GetFetchErsiliaError(ErsiliaError):
         self.model_id = model_id
         self.message = "Error occured while fetching model: {0}".format(self.model_id)
         self.hints = ""
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class FolderNotFoundError(ErsiliaError):
@@ -34,7 +34,7 @@ class FolderNotFoundError(ErsiliaError):
         self.folder_name = folder_name
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "Folder " + self.folder_name + " not found!"
@@ -50,7 +50,7 @@ class CondaEnvironmentExistsError(ErsiliaError):
         self.environment_name = env_name
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "Environment " + self.environment_name + " does not exist!"
@@ -69,7 +69,7 @@ class ModelPackageInstallError(ErsiliaError):
         self.package_name = package_name
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = (
@@ -90,7 +90,7 @@ class VirtualEnvironmentSetupError(ErsiliaError):
         self.virtual_env_name = venv_name
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "Virtual Environment " + self.virtual_env_name + " does not exist!"

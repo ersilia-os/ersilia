@@ -7,7 +7,7 @@ class GitLfsSetupError(ErsiliaError):
     ):
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "Git LFS is not installed! Git LFS is needed to download large files from our GitHub repositories."
@@ -25,7 +25,7 @@ class GithubCliSetupError(ErsiliaError):
     ):
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "GitHub CLI is not installed! GitHub CLI is a fantastic tool to interact with GitHub. Ersilia uses it in the backend."
@@ -43,7 +43,7 @@ class CondaSetupError(ErsiliaError):
     ):
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "Conda is not installed! Conda is required to create virtual environments for each model."
@@ -61,7 +61,7 @@ class PingError(ErsiliaError):
     ):
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "No internet connection. Internet connection is required for downloading models from GitHub repositories."
@@ -78,7 +78,7 @@ class EosHomePathNotFoundError(ErsiliaError):
     ):
         self.message = self._get_message()
         self.hints = self._get_hints()
-        ErsiliaError.__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "EOS Home path not found. Looks like Ersilia is not installed correctly."
