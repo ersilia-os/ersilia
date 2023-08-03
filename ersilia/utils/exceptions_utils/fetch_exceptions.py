@@ -9,6 +9,13 @@ class FetchErsiliaError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
+class InvalidUrlError(ErsiliaError):
+    def __init__(self, url):
+        self.message = "Provided URL is invalid: {0}".format(url)
+        self.hints = "Open a browser and check that the URL is valid. You should see an API interface."
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
 class S3DownloaderError(ErsiliaError):
     def __init__(self, model_id):
         self.model_id = model_id

@@ -4,12 +4,7 @@ import json
 import os
 from timeit import default_timer as timer
 from datetime import timedelta
-import time
-from tqdm import tqdm
-import datetime
-import shutil
 
-from ... import ErsiliaBase
 from .actions.setup import SetupChecker
 from .actions.prepare import ModelPreparer
 from .actions.get import ModelGetter
@@ -20,143 +15,12 @@ from .actions.content import CardGetter
 from .actions.check import ModelChecker
 from .actions.sniff import ModelSniffer
 from .actions.inform import ModelInformer
+from .register.register import ModelRegisterer
+from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
+from .lazy_fetchers.hosted import ModelHostedFetcher
 
-from ..pull.pull import ModelPuller
-from ...serve.services import PulledDockerImageService
-from ...setup.requirements.docker import DockerRequirement
-from ...utils.docker import SimpleDocker
-
+from ... import ErsiliaBase
 from . import STATUS_FILE, DONE_TAG
-from ... import EOS
-from ...default import (
-    IS_FETCHED_FROM_DOCKERHUB_FILE,
-    SERVICE_CLASS_FILE,
-    DOCKERHUB_ORG,
-    DOCKERHUB_LATEST_TAG,
-)
-
-
-class ModelRegisterer(ErsiliaBase):
-    def __init__(self, model_id, config_json):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-        self.model_id = model_id
-
-    def register_from_dockerhub(self):
-        data = {"docker_hub": True}
-        self.logger.debug(
-            "Registering model {0} in the file system".format(self.model_id)
-        )
-        path = os.path.join(EOS, "dest", self.model_id)
-        self.logger.debug(path)
-        if os.path.exists(path):
-            shutil.rmtree(path)
-        os.mkdir(path)
-        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
-        self.logger.debug(file_name)
-        with open(file_name, "w") as f:
-            json.dump(data, f)
-        current_time = datetime.datetime.now()
-        folder_name = current_time.strftime("%Y%m%d%H%M%S")
-        path = os.path.join(EOS, "repository", self.model_id)
-        if os.path.exists(path):
-            shutil.rmtree(path)
-        path = os.path.join(path, folder_name)
-        os.makedirs(path)
-        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
-        with open(file_name, "w") as f:
-            json.dump(data, f)
-        file_name = os.path.join(path, SERVICE_CLASS_FILE)
-        self.logger.debug("Writing service class pulled_docker {0}".format(file_name))
-        with open(file_name, "w") as f:
-            f.write("pulled_docker")
-
-    def register_not_from_dockerhub(self):
-        data = {"docker_hub": False}
-        path = self._model_path(self.model_id)
-        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
-        with open(file_name, "w") as f:
-            json.dump(data, f)
-        path = self._get_bundle_location(model_id=self.model_id)
-        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
-        with open(file_name, "w") as f:
-            json.dump(data, f)
-
-    def register(self, is_from_dockerhub):
-        if is_from_dockerhub:
-            self.register_from_dockerhub()
-        else:
-            self.register_not_from_dockerhub()
-
-
-class ModelDockerHubFetcher(ErsiliaBase):
-    def __init__(self, overwrite=None, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-        self.simple_docker = SimpleDocker()
-        self.overwrite = overwrite
-
-    def is_docker_installed(self):
-        return DockerRequirement().is_installed()
-
-    def is_available(self, model_id):
-        mp = ModelPuller(
-            model_id=model_id, overwrite=self.overwrite, config_json=self.config_json
-        )
-        if mp.is_available_locally():
-            return True
-        if mp.is_available_in_dockerhub():
-            return True
-        return False
-
-    def write_apis(self, model_id):
-        self.logger.debug("Writing APIs")
-        di = PulledDockerImageService(
-            model_id=model_id, config_json=self.config_json, preferred_port=None
-        )
-        di.serve()
-        di.close()
-
-    def copy_information(self, model_id):
-        fr_file = "/root/eos/dest/{0}/information.json".format(model_id)
-        to_file = "{0}/dest/{1}/information.json".format(EOS, model_id)
-        self.simple_docker.cp_from_image(
-            img_path=fr_file,
-            local_path=to_file,
-            org=DOCKERHUB_ORG,
-            img=model_id,
-            tag=DOCKERHUB_LATEST_TAG,
-        )
-
-    def copy_metadata(self, model_id):
-        fr_file = "/root/eos/dest/{0}/api_schema.json".format(model_id)
-        to_file = "{0}/dest/{1}/api_schema.json".format(EOS, model_id)
-        self.simple_docker.cp_from_image(
-            img_path=fr_file,
-            local_path=to_file,
-            org=DOCKERHUB_ORG,
-            img=model_id,
-            tag=DOCKERHUB_LATEST_TAG,
-        )
-
-    def copy_status(self, model_id):
-        fr_file = "/root/eos/dest/{0}/{1}".format(model_id, STATUS_FILE)
-        to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, STATUS_FILE)
-        self.simple_docker.cp_from_image(
-            img_path=fr_file,
-            local_path=to_file,
-            org=DOCKERHUB_ORG,
-            img=model_id,
-            tag=DOCKERHUB_LATEST_TAG,
-        )
-
-    def fetch(self, model_id):
-        mp = ModelPuller(model_id=model_id, config_json=self.config_json)
-        mp.pull()
-        mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
-        mr.register(is_from_dockerhub=True)
-        self.write_apis(model_id)
-        self.copy_information(model_id)
-        self.copy_metadata(model_id)
-        self.copy_status(model_id)
 
 
 class ModelFetcher(ErsiliaBase):
@@ -172,6 +36,8 @@ class ModelFetcher(ErsiliaBase):
         force_from_github=False,
         force_from_s3=False,
         force_from_dockerhub=False,
+        force_from_hosted=False,
+        hosted_url=None,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -188,9 +54,14 @@ class ModelFetcher(ErsiliaBase):
             overwrite=self.overwrite, config_json=self.config_json
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
+        self.model_hosted_fetcher = ModelHostedFetcher(
+            url=hosted_url, config_json=self.config_json
+        )
         self.force_from_github = force_from_github
         self.force_from_s3 = force_from_s3
         self.force_from_dockerhub = force_from_dockerhub
+        self.force_from_hosted = force_from_hosted
+        self.hosted_url = hosted_url
 
     def _setup_check(self):
         sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
@@ -278,6 +149,11 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Fetching from DockerHub")
         self.model_dockerhub_fetcher.fetch(model_id=model_id)
 
+    def _fetch_from_hosted(self, model_id):
+        self.logger.debug("Fetching from hosted")
+        self.model_hosted_fetcher.fetch(model_id=model_id)
+        self.logger.debug("Fetching from hosted done")
+
     def _decide_if_use_dockerhub(self, model_id):
         if self.repo_path is not None:
             return False
@@ -287,6 +163,8 @@ class ModelFetcher(ErsiliaBase):
             return False
         if self.force_from_github:
             return False
+        if self.force_from_hosted:
+            return False
         if not self.is_docker_installed:
             self.logger.debug("Docker is not installed in your local")
             return False
@@ -295,11 +173,31 @@ class ModelFetcher(ErsiliaBase):
             return False
         return True
 
+    def _decide_if_use_hosted(self, model_id):
+        if self.repo_path is not None:
+            return False
+        if self.force_from_dockerhub:
+            return False
+        if self.force_from_github:
+            return False
+        if self.force_from_s3:
+            return False
+        if not self.model_hosted_fetcher.is_available(model_id=model_id):
+            self.logger.debug("There is no hosted URL available for this model")
+            return False
+        if self.force_from_hosted:
+            return True
+        return False
+
     def fetch(self, model_id):
+        do_hosted = self._decide_if_use_hosted(model_id=model_id)
+        if do_hosted:
+            self._fetch_from_hosted(model_id=model_id)
+            return
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
             self._fetch_from_dockerhub(model_id=model_id)
-        else:
-            if self.overwrite is None:
-                self.overwrite = True
-            self._fetch_not_from_dockerhub(model_id=model_id)
+            return
+        if self.overwrite is None:
+            self.overwrite = True
+        self._fetch_not_from_dockerhub(model_id=model_id)

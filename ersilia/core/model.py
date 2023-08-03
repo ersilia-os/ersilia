@@ -75,6 +75,7 @@ class ErsiliaModel(ErsiliaBase):
             "conda",
             "docker",
             "pulled_docker",
+            "hosted",
         ], "Wrong service class"
         self.service_class = service_class
         mdl = ModelBase(model)

@@ -17,13 +17,14 @@ from ..utils.venv import SimpleVenv
 from ..default import DEFAULT_VENV
 from ..default import PACKMODE_FILE, APIS_LIST_FILE
 from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ..default import IS_FETCHED_FROM_HOSTED_FILE
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
 
 
 class BaseServing(ErsiliaBase):
-    def __init__(self, model_id, config_json=None, preferred_port=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
         self.bundle_tag = self._get_latest_bundle_tag(model_id=self.model_id)
@@ -194,7 +195,7 @@ class _BentoMLService(BaseServing):
 
 
 class SystemBundleService(_BentoMLService):
-    def __init__(self, model_id, config_json=None, preferred_port=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         _BentoMLService.__init__(
             self,
             model_id=model_id,
@@ -234,7 +235,7 @@ class SystemBundleService(_BentoMLService):
 
 
 class VenvEnvironmentService(_BentoMLService):
-    def __init__(self, model_id, config_json=None, preferred_port=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         _BentoMLService.__init__(
             self,
             model_id=model_id,
@@ -271,7 +272,7 @@ class VenvEnvironmentService(_BentoMLService):
 
 
 class CondaEnvironmentService(_BentoMLService):
-    def __init__(self, model_id, config_json=None, preferred_port=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         _BentoMLService.__init__(
             self,
             model_id=model_id,
@@ -319,7 +320,7 @@ class CondaEnvironmentService(_BentoMLService):
 
 
 class DockerImageService(BaseServing):
-    def __init__(self, model_id, config_json=None, preferred_port=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         BaseServing.__init__(
             self,
             model_id=model_id,
@@ -373,7 +374,7 @@ class DockerImageService(BaseServing):
 
 # TODO: Include 'pip' within available service_class
 class PipInstalledService(BaseServing):
-    def __init__(self, model_id, config_json=None, preferred_port=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         BaseServing.__init__(
             self,
             model_id=model_id,
@@ -416,7 +417,7 @@ class PipInstalledService(BaseServing):
 
 
 class DummyService(BaseServing):
-    def __init__(self, model_id, config_json=None, preferred_port=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         BaseServing.__init__(
             self,
             model_id=model_id,
@@ -444,7 +445,7 @@ class DummyService(BaseServing):
 
 
 class PulledDockerImageService(BaseServing):
-    def __init__(self, model_id, config_json=None, preferred_port=None):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         BaseServing.__init__(
             self,
             model_id=model_id,
@@ -579,3 +580,97 @@ class PulledDockerImageService(BaseServing):
     def close(self):
         self.logger.debug("Stopping and removing container")
         self._stop_all_containers_of_image()
+
+
+class HostedService(BaseServing):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=None,
+        )
+        if url is None:
+            self.url = self._resolve_url()
+        else:
+            self.url = url
+        self.pid = -1
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.close()
+
+    def _api_with_url(self, api_name, input):
+        if self.url is None:
+            return
+        self.logger.debug("Using URL: {0}".format(self.url))
+        response = requests.post("{0}/{1}".format(self.url, api_name), json=input)
+        return response.json()
+
+    def _resolve_url(self):
+        from_hosted_file = os.path.join(
+            self._model_path(self.model_id), IS_FETCHED_FROM_HOSTED_FILE
+        )
+        self.logger.debug("Reading hosted file: {0}".format(from_hosted_file))
+        if not os.path.exists(from_hosted_file):
+            return None
+        with open(from_hosted_file, "r") as f:
+            data = json.load(f)
+        self.logger.debug("From hosted file: {0}".format(data))
+        if not data["hosted"]:
+            return None
+        return data["url"]
+
+    def is_available(self):
+        if self.is_url_available(self.url):
+            self.logger.debug("URL {0} is available".format(self.url))
+            return True
+        else:
+            self.logger.debug("URL {0} is not available".format(self.url))
+            return False
+
+    def _get_apis(self):
+        file_name = os.path.join(
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
+        )
+        self.logger.debug("Getting APIs")
+        if os.path.exists(file_name):
+            with open(file_name, "r") as f:
+                apis_list = []
+                for l in f:
+                    apis_list += [l.rstrip()]
+            if len(apis_list) > 0:
+                return apis_list
+        self.logger.debug("Getting them using info endpoint")
+        url = "{0}/info".format(self.url)
+        self.logger.debug("Using URL: {0}".format(url))
+        data = "{}"
+        apis_list = json.loads(requests.post(url, data=data).text)["apis_list"]
+        self.logger.debug("Writing file {0}".format(file_name))
+        with open(file_name, "w") as f:
+            for api in apis_list:
+                f.write(api + os.linesep)
+        return apis_list
+
+    def is_url_available(self, url):
+        try:
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+        except requests.HTTPError as http_err:
+            return False
+        except Exception as err:
+            return False
+        else:
+            return True
+
+    def serve(self):
+        self._apis_list = self._get_apis()
+        self.logger.debug(self._apis_list)
+
+    def api(self, api_name, input):
+        return self._api_with_url(api_name=api_name, input=input)
+
+    def close(self):
+        pass
