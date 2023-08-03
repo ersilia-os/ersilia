@@ -108,7 +108,12 @@
             <span class="n">page_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_size</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rows</span>
         <span class="p">):</span>
             <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">record</span></div></div>
+                <span class="k">yield</span> <span class="n">record</span></div>
+
+<div class="viewcode-block" id="AirtableInterface.items_all"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface.items_all">[docs]</a>    <span class="k">def</span> <span class="nf">items_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">records</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">record</span></div></div>
 </pre></div>
 
            </div>

@@ -117,6 +117,18 @@
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--from_s3&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force fetch from AWS S3 bucket&quot;</span>
     <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--from_hosted&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force fetch from hosted service. This only creates a basic folder structure for the model, the model is not actually downloaded.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--from_url&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fetch a model based on a URL. This only creates a basic folder structure for the model, the model is not actually downloaded.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span>
         <span class="n">model</span><span class="p">,</span>
         <span class="n">repo_path</span><span class="p">,</span>
@@ -126,6 +138,8 @@
         <span class="n">from_github</span><span class="p">,</span>
         <span class="n">from_dockerhub</span><span class="p">,</span>
         <span class="n">from_s3</span><span class="p">,</span>
+        <span class="n">from_hosted</span><span class="p">,</span>
+        <span class="n">from_url</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">)</span>
@@ -144,6 +158,8 @@
             <span class="n">force_from_github</span><span class="o">=</span><span class="n">from_github</span><span class="p">,</span>
             <span class="n">force_from_s3</span><span class="o">=</span><span class="n">from_s3</span><span class="p">,</span>
             <span class="n">force_from_dockerhub</span><span class="o">=</span><span class="n">from_dockerhub</span><span class="p">,</span>
+            <span class="n">force_from_hosted</span><span class="o">=</span><span class="n">from_hosted</span><span class="p">,</span>
+            <span class="n">hosted_url</span><span class="o">=</span><span class="n">from_url</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> fetched successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span></div>

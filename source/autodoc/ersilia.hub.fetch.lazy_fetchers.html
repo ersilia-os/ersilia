@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ersilia.hub.fetch.lazy_fetchers package &mdash; Ersilia  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="ersilia.hub.fetch.pack package" href="ersilia.hub.fetch.pack.html" />
+    <link rel="prev" title="ersilia.hub.fetch.actions package" href="ersilia.hub.fetch.actions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Ersilia
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../package.html">Package index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ersilia.html">ersilia package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ersilia.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia.default">ersilia.default module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../devel.html">For developers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Ersilia</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../package.html">Package index</a></li>
+          <li class="breadcrumb-item"><a href="ersilia.html">ersilia package</a></li>
+          <li class="breadcrumb-item"><a href="ersilia.hub.html">ersilia.hub package</a></li>
+          <li class="breadcrumb-item"><a href="ersilia.hub.fetch.html">ersilia.hub.fetch package</a></li>
+      <li class="breadcrumb-item active">ersilia.hub.fetch.lazy_fetchers package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/source/autodoc/ersilia.hub.fetch.lazy_fetchers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ersilia-hub-fetch-lazy-fetchers-package">
+<h1>ersilia.hub.fetch.lazy_fetchers package<a class="headerlink" href="#ersilia-hub-fetch-lazy-fetchers-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ersilia.hub.fetch.lazy_fetchers.dockerhub">
+<span id="ersilia-hub-fetch-lazy-fetchers-dockerhub-module"></span><h2>ersilia.hub.fetch.lazy_fetchers.dockerhub module<a class="headerlink" href="#module-ersilia.hub.fetch.lazy_fetchers.dockerhub" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.lazy_fetchers.dockerhub.</span></span><span class="sig-name descname"><span class="pre">ModelDockerHubFetcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/dockerhub.html#ModelDockerHubFetcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_information">
+<span class="sig-name descname"><span class="pre">copy_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/dockerhub.html#ModelDockerHubFetcher.copy_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_information" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_metadata">
+<span class="sig-name descname"><span class="pre">copy_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/dockerhub.html#ModelDockerHubFetcher.copy_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_metadata" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_status">
+<span class="sig-name descname"><span class="pre">copy_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/dockerhub.html#ModelDockerHubFetcher.copy_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_status" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.fetch">
+<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/dockerhub.html#ModelDockerHubFetcher.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.fetch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_available">
+<span class="sig-name descname"><span class="pre">is_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/dockerhub.html#ModelDockerHubFetcher.is_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_available" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_installed">
+<span class="sig-name descname"><span class="pre">is_docker_installed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/dockerhub.html#ModelDockerHubFetcher.is_docker_installed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_installed" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.write_apis">
+<span class="sig-name descname"><span class="pre">write_apis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/dockerhub.html#ModelDockerHubFetcher.write_apis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.write_apis" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ersilia.hub.fetch.lazy_fetchers.hosted">
+<span id="ersilia-hub-fetch-lazy-fetchers-hosted-module"></span><h2>ersilia.hub.fetch.lazy_fetchers.hosted module<a class="headerlink" href="#module-ersilia.hub.fetch.lazy_fetchers.hosted" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.lazy_fetchers.hosted.</span></span><span class="sig-name descname"><span class="pre">ModelHostedFetcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/hosted.html#ModelHostedFetcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.fetch">
+<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/hosted.html#ModelHostedFetcher.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.fetch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.get_information">
+<span class="sig-name descname"><span class="pre">get_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/hosted.html#ModelHostedFetcher.get_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.get_information" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.get_metadata">
+<span class="sig-name descname"><span class="pre">get_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/hosted.html#ModelHostedFetcher.get_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.get_metadata" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.is_available">
+<span class="sig-name descname"><span class="pre">is_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/hosted.html#ModelHostedFetcher.is_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.is_available" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.write_apis">
+<span class="sig-name descname"><span class="pre">write_apis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/hosted.html#ModelHostedFetcher.write_apis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.write_apis" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.write_status">
+<span class="sig-name descname"><span class="pre">write_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/lazy_fetchers/hosted.html#ModelHostedFetcher.write_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.write_status" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ersilia.hub.fetch.lazy_fetchers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.hub.fetch.lazy_fetchers" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ersilia.hub.fetch.actions.html" class="btn btn-neutral float-left" title="ersilia.hub.fetch.actions package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ersilia.hub.fetch.pack.html" class="btn btn-neutral float-right" title="ersilia.hub.fetch.pack package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
