@@ -188,6 +188,17 @@ class ModelFetcher(ErsiliaBase):
         if self.force_from_hosted:
             return True
         return False
+    
+    def exists(self, model_id):
+        status_file = os.path.join(self._model_path(model_id), STATUS_FILE)
+        if not os.path.exists(status_file):
+            return False
+        with open(status_file, "r") as f:
+            status = json.load(f)
+        if status["done"]:
+            return True
+        else:
+            return False
 
     def fetch(self, model_id):
         do_hosted = self._decide_if_use_hosted(model_id=model_id)
