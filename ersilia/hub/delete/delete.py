@@ -233,6 +233,8 @@ class ModelFullDeleter(ErsiliaBase):
         for k, v in ms.items():
             if v:
                 return True
+        if os.path.exists(self._model_path(model_id)):
+            return True
         return False
 
     def delete(self, model_id):
