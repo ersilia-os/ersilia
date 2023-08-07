@@ -119,7 +119,11 @@ class ModelBentoDeleter(ErsiliaBase):
 
     def _delete(self, model_id, keep_latest=True):
         ml = ModelCatalog()
-        catalog = ml.bentoml()
+        try:
+            catalog = ml.bentoml()
+        except:
+            self.logger.debug("No BentoML Catalog available")
+            catalog = None
         if catalog is None:
             return
         if len(catalog.data) == 0:
