@@ -188,7 +188,7 @@ class ModelFetcher(ErsiliaBase):
         if self.force_from_hosted:
             return True
         return False
-    
+
     def exists(self, model_id):
         status_file = os.path.join(self._model_path(model_id), STATUS_FILE)
         if not os.path.exists(status_file):

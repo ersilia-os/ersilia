@@ -21,4 +21,3 @@ class AirtableSanitizer(ErsiliaBase):
                 url = fields[self.HOSTED_URL_FIELD]
                 if not validators.url(url):
                     raise InvalidUrlInAirtableError(url)
-            

@@ -198,3 +198,10 @@ class SourceCodeBaseInformationError(ErsiliaError):
         self.message = "Source Code field error"
         self.hints = "Source Code must be a valid URL"
         ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class MemoryGbBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Memory Gb field error"
+        self.hints = "Memory Gb field must be specified as an integer indicating GB of memory limit"
+        ErsiliaError.__init__(self, self.message, self.hints)

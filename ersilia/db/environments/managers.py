@@ -171,7 +171,7 @@ class DockerManager(ErsiliaBase):
             env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG),
         )
 
-    def run(self, model_id, workers=1, enable_microbatch=True):
+    def run(self, model_id, workers=1, enable_microbatch=True, memory=None):
         self.logger.debug("Running docker manager")
         imgs = self.images_of_model(model_id, only_latest=True)
         self.logger.debug("Available images: {0}".format(imgs))
@@ -191,9 +191,21 @@ class DockerManager(ErsiliaBase):
             dockerport = BENTOML_DOCKERPORT
         else:
             dockerport = INTERNAL_DOCKERPORT
-        cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
-            name, port, dockerport, img, workers, mb_string, resolve_platform()
-        )
+        if memory is None:
+            cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
+                name, port, dockerport, img, workers, mb_string, resolve_platform()
+            )
+        else:
+            cmd = 'docker run --memory="{7}" --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}'.format(
+                name,
+                port,
+                dockerport,
+                img,
+                workers,
+                mb_string,
+                resolve_platform(),
+                str(memory) + "g",
+            )
         self.logger.debug(cmd)
         run_command(cmd)
         return {"container_name": name, "port": port}

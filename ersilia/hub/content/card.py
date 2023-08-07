@@ -31,6 +31,7 @@ from ...utils.exceptions_utils.card_exceptions import (
     DockerArchitectureInformationError,
     S3BaseInformationError,
     BothIdentifiersBaseInformationError,
+    MemoryGbBaseInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
 
@@ -67,6 +68,7 @@ class BaseInformation(ErsiliaBase):
         self._dockerhub = None
         self._docker_architecture = None
         self._s3 = None
+        self._memory_gb = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -340,6 +342,16 @@ class BaseInformation(ErsiliaBase):
         self._both_identifiers = (model_id, slug)
         return self._both_identifiers
 
+    @property
+    def memory_gb(self):
+        return self._memory_gb
+
+    @memory_gb.setter
+    def memory_gb(self, new_memory_gb):
+        if type(new_memory_gb) != int:
+            raise MemoryGbBaseInformationError
+        self._memory_gb = new_memory_gb
+
     def as_dict(self):
         data = {
             "Identifier": self.identifier,
@@ -363,6 +375,7 @@ class BaseInformation(ErsiliaBase):
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
+            "Memory Gb": self.memory_gb,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -393,6 +406,8 @@ class BaseInformation(ErsiliaBase):
             self.docker_architecture = data["Docker Architecture"]
         if "S3" in data:
             self.s3 = data["S3"]
+        if "Memory Gb" in data:
+            self.memory_gb = data["Memory Gb"]
 
 
 class RepoMetadataFile(ErsiliaBase):

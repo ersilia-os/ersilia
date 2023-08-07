@@ -129,12 +129,20 @@ class SimpleDocker(object):
         cmd = "docker rmi %s" % self._image_name(org, img, tag)
         run_command(cmd)
 
-    def run(self, org, img, tag, name):
+    def run(self, org, img, tag, name, memory=None):
         if name is None:
             name = self.identifier.encode()
-        cmd = "docker run -it -d --platform {0} --name {1} {2} bash".format(
-            resolve_platform(), name, self._image_name(org, img, tag)
-        )
+        if memory is None:
+            cmd = "docker run -it -d --platform {0} --name {1} {2} bash".format(
+                resolve_platform(), name, self._image_name(org, img, tag)
+            )
+        else:
+            cmd = 'docker run -it -d --memory="{3}" --platform {0} --name {1} {2} bash'.format(
+                resolve_platform(),
+                name,
+                self._image_name(org, img, tag),
+                str(memory) + "g",
+            )
         run_command(cmd)
         return name
 

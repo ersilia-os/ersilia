@@ -18,6 +18,7 @@ from ..default import DEFAULT_VENV
 from ..default import PACKMODE_FILE, APIS_LIST_FILE
 from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 from ..default import IS_FETCHED_FROM_HOSTED_FILE
+from ..default import INFORMATION_FILE
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -470,6 +471,7 @@ class PulledDockerImageService(BaseServing):
         )
         self.simple_docker = SimpleDocker()
         self.pid = -1
+        self._mem_gb = self._get_memory()
 
     def __enter__(self):
         return self
@@ -483,6 +485,23 @@ class PulledDockerImageService(BaseServing):
         self.logger.debug("Using URL: {0}".format(self.url))
         response = requests.post("{0}/{1}".format(self.url, api_name), json=input)
         return response.json()
+
+    def _get_memory(self):
+        info_file = os.path.join(self._model_path(self.model_id), INFORMATION_FILE)
+        if not os.path.exists(info_file):
+            return None
+        with open(info_file, "r") as f:
+            info = json.load(f)["card"]
+        memory_field = "Memory Gb"
+        if memory_field not in info:
+            return None
+        mem_gb = info[memory_field]
+        if type(mem_gb) != int:
+            return None
+        if mem_gb < 2:
+            mem_gb = 2
+        self.logger.debug("Asking for {0} GB of memory".format(mem_gb))
+        return mem_gb
 
     def is_available(self):
         is_available = self.simple_docker.exists(
@@ -559,13 +578,23 @@ class PulledDockerImageService(BaseServing):
         self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
         self.volumes = {self.tmp_folder: {"bind": "/ersilia_tmp", "mode": "rw"}}
         self.logger.debug("Trying to run container")
-        self.container = self.client.containers.run(
-            self.image_name,
-            name=self.container_name,
-            detach=True,
-            ports={"80/tcp": self.port},
-            volumes=self.volumes,
-        )
+        if self._mem_gb is None:
+            self.container = self.client.containers.run(
+                self.image_name,
+                name=self.container_name,
+                detach=True,
+                ports={"80/tcp": self.port},
+                volumes=self.volumes,
+            )
+        else:
+            self.container = self.client.containers.run(
+                self.image_name,
+                name=self.container_name,
+                detach=True,
+                ports={"80/tcp": self.port},
+                volumes=self.volumes,
+                mem_limit="{0}g".format(self._mem_gb),
+            )
         self.logger.debug("Serving container {0}".format(self.container_name))
         self.container_id = self.container.id
         self.logger.debug("Running container {0}".format(self.container_id))
