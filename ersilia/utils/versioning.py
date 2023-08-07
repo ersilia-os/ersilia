@@ -1,6 +1,10 @@
 import sys
 import os
-from bentoml import __version__ as __bentoml_version__
+
+try:
+    from bentoml import __version__ as __bentoml_version__
+except:
+    __bentoml_version__ = None
 from .. import ErsiliaBase
 from .. import __version__ as __ersilia_version__
 
