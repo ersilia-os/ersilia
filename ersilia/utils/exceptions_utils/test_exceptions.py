@@ -41,3 +41,9 @@ class InvalidEntry(ErsiliaError):
         self.hints = ("Check the model information, usually available in a metadata.json file.")
         super().__init__(self.message, self.hints)
 
+class InconsistentOutputTypes(ErsiliaError): 
+    def __init__(self, model_id):
+        self.message = ("Model output types are inconsistent.")
+        self.hints = ("Observe the output comparisons above for each input, and pay attention to the type of the output (string, float, list, etc.) because they do not match.")
+        super().__init__(self.message, self.hints)
+
