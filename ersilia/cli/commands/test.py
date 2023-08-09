@@ -9,15 +9,10 @@ from ersilia.cli.commands.run import run_cmd
 from ersilia.core.base import ErsiliaBase
 from ...publish.test import ModelTester
 
-# need to import the ModelTester class 
-
-# from ersilia.cli import throw_ersilia_exception
 from ersilia.utils.exceptions_utils import throw_ersilia_exception
 
-# from ..utils.exceptions_utils import test_exceptions as texc
 from ersilia.utils.exceptions_utils.test_exceptions import WrongCardIdentifierError
 
-# from ..default import INFORMATION_FILE
 from ersilia.default import INFORMATION_FILE
 
 
