@@ -73,11 +73,22 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.cli.commands.test</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">click</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 
+<span class="kn">from</span> <span class="nn">...cli</span> <span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
+<span class="kn">from</span> <span class="nn">ersilia.cli.commands.run</span> <span class="kn">import</span> <span class="n">run_cmd</span>
+<span class="kn">from</span> <span class="nn">ersilia.core.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...publish.test</span> <span class="kn">import</span> <span class="n">ModelTester</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+
+<span class="kn">from</span> <span class="nn">ersilia.utils.exceptions_utils</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+
+<span class="kn">from</span> <span class="nn">ersilia.utils.exceptions_utils.test_exceptions</span> <span class="kn">import</span> <span class="n">WrongCardIdentifierError</span>
+
+<span class="kn">from</span> <span class="nn">ersilia.default</span> <span class="kn">import</span> <span class="n">INFORMATION_FILE</span>
 
 
 <div class="viewcode-block" id="test_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.test.test_cmd">[docs]</a><span class="k">def</span> <span class="nf">test_cmd</span><span class="p">():</span>
@@ -89,12 +100,19 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Test a model and obtain performance metrics&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--output&quot;</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelTester</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
+
+        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No model seems to be served. Please run &#39;ersilia serve ...&#39; before.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="n">mt</span> <span class="o">=</span> <span class="n">ModelTester</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Checking model information&quot;</span><span class="p">)</span>
-        <span class="n">mt</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
+        <span class="c1"># click.echo(&quot;Checking model information&quot;)</span>
+        <span class="n">mt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>    <span class="c1"># pass in the output here </span></div>
 </pre></div>
 
            </div>
