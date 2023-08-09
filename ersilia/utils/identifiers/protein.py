@@ -5,7 +5,7 @@ from bioservices.uniprot import UniProt
 
 class ProteinIdentifier(object):
     def __init__(self):
-        super().__init__()
+        pass
         self.seguid = seguid
         self.uniprot = UniProt(verbose=False)
 

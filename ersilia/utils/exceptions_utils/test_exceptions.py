@@ -46,4 +46,3 @@ class InconsistentOutputTypes(ErsiliaError):
         self.message = ("Model output types are inconsistent.")
         self.hints = ("Observe the output comparisons above for each input, and pay attention to the type of the output (string, float, list, etc.) because they do not match.")
         super().__init__(self.message, self.hints)
-

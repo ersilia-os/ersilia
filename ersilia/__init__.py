@@ -1,6 +1,10 @@
 # External imports
 import os
 from ._version import __version__
+import warnings
+
+# Filter out some warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # Disable GPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"

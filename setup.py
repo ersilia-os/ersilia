@@ -25,10 +25,12 @@ slim = [
     "validators",
     "h5py",
     "loguru",
-    "pyairtable",
+    "pyairtable<2",
     "PyYAML",
     "dockerfile-parse",
     "tqdm",
+    "click",
+    "docker",
 ]
 slim_requires = slim
 

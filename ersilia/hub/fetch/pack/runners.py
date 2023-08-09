@@ -1,6 +1,10 @@
 import os
 import tempfile
-import bentoml
+
+try:
+    import bentoml
+except:
+    bentoml = None
 
 from . import BasePack
 from ....utils.terminal import run_command

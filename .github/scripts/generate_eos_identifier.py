@@ -11,7 +11,6 @@ def run_command_check_output(cmd):
 
 class ModelIdentifier(object):
     def __init__(self):
-        super().__init__()
         self.letters = string.ascii_lowercase
         self.numbers = "0123456789"
 

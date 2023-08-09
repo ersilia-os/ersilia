@@ -10,6 +10,7 @@ from .services import (
     DockerImageService,
     DummyService,
     PulledDockerImageService,
+    HostedService,
 )
 from .api import Api
 from ..db.environments.managers import DockerManager
@@ -21,6 +22,7 @@ from ..default import (
     SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
     IS_FETCHED_FROM_DOCKERHUB_FILE,
+    IS_FETCHED_FROM_HOSTED_FILE,
 )
 
 DEFAULT_OUTPUT = None
@@ -28,7 +30,12 @@ DEFAULT_OUTPUT = None
 
 class AutoService(ErsiliaBase):
     def __init__(
-        self, model_id, service_class=None, config_json=None, preferred_port=None
+        self,
+        model_id,
+        service_class=None,
+        config_json=None,
+        preferred_port=None,
+        url=None,
     ):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Setting AutoService for {0}".format(model_id))
@@ -36,6 +43,7 @@ class AutoService(ErsiliaBase):
         self.model_id = model_id
         self._meta = None
         self._preferred_port = preferred_port
+        self._url = url
         if service_class is None:
             self.logger.debug("No service class provided, deciding automatically")
             service_class_file = os.path.join(
@@ -72,6 +80,10 @@ class AutoService(ErsiliaBase):
                 elif s == "pulled_docker":
                     self.service = PulledDockerImageService(
                         model_id, config_json=config_json, preferred_port=preferred_port
+                    )
+                elif s == "hosted":
+                    self.service = HostedService(
+                        model_id, config_json=config_json, url=url
                     )
                 else:
                     self.service = None
@@ -136,6 +148,15 @@ class AutoService(ErsiliaBase):
                         f.write("pulled_docker")
                         self.logger.debug("Service class: pulled_docker")
                         self._service_class = "pulled_docker"
+                    elif HostedService(
+                        model_id, config_json=config_json, url=url
+                    ).is_available():
+                        self.service = HostedService(
+                            model_id, config_json=config_json, url=url
+                        )
+                        f.write("hosted")
+                        self.logger.debug("Service class: hosted")
+                        self._service_class = "hosted"
                     else:
                         self.logger.debug("Service class: dummy")
                         self.service = DummyService(
@@ -147,10 +168,16 @@ class AutoService(ErsiliaBase):
             self.logger.info("Service class provided")
             service_class = self._service_class_loader(service_class)
             if service_class(
-                model_id, config_json=config_json, preferred_port=preferred_port
+                model_id,
+                config_json=config_json,
+                preferred_port=preferred_port,
+                url=url,
             ).is_available():
                 self.service = service_class(
-                    model_id, config_json=config_json, preferred_port=preferred_port
+                    model_id,
+                    config_json=config_json,
+                    preferred_port=preferred_port,
+                    url=url,
                 )
             else:
                 self.service = None
@@ -165,6 +192,16 @@ class AutoService(ErsiliaBase):
         with open(from_dockerhub_file, "r") as f:
             data = json.load(f)
             return data["docker_hub"]
+
+    def _was_fetched_from_hosted_url(self):
+        from_hosted_file = os.path.join(
+            self._dest_dir, self.model_id, IS_FETCHED_FROM_HOSTED_FILE
+        )
+        if not os.path.exists(from_hosted_file):
+            return False
+        with open(from_hosted_file, "r") as f:
+            data = json.load(f)
+            return data["hosted_url"]
 
     def _set_api(self, api_name):
         def _method(input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE):
@@ -206,6 +243,9 @@ class AutoService(ErsiliaBase):
         elif type(service_class) is PulledDockerImageService:
             self._service_class = "pulled_docker"
             return service_class
+        elif type(service_class) is HostedService:
+            self._service_class = "hosted"
+            return service_class
         else:
             self._service_class = service_class
             if service_class == "system":
@@ -218,6 +258,8 @@ class AutoService(ErsiliaBase):
                 return DockerImageService
             elif service_class == "pulled_docker":
                 return PulledDockerImageService
+            elif service_class == "hosted":
+                return HostedService
             raise Exception()
 
     def get_apis(self):

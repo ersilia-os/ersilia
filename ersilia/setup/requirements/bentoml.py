@@ -20,6 +20,7 @@ class BentoMLRequirement(object):
     def is_bentoml_ersilia_version(self):
         if not self.is_installed():
             return False
+
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "version.txt")
         cmd = "bentoml --version > {0}".format(tmp_file)
@@ -30,7 +31,6 @@ class BentoMLRequirement(object):
             return True
         else:
             return False
-        shutil.rmtree(tmp_folder)
 
     def install(self):
         print("Installing bentoml (the ersilia version)")

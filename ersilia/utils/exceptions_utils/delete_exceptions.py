@@ -7,4 +7,4 @@ class ModelDeleteError(ErsiliaError):
         self.hints = "Check that the model is actually installed in your local device:\n$ ersilia serve {0}".format(
             model
         )
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
