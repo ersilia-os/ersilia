@@ -31,6 +31,7 @@ slim = [
     "tqdm",
     "click",
     "docker",
+    "fuzzywuzzy"
 ]
 slim_requires = slim
 
