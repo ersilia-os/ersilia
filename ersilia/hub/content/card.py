@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 import tempfile
 import requests
 from ... import ErsiliaBase
@@ -7,7 +8,11 @@ from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 import validators
-from validators import ValidationError
+
+if sys.version_info.minor<=7:
+    from validators import ValidationFailure
+else:
+    from validators import ValidationError
 
 from ...utils.exceptions_utils.card_exceptions import (
     SlugBaseInformationError,
