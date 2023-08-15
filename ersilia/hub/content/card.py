@@ -12,7 +12,7 @@ import validators
 if sys.version_info.minor<=7:
     from validators import ValidationFailure
 else:
-    from validators import ValidationError
+    from validators import ValidationError as ValidationFailure
 
 from ...utils.exceptions_utils.card_exceptions import (
     SlugBaseInformationError,
