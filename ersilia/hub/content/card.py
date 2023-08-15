@@ -9,7 +9,7 @@ from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 import validators
 
-if sys.version_info.minor==7:
+if sys.version_info.minor<=7:
     from validators import ValidationFailure
 else:
     from validators import ValidationError
