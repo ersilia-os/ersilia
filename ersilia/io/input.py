@@ -188,7 +188,7 @@ class ExampleGenerator(ErsiliaBase):
         if type(self.input_shape) is InputShapeList:
             self._flatten = self._flatten_list
         if type(self.input_shape) is InputShapePairOfLists:
-            self._flatten = self._flatten_single
+            self._flatten = self._flatten_pair_of_lists
 
     @throw_ersilia_exception
     def check_model_id(self, model_id):
@@ -204,10 +204,10 @@ class ExampleGenerator(ErsiliaBase):
             return ","
 
     def _flatten_single(self, datum):
-        return datum
+        return [datum]
 
     def _flatten_list(self, datum):
-        return self._string_delimiter.join(datum)
+        return [self._string_delimiter.join(datum)]
 
     def _flatten_pair_of_lists(self, datum):
         return [
@@ -242,7 +242,7 @@ class ExampleGenerator(ErsiliaBase):
                     writer = csv.writer(f, delimiter=delimiter)
                     if simple:
                         for v in self.IO.example(n_samples):
-                            writer.writerow([self._flatten(v["input"])])
+                            writer.writerow(self._flatten(v["input"]))
                     else:
                         writer.writerow(["key", "input", "text"])
                         for v in self.IO.example(n_samples):
