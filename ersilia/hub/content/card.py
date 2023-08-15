@@ -7,7 +7,7 @@ from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 import validators
-from validators import ValidationFailure
+from validators import ValidationError
 
 from ...utils.exceptions_utils.card_exceptions import (
     SlugBaseInformationError,
