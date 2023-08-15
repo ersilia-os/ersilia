@@ -86,7 +86,7 @@
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="o">.</span><span class="n">minor</span><span class="o">&lt;=</span><span class="mi">7</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationFailure</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationError</span>
+    <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ValidationFailure</span>
 
 <span class="kn">from</span> <span class="nn">...utils.exceptions_utils.card_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">SlugBaseInformationError</span><span class="p">,</span>
