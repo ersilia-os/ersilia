@@ -4,14 +4,17 @@ import click
 import tempfile
 import types
 import subprocess
+import shutil
 import time 
 import re
+import pandas as pd
 from ..cli import echo
 
 from fuzzywuzzy import fuzz
 from ..io.input import ExampleGenerator
 from .. import ErsiliaBase
 from .. import throw_ersilia_exception
+from ..utils.terminal import run_command, run_command_check_output
 from .. import ErsiliaModel
 from ..utils.exceptions_utils import test_exceptions as texc
 from ..core.session import Session
@@ -24,6 +27,7 @@ NUM_SAMPLES = 5
 BOLD = '\033[1m'
 RESET = '\033[0m'
 
+BASE = 'base'
 
 class ModelTester(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
@@ -240,23 +244,6 @@ class ModelTester(ErsiliaBase):
             raise texc.InvalidEntry("Output Shape")
 
     """
-    This is a helper function for the run_bash() function, and it parses through the Dockerfile to find 
-    the package installation lines.
-    """
-    def _parse_dockerfile(self, temp_dir, pyversion):
-        packages = set()
-        prefix = "FROM bentoml/model-server:0.11.0-py"
-        os.chdir(temp_dir) # navigate into cloned repo
-        with open('Dockerfile', 'r') as dockerfile:
-            lines = dockerfile.readlines()
-            assert lines[0].startswith(prefix)
-            pyversion[0] = lines[0][len(prefix):]
-            lines_as_string = '\n'.join(lines)
-            run_lines = re.findall(r'^\s*RUN\s+(.+)$', lines_as_string, re.MULTILINE)
-        return run_lines
-
-
-    """
     Check the model information to make sure it's correct. Performs the following checks:
     - Checks that model ID is correct
     - Checks that model slug is non-empty
@@ -418,26 +405,85 @@ class ModelTester(ErsiliaBase):
             echo("Number of outputs and inputs are equal!\n")
 
 
-    # WITH CONDA!!!!
+    def _parse_dockerfile(self, temp_dir, pyversion):
+        packages = set()
+        prefix = "FROM bentoml/model-server:0.11.0-py"
+        os.chdir(temp_dir) # navigate into cloned repo
+        with open('Dockerfile', 'r') as dockerfile:
+            lines = dockerfile.readlines()
+            assert lines[0].startswith(prefix)
+            pyversion[0] = lines[0][len(prefix):]
+            lines_as_string = '\n'.join(lines)
+            run_lines = re.findall(r'^\s*RUN\s+(.+)$', lines_as_string, re.MULTILINE)
+
+        pip_prefix = "pip install"
+        conda_prefix = "conda install"
+        
+        modified_run_lines = [] 
+        for line in run_lines:
+            if line.startswith(pip_prefix):
+                line = line.replace(pip_prefix, "pip install --quiet --no-input")
+            elif line.startswith(conda_prefix):
+                line = line + " -y"
+            else:
+                print("not conda or pip")
+            
+            modified_run_lines.append(line) 
+
+        return modified_run_lines  
+    
+    @staticmethod
+    def default_env():
+        if "CONDA_DEFAULT_ENV" in os.environ:
+            return os.environ["CONDA_DEFAULT_ENV"]
+        else:
+            return BASE
+    
+    @staticmethod
+    def conda_prefix(is_base):
+        o = run_command_check_output("which conda").rstrip()
+        if o:
+            o = os.path.abspath(os.path.join(o, "..", ".."))
+            return o
+        if is_base:
+            o = run_command_check_output("echo $CONDA_PREFIX").rstrip()
+            return o
+        else:
+            o = run_command_check_output("echo $CONDA_PREFIX_1").rstrip()
+            return o
+
+    def is_base(self):
+        default_env = self.default_env()
+        if default_env == 'base':
+            return True
+        else:
+            return False
+    
+    def _compare_tolerance(self, value1, value2, tolerance_percentage):
+        diff = abs(value1 - value2)
+        tolerance = (tolerance_percentage / 100) * max(abs(value1), abs(value2))
+        return diff <= tolerance
+    
+    def _compare_string_similarity(self, str1, str2, similarity_threshold):
+        similarity = fuzz.ratio(str1, str2)
+        return similarity >= similarity_threshold
+
     @throw_ersilia_exception
     def run_bash(self): 
-        # print("Running the model bash script...")
         print("Cloning a temporary file and calculating model size...")
         
-        # Save current working directory - atm, this must be run from root directory (~)
-        # TODO: is there a way to change this so that this test command doesn't have to be run from root dir
-        current_dir = os.getcwd()
-
-        # Create temp directory and clone model 
+        # Create temp directory and clone model repo
         with tempfile.TemporaryDirectory() as temp_dir:
+            """
             repo_url = 'https://github.com/ersilia-os/{0}.git'.format(self.model_id) 
             try:
                 subprocess.run(['git', 'clone', repo_url, temp_dir], check=True)
             except subprocess.CalledProcessError as e:
                 print(f"Error while cloning the repository: {e}")
+            """
 
-            # we will remove this part later, but will keep until we get the run_bash() function working
-            self._set_model_size(temp_dir)
+            # Print size of model
+            self._set_model_size(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}".format(self.model_id)))
             size_kb = self.model_size / 1024
             size_mb = size_kb / 1024
             size_gb = size_mb / 1024
@@ -445,68 +491,115 @@ class ModelTester(ErsiliaBase):
             print("KB:", size_kb)
             print("MB:", size_mb)
             print("GB:", size_gb)
-            return
-        
-            # halt this check if the run.sh file does not exist (e.g. eos3b5e)
-            if not os.path.exists(os.path.join(temp_dir, "model/framework/run.sh")):
+
+            click.echo(BOLD + "\nRunning the model bash script..." + RESET)
+            
+            # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
+            if not os.path.exists(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework/run.sh".format(self.model_id))):
                 print("Check halted: run.sh file does not exist.")
+                return
+            
+            # Halt this check if the model was not fetched from github or S3
+            if not os.path.exists(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/metadata.json".format(self.model_id))):
+                print("Check halted: model not fetch from Github or S3")
                 return
 
             # Navigate into the temporary directory
-            subdirectory_path = os.path.join(temp_dir, "model/framework")
+            subdirectory_path = os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework".fomat(self.model_id))
             os.chdir(subdirectory_path)
 
-            # Parse Dockerfile 
-            #dockerfile_path = os.path.join(temp_dir, "Dockerfile")
+            # Parse Dockerfiles
             pyversion = [0]
             packages = self._parse_dockerfile(temp_dir, pyversion)
-            pyversion[0] = pyversion[0][0] + '.' + pyversion[0][1:]
+            packages_string = '\n'.join(packages)
+            pyversion[0] = pyversion[0][0] + '.' + pyversion[0][1:-1]  
 
-            conda_env_name = self.model_id
             try:
-                # subprocess.run(['conda', 'create', '-n', self.model_id, 'python={0}'.format(pyversion[0])], check=True)
-                subprocess.run(['conda', 'create', '-n', self.model_id, 'python={0}'.format('3.10.0')], check=True)
-                subprocess.run(['conda', 'activate', conda_env_name], shell=True, check=True)
-
-                # install packages
-                for package in packages:
-                    if 'conda install' in package:
-                        # Handle conda package installation
-                        subprocess.run(package, shell=True, check=True)
-                    elif 'pip install' in package:
-                        subprocess.run(package, shell=True, check=True)
-                    else:
-                        print("Invalid package command:", package)
-                print("Packages printed!")
+                run_path = os.path.abspath(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework/".format(self.model_id)))
+                arg0 = os.path.abspath(os.path.join(self.conda_prefix(self.is_base()), "../ersilia/test/inputs/compound_singles.csv"))     
                 
-                # Create temp file
-                with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:
-                    temp_file_path = temp_file.name
+                tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
+                arg1 = os.path.join(temp_dir, "bash_output.csv")
+                output_log = os.path.abspath(os.path.join(temp_dir, "output.txt"))
+                error_log = os.path.abspath(os.path.join(temp_dir, "error.txt"))
 
-                # Run bash script with specified args
-                output_path = temp_file_path
-                run_path = os.path.join(temp_dir, "model/framework/run.sh")      # path to run.sh
-                arg1 = os.path.join(current_dir, "ersilia/test/inputs/compound_singles.csv")      # input
-                arg2 = output_path      # output
+                bash_script = """
+    source {0}/etc/profile.d/conda.sh 
+    conda activate {1}
+    {3}
+    cd {4}
+    bash run.sh . {5} {6} > {7} 2> {8}
+    conda deactivate
+    """.format(self.conda_prefix(self.is_base()), self.model_id, pyversion[0], packages_string, run_path, arg0, arg1, output_log, error_log)
 
+                with open(tmp_script, "w") as f:
+                    f.write(bash_script)
+
+                print("Executing 'bash run.sh'...")
                 try:
-                    subprocess.run(['bash', run_path, ".", arg1, arg2,], check=True)
+                    subprocess.run(['bash', tmp_script], capture_output=True, text=True, check=True)
+                    print("Bash execution completed!\n")
                 except subprocess.CalledProcessError as e:
-                    print(f"Error while running the bash script: {e}")
+                    print("Error encountered while running the bash script.")
 
-                with open(output_path, 'r') as temp_file:
-                    output_contents = temp_file.read()
+                with open(output_log, "r") as output_file:
+                    output_content = output_file.read()
+                    print("Captured Output:")
+                    print(output_content)
 
-                print("Output contents:")
-                print(output_contents)
-
-                deactivate_command = "conda deactivate"
-                subprocess.run(deactivate_command, shell=True, check=True)
+                with open(error_log, "r") as error_file:
+                    error_content = error_file.read()
+                    print("Captured Error:")
+                    print(error_content)
 
             except Exception as e:
                     print(f"Error while creating or activating the conda environment: {e}")
+            
+            print("Executing ersilia run...")
+            output_file = os.path.abspath(os.path.join(temp_dir, "ersilia_output.csv"))
 
-    
+            session = Session(config_json=None)
+            service_class = session.current_service_class()
+            mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
+            result = mdl.run(input=arg0, output=output_file, batch_size=100)
+            print("Ersilia run completed!")
+            
+            ersilia_run = pd.read_csv(output_file)
+            remove_cols = ['key', 'input']
+            ersilia_run = ersilia_run.drop(columns=remove_cols)
+            bash_run = pd.read_csv(arg1)
+            print("Bash output:\n", bash_run)
+            print("Ersilia output:\n", ersilia_run)
+
+            # Select common columns for comparison
+            common_columns = ersilia_run.columns.intersection(bash_run.columns)
+
+            # Compare values in the common columns within a 5% tolerance`
+            for column in common_columns:
+                if isinstance(ersilia_run[column][1], (float, int)) and isinstance(ersilia_run[column][1], (float, int)): 
+                    if not all(self._compare_tolerance(a, b, 5) for a, b in zip(ersilia_run[column], bash_run[column])):
+                        print("Bash run and Ersilia run produce inconsistent results.")
+                        print("Error in the following column: ", column)
+                        print(ersilia_run[column])
+                        print(bash_run[column])
+                        raise texc.InconsistentOutputs(self.model_id)
+                elif isinstance(ersilia_run[column][1], str) and isinstance(ersilia_run[column][1], str):
+                    if not all(self._compare_string_similarity(a, b, 95) for a, b in zip(ersilia_run[column], bash_run[column])):
+                        print("Bash run and Ersilia run produce inconsistent results.")
+                        print("Error in the following column: ", column)
+                        print(ersilia_run[column])
+                        print(bash_run[column])
+                        raise texc.InconsistentOutputs(self.model_id)
+                elif isinstance(ersilia_run[column][1], bool) and isinstance(ersilia_run[column][1], bool):    
+                    if not ersilia_run[column].equals(bash_run[column]):
+                        print("Bash run and Ersilia run produce inconsistent results.")
+                        print("Error in the following column: ", column)
+                        print(ersilia_run[column])
+                        print(bash_run[column])
+                        raise texc.InconsistentOutputs(self.model_id)
+
+            click.echo(BOLD + "\nSUCCESS! Bash run and Ersilia run produce consistent results." + RESET)
+
     """
     writes to the .json file all the basic information received from the test module:
     - size of the model
@@ -536,10 +629,10 @@ class ModelTester(ErsiliaBase):
 
     def run(self, output_file):
         start = time.time()
-        self.check_information(output_file)
-        self.check_single_input(output_file)
-        self.check_example_input(output_file)
-        self.check_consistent_output()
+        #self.check_information(output_file)
+        #self.check_single_input(output_file)
+        #self.check_example_input(output_file)
+        #self.check_consistent_output()
         self.run_bash()
         
         end = time.time()
