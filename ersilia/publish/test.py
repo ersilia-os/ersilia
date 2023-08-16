@@ -496,13 +496,9 @@ class ModelTester(ErsiliaBase):
             
             # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
             if not os.path.exists(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework/run.sh".format(self.model_id))):
-                print("Check halted: run.sh file does not exist.")
+                print("Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3.")
                 return
-            
-            # Halt this check if the model was not fetched from github or S3
-            if not os.path.exists(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/metadata.json".format(self.model_id))):
-                print("Check halted: model not fetch from Github or S3")
-                return
+        
 
             # Navigate into the temporary directory
             subdirectory_path = os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework".fomat(self.model_id))
