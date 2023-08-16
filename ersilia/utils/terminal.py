@@ -31,21 +31,32 @@ def run_command(cmd, quiet=None):
     if type(cmd) == str:
         if quiet:
             with open(os.devnull, "w") as fp:
-                subprocess.Popen(
+                return_code = subprocess.Popen(
                     cmd, stdout=fp, stderr=fp, shell=True, env=os.environ
                 ).wait()
         else:
-            subprocess.Popen(cmd, shell=True, env=os.environ).wait()
+            return_code = subprocess.Popen(cmd, shell=True, env=os.environ).wait()
     else:
         if quiet:
-            subprocess.check_call(
-                cmd,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                env=os.environ,
-            )
+            try:
+                subprocess.check_call(
+                    cmd,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    env=os.environ,
+                )
+                return_code = 0
+            except subprocess.CalledProcessError as e:
+                return_code = e.returncode
         else:
-            subprocess.check_call(cmd, env=os.environ)
+            try:
+                subprocess.check_call(cmd, env=os.environ)
+                return_code = 0
+            except subprocess.CalledProcessError as e:
+                return_code = e.returncode
+
+    if return_code != 0:
+        raise subprocess.CalledProcessError(return_code, cmd)
 
 
 def run_command_check_output(cmd):
