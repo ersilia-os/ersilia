@@ -501,7 +501,7 @@ class ModelTester(ErsiliaBase):
         
 
             # Navigate into the temporary directory
-            subdirectory_path = os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework".fomat(self.model_id))
+            subdirectory_path = os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework".format(self.model_id))
             os.chdir(subdirectory_path)
 
             # Parse Dockerfiles
