@@ -404,7 +404,7 @@ class ModelTester(ErsiliaBase):
         else: 
             echo("Number of outputs and inputs are equal!\n")
 
-
+    """
     def _parse_dockerfile(self, temp_dir, pyversion):
         packages = set()
         prefix = "FROM bentoml/model-server:0.11.0-py"
@@ -431,7 +431,8 @@ class ModelTester(ErsiliaBase):
             modified_run_lines.append(line) 
 
         return modified_run_lines  
-    
+    """
+        
     @staticmethod
     def default_env():
         if "CONDA_DEFAULT_ENV" in os.environ:
@@ -504,11 +505,13 @@ class ModelTester(ErsiliaBase):
             subdirectory_path = os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework".format(self.model_id))
             os.chdir(subdirectory_path)
 
+            """
             # Parse Dockerfiles
             pyversion = [0]
             packages = self._parse_dockerfile(temp_dir, pyversion)
             packages_string = '\n'.join(packages)
             pyversion[0] = pyversion[0][0] + '.' + pyversion[0][1:-1]  
+            """
 
             try:
                 run_path = os.path.abspath(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework/".format(self.model_id)))
@@ -522,11 +525,10 @@ class ModelTester(ErsiliaBase):
                 bash_script = """
     source {0}/etc/profile.d/conda.sh 
     conda activate {1}
-    {3}
-    cd {4}
-    bash run.sh . {5} {6} > {7} 2> {8}
+    cd {2}
+    bash run.sh . {3} {4} > {5} 2> {6}
     conda deactivate
-    """.format(self.conda_prefix(self.is_base()), self.model_id, pyversion[0], packages_string, run_path, arg0, arg1, output_log, error_log)
+    """.format(self.conda_prefix(self.is_base()), self.model_id, run_path, arg0, arg1, output_log, error_log)
 
                 with open(tmp_script, "w") as f:
                     f.write(bash_script)
