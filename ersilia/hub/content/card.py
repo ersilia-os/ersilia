@@ -9,9 +9,9 @@ from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 import validators
 
-if sys.version_info.minor<8:
+try:
     from validators import ValidationFailure
-else:
+except ImportError:
     from validators import ValidationError as ValidationFailure
 
 from ...utils.exceptions_utils.card_exceptions import (
