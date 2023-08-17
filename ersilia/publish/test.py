@@ -466,6 +466,7 @@ class ModelTester(ErsiliaBase):
             # Read it into a temp file
             ex_file = os.path.abspath(os.path.join(temp_dir, "example_file.csv"))
             with open(ex_file, "w") as f:
+                f.write("smiles")
                 for item in input:
                     f.write(str(item) + '\n')
 
