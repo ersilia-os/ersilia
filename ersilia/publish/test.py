@@ -403,35 +403,6 @@ class ModelTester(ErsiliaBase):
             raise texc.MissingOutputs()
         else: 
             echo("Number of outputs and inputs are equal!\n")
-
-    """
-    def _parse_dockerfile(self, temp_dir, pyversion):
-        packages = set()
-        prefix = "FROM bentoml/model-server:0.11.0-py"
-        os.chdir(temp_dir) # navigate into cloned repo
-        with open('Dockerfile', 'r') as dockerfile:
-            lines = dockerfile.readlines()
-            assert lines[0].startswith(prefix)
-            pyversion[0] = lines[0][len(prefix):]
-            lines_as_string = '\n'.join(lines)
-            run_lines = re.findall(r'^\s*RUN\s+(.+)$', lines_as_string, re.MULTILINE)
-
-        pip_prefix = "pip install"
-        conda_prefix = "conda install"
-        
-        modified_run_lines = [] 
-        for line in run_lines:
-            if line.startswith(pip_prefix):
-                line = line.replace(pip_prefix, "pip install --quiet --no-input")
-            elif line.startswith(conda_prefix):
-                line = line + " -y"
-            else:
-                print("not conda or pip")
-            
-            modified_run_lines.append(line) 
-
-        return modified_run_lines  
-    """
         
     @staticmethod
     def default_env():
@@ -471,17 +442,10 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def run_bash(self): 
-        print("Cloning a temporary file and calculating model size...")
+        click.echo(BOLD + "Calculating model size..." + RESET)
         
         # Create temp directory and clone model repo
         with tempfile.TemporaryDirectory() as temp_dir:
-            """
-            repo_url = 'https://github.com/ersilia-os/{0}.git'.format(self.model_id) 
-            try:
-                subprocess.run(['git', 'clone', repo_url, temp_dir], check=True)
-            except subprocess.CalledProcessError as e:
-                print(f"Error while cloning the repository: {e}")
-            """
 
             # Print size of model
             self._set_model_size(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}".format(self.model_id)))
@@ -492,31 +456,30 @@ class ModelTester(ErsiliaBase):
             print("KB:", size_kb)
             print("MB:", size_mb)
             print("GB:", size_gb)
-
-            click.echo(BOLD + "\nRunning the model bash script..." + RESET)
             
+            click.echo(BOLD + "\nRunning the model bash script..." + RESET)
+
+            # Create an example input
+            eg = ExampleGenerator(model_id=self.model_id)
+            input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True)
+            
+            # Read it into a temp file
+            ex_file = os.path.abspath(os.path.join(temp_dir, "example_file.csv"))
+            with open(ex_file, "w") as f:
+                for item in input:
+                    f.write(str(item) + '\n')
+
             # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
             if not os.path.exists(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework/run.sh".format(self.model_id))):
                 print("Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3.")
                 return
-        
 
             # Navigate into the temporary directory
             subdirectory_path = os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework".format(self.model_id))
             os.chdir(subdirectory_path)
 
-            """
-            # Parse Dockerfiles
-            pyversion = [0]
-            packages = self._parse_dockerfile(temp_dir, pyversion)
-            packages_string = '\n'.join(packages)
-            pyversion[0] = pyversion[0][0] + '.' + pyversion[0][1:-1]  
-            """
-
             try:
                 run_path = os.path.abspath(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework/".format(self.model_id)))
-                arg0 = os.path.abspath(os.path.join(self.conda_prefix(self.is_base()), "../ersilia/test/inputs/compound_singles.csv"))     
-                
                 tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
                 arg1 = os.path.join(temp_dir, "bash_output.csv")
                 output_log = os.path.abspath(os.path.join(temp_dir, "output.txt"))
@@ -528,7 +491,7 @@ class ModelTester(ErsiliaBase):
     cd {2}
     bash run.sh . {3} {4} > {5} 2> {6}
     conda deactivate
-    """.format(self.conda_prefix(self.is_base()), self.model_id, run_path, arg0, arg1, output_log, error_log)
+    """.format(self.conda_prefix(self.is_base()), self.model_id, run_path, ex_file, arg1, output_log, error_log)
 
                 with open(tmp_script, "w") as f:
                     f.write(bash_script)
@@ -551,7 +514,7 @@ class ModelTester(ErsiliaBase):
                     print(error_content)
 
             except Exception as e:
-                    print(f"Error while creating or activating the conda environment: {e}")
+                    print(f"Error while activating the conda environment: {e}")
             
             print("Executing ersilia run...")
             output_file = os.path.abspath(os.path.join(temp_dir, "ersilia_output.csv"))
@@ -559,15 +522,15 @@ class ModelTester(ErsiliaBase):
             session = Session(config_json=None)
             service_class = session.current_service_class()
             mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
-            result = mdl.run(input=arg0, output=output_file, batch_size=100)
-            print("Ersilia run completed!")
+            result = mdl.run(input=ex_file, output=output_file, batch_size=100)
+            print("Ersilia run completed!\n")
             
             ersilia_run = pd.read_csv(output_file)
             remove_cols = ['key', 'input']
             ersilia_run = ersilia_run.drop(columns=remove_cols)
             bash_run = pd.read_csv(arg1)
             print("Bash output:\n", bash_run)
-            print("Ersilia output:\n", ersilia_run)
+            print("\nErsilia output:\n", ersilia_run)
 
             # Select common columns for comparison
             common_columns = ersilia_run.columns.intersection(bash_run.columns)
@@ -576,21 +539,21 @@ class ModelTester(ErsiliaBase):
             for column in common_columns:
                 if isinstance(ersilia_run[column][1], (float, int)) and isinstance(ersilia_run[column][1], (float, int)): 
                     if not all(self._compare_tolerance(a, b, 5) for a, b in zip(ersilia_run[column], bash_run[column])):
-                        print("Bash run and Ersilia run produce inconsistent results.")
+                        click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
                         print("Error in the following column: ", column)
                         print(ersilia_run[column])
                         print(bash_run[column])
                         raise texc.InconsistentOutputs(self.model_id)
                 elif isinstance(ersilia_run[column][1], str) and isinstance(ersilia_run[column][1], str):
                     if not all(self._compare_string_similarity(a, b, 95) for a, b in zip(ersilia_run[column], bash_run[column])):
-                        print("Bash run and Ersilia run produce inconsistent results.")
+                        click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
                         print("Error in the following column: ", column)
                         print(ersilia_run[column])
                         print(bash_run[column])
                         raise texc.InconsistentOutputs(self.model_id)
                 elif isinstance(ersilia_run[column][1], bool) and isinstance(ersilia_run[column][1], bool):    
                     if not ersilia_run[column].equals(bash_run[column]):
-                        print("Bash run and Ersilia run produce inconsistent results.")
+                        click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
                         print("Error in the following column: ", column)
                         print(ersilia_run[column])
                         print(bash_run[column])
