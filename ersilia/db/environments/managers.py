@@ -171,7 +171,7 @@ class DockerManager(ErsiliaBase):
             print('done building for linux/amd64,linux/arm64')
             sys.exit()  # This will terminate the program immediately only if build for linux/amd64,linux/arm64 complete successfully
             
-        except subprocess.CalledProcessError as e:
+        except:
             # Build failed for multi-platforms, now try building only for linux/amd64
             self.logger.warning("Build failed for multi-platform, trying linux/amd64 only")
             cmd = "cd {0}; docker build -t {1}/{2}:{3} .".format(
