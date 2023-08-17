@@ -91,7 +91,7 @@
 
 <div class="viewcode-block" id="DockerHubUploader.build_image"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.dockerhub.DockerHubUploader.build_image">[docs]</a>    <span class="k">def</span> <span class="nf">build_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">()</span>
-        <span class="n">dm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
+        <span class="n">dm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_pwd</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DockerHubUploader.upload"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.dockerhub.DockerHubUploader.upload">[docs]</a>    <span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">build_image</span><span class="p">()</span>
