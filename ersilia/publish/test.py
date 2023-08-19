@@ -7,7 +7,6 @@ import subprocess
 import shutil
 import time 
 import re
-import pandas as pd
 from ..cli import echo
 
 from fuzzywuzzy import fuzz
@@ -439,6 +438,16 @@ class ModelTester(ErsiliaBase):
     def _compare_string_similarity(self, str1, str2, similarity_threshold):
         similarity = fuzz.ratio(str1, str2)
         return similarity >= similarity_threshold
+    
+    def read_csv(self, file_path):
+        data = []
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+            header = lines[0].strip().split(',')
+            for line in lines[1:]:
+                values = line.strip().split(',')
+                data.append(dict(zip(header, values)))
+        return data
 
     @throw_ersilia_exception
     def run_bash(self): 
@@ -525,20 +534,31 @@ class ModelTester(ErsiliaBase):
             result = mdl.run(input=ex_file, output=output_file, batch_size=100)
             print("Ersilia run completed!\n")
             
-            ersilia_run = pd.read_csv(output_file)
+            ersilia_run = self.read_csv(output_file)
             remove_cols = ['key', 'input']
-            ersilia_run = ersilia_run.drop(columns=remove_cols)
-            bash_run = pd.read_csv(arg1)
+            for row in ersilia_run:
+                for col in remove_cols:
+                    if col in row:
+                        del row[col]
+            bash_run = self.read_csv(arg1)
             print("Bash output:\n", bash_run)
             print("\nErsilia output:\n", ersilia_run)
 
             # Select common columns for comparison
-            common_columns = ersilia_run.columns.intersection(bash_run.columns)
+            ersilia_columns = set()
+            for row in ersilia_run:
+                ersilia_columns.update(row.keys())
+
+            bash_columns = set()
+            for row in bash_run:
+                bash_columns.update(row.keys())
+
+            common_columns = ersilia_columns & bash_columns
 
             # Compare values in the common columns within a 5% tolerance`
             for column in common_columns:
                 if isinstance(ersilia_run[column][1], (float, int)) and isinstance(ersilia_run[column][1], (float, int)): 
-                    if not all(self._compare_tolerance(a, b, 5) for a, b in zip(ersilia_run[column], bash_run[column])):
+                    if not all(self._compare_tolerance(a, b, DIFFERENCE_THRESHOLD) for a, b in zip(ersilia_run[column], bash_run[column])):
                         click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
                         print("Error in the following column: ", column)
                         print(ersilia_run[column])
