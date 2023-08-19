@@ -444,7 +444,6 @@ class ModelTester(ErsiliaBase):
     def run_bash(self): 
         click.echo(BOLD + "Calculating model size..." + RESET)
         
-        # Create temp directory and clone model repo
         with tempfile.TemporaryDirectory() as temp_dir:
 
             # Print size of model
