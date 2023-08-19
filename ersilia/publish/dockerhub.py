@@ -17,7 +17,7 @@ class DockerHubUploader(ErsiliaBase):
 
     def build_image(self):
         dm = DockerManager()
-        dm.build(self.model_id)
+        dm.build(self.model_id, self.docker_user, self.docker_pwd)
 
     def upload(self):
         self.build_image()
