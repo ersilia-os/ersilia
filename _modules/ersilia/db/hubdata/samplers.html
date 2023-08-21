@@ -174,7 +174,7 @@
         <span class="p">}</span>
         <span class="c1">#Ensure that there is only one input type specified in the metadata.</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="n">input_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">input_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
         <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span>
         <span class="k">if</span> <span class="n">input_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">shapes_to_filename_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
