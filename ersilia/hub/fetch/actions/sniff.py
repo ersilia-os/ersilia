@@ -90,7 +90,7 @@ class ModelSniffer(BaseAction):
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
-        mbytes = size / (1024**2)
+        mbytes = size / (1024 ** 2)
         return mbytes
 
     def _get_schema(self, results):
