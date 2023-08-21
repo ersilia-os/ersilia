@@ -100,10 +100,10 @@ class InputSampler(ErsiliaBase):
         }
         #Ensure that there is only one input type specified in the metadata.
         assert len(self.input_type) == 1
-        input_type = self.input_type[0].lower()
-        input_shape = self.input_shape.lower().replace(" ", "-")
+        input_type = self.input_type.lower()
+        input_shape = self.input_shape.lower().replace(" ", "_")
         file_name=None
-        if(input_shape not in shapes_to_filename_map):
+        if input_shape not in shapes_to_filename_map.keys():
             raise InputBaseInformationError()
         file_name= shapes_to_filename_map[input_shape]
         assert file_name is not None
