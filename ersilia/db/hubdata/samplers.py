@@ -91,28 +91,17 @@ class InputSampler(ErsiliaBase):
         return None
 
     def _create_url_to_get_sample_content(self):
-        shapes_to_filename_map = {
-            'single':"inp-000.csv",
-            'pair' :"inp-pair.csv",
-            'list': "inp-list.csv",
-            'pair_of_lists': 'inp-pair-of-lists',
-            'list_of_list':'inp-list-of-lists'
-        }
+        shapes = ["single", "pair", "list", "pair-of-lists"]
         #Ensure that there is only one input type specified in the metadata.
         assert len(self.input_type) == 1
         input_type = self.input_type[0].lower()
-        input_shape = self.input_shape.lower().replace(" ", "_")
-        file_name=None
-        if input_shape not in shapes_to_filename_map.keys():
+        input_shape = self.input_shape.lower().replace(" ", "-")
+        if input_shape not in shapes:
             raise InputBaseInformationError()
-        file_name= shapes_to_filename_map[input_shape]
-        assert file_name is not None
-
-        return  "https://raw.githubusercontent.com/ersilia-os/{0}/main/{1}/{2}/{3}".format(
+        return  "https://raw.githubusercontent.com/ersilia-os/{0}/main/{1}/{2}/inp-000.csv".format(
                 _ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY,
                 input_type,
                 input_shape,
-                file_name,
             )
         
 
@@ -122,14 +111,13 @@ class InputSampler(ErsiliaBase):
             download = s.get(url)
             decoded_content = download.content.decode("utf-8")
             cr = csv.reader(decoded_content.splitlines(), delimiter=",")
-            data = list(cr)[1:]
-            R = []
-            for r in data:
-                R += [r]
-        return R
+            data = list(cr)
+            headers = data[0]
+            content = data[1:]
+        return content, headers
 
     def sample(self, n_samples, file_name):
-        entities = self._get_inputs_from_maintained_file()
+        entities, headers = self._get_inputs_from_maintained_file()
         entities = random.sample(entities, min(n_samples, len(entities)))
         if file_name is None:
             for e in entities:
@@ -137,6 +125,6 @@ class InputSampler(ErsiliaBase):
         else:
             with open(file_name, "w") as f:
                 writer = csv.writer(f)
-                writer.writerow(["key", "input"])
+                writer.writerow(headers)
                 for r in entities:
                     writer.writerow(r)
