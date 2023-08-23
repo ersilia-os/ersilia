@@ -31,7 +31,6 @@ slim = [
     "tqdm",
     "click",
     "docker",
-    "fuzzywuzzy"
 ]
 slim_requires = slim
 
@@ -42,7 +41,7 @@ lake_requires = slim_requires + ["isaura==0.1"]
 doc_builder_requires = slim + ["sphinx", "jinja2"]
 
 # Test requirements
-test_requires = slim + ["pytest"]
+test_requires = slim + ["pytest", "fuzzywuzzy"]
 
 # Define extras requires
 extras_require = {
