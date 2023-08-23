@@ -199,7 +199,12 @@
         <span class="n">path</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">base_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">base_folder</span><span class="p">)</span>
-        <span class="n">base_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Dockerfile&quot;</span><span class="p">,</span> <span class="s2">&quot;docker-entrypoint.sh&quot;</span><span class="p">,</span> <span class="s2">&quot;nginx.conf&quot;</span><span class="p">,</span> <span class="s2">&quot;download-miniconda.sh&quot;</span><span class="p">]</span>
+        <span class="n">base_files</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;Dockerfile&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;docker-entrypoint.sh&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;nginx.conf&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;download-miniconda.sh&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">base_files</span><span class="p">:</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;cd </span><span class="si">{0}</span><span class="s2">; wget </span><span class="si">{2}</span><span class="s2">/base/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">base_folder</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_deploy_dockerfiles_url</span>
@@ -231,23 +236,25 @@
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="c1"># login to docker so as to be able to push images to dockerhub</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker login --password </span><span class="si">{0}</span><span class="s2"> --username </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">docker_pwd</span><span class="p">,</span> <span class="n">docker_user</span>
-            <span class="p">)</span>
+            <span class="n">docker_pwd</span><span class="p">,</span> <span class="n">docker_user</span>
+        <span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Attempt to build for linux/amd64 and linux/arm64</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;building for both linux/amd64,linux/arm64&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;building for both linux/amd64,linux/arm64&quot;</span><span class="p">)</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;cd </span><span class="si">{0}</span><span class="s2">; docker buildx build --builder=container --platform linux/amd64,linux/arm64 -t </span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">:</span><span class="si">{3}</span><span class="s2"> --push .&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">model_folder</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
             <span class="p">)</span>
             <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done building for linux/amd64,linux/arm64&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done building for linux/amd64,linux/arm64&quot;</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>  <span class="c1"># This will terminate the program immediately only if build for linux/amd64,linux/arm64 complete successfully</span>
-            
+
         <span class="k">except</span><span class="p">:</span>
             <span class="c1"># Build failed for multi-platforms, now try building only for linux/amd64</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Build failed for multi-platform, trying linux/amd64 only&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Build failed for multi-platform, trying linux/amd64 only&quot;</span>
+            <span class="p">)</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;cd </span><span class="si">{0}</span><span class="s2">; docker build -t </span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">:</span><span class="si">{3}</span><span class="s2"> .&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">model_folder</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
             <span class="p">)</span>
@@ -257,7 +264,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_bentoml</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">build_with_bentoml</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="n">use_cache</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">build_with_ersilia</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">docker_user</span><span class="o">=</span><span class="n">docker_user</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="o">=</span><span class="n">docker_pwd</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">build_with_ersilia</span><span class="p">(</span>
+                <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">docker_user</span><span class="o">=</span><span class="n">docker_user</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="o">=</span><span class="n">docker_pwd</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DockerManager.remove"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">)</span>
