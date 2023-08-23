@@ -9,8 +9,6 @@ from .interfaces import AirtableInterface
 from ... import ErsiliaBase
 
 
-
-
 from ...default import METADATA_JSON_FILE
 
 _AIRTABLE_MODEL_STATUS_READY = "Ready"
@@ -92,20 +90,19 @@ class InputSampler(ErsiliaBase):
 
     def _create_url_to_get_sample_content(self):
         shapes = ["single", "pair", "list", "pair-of-lists"]
-        #Ensure that there is only one input type specified in the metadata.
+        # Ensure that there is only one input type specified in the metadata.
         assert len(self.input_type) == 1
         input_type = self.input_type[0].lower()
         input_shape = self.input_shape.lower().replace(" ", "-")
         if input_shape not in shapes:
             raise InputBaseInformationError()
-        return  "https://raw.githubusercontent.com/ersilia-os/{0}/main/{1}/{2}/inp-000.csv".format(
-                _ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY,
-                input_type,
-                input_shape,
-            )
-        
+        return "https://raw.githubusercontent.com/ersilia-os/{0}/main/{1}/{2}/inp-000.csv".format(
+            _ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY,
+            input_type,
+            input_shape,
+        )
 
-    def _get_inputs_from_maintained_file(self):        
+    def _get_inputs_from_maintained_file(self):
         url = self._create_url_to_get_sample_content()
         with requests.Session() as s:
             download = s.get(url)
