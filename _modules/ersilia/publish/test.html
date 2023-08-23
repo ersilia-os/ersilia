@@ -81,8 +81,6 @@
 <span class="kn">import</span> <span class="nn">time</span> 
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">..cli</span> <span class="kn">import</span> <span class="n">echo</span>
-
-<span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">fuzz</span>
 <span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
@@ -90,6 +88,11 @@
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils</span> <span class="kn">import</span> <span class="n">test_exceptions</span> <span class="k">as</span> <span class="n">texc</span>
 <span class="kn">from</span> <span class="nn">..core.session</span> <span class="kn">import</span> <span class="n">Session</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">INFORMATION_FILE</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="kn">import</span> <span class="n">fuzz</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">fuzz</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="n">RUN_FILE</span> <span class="o">=</span> <span class="s2">&quot;run.sh&quot;</span>
 <span class="n">DATA_FILE</span> <span class="o">=</span> <span class="s2">&quot;data.csv&quot;</span>
@@ -128,7 +131,7 @@
 <span class="sd">    they&#39;re strings and not floats. The fuzz.ratio gives the percent of similarity between the two outputs.</span>
 <span class="sd">    Example: two strings that are the exact same will return 100</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">_compare_output_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">):</span> 
+    <span class="k">def</span> <span class="nf">_compare_output_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">output1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">output2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
             <span class="k">return</span> <span class="mi">100</span>
         <span class="k">else</span><span class="p">:</span>
