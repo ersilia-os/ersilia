@@ -7,8 +7,6 @@ import subprocess
 import time 
 import re
 from ..cli import echo
-
-from fuzzywuzzy import fuzz
 from ..io.input import ExampleGenerator
 from .. import ErsiliaBase
 from .. import throw_ersilia_exception
@@ -16,6 +14,11 @@ from .. import ErsiliaModel
 from ..utils.exceptions_utils import test_exceptions as texc
 from ..core.session import Session
 from ..default import INFORMATION_FILE
+
+try:
+    from fuzzywuzzy import fuzz
+except:
+    fuzz = None
 
 RUN_FILE = "run.sh"
 DATA_FILE = "data.csv"
@@ -54,7 +57,7 @@ class ModelTester(ErsiliaBase):
     they're strings and not floats. The fuzz.ratio gives the percent of similarity between the two outputs.
     Example: two strings that are the exact same will return 100
     """
-    def _compare_output_strings(self, output1, output2): 
+    def _compare_output_strings(self, output1, output2):
         if output1 is None and output2 is None: 
             return 100
         else:
