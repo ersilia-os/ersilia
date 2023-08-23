@@ -125,7 +125,12 @@ class DockerManager(ErsiliaBase):
         path = tempfile.mkdtemp(prefix="ersilia-")
         base_folder = os.path.join(path, "base")
         os.mkdir(base_folder)
-        base_files = ["Dockerfile", "docker-entrypoint.sh", "nginx.conf", "download-miniconda.sh"]
+        base_files = [
+            "Dockerfile",
+            "docker-entrypoint.sh",
+            "nginx.conf",
+            "download-miniconda.sh",
+        ]
         for f in base_files:
             cmd = "cd {0}; wget {2}/base/{1}".format(
                 base_folder, f, self._model_deploy_dockerfiles_url
@@ -157,23 +162,25 @@ class DockerManager(ErsiliaBase):
             f.write(text)
         # login to docker so as to be able to push images to dockerhub
         cmd = "docker login --password {0} --username {1}".format(
-                docker_pwd, docker_user
-            )
+            docker_pwd, docker_user
+        )
         run_command(cmd)
 
         try:
             # Attempt to build for linux/amd64 and linux/arm64
-            print('building for both linux/amd64,linux/arm64')
+            print("building for both linux/amd64,linux/arm64")
             cmd = "cd {0}; docker buildx build --builder=container --platform linux/amd64,linux/arm64 -t {1}/{2}:{3} --push .".format(
                 model_folder, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
             )
             run_command(cmd)
-            print('done building for linux/amd64,linux/arm64')
+            print("done building for linux/amd64,linux/arm64")
             sys.exit()  # This will terminate the program immediately only if build for linux/amd64,linux/arm64 complete successfully
-            
+
         except:
             # Build failed for multi-platforms, now try building only for linux/amd64
-            self.logger.warning("Build failed for multi-platform, trying linux/amd64 only")
+            self.logger.warning(
+                "Build failed for multi-platform, trying linux/amd64 only"
+            )
             cmd = "cd {0}; docker build -t {1}/{2}:{3} .".format(
                 model_folder, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
             )
@@ -183,7 +190,9 @@ class DockerManager(ErsiliaBase):
         if self.with_bentoml:
             self.build_with_bentoml(model_id=model_id, use_cache=use_cache)
         else:
-            self.build_with_ersilia(model_id=model_id, docker_user=docker_user, docker_pwd=docker_pwd)
+            self.build_with_ersilia(
+                model_id=model_id, docker_user=docker_user, docker_pwd=docker_pwd
+            )
 
     def remove(self, model_id):
         self.docker.delete(org=DOCKERHUB_ORG, img=model_id, tag=DOCKERHUB_LATEST_TAG)

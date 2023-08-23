@@ -88,7 +88,9 @@ class ModelPuller(ErsiliaBase):
                 "Pulling image {0} from DockerHub...".format(self.image_name)
             )
             try:
-                img = self.client.images.get("{0}/{1}".format(DOCKERHUB_ORG, self.model_id))
+                img = self.client.images.get(
+                    "{0}/{1}".format(DOCKERHUB_ORG, self.model_id)
+                )
                 self.logger.debug(
                     f"Size of image: {img.attrs['Size'] / (1024*1024):.2f} MB"
                 )

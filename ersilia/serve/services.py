@@ -6,7 +6,7 @@ import importlib
 import requests
 import uuid
 import docker
-from .. import ErsiliaBase
+from .. import ErsiliaBase, throw_ersilia_exception
 from ..utils.terminal import run_command
 from ..utils.ports import find_free_port
 from ..db.environments.localdb import EnvironmentDb
@@ -19,6 +19,7 @@ from ..default import PACKMODE_FILE, APIS_LIST_FILE
 from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 from ..default import IS_FETCHED_FROM_HOSTED_FILE
 from ..default import INFORMATION_FILE
+from ..utils.exceptions_utils.serve_exceptions import BadGatewayError
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -531,6 +532,7 @@ class PulledDockerImageService(BaseServing):
                 container.remove()
                 self.logger.debug("Container removed")
 
+    @throw_ersilia_exception
     def _get_apis(self):
         file_name = os.path.join(
             self._get_bundle_location(self.model_id), APIS_LIST_FILE
@@ -547,7 +549,11 @@ class PulledDockerImageService(BaseServing):
         url = "{0}/info".format(self.url)
         self.logger.debug("Using URL: {0}".format(url))
         data = "{}"
-        apis_list = json.loads(requests.post(url, data=data).text)["apis_list"]
+        response = requests.post(url, data=data)
+        self.logger.debug("Status code: {0}".format(response.status_code))
+        if response.status_code == 502:
+            raise BadGatewayError(url)
+        apis_list = json.loads(response.text)["apis_list"]
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
             for api in apis_list:
