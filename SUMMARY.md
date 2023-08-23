@@ -6,7 +6,7 @@
 
 * [Introduction](ersilia-model-hub/introduction.md)
 * [Installation](ersilia-model-hub/installation.md)
-* [Model usage](ersilia-model-hub/model-usage.md)
+* [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
 * [Inputs](ersilia-model-hub/inputs-and-outputs.md)
 * [Contribute models](contributors/incorporate-models.md)
   * [Model Template](ersilia-model-hub/contribute-models/model-template.md)
