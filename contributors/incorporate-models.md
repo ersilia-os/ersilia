@@ -10,19 +10,19 @@ This page serves as a guideline to develop a selected model to add to the Ersili
 2. Models developed by Ersilia based on publicly available data.
 3. Models developed by Ersilia based on data from collaborators.
 
-In this page, we focus on the first type of models, i.e. models developed by **third parties**. These third party models come with source code and parameters (or data to train them). We show how to to use the Ersilia Model Template to adapt the assets provided by third parties and incorporate them into the Ersilia Model Hub.
+In this page, we focus on the first type of models, i.e. models developed by **third parties**. These third party models come with source code and parameters (or data to train them). We show how to use the Ersilia Model Template to adapt the assets provided by third parties and incorporate them into the Ersilia Model Hub.
 
 ## Model List
 
 First, check our Model Hub Backend, which contains:
 
 * **Model Hub:** [models](https://airtable.com/shrNc3sTtTA3QeEZu/tblZGe2a2XeBxrEHP) that are already in the Hub or being incorporated at the moment. Each model should contain accurate information about its usage, source and any other relevant information.
-* **Model Suggestions:** Contains a [backlog](https://airtable.com/shrTpe45mLKqaHXsc) of models that could be of interest to Ersilia with minimal information about them. There is a _Selected_ tickbox that means that someone is already working on the model. Once a model is incorporated it is flitered out of this list. If you have a new model suggestion, please fill in this [form](https://airtable.com/shroQLlkcmDcC0xzm) with as much detail as possible.
+* **Model Suggestions:** Contains a [backlog](https://airtable.com/shrTpe45mLKqaHXsc) of models that could be of interest to Ersilia with minimal information about them. There is a _Selected_ tickbox that means that someone is already working on the model. Once a model is incorporated, it is filtered out of this list. If you have a new model suggestion, please fill in this [form](https://airtable.com/shroQLlkcmDcC0xzm) with as much detail as possible.
 
 To start contributing:
 
 1. We only accept contributions through GitHub. Please make sure you have an account and are familiar with the basic git commands (clone, pull and push)
-2. Become a member of the **Ersilia Slack** Workspace. All our communications are centralised there. If you need a sign up link, please email us at hello@ersilia.io
+2. Become a member of the **Ersilia Slack** Workspace. All our communications are centralised there. If you need a sign up link, please email us at [hello@ersilia.io](mailto:hello@ersilia.io)
 3. Join the **#model-contributors** channel in Slack and ask for edit permits for the Spreadsheet.
 4. Fill in models of interest in the **Model Suggestions** [list](https://airtable.com/shroQLlkcmDcC0xzm) (if you need some sources of inspiration, check below)
 5. Select a model of interest from the approved backlog and open a Model Request issue in the Ersilia [repository](https://github.com/ersilia-os/ersilia/issues/new/choose).

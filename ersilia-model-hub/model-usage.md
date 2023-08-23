@@ -63,9 +63,9 @@ A URL will be prompted as well as a process id (PID). These can be relevant if y
 
 ### Make predictions
 
-The RA Score prediction model takes **chemical structures** as input and provides a score (ranging from 0 to 1). The higher the score the more synthetically accessible the molecule is predicted to be.
+The RA Score prediction model takes **chemical structures** as input and provides a score (ranging from 0 to 1). The higher the score, the more synthetically accessible the molecule is predicted to be.
 
-Ideally, in the chemistry models, the input molecules are specified as **SMILES** strings. SMILES strings can be easily found online. For instance, we can find an antibiotic, Halicin in [PubChem](https://pubchem.ncbi.nlm.nih.gov/compound/Halicin#section=Canonical-SMILES), and then predict its retrosynthetic accessibility as follows:
+Ideally, in the chemistry models, the input molecules are specified as **SMILES** strings. SMILES strings can be easily found online. For instance, we can find an antibiotic, Halicin, in [PubChem](https://pubchem.ncbi.nlm.nih.gov/compound/Halicin#section=Canonical-SMILES), and then predict its retrosynthetic accessibility as follows:
 
 ```bash
 # Halicin

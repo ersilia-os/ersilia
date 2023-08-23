@@ -36,7 +36,7 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 
 ### The `metadata.json` file
 
-The `metadata.json` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable Model Hub and the README file will automatically be updatd from the `metadata.json` upon merge of the Pull Request.
+The `metadata.json` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable Model Hub and the README file will automatically be updated from the `metadata.json` upon merge of the Pull Request.
 
 The `.json` fields are constrained by certain parameters. If they do not adhere to the minimal quality standards, the Pull Request will be rejected and an explanatory message will be available on the GitHub Action. Below we try to provide a comprehensive overview of the metadata accepted:
 
@@ -54,13 +54,13 @@ Some contributors may find it difficult to come up with a good description for t
 
 **Task**: the ML task performed by the model. The only accepted [tasks](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/task.txt) are: `Regression`, `Classification`, `Generative`, `Representation`, `Similarity`, `Clustering` and `Dimensionality reduction`.
 
-**Mode**: [mode](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/mode.txt) of training of the models: `Pretrained` (the checkpoints where downloaded directly from a third party), `Retrained` (the model was trained again using the same or a new dataset), `In-house` (if the model has been developed from scratch by Ersilia's contributors) or `Online` (if the model sends queries to an external server)
+**Mode**: [mode](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/mode.txt) of training of the models: `Pretrained` (the checkpoints were downloaded directly from a third party), `Retrained` (the model was trained again using the same or a new dataset), `In-house` (if the model has been developed from scratch by Ersilia's contributors) or `Online` (if the model sends queries to an external server)
 
 **Input:** data format required by the model. Most chemistry related models, for example, will require compounds as input. Currently, the only accepted [inputs](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input.txt) by Ersilia are `Compound`, `Protein` or `Text`.
 
 **Input Shape:** [format](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input\_shape.txt) of the input data. It can be `Single` (one compound), `Pair` (for example, two compounds), a `List`, a `Pair of Lists` or a `List of Lists`. Please note this refers to the _minimum_ shape for the model to work. If a model predicts, for example, the antimalarial potential of a small molecule, the input shape is `Single`, regardless of the fact that you can pass several compounds in a list.
 
-**Output:** description of the model result. It is important to choose the right description. Is the model providing a probability? Is it a score? Is it a new compound? The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`.
+**Output:** description of the model [result](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output.txt). It is important to choose the right description. Is the model providing a probability? Is it a score? Is it a new compound? The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`.
 
 **Output Type:** the only accepted output [types](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_type.txt) are `String`, `Float` or `Integer`. More than one type can be added as a list if necessary.
 
@@ -72,7 +72,7 @@ Some contributors may find it difficult to come up with a good description for t
 
 * Disease: `AIDS`, `Alzheimer`, `Cancer`, `Cardiotoxicity`, `Cytotoxicity`, `COVID19`, `Dengue`, `Malaria`, `Neglected tropical disease`, `Schistosomiasis`, `Tuberculosis`.
 * Organism: `A.baumannii`, `E.coli`, `E.faecium`, `HBV`, `HIV`, `Human`, `K.pneumoniae`, `Mouse`, `M.tuberculosis`, `P.aeruginosa`, `P.falciparum`, `Rat`, `Sars-CoV-2`,  `S.aureus`, `ESKAPE`.
-* Target: `BACE`, `CYP450`, `GPCR`, `hERG`,.&#x20;
+* Target: `BACE`, `CYP450`, `GPCR`, `hERG`.&#x20;
 * Experiment: `Fraction bound`, `IC50`, `Half-life`, `LogD`, `LogP`, `LogS`, `MIC90`, `Molecular weight`, `Papp`, `pKa`.
 * Application: `ADME`, `Antimicrobial activity`, `Antiviral activity`, `Bioactivity profile`, `Lipophilicity`, `Metabolism`, `Microsomal stability`, `Natural product`, `Price`, `Quantum properties`, `Side effects`, `Solubility`, `Synthetic accessibility`, `Target identification`, `Therapeutic indication`, `Toxicity`.
 * Dataset: `ChEMBL`, `DrugBank`, `MoleculeNet`, `Tox21`, `ToxCast`, `ZINC`, `TDCommons`.
@@ -118,10 +118,10 @@ The `Dockerfile` available in the Ersilia Model Template is the following:
 
 {% code title="Dockerfile" %}
 ```docker
-FROM bentoml/model-server:0.11.0-py37
+FROM bentoml/model-server:0.11.0-py310
 MAINTAINER ersilia
 
-RUN conda install -c conda-forge rdkit=2020.03
+RUN pip install rdkit==23.
 RUN pip install joblib==1.1.0
 
 WORKDIR /repo
