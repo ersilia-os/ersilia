@@ -47,7 +47,7 @@ ersilia card eos2r5a
 ```
 
 {% hint style="info" %}
-We do our best to keep the user away from the [dependency hell](https://en.wikipedia.org/wiki/Dependency\_hell). Models are **automatically** installed with the necessary degree of isolation from the system. While some models have no dependencies at all and can be run using the system Python installation, others need to be containerized using Docker.&#x20;
+We do our best to keep the user away from the [dependency hell](https://en.wikipedia.org/wiki/Dependency\_hell). Models are **automatically** installed with the necessary degree of isolation from the system. All models are available through GitHub and also as Docker Images
 {% endhint %}
 
 ### Serve model
@@ -59,21 +59,19 @@ Once the model has been fetched, it should be ready to be used. A model in the E
 ersilia serve retrosynthetic-accessibility
 ```
 
-A URL will be prompted as well as a process id (PID). These can be relevant if you are an advanced user and want to have low-level control of the tool. The most important is, however, the list of **available APIs**. In this case, we want to infer RA Score through the `predict` API.
-
-{% hint style="info" %}
-The `predict` API is obviously one of the most ubiquitous throughout our catalog of models. Other common APIs are `transform` and `interpret`.
-{% endhint %}
+A URL will be prompted as well as a process id (PID). These can be relevant if you are an advanced user and want to have low-level control of the tool. The most important is, however, the list of **available APIs**. By default, all models use the `run` API.
 
 ### Make predictions
 
-The RA Score prediction model takes **chemical structures** as input and provides an score (ranging from 0 to 1). The higher the score the more synthetically accessible the molecule is predicted to be.
+The RA Score prediction model takes **chemical structures** as input and provides a score (ranging from 0 to 1). The higher the score the more synthetically accessible the molecule is predicted to be.
 
 Ideally, in the chemistry models, the input molecules are specified as **SMILES** strings. SMILES strings can be easily found online. For instance, we can find an antibiotic, Halicin in [PubChem](https://pubchem.ncbi.nlm.nih.gov/compound/Halicin#section=Canonical-SMILES), and then predict its retrosynthetic accessibility as follows:
 
 ```bash
 # Halicin
-ersilia api predict -i "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]"
+ersilia api run -i "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]"
+# also works with the run command directly
+ersilia run -i "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]"
 ```
 
 {% hint style="warning" %}
@@ -84,7 +82,7 @@ You can make **multiple predictions** in batch mode. This is typically much fast
 
 ```bash
 # Halicin and Ibuprofen
-ersilia api predict -i "['C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]','CC(C)CC1=CC=C(C=C1)C(C)C(=O)O']"
+ersilia api run -i "['C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]','CC(C)CC1=CC=C(C=C1)C(C)C(=O)O']"
 ```
 
 This can become impractical and perhaps you prefer to provide an **input file** instead. Let's name this file `input.csv`.
@@ -100,14 +98,14 @@ The terminal command now becomes much cleaner:
 
 ```bash
 # predict using an input file
-ersilia api predict -i input.csv
+ersilia api run -i input.csv
 ```
 
 By default, predictions are returned in the standard **output** of the terminal. We favour the widely used **JSON format** because it offers great flexibility and interoperability. However, many of the model APIs return an output that can be naturally expressed in tabular format, for example, in a **CSV file**. If this is what you want, simply specify an output file with the `.csv` extension.
 
 ```bash
 # save output in a CSV file
-ersilia api predict -i input.csv -o output.csv
+ersilia api run -i input.csv -o output.csv
 ```
 
 {% hint style="info" %}
@@ -130,6 +128,8 @@ If you are sure you don't want to use a model anymore, you may want to remove it
 ```bash
 # delete model
 ersilia delete retrosynthetic-accessibility
+# or use the eos identifier
+ersilia delete eos2r5a
 ```
 
 ## As a Python package
@@ -159,7 +159,7 @@ input = [
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 ]
 # predict
-mdl.predict(input)
+mdl.run(input)
 ```
 
 To **close** the model:
@@ -176,7 +176,7 @@ A more concise way to run prediction would be to use the `with` clause:
 ```python
 # use with statement
 with ErsiliaModel("retrosynthetic-accessibility") as mdl:
-    mdl.predict(input)
+    mdl.run(input)
 ```
 
 ## Using Ersilia through Colab
