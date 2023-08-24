@@ -248,8 +248,11 @@
             <span class="n">models</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="n">model_id</span><span class="p">])</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting conda environment </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
-                <span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
-                <span class="n">conda</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
+                    <span class="n">conda</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">continue</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">envdb</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span></div></div>
 
 
