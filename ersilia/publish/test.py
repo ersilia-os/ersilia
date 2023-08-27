@@ -380,13 +380,13 @@ class ModelTester(ErsiliaBase):
                                     print('\n')
                                 raise texc.InconsistentOutputs(self.model_id)
                         else: 
-                            if self._compare_output_strings(elem1, elem2) <= 0.95: 
+                            if self._compare_output_strings(elem1, elem2) <= 95: 
                                 print('output1 value:', elem1)
                                 print('output2 value:', elem2)
                                 raise texc.InconsistentOutputs(self.model_id)
                 else: 
                     # if it reaches this, then the outputs are just strings
-                    if self._compare_output_strings(output1[key1], output2[key2]) <= 0.95: 
+                    if self._compare_output_strings(output1[key1], output2[key2]) <= 95: 
                         print('output1 value:', output1[key1])
                         print('output2 value:', output2[key2])
                         raise texc.InconsistentOutputs(self.model_id)
@@ -557,27 +557,28 @@ class ModelTester(ErsiliaBase):
 
             # Compare values in the common columns within a 5% tolerance`
             for column in common_columns:
-                if isinstance(ersilia_run[column][1], (float, int)) and isinstance(ersilia_run[column][1], (float, int)): 
-                    if not all(self._compare_tolerance(a, b, DIFFERENCE_THRESHOLD) for a, b in zip(ersilia_run[column], bash_run[column])):
-                        click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
-                        print("Error in the following column: ", column)
-                        print(ersilia_run[column])
-                        print(bash_run[column])
-                        raise texc.InconsistentOutputs(self.model_id)
-                elif isinstance(ersilia_run[column][1], str) and isinstance(ersilia_run[column][1], str):
-                    if not all(self._compare_string_similarity(a, b, 95) for a, b in zip(ersilia_run[column], bash_run[column])):
-                        click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
-                        print("Error in the following column: ", column)
-                        print(ersilia_run[column])
-                        print(bash_run[column])
-                        raise texc.InconsistentOutputs(self.model_id)
-                elif isinstance(ersilia_run[column][1], bool) and isinstance(ersilia_run[column][1], bool):    
-                    if not ersilia_run[column].equals(bash_run[column]):
-                        click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
-                        print("Error in the following column: ", column)
-                        print(ersilia_run[column])
-                        print(bash_run[column])
-                        raise texc.InconsistentOutputs(self.model_id)
+                for i in range(len(ersilia_run)):
+                    if isinstance(ersilia_run[i][column], (float, int)) and isinstance(ersilia_run[i][column], (float, int)): 
+                        if not all(self._compare_tolerance(a, b, DIFFERENCE_THRESHOLD) for a, b in zip(ersilia_run[i][column], bash_run[i][column])):
+                            click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
+                            print("Error in the following column: ", column)
+                            print(ersilia_run[i][column])
+                            print(bash_run[i][column])
+                            raise texc.InconsistentOutputs(self.model_id)
+                    elif isinstance(ersilia_run[i][column], str) and isinstance(ersilia_run[i][column], str):
+                        if not all(self._compare_string_similarity(a, b, 95) for a, b in zip(ersilia_run[i][column], bash_run[i][column])):
+                            click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
+                            print("Error in the following column: ", column)
+                            print(ersilia_run[i][column])
+                            print(bash_run[i][column])
+                            raise texc.InconsistentOutputs(self.model_id)
+                    elif isinstance(ersilia_run[i][column], bool) and isinstance(ersilia_run[i][column], bool):    
+                        if not ersilia_run[i][column].equals(bash_run[i][column]):
+                            click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
+                            print("Error in the following column: ", column)
+                            print(ersilia_run[i][column])
+                            print(bash_run[i][column])
+                            raise texc.InconsistentOutputs(self.model_id)
 
             click.echo(BOLD + "\nSUCCESS! Bash run and Ersilia run produce consistent results." + RESET)
 
