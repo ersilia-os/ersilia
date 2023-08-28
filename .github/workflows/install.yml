@@ -28,6 +28,9 @@ jobs:
       run: |
         ersilia --help
         ersilia --version
+    - name: Test fetch with dockerhub
+      run: |
+        ersilia -v fetch molecular-weight
 
   test:
     strategy:
