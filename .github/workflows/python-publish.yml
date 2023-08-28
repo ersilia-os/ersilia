@@ -39,5 +39,6 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
         run: |
-          python setup.py sdist bdist_wheel
+          # python setup.py sdist bdist_wheel
+          poetry build
           twine upload --verbose --skip-existing dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
