@@ -4,10 +4,7 @@ import requests
 from ... import ErsiliaBase
 from ...utils.terminal import yes_no_input, run_command
 from ... import throw_ersilia_exception
-from ...utils.exceptions_utils.pull_exceptions import (
-    DockerImageNotAvailableError,
-    DockerImageArchitectureNotAvailableError,
-)
+from ...utils.exceptions_utils.pull_exceptions import DockerImageNotAvailableError
 
 from ...utils.docker import SimpleDocker
 from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG

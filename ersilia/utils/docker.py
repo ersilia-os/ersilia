@@ -1,11 +1,12 @@
 import os
+import subprocess
 from dockerfile_parse import DockerfileParser
 import tempfile
 
 from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
-from ..default import DEFAULT_DOCKER_PLATFORM
+from ..default import DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME
 from ..utils.system import SystemChecker
 
 
@@ -23,9 +24,41 @@ def resolve_platform():
         return DEFAULT_DOCKER_PLATFORM
 
 
+def is_docker_installed():
+    try:
+        subprocess.check_output(["docker", "--version"])
+        return True
+    except subprocess.CalledProcessError:
+        return False
+    except FileNotFoundError:
+        return False
+
+
+def is_udocker_installed():
+    cmd = ["sudo", "-u", DEFAULT_UDOCKER_USERNAME, "udocker", "--help"]
+    try:
+        out = subprocess.check_output(cmd)
+        if "Syntax" in out:
+            return True
+        return False
+    except:
+        return False
+
+
 class SimpleDocker(object):
-    def __init__(self):
+    def __init__(self, use_udocker=None):
         self.identifier = LongIdentifier()
+        if use_udocker is None:
+            self._with_udocker = self._use_udocker()
+        else:
+            self._with_udocker = use_udocker
+
+    def _use_udocker(self):
+        if is_docker_installed():
+            return False
+        if not is_udocker_installed():
+            return False
+        return True
 
     @staticmethod
     def _splitter(name):
@@ -51,21 +84,34 @@ class SimpleDocker(object):
     def images(self):
         tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
         tmp_file = os.path.join(tmp_dir, "images.txt")
-        cmd = "docker images > {0}".format(tmp_file)
-        run_command(cmd)
-        img_dict = {}
-        with open(tmp_file, "r") as f:
-            h = next(f)
-            rep_idx = h.find("REPOSITORY")
-            tag_idx = h.find("TAG")
-            img_idx = h.find("IMAGE ID")
-            crt_idx = h.find("CREATED")
-            for l in f:
-                rep = l[rep_idx:tag_idx].strip()
-                tag = l[tag_idx:img_idx].strip()
-                img = l[img_idx:crt_idx].strip()
-                img_dict["{0}:{1}".format(rep, tag)] = img
-        return img_dict
+        if not self._with_udocker:
+            cmd = "docker images > {0}".format(tmp_file)
+            run_command(cmd)
+            img_dict = {}
+            with open(tmp_file, "r") as f:
+                h = next(f)
+                rep_idx = h.find("REPOSITORY")
+                tag_idx = h.find("TAG")
+                img_idx = h.find("IMAGE ID")
+                crt_idx = h.find("CREATED")
+                for l in f:
+                    rep = l[rep_idx:tag_idx].strip()
+                    tag = l[tag_idx:img_idx].strip()
+                    img = l[img_idx:crt_idx].strip()
+                    img_dict["{0}:{1}".format(rep, tag)] = img
+            return img_dict
+        else:
+            # TODO
+            cmd = "sudo -u {0} udocker images > {1}".format(
+                DEFAULT_UDOCKER_USERNAME, tmp_file
+            )
+            run_command(cmd)
+            with open(tmp_file, "r") as f:
+                h = next(f)
+                for l in f:
+                    img = l.split(" ")[0]
+                    img_dict[img] = img
+            return img_dict
 
     def containers(self, only_run):
         tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
@@ -118,6 +164,8 @@ class SimpleDocker(object):
         return None
 
     def build(self, path, org, img, tag):
+        if self._with_udocker:
+            raise Exception("Cannot built with udocker")
         path = os.path.abspath(path)
         cwd = os.getcwd()
         os.chdir(path)
@@ -126,24 +174,36 @@ class SimpleDocker(object):
         os.chdir(cwd)
 
     def delete(self, org, img, tag):
-        cmd = "docker rmi %s" % self._image_name(org, img, tag)
-        run_command(cmd)
+        if not self._with_udocker:
+            cmd = "docker rmi %s" % self._image_name(org, img, tag)
+            run_command(cmd)
+        else:
+            cmd = "sudo -u {0} udocker rmi {1}".format(
+                DEFAULT_UDOCKER_USERNAME, self._image_name(org, img, tag)
+            )
 
     def run(self, org, img, tag, name, memory=None):
         if name is None:
             name = self.identifier.encode()
-        if memory is None:
-            cmd = "docker run -it -d --platform {0} --name {1} {2} bash".format(
-                resolve_platform(), name, self._image_name(org, img, tag)
-            )
+        if not self._with_udocker:
+            if memory is None:
+                cmd = "docker run -it -d --platform {0} --name {1} {2} bash".format(
+                    resolve_platform(), name, self._image_name(org, img, tag)
+                )
+            else:
+                cmd = 'docker run -it -d --memory="{3}" --platform {0} --name {1} {2} bash'.format(
+                    resolve_platform(),
+                    name,
+                    self._image_name(org, img, tag),
+                    str(memory) + "g",
+                )
+            run_command(cmd)
         else:
-            cmd = 'docker run -it -d --memory="{3}" --platform {0} --name {1} {2} bash'.format(
-                resolve_platform(),
-                name,
-                self._image_name(org, img, tag),
-                str(memory) + "g",
+            # TODO
+            cmd = "sudo -u {0} udocker run {2} bash".format(
+                DEFAULT_UDOCKER_USERNAME, self._image_name(org, img, tag)
             )
-        run_command(cmd)
+            run_command(cmd)
         return name
 
     @staticmethod
