@@ -4,37 +4,35 @@ import click
 import tempfile
 import types
 import subprocess
-import time
+import shutil
+import time 
 import re
 from ..cli import echo
+
+from fuzzywuzzy import fuzz
 from ..io.input import ExampleGenerator
 from .. import ErsiliaBase
 from .. import throw_ersilia_exception
+from ..utils.terminal import run_command, run_command_check_output
 from .. import ErsiliaModel
 from ..utils.exceptions_utils import test_exceptions as texc
 from ..core.session import Session
 from ..default import INFORMATION_FILE
 
-try:
-    from fuzzywuzzy import fuzz
-except:
-    fuzz = None
-
 RUN_FILE = "run.sh"
 DATA_FILE = "data.csv"
-DIFFERENCE_THRESHOLD = (
-    5  # outputs should be within this percent threshold to be considered consistent
-)
+DIFFERENCE_THRESHOLD = 5    # outputs should be within this percent threshold to be considered consistent
 NUM_SAMPLES = 5
-BOLD = "\033[1m"
-RESET = "\033[0m"
+BOLD = '\033[1m'
+RESET = '\033[0m'
 
+BASE = 'base'
 
 class ModelTester(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
-        self.model_size = 0
+        self.model_size = 0 
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         self._info = self._read_information()
         self._input = self._info["card"]["Input"]
@@ -48,20 +46,19 @@ class ModelTester(ErsiliaBase):
     def _read_information(self):
         json_file = os.path.join(self._dest_dir, self.model_id, INFORMATION_FILE)
         self.logger.debug("Reading model information from {0}".format(json_file))
-        if not os.path.exists(json_file):
+        if not os.path.exists(json_file): 
             raise texc.InformationFileNotExist(self.model_id)
         with open(json_file, "r") as f:
             data = json.load(f)
         return data
-
+    
     """
     This function uses the fuzzy wuzzy package to compare the differences between outputs when 
     they're strings and not floats. The fuzz.ratio gives the percent of similarity between the two outputs.
     Example: two strings that are the exact same will return 100
     """
-
-    def _compare_output_strings(self, output1, output2):
-        if output1 is None and output2 is None:
+    def _compare_output_strings(self, output1, output2): 
+        if output1 is None and output2 is None: 
             return 100
         else:
             return fuzz.ratio(output1, output2)
@@ -71,23 +68,19 @@ class ModelTester(ErsiliaBase):
     other in order to be considered consistent. This function returns true if the outputs are within that 
     5% threshold (meaning they're consistent), and false if they are not (meaning they are not consistent).
     """
-
-    def _is_below_difference_threshold(self, output1, output2):
-        if output1 == 0.0 or output2 == 0.0:
+    def _is_below_difference_threshold(self, output1, output2): 
+        if output1 == 0.0 or output2 == 0.0: 
             return output1 == output2
-        elif output1 is None or output2 is None:
+        elif output1 is None or output2 is None: 
             return output1 == output2
         else:
-            return (
-                100 * (abs(output1 - output2) / ((output1 + output2) / 2))
-                < DIFFERENCE_THRESHOLD
-            )
+            return (100 * (abs(output1 - output2) / ((output1 + output2) / 2)) < DIFFERENCE_THRESHOLD)
+             
 
     """
     When the user specifies an output file, the file will show the user how big the model is. This function 
     calculates the size of the model to allow this. 
     """
-
     def _set_model_size(self, directory):
         for dirpath, dirnames, filenames in os.walk(directory):
             for filename in filenames:
@@ -97,52 +90,50 @@ class ModelTester(ErsiliaBase):
     """
     This helper method was taken from the run.py file, and just prints the output for the user 
     """
-
-    def _print_output(self, result, output):
+    def _print_output(self, result, output): 
         echo("Printing output...")
 
-        if isinstance(result, types.GeneratorType):
-            for r in result:
-                if r is not None:
+        if isinstance(result, types.GeneratorType): 
+            for r in result: 
+                if r is not None: 
                     if output is not None:
-                        with open(output.name, "w") as file:
+                        with open(output.name, 'w') as file:
                             json.dump(r, output.name)
-                    else:
+                    else: 
                         echo(json.dumps(r, indent=4))
-                else:
+                else: 
                     if output is not None:
                         message = echo("Something went wrong", fg="red")
-                        with open(output.name, "w") as file:
+                        with open(output.name, 'w') as file:
                             json.dump(message, output.name)
-                    else:
+                    else: 
                         echo("Something went wrong", fg="red")
-
+                        
         else:
             echo(result)
+        
 
     """
     This helper method checks that the model ID is correct.
     """
-
-    def _check_model_id(self, data):
+    def _check_model_id(self, data): 
         print("Checking model ID...")
         if data["card"]["Identifier"] != self.model_id:
-            raise texc.WrongCardIdentifierError(self.model_id)
+            raise texc.WrongCardIdentifierError(self.model_id)    
+
 
     """
     This helper method checks that the slug field is non-empty.
     """
-
-    def _check_model_slug(self, data):
+    def _check_model_slug(self, data): 
         print("Checking model slug...")
         if not data["card"]["Slug"]:
             raise texc.EmptyField("slug")
-
+   
     """
     This helper method checks that the description field is non-empty.
     """
-
-    def _check_model_description(self, data):
+    def _check_model_description(self, data): 
         print("Checking model description...")
         if not data["card"]["Description"]:
             raise texc.EmptyField("Description")
@@ -157,19 +148,11 @@ class ModelTester(ErsiliaBase):
         - Clustering
         - Dimensionality reduction
     """
-
-    def _check_model_task(self, data):
+    def _check_model_task(self, data): 
         print("Checking model task...")
-        valid_tasks = [
-            "Classification",
-            "Regression",
-            "Generative",
-            "Representation",
-            "Similarity",
-            "Clustering",
-            "Dimensionality reduction",
-        ]
-        sep = ", "
+        valid_tasks = [ 'Classification', 'Regression', 'Generative' , 'Representation', 
+                        'Similarity',  'Clustering',  'Dimensionality reduction']
+        sep = ', '
         tasks = []
         if sep in data["card"]["Task"]:
             tasks = data["card"]["Task"].split(sep)
@@ -178,17 +161,16 @@ class ModelTester(ErsiliaBase):
         for task in tasks:
             if task not in valid_tasks:
                 raise texc.InvalidEntry("Task")
-
+    
     """
     This helper method checks that the input field is one of the following valid entries:
         - Compound
         - Protein
         - Text
     """
-
-    def _check_model_input(self, data):
+    def _check_model_input(self, data): 
         print("Checking model input...")
-        valid_inputs = [["Compound"], ["Protein"], ["Text"]]
+        valid_inputs = [[ 'Compound' ], [ 'Protein' ], [ 'Text' ]]
         if data["card"]["Input"] not in valid_inputs:
             raise texc.InvalidEntry("Input")
 
@@ -200,16 +182,9 @@ class ModelTester(ErsiliaBase):
         - Pair of Lists
         - List of Lists
     """
-
-    def _check_model_input_shape(self, data):
+    def _check_model_input_shape(self, data): 
         print("Checking model input shape...")
-        valid_input_shapes = [
-            "Single",
-            "Pair",
-            "List",
-            "Pair of Lists",
-            "List of Lists",
-        ]
+        valid_input_shapes = ["Single", "Pair", "List", "Pair of Lists", "List of Lists"]
         if data["card"]["Input Shape"] not in valid_input_shapes:
             raise texc.InvalidEntry("Input Shape")
 
@@ -227,23 +202,11 @@ class ModelTester(ErsiliaBase):
         - Score
         - Text
     """
-
-    def _check_model_output(self, data):
+    def _check_model_output(self, data): 
         print("Checking model output...")
-        valid_outputs = [
-            "Boolean",
-            "Compound",
-            "Descriptor",
-            "Distance",
-            "Experimental value",
-            "Image",
-            "Other value",
-            "Probability",
-            "Protein",
-            "Score",
-            "Text",
-        ]
-        sep = ", "
+        valid_outputs = [ 'Boolean', 'Compound', 'Descriptor', 'Distance', 'Experimental value', 
+                          'Image', 'Other value', 'Probability', 'Protein', 'Score', 'Text']
+        sep = ', '
         outputs = []
         if sep in data["card"]["Output"]:
             outputs = data["card"]["Output"].split(sep)
@@ -259,10 +222,9 @@ class ModelTester(ErsiliaBase):
         - Float
         - Integer
     """
-
-    def _check_model_output_type(self, data):
+    def _check_model_output_type(self, data): 
         print("Checking model output type...")
-        valid_output_types = [["String"], ["Float"], ["Integer"]]
+        valid_output_types = [[ 'String' ], [ 'Float' ], [ 'Integer' ]]
         if data["card"]["Output Type"] not in valid_output_types:
             raise texc.InvalidEntry("Output Type")
 
@@ -274,35 +236,11 @@ class ModelTester(ErsiliaBase):
         - Matrix
         - Serializable Object
     """
-
-    def _check_model_output_shape(self, data):
+    def _check_model_output_shape(self, data): 
         print("Checking model output shape...")
-        valid_output_shapes = [
-            "Single",
-            "List",
-            "Flexible List",
-            "Matrix",
-            "Serializable Object",
-        ]
+        valid_output_shapes = ["Single", "List", "Flexible List", "Matrix", "Serializable Object"]
         if data["card"]["Output Shape"] not in valid_output_shapes:
             raise texc.InvalidEntry("Output Shape")
-
-    """
-    This is a helper function for the run_bash() function, and it parses through the Dockerfile to find 
-    the package installation lines.
-    """
-
-    def _parse_dockerfile(self, temp_dir, pyversion):
-        packages = set()
-        prefix = "FROM bentoml/model-server:0.11.0-py"
-        os.chdir(temp_dir)  # navigate into cloned repo
-        with open("Dockerfile", "r") as dockerfile:
-            lines = dockerfile.readlines()
-            assert lines[0].startswith(prefix)
-            pyversion[0] = lines[0][len(prefix) :]
-            lines_as_string = "\n".join(lines)
-            run_lines = re.findall(r"^\s*RUN\s+(.+)$", lines_as_string, re.MULTILINE)
-        return run_lines
 
     """
     Check the model information to make sure it's correct. Performs the following checks:
@@ -313,15 +251,10 @@ class ModelTester(ErsiliaBase):
     - Checks that the model input, input shape is valid
     - Checks that the model output, output type, output shape is valid
     """
-
     @throw_ersilia_exception
     def check_information(self, output):
         self.logger.debug("Checking that model information is correct")
-        print(
-            BOLD
-            + "Beginning checks for {0} model information:".format(self.model_id)
-            + RESET
-        )
+        print(BOLD + "Beginning checks for {0} model information:".format(self.model_id) + RESET)
         json_file = os.path.join(self._dest_dir, self.model_id, INFORMATION_FILE)
         with open(json_file, "r") as f:
             data = json.load(f)
@@ -340,10 +273,10 @@ class ModelTester(ErsiliaBase):
         if output is not None:
             self.information_check = True
 
+
     """
     Runs the model on a single smiles string and prints to the user if no output is specified.
     """
-
     @throw_ersilia_exception
     def check_single_input(self, output):
         session = Session(config_json=None)
@@ -356,14 +289,13 @@ class ModelTester(ErsiliaBase):
 
         if output is not None:
             self.single_input = True
-        else:
+        else: 
             self._print_output(result, output)
 
     """
     Generates an example input of 5 smiles using the 'example' command, and then tests the model on that input and prints it
     to the consol if no output file is specified by the user.
     """
-
     @throw_ersilia_exception
     def check_example_input(self, output):
         session = Session(config_json=None)
@@ -371,18 +303,15 @@ class ModelTester(ErsiliaBase):
         eg = ExampleGenerator(model_id=self.model_id)
         input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True)
 
-        click.echo(
-            BOLD
-            + "\nTesting model on input of 5 smiles given by 'example' command...\n"
-            + RESET
-        )
+        click.echo(BOLD + "\nTesting model on input of 5 smiles given by 'example' command...\n" + RESET)
         mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
-        result = mdl.run(input=input, output=output, batch_size=100)
+        result = mdl.run(input=input, output=output, batch_size=100) 
 
         if output is not None:
             self.example_input = True
-        else:
+        else: 
             self._print_output(result, output)
+
 
     """
     Gets an example input of 5 smiles using the 'example' command, and then runs this same input on the 
@@ -390,7 +319,6 @@ class ModelTester(ErsiliaBase):
     it is not consistent, an InconsistentOutput error is raised. Lastly, it makes sure that the number of 
     outputs equals the number of inputs.  
     """
-
     @throw_ersilia_exception
     def check_consistent_output(self):
         # self.logger.debug("Confirming model produces consistent output...")
@@ -402,12 +330,8 @@ class ModelTester(ErsiliaBase):
         eg = ExampleGenerator(model_id=self.model_id)
         input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True)
 
-        mdl1 = ErsiliaModel(
-            self.model_id, service_class=service_class, config_json=None
-        )
-        mdl2 = ErsiliaModel(
-            self.model_id, service_class=service_class, config_json=None
-        )
+        mdl1 = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
+        mdl2 = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         result = mdl1.run(input=input, output=None, batch_size=100)
         result2 = mdl2.run(input=input, output=None, batch_size=100)
 
@@ -416,96 +340,123 @@ class ModelTester(ErsiliaBase):
         for item1, item2 in zipped:
             output1 = item1["output"]
             output2 = item2["output"]
-
+            
             keys1 = list(output1.keys())
             keys2 = list(output2.keys())
-
-            for key1, key2 in zip(keys1, keys2):
-                # check if the output types are not the same
+            
+            for key1, key2 in zip(keys1, keys2): 
+                
+                # check if the output types are not the same 
                 if not isinstance(output1[key1], type(output2[key2])):
                     for item1, item2 in zipped:
                         print(item1)
                         print(item2)
-                        print("\n")
+                        print('\n')
                     raise texc.InconsistentOutputTypes(self.model_id)
-
-                if output1[key1] is None:
+                
+                if output1[key1] is None: 
                     continue
 
-                elif isinstance(output1[key1], (float, int)):
-                    # check to see if the first and second outputs are within 5% from each other
-                    if not self._is_below_difference_threshold(
-                        output1[key1], output2[key2]
-                    ):
+                elif isinstance(output1[key1], (float, int)): 
+
+                    # check to see if the first and second outputs are within 5% from each other 
+                    if not self._is_below_difference_threshold(output1[key1], output2[key2]):
                         for item1, item2 in zipped:
                             print(item1)
                             print(item2)
-                            print("\n")
-                        # maybe change it to print all of the outputs, and in the error raised it highlights exactly the ones that were off
+                            print('\n')
+                        # maybe change it to print all of the outputs, and in the error raised it highlights exactly the ones that were off 
                         raise texc.InconsistentOutputs(self.model_id)
-                elif isinstance(output1[key1], list):
+                elif isinstance(output1[key1], list): 
                     ls1 = output1[key1]
                     ls2 = output2[key2]
 
                     for elem1, elem2 in zip(ls1, ls2):
-                        if isinstance(
-                            elem1, float
-                        ):  # if one of the outputs is a float, then that means the other is a float too
+                        if isinstance(elem1, float): # if one of the outputs is a float, then that means the other is a float too
                             if not self._is_below_difference_threshold(elem1, elem2):
                                 for item1, item2 in zipped:
                                     print(item1)
                                     print(item2)
-                                    print("\n")
+                                    print('\n')
                                 raise texc.InconsistentOutputs(self.model_id)
-                        else:
-                            if self._compare_output_strings(elem1, elem2) <= 0.95:
-                                print("output1 value:", elem1)
-                                print("output2 value:", elem2)
+                        else: 
+                            if self._compare_output_strings(elem1, elem2) <= 95: 
+                                print('output1 value:', elem1)
+                                print('output2 value:', elem2)
                                 raise texc.InconsistentOutputs(self.model_id)
-                else:
+                else: 
                     # if it reaches this, then the outputs are just strings
-                    if (
-                        self._compare_output_strings(output1[key1], output2[key2])
-                        <= 0.95
-                    ):
-                        print("output1 value:", output1[key1])
-                        print("output2 value:", output2[key2])
+                    if self._compare_output_strings(output1[key1], output2[key2]) <= 95: 
+                        print('output1 value:', output1[key1])
+                        print('output2 value:', output2[key2])
                         raise texc.InconsistentOutputs(self.model_id)
-
+                
         self.consistent_output = True
         print("Model output is consistent!")
-
-        click.echo(
-            BOLD + "\nConfirming there are same number of outputs as inputs..." + RESET
-        )
+    
+        click.echo(BOLD + "\nConfirming there are same number of outputs as inputs..." + RESET)
         print("Number of inputs:", NUM_SAMPLES)
         print("Number of outputs:", len(zipped))
 
-        if NUM_SAMPLES != len(zipped):
+        if NUM_SAMPLES != len(zipped): 
             raise texc.MissingOutputs()
-        else:
+        else: 
             echo("Number of outputs and inputs are equal!\n")
+        
+    @staticmethod
+    def default_env():
+        if "CONDA_DEFAULT_ENV" in os.environ:
+            return os.environ["CONDA_DEFAULT_ENV"]
+        else:
+            return BASE
+    
+    @staticmethod
+    def conda_prefix(is_base):
+        o = run_command_check_output("which conda").rstrip()
+        if o:
+            o = os.path.abspath(os.path.join(o, "..", ".."))
+            return o
+        if is_base:
+            o = run_command_check_output("echo $CONDA_PREFIX").rstrip()
+            return o
+        else:
+            o = run_command_check_output("echo $CONDA_PREFIX_1").rstrip()
+            return o
 
-    # WITH CONDA!!!!
+    def is_base(self):
+        default_env = self.default_env()
+        if default_env == 'base':
+            return True
+        else:
+            return False
+    
+    def _compare_tolerance(self, value1, value2, tolerance_percentage):
+        diff = abs(value1 - value2)
+        tolerance = (tolerance_percentage / 100) * max(abs(value1), abs(value2))
+        return diff <= tolerance
+    
+    def _compare_string_similarity(self, str1, str2, similarity_threshold):
+        similarity = fuzz.ratio(str1, str2)
+        return similarity >= similarity_threshold
+    
+    def read_csv(self, file_path):
+        data = []
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+            header = lines[0].strip().split(',')
+            for line in lines[1:]:
+                values = line.strip().split(',')
+                data.append(dict(zip(header, values)))
+        return data
+
     @throw_ersilia_exception
-    def run_bash(self):
-        # print("Running the model bash script...")
-        print("Cloning a temporary file and calculating model size...")
-
-        # Save current working directory - atm, this must be run from root directory (~)
-        # TODO: is there a way to change this so that this test command doesn't have to be run from root dir
-        current_dir = os.getcwd()
-
-        # Create temp directory and clone model
+    def run_bash(self): 
+        click.echo(BOLD + "Calculating model size..." + RESET)
+        
         with tempfile.TemporaryDirectory() as temp_dir:
-            repo_url = "https://github.com/ersilia-os/{0}.git".format(self.model_id)
-            try:
-                subprocess.run(["git", "clone", repo_url, temp_dir], check=True)
-            except subprocess.CalledProcessError as e:
-                print(f"Error while cloning the repository: {e}")
 
-            # we will remove this part later, but will keep until we get the run_bash() function working
-            self._set_model_size(temp_dir)
+            # Print size of model
+            self._set_model_size(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}".format(self.model_id)))
             size_kb = self.model_size / 1024
             size_mb = size_kb / 1024
             size_gb = size_mb / 1024
@@ -513,90 +464,123 @@ class ModelTester(ErsiliaBase):
             print("KB:", size_kb)
             print("MB:", size_mb)
             print("GB:", size_gb)
-            return
+            
+            click.echo(BOLD + "\nRunning the model bash script..." + RESET)
 
-            # halt this check if the run.sh file does not exist (e.g. eos3b5e)
-            if not os.path.exists(os.path.join(temp_dir, "model/framework/run.sh")):
-                print("Check halted: run.sh file does not exist.")
+            # Create an example input
+            eg = ExampleGenerator(model_id=self.model_id)
+            input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True)
+            
+            # Read it into a temp file
+            ex_file = os.path.abspath(os.path.join(temp_dir, "example_file.csv"))
+            with open(ex_file, "w") as f:
+                f.write("smiles")
+                for item in input:
+                    f.write(str(item) + '\n')
+
+            # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
+            if not os.path.exists(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework/run.sh".format(self.model_id))):
+                print("Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3.")
                 return
 
             # Navigate into the temporary directory
-            subdirectory_path = os.path.join(temp_dir, "model/framework")
+            subdirectory_path = os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework".format(self.model_id))
             os.chdir(subdirectory_path)
 
-            # Parse Dockerfile
-            # dockerfile_path = os.path.join(temp_dir, "Dockerfile")
-            pyversion = [0]
-            packages = self._parse_dockerfile(temp_dir, pyversion)
-            pyversion[0] = pyversion[0][0] + "." + pyversion[0][1:]
-
-            conda_env_name = self.model_id
             try:
-                # subprocess.run(['conda', 'create', '-n', self.model_id, 'python={0}'.format(pyversion[0])], check=True)
-                subprocess.run(
-                    [
-                        "conda",
-                        "create",
-                        "-n",
-                        self.model_id,
-                        "python={0}".format("3.10.0"),
-                    ],
-                    check=True,
-                )
-                subprocess.run(
-                    ["conda", "activate", conda_env_name], shell=True, check=True
-                )
+                run_path = os.path.abspath(os.path.join(self.conda_prefix(self.is_base()), "../eos/dest/{0}/model/framework/".format(self.model_id)))
+                tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
+                arg1 = os.path.join(temp_dir, "bash_output.csv")
+                output_log = os.path.abspath(os.path.join(temp_dir, "output.txt"))
+                error_log = os.path.abspath(os.path.join(temp_dir, "error.txt"))
 
-                # install packages
-                for package in packages:
-                    if "conda install" in package:
-                        # Handle conda package installation
-                        subprocess.run(package, shell=True, check=True)
-                    elif "pip install" in package:
-                        subprocess.run(package, shell=True, check=True)
-                    else:
-                        print("Invalid package command:", package)
-                print("Packages printed!")
+                bash_script = """
+    source {0}/etc/profile.d/conda.sh 
+    conda activate {1}
+    cd {2}
+    bash run.sh . {3} {4} > {5} 2> {6}
+    conda deactivate
+    """.format(self.conda_prefix(self.is_base()), self.model_id, run_path, ex_file, arg1, output_log, error_log)
 
-                # Create temp file
-                with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp_file:
-                    temp_file_path = temp_file.name
+                with open(tmp_script, "w") as f:
+                    f.write(bash_script)
 
-                # Run bash script with specified args
-                output_path = temp_file_path
-                run_path = os.path.join(
-                    temp_dir, "model/framework/run.sh"
-                )  # path to run.sh
-                arg1 = os.path.join(
-                    current_dir, "ersilia/test/inputs/compound_singles.csv"
-                )  # input
-                arg2 = output_path  # output
-
+                print("Executing 'bash run.sh'...")
                 try:
-                    subprocess.run(
-                        [
-                            "bash",
-                            run_path,
-                            ".",
-                            arg1,
-                            arg2,
-                        ],
-                        check=True,
-                    )
+                    subprocess.run(['bash', tmp_script], capture_output=True, text=True, check=True)
+                    print("Bash execution completed!\n")
                 except subprocess.CalledProcessError as e:
-                    print(f"Error while running the bash script: {e}")
+                    print("Error encountered while running the bash script.")
 
-                with open(output_path, "r") as temp_file:
-                    output_contents = temp_file.read()
+                with open(output_log, "r") as output_file:
+                    output_content = output_file.read()
+                    print("Captured Output:")
+                    print(output_content)
 
-                print("Output contents:")
-                print(output_contents)
-
-                deactivate_command = "conda deactivate"
-                subprocess.run(deactivate_command, shell=True, check=True)
+                with open(error_log, "r") as error_file:
+                    error_content = error_file.read()
+                    print("Captured Error:")
+                    print(error_content)
 
             except Exception as e:
-                print(f"Error while creating or activating the conda environment: {e}")
+                    print(f"Error while activating the conda environment: {e}")
+            
+            print("Executing ersilia run...")
+            output_file = os.path.abspath(os.path.join(temp_dir, "ersilia_output.csv"))
+
+            session = Session(config_json=None)
+            service_class = session.current_service_class()
+            mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
+            result = mdl.run(input=ex_file, output=output_file, batch_size=100)
+            print("Ersilia run completed!\n")
+            
+            ersilia_run = self.read_csv(output_file)
+            remove_cols = ['key', 'input']
+            for row in ersilia_run:
+                for col in remove_cols:
+                    if col in row:
+                        del row[col]
+            bash_run = self.read_csv(arg1)
+            print("Bash output:\n", bash_run)
+            print("\nErsilia output:\n", ersilia_run)
+
+            # Select common columns for comparison
+            ersilia_columns = set()
+            for row in ersilia_run:
+                ersilia_columns.update(row.keys())
+
+            bash_columns = set()
+            for row in bash_run:
+                bash_columns.update(row.keys())
+
+            common_columns = ersilia_columns & bash_columns
+
+            # Compare values in the common columns within a 5% tolerance`
+            for column in common_columns:
+                for i in range(len(ersilia_run)):
+                    if isinstance(ersilia_run[i][column], (float, int)) and isinstance(ersilia_run[i][column], (float, int)): 
+                        if not all(self._compare_tolerance(a, b, DIFFERENCE_THRESHOLD) for a, b in zip(ersilia_run[i][column], bash_run[i][column])):
+                            click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
+                            print("Error in the following column: ", column)
+                            print(ersilia_run[i][column])
+                            print(bash_run[i][column])
+                            raise texc.InconsistentOutputs(self.model_id)
+                    elif isinstance(ersilia_run[i][column], str) and isinstance(ersilia_run[i][column], str):
+                        if not all(self._compare_string_similarity(a, b, 95) for a, b in zip(ersilia_run[i][column], bash_run[i][column])):
+                            click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
+                            print("Error in the following column: ", column)
+                            print(ersilia_run[i][column])
+                            print(bash_run[i][column])
+                            raise texc.InconsistentOutputs(self.model_id)
+                    elif isinstance(ersilia_run[i][column], bool) and isinstance(ersilia_run[i][column], bool):    
+                        if not ersilia_run[i][column].equals(bash_run[i][column]):
+                            click.echo(BOLD + "\nBash run and Ersilia run produce inconsistent results." + RESET)
+                            print("Error in the following column: ", column)
+                            print(ersilia_run[i][column])
+                            print(bash_run[i][column])
+                            raise texc.InconsistentOutputs(self.model_id)
+
+            click.echo(BOLD + "\nSUCCESS! Bash run and Ersilia run produce consistent results." + RESET)
 
     """
     writes to the .json file all the basic information received from the test module:
@@ -607,24 +591,23 @@ class ModelTester(ErsiliaBase):
     - did the run bash run without error? True or False
     - did the example input run without error? True or False 
     - are the outputs consistent? True or False 
-    """
-
+    """ 
     def make_output(self, output, time):
         size_kb = self.model_size / 1024
         size_mb = size_kb / 1024
         size_gb = size_mb / 1024
 
-        data = {
-            "model size": {"KB": size_kb, "MB": size_mb, "GB": size_gb},
-            "time to run tests (seconds)": time,
-            "basic checks passed": self.information_check,
-            "single input run without error": self.single_input,
-            "example input run without error": self.example_input,
-            "outputs consistent": self.consistent_output,
-            "bash run without error": self.run_using_bash,
-        }
+        data = {"model size": {"KB": size_kb, "MB": size_mb, "GB": size_gb}, 
+                "time to run tests (seconds)": time, 
+                "basic checks passed": self.information_check, 
+                "single input run without error": self.single_input, 
+                "example input run without error": self.example_input,
+                "outputs consistent": self.consistent_output,
+                "bash run without error": self.run_using_bash
+                }
         with open(output, "w") as json_file:
             json.dump(data, json_file, indent=4)
+
 
     def run(self, output_file):
         start = time.time()
@@ -633,9 +616,9 @@ class ModelTester(ErsiliaBase):
         self.check_example_input(output_file)
         self.check_consistent_output()
         self.run_bash()
-
+        
         end = time.time()
         seconds_taken = end - start
 
-        if output_file is not None:
+        if output_file is not None: 
             self.make_output(output_file, seconds_taken)
