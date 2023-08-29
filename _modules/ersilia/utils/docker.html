@@ -74,13 +74,14 @@
              
   <h1>Source code for ersilia.utils.docker</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 
 <span class="kn">from</span> <span class="nn">.identifiers.long</span> <span class="kn">import</span> <span class="n">LongIdentifier</span>
 <span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
 
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_DOCKER_PLATFORM</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_DOCKER_PLATFORM</span><span class="p">,</span> <span class="n">DEFAULT_UDOCKER_USERNAME</span>
 <span class="kn">from</span> <span class="nn">..utils.system</span> <span class="kn">import</span> <span class="n">SystemChecker</span>
 
 
@@ -98,9 +99,41 @@
         <span class="k">return</span> <span class="n">DEFAULT_DOCKER_PLATFORM</span></div>
 
 
+<div class="viewcode-block" id="is_docker_installed"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.is_docker_installed">[docs]</a><span class="k">def</span> <span class="nf">is_docker_installed</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="is_udocker_installed"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.is_udocker_installed">[docs]</a><span class="k">def</span> <span class="nf">is_udocker_installed</span><span class="p">():</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sudo&quot;</span><span class="p">,</span> <span class="s2">&quot;-u&quot;</span><span class="p">,</span> <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span> <span class="s2">&quot;udocker&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;Syntax&quot;</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
 <div class="viewcode-block" id="SimpleDocker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker">[docs]</a><span class="k">class</span> <span class="nc">SimpleDocker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_udocker</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">LongIdentifier</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">use_udocker</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_with_udocker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_udocker</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_with_udocker</span> <span class="o">=</span> <span class="n">use_udocker</span>
+
+    <span class="k">def</span> <span class="nf">_use_udocker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_docker_installed</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_udocker_installed</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_splitter</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
@@ -126,21 +159,34 @@
 <div class="viewcode-block" id="SimpleDocker.images"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.images">[docs]</a>    <span class="k">def</span> <span class="nf">images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">&quot;images.txt&quot;</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker images &gt; </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-        <span class="n">img_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">h</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">rep_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;REPOSITORY&quot;</span><span class="p">)</span>
-            <span class="n">tag_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;TAG&quot;</span><span class="p">)</span>
-            <span class="n">img_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;IMAGE ID&quot;</span><span class="p">)</span>
-            <span class="n">crt_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;CREATED&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">rep</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">rep_idx</span><span class="p">:</span><span class="n">tag_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="n">tag</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">tag_idx</span><span class="p">:</span><span class="n">img_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="n">img</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">img_idx</span><span class="p">:</span><span class="n">crt_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="n">img_dict</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rep</span><span class="p">,</span> <span class="n">tag</span><span class="p">)]</span> <span class="o">=</span> <span class="n">img</span>
-        <span class="k">return</span> <span class="n">img_dict</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_with_udocker</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker images &gt; </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span>
+            <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="n">img_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">rep_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;REPOSITORY&quot;</span><span class="p">)</span>
+                <span class="n">tag_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;TAG&quot;</span><span class="p">)</span>
+                <span class="n">img_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;IMAGE ID&quot;</span><span class="p">)</span>
+                <span class="n">crt_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;CREATED&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">rep</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">rep_idx</span><span class="p">:</span><span class="n">tag_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">tag</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">tag_idx</span><span class="p">:</span><span class="n">img_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">img</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">img_idx</span><span class="p">:</span><span class="n">crt_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">img_dict</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rep</span><span class="p">,</span> <span class="n">tag</span><span class="p">)]</span> <span class="o">=</span> <span class="n">img</span>
+            <span class="k">return</span> <span class="n">img_dict</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># TODO</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;sudo -u </span><span class="si">{0}</span><span class="s2"> udocker images &gt; </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span> <span class="n">tmp_file</span>
+            <span class="p">)</span>
+            <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">img</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">img_dict</span><span class="p">[</span><span class="n">img</span><span class="p">]</span> <span class="o">=</span> <span class="n">img</span>
+            <span class="k">return</span> <span class="n">img_dict</span></div>
 
 <div class="viewcode-block" id="SimpleDocker.containers"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.containers">[docs]</a>    <span class="k">def</span> <span class="nf">containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_run</span><span class="p">):</span>
         <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
@@ -193,6 +239,8 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="SimpleDocker.build"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_with_udocker</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot built with udocker&quot;</span><span class="p">)</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -201,24 +249,36 @@
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SimpleDocker.delete"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker rmi </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_with_udocker</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker rmi </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+            <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;sudo -u </span><span class="si">{0}</span><span class="s2"> udocker rmi </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="SimpleDocker.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run -it -d --platform </span><span class="si">{0}</span><span class="s2"> --name </span><span class="si">{1}</span><span class="s2"> </span><span class="si">{2}</span><span class="s2"> bash&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">resolve_platform</span><span class="p">(),</span> <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_with_udocker</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run -it -d --platform </span><span class="si">{0}</span><span class="s2"> --name </span><span class="si">{1}</span><span class="s2"> </span><span class="si">{2}</span><span class="s2"> bash&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">resolve_platform</span><span class="p">(),</span> <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;docker run -it -d --memory=&quot;</span><span class="si">{3}</span><span class="s1">&quot; --platform </span><span class="si">{0}</span><span class="s1"> --name </span><span class="si">{1}</span><span class="s1"> </span><span class="si">{2}</span><span class="s1"> bash&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">resolve_platform</span><span class="p">(),</span>
+                    <span class="n">name</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;docker run -it -d --memory=&quot;</span><span class="si">{3}</span><span class="s1">&quot; --platform </span><span class="si">{0}</span><span class="s1"> --name </span><span class="si">{1}</span><span class="s1"> </span><span class="si">{2}</span><span class="s1"> bash&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">resolve_platform</span><span class="p">(),</span>
-                <span class="n">name</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">),</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span>
+            <span class="c1"># TODO</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;sudo -u </span><span class="si">{0}</span><span class="s2"> udocker run </span><span class="si">{2}</span><span class="s2"> bash&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
             <span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">name</span></div>
 
 <div class="viewcode-block" id="SimpleDocker.kill"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.kill">[docs]</a>    <span class="nd">@staticmethod</span>
