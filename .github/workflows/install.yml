@@ -29,6 +29,11 @@ jobs:
         ersilia --help
         ersilia --version
 
+  test-docker:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -61,8 +66,8 @@ jobs:
         run: source $CONDA/etc/profile.d/conda.sh
 
       - name: Set Python to 3.10.10
-        run:
-         conda install -y python=3.10.10 
+        run: |
+          conda install -y python=3.10.10 
 
       - name: Install dependencies
         run: |
