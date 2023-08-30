@@ -72,7 +72,9 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.publish.test</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="c1"># TODO adapt to input-type agnostic. For now, it works only with Compound input types.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">click</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
@@ -522,10 +524,7 @@
                                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># if it reaches this, then the outputs are just strings</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_compare_output_strings</span><span class="p">(</span><span class="n">output1</span><span class="p">[</span><span class="n">key1</span><span class="p">],</span> <span class="n">output2</span><span class="p">[</span><span class="n">key2</span><span class="p">])</span>
-                        <span class="o">&lt;=</span> <span class="mi">95</span>
-                    <span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_output_strings</span><span class="p">(</span><span class="n">output1</span><span class="p">[</span><span class="n">key1</span><span class="p">],</span> <span class="n">output2</span><span class="p">[</span><span class="n">key2</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">95</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;output1 value:&quot;</span><span class="p">,</span> <span class="n">output1</span><span class="p">[</span><span class="n">key1</span><span class="p">])</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;output2 value:&quot;</span><span class="p">,</span> <span class="n">output2</span><span class="p">[</span><span class="n">key2</span><span class="p">])</span>
                         <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -550,7 +549,7 @@
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">BASE</span></div>
-    
+
 <div class="viewcode-block" id="ModelTester.conda_prefix"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.conda_prefix">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">conda_prefix</span><span class="p">(</span><span class="n">is_base</span><span class="p">):</span>
         <span class="n">o</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;which conda&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
@@ -566,38 +565,42 @@
 
 <div class="viewcode-block" id="ModelTester.is_base"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.is_base">[docs]</a>    <span class="k">def</span> <span class="nf">is_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">default_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_env</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">default_env</span> <span class="o">==</span> <span class="s1">&#39;base&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">default_env</span> <span class="o">==</span> <span class="s2">&quot;base&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
-    
+
     <span class="k">def</span> <span class="nf">_compare_tolerance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">,</span> <span class="n">tolerance_percentage</span><span class="p">):</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value1</span> <span class="o">-</span> <span class="n">value2</span><span class="p">)</span>
         <span class="n">tolerance</span> <span class="o">=</span> <span class="p">(</span><span class="n">tolerance_percentage</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value1</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value2</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">diff</span> <span class="o">&lt;=</span> <span class="n">tolerance</span>
-    
+
     <span class="k">def</span> <span class="nf">_compare_string_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">,</span> <span class="n">similarity_threshold</span><span class="p">):</span>
         <span class="n">similarity</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">ratio</span><span class="p">(</span><span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">similarity</span> <span class="o">&gt;=</span> <span class="n">similarity_threshold</span>
-    
+
 <div class="viewcode-block" id="ModelTester.read_csv"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.read_csv">[docs]</a>    <span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-            <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                <span class="n">values</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">values</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
     <span class="nd">@throw_ersilia_exception</span>
-    <span class="k">def</span> <span class="nf">run_bash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+    <span class="k">def</span> <span class="nf">run_bash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;Calculating model size...&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
-        
-        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
 
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
             <span class="c1"># Print size of model</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_model_size</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span> <span class="s2">&quot;../eos/dest/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_model_size</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span>
+                    <span class="s2">&quot;../eos/dest/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">size_kb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_size</span> <span class="o">/</span> <span class="mi">1024</span>
             <span class="n">size_mb</span> <span class="o">=</span> <span class="n">size_kb</span> <span class="o">/</span> <span class="mi">1024</span>
             <span class="n">size_gb</span> <span class="o">=</span> <span class="n">size_mb</span> <span class="o">/</span> <span class="mi">1024</span>
@@ -605,31 +608,46 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;KB:&quot;</span><span class="p">,</span> <span class="n">size_kb</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MB:&quot;</span><span class="p">,</span> <span class="n">size_mb</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GB:&quot;</span><span class="p">,</span> <span class="n">size_gb</span><span class="p">)</span>
-            
+
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running the model bash script...&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
 
             <span class="c1"># Create an example input</span>
             <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
             <span class="nb">input</span> <span class="o">=</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            
+
             <span class="c1"># Read it into a temp file</span>
             <span class="n">ex_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;example_file.csv&quot;</span><span class="p">))</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ex_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">:</span>
-                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="c1"># Halt this check if the run.sh file does not exist (e.g. eos3b5e)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span> <span class="s2">&quot;../eos/dest/</span><span class="si">{0}</span><span class="s2">/model/framework/run.sh&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span>
+                    <span class="s2">&quot;../eos/dest/</span><span class="si">{0}</span><span class="s2">/model/framework/run.sh&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3.&quot;</span>
+                <span class="p">)</span>
                 <span class="k">return</span>
 
             <span class="c1"># Navigate into the temporary directory</span>
-            <span class="n">subdirectory_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span> <span class="s2">&quot;../eos/dest/</span><span class="si">{0}</span><span class="s2">/model/framework&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+            <span class="n">subdirectory_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span>
+                <span class="s2">&quot;../eos/dest/</span><span class="si">{0}</span><span class="s2">/model/framework&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">subdirectory_path</span><span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">run_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span> <span class="s2">&quot;../eos/dest/</span><span class="si">{0}</span><span class="s2">/model/framework/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)))</span>
+                <span class="n">run_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span>
+                        <span class="s2">&quot;../eos/dest/</span><span class="si">{0}</span><span class="s2">/model/framework/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
                 <span class="n">tmp_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;script.sh&quot;</span><span class="p">))</span>
                 <span class="n">arg1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;bash_output.csv&quot;</span><span class="p">)</span>
                 <span class="n">output_log</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;output.txt&quot;</span><span class="p">))</span>
@@ -641,14 +659,24 @@
 <span class="s2">    cd </span><span class="si">{2}</span>
 <span class="s2">    bash run.sh . </span><span class="si">{3}</span><span class="s2"> </span><span class="si">{4}</span><span class="s2"> &gt; </span><span class="si">{5}</span><span class="s2"> 2&gt; </span><span class="si">{6}</span>
 <span class="s2">    conda deactivate</span>
-<span class="s2">    &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">run_path</span><span class="p">,</span> <span class="n">ex_file</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">output_log</span><span class="p">,</span> <span class="n">error_log</span><span class="p">)</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">()),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+                    <span class="n">run_path</span><span class="p">,</span>
+                    <span class="n">ex_file</span><span class="p">,</span>
+                    <span class="n">arg1</span><span class="p">,</span>
+                    <span class="n">output_log</span><span class="p">,</span>
+                    <span class="n">error_log</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
 
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing &#39;bash run.sh&#39;...&quot;</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;bash&#39;</span><span class="p">,</span> <span class="n">tmp_script</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                        <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="n">tmp_script</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bash execution completed!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error encountered while running the bash script.&quot;</span><span class="p">)</span>
@@ -664,19 +692,21 @@
                     <span class="nb">print</span><span class="p">(</span><span class="n">error_content</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error while activating the conda environment: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error while activating the conda environment: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing ersilia run...&quot;</span><span class="p">)</span>
             <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;ersilia_output.csv&quot;</span><span class="p">))</span>
 
             <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
-            <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">ex_file</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ersilia run completed!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            
+
             <span class="n">ersilia_run</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
-            <span class="n">remove_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">]</span>
+            <span class="n">remove_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ersilia_run</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">remove_cols</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
@@ -699,29 +729,57 @@
             <span class="c1"># Compare values in the common columns within a 5% tolerance`</span>
             <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">common_columns</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">)):</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span> 
-                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compare_tolerance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">DIFFERENCE_THRESHOLD</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])):</span>
-                            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash run and Ersilia run produce inconsistent results.&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                        <span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                    <span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_compare_tolerance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">DIFFERENCE_THRESHOLD</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
+                        <span class="p">):</span>
+                            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                                <span class="n">BOLD</span>
+                                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash run and Ersilia run produce inconsistent results.&quot;</span>
+                                <span class="o">+</span> <span class="n">RESET</span>
+                            <span class="p">)</span>
                             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in the following column: &quot;</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
                             <span class="nb">print</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
                             <span class="nb">print</span><span class="p">(</span><span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
                             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compare_string_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])):</span>
-                            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash run and Ersilia run produce inconsistent results.&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                        <span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="nb">str</span>
+                    <span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_compare_string_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
+                        <span class="p">):</span>
+                            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                                <span class="n">BOLD</span>
+                                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash run and Ersilia run produce inconsistent results.&quot;</span>
+                                <span class="o">+</span> <span class="n">RESET</span>
+                            <span class="p">)</span>
                             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in the following column: &quot;</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
                             <span class="nb">print</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
                             <span class="nb">print</span><span class="p">(</span><span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
                             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="nb">bool</span><span class="p">):</span>    
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                        <span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="nb">bool</span>
+                    <span class="p">):</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">]):</span>
-                            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash run and Ersilia run produce inconsistent results.&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+                            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                                <span class="n">BOLD</span>
+                                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash run and Ersilia run produce inconsistent results.&quot;</span>
+                                <span class="o">+</span> <span class="n">RESET</span>
+                            <span class="p">)</span>
                             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in the following column: &quot;</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
                             <span class="nb">print</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
                             <span class="nb">print</span><span class="p">(</span><span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
                             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">SUCCESS! Bash run and Ersilia run produce consistent results.&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                <span class="n">BOLD</span>
+                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">SUCCESS! Bash run and Ersilia run produce consistent results.&quot;</span>
+                <span class="o">+</span> <span class="n">RESET</span>
+            <span class="p">)</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    writes to the .json file all the basic information received from the test module:</span>
