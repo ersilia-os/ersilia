@@ -4,17 +4,13 @@ import random
 import importlib
 
 from ...utils.identifiers.arbitrary import ArbitraryIdentifier
-from ...setup.requirements.compound import (
-    ChemblWebResourceClientRequirement,
-    RdkitRequirement,
-)
 from ... import logger
 from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 from .examples import text as test_examples
 from . import EXAMPLES_FOLDER
 
 
-EXAMPLES = "compound.tsv"
+EXAMPLES = "text.tsv"
 
 
 class IO(object):
@@ -36,10 +32,22 @@ class IO(object):
             self._test = test_examples.input_shape_single_text
 
         if type(self.input_shape) is InputShapeList:
+            # TODO
+            self.logger.warning(
+                "Input shape list for text is not available in Ersilia yet!"
+            )
+            raise Exception
             self.logger.debug("InputShapeList shape: {0}".format(self.input_shape.name))
             self._example = self._example_list
             self._parser = self._parse_list
             self._test = test_examples.input_shape_list_text
+
+        if type(self.input_shape) is InputShapePairOfLists:
+            # TODO
+            self.logger.warning(
+                "Input shape pair of list for text is not available in Ersilia yet!"
+            )
+            raise Exception
 
     def _sample_example_singlets(self, n_samples):
         delimiter = None
@@ -77,11 +85,7 @@ class IO(object):
             yield d
 
     def setup(self):
-        self.logger.debug(
-            "Checking RDKIT and other requirements necessary for compound inputs"
-        )
-        RdkitRequirement()
-        ChemblWebResourceClientRequirement()
+        self.logger.debug("No setup is necessary for text file")
 
     def example(self, n_samples):
         return self._example(n_samples)
@@ -90,15 +94,9 @@ class IO(object):
         return self._test
 
     def _parse_text(self, datum):
-        text = datum
-        text_type = self.identifier.guess_type(text)
-        key = None
-        if text_type == "iupac_name":
-            inp = text
-        else:
-            inp = self.identifier.chemical_identifier_resolver(text)
-        if key is None:
-            key = self.identifier.encode(inp)
+        text = str(datum)
+        inp = text
+        key = self.identifier.encode(inp)
         result = {"key": key, "input": inp, "text": text}
         return result
 
@@ -119,10 +117,14 @@ class IO(object):
             return self._parser(datum)
 
     def is_input(self, text):
-        return self.identifier._is_iupac_name(text)
+        if text == "input":
+            return False
+        return True  # TODO
 
     def string_delimiter(self):
-        return "."
+        # TODO
+        return "$$$"
 
     def column_delimiter(self):
+        # TODO
         return ","
