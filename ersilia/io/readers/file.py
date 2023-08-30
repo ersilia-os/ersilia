@@ -297,12 +297,19 @@ class BaseTabularFile(object):
             R = []
             reader = csv.reader(f, delimiter=self._column_delimiter)
             if header:
-                next(reader)
-            for l in reader:
-                r = []
-                for i in input:
-                    r += [l[i]]
-                R += [r]
+                h = next(reader)
+            else:
+                h = None
+            if len(h) == 1:
+                for l in reader:
+                    l = self._column_delimiter.join(l)
+                    R += [[l]]
+            else:
+                for l in reader:
+                    r = []
+                    for i in input:
+                        r += [l[i]]
+                    R += [r]
         self._data = R
         return self._data
 
@@ -386,6 +393,7 @@ class TabularFileShapeStandardizer(BaseTabularFile):
     def _standardize_single(self):
         self.logger.debug("Standardizing input single")
         with open(self.dst_path, "w") as f:
+            self.logger.debug("Writing standardized input to {0}".format(self.dst_path))
             writer = csv.writer(f, delimiter=self.dst_column_delimiter)
             writer.writerow(["input_0"])
             for r in self._data:
