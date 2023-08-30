@@ -119,7 +119,14 @@ class IO(object):
     def is_input(self, text):
         if text == "input":
             return False
+        if self.identifier._is_checksum(text):
+            return False
         return True  # TODO
+
+    def is_key(self, text):
+        if text == "key":
+            return False
+        return self.identifier._is_checksum(text)
 
     def string_delimiter(self):
         # TODO

@@ -191,6 +191,11 @@ class BaseTabularFile(object):
             for i, r in enumerate(reader):
                 if len(r) == 1:
                     self.matching = {"input": [0], "key": None}
+                    self.logger.debug(
+                        "Number of columns seems to be 1: assuming input is the only column: {0}".format(
+                            self.matching
+                        )
+                    )
                     return self.matching
                 if i > self.sniff_line_limit:
                     self.logger.debug("Stopping sniffer for resolving column types")
@@ -201,6 +206,9 @@ class BaseTabularFile(object):
                     if self.is_key(v):
                         key[j] += 1
                 N += 1
+            self.logger.debug("Done with sniffing the file")
+            self.logger.debug("Input: {0}".format(dict(input)))
+            self.logger.debug("Key: {0}".format(dict(key)))
         if len(key) == 0:
             key = None
         else:
@@ -223,6 +231,7 @@ class BaseTabularFile(object):
                 key = None
             else:
                 key = sorted(key)
+            self.logger.debug("Key: {0}".format(key))
         if len(input) == 0:
             input = None
         else:
@@ -231,6 +240,10 @@ class BaseTabularFile(object):
                 for k, v in sorted(input.items(), key=lambda item: -item[1])
                 if v > 0
             ]
+            if key is not None:
+                inputs_and_counts = [
+                    (k, n) for k, n in inputs_and_counts if k not in key
+                ]
             inputs_and_counts = inputs_and_counts[: self.expected_number]
             input = []
             for k, n in inputs_and_counts:
@@ -245,6 +258,7 @@ class BaseTabularFile(object):
                 input = None
             else:
                 input = sorted(input)
+            self.logger.debug("Input: {0}".format(input))
         if key is not None:
             assert len(key) == self.expected_number
         if input is not None:
@@ -256,12 +270,16 @@ class BaseTabularFile(object):
 
     def has_header(self):
         if self._has_header is not None:
+            self.logger.debug("Has header is not None")
             return self._has_header
+        self.logger.debug("Resolving columns")
         self.resolve_columns()
         with open(self.path, "r") as f:
             reader = csv.reader(f, delimiter=self._column_delimiter)
             candidate_header = next(reader)
+            self.logger.debug("Candidate header is {0}".format(candidate_header))
         input = self.matching["input"]
+        self.logger.debug("Matching for input is {0}".format(input))
         if input is not None:
             hi = []
             for i in input:
