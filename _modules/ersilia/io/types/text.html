@@ -193,7 +193,14 @@
 <div class="viewcode-block" id="IO.is_input"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.text.IO.is_input">[docs]</a>    <span class="k">def</span> <span class="nf">is_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">_is_checksum</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># TODO</span></div>
+
+<div class="viewcode-block" id="IO.is_key"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.text.IO.is_key">[docs]</a>    <span class="k">def</span> <span class="nf">is_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;key&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">_is_checksum</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="IO.string_delimiter"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.text.IO.string_delimiter">[docs]</a>    <span class="k">def</span> <span class="nf">string_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># TODO</span>
