@@ -28,10 +28,14 @@ jobs:
           wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
           mv _static_version.py ersilia/.
 
-      - name: Install dependencies
+      - name: Install Poetry
         run: |
-          python -m pip install --upgrade pip
-          pip install setuptools wheel twine
+            python -m pip install --upgrade pip
+            pip install setuptools wheel twine
+            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+            source $HOME/.poetry/env
+            echo `poetry --version`
+            echo "Poetry successfully installed"
 
       - name: Build and publish
         env:
@@ -39,6 +43,6 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
         run: |
-          # python setup.py sdist bdist_wheel
+          source $HOME/.poetry/env
           poetry build
           twine upload --verbose --skip-existing dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
