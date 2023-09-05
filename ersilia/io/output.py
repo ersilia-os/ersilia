@@ -199,10 +199,12 @@ class GenericOutputAdapter(ResponseRefactor):
                 current_pure_dtype[ok] = t
             else:
                 t = current_pure_dtype[ok]
-            self.logger.debug("Pure datatype: {0}".format(t))
+            self.logger.debug("Datatype: {0}".format(t))
             if t in self._array_types:
                 assert m is not None
                 if v is not None:
+                    if len(m) > len(v):
+                        v = list(v) + [None] * (len(m) - len(v))
                     assert len(m) == len(v)
                 if merge_key:
                     output_keys_expanded += [

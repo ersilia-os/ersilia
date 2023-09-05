@@ -109,3 +109,18 @@ class VirtualEnvironmentSetupError(ErsiliaError):
             "Please report the error at:\n - https://github.com/ersilia-os/ersilia\n"
         )
         return text
+
+
+class OutputDataTypesNotConsistentError(ErsiliaError):
+    def __init__(self):
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = "Output data types are not consistent"
+        return text
+
+    def _get_hints(self):
+        text = "This message is related to a bad development of the model. As an end user, there is not much you can do about it. Please reach out to Ersilia directly to report this error."
+        return text

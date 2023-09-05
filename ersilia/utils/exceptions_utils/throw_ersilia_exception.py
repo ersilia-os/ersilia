@@ -21,7 +21,7 @@ def echo(text: str, **styles):
 def throw_ersilia_exception(func):
     def inner_function(*args, **kwargs):
         try:
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except Exception as E:
             text = ":police_car_light::police_car_light::police_car_light: Something went wrong with Ersilia :police_car_light::police_car_light::police_car_light:\n"
             echo(text, blink=False, bold=True, fg="red")
