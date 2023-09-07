@@ -93,12 +93,15 @@ class ModelSniffer(BaseAction):
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
-        mbytes = size / (1024 ** 2)
+        mbytes = size / (1024**2)
         return mbytes
 
     def _get_output_ann_type(self):
         dest_dir = self._model_path(self.model_id)
         metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
+        if not os.path.exists(metadata_json):
+            self.logger.debug("{0} does not exist".format(metadata_json))
+            return None
         with open(metadata_json, "r") as f:
             md = json.load(f)
         return md["Output Type"][0]  # TODO Account for mixed types
@@ -106,6 +109,9 @@ class ModelSniffer(BaseAction):
     def _get_output_ann_shape(self):
         dest_dir = self._model_path(self.model_id)
         metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
+        if not os.path.exists(metadata_json):
+            self.logger.debug("{0} does not exist".format(metadata_json))
+            return None
         with open(metadata_json, "r") as f:
             md = json.load(f)
         return md["Output Shape"]  # TODO Account for mixed types
@@ -125,13 +131,17 @@ class ModelSniffer(BaseAction):
             for k, v in out.items():
                 ann_type = self._get_output_ann_type()
                 ann_shape = self._get_output_ann_shape()
-                self.logger.debug("Output annotation type: {0}".format(ann_type))
-                self.logger.debug("Output annotation shape: {0}".format(ann_shape))
-                dt = AnnotatedDataTyper(
-                    v, annotated_type=ann_type, annotated_shape=ann_shape
-                )
-                t = dt.get_type()
-                self.logger.debug("Resolved annotation: {0}".format(t))
+                if ann_type is None:
+                    self.logger.debug("Output annotation type: {0}".format(ann_type))
+                    self.logger.debug("Output annotation shape: {0}".format(ann_shape))
+                    dt = AnnotatedDataTyper(
+                        v, annotated_type=ann_type, annotated_shape=ann_shape
+                    )
+                    t = dt.get_type()
+                    self.logger.debug("Resolved annotation: {0}".format(t))
+                else:
+                    self.logger.debug("No annotated metadata could be retrieved")
+                    t = None
                 if t is None:
                     dt = PureDataTyper(v)
                     t = dt.get_type()
