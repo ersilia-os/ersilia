@@ -1,5 +1,5 @@
-import docker
 import requests
+import subprocess
 
 from ... import ErsiliaBase
 from ...utils.terminal import yes_no_input, run_command
@@ -15,7 +15,6 @@ class ModelPuller(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.model_id = model_id
-        self.client = docker.from_env()
         self.image_name = "{0}/{1}:{2}".format(
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
@@ -60,6 +59,21 @@ class ModelPuller(ErsiliaBase):
             org=DOCKERHUB_ORG, img=self.model_id, tag=DOCKERHUB_LATEST_TAG
         )
 
+    def _get_size_of_local_docker_image_in_mb(self):
+        try:
+            image_name = "{0}/{1}:{2}".format(
+                DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            )
+            result = subprocess.check_output(
+                ["docker", "image", "inspect", image_name, "--format", "{{.Size}}"]
+            )
+            # Convert bytes to MB
+            size_in_mb = int(result.strip()) / (1024 * 1024)
+            return size_in_mb
+        except subprocess.CalledProcessError:
+            self.logger.warning("Image not found locally")
+            return None
+
     @throw_ersilia_exception
     def pull(self):
         if self.is_available_locally():
@@ -85,19 +99,13 @@ class ModelPuller(ErsiliaBase):
                 "Pulling image {0} from DockerHub...".format(self.image_name)
             )
             try:
-                img = self.client.images.get(
-                    "{0}/{1}".format(DOCKERHUB_ORG, self.model_id)
-                )
                 self.logger.debug(
-                    f"Size of image: {img.attrs['Size'] / (1024*1024):.2f} MB"
+                    "Trying to pull image {0}/{1}".format(DOCKERHUB_ORG, self.model_id)
                 )
-            except:
-                self.logger.warning("Could not obtain size of image")
-            try:
-                self.client.images.pull(
-                    "{0}/{1}".format(DOCKERHUB_ORG, self.model_id),
-                    tag=DOCKERHUB_LATEST_TAG,
-                    decode=True,
+                run_command(
+                    "docker pull {0}/{1}:{2}".format(
+                        DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+                    )
                 )
                 self.logger.debug("Image pulled succesfully!")
             except:
@@ -109,6 +117,11 @@ class ModelPuller(ErsiliaBase):
                         DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
                     )
                 )
+            size = self._get_size_of_local_docker_image_in_mb()
+            if size:
+                self.logger.debug("Size of image {0} MB".format(size))
+            else:
+                self.logger.warning("Could not obtain size of image")
             # except: #TODO add better error
             #    raise DockerImageArchitectureNotAvailableError(model=self.model_id)
         else:
