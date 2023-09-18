@@ -1,5 +1,10 @@
 import os
 import json
+try:
+    import emoji
+except:
+    emoji = None
+import click
 
 from ... import ErsiliaBase
 from ...default import (
@@ -89,3 +94,76 @@ class Information(ErsiliaBase):
             "card": self._get_card(),
         }
         return data
+    
+
+class InformationDisplayer(ErsiliaBase):
+
+    def __init__(self, info_data, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.info_data = info_data
+        self.logger.debug(self.info_data)
+    
+    @staticmethod
+    def _echo(text, **styles):
+        if emoji is not None:
+            text = emoji.emojize(text)
+        return click.echo(click.style(text, **styles))
+    
+    def _description_info(self):
+        color = "blue"
+        card = self.info_data["card"]
+        text = ":rocket: {0}".format(card["Title"]).rstrip(os.linesep)
+        self._echo(text, fg=color, bold=True)
+        text = "{0}".format(card["Description"]).rstrip(os.linesep)
+        self._echo(text, fg=color)
+        text = ""
+        self._echo(text)
+
+    def _identifiers_info(self):
+        color = "green"
+        card = self.info_data["card"]
+        text = ":person_tipping_hand: Identifiers"
+        self._echo(text, fg=color, bold=True)
+        text = "Model identifiers: {0}".format(card["Identifier"]).rstrip(os.linesep)
+        self._echo(text, fg=color)
+        text = "Slug: {0}".format(card["Slug"]).rstrip(os.linesep)
+        self._echo(text, fg=color)
+        text = ""
+        self._echo(text)
+
+    def _code_info(self):
+        color = "red"
+        card = self.info_data["card"]
+        text = ":nerd_face: Code and parameters"
+        self._echo(text, fg=color, bold=True)
+        text = "GitHub: https://github.com/ersilia-os/{0}".format(card["Identifier"])
+        self._echo(text, fg=color)
+        text = "AWS S3: {0}".format(card["S3"])
+        self._echo(text, fg=color)
+        text = ""
+        self._echo(text)
+
+    def _docker_info(self):
+        try:
+            color = "blue"
+            card = self.info_data["card"]
+            dockerhub_field = card["DockerHub"]
+            docker_architecture = card["Docker Architecture"]
+            text = ":whale: Docker"
+            self._echo(text, fg=color, bold=True)
+            text = "Docker Hub: {0}".format(dockerhub_field)
+            self._echo(text, fg=color)
+            text = "Architectures: {0}".format(",".join(docker_architecture))
+            self._echo(text, fg=color)
+            text = ""
+            self._echo(text)
+        except:
+            self.logger.warning("No metadata for Docker slots")
+
+    def echo(self):
+        self._description_info()
+        self._identifiers_info()
+        self._code_info()
+        self._docker_info()
+        text = "For more information, please visit https://ersilia.io/model-hub"
+        self._echo(text, fg="black")
