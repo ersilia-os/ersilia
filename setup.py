@@ -66,7 +66,7 @@ setup(
     packages=find_packages(),
     entry_points={"console_scripts": ["ersilia=ersilia.cli:cli"]},
     classifiers=[
-        "Programming Language :: Python :: 3.7",
+        "Programming Language x:: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
