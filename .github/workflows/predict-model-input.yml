@@ -52,6 +52,7 @@ jobs:
           echo "Sample model id selected: $MODEL_ID"
           ersilia fetch $MODEL_ID
           ersilia serve $MODEL_ID
+          echo "$MODEL_ID succesfully fetched and served"
           ersilia sample -n 100 -f input.csv
           ersilia api -i input.csv -o output.csv
           ersilia close
