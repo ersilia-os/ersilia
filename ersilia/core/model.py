@@ -12,6 +12,7 @@ from .. import logger
 from .base import ErsiliaBase
 from .modelbase import ModelBase
 from .session import Session, RunLogger
+from .tracking import RunTracker
 from ..serve.autoservice import AutoService
 from ..serve.schema import ApiSchema
 from ..serve.api import Api
@@ -47,6 +48,7 @@ class ErsiliaModel(ErsiliaBase):
         fetch_if_not_available=True,
         preferred_port=None,
         log_runs=True,
+        track_runs=False
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -129,6 +131,11 @@ class ErsiliaModel(ErsiliaBase):
         else:
             self._run_logger = None
 
+        if track_runs:
+            self._run_tracker = RunTracker()
+        else:
+            self._run_tracker = None
+
     def __enter__(self):
         self.serve()
         return self
@@ -140,6 +147,9 @@ class ErsiliaModel(ErsiliaBase):
         return self._is_valid
 
     def _set_api(self, api_name):
+        # Don't want to override apis we explicitly write
+        if hasattr(self, api_name): return
+
         def _method(input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
             return self.api(api_name, input, output, batch_size)
 
@@ -402,13 +412,15 @@ class ErsiliaModel(ErsiliaBase):
     def get_apis(self):
         return self.autoservice.get_apis()
 
-    def run(self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
+    def run(self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False):
         api_name = self.get_apis()[0]
         result = self.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )
         if self._run_logger is not None:
             self._run_logger.log(result=result, meta=self._model_info)
+        if self._run_tracker is not None and track_run:
+            self._run_tracker.track(input=input, result=result, meta=self._model_info)
         return result
 
     @property

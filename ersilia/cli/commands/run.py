@@ -20,7 +20,10 @@ def run_cmd():
     @click.option(
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
-    def run(input, output, batch_size):
+    @click.option(
+        "-t/", "--track_run/--no_track_run", "track_run", required=False, default=False
+    )
+    def run(input, output, batch_size, track_run):
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
@@ -30,8 +33,8 @@ def run_cmd():
                 fg="red",
             )
             return
-        mdl = ErsiliaModel(model_id, service_class=service_class, config_json=None)
-        result = mdl.run(input=input, output=output, batch_size=batch_size)
+        mdl = ErsiliaModel(model_id, service_class=service_class, config_json=None, track_runs=track_run)
+        result = mdl.run(input=input, output=output, batch_size=batch_size, track_run=track_run)
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:
