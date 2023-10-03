@@ -1,7 +1,7 @@
 ---
 description: >-
   Please find here the guidelines for the Outreachy contribution period running
-  from 2nd October 2023 to 28th October 2023
+  from 2nd October 2023 to 27th October 2023
 ---
 
 # Outreachy Winter 2023
@@ -112,7 +112,7 @@ ersilia --help #this should output the command options for ersilia
 ```
 ersilia -v fetch eos3b5e
 ersilia serve eos3b5e
-ersilia -v api calculate -i "CCCC"
+ersilia -v api run -i "CCCC"
 ```
 
 This is calculating the molecular weight of the molecules, the output should be printed in your CLI and look like:
