@@ -74,6 +74,7 @@ jobs:
           command: |
               apt-get update
               source activate ersilia
+              pip install -U pip setuptools
               pip install -e .[docs]
               apt-get -y install make
       - run:
