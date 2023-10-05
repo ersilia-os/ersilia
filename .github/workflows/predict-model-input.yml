@@ -44,15 +44,16 @@ jobs:
           python --version
           echo "After conda init"
           conda init
-          python -m pip install -e .[test]
+          python -m pip install -e .
 
       - name: Predict output
         run: |
           source activate
           echo "Sample model id selected: $MODEL_ID"
-          ersilia fetch $MODEL_ID
+          ersilia -v fetch $MODEL_ID
+          echo "Serving model: $MODEL_ID"
           ersilia serve $MODEL_ID
-          echo "$MODEL_ID succesfully fetched and served"
+          echo "$MODEL_ID successfully fetched and served"
           ersilia sample -n 100 -f input.csv
-          ersilia api -i input.csv -o output.csv
+          ersilia run -i input.csv -o output.csv
           ersilia close
