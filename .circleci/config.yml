@@ -25,7 +25,8 @@ jobs:
           name: Install ersilia package in developer mode
           command: |
               source activate ersilia
-              pip install -e .
+              pip install -U pip setuptools
+              python -m pip install -e .
       - run:
           name: Test CLI
           command: |
