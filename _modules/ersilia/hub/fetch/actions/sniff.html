@@ -75,7 +75,6 @@
   <h1>Source code for ersilia.hub.fetch.actions.sniff</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -87,8 +86,12 @@
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">ErsiliaModel</span>
 <span class="kn">from</span> <span class="nn">....io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span> <span class="nn">....io.pure</span> <span class="kn">import</span> <span class="n">PureDataTyper</span>
-<span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">API_SCHEMA_FILE</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span>
+<span class="kn">from</span> <span class="nn">....io.annotated</span> <span class="kn">import</span> <span class="n">AnnotatedDataTyper</span>
+<span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">API_SCHEMA_FILE</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span>
 <span class="kn">from</span> <span class="nn">....utils.exceptions_utils.exceptions</span> <span class="kn">import</span> <span class="n">EmptyOutputError</span>
+<span class="kn">from</span> <span class="nn">....utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OutputDataTypesNotConsistentError</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <span class="n">N</span> <span class="o">=</span> <span class="mi">3</span>
@@ -168,34 +171,91 @@
         <span class="n">mbytes</span> <span class="o">=</span> <span class="n">size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">mbytes</span>
 
+    <span class="k">def</span> <span class="nf">_get_output_ann_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">metadata_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">md</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># TODO Account for mixed types</span>
+
+    <span class="k">def</span> <span class="nf">_get_output_ann_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">metadata_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">md</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>  <span class="c1"># TODO Account for mixed types</span>
+
+    <span class="nd">@throw_ersilia_exception</span>
     <span class="k">def</span> <span class="nf">_get_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
         <span class="n">input_schema</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="n">output_schema</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="n">inp</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">pdt</span> <span class="o">=</span> <span class="n">PureDataTyper</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                <span class="n">input_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">pdt</span><span class="o">.</span><span class="n">get_type</span><span class="p">()]</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="n">PureDataTyper</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">input_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">get_type</span><span class="p">()]</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">pdt</span> <span class="o">=</span> <span class="n">PureDataTyper</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                <span class="n">output_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">pdt</span><span class="o">.</span><span class="n">get_type</span><span class="p">()]</span>
+                <span class="n">ann_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_ann_type</span><span class="p">()</span>
+                <span class="n">ann_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_ann_shape</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">ann_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output annotation type: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ann_type</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output annotation shape: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ann_shape</span><span class="p">))</span>
+                    <span class="n">dt</span> <span class="o">=</span> <span class="n">AnnotatedDataTyper</span><span class="p">(</span>
+                        <span class="n">v</span><span class="p">,</span> <span class="n">annotated_type</span><span class="o">=</span><span class="n">ann_type</span><span class="p">,</span> <span class="n">annotated_shape</span><span class="o">=</span><span class="n">ann_shape</span>
+                    <span class="p">)</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resolved annotation: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No annotated metadata could be retrieved&quot;</span><span class="p">)</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">dt</span> <span class="o">=</span> <span class="n">PureDataTyper</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span>
+                <span class="n">output_schema</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span>
         <span class="n">input_schema_</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">input_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dicts_are_identical</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
                 <span class="n">input_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Input data types are not consistent&quot;</span><span class="p">)</span>
-        <span class="n">output_schema_</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">output_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dicts_are_identical</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-                <span class="n">output_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Output data types are not consistent&quot;</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_latest_meta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Latest meta: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+        <span class="n">output_schema_</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">output_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ann_shape</span> <span class="o">==</span> <span class="s2">&quot;Single&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dicts_are_identical</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                    <span class="n">output_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Output data types are not consistent&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">OutputDataTypesNotConsistentError</span>
+            <span class="k">elif</span> <span class="n">ann_shape</span> <span class="o">==</span> <span class="s2">&quot;List&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dicts_are_identical</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                    <span class="n">output_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Output data types are not consistent. Continuing anyway, but removing output shape.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">w</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">w</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">,)</span>
+                    <span class="n">output_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">output_schema_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> : </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
             <span class="n">meta_k</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
@@ -209,6 +269,7 @@
                 <span class="n">output_schema_</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
         <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">input_schema_</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output_schema_</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Schema: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">schema</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done with the schema!&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">schema</span>
 
     <span class="nd">@throw_ersilia_exception</span>
@@ -230,12 +291,14 @@
             <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="n">api_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
             <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;These are the results for API </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">api_name</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]:</span>
                     <span class="k">raise</span> <span class="n">EmptyOutputError</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting schema for API </span><span class="si">{0}</span><span class="s2">...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">api_name</span><span class="p">))</span>
             <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_schema</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is the schema </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">schema</span><span class="p">))</span>
             <span class="n">all_schemas</span><span class="p">[</span><span class="n">api_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">API_SCHEMA_FILE</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>

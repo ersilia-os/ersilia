@@ -184,6 +184,21 @@
             <span class="s2">&quot;Please report the error at:</span><span class="se">\n</span><span class="s2"> - https://github.com/ersilia-os/ersilia</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="OutputDataTypesNotConsistentError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.OutputDataTypesNotConsistentError">[docs]</a><span class="k">class</span> <span class="nc">OutputDataTypesNotConsistentError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_hints</span><span class="p">()</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Output data types are not consistent&quot;</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+    <span class="k">def</span> <span class="nf">_get_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;This message is related to a bad development of the model. As an end user, there is not much you can do about it. Please reach out to Ersilia directly to report this error.&quot;</span>
+        <span class="k">return</span> <span class="n">text</span></div>
 </pre></div>
 
            </div>
