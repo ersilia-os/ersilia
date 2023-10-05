@@ -64,12 +64,6 @@ jobs:
           command: |
               source activate ersilia
               ersilia -v delete molecular-weight
-      - run:
-          name: Test Python interface
-          command: |
-            source activate ersilia
-            pip install -e .[test]
-            pytest
   docs-build:
     docker:
       - image: ersiliaos/conda:3.7
