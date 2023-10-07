@@ -318,7 +318,7 @@ class BaseTabularFile(object):
                 h = next(reader)
             else:
                 h = None
-            if len(h) == 1:
+            if h is not None and len(h) == 1:
                 for l in reader:
                     l = self._column_delimiter.join(l)
                     R += [[l]]
