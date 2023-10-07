@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class RunTracker:
     """
     This class will be responsible for tracking model runs. It calculates the desired metadata based on a model's
@@ -5,6 +7,13 @@ class RunTracker:
 
     NOTE: Currently, the Splunk connection is not set up. For now, we will print tracking results to the console.
     """
+    time_start = None
+    # def __init__(self):
+    #     self.time_start = None
+
+    # function to be called before model is run
+    def start_tracking(self):
+        self.time_start = datetime.now()
 
     def track(self, input, result, meta):
         """
@@ -15,3 +24,6 @@ class RunTracker:
         print("Run output file:", result)
 
         print("Model metadata:", meta)
+        
+        time = datetime.now() - self.time_start
+        print("Time taken:", time)
