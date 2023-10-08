@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 
 
@@ -25,3 +26,11 @@ class RunTracker:
         print(self.read_csv(result))
 
         print("Model metadata:", meta)
+
+    def log_to_console(self, data):
+        print(f"\n{json.dumps(data)}\n")
+
+    def read_json(self, result):
+        data = json.load(result)
+        self.log_to_console(result)
+        return data
