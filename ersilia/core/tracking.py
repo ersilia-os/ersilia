@@ -25,11 +25,11 @@ class RunTracker:
         print("Run output file:", result)
         print(self.read_csv(result))
 
-        model_id = meta['metadata'].get ('Identifier', 'Unknown')
-        print ("Model ID:", model_id)
-
         print("Model metadata:", meta)
 
+        model_id = meta['metadata'].get ('Identifier', 'Unknown')
+        print ("Model ID:", model_id)
+        
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
 
