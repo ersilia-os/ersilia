@@ -4,7 +4,7 @@ on: [ push, pull_request, issue_comment ]
 
 jobs:
   lint:
-    if: !contains(github.event_name, 'issue_comment') # Don't want to trigger on comments
+    if: ${{ !contains(github.event_name, 'issue_comment') }} # Don't want to trigger on comments
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,7 +13,7 @@ jobs:
           options: "--check"
           src: "./ersilia"
   comment-lint:
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '✨')
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '✨') }}
     runs-on: ubuntu-latest
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
