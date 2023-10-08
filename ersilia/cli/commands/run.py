@@ -33,8 +33,15 @@ def run_cmd():
                 fg="red",
             )
             return
-        mdl = ErsiliaModel(model_id, service_class=service_class, config_json=None, track_runs=track_run)
-        result = mdl.run(input=input, output=output, batch_size=batch_size, track_run=track_run)
+        mdl = ErsiliaModel(
+            model_id,
+            service_class=service_class,
+            config_json=None,
+            track_runs=track_run,
+        )
+        result = mdl.run(
+            input=input, output=output, batch_size=batch_size, track_run=track_run
+        )
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:
