@@ -5,7 +5,6 @@ class RunTracker:
 
     NOTE: Currently, the Splunk connection is not set up. For now, we will print tracking results to the console.
     """
-
     def track(self, input, result, meta):
         """
         Tracks the results after a model run.
