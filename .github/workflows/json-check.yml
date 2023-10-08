@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # pin@v3.5.3
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # pin@v3.5.3
 
       - name: json syntax check
-        uses: GrantBirki/json-yaml-validate@1652fde01b1be71dfa7131148819e67639792673 # pin@v2.3.0
+        uses: GrantBirki/json-yaml-validate@3add42f5fa8bfff04a3fe664d27a316736257ef1 # pin@v2.3.1
         with:
           exclude_file: ".github/config/exclude.txt" # .gitignore style file for exclusions
           comment: "true" # allow PR comments with error messages

@@ -24,6 +24,6 @@ class RunTracker:
         print("Run output file:", result)
 
         print("Model metadata:", meta)
-        
+
         time = datetime.now() - self.time_start
         print("Time taken:", time)

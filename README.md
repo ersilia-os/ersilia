@@ -1,7 +1,7 @@
 <div id="top"></div>
 <img src="https://raw.githubusercontent.com/ersilia-os/ersilia/master/assets/Ersilia_Plum.png" height="70">
 
-# Welcome to the Ersilia Model Hub
+# 🎉 Welcome to the Ersilia Model Hub! 🌟
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/pypi/pyversions/ersilia
@@ -18,7 +18,10 @@
 
 ## Project Description
 
-The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infectious and neglected disease research. The end goal is to provide an open-source, low-code solution to access AI/ML models for **drug discovery**. The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors.
+The [Ersilia Model Hub](https://ersilia.io) is a unified platform of pre-trained AI/ML models dedicated to 🦠 infectious and neglected disease research. Our mission is to offer an open-source, 🛠 low-code solution that provides seamless access to AI/ML models for 💊 drug discovery. Models housed in our hub come from two sources:
+
+1. 📚 Published models from literature (with due third-party acknowledgement)
+2. 🛠 Custom models developed by the **Ersilia team** or our valued contributors.
 
 * Read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/)
