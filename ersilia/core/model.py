@@ -48,7 +48,7 @@ class ErsiliaModel(ErsiliaBase):
         fetch_if_not_available=True,
         preferred_port=None,
         log_runs=True,
-        track_runs=False
+        track_runs=False,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -148,7 +148,8 @@ class ErsiliaModel(ErsiliaBase):
 
     def _set_api(self, api_name):
         # Don't want to override apis we explicitly write
-        if hasattr(self, api_name): return
+        if hasattr(self, api_name):
+            return
 
         def _method(input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
             return self.api(api_name, input, output, batch_size)
@@ -412,7 +413,9 @@ class ErsiliaModel(ErsiliaBase):
     def get_apis(self):
         return self.autoservice.get_apis()
 
-    def run(self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False):
+    def run(
+        self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False
+    ):
         api_name = self.get_apis()[0]
         result = self.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
