@@ -1,9 +1,10 @@
 name: Python Black Linter
 
-on: [ push, pull_request ]
+on: [ push, pull_request, issue_comment ]
 
 jobs:
   lint:
+    if: !contains(github.event_name, 'issue_comment') # Don't want to trigger on comments
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
