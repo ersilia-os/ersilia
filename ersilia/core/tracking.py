@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 class RunTracker:
     """
     This class will be responsible for tracking model runs. It calculates the desired metadata based on a model's
@@ -6,12 +9,19 @@ class RunTracker:
     NOTE: Currently, the Splunk connection is not set up. For now, we will print tracking results to the console.
     """
 
+    def read_csv(self, file):
+        # reads csv file and returns Pandas dataframe
+        return pd.read_csv(file)
+
     def track(self, input, result, meta):
         """
         Tracks the results after a model run.
         """
 
         print("Run input file:", input)
+        print(self.read_csv(input))
+
         print("Run output file:", result)
+        print(self.read_csv(result))
 
         print("Model metadata:", meta)
