@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # pin@v3.5.3
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # pin@v3.5.3
 
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
@@ -44,14 +44,16 @@ jobs:
           python --version
           echo "After conda init"
           conda init
-          python -m pip install -e .[test]
+          python -m pip install -e .
 
       - name: Predict output
         run: |
           source activate
           echo "Sample model id selected: $MODEL_ID"
-          ersilia fetch $MODEL_ID
+          ersilia -v fetch $MODEL_ID
+          echo "Serving model: $MODEL_ID"
           ersilia serve $MODEL_ID
+          echo "$MODEL_ID successfully fetched and served"
           ersilia sample -n 100 -f input.csv
-          ersilia api -i input.csv -o output.csv
+          ersilia run -i input.csv -o output.csv
           ersilia close

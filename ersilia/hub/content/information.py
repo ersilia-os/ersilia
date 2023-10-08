@@ -1,5 +1,6 @@
 import os
 import json
+
 try:
     import emoji
 except:
@@ -94,21 +95,20 @@ class Information(ErsiliaBase):
             "card": self._get_card(),
         }
         return data
-    
+
 
 class InformationDisplayer(ErsiliaBase):
-
     def __init__(self, info_data, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.info_data = info_data
         self.logger.debug(self.info_data)
-    
+
     @staticmethod
     def _echo(text, **styles):
         if emoji is not None:
             text = emoji.emojize(text)
         return click.echo(click.style(text, **styles))
-    
+
     def _description_info(self):
         color = "blue"
         card = self.info_data["card"]
