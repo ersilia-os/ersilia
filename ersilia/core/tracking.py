@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 
+
 class RunTracker:
     """
     This class will be responsible for tracking model runs. It calculates the desired metadata based on a model's
@@ -28,7 +29,7 @@ class RunTracker:
 
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
-        
+
     def read_json(self, result):
         data = json.load(result)
         self.log_to_console(result)
