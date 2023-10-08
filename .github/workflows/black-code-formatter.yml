@@ -1,0 +1,34 @@
+name: Python Black Linter
+
+on:
+  push:
+  pull_request:
+  issue_comment:
+    types: [ created, edited ]
+
+jobs:
+  lint:
+    if: ${{ !contains(github.event_name, 'issue_comment') }} # Don't want to trigger on comments
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: psf/black@stable
+        with:
+          options: "--check"
+          src: "./ersilia"
+  comment-lint:
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '✨') }}
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+      - name: Lint files
+        uses: psf/black@stable
+        with:
+          src: "./ersilia"
+      - name: Commit lint
+        uses: stefanzweifel/git-auto-commit-action@v5
