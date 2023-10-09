@@ -8,9 +8,8 @@ class RunTracker:
 
     NOTE: Currently, the Splunk connection is not set up. For now, we will print tracking results to the console.
     """
-    time_start = None
-    # def __init__(self):
-    #     self.time_start = None
+    def __init__(self):
+        self.time_start = None
 
     # function to be called before model is run
     def start_tracking(self):
