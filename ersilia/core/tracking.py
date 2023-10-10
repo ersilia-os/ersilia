@@ -1,5 +1,7 @@
 from datetime import datetime
+import json
 import pandas as pd
+
 
 class RunTracker:
     """
@@ -34,3 +36,11 @@ class RunTracker:
 
         time = datetime.now() - self.time_start
         print("Time taken:", time)
+
+    def log_to_console(self, data):
+        print(f"\n{json.dumps(data)}\n")
+
+    def read_json(self, result):
+        data = json.load(result)
+        self.log_to_console(result)
+        return data
