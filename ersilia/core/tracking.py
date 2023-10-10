@@ -10,6 +10,7 @@ class RunTracker:
 
     NOTE: Currently, the Splunk connection is not set up. For now, we will print tracking results to the console.
     """
+
     def __init__(self):
         self.time_start = None
 
