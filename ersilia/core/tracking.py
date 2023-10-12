@@ -31,12 +31,16 @@ class RunTracker:
         print(self.read_csv(input))
 
         print("Run output file:", result)
-        print(self.read_csv(result))
+        resultDf = self.read_csv(result)
+        print(resultDf)
 
         print("Model metadata:", meta)
 
         time = datetime.now() - self.time_start
         print("Time taken:", time)
+
+        nan_count = resultDf.isna().sum()
+        print(nan_count)
 
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
