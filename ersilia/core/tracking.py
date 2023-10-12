@@ -35,9 +35,9 @@ class RunTracker:
 
         print("Model metadata:", meta)
 
-        model_id = meta['metadata'].get('Identifier', 'Unknown')
-        print ("Model ID:", model_id)
-       
+        model_id = meta["metadata"].get("Identifier", "Unknown")
+        print("Model ID:", model_id)
+
         time = datetime.now() - self.time_start
         print("Time taken:", time)
 
