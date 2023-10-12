@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import pandas as pd
 
@@ -9,6 +10,13 @@ class RunTracker:
 
     NOTE: Currently, the Splunk connection is not set up. For now, we will print tracking results to the console.
     """
+
+    def __init__(self):
+        self.time_start = None
+
+    # function to be called before model is run
+    def start_tracking(self):
+        self.time_start = datetime.now()
 
     def read_csv(self, file):
         # reads csv file and returns Pandas dataframe
@@ -27,9 +35,12 @@ class RunTracker:
 
         print("Model metadata:", meta)
 
-        model_id = meta['metadata'].get ('Identifier', 'Unknown')
+        model_id = meta['metadata'].get('Identifier', 'Unknown')
         print ("Model ID:", model_id)
-        
+       
+        time = datetime.now() - self.time_start
+        print("Time taken:", time)
+
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
 

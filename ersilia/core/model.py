@@ -416,6 +416,10 @@ class ErsiliaModel(ErsiliaBase):
     def run(
         self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False
     ):
+        # Init some tracking before the run starts
+        if self._run_tracker is not None and track_run:
+            self._run_tracker.start_tracking()
+
         api_name = self.get_apis()[0]
         result = self.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
