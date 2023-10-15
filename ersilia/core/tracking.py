@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import statistics
 import pandas as pd
 
 
@@ -24,14 +25,20 @@ class RunTracker:
 
     def stats(self, result):
         dat = self.read_csv(result)
-        # drop first two columns (key, input)
-        dat.drop(['key','input'], axis=1)
 
-        # print statistics
-        summary = dat.agg(["mean", "mode", "std", "max", "min"])
-        print("Hello")
-        print(summary)
-        return summary
+        # drop first two columns (key, input)
+        dat = dat.drop(['key','input'], axis = 1)
+
+        # calculate and print statistics
+        for column in dat:
+            print("Mean %s: %s" % (column, dat[column].mean()))
+            if len(dat[column].mode()) == 1:
+                print("Mode %s: %s" % (column, dat[column].mode()))
+            else:
+                print("No mode")
+            print("Min %s: %s" % (column, dat[column].min()))
+            print("Max %s: %s" % (column, dat[column].max()))
+            print("Standard deviation %s: %s" % (column, dat[column].std()))
 
     def track(self, input, result, meta):
     
