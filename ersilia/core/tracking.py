@@ -39,8 +39,11 @@ class RunTracker:
         time = datetime.now() - self.time_start
         print("Time taken:", time)
 
+        # checking for mismatched types
         nan_count = resultDf.isna().sum()
-        print(nan_count)
+        print("\nNAN Count:\n", nan_count)
+
+        self.check_types(resultDf, meta['metadata'])
 
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
@@ -49,3 +52,26 @@ class RunTracker:
         data = json.load(result)
         self.log_to_console(result)
         return data
+    
+    def check_types(self, resultDf, metadata):
+        typeDict = {"float64": "Float", "int64": "Int"}
+        count = 0
+
+        # ignore key and input columns
+        dtypesLst = resultDf.loc[:, ~resultDf.columns.isin(['key', 'input'])].dtypes
+
+        for i in dtypesLst:
+            if typeDict[str(i)] != metadata['Output Type'][0]:
+                count += 1
+
+        if (len(dtypesLst) > 1 and metadata['Output Shape'] != 'List'):
+            print("Not right shape. Expected List but got Single")
+        elif (len(dtypesLst) == 1 and metadata['Output Shape'] != 'Single'):
+            print("Not right shape. Expected Single but got List")
+        else:
+            print("Output is correct shape.")
+
+        print("Output has", count, "mismatched types.\n")
+
+        
+
