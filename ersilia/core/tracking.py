@@ -22,11 +22,22 @@ class RunTracker:
         # reads csv file and returns Pandas dataframe
         return pd.read_csv(file)
 
+    def stats(self, result):
+        dat = self.read_csv(result)
+        # drop first two columns (key, input)
+        dat.drop(['key','input'], axis=1)
+
+        # print statistics
+        summary = dat.agg(["mean", "mode", "std", "max", "min"])
+        print("Hello")
+        print(summary)
+        return summary
+
     def track(self, input, result, meta):
+    
         """
         Tracks the results after a model run.
         """
-
         print("Run input file:", input)
         print(self.read_csv(input))
 
@@ -38,8 +49,11 @@ class RunTracker:
         time = datetime.now() - self.time_start
         print("Time taken:", time)
 
+        print(self.stats(result))
+    
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
+
 
     def read_json(self, result):
         data = json.load(result)
