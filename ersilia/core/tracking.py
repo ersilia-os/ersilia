@@ -36,7 +36,7 @@ class RunTracker:
         print("Model metadata:", meta)
 
         model_id = meta["metadata"].get("Identifier", "Unknown")
-        print("Model Dog:", model_id)
+        print("Model ID:", model_id)
 
         time = datetime.now() - self.time_start
         print("Time taken:", time)
