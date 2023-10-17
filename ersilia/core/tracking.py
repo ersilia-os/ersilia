@@ -69,7 +69,7 @@ class RunTracker:
         nan_count = resultDf.isna().sum()
         print("\nNAN Count:\n", nan_count)
 
-        self.check_types(resultDf, meta['metadata'])
+        self.check_types(resultDf, meta["metadata"])
 
         self.stats(result)
 
@@ -98,20 +98,17 @@ class RunTracker:
         count = 0
 
         # ignore key and input columns
-        dtypesLst = resultDf.loc[:, ~resultDf.columns.isin(['key', 'input'])].dtypes
+        dtypesLst = resultDf.loc[:, ~resultDf.columns.isin(["key", "input"])].dtypes
 
         for i in dtypesLst:
-            if typeDict[str(i)] != metadata['Output Type'][0]:
+            if typeDict[str(i)] != metadata["Output Type"][0]:
                 count += 1
 
-        if (len(dtypesLst) > 1 and metadata['Output Shape'] != 'List'):
+        if len(dtypesLst) > 1 and metadata["Output Shape"] != "List":
             print("Not right shape. Expected List but got Single")
-        elif (len(dtypesLst) == 1 and metadata['Output Shape'] != 'Single'):
+        elif len(dtypesLst) == 1 and metadata["Output Shape"] != "Single":
             print("Not right shape. Expected Single but got List")
         else:
             print("Output is correct shape.")
 
         print("Output has", count, "mismatched types.\n")
-
-
-
