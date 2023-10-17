@@ -51,10 +51,25 @@ class RunTracker:
 
         print("Model metadata:", meta)
 
+        model_id = meta["metadata"].get("Identifier", "Unknown")
+        print("Model ID:", model_id)
+
         time = datetime.now() - self.time_start
         print("Time taken:", time)
 
         self.stats(result)
+
+        input_dataframe = self.read_csv(input)
+        result_dataframe = self.read_csv(result)
+
+        input_size = input_dataframe.memory_usage(deep=True).sum() / 1024
+        output_size = result_dataframe.memory_usage(deep=True).sum() / 1024
+
+        input_avg_row_size = input_size / len(input_dataframe)
+        output_avg_row_size = output_size / len(result_dataframe)
+
+        print("Average Input Row Size (KB):", input_avg_row_size)
+        print("Average Output Row Size (KB):", output_avg_row_size)
 
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
