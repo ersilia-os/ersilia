@@ -29,11 +29,27 @@ class RunTracker:
     def start_tracking(self):
         self.time_start = datetime.now()
 
+    def stats(self, result):
+        dat = self.read_csv(result)
+
+        # drop first two columns (key, input)
+        dat = dat.drop(["key", "input"], axis=1)
+
+        # calculate and print statistics
+        for column in dat:
+            print("Mean %s: %s" % (column, dat[column].mean()))
+            if len(dat[column].mode()) == 1:
+                print("Mode %s: %s" % (column, dat[column].mode()))
+            else:
+                print("No mode")
+            print("Min %s: %s" % (column, dat[column].min()))
+            print("Max %s: %s" % (column, dat[column].max()))
+            print("Standard deviation %s: %s" % (column, dat[column].std()))
+
     def track(self, input, result, meta):
         """
         Tracks the results after a model run.
         """
-
         print("Run input file:", input)
         print(read_csv(input))
 
@@ -47,6 +63,8 @@ class RunTracker:
 
         time = datetime.now() - self.time_start
         print("Time taken:", time)
+
+        self.stats(result)
 
         input_dataframe = self.read_csv(input)
         result_dataframe = self.read_csv(result)
