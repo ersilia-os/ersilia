@@ -1,6 +1,5 @@
 from datetime import datetime
 import json
-import statistics
 import pandas as pd
 
 
@@ -27,7 +26,7 @@ class RunTracker:
         dat = self.read_csv(result)
 
         # drop first two columns (key, input)
-        dat = dat.drop(['key','input'], axis = 1)
+        dat = dat.drop(["key", "input"], axis=1)
 
         # calculate and print statistics
         for column in dat:
@@ -41,7 +40,6 @@ class RunTracker:
             print("Standard deviation %s: %s" % (column, dat[column].std()))
 
     def track(self, input, result, meta):
-    
         """
         Tracks the results after a model run.
         """
@@ -56,11 +54,10 @@ class RunTracker:
         time = datetime.now() - self.time_start
         print("Time taken:", time)
 
-        print(self.stats(result))
-    
+        self.stats(result)
+
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
-
 
     def read_json(self, result):
         data = json.load(result)
