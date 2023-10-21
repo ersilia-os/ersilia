@@ -20,6 +20,7 @@ def close_cmd():
         mdl.close()
         echo(":no_entry: Model {0} closed".format(mdl.model_id), fg="green")
 
-        old_file_path = "/ersilia/core/current_session.txt"
+        #renames current_session to timestamp 
+        old_file_path = "current_session.txt"
         new_file_path = os.path.join(os.path.dirname(old_file_path), datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
         os.rename(old_file_path, new_file_path)
