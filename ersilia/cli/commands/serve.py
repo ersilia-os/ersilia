@@ -20,7 +20,11 @@ def serve_cmd():
         type=click.INT,
         help="Preferred port to use (integer)",
     )
-    def serve(model, lake, docker, port):
+    # Add the new flag for tracking the serve session
+    @click.option(
+        "-t/", "--track_serve/--no_track_serve", "track_serve", required=False, default=True
+    )
+    def serve(model, lake, docker, port, track_serve):
         if docker:
             service_class = "docker"
         else:
@@ -54,3 +58,6 @@ def serve_cmd():
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
+        if track_serve:
+            with open("current_session.txt", "w") as f:
+                f.write("Session started for model: {0}".format(mdl.model_id))
