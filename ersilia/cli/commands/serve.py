@@ -22,7 +22,11 @@ def serve_cmd():
     )
     # Add the new flag for tracking the serve session
     @click.option(
-        "-t/", "--track_serve/--no_track_serve", "track_serve", required=False, default=True
+        "-t/",
+        "--track_serve/--no_track_serve",
+        "track_serve",
+        required=False,
+        default=True,
     )
     def serve(model, lake, docker, port, track_serve):
         if docker:
