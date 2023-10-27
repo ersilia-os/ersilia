@@ -60,32 +60,44 @@ class RunTracker:
         """
         Tracks the results after a model run.
         """
+        json_dict = {}
         input_dataframe = read_csv(input)
         result_dataframe = read_csv(result)
 
         print("Run input file:", input)
         print(input_dataframe)
+        json_dict["input"] = input
+        json_dict["input_dataframe"] = input_dataframe.to_dict()
 
         print("Run output file:", result)
         print(result_dataframe)
+        json_dict["result"] = result
+        json_dict["result_dataframe"] = result_dataframe.to_dict()
 
         print("Model metadata:", meta)
+        json_dict["meta"] = meta
 
         model_id = meta["metadata"].get("Identifier", "Unknown")
         print("Model ID:", model_id)
+        json_dict["model_id"] = model_id
 
         time = datetime.now() - self.time_start
         print("Time taken:", time)
+        json_dict["time_taken"] = str(time)
 
         # checking for mismatched types
         nan_count = result_dataframe.isna().sum()
         print("\nNAN Count:\n", nan_count)
+        json_dict["nan_count"] = nan_count.to_dict()
 
         self.check_types(result_dataframe, meta["metadata"])
 
         self.stats(result)
 
         self.get_file_sizes(input_dataframe, result_dataframe)
+        
+        json_object = json.dumps(json_dict, indent = 4)  
+        print("\nJSON Dictionary:\n", json_object)
 
         # log results to console
         with open('../cli/commands/current_session.txt', 'a') as f:
@@ -96,6 +108,7 @@ class RunTracker:
             f.write(f"\nModel ID: {model_id}\n")
             f.write(f"\nTime taken: {time}\n")
             f.write(f"\nNAN Count:\n {nan_count}\n")
+
 
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
