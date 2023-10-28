@@ -8,6 +8,10 @@ def read_csv(file):
     return pd.read_csv(file)
 
 
+def read_json(result):
+    data = json.load(result)
+    return data
+
 class RunTracker:
     """
     This class will be responsible for tracking model runs. It calculates the desired metadata based on a model's
@@ -102,14 +106,6 @@ class RunTracker:
         with open("../cli/commands/current_session.txt", "a") as f:
             # write the print statements to a file
             f.write(json_object)
-
-    def log_to_console(self, data):
-        print(f"\n{json.dumps(data)}\n")
-
-    def read_json(self, result):
-        data = json.load(result)
-        self.log_to_console(result)
-        return data
 
     def check_types(self, resultDf, metadata):
         typeDict = {"float64": "Float", "int64": "Int"}
