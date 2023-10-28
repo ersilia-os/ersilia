@@ -96,8 +96,18 @@ class RunTracker:
 
         self.get_file_sizes(input_dataframe, result_dataframe)
 
-        json_object = json.dumps(json_dict, indent = 4)  
+        json_object = json.dumps(json_dict, indent=4)
         print("\nJSON Dictionary:\n", json_object)
+
+        # log results to console
+        with open("../cli/commands/current_session.txt", "a") as f:
+            # write the print statements to a file
+            f.write(f"\n{json.dumps(input_dataframe)}\n")
+            f.write(f"\n{json.dumps(result_dataframe)}\n")
+            f.write(f"\n{json.dumps(meta)}\n")
+            f.write(f"\nModel ID: {model_id}\n")
+            f.write(f"\nTime taken: {time}\n")
+            f.write(f"\nNAN Count:\n {nan_count}\n")
 
     def log_to_console(self, data):
         print(f"\n{json.dumps(data)}\n")
