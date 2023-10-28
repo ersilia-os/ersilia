@@ -4,6 +4,7 @@ from . import ersilia_cli
 from .. import echo
 from ... import ErsiliaModel
 from ...core.session import Session
+from ...core.tracking import close_persistent_file
 
 
 def close_cmd():
@@ -20,10 +21,5 @@ def close_cmd():
         mdl.close()
         echo(":no_entry: Model {0} closed".format(mdl.model_id), fg="green")
 
-        # renames current_session to timestamp
-        old_file_path = "current_session.txt"
-        new_file_path = os.path.join(
-            os.path.dirname(old_file_path),
-            datetime.datetime.now().strftime("%Y%m%d%H%M%S"),
-        )
-        os.rename(old_file_path, new_file_path)
+        # Close our persistent tracking file
+        close_persistent_file()

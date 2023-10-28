@@ -1,6 +1,9 @@
 from datetime import datetime
 import json
 import pandas as pd
+import os
+
+PERSISTENT_FILE_PATH = os.path.abspath("current_session.txt")
 
 
 def read_csv(file):
@@ -11,6 +14,29 @@ def read_csv(file):
 def read_json(result):
     data = json.load(result)
     return data
+
+
+def open_persistent_file(model_id):
+    with open(PERSISTENT_FILE_PATH, "w") as f:
+        f.write("Session started for model: {0}\n".format(model_id))
+
+
+def write_persistent_file(contents):
+    # Only write to file if it already exists (we're meant to be tracking this run)
+    if os.path.isfile(PERSISTENT_FILE_PATH):
+        with open(PERSISTENT_FILE_PATH, "a") as f:
+            f.write(f"{contents}\n")
+
+
+def close_persistent_file():
+    # Make sure the file actually exists before we try renaming
+    if os.path.isfile(PERSISTENT_FILE_PATH):
+        new_file_path = os.path.join(
+            os.path.dirname(PERSISTENT_FILE_PATH),
+            datetime.now().strftime("%Y-%m-%d%_H-%M-%S.txt"),
+        )
+        os.rename(PERSISTENT_FILE_PATH, new_file_path)
+
 
 class RunTracker:
     """
@@ -43,14 +69,14 @@ class RunTracker:
         stats = {}
         for column in dat:
             column_stats = {}
-            column_stats['mean'] = dat[column].mean()
+            column_stats["mean"] = dat[column].mean()
             if len(dat[column].mode()) == 1:
-                column_stats['mode'] = dat[column].mode()
+                column_stats["mode"] = dat[column].mode().iloc[0]
             else:
-                column_stats['mode'] = None
-            column_stats['min'] = dat[column].min()
-            column_stats['max'] = dat[column].max()
-            column_stats['std'] = dat[column].std()
+                column_stats["mode"] = None
+            column_stats["min"] = dat[column].min()
+            column_stats["max"] = dat[column].max()
+            column_stats["std"] = dat[column].std()
 
             stats[column] = column_stats
 
@@ -97,15 +123,13 @@ class RunTracker:
 
         json_dict["stats"] = self.stats(result)
 
-        json_dict['file_sizes'] = self.get_file_sizes(input_dataframe, result_dataframe)
+        json_dict["file_sizes"] = self.get_file_sizes(input_dataframe, result_dataframe)
 
         json_object = json.dumps(json_dict, indent=4)
         print("\nJSON Dictionary:\n", json_object)
 
-        # log results to console
-        with open("../cli/commands/current_session.txt", "a") as f:
-            # write the print statements to a file
-            f.write(json_object)
+        # log results to persistent tracking file
+        write_persistent_file(json_object)
 
     def check_types(self, resultDf, metadata):
         typeDict = {"float64": "Float", "int64": "Int"}
@@ -130,7 +154,4 @@ class RunTracker:
 
         print("Output has", count, "mismatched types.\n")
 
-        return {
-            "mismatched_types": count,
-            "correct_shape": correct_shape
-        }
+        return {"mismatched_types": count, "correct_shape": correct_shape}
