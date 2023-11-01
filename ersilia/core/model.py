@@ -7,7 +7,6 @@ import importlib
 import __main__ as main
 import time
 import csv
-import joblib
 
 from .. import logger
 from .base import ErsiliaBase
