@@ -89,6 +89,7 @@
 <span class="kn">from</span> <span class="nn">..serve.autoservice</span> <span class="kn">import</span> <span class="n">AutoService</span>
 <span class="kn">from</span> <span class="nn">..serve.schema</span> <span class="kn">import</span> <span class="n">ApiSchema</span>
 <span class="kn">from</span> <span class="nn">..serve.api</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="kn">from</span> <span class="nn">..serve.standard_api</span> <span class="kn">import</span> <span class="n">StandardCSVRunApi</span>
 <span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span><span class="p">,</span> <span class="n">BaseIOGetter</span>
 <span class="kn">from</span> <span class="nn">..io.output</span> <span class="kn">import</span> <span class="n">TabularOutputStacker</span>
 <span class="kn">from</span> <span class="nn">..io.readers.file</span> <span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
@@ -202,6 +203,7 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with initialization!&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
@@ -214,6 +216,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span></div>
 
     <span class="k">def</span> <span class="nf">_set_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">api_name</span> <span class="o">==</span> <span class="s2">&quot;run&quot;</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="k">def</span> <span class="nf">_method</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">(</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
 
@@ -241,7 +246,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">apis_list</span> <span class="o">=</span> <span class="n">apis_list</span>
 
-    <span class="k">def</span> <span class="nf">_get_api_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
@@ -250,6 +255,10 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">url</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">url</span>
+
+    <span class="k">def</span> <span class="nf">_get_api_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">api_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">api_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
             <span class="k">assert</span> <span class="p">(</span>
@@ -257,7 +266,7 @@
             <span class="p">),</span> <span class="s2">&quot;More than one API found, please specificy api_name&quot;</span>
             <span class="n">api_name</span> <span class="o">=</span> <span class="n">api_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span>
-            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
             <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span>
             <span class="n">save_to_lake</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span><span class="p">,</span>
@@ -322,6 +331,22 @@
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">inputs</span>
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span>
                 <span class="k">return</span> <span class="n">d</span>
+
+    <span class="k">def</span> <span class="nf">_standard_api_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="n">scra</span> <span class="o">=</span> <span class="n">StandardCSVRunApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">scra</span><span class="o">.</span><span class="n">is_ready</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Standard CSV Api runner is not ready for this particular model&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">scra</span><span class="o">.</span><span class="n">is_amenable</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Standard CSV Api runner is not amenable for this model, input and output&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting standard runner&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">scra</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__output_is_file</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
@@ -476,14 +501,52 @@
 <div class="viewcode-block" id="ErsiliaModel.get_apis"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.get_apis">[docs]</a>    <span class="k">def</span> <span class="nf">get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ErsiliaModel.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">):</span>
         <span class="n">api_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">(</span>
             <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_standard_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">status_ok</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_api_runner</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+                <span class="n">t1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getctime</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t1</span> <span class="o">&gt;</span> <span class="n">t0</span><span class="p">:</span>
+                <span class="n">status_ok</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_ok</span>
+
+<div class="viewcode-block" id="ErsiliaModel.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">try_standard</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting runner&quot;</span><span class="p">)</span>
+        <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">try_standard</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying standard API&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">,</span> <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_run</span><span class="p">(</span>
+                    <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Standard run did not work with exception </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;We will try conventional run.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">standard_status_ok</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying conventional run&quot;</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

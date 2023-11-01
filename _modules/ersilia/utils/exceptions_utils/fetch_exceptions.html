@@ -199,6 +199,27 @@
     <span class="k">def</span> <span class="nf">_get_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;This message is related to a bad development of the model. As an end user, there is not much you can do about it. Please reach out to Ersilia directly to report this error.&quot;</span>
         <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="StandardModelExampleError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.StandardModelExampleError">[docs]</a><span class="k">class</span> <span class="nc">StandardModelExampleError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_hints</span><span class="p">()</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Standard model run from CSV was not possible for model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="p">)</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;Output file </span><span class="si">{0}</span><span class="s2"> was not created successfully&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+    <span class="k">def</span> <span class="nf">_get_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;If you fetch this model from Docker Hub, or you are running it through URL, this is the first time run is executed in your local computer. Reach out to Ersilia to get specific help.&quot;</span>
+        <span class="k">return</span> <span class="n">text</span></div>
 </pre></div>
 
            </div>

@@ -98,6 +98,20 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unichem</span> <span class="o">=</span> <span class="n">unichem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_type</span> <span class="o">=</span> <span class="s2">&quot;smiles&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;smiles&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;inchikey&quot;</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="CompoundIdentifier.is_input_header"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header">[docs]</a>    <span class="k">def</span> <span class="nf">is_input_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="CompoundIdentifier.is_key_header"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header">[docs]</a>    <span class="k">def</span> <span class="nf">is_key_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
 
     <span class="k">def</span> <span class="nf">_is_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -202,6 +216,9 @@
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">inchikey</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">inchikey</span></div></div>
+
+
+<span class="n">Identifier</span> <span class="o">=</span> <span class="n">CompoundIdentifier</span>
 </pre></div>
 
            </div>
