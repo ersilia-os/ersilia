@@ -21,7 +21,9 @@ class ProteinIdentifier(object):
         """Returns protein sequence of a given identifier, using"""
         pass  # TODO
 
-    @staticmethod
-    def encode(sequence):
+    def encode(self, sequence):
         """Protein seguid checksum based on amino-acid sequence"""
         return str(self.seguid(sequence))
+
+
+Identifier = ProteinIdentifier

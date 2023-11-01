@@ -23,3 +23,6 @@ class TextIdentifier(object):
 
     def encode(self, text: str) -> str:
         return "key" + hashlib.md5(text.encode("utf-8")).hexdigest()
+
+
+Identifier = TextIdentifier

@@ -24,6 +24,13 @@ class Session(ErsiliaBase):
         else:
             return data["model_id"]
 
+    def current_identifier(self):
+        data = self.get()
+        if data is None:
+            return None
+        else:
+            return data["identifier"]
+
     def current_service_class(self):
         data = self.get()
         if data is None:

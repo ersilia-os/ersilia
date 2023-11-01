@@ -59,3 +59,6 @@ class ModelIdentifier(object):
             model_id = self.encode()
             if not self.exists(model_id):
                 return model_id
+
+
+Identifier = ModelIdentifier

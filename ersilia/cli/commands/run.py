@@ -20,7 +20,13 @@ def run_cmd():
     @click.option(
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
-    def run(input, output, batch_size):
+    @click.option(
+        "--standard",
+        is_flag=True,
+        default=False,
+        help="Assume that the run is standard and, therefore, do not do so many checks.",
+    )
+    def run(input, output, batch_size, standard):
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
@@ -31,7 +37,9 @@ def run_cmd():
             )
             return
         mdl = ErsiliaModel(model_id, service_class=service_class, config_json=None)
-        result = mdl.run(input=input, output=output, batch_size=batch_size)
+        result = mdl.run(
+            input=input, output=output, batch_size=batch_size, try_standard=standard
+        )
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:

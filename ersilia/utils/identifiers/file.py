@@ -21,3 +21,6 @@ class FileIdentifier(object):
                     else:
                         break
             return h.hexdigest()[:n]
+
+
+Identifier = FileIdentifier

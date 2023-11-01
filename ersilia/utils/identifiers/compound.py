@@ -23,6 +23,20 @@ class CompoundIdentifier(object):
             self.Chem = None
         self.unichem = unichem
         self.default_type = "smiles"
+        self.input_header_synonyms = set(["smiles", "input"])
+        self.key_header_synonyms = set(["inchikey", "key"])
+
+    def is_input_header(self, h):
+        if h.lower() in self.input_header_synonyms:
+            return True
+        else:
+            return False
+
+    def is_key_header(self, h):
+        if h.lower() in self.key_header_synonyms:
+            return True
+        else:
+            return False
 
     def _is_smiles(self, text):
         if self.Chem is None:
@@ -127,3 +141,6 @@ class CompoundIdentifier(object):
             except:
                 inchikey = None
         return inchikey
+
+
+Identifier = CompoundIdentifier

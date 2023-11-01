@@ -23,3 +23,6 @@ class LongIdentifier(object):
             return "-".join(s)
         else:
             return str(uuid.uuid4())
+
+
+Identifier = LongIdentifier
