@@ -179,7 +179,10 @@ class GenericOutputAdapter(ResponseRefactor):
         pdt = PureDataTyper(vals)
         dtype = pdt.get_type()
         self.logger.debug("Guessed pure datatype: {0}".format(dtype))
-        return dtype["type"]
+        if dtype is None:
+            return None
+        else:
+            return dtype["type"]
 
     def __expand_output_keys(self, vals, output_keys):
         output_keys_expanded = []
