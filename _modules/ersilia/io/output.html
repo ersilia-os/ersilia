@@ -253,7 +253,10 @@
         <span class="n">pdt</span> <span class="o">=</span> <span class="n">PureDataTyper</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">pdt</span><span class="o">.</span><span class="n">get_type</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Guessed pure datatype: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dtype</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">dtype</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dtype</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__expand_output_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">output_keys</span><span class="p">):</span>
         <span class="n">output_keys_expanded</span> <span class="o">=</span> <span class="p">[]</span>
