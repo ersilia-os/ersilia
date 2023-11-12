@@ -1,0 +1,653 @@
+Session started for model: eos3b5e
+{
+    "input_dataframe": {
+        "CC(C)c1ccc(C)c2c(cc(C)c2c1)S(O)(=O)=O": {
+            "0": "O=C(C1CC1)c1ccc(OCCCc2cnc[nH]2)cc1",
+            "1": "C[C@H](N)Cn1ccc2cc(F)c(Cl)cc12",
+            "2": "C[C@H](CCCC(C)(C)O)[C@H]1CC[C@H]2\\C(CCC[C@]12C)=C\\C=C1\\C[C@@H](O)CCC1=C",
+            "3": "Cc1nc(Nc2ncc(s2)C(=O)Nc2c(C)cccc2Cl)cc(n1)N1CCN(CCO)CC1"
+        }
+    },
+    "result_dataframe": {
+        "key": {
+            "0": "VIZXMHCBZLGUET-UHFFFAOYSA-N",
+            "1": "ACQBHJXEAYTHCY-UHFFFAOYSA-N",
+            "2": "XJJZQXUGLLXTHO-ZETCQYMHSA-N",
+            "3": "JWUBBDSIWDLEOM-DTOXIADCSA-N",
+            "4": "ZBNZXTGUTAYRHI-UHFFFAOYSA-N"
+        },
+        "input": {
+            "0": "CC(C)c1ccc(C)c2c(cc(C)c2c1)S(O)(=O)=O",
+            "1": "O=C(C1CC1)c1ccc(OCCCc2cnc[nH]2)cc1",
+            "2": "C[C@H](N)Cn1ccc2cc(F)c(Cl)cc12",
+            "3": "C[C@H](CCCC(C)(C)O)[C@H]1CC[C@H]2\\C(CCC[C@]12C)=C\\C=C1\\C[C@@H](O)CCC1=C",
+            "4": "Cc1nc(Nc2ncc(s2)C(=O)Nc2c(C)cccc2Cl)cc(n1)N1CCN(CCO)CC1"
+        },
+        "mw": {
+            "0": 278.373,
+            "1": 270.332,
+            "2": 226.682,
+            "3": 400.6470000000002,
+            "4": 488.01700000000034
+        }
+    },
+    "meta": {
+        "pack_mode": "conda",
+        "service_class": "conda",
+        "apis_list": [
+            "run"
+        ],
+        "api_schema": {
+            "run": {
+                "input": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "type": "string"
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                },
+                "output": {
+                    "mw": {
+                        "type": "numeric",
+                        "meta": null
+                    }
+                }
+            }
+        },
+        "size": {
+            "size": 0.14799022674560547,
+            "units": "MB"
+        },
+        "metadata": {
+            "Identifier": "eos3b5e",
+            "Slug": "molecular-weight",
+            "Status": "Ready",
+            "Title": "Molecular weight",
+            "Description": "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol.\n",
+            "Mode": "Pretrained",
+            "Input": [
+                "Compound"
+            ],
+            "Input Shape": "Single",
+            "Task": [
+                "Regression"
+            ],
+            "Output": [
+                "Other value"
+            ],
+            "Output Type": [
+                "Float"
+            ],
+            "Output Shape": "Single",
+            "Interpretation": "Calculated molecular weight (g/mol)",
+            "Tag": [
+                "Molecular weight"
+            ],
+            "Publication": "https://www.rdkit.org/docs/RDKit_Book.html",
+            "Source Code": "https://github.com/rdkit/rdkit",
+            "License": "BSD-3.0",
+            "Contributor": "miquelduranfrigola",
+            "S3": "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3b5e.zip",
+            "DockerHub": "https://hub.docker.com/r/ersiliaos/eos3b5e",
+            "Docker Architecture": [
+                "AMD64",
+                "ARM64"
+            ]
+        },
+        "card": {
+            "Identifier": "eos3b5e",
+            "Slug": "molecular-weight",
+            "Status": "Ready",
+            "Title": "Molecular weight",
+            "Description": "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol.\n",
+            "Mode": "Pretrained",
+            "Input": [
+                "Compound"
+            ],
+            "Input Shape": "Single",
+            "Task": [
+                "Regression"
+            ],
+            "Output": [
+                "Other value"
+            ],
+            "Output Type": [
+                "Float"
+            ],
+            "Output Shape": "Single",
+            "Interpretation": "Calculated molecular weight (g/mol)",
+            "Tag": [
+                "Molecular weight"
+            ],
+            "Publication": "https://www.rdkit.org/docs/RDKit_Book.html",
+            "Source Code": "https://github.com/rdkit/rdkit",
+            "License": "BSD-3.0",
+            "Contributor": "miquelduranfrigola",
+            "S3": "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3b5e.zip",
+            "DockerHub": "https://hub.docker.com/r/ersiliaos/eos3b5e",
+            "Docker Architecture": [
+                "AMD64",
+                "ARM64"
+            ]
+        }
+    },
+    "model_id": "eos3b5e",
+    "time_taken": "0:00:08.131798",
+    "nan_count": {
+        "key": 0,
+        "input": 0,
+        "mw": 0
+    },
+    "check_types": {
+        "mismatched_types": 0,
+        "correct_shape": true
+    },
+    "stats": {
+        "mw": {
+            "mean": 332.81020000000007,
+            "mode": null,
+            "min": 226.682,
+            "max": 488.01700000000034,
+            "std": 108.19093221569003
+        }
+    },
+    "file_sizes": {
+        "input_size": 0.533203125,
+        "output_size": 1.07421875,
+        "avg_input_size": 0.13330078125,
+        "avg_output_size": 0.21484375
+    }
+}
+{
+    "input_dataframe": {
+        "CC(C)c1ccc(C)c2c(cc(C)c2c1)S(O)(=O)=O": {
+            "0": "O=C(C1CC1)c1ccc(OCCCc2cnc[nH]2)cc1",
+            "1": "C[C@H](N)Cn1ccc2cc(F)c(Cl)cc12",
+            "2": "C[C@H](CCCC(C)(C)O)[C@H]1CC[C@H]2\\C(CCC[C@]12C)=C\\C=C1\\C[C@@H](O)CCC1=C",
+            "3": "Cc1nc(Nc2ncc(s2)C(=O)Nc2c(C)cccc2Cl)cc(n1)N1CCN(CCO)CC1"
+        }
+    },
+    "result_dataframe": {
+        "key": {
+            "0": "VIZXMHCBZLGUET-UHFFFAOYSA-N",
+            "1": "ACQBHJXEAYTHCY-UHFFFAOYSA-N",
+            "2": "XJJZQXUGLLXTHO-ZETCQYMHSA-N",
+            "3": "JWUBBDSIWDLEOM-DTOXIADCSA-N",
+            "4": "ZBNZXTGUTAYRHI-UHFFFAOYSA-N"
+        },
+        "input": {
+            "0": "CC(C)c1ccc(C)c2c(cc(C)c2c1)S(O)(=O)=O",
+            "1": "O=C(C1CC1)c1ccc(OCCCc2cnc[nH]2)cc1",
+            "2": "C[C@H](N)Cn1ccc2cc(F)c(Cl)cc12",
+            "3": "C[C@H](CCCC(C)(C)O)[C@H]1CC[C@H]2\\C(CCC[C@]12C)=C\\C=C1\\C[C@@H](O)CCC1=C",
+            "4": "Cc1nc(Nc2ncc(s2)C(=O)Nc2c(C)cccc2Cl)cc(n1)N1CCN(CCO)CC1"
+        },
+        "mw": {
+            "0": 278.373,
+            "1": 270.332,
+            "2": 226.682,
+            "3": 400.6470000000002,
+            "4": 488.01700000000034
+        }
+    },
+    "meta": {
+        "pack_mode": "conda",
+        "service_class": "conda",
+        "apis_list": [
+            "run"
+        ],
+        "api_schema": {
+            "run": {
+                "input": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "type": "string"
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                },
+                "output": {
+                    "mw": {
+                        "type": "numeric",
+                        "meta": null
+                    }
+                }
+            }
+        },
+        "size": {
+            "size": 0.14799022674560547,
+            "units": "MB"
+        },
+        "metadata": {
+            "Identifier": "eos3b5e",
+            "Slug": "molecular-weight",
+            "Status": "Ready",
+            "Title": "Molecular weight",
+            "Description": "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol.\n",
+            "Mode": "Pretrained",
+            "Input": [
+                "Compound"
+            ],
+            "Input Shape": "Single",
+            "Task": [
+                "Regression"
+            ],
+            "Output": [
+                "Other value"
+            ],
+            "Output Type": [
+                "Float"
+            ],
+            "Output Shape": "Single",
+            "Interpretation": "Calculated molecular weight (g/mol)",
+            "Tag": [
+                "Molecular weight"
+            ],
+            "Publication": "https://www.rdkit.org/docs/RDKit_Book.html",
+            "Source Code": "https://github.com/rdkit/rdkit",
+            "License": "BSD-3.0",
+            "Contributor": "miquelduranfrigola",
+            "S3": "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3b5e.zip",
+            "DockerHub": "https://hub.docker.com/r/ersiliaos/eos3b5e",
+            "Docker Architecture": [
+                "AMD64",
+                "ARM64"
+            ]
+        },
+        "card": {
+            "Identifier": "eos3b5e",
+            "Slug": "molecular-weight",
+            "Status": "Ready",
+            "Title": "Molecular weight",
+            "Description": "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol.\n",
+            "Mode": "Pretrained",
+            "Input": [
+                "Compound"
+            ],
+            "Input Shape": "Single",
+            "Task": [
+                "Regression"
+            ],
+            "Output": [
+                "Other value"
+            ],
+            "Output Type": [
+                "Float"
+            ],
+            "Output Shape": "Single",
+            "Interpretation": "Calculated molecular weight (g/mol)",
+            "Tag": [
+                "Molecular weight"
+            ],
+            "Publication": "https://www.rdkit.org/docs/RDKit_Book.html",
+            "Source Code": "https://github.com/rdkit/rdkit",
+            "License": "BSD-3.0",
+            "Contributor": "miquelduranfrigola",
+            "S3": "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3b5e.zip",
+            "DockerHub": "https://hub.docker.com/r/ersiliaos/eos3b5e",
+            "Docker Architecture": [
+                "AMD64",
+                "ARM64"
+            ]
+        }
+    },
+    "model_id": "eos3b5e",
+    "time_taken": "0:00:06.052920",
+    "nan_count": {
+        "key": 0,
+        "input": 0,
+        "mw": 0
+    },
+    "check_types": {
+        "mismatched_types": 0,
+        "correct_shape": true
+    },
+    "stats": {
+        "mw": {
+            "mean": 332.81020000000007,
+            "mode": null,
+            "min": 226.682,
+            "max": 488.01700000000034,
+            "std": 108.19093221569003
+        }
+    },
+    "file_sizes": {
+        "input_size": 0.533203125,
+        "output_size": 1.07421875,
+        "avg_input_size": 0.13330078125,
+        "avg_output_size": 0.21484375
+    }
+}
+{
+    "input_dataframe": {
+        "CC(C)c1ccc(C)c2c(cc(C)c2c1)S(O)(=O)=O": {
+            "0": "O=C(C1CC1)c1ccc(OCCCc2cnc[nH]2)cc1",
+            "1": "C[C@H](N)Cn1ccc2cc(F)c(Cl)cc12",
+            "2": "C[C@H](CCCC(C)(C)O)[C@H]1CC[C@H]2\\C(CCC[C@]12C)=C\\C=C1\\C[C@@H](O)CCC1=C",
+            "3": "Cc1nc(Nc2ncc(s2)C(=O)Nc2c(C)cccc2Cl)cc(n1)N1CCN(CCO)CC1"
+        }
+    },
+    "result_dataframe": {
+        "key": {
+            "0": "VIZXMHCBZLGUET-UHFFFAOYSA-N",
+            "1": "ACQBHJXEAYTHCY-UHFFFAOYSA-N",
+            "2": "XJJZQXUGLLXTHO-ZETCQYMHSA-N",
+            "3": "JWUBBDSIWDLEOM-DTOXIADCSA-N",
+            "4": "ZBNZXTGUTAYRHI-UHFFFAOYSA-N"
+        },
+        "input": {
+            "0": "CC(C)c1ccc(C)c2c(cc(C)c2c1)S(O)(=O)=O",
+            "1": "O=C(C1CC1)c1ccc(OCCCc2cnc[nH]2)cc1",
+            "2": "C[C@H](N)Cn1ccc2cc(F)c(Cl)cc12",
+            "3": "C[C@H](CCCC(C)(C)O)[C@H]1CC[C@H]2\\C(CCC[C@]12C)=C\\C=C1\\C[C@@H](O)CCC1=C",
+            "4": "Cc1nc(Nc2ncc(s2)C(=O)Nc2c(C)cccc2Cl)cc(n1)N1CCN(CCO)CC1"
+        },
+        "mw": {
+            "0": 278.373,
+            "1": 270.332,
+            "2": 226.682,
+            "3": 400.6470000000002,
+            "4": 488.01700000000034
+        }
+    },
+    "meta": {
+        "pack_mode": "conda",
+        "service_class": "conda",
+        "apis_list": [
+            "run"
+        ],
+        "api_schema": {
+            "run": {
+                "input": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "type": "string"
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                },
+                "output": {
+                    "mw": {
+                        "type": "numeric",
+                        "meta": null
+                    }
+                }
+            }
+        },
+        "size": {
+            "size": 0.14799022674560547,
+            "units": "MB"
+        },
+        "metadata": {
+            "Identifier": "eos3b5e",
+            "Slug": "molecular-weight",
+            "Status": "Ready",
+            "Title": "Molecular weight",
+            "Description": "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol.\n",
+            "Mode": "Pretrained",
+            "Input": [
+                "Compound"
+            ],
+            "Input Shape": "Single",
+            "Task": [
+                "Regression"
+            ],
+            "Output": [
+                "Other value"
+            ],
+            "Output Type": [
+                "Float"
+            ],
+            "Output Shape": "Single",
+            "Interpretation": "Calculated molecular weight (g/mol)",
+            "Tag": [
+                "Molecular weight"
+            ],
+            "Publication": "https://www.rdkit.org/docs/RDKit_Book.html",
+            "Source Code": "https://github.com/rdkit/rdkit",
+            "License": "BSD-3.0",
+            "Contributor": "miquelduranfrigola",
+            "S3": "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3b5e.zip",
+            "DockerHub": "https://hub.docker.com/r/ersiliaos/eos3b5e",
+            "Docker Architecture": [
+                "AMD64",
+                "ARM64"
+            ]
+        },
+        "card": {
+            "Identifier": "eos3b5e",
+            "Slug": "molecular-weight",
+            "Status": "Ready",
+            "Title": "Molecular weight",
+            "Description": "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol.\n",
+            "Mode": "Pretrained",
+            "Input": [
+                "Compound"
+            ],
+            "Input Shape": "Single",
+            "Task": [
+                "Regression"
+            ],
+            "Output": [
+                "Other value"
+            ],
+            "Output Type": [
+                "Float"
+            ],
+            "Output Shape": "Single",
+            "Interpretation": "Calculated molecular weight (g/mol)",
+            "Tag": [
+                "Molecular weight"
+            ],
+            "Publication": "https://www.rdkit.org/docs/RDKit_Book.html",
+            "Source Code": "https://github.com/rdkit/rdkit",
+            "License": "BSD-3.0",
+            "Contributor": "miquelduranfrigola",
+            "S3": "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3b5e.zip",
+            "DockerHub": "https://hub.docker.com/r/ersiliaos/eos3b5e",
+            "Docker Architecture": [
+                "AMD64",
+                "ARM64"
+            ]
+        }
+    },
+    "model_id": "eos3b5e",
+    "time_taken": "0:00:06.201848",
+    "nan_count": {
+        "key": 0,
+        "input": 0,
+        "mw": 0
+    },
+    "check_types": {
+        "mismatched_types": 0,
+        "correct_shape": true
+    },
+    "stats": {
+        "mw": {
+            "mean": 332.81020000000007,
+            "mode": null,
+            "min": 226.682,
+            "max": 488.01700000000034,
+            "std": 108.19093221569003
+        }
+    },
+    "file_sizes": {
+        "input_size": 0.533203125,
+        "output_size": 1.07421875,
+        "avg_input_size": 0.13330078125,
+        "avg_output_size": 0.21484375
+    }
+}
+{
+    "input_dataframe": {
+        "CC(C)c1ccc(C)c2c(cc(C)c2c1)S(O)(=O)=O": {
+            "0": "O=C(C1CC1)c1ccc(OCCCc2cnc[nH]2)cc1",
+            "1": "C[C@H](N)Cn1ccc2cc(F)c(Cl)cc12",
+            "2": "C[C@H](CCCC(C)(C)O)[C@H]1CC[C@H]2\\C(CCC[C@]12C)=C\\C=C1\\C[C@@H](O)CCC1=C",
+            "3": "Cc1nc(Nc2ncc(s2)C(=O)Nc2c(C)cccc2Cl)cc(n1)N1CCN(CCO)CC1"
+        }
+    },
+    "result_dataframe": {
+        "key": {
+            "0": "VIZXMHCBZLGUET-UHFFFAOYSA-N",
+            "1": "ACQBHJXEAYTHCY-UHFFFAOYSA-N",
+            "2": "XJJZQXUGLLXTHO-ZETCQYMHSA-N",
+            "3": "JWUBBDSIWDLEOM-DTOXIADCSA-N",
+            "4": "ZBNZXTGUTAYRHI-UHFFFAOYSA-N"
+        },
+        "input": {
+            "0": "CC(C)c1ccc(C)c2c(cc(C)c2c1)S(O)(=O)=O",
+            "1": "O=C(C1CC1)c1ccc(OCCCc2cnc[nH]2)cc1",
+            "2": "C[C@H](N)Cn1ccc2cc(F)c(Cl)cc12",
+            "3": "C[C@H](CCCC(C)(C)O)[C@H]1CC[C@H]2\\C(CCC[C@]12C)=C\\C=C1\\C[C@@H](O)CCC1=C",
+            "4": "Cc1nc(Nc2ncc(s2)C(=O)Nc2c(C)cccc2Cl)cc(n1)N1CCN(CCO)CC1"
+        },
+        "mw": {
+            "0": 278.373,
+            "1": 270.332,
+            "2": 226.682,
+            "3": 400.6470000000002,
+            "4": 488.01700000000034
+        }
+    },
+    "meta": {
+        "pack_mode": "conda",
+        "service_class": "conda",
+        "apis_list": [
+            "run"
+        ],
+        "api_schema": {
+            "run": {
+                "input": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "input": {
+                        "type": "string"
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                },
+                "output": {
+                    "mw": {
+                        "type": "numeric",
+                        "meta": null
+                    }
+                }
+            }
+        },
+        "size": {
+            "size": 0.14799022674560547,
+            "units": "MB"
+        },
+        "metadata": {
+            "Identifier": "eos3b5e",
+            "Slug": "molecular-weight",
+            "Status": "Ready",
+            "Title": "Molecular weight",
+            "Description": "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol.\n",
+            "Mode": "Pretrained",
+            "Input": [
+                "Compound"
+            ],
+            "Input Shape": "Single",
+            "Task": [
+                "Regression"
+            ],
+            "Output": [
+                "Other value"
+            ],
+            "Output Type": [
+                "Float"
+            ],
+            "Output Shape": "Single",
+            "Interpretation": "Calculated molecular weight (g/mol)",
+            "Tag": [
+                "Molecular weight"
+            ],
+            "Publication": "https://www.rdkit.org/docs/RDKit_Book.html",
+            "Source Code": "https://github.com/rdkit/rdkit",
+            "License": "BSD-3.0",
+            "Contributor": "miquelduranfrigola",
+            "S3": "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3b5e.zip",
+            "DockerHub": "https://hub.docker.com/r/ersiliaos/eos3b5e",
+            "Docker Architecture": [
+                "AMD64",
+                "ARM64"
+            ]
+        },
+        "card": {
+            "Identifier": "eos3b5e",
+            "Slug": "molecular-weight",
+            "Status": "Ready",
+            "Title": "Molecular weight",
+            "Description": "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol.\n",
+            "Mode": "Pretrained",
+            "Input": [
+                "Compound"
+            ],
+            "Input Shape": "Single",
+            "Task": [
+                "Regression"
+            ],
+            "Output": [
+                "Other value"
+            ],
+            "Output Type": [
+                "Float"
+            ],
+            "Output Shape": "Single",
+            "Interpretation": "Calculated molecular weight (g/mol)",
+            "Tag": [
+                "Molecular weight"
+            ],
+            "Publication": "https://www.rdkit.org/docs/RDKit_Book.html",
+            "Source Code": "https://github.com/rdkit/rdkit",
+            "License": "BSD-3.0",
+            "Contributor": "miquelduranfrigola",
+            "S3": "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3b5e.zip",
+            "DockerHub": "https://hub.docker.com/r/ersiliaos/eos3b5e",
+            "Docker Architecture": [
+                "AMD64",
+                "ARM64"
+            ]
+        }
+    },
+    "model_id": "eos3b5e",
+    "time_taken": "0:00:06.287074",
+    "nan_count": {
+        "key": 0,
+        "input": 0,
+        "mw": 0
+    },
+    "check_types": {
+        "mismatched_types": 0,
+        "correct_shape": true
+    },
+    "stats": {
+        "mw": {
+            "mean": 332.81020000000007,
+            "mode": null,
+            "min": 226.682,
+            "max": 488.01700000000034,
+            "std": 108.19093221569003
+        }
+    },
+    "file_sizes": {
+        "input_size": 0.533203125,
+        "output_size": 1.07421875,
+        "avg_input_size": 0.13330078125,
+        "avg_output_size": 0.21484375
+    }
+}

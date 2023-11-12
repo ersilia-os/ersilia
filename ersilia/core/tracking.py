@@ -4,6 +4,23 @@ import pandas as pd
 import os
 
 PERSISTENT_FILE_PATH = os.path.abspath("current_session.txt")
+# Temporary path to log files
+TEMP_FILE_LOGS = os.path.abspath("")
+
+
+def log_files_metrics(file):
+    error_count = 0
+    warning_count = 0
+
+    with open(file, "r") as file:
+        for line in file:
+            if "ERROR" in line:
+                error_count += 1
+            elif "WARNING" in line:
+                warning_count += 1
+
+    print(f"Error count: {error_count}")
+    print(f"Warning count: {warning_count}")
 
 
 def read_csv(file):
@@ -27,6 +44,7 @@ def write_persistent_file(contents):
         with open(PERSISTENT_FILE_PATH, "a") as f:
             f.write(f"{contents}\n")
 
+    log_files_metrics(TEMP_FILE_LOGS)
 
 def close_persistent_file():
     # Make sure the file actually exists before we try renaming
