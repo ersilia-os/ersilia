@@ -53,10 +53,13 @@ class RunTracker:
 
     def __init__(self):
         self.time_start = None
+        self.memory_usage_start = 0
 
     # function to be called before model is run
     def start_tracking(self):
         self.time_start = datetime.now()
+        tracemalloc.start()
+        self.memory_usage_start = tracemalloc.get_traced_memory()[0]
 
     def sample_df(self, df, num_rows, num_cols):
         """
@@ -101,6 +104,38 @@ class RunTracker:
             "avg_output_size": output_avg_row_size,
         }
 
+    def check_types(self, resultDf, metadata):
+        typeDict = {"float64": "Float", "int64": "Int"}
+        count = 0
+
+        # ignore key and input columns
+        dtypesLst = resultDf.loc[:, ~resultDf.columns.isin(["key", "input"])].dtypes
+
+        for i in dtypesLst:
+            if typeDict[str(i)] != metadata["Output Type"][0]:
+                count += 1
+
+        if len(dtypesLst) > 1 and metadata["Output Shape"] != "List":
+            print("Not right shape. Expected List but got Single")
+            correct_shape = False
+        elif len(dtypesLst) == 1 and metadata["Output Shape"] != "Single":
+            print("Not right shape. Expected Single but got List")
+            correct_shape = False
+        else:
+            print("Output is correct shape.")
+            correct_shape = True
+
+        print("Output has", count, "mismatched types.\n")
+
+        return {"mismatched_types": count, "correct_shape": correct_shape}
+
+    def get_peak_memory(self):
+        # Compare memory between peak and amount when we started
+        peak_memory = tracemalloc.get_traced_memory()[1] - self.memory_usage_start
+        tracemalloc.stop()
+
+        return peak_memory
+
     def track(self, input, result, meta):
         """
         Tracks the results after a model run.
@@ -130,45 +165,13 @@ class RunTracker:
 
         json_dict["file_sizes"] = self.get_file_sizes(input_dataframe, result_dataframe)
 
+        json_dict["peak_memory_use"] = self.get_peak_memory()
+
         json_object = json.dumps(json_dict, indent=4)
-        print("\nJSON Dictionary:\n", json_object)
 
         # log results to persistent tracking file
         write_persistent_file(json_object)
 
-    def check_types(self, resultDf, metadata):
-        typeDict = {"float64": "Float", "int64": "Int"}
-        count = 0
-
-        # ignore key and input columns
-        dtypesLst = resultDf.loc[:, ~resultDf.columns.isin(["key", "input"])].dtypes
-
-        for i in dtypesLst:
-            if typeDict[str(i)] != metadata["Output Type"][0]:
-                count += 1
-
-        if len(dtypesLst) > 1 and metadata["Output Shape"] != "List":
-            print("Not right shape. Expected List but got Single")
-            correct_shape = False
-        elif len(dtypesLst) == 1 and metadata["Output Shape"] != "Single":
-            print("Not right shape. Expected Single but got List")
-            correct_shape = False
-        else:
-            print("Output is correct shape.")
-            correct_shape = True
-
-        print("Output has", count, "mismatched types.\n")
-
-        return {"mismatched_types": count, "correct_shape": correct_shape}
-
-    def start(self):
-        tracemalloc.start()
-        self.time_start = tracemalloc.get_traced_memory()[0]
-
-    def track_memory(self):
-        peak_memory = tracemalloc.get_traced_memory()[1] - self.time_start
-        print(f"Peak memory: {peak_memory}")
-        tracemalloc.stop()
 
 def write_file(dict):
     str = json.dump(dict)
