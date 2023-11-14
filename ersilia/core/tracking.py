@@ -42,6 +42,7 @@ def close_persistent_file():
         )
         os.rename(PERSISTENT_FILE_PATH, new_file_path)
 
+
 def upload_to_s3(json_dict, bucket="t4sg-ersilia", object_name=None):
     """Upload a file to an S3 bucket
 
@@ -53,24 +54,27 @@ def upload_to_s3(json_dict, bucket="t4sg-ersilia", object_name=None):
 
     # If S3 object_name was not specified, use file_name
     if object_name is None:
-        object_name = datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + '-' + json_dict["model_id"]
+        object_name = (
+            datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + "-" + json_dict["model_id"]
+        )
 
     # Dump JSON into a temporary file to upload
     json_str = json.dumps(json_dict, indent=4)
     tmp = tempfile.NamedTemporaryFile()
 
-    with open(tmp.name, 'w') as f:
+    with open(tmp.name, "w") as f:
         f.write(json_str)
         f.flush()
 
         # Upload the file
-        s3_client = boto3.client('s3')
+        s3_client = boto3.client("s3")
         try:
             s3_client.upload_file(tmp.name, bucket, f"{object_name}.json")
         except ClientError as e:
             logging.error(e)
             return False
     return True
+
 
 class RunTracker:
     """
