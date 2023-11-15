@@ -14,13 +14,13 @@ def log_files_metrics(file):
 
     with open(file, "r") as file:
         for line in file:
-            if "ERROR" in line:
+            if "| ERROR" in line:
                 error_count += 1
-            elif "WARNING" in line:
+            elif "| WARNING" in line:
                 warning_count += 1
 
-    print(f"Error count: {error_count}")
-    print(f"Warning count: {warning_count}")
+    write_persistent_file(f"Error count: {error_count}")
+    write_persistent_file(f"Warning count: {warning_count}")
 
 
 def read_csv(file):
@@ -44,7 +44,6 @@ def write_persistent_file(contents):
         with open(PERSISTENT_FILE_PATH, "a") as f:
             f.write(f"{contents}\n")
 
-    log_files_metrics(TEMP_FILE_LOGS)
 
 def close_persistent_file():
     # Make sure the file actually exists before we try renaming
@@ -54,6 +53,8 @@ def close_persistent_file():
             datetime.now().strftime("%Y-%m-%d%_H-%M-%S.txt"),
         )
         os.rename(PERSISTENT_FILE_PATH, new_file_path)
+
+    log_files_metrics(TEMP_FILE_LOGS)
 
 
 class RunTracker:
