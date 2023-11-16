@@ -9,6 +9,23 @@ from botocore.exceptions import ClientError
 import os
 
 PERSISTENT_FILE_PATH = os.path.abspath("current_session.txt")
+# Temporary path to log files
+TEMP_FILE_LOGS = os.path.abspath("")
+
+
+def log_files_metrics(file):
+    error_count = 0
+    warning_count = 0
+
+    with open(file, "r") as file:
+        for line in file:
+            if "| ERROR" in line:
+                error_count += 1
+            elif "| WARNING" in line:
+                warning_count += 1
+
+    write_persistent_file(f"Error count: {error_count}")
+    write_persistent_file(f"Warning count: {warning_count}")
 
 
 def read_csv(file):
@@ -36,6 +53,8 @@ def write_persistent_file(contents):
 def close_persistent_file():
     # Make sure the file actually exists before we try renaming
     if os.path.isfile(PERSISTENT_FILE_PATH):
+        log_files_metrics(TEMP_FILE_LOGS)
+
         new_file_path = os.path.join(
             os.path.dirname(PERSISTENT_FILE_PATH),
             datetime.now().strftime("%Y-%m-%d%_H-%M-%S.txt"),
