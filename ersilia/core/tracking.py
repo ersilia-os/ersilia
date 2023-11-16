@@ -53,13 +53,13 @@ def write_persistent_file(contents):
 def close_persistent_file():
     # Make sure the file actually exists before we try renaming
     if os.path.isfile(PERSISTENT_FILE_PATH):
+        log_files_metrics(TEMP_FILE_LOGS)
+
         new_file_path = os.path.join(
             os.path.dirname(PERSISTENT_FILE_PATH),
             datetime.now().strftime("%Y-%m-%d%_H-%M-%S.txt"),
         )
         os.rename(PERSISTENT_FILE_PATH, new_file_path)
-
-    log_files_metrics(TEMP_FILE_LOGS)
 
 
 def upload_to_s3(json_dict, bucket="t4sg-ersilia", object_name=None):
