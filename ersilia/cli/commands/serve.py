@@ -27,7 +27,7 @@ def serve_cmd():
         "--track_serve/--no_track_serve",
         "track_serve",
         required=False,
-        default=True,
+        default=False,
     )
     def serve(model, lake, docker, port, track_serve):
         if docker:
