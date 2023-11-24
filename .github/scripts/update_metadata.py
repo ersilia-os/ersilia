@@ -113,9 +113,7 @@ class UpdateMetadata:
         if self.metadata["Tag"] == []:
             # split the tags into a list andremove any whitespace
             # tags = [tag.strip() for tag in self.json_input["tag"].split(",")]
-            print(type(self.json_input["tag"]))
-            tags = self.json_input["tag"]
-            self.metadata["Tag"] = tags
+            self.metadata["Tag"] = []
         if self.metadata["Status"] == "":
             self.metadata["Status"] = "In progress"
 
