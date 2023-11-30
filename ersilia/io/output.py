@@ -167,6 +167,9 @@ class GenericOutputAdapter(ResponseRefactor):
     def __cast_values(self, vals, dtypes, output_keys):
         v = []
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
+            self.logger.debug(v_)
+            self.logger.debug(t_)
+            self.logger.debug(k_)
             if t_ in self._array_types:
                 if v_ is None:
                     v_ = [None] * self.__array_shape(k_)
@@ -196,24 +199,31 @@ class GenericOutputAdapter(ResponseRefactor):
             self.logger.debug("Values: {0}".format(v))
             m = self.__meta_by_key(ok)
             if ok not in current_pure_dtype:
+                self.logger.debug("Getting pure dtype for {0}".format(ok))
                 t = self.__pure_dtype(ok)
+                self.logger.debug("This is the pure datatype: {0}".format(t))
                 if t is None:
                     t = self._guess_pure_dtype_if_absent(v)
+                    self.logger.debug("Guessed absent pure datatype: {0}".format(t))
                 current_pure_dtype[ok] = t
             else:
                 t = current_pure_dtype[ok]
             self.logger.debug("Datatype: {0}".format(t))
             if t in self._array_types:
+                self.logger.debug("Datatype has been matched: {0} over {1}".format(t, self._array_types))
                 assert m is not None
                 if v is not None:
                     if len(m) > len(v):
+                        self.logger.debug("Metadata {0} is longer than values {1}".format(len(m), len(v)))
                         v = list(v) + [None] * (len(m) - len(v))
                     assert len(m) == len(v)
                 if merge_key:
+                    self.logger.debug("Merge key is {0}".format(merge_key))
                     output_keys_expanded += [
                         "{0}{1}{2}".format(ok, FEATURE_MERGE_PATTERN, m_) for m_ in m
                     ]
                 else:
+                    self.logger.debug("No merge key")
                     output_keys_expanded += ["{0}".format(m_) for m_ in m]
             else:
                 output_keys_expanded += [ok]
@@ -248,8 +258,16 @@ class GenericOutputAdapter(ResponseRefactor):
                     output_keys = [k for k in out.keys()]
                 vals = [out[k] for k in output_keys]
                 dtypes = [self.__pure_dtype(k) for k in output_keys]
+                are_dtypes_informative = False
+                for dtype in dtypes:
+                    if dtype is not None:
+                        are_dtypes_informative = True
                 if output_keys_expanded is None:
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
+                if not are_dtypes_informative:
+                    t = self._guess_pure_dtype_if_absent(vals)
+                    if len(output_keys) == 1:
+                        dtypes = [t]
                 vals = self.__cast_values(vals, dtypes, output_keys)
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
