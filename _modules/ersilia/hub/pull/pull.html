@@ -76,6 +76,8 @@
   <h1>Source code for ersilia.hub.pull.pull</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span><span class="p">,</span> <span class="n">run_command</span>
@@ -178,11 +180,19 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="s2">&quot;Trying to pull image </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="p">)</span>
+                <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">),</span> <span class="s2">&quot;docker_pull.log&quot;</span>
+                <span class="p">)</span>
                 <span class="n">run_command</span><span class="p">(</span>
-                    <span class="s2">&quot;docker pull </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
+                    <span class="s2">&quot;docker pull </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2"> 2&gt;&amp;1 &gt; </span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">tmp_file</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">pull_log</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pull_log</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;no matching manifest&quot;</span> <span class="ow">in</span> <span class="n">pull_log</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Image pulled succesfully!&quot;</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
