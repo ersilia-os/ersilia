@@ -210,11 +210,19 @@ class GenericOutputAdapter(ResponseRefactor):
                 t = current_pure_dtype[ok]
             self.logger.debug("Datatype: {0}".format(t))
             if t in self._array_types:
-                self.logger.debug("Datatype has been matched: {0} over {1}".format(t, self._array_types))
+                self.logger.debug(
+                    "Datatype has been matched: {0} over {1}".format(
+                        t, self._array_types
+                    )
+                )
                 assert m is not None
                 if v is not None:
                     if len(m) > len(v):
-                        self.logger.debug("Metadata {0} is longer than values {1}".format(len(m), len(v)))
+                        self.logger.debug(
+                            "Metadata {0} is longer than values {1}".format(
+                                len(m), len(v)
+                            )
+                        )
                         v = list(v) + [None] * (len(m) - len(v))
                     assert len(m) == len(v)
                 if merge_key:
