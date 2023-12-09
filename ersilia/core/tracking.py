@@ -7,6 +7,7 @@ import logging
 import boto3
 from botocore.exceptions import ClientError
 import os
+import re
 
 PERSISTENT_FILE_PATH = os.path.abspath("current_session.txt")
 # Temporary path to log files
@@ -17,14 +18,61 @@ def log_files_metrics(file):
     error_count = 0
     warning_count = 0
 
+    ersilia_error_flag = False
+    misc_error_flag = False
+    error_name = ""
+    errors = {}
     with open(file, "r") as file:
+        line = None
         for line in file:
-            if "| ERROR" in line:
-                error_count += 1
-            elif "| WARNING" in line:
-                warning_count += 1
+            if not re.match(r"^\d{2}.\d{2}.\d{2} \| ", line):
+                # continuation of log
+                if ersilia_error_flag:
+                    # catch the error name if hinted by previous line
+                    error_name = line.rstrip()
+                    errors[error_name] += 1
+                    ersilia_error_flag = False
+                    continue
+                elif misc_error_flag:
+                    error_name += line.rstrip()
+                    if len(error_name) > 100:
+                        error_name = error_name[:97] + "..."
+                        misc_error_flag = False
+            else:
+                # encountering new logs
+                # make sure error flags are closed
+                if ersilia_error_flag:
+                    errors["Unknown Ersilia exception class"] += 1
+                    ersilia_error_flag = False
+                if misc_error_flag:
+                    errors[error_name] += 1
+                    misc_error_flag = False
+                if "| ERROR" in line:
+                    error_count += 1
+                    # checking which type of errors
+                    if "Ersilia exception class:" in line:
+                        # combine this with the next line, usually EmptyOutputError or SourceCodeBaseInformationError
+                        # the detailed message is long
+                        ersilia_error_flag = True
+                    else:
+                        # other errors are pretty self-descriptive and short. Will cap by character
+                        misc_error_flag = True
+                        error_name = line.split('| ERROR    | ')[1].rstrip()
+                elif "| WARNING" in line:
+                    warning_count += 1
+        if line is not None:
+            # in case last log is error
+            # make sure error flags are closed
+            if ersilia_error_flag:
+                errors["Unknown Ersilia exception class"] += 1
+            if misc_error_flag:
+                errors[error_name] += 1
 
     write_persistent_file(f"Error count: {error_count}")
+    if len(errors) > 0:
+        write_persistent_file(f"Breakdown by error types:")
+        for error in errors:
+            write_persistent_file(f"{error}: {errors[error]}")
     write_persistent_file(f"Warning count: {warning_count}")
 
 
@@ -74,7 +122,7 @@ def upload_to_s3(json_dict, bucket="t4sg-ersilia", object_name=None):
     # If S3 object_name was not specified, use file_name
     if object_name is None:
         object_name = (
-            datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + "-" + json_dict["model_id"]
+                datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + "-" + json_dict["model_id"]
         )
 
     # Dump JSON into a temporary file to upload
