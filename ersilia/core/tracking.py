@@ -191,6 +191,13 @@ class RunTracker:
         return stats
 
     def get_file_sizes(self, input_df, output_df):
+        """
+        Calculates the size of the input and output dataframes, as well as the average size of each row.
+
+        :input_df: Pandas dataframe containing the input data
+        :output_df: Pandas dataframe containing the output data
+        :return: dictionary containing the input size, output size, average input size, and average output size
+        """
         input_size = input_df.memory_usage(deep=True).sum() / 1024
         output_size = output_df.memory_usage(deep=True).sum() / 1024
 
