@@ -14,6 +14,14 @@ TEMP_FILE_LOGS = os.path.abspath("")
 
 
 def log_files_metrics(file):
+    """
+    This function will log the number of errors and warnings in the log files.
+
+    :param file: The log file to be read
+    :return: None (writes to file)
+    """
+
+
     error_count = 0
     warning_count = 0
 
@@ -157,6 +165,15 @@ class RunTracker:
         }
 
     def check_types(self, resultDf, metadata):
+        """
+        This class is responsible for checking the types of the output dataframe against the expected types.
+        This includes checking the shape of the output dataframe (list vs single) and the types of each column.
+
+        :param resultDf: The output dataframe
+        :param metadata: The metadata dictionary
+        :return: A dictionary containing the number of mismatched types and a boolean for whether the shape is correct
+        """
+
         typeDict = {"float64": "Float", "int64": "Int"}
         count = 0
 
