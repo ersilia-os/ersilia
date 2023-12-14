@@ -38,14 +38,11 @@ class PureDataTyper(object):
     def _is_string_array(self):
         if self._is_array():
             data = np.array(self.data).ravel().tolist()
-            print(len(data))
             data = [x for x in data if x is not None]
-            print(len(data))
             if len(data) < 1:
                 return False
             for x in data:
                 if not PureDataTyper(x)._is_string():
-                    print(x, "HERE")
                     return False
             return True
         else:
