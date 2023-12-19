@@ -30,11 +30,10 @@ jobs:
 
       - name: Install Poetry
         run: |
-            python -m pip install --upgrade pip
-            pip install setuptools wheel twine
-            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-            source $HOME/.poetry/env
-            echo `poetry --version`
+            export POETRY_HOME=/opt/poetry
+            python3 -m venv $POETRY_HOME
+            $POETRY_HOME/bin/pip install poetry==1.2.0
+            $POETRY_HOME/bin/poetry --version
             echo "Poetry successfully installed"
 
       - name: Build and publish
@@ -43,6 +42,6 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
         run: |
-          source $HOME/.poetry/env
-          poetry build
+          export POETRY_HOME=/opt/poetry
+          $POETRY_HOME/bin/poetry build
           twine upload --verbose --skip-existing dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
