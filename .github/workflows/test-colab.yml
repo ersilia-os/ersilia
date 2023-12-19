@@ -24,10 +24,14 @@ jobs:
           source activate
           conda init
           conda install google-colab -c conda-forge
+          pip install pandas
           jupyter --version
 
       - name: Test Google Colab Notebook with CLI shell commands
         run: jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-cli.ipynb --output=output-cli.ipynb --ExecutePreprocessor.timeout=-1
+
+      - name: Test Google Colab Notebook with Python API commands
+        run: jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-python-api.ipynb --output=output-python-api.ipynb --ExecutePreprocessor.timeout=-1
 
       - name: Upload Output of the Google Colab Notebook CLI
         uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # pin@v3.1.3
