@@ -33,15 +33,15 @@ jobs:
             export POETRY_HOME=/opt/poetry
             python3 -m venv $POETRY_HOME
             $POETRY_HOME/bin/pip install poetry==1.2.0
-            $POETRY_HOME/bin/poetry --version
+            echo "${POETRY_HOME}/bin" >> $GITHUB_PATH
+            poetry --version
             echo "Poetry successfully installed"
 
       - name: Build and publish
         env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
         run: |
-          export POETRY_HOME=/opt/poetry
-          $POETRY_HOME/bin/poetry build
-          twine upload --verbose --skip-existing dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
+          poetry config -- http-basic.pypi $PYPI_USERNAME $PYPI_PASSWORD
+          poetry --build publish 
