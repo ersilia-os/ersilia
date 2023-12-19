@@ -42,5 +42,6 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
         run: |
+          export POETRY_HOME=/opt/poetry
           $POETRY_HOME/bin/poetry build
           twine upload --verbose --skip-existing dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
