@@ -50,7 +50,6 @@ pytest = {version = "^7.4.0", optional = true}
 fuzzywuzzy = {version = "^0.18.0", optional = true}
 sphinx = {version = ">=5.3.0", optional = true} # For compatibility with python 3.7.x
 jinja2 = {version = "^3.1.2", optional = true}
-levenshtein = {version = ">=0.21.1,<0.24.0", optional = true} # For faster fuzzy search
 boto3 = "^1.28.40"
 
 
@@ -58,7 +57,7 @@ boto3 = "^1.28.40"
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 lake = ["isaura"]
 docs = ["sphinx", "jinja2"]
-test = ["pytest", "fuzzywuzzy", "levenshtein"]
+test = ["pytest", "fuzzywuzzy"]
 #all = [lake, docs, test]
 
 [tool.poetry.scripts]
