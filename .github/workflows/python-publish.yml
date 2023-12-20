@@ -29,13 +29,7 @@ jobs:
           mv _static_version.py ersilia/.
 
       - name: Install Poetry
-        run: |
-            export POETRY_HOME=/opt/poetry
-            python3 -m venv $POETRY_HOME
-            $POETRY_HOME/bin/pip install poetry==1.2.0
-            echo "${POETRY_HOME}/bin" >> $GITHUB_PATH
-            poetry --version
-            echo "Poetry successfully installed"
+        uses: snok/install-poetry@v1
 
       - name: Build and publish
         env:
