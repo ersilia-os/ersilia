@@ -5,7 +5,7 @@ import tracemalloc
 import tempfile
 import logging
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, NoCredentialsError
 import os
 
 PERSISTENT_FILE_PATH = os.path.abspath("current_session.txt")
@@ -17,15 +17,18 @@ def log_files_metrics(file):
     error_count = 0
     warning_count = 0
 
-    with open(file, "r") as file:
-        for line in file:
-            if "| ERROR" in line:
-                error_count += 1
-            elif "| WARNING" in line:
-                warning_count += 1
+    try:
+        with open(file, "r") as file:
+            for line in file:
+                if "| ERROR" in line:
+                    error_count += 1
+                elif "| WARNING" in line:
+                    warning_count += 1
 
-    write_persistent_file(f"Error count: {error_count}")
-    write_persistent_file(f"Warning count: {warning_count}")
+        write_persistent_file(f"Error count: {error_count}")
+        write_persistent_file(f"Warning count: {warning_count}")
+    except FileNotFoundError:
+        logging.warning("Log file not found")
 
 
 def read_csv(file):
@@ -89,6 +92,8 @@ def upload_to_s3(json_dict, bucket="t4sg-ersilia", object_name=None):
         s3_client = boto3.client("s3")
         try:
             s3_client.upload_file(tmp.name, bucket, f"{object_name}.json")
+        except NoCredentialsError:
+            logging.error("Unable to upload tracking data to AWS: Credentials not found")
         except ClientError as e:
             logging.error(e)
             return False
