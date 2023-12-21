@@ -7,6 +7,7 @@ import logging
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 import os
+import re
 
 PERSISTENT_FILE_PATH = os.path.abspath("current_session.txt")
 # Temporary path to log files
@@ -17,15 +18,63 @@ def log_files_metrics(file):
     error_count = 0
     warning_count = 0
 
+    ersilia_error_flag = False
+    misc_error_flag = False
+    error_name = ""
+    errors = {}
+
     try:
         with open(file, "r") as file:
+            line = None
             for line in file:
-                if "| ERROR" in line:
-                    error_count += 1
-                elif "| WARNING" in line:
-                    warning_count += 1
+                if not re.match(r"^\d{2}.\d{2}.\d{2} \| ", line):
+                    # continuation of log
+                    if ersilia_error_flag:
+                        # catch the error name if hinted by previous line
+                        error_name = line.rstrip()
+                        errors[error_name] += 1
+                        ersilia_error_flag = False
+                        continue
+                    elif misc_error_flag:
+                        error_name += line.rstrip()
+                        if len(error_name) > 100:
+                            error_name = error_name[:97] + "..."
+                            misc_error_flag = False
+                else:
+                    # encountering new logs
+                    # make sure error flags are closed
+                    if ersilia_error_flag:
+                        errors["Unknown Ersilia exception class"] += 1
+                        ersilia_error_flag = False
+                    if misc_error_flag:
+                        errors[error_name] += 1
+                        misc_error_flag = False
+                    if "| ERROR" in line:
+                        error_count += 1
+                        # checking which type of errors
+                        if "Ersilia exception class:" in line:
+                            # combine this with the next line, usually EmptyOutputError or SourceCodeBaseInformationError
+                            # the detailed message is long
+                            ersilia_error_flag = True
+                        else:
+                            # other errors are pretty self-descriptive and short. Will cap by character
+                            misc_error_flag = True
+                            error_name = line.split('| ERROR    | ')[1].rstrip()
+                    elif "| WARNING" in line:
+                        warning_count += 1
+            if line is not None:
+                # in case last log is error
+                # make sure error flags are closed
+                if ersilia_error_flag:
+                    errors["Unknown Ersilia exception class"] += 1
+                if misc_error_flag:
+                    errors[error_name] += 1
 
         write_persistent_file(f"Error count: {error_count}")
+        if len(errors) > 0:
+            write_persistent_file(f"Breakdown by error types:")
+            for error in errors:
+                write_persistent_file(f"{error}: {errors[error]}")
         write_persistent_file(f"Warning count: {warning_count}")
     except FileNotFoundError:
         logging.warning("Log file not found")
@@ -148,6 +197,13 @@ class RunTracker:
         return stats
 
     def get_file_sizes(self, input_df, output_df):
+        """
+        Calculates the size of the input and output dataframes, as well as the average size of each row.
+
+        :input_df: Pandas dataframe containing the input data
+        :output_df: Pandas dataframe containing the output data
+        :return: dictionary containing the input size, output size, average input size, and average output size
+        """
         input_size = input_df.memory_usage(deep=True).sum() / 1024
         output_size = output_df.memory_usage(deep=True).sum() / 1024
 
