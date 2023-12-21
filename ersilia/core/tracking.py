@@ -104,8 +104,8 @@ def log_files_metrics(file):
             for error in errors:
                 write_persistent_file(f"{error}: {errors[error]}")
         write_persistent_file(f"Warning count: {warning_count}")
-    except FileNotFoundError:
-        logging.warning("Log file not found")
+    except (IsADirectoryError, FileNotFoundError):
+        logging.warning("Unable to calculate metrics for log file: log file not found")
 
 
 def open_persistent_file(model_id):
@@ -223,7 +223,7 @@ class RunTracker:
         # drop first two columns (key, input)
         dat = dat.drop(["key", "input"], axis=1)
 
-        # calculate and print statistics
+        # calculate statistics
         stats = {}
         for column in dat:
             column_stats = {}
@@ -282,17 +282,15 @@ class RunTracker:
                 count += 1
 
         if len(dtypes_list) > 1 and metadata["Output Shape"] != "List":
-            print("Not right shape. Expected List but got Single")
+            logging.warning("Not right shape. Expected List but got Single")
             correct_shape = False
         elif len(dtypes_list) == 1 and metadata["Output Shape"] != "Single":
-            print("Not right shape. Expected Single but got List")
+            logging.warning("Not right shape. Expected Single but got List")
             correct_shape = False
         else:
-            print("Output is correct shape.")
             correct_shape = True
 
-        print(result_df)
-        print("Output has", count, "mismatched types.\n")
+        logging.info("Output has", count, "mismatched types.\n")
 
         return {"mismatched_types": count, "correct_shape": correct_shape}
 
