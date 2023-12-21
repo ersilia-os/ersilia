@@ -125,7 +125,7 @@ def close_persistent_file():
         os.rename(PERSISTENT_FILE_PATH, new_file_path)
 
 
-def upload_to_s3(json_dict, bucket="t4sg-ersilia", object_name=None):
+def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
 
     :param json_dict: JSON object to upload
@@ -171,7 +171,7 @@ def upload_to_cddvault(output_df, api_key):
 
     :param output_df: The output dataframe from the model run
     :param api_key: The API key for CDD Vault's API
-    :return: The response from the API call
+    :return: Whether the API call was successful
     """
 
     # We use the slurps API path to be able to bulk upload data
@@ -217,11 +217,12 @@ def upload_to_cddvault(output_df, api_key):
     response = requests.post(
         url, headers=headers, data={"json": json.dumps(data)}, files=files
     )
+
     if response.status_code == 200:
-        return response.json()
+        return True
     else:
         logging.warning("API call to CDD Vault was Unsuccessful")
-        return response.text
+        return False
 
 
 class RunTracker:
@@ -378,6 +379,8 @@ class RunTracker:
         json_dict["file_sizes"] = self.get_file_sizes(input_dataframe, result_dataframe)
 
         json_dict["peak_memory_use"] = self.get_peak_memory()
+
+        # TODO: Call CDD Vault tracking and upload API success to splunk
 
         # log results to persistent tracking file
         json_object = json.dumps(json_dict, indent=4)
