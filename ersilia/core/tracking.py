@@ -8,31 +8,11 @@ import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 import os
 import re
+import requests
 
 PERSISTENT_FILE_PATH = os.path.abspath("current_session.txt")
 # Temporary path to log files until log files are fixed
 TEMP_FILE_LOGS = os.path.abspath("")
-
-
-def create_csv(output_df):
-    """
-    This function takes in the output dataframe from the model run and returns
-    a new temporary csv file that will later be passed to CDD vault. The CSV
-    file has two columns: the first column is the input molecules and the
-    second column is the ISO-formatted time of the run.
-
-    :param output_df: The output dataframe from the model run
-    :return: A new temporary csv file
-    """
-
-    new_df = output_df[["input"]].copy()
-    current_time = datetime.now().isoformat()
-
-    new_df["time"] = current_time
-    csv_file = tempfile.NamedTemporaryFile(mode="w", suffix=".csv")
-    new_df.to_csv(csv_file.name, index=False)
-
-    return csv_file
 
 
 def log_files_metrics(file):
@@ -180,6 +160,68 @@ def upload_to_s3(json_dict, bucket="t4sg-ersilia", object_name=None):
             logging.error(e)
             return False
     return True
+
+
+def upload_to_cddvault(output_df, api_key):
+    """
+    This function takes in the output dataframe from the model run and uploads the data to CDD vault.
+
+    NOTE: Currently, this is simply a skeleton of what the final code should look like. The TODO details
+    what the remaining changes should look like.
+
+    :param output_df: The output dataframe from the model run
+    :param api_key: The API key for CDD Vault's API
+    :return: The response from the API call
+    """
+
+    # We use the slurps API path to be able to bulk upload data
+    url = "https://app.collaborativedrug.com/api/v1/vaults/<vault_id>/slurps"
+    headers = {"CDD-Token": api_key}
+    # TODO: Update project and header_mappings ids, as well as adding mappings for other
+    # output columns if those are to be tracked as well.
+    data = {
+        "project": "",
+        "autoreject": "true",
+        "mapping_template": {
+            "registration_type": "CHEMICAL_STRUCTURE",
+            "header_mappings": [
+                {
+                    "header": {"name": "input", "position": 0},
+                    "definition": {
+                        "id": -1,
+                        "type": "InternalFieldDefinition::MoleculeStructure",
+                    },
+                },
+                {
+                    "header": {"name": "time", "position": 1},
+                    "definition": {
+                        "id": -1,
+                        "type": "InternalFieldDefinition::BatchFieldDefinition",
+                    },
+                },
+            ],
+        },
+    }
+
+    # Save output_df to a CSV of the correct format
+    new_df = output_df[["input"]].copy()
+    current_time = datetime.now().isoformat()
+
+    new_df["time"] = current_time
+    csv_file = tempfile.NamedTemporaryFile(mode="w", suffix=".csv")
+    new_df.to_csv(csv_file.name, index=False)
+
+    files = {"file": open(csv_file.name, "rb")}
+
+    # Create and make API call
+    response = requests.post(
+        url, headers=headers, data={"json": json.dumps(data)}, files=files
+    )
+    if response.status_code == 200:
+        return response.json()
+    else:
+        logging.warning("API call to CDD Vault was Unsuccessful")
+        return response.text
 
 
 class RunTracker:
@@ -340,8 +382,6 @@ class RunTracker:
         # log results to persistent tracking file
         json_object = json.dumps(json_dict, indent=4)
         write_persistent_file(json_object)
-
-        create_csv(result_dataframe)
 
         # Upload run stats to s3
         upload_to_s3(json_dict)
