@@ -138,7 +138,11 @@ class InformationDisplayer(ErsiliaBase):
         self._echo(text, fg=color, bold=True)
         text = "GitHub: https://github.com/ersilia-os/{0}".format(card["Identifier"])
         self._echo(text, fg=color)
-        text = "AWS S3: {0}".format(card["S3"])
+        if "S3" in card:
+            s = card["S3"]
+        else:
+            s = "-"
+        text = "AWS S3: {0}".format(s)
         self._echo(text, fg=color)
         text = ""
         self._echo(text)

@@ -77,10 +77,9 @@ Please check the package requirements in the [Installation Guide](https://ersili
 
 1. If you no longer want to use the model, you can **delete** it.
 
-```bash
-ersilia delete retrosynthetic-accessibility
-```
-
+    ```bash
+    ersilia delete retrosynthetic-accessibility
+    ```
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
 

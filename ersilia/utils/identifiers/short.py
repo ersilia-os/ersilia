@@ -31,3 +31,6 @@ class ShortIdentifier(object):
             else:
                 number = int(datetime.today().timestamp())
             return str(self.hashids.encode(number))
+
+
+Identifier = ShortIdentifier

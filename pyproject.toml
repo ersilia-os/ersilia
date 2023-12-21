@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ersilia"
-version = "0.1.27"
+version = "0.1.30"
 description = "A hub of AI/ML models for open source drug discovery and global health"
 license = "GPLv3"
 authors = ["Ersilia Open Source Initiative <hello@ersilia.io>"]
@@ -40,7 +40,10 @@ pandas = [
 ]
 h5py = "^3.7.0" # For compatibility with isaura
 loguru = "^0.6.0" # For compatibility with isaura
-pyairtable = "<2"
+pyairtable = [
+    {version="<2", python="3.7.*"},
+    {version="<3", python=">=3.8"},
+]
 PyYAML = "^6.0.1"
 dockerfile-parse = "^2.0.1"
 tqdm = "^4.66.1"
@@ -51,7 +54,6 @@ pytest = {version = "^7.4.0", optional = true}
 fuzzywuzzy = {version = "^0.18.0", optional = true}
 sphinx = {version = ">=5.3.0", optional = true} # For compatibility with python 3.7.x
 jinja2 = {version = "^3.1.2", optional = true}
-levenshtein = {version = ">=0.21.1,<0.23.0", optional = true} # For faster fuzzy search
 boto3 = "^1.28.40"
 requests = "^2.31.0"
 
@@ -60,7 +62,7 @@ requests = "^2.31.0"
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 lake = ["isaura"]
 docs = ["sphinx", "jinja2"]
-test = ["pytest", "fuzzywuzzy", "levenshtein"]
+test = ["pytest", "fuzzywuzzy"]
 #all = [lake, docs, test]
 
 [tool.poetry.scripts]

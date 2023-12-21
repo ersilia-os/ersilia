@@ -7,3 +7,6 @@ class TimeStampIdentifier(object):
 
     def encode(self):
         return self.stamp.strftime("%Y%m%d%H%M%S")
+
+
+Identifier = TimeStampIdentifier

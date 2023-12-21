@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # pin@v3.5.3
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
 
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
-        uses: GrantBirki/issue-template-parser@v6.1.1
+        uses: GrantBirki/issue-template-parser@v7.0.0
         id: issue-parser
         with:
           body: ${{ github.event.client_payload.github.payload.issue.body }}
@@ -30,7 +30,7 @@ jobs:
 
       # setup python
       - name: setup python
-        uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # pin@v4.7.0
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: "3.10"
           # cache: 'pip' # caching pip dependencies
@@ -81,7 +81,7 @@ jobs:
 
       # upload git-lfs object
       - name: checkout persist credentials
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # pin@v3.5.3
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
@@ -154,7 +154,7 @@ jobs:
 
       # comment on the issue comment with further instructions for the user
       - name: comment
-        uses: GrantBirki/comment@e6bf4bc177996c9572b4ddb98b25eb1a80f9abc9 # pin@v2.0.7
+        uses: GrantBirki/comment@7016e89e8f225b0f18f1fbb7fd10263df2772a05 # pin@v2.0.8
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/new-model.md

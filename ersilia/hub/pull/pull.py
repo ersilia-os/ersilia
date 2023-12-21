@@ -1,5 +1,7 @@
 import requests
 import subprocess
+import tempfile
+import os
 
 from ... import ErsiliaBase
 from ...utils.terminal import yes_no_input, run_command
@@ -102,11 +104,19 @@ class ModelPuller(ErsiliaBase):
                 self.logger.debug(
                     "Trying to pull image {0}/{1}".format(DOCKERHUB_ORG, self.model_id)
                 )
+                tmp_file = os.path.join(
+                    tempfile.mkdtemp(prefix="ersilia-"), "docker_pull.log"
+                )
                 run_command(
-                    "docker pull {0}/{1}:{2}".format(
-                        DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+                    "docker pull {0}/{1}:{2} 2>&1 > {3}".format(
+                        DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG, tmp_file
                     )
                 )
+                with open(tmp_file, "r") as f:
+                    pull_log = f.read()
+                    self.logger.log(pull_log)
+                if "no matching manifest" in pull_log:
+                    raise Exception
                 self.logger.debug("Image pulled succesfully!")
             except:
                 self.logger.warning(

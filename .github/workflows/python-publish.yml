@@ -9,16 +9,18 @@ on:
     types:
       - completed
 
+  workflow_dispatch:
+
 jobs:
   deploy:
 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # pin@v3.5.3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
 
       - name: Set up Python
-        uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # pin@v4.7.0
+        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
         with:
           python-version: '3.7'
           # cache: 'pip' # caching pip dependencies
@@ -28,21 +30,14 @@ jobs:
           wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
           mv _static_version.py ersilia/.
 
-      - name: Install Poetry
-        run: |
-            python -m pip install --upgrade pip
-            pip install setuptools wheel twine
-            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-            source $HOME/.poetry/env
-            echo `poetry --version`
-            echo "Poetry successfully installed"
-
+      - name: Python Poetry Action
+        uses: abatilo/actions-poetry@v2.3.0
+            
       - name: Build and publish
         env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
         run: |
-          source $HOME/.poetry/env
-          poetry build
-          twine upload --verbose --skip-existing dist/* -u $TWINE_USERNAME -p $TWINE_PASSWORD
+          poetry config -- http-basic.pypi $PYPI_USERNAME $PYPI_PASSWORD
+          poetry --build publish 

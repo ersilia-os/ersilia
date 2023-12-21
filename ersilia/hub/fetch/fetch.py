@@ -18,8 +18,10 @@ from .actions.inform import ModelInformer
 from .register.register import ModelRegisterer
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
+from .register.standard_example import ModelStandardExample
 
 from ... import ErsiliaBase
+
 from . import STATUS_FILE, DONE_TAG
 
 
@@ -200,7 +202,12 @@ class ModelFetcher(ErsiliaBase):
         else:
             return False
 
-    def fetch(self, model_id):
+    def _standard_csv_example(self, model_id):
+        ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
+        ms.run()
+
+    def _fetch(self, model_id):
+        self.logger.debug("Starting fetching procedure")
         do_hosted = self._decide_if_use_hosted(model_id=model_id)
         if do_hosted:
             self._fetch_from_hosted(model_id=model_id)
@@ -212,3 +219,7 @@ class ModelFetcher(ErsiliaBase):
         if self.overwrite is None:
             self.overwrite = True
         self._fetch_not_from_dockerhub(model_id=model_id)
+
+    def fetch(self, model_id):
+        self._fetch(model_id)
+        self._standard_csv_example(model_id)

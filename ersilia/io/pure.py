@@ -38,6 +38,9 @@ class PureDataTyper(object):
     def _is_string_array(self):
         if self._is_array():
             data = np.array(self.data).ravel().tolist()
+            data = [x for x in data if x is not None]
+            if len(data) < 1:
+                return False
             for x in data:
                 if not PureDataTyper(x)._is_string():
                     return False
@@ -50,6 +53,9 @@ class PureDataTyper(object):
             has_numeric = False
             has_string = False
             data = np.array(self.data).ravel().tolist()
+            data = [x for x in data if x is not None]
+            if len(data) < 1:
+                return False
             for x in data:
                 if PureDataTyper(x)._is_numeric():
                     has_numeric = True

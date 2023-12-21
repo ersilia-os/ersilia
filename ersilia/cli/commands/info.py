@@ -25,7 +25,7 @@ def info_cmd():
         mdl = ErsiliaModel(model_id, service_class=service_class)
         info = mdl.info()
         if as_json:
-            print(json.dumps(info, indent=4))
+            echo(json.dumps(info, indent=4))
             return info
         else:
             InformationDisplayer(info).echo()
