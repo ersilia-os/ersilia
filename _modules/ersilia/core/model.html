@@ -88,6 +88,7 @@
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">.modelbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">RunLogger</span>
+<span class="kn">from</span> <span class="nn">.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span>
 <span class="kn">from</span> <span class="nn">..serve.autoservice</span> <span class="kn">import</span> <span class="n">AutoService</span>
 <span class="kn">from</span> <span class="nn">..serve.schema</span> <span class="kn">import</span> <span class="n">ApiSchema</span>
 <span class="kn">from</span> <span class="nn">..serve.api</span> <span class="kn">import</span> <span class="n">Api</span>
@@ -124,6 +125,7 @@
         <span class="n">fetch_if_not_available</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">log_runs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">track_runs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -205,6 +207,12 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">track_runs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with initialization!&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -218,7 +226,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span></div>
 
     <span class="k">def</span> <span class="nf">_set_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">api_name</span> <span class="o">==</span> <span class="s2">&quot;run&quot;</span><span class="p">:</span>
+        <span class="c1"># Don&#39;t want to override apis we explicitly write</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
             <span class="k">return</span>
 
         <span class="k">def</span> <span class="nf">_method</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">):</span>
@@ -503,13 +512,21 @@
 <div class="viewcode-block" id="ErsiliaModel.get_apis"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.get_apis">[docs]</a>    <span class="k">def</span> <span class="nf">get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">track_run</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+        <span class="c1"># Init some tracking before the run starts</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">start_tracking</span><span class="p">()</span>
+
         <span class="n">api_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">(</span>
             <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">_standard_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -526,7 +543,12 @@
         <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_ok</span>
 
 <div class="viewcode-block" id="ErsiliaModel.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">try_standard</span><span class="o">=</span><span class="kc">True</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+        <span class="n">track_run</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">try_standard</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting runner&quot;</span><span class="p">)</span>
         <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="kc">False</span>
@@ -547,7 +569,9 @@
             <span class="k">return</span> <span class="n">result</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying conventional run&quot;</span><span class="p">)</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span>
+                <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">track_run</span><span class="o">=</span><span class="n">track_run</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="n">result</span></div>
 
     <span class="nd">@property</span>

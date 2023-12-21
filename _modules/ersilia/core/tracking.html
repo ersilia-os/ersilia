@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ersilia.core.tracking &mdash; Ersilia  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Ersilia
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/package.html">Package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/devel.html">For developers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Ersilia</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../ersilia.html">ersilia</a></li>
+      <li class="breadcrumb-item active">ersilia.core.tracking</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ersilia.core.tracking</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">tracemalloc</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">boto3</span>
+<span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span><span class="p">,</span> <span class="n">NoCredentialsError</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">PERSISTENT_FILE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;current_session.txt&quot;</span><span class="p">)</span>
+<span class="c1"># Temporary path to log files until log files are fixed</span>
+<span class="n">TEMP_FILE_LOGS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="log_files_metrics"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.log_files_metrics">[docs]</a><span class="k">def</span> <span class="nf">log_files_metrics</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function will log the number of errors and warnings in the log files.</span>
+
+<span class="sd">    :param file: The log file to be read</span>
+<span class="sd">    :return: None (writes to file)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">error_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">warning_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">error_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\d</span><span class="si">{2}</span><span class="s2">.\d</span><span class="si">{2}</span><span class="s2">.\d</span><span class="si">{2}</span><span class="s2"> \| &quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+                    <span class="c1"># continuation of log</span>
+                    <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
+                        <span class="c1"># catch the error name if hinted by previous line</span>
+                        <span class="n">error_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                        <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">continue</span>
+                    <span class="k">elif</span> <span class="n">misc_error_flag</span><span class="p">:</span>
+                        <span class="n">error_name</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">error_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+                            <span class="n">error_name</span> <span class="o">=</span> <span class="n">error_name</span><span class="p">[:</span><span class="mi">97</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span>
+                            <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># encountering new logs</span>
+                    <span class="c1"># make sure error flags are closed</span>
+                    <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
+                        <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
+                        <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="s2">&quot;| ERROR&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">error_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="c1"># checking which type of errors</span>
+                        <span class="k">if</span> <span class="s2">&quot;Ersilia exception class:&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="c1"># combine this with the next line, usually EmptyOutputError or SourceCodeBaseInformationError</span>
+                            <span class="c1"># the detailed message is long</span>
+                            <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># other errors are pretty self-descriptive and short. Will cap by character</span>
+                            <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">error_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;| ERROR    | &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                    <span class="k">elif</span> <span class="s2">&quot;| WARNING&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">warning_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># in case last log is error</span>
+                <span class="c1"># make sure error flags are closed</span>
+                <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error count: </span><span class="si">{</span><span class="n">error_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Breakdown by error types:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+                <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">errors</span><span class="p">[</span><span class="n">error</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning count: </span><span class="si">{</span><span class="n">warning_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">IsADirectoryError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Unable to calculate metrics for log file: log file not found&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="open_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.open_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">open_persistent_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Opens a new persistent file, specifically for a run of model_id</span>
+<span class="sd">    :param model_id: The currently running model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Session started for model: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="write_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.write_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">write_persistent_file</span><span class="p">(</span><span class="n">contents</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes contents to the current persistent file. Only writes if the file actually exists.</span>
+<span class="sd">    :param contents: The contents to write to the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Only write to file if it already exists (we&#39;re meant to be tracking this run)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">contents</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="close_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.close_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">close_persistent_file</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Closes the persistent file, renaming it to a unique name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make sure the file actually exists before we try renaming</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">):</span>
+        <span class="n">log_files_metrics</span><span class="p">(</span><span class="n">TEMP_FILE_LOGS</span><span class="p">)</span>
+
+        <span class="n">new_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">),</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">%_H-%M-%S.txt&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">,</span> <span class="n">new_file_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="upload_to_s3"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_s3">[docs]</a><span class="k">def</span> <span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">json_dict</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;ersilia-tracking&quot;</span><span class="p">,</span> <span class="n">object_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a file to an S3 bucket</span>
+
+<span class="sd">    :param json_dict: JSON object to upload</span>
+<span class="sd">    :param bucket: Bucket to upload to</span>
+<span class="sd">    :param object_name: S3 object name. If not specified then we generate a name based on the timestamp and model id.</span>
+<span class="sd">    :return: True if file was uploaded, else False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># If S3 object_name was not specified, use file_name</span>
+    <span class="k">if</span> <span class="n">object_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">object_name</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Dump JSON into a temporary file to upload</span>
+    <span class="n">json_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="c1"># Upload the file</span>
+        <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">NoCredentialsError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Unable to upload tracking data to AWS: Credentials not found&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="upload_to_cddvault"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_cddvault">[docs]</a><span class="k">def</span> <span class="nf">upload_to_cddvault</span><span class="p">(</span><span class="n">output_df</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function takes in the output dataframe from the model run and uploads the data to CDD vault.</span>
+
+<span class="sd">    NOTE: Currently, this is simply a skeleton of what the final code should look like. The TODO details</span>
+<span class="sd">    what the remaining changes should look like.</span>
+
+<span class="sd">    :param output_df: The output dataframe from the model run</span>
+<span class="sd">    :param api_key: The API key for CDD Vault&#39;s API</span>
+<span class="sd">    :return: Whether the API call was successful</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># We use the slurps API path to be able to bulk upload data</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://app.collaborativedrug.com/api/v1/vaults/&lt;vault_id&gt;/slurps&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;CDD-Token&quot;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">}</span>
+    <span class="c1"># TODO: Update project and header_mappings ids, as well as adding mappings for other</span>
+    <span class="c1"># output columns if those are to be tracked as well.</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;autoreject&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mapping_template&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;registration_type&quot;</span><span class="p">:</span> <span class="s2">&quot;CHEMICAL_STRUCTURE&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;header_mappings&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;header&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+                    <span class="s2">&quot;definition&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;InternalFieldDefinition::MoleculeStructure&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;header&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                    <span class="s2">&quot;definition&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;InternalFieldDefinition::BatchFieldDefinition&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">},</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Save output_df to a CSV of the correct format</span>
+    <span class="n">new_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[[</span><span class="s2">&quot;input&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+
+    <span class="n">new_df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_time</span>
+    <span class="n">csv_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
+    <span class="n">new_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)}</span>
+
+    <span class="c1"># Create and make API call</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;json&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)},</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;API call to CDD Vault was Unsuccessful&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="RunTracker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker">[docs]</a><span class="k">class</span> <span class="nc">RunTracker</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class will be responsible for tracking model runs. It calculates the desired metadata based on a model&#39;s</span>
+<span class="sd">    inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested</span>
+<span class="sd">    to Ersilia&#39;s Splunk dashboard.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory_usage_start</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># function to be called before model is run</span>
+<div class="viewcode-block" id="RunTracker.start_tracking"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.start_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">start_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs any code necessary for the beginning of the run.</span>
+<span class="sd">        Currently necessary for tracking the runtime and memory usage of a run.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">tracemalloc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory_usage_start</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="RunTracker.sample_df"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.sample_df">[docs]</a>    <span class="k">def</span> <span class="nf">sample_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a sample of the dataframe, with the specified number of rows and columns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_cols</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RunTracker.stats"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.stats">[docs]</a>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stats function: calculates the basic statistics of the output file from a model. This includes the</span>
+<span class="sd">        mode (if applicable), minimum, maximum, and standard deviation.</span>
+
+<span class="sd">        :param result: The path to the model&#39;s output file.</span>
+<span class="sd">        :return: A dictionary containing the stats for each column of the result.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># drop first two columns (key, input)</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># calculate statistics</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">dat</span><span class="p">:</span>
+            <span class="n">column_stats</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">column_stats</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dat</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">mode</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">column_stats</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">mode</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">column_stats</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">column_stats</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">column_stats</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">column_stats</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+
+            <span class="n">stats</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_stats</span>
+
+        <span class="k">return</span> <span class="n">stats</span></div>
+
+<div class="viewcode-block" id="RunTracker.get_file_sizes"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_file_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_df</span><span class="p">,</span> <span class="n">output_df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the size of the input and output dataframes, as well as the average size of each row.</span>
+
+<span class="sd">        :input_df: Pandas dataframe containing the input data</span>
+<span class="sd">        :output_df: Pandas dataframe containing the output data</span>
+<span class="sd">        :return: dictionary containing the input size, output size, average input size, and average output size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_size</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1024</span>
+        <span class="n">output_size</span> <span class="o">=</span> <span class="n">output_df</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1024</span>
+
+        <span class="n">input_avg_row_size</span> <span class="o">=</span> <span class="n">input_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">)</span>
+        <span class="n">output_avg_row_size</span> <span class="o">=</span> <span class="n">output_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_df</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;input_size&quot;</span><span class="p">:</span> <span class="n">input_size</span><span class="p">,</span>
+            <span class="s2">&quot;output_size&quot;</span><span class="p">:</span> <span class="n">output_size</span><span class="p">,</span>
+            <span class="s2">&quot;avg_input_size&quot;</span><span class="p">:</span> <span class="n">input_avg_row_size</span><span class="p">,</span>
+            <span class="s2">&quot;avg_output_size&quot;</span><span class="p">:</span> <span class="n">output_avg_row_size</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="RunTracker.check_types"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.check_types">[docs]</a>    <span class="k">def</span> <span class="nf">check_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_df</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This class is responsible for checking the types of the output dataframe against the expected types.</span>
+<span class="sd">        This includes checking the shape of the output dataframe (list vs single) and the types of each column.</span>
+
+<span class="sd">        :param result_df: The output dataframe</span>
+<span class="sd">        :param metadata: The metadata dictionary</span>
+<span class="sd">        :return: A dictionary containing the number of mismatched types and a boolean for whether the shape is correct</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">type_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float64&quot;</span><span class="p">:</span> <span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="s2">&quot;int64&quot;</span><span class="p">:</span> <span class="s2">&quot;Int&quot;</span><span class="p">}</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># ignore key and input columns</span>
+        <span class="n">dtypes_list</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="o">~</span><span class="n">result_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">dtypes</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dtypes_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">type_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">!=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtypes_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;List&quot;</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not right shape. Expected List but got Single&quot;</span><span class="p">)</span>
+            <span class="n">correct_shape</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtypes_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;Single&quot;</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not right shape. Expected Single but got List&quot;</span><span class="p">)</span>
+            <span class="n">correct_shape</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">correct_shape</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Output has&quot;</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="s2">&quot;mismatched types.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;mismatched_types&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span> <span class="s2">&quot;correct_shape&quot;</span><span class="p">:</span> <span class="n">correct_shape</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="RunTracker.get_peak_memory"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_peak_memory">[docs]</a>    <span class="k">def</span> <span class="nf">get_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the peak memory usage of ersilia&#39;s Python instance during the run.</span>
+<span class="sd">        :return: The peak memory usage in bytes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Compare memory between peak and amount when we started</span>
+        <span class="n">peak_memory</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_usage_start</span>
+        <span class="n">tracemalloc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">peak_memory</span></div>
+
+<div class="viewcode-block" id="RunTracker.track"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tracks the results after a model run.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">input_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="n">result_dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;input_dataframe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_dataframe</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;result_dataframe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result_dataframe</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span>
+
+        <span class="n">model_id</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_id</span>
+
+        <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span>
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;time_taken&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+        <span class="c1"># checking for mismatched types</span>
+        <span class="n">nan_count</span> <span class="o">=</span> <span class="n">result_dataframe</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;nan_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan_count</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;check_types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_types</span><span class="p">(</span><span class="n">result_dataframe</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
+
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;file_sizes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_sizes</span><span class="p">(</span><span class="n">input_dataframe</span><span class="p">,</span> <span class="n">result_dataframe</span><span class="p">)</span>
+
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;peak_memory_use&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
+
+        <span class="c1"># TODO: Call CDD Vault tracking and upload API success to splunk</span>
+
+        <span class="c1"># log results to persistent tracking file</span>
+        <span class="n">json_object</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">write_persistent_file</span><span class="p">(</span><span class="n">json_object</span><span class="p">)</span>
+
+        <span class="c1"># Upload run stats to s3</span>
+        <span class="n">upload_to_s3</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Ersilia Open Source Initiative.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

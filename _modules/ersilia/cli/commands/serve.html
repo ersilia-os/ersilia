@@ -80,6 +80,7 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaModel</span>
 <span class="kn">from</span> <span class="nn">..messages</span> <span class="kn">import</span> <span class="n">ModelNotFound</span>
+<span class="kn">from</span> <span class="nn">...core.tracking</span> <span class="kn">import</span> <span class="n">open_persistent_file</span>
 
 
 <div class="viewcode-block" id="serve_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.serve.serve_cmd">[docs]</a><span class="k">def</span> <span class="nf">serve_cmd</span><span class="p">():</span>
@@ -97,7 +98,15 @@
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preferred port to use (integer)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">lake</span><span class="p">,</span> <span class="n">docker</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+    <span class="c1"># Add the new flag for tracking the serve session</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;-t/&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--track_serve/--no_track_serve&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;track_serve&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">lake</span><span class="p">,</span> <span class="n">docker</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">track_serve</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">docker</span><span class="p">:</span>
             <span class="n">service_class</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -130,7 +139,11 @@
                     <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">api</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:person_tipping_hand: Information:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - info&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span></div>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - info&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Setup persistent tracking</span>
+        <span class="k">if</span> <span class="n">track_serve</span><span class="p">:</span>
+            <span class="n">open_persistent_file</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
