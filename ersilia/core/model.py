@@ -12,6 +12,7 @@ from .. import logger
 from .base import ErsiliaBase
 from .modelbase import ModelBase
 from .session import Session, RunLogger
+from .tracking import RunTracker
 from ..serve.autoservice import AutoService
 from ..serve.schema import ApiSchema
 from ..serve.api import Api
@@ -48,6 +49,7 @@ class ErsiliaModel(ErsiliaBase):
         fetch_if_not_available=True,
         preferred_port=None,
         log_runs=True,
+        track_runs=False,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -129,6 +131,12 @@ class ErsiliaModel(ErsiliaBase):
             )
         else:
             self._run_logger = None
+
+        if track_runs:
+            self._run_tracker = RunTracker()
+        else:
+            self._run_tracker = None
+
         self.logger.info("Done with initialization!")
 
     def __enter__(self):
@@ -142,7 +150,8 @@ class ErsiliaModel(ErsiliaBase):
         return self._is_valid
 
     def _set_api(self, api_name):
-        if api_name == "run":
+        # Don't want to override apis we explicitly write
+        if hasattr(self, api_name):
             return
 
         def _method(input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
@@ -427,13 +436,21 @@ class ErsiliaModel(ErsiliaBase):
     def get_apis(self):
         return self.autoservice.get_apis()
 
-    def _run(self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
+    def _run(
+        self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False
+    ):
+        # Init some tracking before the run starts
+        if self._run_tracker is not None and track_run:
+            self._run_tracker.start_tracking()
+
         api_name = self.get_apis()[0]
         result = self.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )
         if self._run_logger is not None:
             self._run_logger.log(result=result, meta=self._model_info)
+        if self._run_tracker is not None and track_run:
+            self._run_tracker.track(input=input, result=result, meta=self._model_info)
         return result
 
     def _standard_run(self, input=None, output=None):
@@ -450,7 +467,12 @@ class ErsiliaModel(ErsiliaBase):
         return result, status_ok
 
     def run(
-        self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, try_standard=True
+        self,
+        input=None,
+        output=None,
+        batch_size=DEFAULT_BATCH_SIZE,
+        track_run=False,
+        try_standard=True,
     ):
         self.logger.info("Starting runner")
         standard_status_ok = False
@@ -471,7 +493,9 @@ class ErsiliaModel(ErsiliaBase):
             return result
         else:
             self.logger.debug("Trying conventional run")
-            result = self._run(input=input, output=output, batch_size=batch_size)
+            result = self._run(
+                input=input, output=output, batch_size=batch_size, track_run=track_run
+            )
             return result
 
     @property

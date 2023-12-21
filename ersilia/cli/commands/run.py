@@ -21,12 +21,15 @@ def run_cmd():
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
     @click.option(
+        "-t/", "--track_run/--no_track_run", "track_run", required=False, default=False
+    )
+    @click.option(
         "--standard",
         is_flag=True,
         default=False,
         help="Assume that the run is standard and, therefore, do not do so many checks.",
     )
-    def run(input, output, batch_size, standard):
+    def run(input, output, batch_size, track_run, standard):
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
@@ -36,9 +39,18 @@ def run_cmd():
                 fg="red",
             )
             return
-        mdl = ErsiliaModel(model_id, service_class=service_class, config_json=None)
+        mdl = ErsiliaModel(
+            model_id,
+            service_class=service_class,
+            config_json=None,
+            track_runs=track_run,
+        )
         result = mdl.run(
-            input=input, output=output, batch_size=batch_size, try_standard=standard
+            input=input,
+            output=output,
+            batch_size=batch_size,
+            track_run=track_run,
+            try_standard=standard,
         )
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
