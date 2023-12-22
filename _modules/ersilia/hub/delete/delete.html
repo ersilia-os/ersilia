@@ -115,7 +115,7 @@
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
             <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing folder </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing EOS folder </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">))</span>
         <span class="n">rmtree</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span></div></div>
 
 
@@ -143,7 +143,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">delete_if_exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelLakeDeleter.delete"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelLakeDeleter.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting lake delete (local)&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delete_local</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting lake delete (public)&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delete_public</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
 
 
@@ -156,10 +158,11 @@
         <span class="k">return</span> <span class="n">folder</span>
 
 <div class="viewcode-block" id="ModelTmpDeleter.delete"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelTmpDeleter.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting temporary folder delete&quot;</span><span class="p">)</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
             <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing folder </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing temporary folder </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">))</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span></div></div>
 
 
@@ -180,23 +183,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing bento folder first </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bento_folder</span><span class="p">))</span>
             <span class="n">rmtree</span><span class="p">(</span><span class="n">bento_folder</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">bento_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing folder </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">))</span>
-        <span class="n">rmtree</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing bundle folder </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">))</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Folder removed&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ModelBentoDeleter"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelBentoDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelBentoDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_delete_service</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_delete_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service</span><span class="p">):</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;echo yes | bentoml delete </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">service</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">keep_latest</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">ml</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">catalog</span> <span class="o">=</span> <span class="n">ml</span><span class="o">.</span><span class="n">bentoml</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No BentoML Catalog available&quot;</span><span class="p">)</span>
             <span class="n">catalog</span> <span class="o">=</span> <span class="kc">None</span>
@@ -212,6 +217,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_delete_service</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelBentoDeleter.delete"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelBentoDeleter.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting Bento delete&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">keep_latest</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ModelBentoDeleter.clean"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelBentoDeleter.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
