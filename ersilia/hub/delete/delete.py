@@ -39,7 +39,7 @@ class ModelEosDeleter(ErsiliaBase):
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
-        self.logger.info("Removing folder {0}".format(folder))
+        self.logger.info("Removing EOS folder {0}".format(folder))
         rmtree(folder)
 
 
@@ -67,7 +67,9 @@ class ModelLakeDeleter(ErsiliaBase):
         self.delete_if_exists(path)
 
     def delete(self, model_id):
+        self.logger.debug("Attempting lake delete (local)")
         self.delete_local(model_id)
+        self.logger.debug("Attempting lake delete (public)")
         self.delete_public(model_id)
 
 
@@ -80,10 +82,11 @@ class ModelTmpDeleter(ErsiliaBase):
         return folder
 
     def delete(self, model_id):
+        self.logger.debug("Attempting temporary folder delete")
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
-        self.logger.info("Removing folder {0}".format(folder))
+        self.logger.info("Removing temporary folder {0}".format(folder))
         shutil.rmtree(folder)
 
 
@@ -104,23 +107,25 @@ class ModelBundleDeleter(ErsiliaBase):
             self.logger.info("Removing bento folder first {0}".format(bento_folder))
             rmtree(bento_folder)
             os.makedirs(bento_folder, exist_ok=True)
-        self.logger.info("Removing folder {0}".format(folder))
+        self.logger.info("Removing bundle folder {0}".format(folder))
         rmtree(folder)
+        self.logger.debug("Folder removed")
 
 
 class ModelBentoDeleter(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    @staticmethod
-    def _delete_service(service):
+    def _delete_service(self, service):
         cmd = "echo yes | bentoml delete %s" % service
+        self.logger.debug(cmd)
         run_command(cmd)
 
     def _delete(self, model_id, keep_latest=True):
         ml = ModelCatalog()
         try:
             catalog = ml.bentoml()
+            self.logger.debug(catalog)
         except:
             self.logger.debug("No BentoML Catalog available")
             catalog = None
@@ -136,6 +141,7 @@ class ModelBentoDeleter(ErsiliaBase):
             self._delete_service(service)
 
     def delete(self, model_id):
+        self.logger.debug("Attempting Bento delete")
         self._delete(model_id, keep_latest=False)
 
     def clean(self, model_id):
