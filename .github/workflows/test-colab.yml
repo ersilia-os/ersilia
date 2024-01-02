@@ -25,6 +25,7 @@ jobs:
           conda init
           conda install google-colab -c conda-forge
           jupyter --version
+          pip install --upgrade nbconvert nbformat jsonschema
 
       - name: Test Google Colab Notebook with CLI shell commands
         run: jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-cli.ipynb --output=output-cli.ipynb --ExecutePreprocessor.timeout=-1
