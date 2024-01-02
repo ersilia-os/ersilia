@@ -1,4 +1,4 @@
-name: Ersillia model output prediction (Manual)
+name: Ersilia model output prediction (Manual)
 on:  
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -7,21 +7,28 @@ on:
         description: Model ID
         required: true
         type: string
-  
+
+permissions:
+  contents: read
+
 env:
   MODEL_ID: ${{ github.event.inputs.model_id }}
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
 
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
 
       - name: Source conda
         run: source $CONDA/etc/profile.d/conda.sh
+
+      - name: Set Python to 3.10.10
+        run:
+         conda install -y python=3.10.10
 
       - name: Install dependencies
         run: |
@@ -37,14 +44,16 @@ jobs:
           python --version
           echo "After conda init"
           conda init
-          python -m pip install -e .[test]
-  
+          python -m pip install -e .
+
       - name: Predict output
         run: |
           source activate
           echo "Sample model id selected: $MODEL_ID"
-          ersilia fetch $MODEL_ID
+          ersilia -v fetch $MODEL_ID
+          echo "Serving model: $MODEL_ID"
           ersilia serve $MODEL_ID
+          echo "$MODEL_ID successfully fetched and served"
           ersilia sample -n 100 -f input.csv
-          ersilia api -i input.csv -o output.csv
+          ersilia run -i input.csv -o output.csv
           ersilia close

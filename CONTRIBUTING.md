@@ -18,7 +18,7 @@ The best place to start is by checking our issue tracker. Our issues have the fo
 * enhancement: add a new feature
 * documentation: issues related to the project's documentation
 
-If this is the first time contributing to an Open Source project, read a bit about [How to Contribute to An Open Source Project on Github](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github) and [Collaborating with pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests)
+If this is the first time contributing to an Open Source project, read a bit about [How to Contribute to An Open Source Project on Github](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github) and [Collaborating with pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests). If you land here during the Outreachy contribution period, please look for the appropriate guidelines in our [documentation](https://ersilia.gitbook.io/ersilia-book/contributors/internships).
 
 ## Create a new Issue 🚀
 
@@ -30,15 +30,16 @@ Once you have identified an issue to tackle, follow the next steps:
 
 1. Fork the repository
 2. Make changes in your fork (or in a branch of your fork)
-3. Create a Pull Request (PR) with a description of the changes made. A good description really helps the community managers
-4. Make any required changes to the PR
-5. Once the PR has been merged, you can continue working on a new issue or delete the fork!
+3. Create a Pull Request (PR) with a description of the changes made. A good description really helps the community managers. Link the issue the PR is related to as well.
+4. PR's have automated tests. If the tests fail, please make the necessary changes. Ersilia maintainers will only work on PRs that pass the tests.
+5. Once the PR has been merged, delete your fork of the repository. Our Git-LFS quota also takes into account forks, so having unused forks sitting around is eating up our space in Git LFS. Thanks for taking care of the community.
+6. Look for a new issue to work on!
 
 ## Other Contributing Suggestions
 
 * Support already existing contributors with comments on the issues they might be tackling
 * Create new issues for bug reports or feature enhancements using the appropriate templates (even if the issue is out of scope for you, it might be a good job for another contributor)
-* Suggest new models to the Ersilia Model Hub using an issue or via our online [form](https://ersilia.io/request-model)
+* Suggest new models to the Ersilia Model Hub using an issue or via our online [form](https://airtable.com/shrmEcwwxpb21TEVw)
 * Documentation-related enhancements are very welcome, please work on them by opening a new issue
 
 ## I still have questions

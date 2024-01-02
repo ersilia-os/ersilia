@@ -6,7 +6,6 @@ except:
 
 class FileIdentifier(object):
     def __init__(self, chunk_size=10000):
-        super().__init__()
         self.chunk_size = chunk_size
 
     def encode(self, filename, n=None):
@@ -22,3 +21,6 @@ class FileIdentifier(object):
                     else:
                         break
             return h.hexdigest()[:n]
+
+
+Identifier = FileIdentifier

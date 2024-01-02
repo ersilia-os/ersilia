@@ -35,3 +35,8 @@ class AirtableInterface(ErsiliaBase):
         ):
             for record in records:
                 yield record
+
+    def items_all(self):
+        records = self.table.all()
+        for record in records:
+            yield record

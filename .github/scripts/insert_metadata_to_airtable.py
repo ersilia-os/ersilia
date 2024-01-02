@@ -22,22 +22,17 @@ if r.status_code == 200:
     text = r.content
     data = json.loads(text)
 
-data["GitHub"] = github
-data["Status"] = "In progress"
-data["Contributor"] = contributor_name
-
-if data["Publication"] == "":
-    del data["Publication"]
-if data["Source"] == "":
-    del data["Source"]
-
-del data["Tag"]
-del data["Mode"]
-del data["Input"]
-del data["Input Shape"]
-del data["Task"]
-del data["Output"]
-del data["Interpretation"]
+airtable_data = {}
+airtable_data["Identifier"] = model_id
+airtable_data["Slug"] = data["Slug"]
+airtable_data["Title"] = data["Title"]
+airtable_data["GitHub"] = github
+airtable_data["Contributor"] = contributor_name
+airtable_data["Status"] = "In progress"
+if data["Publication"] != "":
+    airtable_data["Publication"] = data["Publication"]
+if data["Source Code"] != "":
+    airtable_data["Source Code"] = data["Source Code"]
 
 table = Table(write_api_key, base_id, table_name)
-table.create(data)
+table.create(airtable_data)

@@ -96,7 +96,7 @@ class Model(object):
 
 class Artifact(BentoServiceArtifact):
     def __init__(self, name):
-        super(Artifact, self).__init__(name)
+        BentoServiceArtifact.__init__(name)
         self._model = None
         self._extension = ".pkl"
 

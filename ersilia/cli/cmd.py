@@ -29,6 +29,10 @@ class Command(object):
         m = importlib.import_module("ersilia.cli.commands.close")
         m.close_cmd()
 
+    def current(self):
+        m = importlib.import_module("ersilia.cli.commands.current")
+        m.current_cmd()
+
     def delete(self):
         m = importlib.import_module("ersilia.cli.commands.delete")
         m.delete_cmd()
@@ -37,6 +41,10 @@ class Command(object):
         m = importlib.import_module("ersilia.cli.commands.example")
         m.example_cmd()
 
+    def info(self):
+        m = importlib.import_module("ersilia.cli.commands.info")
+        m.info_cmd()
+
     def fetch(self):
         m = importlib.import_module("ersilia.cli.commands.fetch")
         m.fetch_cmd()
@@ -44,6 +52,10 @@ class Command(object):
     def publish(self):
         m = importlib.import_module("ersilia.cli.commands.publish")
         m.publish_cmd()
+
+    def run(self):
+        m = importlib.import_module("ersilia.cli.commands.run")
+        m.run_cmd()
 
     def sample(self):
         m = importlib.import_module("ersilia.cli.commands.sample")
@@ -56,3 +68,7 @@ class Command(object):
     def setup(self):
         m = importlib.import_module("ersilia.cli.commands.setup")
         m.setup_cmd()
+
+    def test(self):
+        m = importlib.import_module("ersilia.cli.commands.test")
+        m.test_cmd()

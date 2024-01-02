@@ -7,21 +7,28 @@ on:
         description: Model ID
         required: true
         type: string
-  
+
+permissions:
+  contents: read
+
 env:
   MODEL_ID: ${{ github.event.inputs.model_id }}
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
 
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
 
       - name: Source conda
         run: source $CONDA/etc/profile.d/conda.sh
+
+      - name: Set Python to 3.10.10
+        run:
+         conda install -y python=3.10.10
 
       - name: Install dependencies
         run: |
@@ -30,6 +37,7 @@ jobs:
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
+
       - name: Install ersilia
         run: |
           source activate
@@ -50,7 +58,7 @@ jobs:
 
       - name: Upload log output
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # pin@v4.0.0
         with:
           name: ersilia-predict-logs
           path: /home/runner/eos/console.log

@@ -11,10 +11,12 @@ import csv
 from .. import logger
 from .base import ErsiliaBase
 from .modelbase import ModelBase
-from .session import Session
+from .session import Session, RunLogger
+from .tracking import RunTracker
 from ..serve.autoservice import AutoService
 from ..serve.schema import ApiSchema
 from ..serve.api import Api
+from ..serve.standard_api import StandardCSVRunApi
 from ..io.input import ExampleGenerator, BaseIOGetter
 from ..io.output import TabularOutputStacker
 from ..io.readers.file import FileTyper, TabularFileReader
@@ -27,7 +29,7 @@ from ..lake.base import LakeBase
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
-from ..default import DEFAULT_BATCH_SIZE
+from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
 
 try:
     import pandas as pd
@@ -46,6 +48,8 @@ class ErsiliaModel(ErsiliaBase):
         verbose=None,
         fetch_if_not_available=True,
         preferred_port=None,
+        log_runs=True,
+        track_runs=False,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -73,6 +77,8 @@ class ErsiliaModel(ErsiliaBase):
             "venv",
             "conda",
             "docker",
+            "pulled_docker",
+            "hosted",
         ], "Wrong service class"
         self.service_class = service_class
         mdl = ModelBase(model)
@@ -119,6 +125,19 @@ class ErsiliaModel(ErsiliaBase):
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
+        if log_runs:
+            self._run_logger = RunLogger(
+                model_id=self.model_id, config_json=self.config_json
+            )
+        else:
+            self._run_logger = None
+
+        if track_runs:
+            self._run_tracker = RunTracker()
+        else:
+            self._run_tracker = None
+
+        self.logger.info("Done with initialization!")
 
     def __enter__(self):
         self.serve()
@@ -131,6 +150,10 @@ class ErsiliaModel(ErsiliaBase):
         return self._is_valid
 
     def _set_api(self, api_name):
+        # Don't want to override apis we explicitly write
+        if hasattr(self, api_name):
+            return
+
         def _method(input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
             return self.api(api_name, input, output, batch_size)
 
@@ -138,7 +161,7 @@ class ErsiliaModel(ErsiliaBase):
 
     def _set_apis(self):
         apis_list = os.path.join(
-            self._get_bundle_location(self.model_id), "apis_list.txt"
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
         )
         api_names = []
         if os.path.exists(apis_list):
@@ -149,14 +172,16 @@ class ErsiliaModel(ErsiliaBase):
         if len(api_names) == 0:
             self.logger.debug("No apis found. Writing...")
             with open(apis_list, "w") as f:
-                for api_name in self.autoservice.service._get_apis_from_bento():
+                for (
+                    api_name
+                ) in self.autoservice.service._get_apis_from_where_available():
                     api_names += [api_name]
                     f.write(api_name + os.linesep)
         for api_name in api_names:
             self._set_api(api_name)
         self.apis_list = apis_list
 
-    def _get_api_instance(self, api_name):
+    def _get_url(self):
         model_id = self.model_id
         tmp_file = tmp_pid_file(model_id)
         assert os.path.exists(
@@ -165,6 +190,10 @@ class ErsiliaModel(ErsiliaBase):
         with open(tmp_file, "r") as f:
             for l in f:
                 url = l.rstrip().split()[1]
+        return url
+
+    def _get_api_instance(self, api_name):
+        url = self._get_url()
         if api_name is None:
             api_names = self.autoservice.get_apis()
             assert (
@@ -172,7 +201,7 @@ class ErsiliaModel(ErsiliaBase):
             ), "More than one API found, please specificy api_name"
             api_name = api_names[0]
         api = Api(
-            model_id=model_id,
+            model_id=self.model_id,
             url=url,
             api_name=api_name,
             save_to_lake=self.save_to_lake,
@@ -237,6 +266,22 @@ class ErsiliaModel(ErsiliaBase):
                 d["inputs"] = data.inputs
                 d["values"] = data.values
                 return d
+
+    def _standard_api_runner(self, input, output):
+        scra = StandardCSVRunApi(model_id=self.model_id, url=self._get_url())
+        if not scra.is_ready():
+            self.logger.debug(
+                "Standard CSV Api runner is not ready for this particular model"
+            )
+            return None
+        if not scra.is_amenable(input, output):
+            self.logger.debug(
+                "Standard CSV Api runner is not amenable for this model, input and output"
+            )
+            return None
+        self.logger.debug("Starting standard runner")
+        result = scra.post(input=input, output=output)
+        return result
 
     @staticmethod
     def __output_is_file(output):
@@ -391,6 +436,68 @@ class ErsiliaModel(ErsiliaBase):
     def get_apis(self):
         return self.autoservice.get_apis()
 
+    def _run(
+        self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False
+    ):
+        # Init some tracking before the run starts
+        if self._run_tracker is not None and track_run:
+            self._run_tracker.start_tracking()
+
+        api_name = self.get_apis()[0]
+        result = self.api(
+            api_name=api_name, input=input, output=output, batch_size=batch_size
+        )
+        if self._run_logger is not None:
+            self._run_logger.log(result=result, meta=self._model_info)
+        if self._run_tracker is not None and track_run:
+            self._run_tracker.track(input=input, result=result, meta=self._model_info)
+        return result
+
+    def _standard_run(self, input=None, output=None):
+        t0 = time.time()
+        t1 = None
+        status_ok = False
+        result = self._standard_api_runner(input=input, output=output)
+        if type(output) is str:
+            if os.path.exists(output):
+                t1 = os.path.getctime(output)
+        if t1 is not None:
+            if t1 > t0:
+                status_ok = True
+        return result, status_ok
+
+    def run(
+        self,
+        input=None,
+        output=None,
+        batch_size=DEFAULT_BATCH_SIZE,
+        track_run=False,
+        try_standard=True,
+    ):
+        self.logger.info("Starting runner")
+        standard_status_ok = False
+        if try_standard:
+            self.logger.debug("Trying standard API")
+            try:
+                result, standard_status_ok = self._standard_run(
+                    input=input, output=output
+                )
+            except Exception as e:
+                self.logger.warning(
+                    "Standard run did not work with exception {0}".format(e)
+                )
+                result = None
+                standard_status_ok = False
+                self.logger.debug("We will try conventional run.")
+        if standard_status_ok:
+            return result
+        else:
+            self.logger.debug("Trying conventional run")
+            result = self._run(
+                input=input, output=output, batch_size=batch_size, track_run=track_run
+            )
+            return result
+
     @property
     def paths(self):
         p = {
@@ -428,3 +535,14 @@ class ErsiliaModel(ErsiliaBase):
     def example(self, n_samples, file_name=None, simple=True):
         eg = ExampleGenerator(model_id=self.model_id, config_json=self.config_json)
         return eg.example(n_samples=n_samples, file_name=file_name, simple=simple)
+
+    def info(self):
+        information_file = os.path.join(
+            self._model_path(self.model_id), INFORMATION_FILE
+        )
+        with open(information_file, "r") as f:
+            return json.load(f)
+
+    @property
+    def _model_info(self):
+        return self.info()

@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 import tempfile
 import requests
 from ... import ErsiliaBase
@@ -7,7 +8,11 @@ from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 import validators
-from validators import ValidationFailure
+
+try:
+    from validators import ValidationFailure
+except ImportError:
+    from validators import ValidationError as ValidationFailure
 
 from ...utils.exceptions_utils.card_exceptions import (
     SlugBaseInformationError,
@@ -19,13 +24,19 @@ from ...utils.exceptions_utils.card_exceptions import (
     InputBaseInformationError,
     InputShapeBaseInformationError,
     OutputBaseInformationError,
+    OutputTypeBaseInformationError,
+    OutputShapeBaseInformationError,
     TaskBaseInformationError,
     TagBaseInformationError,
     PublicationBaseInformationError,
-    SourceBaseInformationError,
+    SourceCodeBaseInformationError,
     LicenseBaseInformationError,
     GithubBaseInformationError,
+    DockerhubBaseInformationError,
+    DockerArchitectureInformationError,
+    S3BaseInformationError,
     BothIdentifiersBaseInformationError,
+    MemoryGbBaseInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
 
@@ -40,12 +51,29 @@ from ...default import CARD_FILE, METADATA_JSON_FILE
 class BaseInformation(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self._github = None
         self._identifier = None
         self._slug = None
         self._status = None
         self._title = None
         self._description = None
-        self._github = None
+        self._mode = None
+        self._task = None
+        self._input = None
+        self._input_shape = None
+        self._output = None
+        self._output_type = None
+        self._output_shape = None
+        self._interpretation = None
+        self._tag = None
+        self._publication = None
+        self._source_code = None
+        self._license = None
+        self._contributor = None
+        self._dockerhub = None
+        self._docker_architecture = None
+        self._s3 = None
+        self._memory_gb = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -179,6 +207,29 @@ class BaseInformation(ErsiliaBase):
         self._output = new_output
 
     @property
+    def output_type(self):
+        return self._output_type
+
+    @output_type.setter
+    def output_type(self, new_output_type):
+        default_output_type = self._read_default_fields("Output Type")
+        for no in new_output_type:
+            if no not in default_output_type:
+                raise OutputTypeBaseInformationError
+        self._output_type = new_output_type
+
+    @property
+    def output_shape(self):
+        return self._output_shape
+
+    @output_shape.setter
+    def output_shape(self, new_output_shape):
+        default_output_shape = self._read_default_fields("Output Shape")
+        if new_output_shape not in default_output_shape:
+            raise OutputShapeBaseInformationError
+        self._output_shape = new_output_shape
+
+    @property
     def interpretation(self):
         return self._interpretation
 
@@ -211,14 +262,14 @@ class BaseInformation(ErsiliaBase):
         self._publication = new_publication
 
     @property
-    def source(self):
-        return self._source
+    def source_code(self):
+        return self._source_code
 
-    @source.setter
-    def source(self, new_source):
-        if not self._is_valid_url(new_source):
-            raise SourceBaseInformationError
-        self._source = new_source
+    @source_code.setter
+    def source_code(self, new_source_code):
+        if not self._is_valid_url(new_source_code):
+            raise SourceCodeBaseInformationError
+        self._source_code = new_source_code
 
     @property
     def license(self):
@@ -255,6 +306,39 @@ class BaseInformation(ErsiliaBase):
         return self._github
 
     @property
+    def dockerhub(self):
+        return self._dockerhub
+
+    @dockerhub.setter
+    def dockerhub(self, new_dockerhub_url):
+        if not new_dockerhub_url.startswith("https://hub.docker.com/r/ersiliaos/"):
+            raise DockerhubBaseInformationError
+        self._dockerhub = new_dockerhub_url
+
+    @property
+    def docker_architecture(self):
+        return self._docker_architecture
+
+    @docker_architecture.setter
+    def docker_architecture(self, new_docker_architecture):
+        for d in new_docker_architecture:
+            if d not in self._read_default_fields("Docker Architecture"):
+                raise DockerArchitectureInformationError
+        self._docker_architecture = new_docker_architecture
+
+    @property
+    def s3(self):
+        return self._s3
+
+    @s3.setter
+    def s3(self, new_s3_url):
+        if not new_s3_url.startswith(
+            "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/"
+        ):
+            raise S3BaseInformationError
+        self._s3 = new_s3_url
+
+    @property
     def both_identifiers(self):
         model_id = self.identifier
         slug = self.slug
@@ -262,6 +346,16 @@ class BaseInformation(ErsiliaBase):
             raise BothIdentifiersBaseInformationError
         self._both_identifiers = (model_id, slug)
         return self._both_identifiers
+
+    @property
+    def memory_gb(self):
+        return self._memory_gb
+
+    @memory_gb.setter
+    def memory_gb(self, new_memory_gb):
+        if type(new_memory_gb) != int:
+            raise MemoryGbBaseInformationError
+        self._memory_gb = new_memory_gb
 
     def as_dict(self):
         data = {
@@ -275,13 +369,20 @@ class BaseInformation(ErsiliaBase):
             "Input Shape": self.input_shape,
             "Task": self.task,
             "Output": self.output,
+            "Output Type": self.output_type,
+            "Output Shape": self.output_shape,
             "Interpretation": self.interpretation,
             "Tag": self.tag,
             "Publication": self.publication,
-            "Source": self.source,
+            "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
+            "DockerHub": self.dockerhub,
+            "Docker Architecture": self.docker_architecture,
+            "S3": self.s3,
+            "Memory Gb": self.memory_gb,
         }
+        data = dict((k, v) for k, v in data.items() if v is not None)
         return data
 
     def from_dict(self, data):
@@ -295,16 +396,27 @@ class BaseInformation(ErsiliaBase):
         self.input_shape = data["Input Shape"]
         self.task = data["Task"]
         self.output = data["Output"]
+        self.output_type = data["Output Type"]
+        self.output_shape = data["Output Shape"]
         self.interpretation = data["Interpretation"]
         self.tag = data["Tag"]
         self.publication = data["Publication"]
-        self.source = data["Source"]
+        self.source_code = data["Source Code"]
         self.license = data["License"]
-        self.contributor = data["Contributor"]
+        if "Contributor" in data:
+            self.contributor = data["Contributor"]
+        if "DockerHub" in data:
+            self.dockerhub = data["DockerHub"]
+        if "Docker Architecture" in data:
+            self.docker_architecture = data["Docker Architecture"]
+        if "S3" in data:
+            self.s3 = data["S3"]
+        if "Memory Gb" in data:
+            self.memory_gb = data["Memory Gb"]
 
 
 class RepoMetadataFile(ErsiliaBase):
-    def __init__(self, model_id, config_json=None):
+    def __init__(self, model_id=None, config_json=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
@@ -324,7 +436,6 @@ class RepoMetadataFile(ErsiliaBase):
         if r.status_code == 200:
             text = r.content
             data = json.loads(text)
-            print(data)
             return data
         else:
             return None
@@ -358,6 +469,7 @@ class AirtableMetadata(AirtableInterface):
     def __init__(self, model_id, config_json=None):
         self.model_id = model_id
         AirtableInterface.__init__(self, config_json=config_json)
+        self._warning_empty_row_message = "The AirTable field Identifier was not found! Please check that there are not empty rows."
 
     def _find_record(self):
         data = None
@@ -365,8 +477,12 @@ class AirtableMetadata(AirtableInterface):
             page_size=self.page_size, max_records=self.max_rows
         ):
             for record in records:
-                if self.model_id == record["fields"]["Identifier"]:
-                    data = record["fields"]
+                try:
+                    if self.model_id == record["fields"]["Identifier"]:
+                        data = record["fields"]
+                except:
+                    self.logger.warning(self._warning_empty_row_message)
+
         return data
 
     def _find_airtable_record_id(self):
@@ -375,8 +491,11 @@ class AirtableMetadata(AirtableInterface):
             page_size=self.page_size, max_records=self.max_rows
         ):
             for record in records:
-                if self.model_id == record["fields"]["Identifier"]:
-                    rec_id = record["id"]
+                try:
+                    if self.model_id == record["fields"]["Identifier"]:
+                        rec_id = record["id"]
+                except:
+                    self.logger.warning(self._warning_empty_row_message)
         return rec_id
 
     def read_information(self):
@@ -413,35 +532,49 @@ class ReadmeMetadata(ErsiliaBase):
             "Cannot read directly from README file. Using AirTable instead"
         )
         am = AirtableMetadata(model_id=self.model_id)
-        return am.read_information()
+        bi = am.read_information()
+        print(bi.as_dict())
+        return bi
 
     def write_information(self, data: BaseInformation, readme_path=None):
         d = data.as_dict()
         text = "# {0}\n\n".format(d["Title"])
         text += "{0}\n\n".format(d["Description"].rstrip("\n"))
         text += "## Identifiers\n\n"
-        text += "* EOS model ID: {0}\n".format(d["Identifier"])
-        text += "* Slug: {0}\n\n".format(d["Slug"])
+        text += "* EOS model ID: `{0}`\n".format(d["Identifier"])
+        text += "* Slug: `{0}`\n\n".format(d["Slug"])
         text += "## Characteristics\n\n"
-        text += "* Input: {0}\n".format(", ".join(d["Input"]))
-        text += "* Input shape: {0}\n".format(d["Input Shape"])
-        text += "* Task: {0}\n".format(", ".join(d["Task"]))
-        text += "* Output: {0}\n".format(", ".join(d["Output"]))
+        text += "* Input: `{0}`\n".format(", ".join(d["Input"]))
+        text += "* Input Shape: `{0}`\n".format(d["Input Shape"])
+        text += "* Task: `{0}`\n".format(", ".join(d["Task"]))
+        text += "* Output: `{0}`\n".format(", ".join(d["Output"]))
+        text += "* Output Type: `{0}`\n".format(", ".join(d["Output Type"]))
+        text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
         text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
         text += "## References\n\n"
         text += "* [Publication]({0})\n".format(d["Publication"])
-        text += "* [Source]({0})\n".format(d["Source"])
+        text += "* [Source Code]({0})\n".format(d["Source Code"])
         text += "* Ersilia contributor: [{0}](https://github.com/{0})\n\n".format(
             d["Contributor"]
         )
+        text += "## Ersilia model URLs\n"
+        text += "* [GitHub]({0})\n".format(data.github)
+        if "S3" in d:
+            text += "* [AWS S3]({0})\n".format(d["S3"])
+        if "DockerHub" in d:
+            text += "* [DockerHub]({0}) ({1})\n".format(
+                d["DockerHub"], ", ".join(d["Docker Architecture"])
+            )
+        text += "\n"
         text += "## Citation\n\n"
-        text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)\n\n".format(
+        text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).\n\n".format(
             d["Publication"]
         )
         text += "## License\n\n"
-        text += "This package is licensed under a GPLv3 license. The model contained within this package is licensed under a {0} license. Please refer to the model license files if you use this model in your research.\n\n".format(
+        text += "This package is licensed under a GPL-3.0 license. The model contained within this package is licensed under a {0} license.\n\n".format(
             d["License"]
         )
+        text += "Notice: Ersilia grants access to these models 'as is' provided by the original authors, please refer to the original code repository and/or publication if you use the model in your research.\n\n"
         text += "## About Us\n\n"
         text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.\n\n"
         text += "[Help us](https://www.ersilia.io/donate) achieve our mission!"
@@ -473,8 +606,10 @@ class ReadmeCard(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
-        url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
-            model_id
+        url = (
+            "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
+                model_id
+            )
         )
         return url
 
@@ -599,18 +734,18 @@ class LakeCard(ErsiliaBase):
 class ModelCard(object):
     def __init__(self, config_json=None):
         self.lc = LocalCard(config_json=config_json)
-        self.ac = AirtableCard(config_json=config_json)
         self.mc = MetadataCard(config_json=config_json)
+        self.ac = AirtableCard(config_json=config_json)
         self.rc = ReadmeCard(config_json=config_json)
 
     def _get(self, model_id):
         card = self.lc.get(model_id)
         if card is not None:
             return card
-        card = self.ac.get(model_id)
+        card = self.mc.get(model_id)
         if card is not None:
             return card
-        card = self.mc.get(model_id)
+        card = self.ac.get(model_id)
         if card is not None:
             return card
         card = self.rc.get(model_id)

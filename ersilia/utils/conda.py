@@ -393,7 +393,7 @@ class SimpleConda(CondaUtils):
 
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_log = os.path.join(tmp_folder, "command_outputs.log")
-        cmd = "bash {0} > {1} 2>&1".format(tmp_script, tmp_log)
+        cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
         run_command(cmd)
         with open(tmp_log, "r") as f:

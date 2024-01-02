@@ -14,6 +14,7 @@ DOCKERFILE_FILE = "Dockerfile"
 GITHUB_ORG = "ersilia-os"
 GITHUB_ERSILIA_REPO = "ersilia"
 ERSILIA_MODELS_S3_BUCKET = "ersilia-models"
+ERSILIA_MODELS_ZIP_S3_BUCKET = "ersilia-models-zipped"
 CONFIG_JSON = "config.json"
 CREDENTIALS_JSON = "credentials.json"
 INSTALL_STATUS_FILE = ".install.status"
@@ -23,6 +24,7 @@ DOCKERHUB_LATEST_TAG = "latest"
 DEFAULT_DOCKER_PLATFORM = "linux/amd64"
 DEFAULT_MODEL_ID = "eos0zzz"
 DEFAULT_VENV = "env"
+DEFAULT_API_NAME = "run"
 PACKMODE_FILE = "pack_mode.txt"
 LOGGING_FILE = "console.log"
 CURRENT_LOGGING_FILE = "current.log"
@@ -34,8 +36,17 @@ MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
 FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"
+EXAMPLE_STANDARD_INPUT_CSV_FILENAME = "example_standard_input.csv"
+EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
+SERVICE_CLASS_FILE = "service_class.txt"
+APIS_LIST_FILE = "apis_list.txt"
+INFORMATION_FILE = "information.json"
+IS_FETCHED_FROM_DOCKERHUB_FILE = "from_dockerhub.json"
+IS_FETCHED_FROM_HOSTED_FILE = "from_hosted.json"
+DEFAULT_UDOCKER_USERNAME = "udockerusername"
+DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"
@@ -50,7 +61,6 @@ ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
 FEATURE_MERGE_PATTERN = "---"
 
 # Airtable
-AIRTABLE_READONLY_API_KEY = "keyVMAlJFOvu7vgMR"
 AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
 AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 
@@ -58,6 +68,8 @@ AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 ERSILIA_WEB_URL = "https://ersilia.io"
 ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
 AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/shrNc3sTtTA3QeEZu"
+S3_BUCKET_URL = "https://ersilia-models.s3.eu-central-1.amazonaws.com"
+S3_BUCKET_URL_ZIP = "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"

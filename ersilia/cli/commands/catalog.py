@@ -1,66 +1,57 @@
 import click
 
-
 from . import ersilia_cli
 from ...hub.content.catalog import ModelCatalog
 from ...hub.content.search import ModelSearcher
-from ...hub.content.table_update import table
 
 
 def catalog_cmd():
     """Creates catalog command"""
+
     # Example usage: ersilia catalog
     @ersilia_cli.command(help="List a catalog of models")
     @click.option(
         "-l",
-        "--local",
+        "--local/--hub",
         is_flag=True,
         default=False,
         help="Show catalog of models available in the local computer",
     )
     @click.option(
-        "-t",
-        "--text",
-        default=None,
-        type=click.STRING,
-        help="Shows the  model related to input keyword",
+        "--file_name", "-f", default=None, type=click.STRING, help="Catalog file name"
     )
     @click.option(
-        "-m",
-        "--mode",
-        default=None,
-        type=click.STRING,
-        help="Shows the  model trained via input mode",
+        "--browser", is_flag=True, default=False, help="Show catalog in the browser"
     )
     @click.option(
-        "-n", "--next", is_flag=True, default=False, help="Shows the next table"
+        "--more/--less",
+        is_flag=True,
+        default=False,
+        help="Show more information than just the EOS identifier",
     )
-    @click.option(
-        "-p", "--previous", is_flag=True, default=False, help="Shows previous table"
-    )
-    def catalog(
-        local=False, search=None, text=None, mode=None, next=False, previous=False
-    ):
-
-        mc = ModelCatalog()
-        if not (local or text or mode):
-            catalog = mc.hub()
-            if not (next or previous):
-                catalog = table(catalog).initialise()
-
-            if next:
-                catalog = table(catalog).next_table()
-
-            if previous:
-                catalog = table(catalog).prev_table()
-
+    def catalog(local=False, file_name=None, browser=False, more=False):
+        if local is True and browser is True:
+            click.echo(
+                "You cannot show the local model catalog in the browser", fg="red"
+            )
+        if more:
+            only_identifier = False
+        else:
+            only_identifier = True
+        mc = ModelCatalog(only_identifier=only_identifier)
+        if browser:
+            mc.airtable()
+            return
         if local:
-            catalog = mc.local()
-
-        if text:
-            catalog = mc.hub()
-            catalog = ModelSearcher(catalog).search_text(text)
-        if mode:
-            catalog = mc.hub()
-            catalog = ModelSearcher(catalog).search_mode(mode)
+            if file_name is None:
+                catalog = mc.local().as_json()
+            else:
+                mc.local().write(file_name)
+                catalog = None
+        else:
+            if file_name is None:
+                catalog = mc.hub().as_json()
+            else:
+                mc.hub().write(file_name)
+                catalog = None
         click.echo(catalog)

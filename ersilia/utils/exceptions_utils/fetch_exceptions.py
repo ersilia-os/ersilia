@@ -6,7 +6,26 @@ class FetchErsiliaError(ErsiliaError):
         self.model_id = model_id
         self.message = "Error occured while fetching model: {0}".format(self.model_id)
         self.hints = ""
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class InvalidUrlError(ErsiliaError):
+    def __init__(self, url):
+        self.message = "Provided URL is invalid: {0}".format(url)
+        self.hints = "Open a browser and check that the URL is valid. You should see an API interface."
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class S3DownloaderError(ErsiliaError):
+    def __init__(self, model_id):
+        self.model_id = model_id
+        self.message = "Error occured while fetching model from S3: {0}".format(
+            self.model_id
+        )
+        self.hints = (
+            "Make sure that this model is actually in Ersilia Model Hub's S3 bucket"
+        )
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class GetFetchErsiliaError(ErsiliaError):
@@ -14,7 +33,7 @@ class GetFetchErsiliaError(ErsiliaError):
         self.model_id = model_id
         self.message = "Error occured while fetching model: {0}".format(self.model_id)
         self.hints = ""
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class FolderNotFoundError(ErsiliaError):
@@ -22,7 +41,7 @@ class FolderNotFoundError(ErsiliaError):
         self.folder_name = folder_name
         self.message = self._get_message()
         self.hints = self._get_hints()
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "Folder " + self.folder_name + " not found!"
@@ -38,7 +57,7 @@ class CondaEnvironmentExistsError(ErsiliaError):
         self.environment_name = env_name
         self.message = self._get_message()
         self.hints = self._get_hints()
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "Environment " + self.environment_name + " does not exist!"
@@ -57,7 +76,7 @@ class ModelPackageInstallError(ErsiliaError):
         self.package_name = package_name
         self.message = self._get_message()
         self.hints = self._get_hints()
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = (
@@ -78,7 +97,7 @@ class VirtualEnvironmentSetupError(ErsiliaError):
         self.virtual_env_name = venv_name
         self.message = self._get_message()
         self.hints = self._get_hints()
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
         text = "Virtual Environment " + self.virtual_env_name + " does not exist!"
@@ -89,4 +108,40 @@ class VirtualEnvironmentSetupError(ErsiliaError):
         text += (
             "Please report the error at:\n - https://github.com/ersilia-os/ersilia\n"
         )
+        return text
+
+
+class OutputDataTypesNotConsistentError(ErsiliaError):
+    def __init__(self):
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = "Output data types are not consistent"
+        return text
+
+    def _get_hints(self):
+        text = "This message is related to a bad development of the model. As an end user, there is not much you can do about it. Please reach out to Ersilia directly to report this error."
+        return text
+
+
+class StandardModelExampleError(ErsiliaError):
+    def __init__(self, model_id, file_name):
+        self.model_id = model_id
+        self.file_name = file_name
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = "Standard model run from CSV was not possible for model {0}".format(
+            self.model_id
+        )
+        text += "\n"
+        text += "Output file {0} was not created successfully".format(self.file_name)
+        return text
+
+    def _get_hints(self):
+        text = "If you fetch this model from Docker Hub, or you are running it through URL, this is the first time run is executed in your local computer. Reach out to Ersilia to get specific help."
         return text

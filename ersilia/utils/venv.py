@@ -59,7 +59,7 @@ class SimpleVenv(ErsiliaBase):
         logger.debug("Running {0}".format(tmp_script))  #
 
         # run_command("bash {0}".format(tmp_script))
-        run_command("bash {0} > {1} 2>&1".format(tmp_script, tmp_log))  #
+        run_command("bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log))  #
         with open(tmp_log, "r") as f:
             log_file = f.read()
         logger.debug(log_file)

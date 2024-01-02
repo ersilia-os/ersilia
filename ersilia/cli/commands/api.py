@@ -10,6 +10,7 @@ from ...core.session import Session
 
 def api_cmd():
     """Create api command"""
+
     # Example usage: ersilia api {API_NAME} -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
     @ersilia_cli.command(
         short_help="Run API on a served model", help="Run API on a served model"

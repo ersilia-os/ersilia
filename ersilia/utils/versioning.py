@@ -1,6 +1,10 @@
 import sys
 import os
-from bentoml import __version__ as __bentoml_version__
+
+try:
+    from bentoml import __version__ as __bentoml_version__
+except:
+    __bentoml_version__ = None
 from .. import ErsiliaBase
 from .. import __version__ as __ersilia_version__
 
@@ -27,12 +31,12 @@ class Versioner(ErsiliaBase):
         return ver
 
     def ersilia_version_from_path(self, path):
-        static_version_file = "_clean_static_version.py"
+        static_version_file = "_static_version.py"
         fn = os.path.join(path, "ersilia", static_version_file)
         if not os.path.exists(fn):
             fn = os.path.join(path, static_version_file)
         if not os.path.exists(fn):
-            raise Exception
+            return None
         with open(fn, "r") as f:
             text = f.read()
             ver = text.split('"')[1]
@@ -63,6 +67,6 @@ class Versioner(ErsiliaBase):
 
     @staticmethod
     def reformat_py(v):
-        if len(v) != 4:
+        if len(v) < 4:
             raise Exception
-        return "{0}.{1}".format(v[2], v[3])
+        return "{0}.{1}".format(v[2], v[3:])

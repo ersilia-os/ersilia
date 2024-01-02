@@ -1,0 +1,74 @@
+[tool.poetry]
+name = "ersilia"
+version = "0.1.30"
+description = "A hub of AI/ML models for open source drug discovery and global health"
+license = "GPLv3"
+authors = ["Ersilia Open Source Initiative <hello@ersilia.io>"]
+readme = "README.md"
+homepage = "https://ersilia.io"
+repository = "https://github.com/ersilia-os/ersilia"
+documentation = "https://ersilia.io/model-hub"
+keywords= ["drug-discovery", "machine-learning", "ersilia", "open-science", "global-health", "model-hub", "infectious-diseases"]
+classifiers=[
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+packages = [
+    {include = "ersilia"},
+]
+include = [
+    "ersilia/hub/content/metadata/*.txt",
+    "ersilia/io/types/examples/*.tsv",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+inputimeout = "^1.0.4"
+emoji = "^2.8.0"
+validators = [
+    {version="0.20.0", python="3.7.*"},
+    {version="~0.21.0", python=">=3.8"},
+]
+pandas = [
+    {version="1.2.4", python="3.7.*"},
+    {version="~1.3.0", python=">=3.8"},
+]
+h5py = "^3.7.0" # For compatibility with isaura
+loguru = "^0.6.0" # For compatibility with isaura
+pyairtable = [
+    {version="<2", python="3.7.*"},
+    {version="<3", python=">=3.8"},
+]
+PyYAML = "^6.0.1"
+dockerfile-parse = "^2.0.1"
+tqdm = "^4.66.1"
+click = "^8.1.7"
+docker = "^6.1.3"
+isaura = {version="0.1", optional=true}
+pytest = {version = "^7.4.0", optional = true}
+fuzzywuzzy = {version = "^0.18.0", optional = true}
+sphinx = {version = ">=5.3.0", optional = true} # For compatibility with python 3.7.x
+jinja2 = {version = "^3.1.2", optional = true}
+boto3 = "^1.28.40"
+requests = "^2.31.0"
+
+
+[tool.poetry.extras]
+# Instead of using poetry dependency groups, we use extras to make it pip installable
+lake = ["isaura"]
+docs = ["sphinx", "jinja2"]
+test = ["pytest", "fuzzywuzzy"]
+#all = [lake, docs, test]
+
+[tool.poetry.scripts]
+ersilia = "ersilia.cli:cli"
+bentoml = "ersilia.setup.requirements:check_bentoml"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

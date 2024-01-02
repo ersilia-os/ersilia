@@ -11,7 +11,7 @@ class ErsiliaError(Exception):
         self, message="Ersilia has experienced an error", hints="", config_json=None
     ):
         text = "Ersilia exception class:\n"
-        text += "{}\n\n".format(self.__class__.__name__)
+        text += "{}\n\n".format(type(self).__name__)
         text += "Detailed error:\n"
         text += message
         text += "\n\n"
@@ -21,7 +21,7 @@ class ErsiliaError(Exception):
             text += "\n"
         eb = ErsiliaBase(config_json=config_json, credentials_json=None)
         eb.logger.error(text)
-        super().__init__(text)
+        Exception.__init__(self, text)
 
 
 class MissingDependencyError(ErsiliaError):
@@ -29,7 +29,7 @@ class MissingDependencyError(ErsiliaError):
         self.dependency = dependency
         self.message = "Missing dependency {0}".format(self.dependency)
         self.hints = ""
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class NullModelIdentifierError(ErsiliaError):
@@ -37,7 +37,7 @@ class NullModelIdentifierError(ErsiliaError):
         self.model = model
         self.message = "Model identifier {0} is null".format(self.model)
         self.hints = "This type of error typically occurs when a model has not been served. Please run 'ersilia serve MODEL_ID' if you have a model identifier in mind"
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class InvalidModelIdentifierError(ErsiliaError):
@@ -49,18 +49,20 @@ class InvalidModelIdentifierError(ErsiliaError):
         self.hints = "Please check that {0} exists in the Ersilia Model Hub:\n - https://ersilia.io/model-hub (for approved models)\n - https://airtable.com/shrUcrUnd7jB9ChZV (for approved and in preparation models)".format(
             self.model
         )
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class ModelNotAvailableLocallyError(ErsiliaError):
     def __init__(self, model):
         self.model = model
-        self.message = "Model {0} is not available locally, so it cannot be served".format(
-            self.model
+        self.message = (
+            "Model {0} is not available locally, so it cannot be served".format(
+                self.model
+            )
         )
         self.hints = "Fetch the model using the CLI. Simply run:\n"
         self.hints += "$ ersilia fetch {0}".format(self.model)
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class EmptyOutputError(ErsiliaError):
@@ -73,7 +75,7 @@ class EmptyOutputError(ErsiliaError):
         log = self.run_from_terminal()
         self.message += log
         self.hints = "- Visit the fetch troubleshooting site"
-        super().__init__(self.message, self.hints)
+        ErsiliaError.__init__(self, self.message, self.hints)
 
     def run_from_terminal(self):
         eb = ErsiliaBase()
@@ -91,7 +93,7 @@ class EmptyOutputError(ErsiliaError):
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         log_file = os.path.join(tmp_folder, "terminal.log")
         run_command("ersilia example {0} -n 3 -f {1}".format(self.model_id, input_file))
-        cmd = "bash {0} {1} {2} {3} > {4} 2>&1 ".format(
+        cmd = "bash {0} {1} {2} {3} 2>&1 | tee -a {4}".format(
             exec_file, framework_dir, input_file, output_file, log_file
         )
         run_command(cmd)

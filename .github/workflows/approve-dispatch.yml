@@ -2,18 +2,22 @@ name: Approve Command Dispatch
 
 on:
   repository_dispatch:
-    types: [approve-command]
+    types: [ approve-command ]
+
+permissions:
+  issues: write
+  contents: read
 
 jobs:
   approve-command-dispatch:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
 
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
-        uses: GrantBirki/issue-template-parser@ff381974602c5bfd404ec7964b1677c9519c2860 # pin@v7.0.0
+        uses: GrantBirki/issue-template-parser@v7.0.0
         id: issue-parser
         with:
           body: ${{ github.event.client_payload.github.payload.issue.body }}
@@ -72,11 +76,22 @@ jobs:
           OWNER: ersilia-os
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
           JSON: ${{ steps.issue-parser.outputs.json }}
-        run: python3 .github/scripts/update_metadata.py
+        run: |
+          python3 .github/scripts/update_metadata.py 
 
       # upload git-lfs object
+      - name: checkout persist credentials
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+      - name: remove ersilia repo
+        run: |
+          rm -rf *
+
       - name: clone the repository
-        uses: GuillaumeFalourd/clone-github-repo-action@19817562c346ff60f9935158dede6c5ece8fd0ac # pin@v2.3
+        uses: GuillaumeFalourd/clone-github-repo-action@62795acaa4a02f89824de75c7025459a9cabaa45 # pin@v3
         with:
           owner: 'ersilia-os'
           repository: ${{ steps.create-model-repo.outputs.repo_name }}
@@ -86,21 +101,25 @@ jobs:
         env:
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
         run: |
-          echo "$REPO"
           cd $REPO
-          ls
           git lfs install
-          touch mock.csv
-          git lfs track mock.csv
-          git add .
+          echo "This is a mock git lfs file" > mock.txt
+          git lfs track mock.txt
+          git add .gitattributes
+          git add mock.txt
+          git lfs ls-files
 
-      - name: Commit & Push changes
+      - name: commit and push changes
         uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # pin@v1.4
         with:
-          author_name: $USER
+          author_name: "ersilia-bot"
+          author_email: "ersilia-bot@users.noreply.github.com"
           message: "mock lfs [skip ci]"
-          directory: "."
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: ${{ steps.create-model-repo.outputs.repo_name }}
+          repository: "ersilia-os/${{ steps.create-model-repo.outputs.repo_name }}"
+          github_token: ${{ secrets.PAT }}
+          amend: true
+          force: true
 
       # sync metadata to airtable
       # now that the repo has been created, and the metadata.json file has been updated, we can sync the metadata to airtable

@@ -3,10 +3,12 @@ from . import ersilia_cli
 from .. import echo
 from ... import ErsiliaModel
 from ..messages import ModelNotFound
+from ...core.tracking import open_persistent_file
 
 
 def serve_cmd():
     """Creates serve command"""
+
     # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
@@ -19,7 +21,15 @@ def serve_cmd():
         type=click.INT,
         help="Preferred port to use (integer)",
     )
-    def serve(model, lake, docker, port):
+    # Add the new flag for tracking the serve session
+    @click.option(
+        "-t/",
+        "--track_serve/--no_track_serve",
+        "track_serve",
+        required=False,
+        default=False,
+    )
+    def serve(model, lake, docker, port, track_serve):
         if docker:
             service_class = "docker"
         else:
@@ -41,7 +51,19 @@ def serve_cmd():
         echo("   PID: {0}".format(mdl.pid), fg="yellow")
         echo("   SRV: {0}".format(mdl.scl), fg="yellow")
         echo("")
-        echo(":backhand_index_pointing_right: Available APIs:", fg="blue")
+        echo(":backhand_index_pointing_right: To run model:", fg="blue")
+        echo("   - run", fg="blue")
         apis = mdl.get_apis()
-        for api in apis:
-            echo("   - {0}".format(api), fg="blue")
+        if apis != ["run"]:
+            echo("")
+            echo("   These APIs are also valid:", fg="blue")
+            for api in apis:
+                if api != "run":
+                    echo("   - {0}".format(api), fg="blue")
+        echo("")
+        echo(":person_tipping_hand: Information:", fg="blue")
+        echo("   - info", fg="blue")
+
+        # Setup persistent tracking
+        if track_serve:
+            open_persistent_file(mdl.model_id)

@@ -92,7 +92,7 @@ class UpdateMetadata:
         self.log.info(
             f"populating {self.metadata_filename} with new model submission request data"
         )
-
+        print(self.json_input)
         # Match the metadata keys to the JSON input keys
         # We will only populate the metadata file with the JSON input if the metadata file is empty ("" or [])
         # This is gross, sorry
@@ -106,12 +106,17 @@ class UpdateMetadata:
             self.metadata["Description"] = self.json_input["model_description"]
         if self.metadata["Publication"] == "":
             self.metadata["Publication"] = self.json_input["publication"]
+        if self.metadata["Source Code"] == "":
+            self.metadata["Source Code"] = self.json_input["source_code"]
         if self.metadata["License"] == "":
             self.metadata["License"] = self.json_input["license"]
         if self.metadata["Tag"] == []:
             # split the tags into a list andremove any whitespace
-            tags = [tag.strip() for tag in self.json_input["tags"].split(",")]
-            self.metadata["Tag"] = tags
+            # tags = [tag.strip() for tag in self.json_input["tag"].split(",")]
+            print(type(self.json_input["tag"]))
+            self.metadata["Tag"] = self.json_input["tag"]
+        if self.metadata["Status"] == "":
+            self.metadata["Status"] = "In progress"
 
     def write_metadata(self):
         """

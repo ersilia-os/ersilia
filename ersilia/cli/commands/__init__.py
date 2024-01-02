@@ -1,11 +1,41 @@
 import click
-from bentoml.cli.click_utils import BentoMLCommandGroup
+import functools
 from ... import __version__
 from ... import logger
 from ..echo import Silencer
 
 
-@click.group(cls=BentoMLCommandGroup)
+class ErsiliaCommandGroup(click.Group):
+    NUMBER_OF_COMMON_PARAMS = 2
+
+    @staticmethod
+    def bentoml_common_params(func):
+        @click.option(
+            "-q",
+            "--quiet",
+            is_flag=True,
+            default=False,
+            help="Hide all warnings and info logs",
+        )
+        @functools.wraps(func)
+        def wrapper(quiet, *args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    def command(self, *args, **kwargs):
+        def wrapper(func):
+            func = ErsiliaCommandGroup.bentoml_common_params(func)
+            func.__click_params__ = (
+                func.__click_params__[-self.NUMBER_OF_COMMON_PARAMS :]
+                + func.__click_params__[: -self.NUMBER_OF_COMMON_PARAMS]
+            )
+            return click.Group.command(self, *args, **kwargs)(func)
+
+        return wrapper
+
+
+@click.group(cls=ErsiliaCommandGroup)
 @click.version_option(version=__version__)
 @click.option(
     "-v",
@@ -23,13 +53,13 @@ from ..echo import Silencer
 )
 def ersilia_cli(verbose, silent):
     """
-    Ersilia CLI
+    🦠 Welcome to Ersilia! 💊
     """
     if verbose:
         logger.set_verbosity(1)
     else:
         logger.set_verbosity(0)
     silencer = Silencer()
-    silencer.speak()  # To reset default
+    silencer.speak()
     if silent:
         silencer.silence()

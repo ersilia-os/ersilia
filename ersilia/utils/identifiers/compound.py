@@ -17,12 +17,26 @@ except:
 
 class CompoundIdentifier(object):
     def __init__(self, local=True):
-        super().__init__()
         if local:
             self.Chem = Chem
         else:
             self.Chem = None
         self.unichem = unichem
+        self.default_type = "smiles"
+        self.input_header_synonyms = set(["smiles", "input"])
+        self.key_header_synonyms = set(["inchikey", "key"])
+
+    def is_input_header(self, h):
+        if h.lower() in self.input_header_synonyms:
+            return True
+        else:
+            return False
+
+    def is_key_header(self, h):
+        if h.lower() in self.key_header_synonyms:
+            return True
+        else:
+            return False
 
     def _is_smiles(self, text):
         if self.Chem is None:
@@ -53,6 +67,8 @@ class CompoundIdentifier(object):
         return True
 
     def guess_type(self, text):
+        if text is None:
+            return self.default_type
         if self._is_inchikey(text):
             return "inchikey"
         if self._is_smiles(text):
@@ -111,14 +127,20 @@ class CompoundIdentifier(object):
             if inchikey is None:
                 inchikey = self._nci_smiles_to_inchikey(smiles)
         else:
-            mol = self.Chem.MolFromSmiles(smiles)
-            if mol is None:
-                raise Exception(
-                    "The SMILES string: %s is not valid or could not be converted to an InChIKey"
-                    % smiles
-                )
-            inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
-            if inchi is None:
-                raise Exception("Could not obtain InChI")
-            inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
+            try:
+                mol = self.Chem.MolFromSmiles(smiles)
+                if mol is None:
+                    raise Exception(
+                        "The SMILES string: %s is not valid or could not be converted to an InChIKey"
+                        % smiles
+                    )
+                inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
+                if inchi is None:
+                    raise Exception("Could not obtain InChI")
+                inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
+            except:
+                inchikey = None
         return inchikey
+
+
+Identifier = CompoundIdentifier

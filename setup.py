@@ -1,38 +1,36 @@
 from setuptools import setup, find_packages
 
 
-def get_version_and_cmdclass(package_path):
-    """Load version.py module without importing the whole package.
-    Template code from miniver
-    """
+def get_version(package_path):
     import os
     from importlib.util import module_from_spec, spec_from_file_location
 
-    spec = spec_from_file_location(
-        "version", os.path.join(package_path, "_clean_version.py")
-    )
+    spec = spec_from_file_location("version", os.path.join(package_path, "_version.py"))
     module = module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.__version__, module.cmdclass
+    version = module.get_version_from_static()
+    return version
 
 
-version, cmdclass = get_version_and_cmdclass("ersilia")
+version = get_version("ersilia")
+
 
 with open("README.md", "r", encoding="utf8") as fh:
     long_description = fh.read()
 
 # Slim requirements
 slim = [
-    "bentoml @ git+https://github.com/ersilia-os/bentoml-ersilia.git",
     "inputimeout",
     "emoji",
     "validators",
     "h5py",
     "loguru",
-    "pyairtable",
+    "pyairtable<2",
     "PyYAML",
     "dockerfile-parse",
     "tqdm",
+    "click",
+    "docker",
 ]
 slim_requires = slim
 
@@ -43,7 +41,7 @@ lake_requires = slim_requires + ["isaura==0.1"]
 doc_builder_requires = slim + ["sphinx", "jinja2"]
 
 # Test requirements
-test_requires = slim + ["pytest"]
+test_requires = slim + ["pytest", "fuzzywuzzy"]
 
 # Define extras requires
 extras_require = {
@@ -52,12 +50,9 @@ extras_require = {
     "test": test_requires,
 }
 
-print(extras_require)
-
 setup(
     name="ersilia",
     version=version,
-    cmdclass=cmdclass,
     author="Ersilia Open Source Initiative",
     author_email="hello@ersilia.io",
     url="https://github.com/ersilia-os/ersilia",
@@ -74,6 +69,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -87,3 +83,23 @@ setup(
     package_data={"ersilia": ["hub/content/metadata/*.txt"]},
     include_package_data=True,
 )
+
+
+# Install bentoml if necessary
+def check_bentoml(package_path):
+    import os
+    from importlib.util import module_from_spec, spec_from_file_location
+
+    spec = spec_from_file_location(
+        "bentoml_requirement",
+        os.path.join(package_path, "setup", "requirements", "bentoml.py"),
+    )
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    req = module.BentoMLRequirement()
+    if not req.is_bentoml_ersilia_version():
+        req.install()
+    return version
+
+
+check_bentoml("ersilia")

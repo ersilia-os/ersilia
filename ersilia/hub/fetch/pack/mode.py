@@ -4,6 +4,7 @@ import json
 from .... import ErsiliaBase
 from ...bundle.repo import DockerfileFile
 from ....utils.versioning import Versioner
+from ....utils.system import SystemChecker
 from ....setup.requirements.conda import CondaRequirement
 from ....setup.requirements.docker import DockerRequirement
 from ....default import MODEL_CONFIG_FILENAME
@@ -53,6 +54,12 @@ class PackModeDecision(ErsiliaBase):
         return None
 
     def decide(self):
+        sc = SystemChecker()
+        if sc.is_github_action():
+            self.logger.debug(
+                "Code is being run inside a GitHub Actions workflow. Use conda as a by-default mode."
+            )
+            return "conda"
         mode = self.decide_from_config_file_if_available()
         if mode is not None:
             self.logger.debug("Mode is already specified in the model repository")
@@ -92,10 +99,13 @@ class PackModeDecision(ErsiliaBase):
                 return "conda"
         else:
             self.logger.debug(
-                "The python/conda installs are not sufficient, use docker"
+                "The python/conda installs may not be sufficient, trying docker"
             )
             self.logger.debug("Mode: docker")
             dockerreq = DockerRequirement()
-            assert not dockerreq.is_inside_docker()
-            assert dockerreq.is_installed()
-            return "docker"
+            if dockerreq.is_inside_docker():
+                return "conda"
+            if dockerreq.is_installed():
+                return "docker"
+            else:
+                return "conda"

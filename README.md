@@ -1,11 +1,12 @@
 <div id="top"></div>
-<img src="https://github.com/ersilia-os/ersilia/blob/master/assets/Ersilia_Plum.png" height="70">
+<img src="https://raw.githubusercontent.com/ersilia-os/ersilia/master/assets/Ersilia_Plum.png" height="70">
 
-# Welcome to the Ersilia Model Hub!
+# 🎉 Welcome to the Ersilia Model Hub! 🌟
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md) [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-yellow.svg)](https://www.gnu.org/licenses/agpl-3.0) [![DOI](https://zenodo.org/badge/277068989.svg)](https://zenodo.org/badge/latestdoi/277068989)
-
-[![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/) [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black) [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ersilia-os/ersilia)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/pypi/pyversions/ersilia
+)](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black)
+[![DOI](https://zenodo.org/badge/277068989.svg)](https://zenodo.org/badge/latestdoi/277068989) [![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/)
 
 ## Table of Contents
 
@@ -17,7 +18,10 @@
 
 ## Project Description
 
-The Ersilia Model Hub is a unified platform of pre-trained AI/ML models for infectious and neglected disease research. The end goal is to provide an open-source, no-code solution to access AI/ML models to accelerate drug discovery. The models embedded in the hub include both models published in the literature (with appropriate third party acknowledgement) and models developed by the Ersilia team or contributors.
+The [Ersilia Model Hub](https://ersilia.io) is a unified platform of pre-trained AI/ML models dedicated to 🦠 infectious and neglected disease research. Our mission is to offer an open-source, 🛠 low-code solution that provides seamless access to AI/ML models for 💊 drug discovery. Models housed in our hub come from two sources:
+
+1. 📚 Published models from literature (with due third-party acknowledgement)
+2. 🛠 Custom models developed by the **Ersilia team** or our valued contributors.
 
 * Read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 * Browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/)
@@ -29,7 +33,7 @@ Please check the package requirements in the [Installation Guide](https://ersili
 1. Create a conda environment and activate it
 
     ```bash
-    conda create -n ersilia python=3.7
+    conda create -n ersilia python=3.10
     conda activate ersilia
     ```
 
@@ -44,31 +48,37 @@ Please check the package requirements in the [Installation Guide](https://ersili
 1. Once the Ersilia Model Hub is installed, you can use the CLI to run predictions. First, select a model from the [Ersilia Model Hub](https://ersilia.io/model-hub/) and **fetch** it:
 
     ```bash
-    ersilia fetch chemprop-antibiotic
+    ersilia fetch retrosynthetic-accessibility
     ```
 
 1. Generate a few (5) example molecules, to be used as input. The **example** command will generate the adequate input for the model in use
 
     ```bash
-    ersilia example chemprop-antibiotic -n 5 -f my_molecules.csv
+    ersilia example retrosynthetic-accessibility -n 5 -f my_molecules.csv
     ```
 
 1. Then, **serve** your model:
 
     ```bash
-    ersilia serve chemprop-antibiotic
+    ersilia serve retrosynthetic-accessibility
     ```
 
-1. And run the prediction **API**:
+1. And **run** the model:
 
     ```bash
-    ersilia api -i my_molecules.csv -o my_predictions.csv
+    ersilia run -i my_molecules.csv -o my_predictions.csv
     ```
 
 1. Finally, **close** the service when you are done.
 
     ```bash
     ersilia close
+    ```
+
+1. If you no longer want to use the model, you can **delete** it.
+
+    ```bash
+    ersilia delete retrosynthetic-accessibility
     ```
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
@@ -86,14 +96,14 @@ The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https:/
 
 ### Submit a New Model
 
-If you want to incorporate a new model in the platform, open a new issue using the [model request template](https://github.com/ersilia-os/ersilia/issues/new?assignees=&labels=new-model&template=model_request.yml&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) or contact us using the following [form](https://www.ersilia.io/request-model)
+If you want to incorporate a new model in the platform, open a new issue using the [model request template](https://github.com/ersilia-os/ersilia/issues/new?assignees=&labels=new-model&template=model_request.yml&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) or contact us using the following [form](https://www.ersilia.io/request-model).
 
-After submitting your model request via an issue (suggested), a maintainer will review your request. If they `/approve` your request, a new model respository will be created for you to fork and use!
+After submitting your model request via an issue (suggested), a maintainer will review your request. If they `/approve` your request, a new model respository will be created for you to fork and use! There is a [demo repository](https://github.com/ersilia-os/eos-demo) explaining the steps one-by-one.
 
 ## License and Citation
 
 This repository is open-sourced under the [GPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
-Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it.
+Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it!
 
 ## About Us
 

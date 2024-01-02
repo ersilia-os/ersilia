@@ -3,8 +3,11 @@ import csv
 import json
 import requests
 import random
+
+from ersilia.utils.exceptions_utils.card_exceptions import InputBaseInformationError
 from .interfaces import AirtableInterface
 from ... import ErsiliaBase
+
 
 from ...default import METADATA_JSON_FILE
 
@@ -85,29 +88,33 @@ class InputSampler(ErsiliaBase):
             return res
         return None
 
-    def _get_inputs_from_maintained_file(self):
-        file_name = "inp-000.csv"  #  TODO extend
+    def _create_url_to_get_sample_content(self):
+        shapes = ["single", "pair", "list", "pair-of-lists"]
+        # Ensure that there is only one input type specified in the metadata.
         assert len(self.input_type) == 1
         input_type = self.input_type[0].lower()
         input_shape = self.input_shape.lower().replace(" ", "-")
-        url = "https://raw.githubusercontent.com/ersilia-os/{0}/main/{1}/{2}/{3}".format(
+        if input_shape not in shapes:
+            raise InputBaseInformationError()
+        return "https://raw.githubusercontent.com/ersilia-os/{0}/main/{1}/{2}/inp-000.csv".format(
             _ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY,
             input_type,
             input_shape,
-            file_name,
         )
+
+    def _get_inputs_from_maintained_file(self):
+        url = self._create_url_to_get_sample_content()
         with requests.Session() as s:
             download = s.get(url)
             decoded_content = download.content.decode("utf-8")
             cr = csv.reader(decoded_content.splitlines(), delimiter=",")
-            data = list(cr)[1:]
-            R = []
-            for r in data:
-                R += [r]
-        return R
+            data = list(cr)
+            headers = data[0]
+            content = data[1:]
+        return content, headers
 
     def sample(self, n_samples, file_name):
-        entities = self._get_inputs_from_maintained_file()
+        entities, headers = self._get_inputs_from_maintained_file()
         entities = random.sample(entities, min(n_samples, len(entities)))
         if file_name is None:
             for e in entities:
@@ -115,6 +122,6 @@ class InputSampler(ErsiliaBase):
         else:
             with open(file_name, "w") as f:
                 writer = csv.writer(f)
-                writer.writerow(["key", "input"])
+                writer.writerow(headers)
                 for r in entities:
                     writer.writerow(r)

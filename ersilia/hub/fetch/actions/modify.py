@@ -12,6 +12,7 @@ from ...bundle.bundle import (
     BundleDockerfileFile,
     BundleRequirementsFile,
 )
+from ...bundle.repo import DockerfileFile
 
 
 class ModelModifier(BaseAction):
@@ -146,6 +147,13 @@ class ModelModifier(BaseAction):
             return
         run_file = os.path.join(framework_dir, run_files[0])
         self.logger.debug("Run file found in framework: {0}".format(run_file))
+        with open(run_file, "r") as f:
+            for l in f:
+                if l.startswith("conda activate"):
+                    self.logger.debug(
+                        "A conda activate statement has been found. It is not advised to modify the conda path in this bash file."
+                    )
+                    return
         python_exec = SimpleConda().get_python_path_env(model_id)
         self.logger.debug("Python executable: {0}".format(python_exec))
         R = []

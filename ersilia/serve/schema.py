@@ -31,6 +31,8 @@ class ApiSchema(ErsiliaBase):
             return None
         if len(shape) == 1:  # array
             n = shape[0]
+            if n is None:
+                return None
             chars = len(str(n))
             names = []
             for i in range(n):

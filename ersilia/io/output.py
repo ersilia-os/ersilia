@@ -12,6 +12,7 @@ from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..default import FEATURE_MERGE_PATTERN
+from ..db.hubdata.interfaces import AirtableInterface
 
 
 class DataFrame(object):
@@ -166,6 +167,9 @@ class GenericOutputAdapter(ResponseRefactor):
     def __cast_values(self, vals, dtypes, output_keys):
         v = []
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
+            self.logger.debug(v_)
+            self.logger.debug(t_)
+            self.logger.debug(k_)
             if t_ in self._array_types:
                 if v_ is None:
                     v_ = [None] * self.__array_shape(k_)
@@ -178,7 +182,10 @@ class GenericOutputAdapter(ResponseRefactor):
         pdt = PureDataTyper(vals)
         dtype = pdt.get_type()
         self.logger.debug("Guessed pure datatype: {0}".format(dtype))
-        return dtype["type"]
+        if dtype is None:
+            return None
+        else:
+            return dtype["type"]
 
     def __expand_output_keys(self, vals, output_keys):
         output_keys_expanded = []
@@ -192,28 +199,58 @@ class GenericOutputAdapter(ResponseRefactor):
             self.logger.debug("Values: {0}".format(v))
             m = self.__meta_by_key(ok)
             if ok not in current_pure_dtype:
+                self.logger.debug("Getting pure dtype for {0}".format(ok))
                 t = self.__pure_dtype(ok)
+                self.logger.debug("This is the pure datatype: {0}".format(t))
                 if t is None:
                     t = self._guess_pure_dtype_if_absent(v)
+                    self.logger.debug("Guessed absent pure datatype: {0}".format(t))
                 current_pure_dtype[ok] = t
             else:
                 t = current_pure_dtype[ok]
-            self.logger.debug("Pure datatype: {0}".format(t))
+            self.logger.debug("Datatype: {0}".format(t))
             if t in self._array_types:
+                self.logger.debug(
+                    "Datatype has been matched: {0} over {1}".format(
+                        t, self._array_types
+                    )
+                )
                 assert m is not None
                 if v is not None:
+                    if len(m) > len(v):
+                        self.logger.debug(
+                            "Metadata {0} is longer than values {1}".format(
+                                len(m), len(v)
+                            )
+                        )
+                        v = list(v) + [None] * (len(m) - len(v))
                     assert len(m) == len(v)
                 if merge_key:
+                    self.logger.debug("Merge key is {0}".format(merge_key))
                     output_keys_expanded += [
                         "{0}{1}{2}".format(ok, FEATURE_MERGE_PATTERN, m_) for m_ in m
                     ]
                 else:
+                    self.logger.debug("No merge key")
                     output_keys_expanded += ["{0}".format(m_) for m_ in m]
             else:
                 output_keys_expanded += [ok]
         return output_keys_expanded
 
-    def _to_dataframe(self, result):
+    def _get_outputshape_from_airtable(self, model_id):
+        airtable_interface = AirtableInterface(config_json=self.config_json)
+        output_shape = " "
+        for record in airtable_interface.items():
+            model_idi = record["fields"]["Identifier"]
+            try:
+                if model_idi == model_id:
+                    output_shape = record["fields"]["Output Shape"]
+            except KeyError:
+                self.logger.warning("The Output Shape field is empty")
+        return output_shape
+
+    def _to_dataframe(self, result, model_id):
+        output_shape = self._get_outputshape_from_airtable(model_id)
         result = json.loads(result)
         R = []
         output_keys = None
@@ -221,13 +258,25 @@ class GenericOutputAdapter(ResponseRefactor):
         for r in result:
             inp = r["input"]
             out = r["output"]
-            if output_keys is None:
-                output_keys = [k for k in out.keys()]
-            vals = [out[k] for k in output_keys]
-            dtypes = [self.__pure_dtype(k) for k in output_keys]
-            if output_keys_expanded is None:
-                output_keys_expanded = self.__expand_output_keys(vals, output_keys)
-            vals = self.__cast_values(vals, dtypes, output_keys)
+            if output_shape == "Flexible List":
+                vals = [json.dumps(out)]
+                output_keys_expanded = ["outcome"]
+            else:
+                if output_keys is None:
+                    output_keys = [k for k in out.keys()]
+                vals = [out[k] for k in output_keys]
+                dtypes = [self.__pure_dtype(k) for k in output_keys]
+                are_dtypes_informative = False
+                for dtype in dtypes:
+                    if dtype is not None:
+                        are_dtypes_informative = True
+                if output_keys_expanded is None:
+                    output_keys_expanded = self.__expand_output_keys(vals, output_keys)
+                if not are_dtypes_informative:
+                    t = self._guess_pure_dtype_if_absent(vals)
+                    if len(output_keys) == 1:
+                        dtypes = [t]
+                vals = self.__cast_values(vals, dtypes, output_keys)
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)
@@ -280,13 +329,13 @@ class GenericOutputAdapter(ResponseRefactor):
             with open(output, "w") as f:
                 json.dump(data, f, indent=4)
         if self._has_extension(output, "csv"):
-            df = self._to_dataframe(result)
+            df = self._to_dataframe(result, model_id)
             df.write(output)
         if self._has_extension(output, "tsv"):
-            df = self._to_dataframe(result)
+            df = self._to_dataframe(result, model_id)
             df.write(output, delimiter="\t")
         if self._has_extension(output, "h5"):
-            df = self._to_dataframe(result)
+            df = self._to_dataframe(result, model_id)
             df.write(output)
         return result
 

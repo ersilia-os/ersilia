@@ -4,11 +4,9 @@ import json
 from .. import ErsiliaBase
 from ..hub.content.slug import Slug
 from ..hub.fetch import STATUS_FILE, DONE_TAG
+from ..default import IS_FETCHED_FROM_DOCKERHUB_FILE
 
-from ..utils.exceptions_utils.exceptions import (
-    InvalidModelIdentifierError,
-    ModelNotAvailableLocallyError,
-)
+from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
 from .. import throw_ersilia_exception
 
 
@@ -68,7 +66,7 @@ class ModelBase(ErsiliaBase):
         else:
             return True
 
-    def is_available_locally(self):
+    def _is_available_locally_from_status(self):
         fetch_status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         if not os.path.exists(fetch_status_file):
             self.logger.debug("No status file exists")
@@ -79,3 +77,30 @@ class ModelBase(ErsiliaBase):
             is_fetched = status[DONE_TAG]
         self.logger.debug("Is fetched: {0}".format(is_fetched))
         return is_fetched
+
+    def _is_available_locally_from_dockerhub(self):
+        from_dockerhub_file = os.path.join(
+            self._dest_dir, self.model_id, IS_FETCHED_FROM_DOCKERHUB_FILE
+        )
+        if not os.path.exists(from_dockerhub_file):
+            return False
+        else:
+            return True
+
+    def is_available_locally(self):
+        bs = self._is_available_locally_from_status()
+        bd = self._is_available_locally_from_dockerhub()
+        if bs or bd:
+            return True
+        else:
+            return False
+
+    def was_fetched_from_dockerhub(self):
+        from_dockerhub_file = os.path.join(
+            self._dest_dir, self.model_id, IS_FETCHED_FROM_DOCKERHUB_FILE
+        )
+        if not os.path.exists(from_dockerhub_file):
+            return False
+        with open(from_dockerhub_file, "r") as f:
+            data = json.load(f)
+            return data["docker_hub"]

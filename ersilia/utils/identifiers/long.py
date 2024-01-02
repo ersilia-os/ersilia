@@ -11,7 +11,7 @@ SEP = "-"
 
 class LongIdentifier(object):
     def __init__(self):
-        super().__init__()
+        pass
 
     @staticmethod
     def encode():
@@ -23,3 +23,6 @@ class LongIdentifier(object):
             return "-".join(s)
         else:
             return str(uuid.uuid4())
+
+
+Identifier = LongIdentifier

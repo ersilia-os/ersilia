@@ -18,6 +18,7 @@ checkpoints_dir = os.path.abspath(os.path.join(root, "..", "..", "checkpoints"))
 with open(os.path.join(checkpoints_dir, "data.json"), "r") as f:
     ckpt = json.load(f)
 
+
 # model to be run (repetition of the same JSON output)
 def my_model(smiles_list, ckpt):
     return [ckpt for _ in smiles_list]

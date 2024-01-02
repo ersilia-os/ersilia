@@ -1,0 +1,27 @@
+name: Update a given model with current eos-template workflows
+
+on:  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      model_id:
+        description: Model ID
+        required: true
+        type: string
+
+env:
+  MODEL_ID: ${{ github.event.inputs.model_id }}
+
+jobs:
+  update-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: de-vri-es/setup-git-credentials@v2
+        with:
+          credentials: ${{secrets.GIT_CREDENTIALS}}
+          
+      - name: Update model workflows using script
+        run: |
+          git lfs install
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/update_model_workflows_from_template.py
+          python update_model_workflows_from_template.py $MODEL_ID
