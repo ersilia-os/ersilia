@@ -1,6 +1,6 @@
 ### Workflow Failure ❌
 
-@{{ issue_creator }} the `/approve` workflow has failed. View the logs here for more information:
+@{{ issue_creator }} (or other maintainers) the `/approve` workflow has failed. View the logs here for more information:
 
 🔗 [Workflow logs]({{ workflow_url }})
 
