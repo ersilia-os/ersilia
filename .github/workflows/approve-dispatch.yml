@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # pin@v3.1.0
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
 
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
-        uses: GrantBirki/issue-template-parser@96ade3338da4a4b5e512f9ef6c7037dcf4ea1dd0 # pin@v5.0.2
+        uses: GrantBirki/issue-template-parser@ff381974602c5bfd404ec7964b1677c9519c2860 # pin@v7.0.0
         id: issue-parser
         with:
           body: ${{ github.event.client_payload.github.payload.issue.body }}
@@ -26,7 +26,7 @@ jobs:
 
       # setup python
       - name: setup python
-        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984 # pin@v4.3.0
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
         with:
           python-version: "3.10"
           # cache: 'pip' # caching pip dependencies
@@ -76,7 +76,7 @@ jobs:
 
       # upload git-lfs object
       - name: clone the repository
-        uses: GuillaumeFalourd/clone-github-repo-action@v2
+        uses: GuillaumeFalourd/clone-github-repo-action@19817562c346ff60f9935158dede6c5ece8fd0ac # pin@v2.3
         with:
           owner: 'ersilia-os'
           repository: ${{ steps.create-model-repo.outputs.repo_name }}
@@ -93,9 +93,9 @@ jobs:
           touch mock.csv
           git lfs track mock.csv
           git add .
-        
+
       - name: Commit & Push changes
-        uses: actions-js/push@master
+        uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # pin@v1.4
         with:
           author_name: $USER
           message: "mock lfs [skip ci]"
@@ -120,7 +120,7 @@ jobs:
           python3 -m pip install pyairtable
           python3 -m pip install requests
           python3 .github/scripts/insert_metadata_to_airtable.py $REPO_NAME $ISSUE_CREATOR $AIRTABLE_API_KEY
-      
+
       # find the creator of the issue
       - name: find original issue creator
         id: issue-creator
@@ -135,7 +135,7 @@ jobs:
 
       # comment on the issue comment with further instructions for the user
       - name: comment
-        uses: GrantBirki/comment@1e9986de26cf23e6c4350276234c91705c540fef # pin@v2.0.3
+        uses: GrantBirki/comment@7016e89e8f225b0f18f1fbb7fd10263df2772a05 # pin@v2.0.8
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/new-model.md
