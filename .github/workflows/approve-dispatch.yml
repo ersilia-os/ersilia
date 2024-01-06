@@ -15,6 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
 
+      # construct the url to this workflow run
+      - name: workflow url
+        id: workflow-url
+        run: |
+          echo "workflow_url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
+
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
         uses: GrantBirki/issue-template-parser@v7.0.0
@@ -30,7 +36,7 @@ jobs:
 
       # setup python
       - name: setup python
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
         with:
           python-version: "3.10"
           # cache: 'pip' # caching pip dependencies
@@ -161,3 +167,15 @@ jobs:
           vars: |
             repo_name: ${{ steps.create-model-repo.outputs.repo_name }}
             issue_creator: ${{ steps.issue-creator.outputs.issue_creator }}
+
+      # steps to run if the workflow fails for any reason
+      - name: comment on failure
+        if: failure()
+        uses: GrantBirki/comment@7016e89e8f225b0f18f1fbb7fd10263df2772a05 # pin@v2.0.8
+        with:
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          file: .github/templates/approve-workflow-failed.md
+          vars: |
+            repo_name: ${{ steps.create-model-repo.outputs.repo_name }}
+            issue_creator: ${{ steps.issue-creator.outputs.issue_creator }}
+            workflow_url: ${{ steps.workflow-url.outputs.workflow_url }}
