@@ -145,3 +145,18 @@ class StandardModelExampleError(ErsiliaError):
     def _get_hints(self):
         text = "If you fetch this model from Docker Hub, or you are running it through URL, this is the first time run is executed in your local computer. Reach out to Ersilia to get specific help."
         return text
+
+
+class DockerNotActiveError(ErsiliaError):
+    def __init__(self):
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = "Cannot fetch model from Docker Hub since Docker is not active."
+        return text
+
+    def _get_hints(self):
+        text = "Make sure that Docker is running on your computer. We recommend to use Docker Desktop."
+        return text

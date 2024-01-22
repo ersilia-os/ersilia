@@ -1,6 +1,6 @@
 from ..register.register import ModelRegisterer
 
-from .... import ErsiliaBase
+from .... import ErsiliaBase, throw_ersilia_exception
 from .... import EOS
 from ....default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 
@@ -8,6 +8,7 @@ from ...pull.pull import ModelPuller
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
 from ....utils.docker import SimpleDocker
+from ....utils.exceptions_utils.fetch_exceptions import DockerNotActiveError
 from .. import STATUS_FILE
 
 
@@ -19,6 +20,9 @@ class ModelDockerHubFetcher(ErsiliaBase):
 
     def is_docker_installed(self):
         return DockerRequirement().is_installed()
+
+    def is_docker_active(self):
+        return DockerRequirement().is_active()
 
     def is_available(self, model_id):
         mp = ModelPuller(
@@ -71,7 +75,10 @@ class ModelDockerHubFetcher(ErsiliaBase):
             tag=DOCKERHUB_LATEST_TAG,
         )
 
+    @throw_ersilia_exception
     def fetch(self, model_id):
+        if not DockerRequirement().is_active():
+            raise DockerNotActiveError()
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         mp.pull()
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)

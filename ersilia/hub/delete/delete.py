@@ -215,7 +215,8 @@ class ModelDockerDeleter(ErsiliaBase):
             )
         )
         dm = DockerManager(config_json=self.config_json)
-        dm.delete_images(model_id)
+        if dm.is_active():
+            dm.delete_images(model_id)
 
 
 class ModelFetchedEntryDeleter(ErsiliaBase):

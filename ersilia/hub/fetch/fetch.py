@@ -56,6 +56,7 @@ class ModelFetcher(ErsiliaBase):
             overwrite=self.overwrite, config_json=self.config_json
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
+        self.is_docker_active = self.model_dockerhub_fetcher.is_docker_active()
         self.model_hosted_fetcher = ModelHostedFetcher(
             url=hosted_url, config_json=self.config_json
         )
@@ -169,6 +170,9 @@ class ModelFetcher(ErsiliaBase):
             return False
         if not self.is_docker_installed:
             self.logger.debug("Docker is not installed in your local")
+            return False
+        if not self.is_docker_active:
+            self.logger.debug("Docker is not active in your local")
             return False
         if not self.model_dockerhub_fetcher.is_available(model_id=model_id):
             self.logger.debug("Docker image of this model doesn't seem to be available")

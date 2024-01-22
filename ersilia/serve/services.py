@@ -11,6 +11,7 @@ from ..utils.terminal import run_command
 from ..utils.ports import find_free_port
 from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
+from ..setup.requirements.docker import DockerRequirement
 from ..utils.conda import SimpleConda
 from ..utils.docker import SimpleDocker
 from ..utils.venv import SimpleVenv
@@ -19,7 +20,10 @@ from ..default import PACKMODE_FILE, APIS_LIST_FILE
 from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 from ..default import IS_FETCHED_FROM_HOSTED_FILE
 from ..default import INFORMATION_FILE
-from ..utils.exceptions_utils.serve_exceptions import BadGatewayError
+from ..utils.exceptions_utils.serve_exceptions import (
+    BadGatewayError,
+    DockerNotActiveError,
+)
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -323,6 +327,7 @@ class CondaEnvironmentService(_BentoMLService):
 
 class DockerImageService(BaseServing):
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        self._is_docker_active()
         BaseServing.__init__(
             self,
             model_id=model_id,
@@ -350,6 +355,13 @@ class DockerImageService(BaseServing):
                 self.logger.debug("Docker image found {0}".format(env))
                 return env
         return None
+
+    @throw_ersilia_exception
+    def _is_docker_active(self):
+        dr = DockerRequirement()
+        if not dr.is_active():
+            raise DockerNotActiveError()
+        return True
 
     def is_available(self):
         env = self._get_env_name()
@@ -448,6 +460,7 @@ class DummyService(BaseServing):
 
 class PulledDockerImageService(BaseServing):
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        self._is_docker_active()
         BaseServing.__init__(
             self,
             model_id=model_id,
@@ -479,6 +492,13 @@ class PulledDockerImageService(BaseServing):
 
     def __exit__(self, exception_type, exception_value, traceback):
         self.close()
+
+    @throw_ersilia_exception
+    def _is_docker_active(self):
+        dr = DockerRequirement()
+        if not dr.is_active():
+            raise DockerNotActiveError()
+        return True
 
     def _api_with_url(self, api_name, input):
         if self.url is None:

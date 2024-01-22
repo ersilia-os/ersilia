@@ -39,6 +39,9 @@ class DockerManager(ErsiliaBase):
     def is_installed(self):
         return DockerRequirement().is_installed()
 
+    def is_active(self):
+        return DockerRequirement().is_active()
+
     def image_exists(self, model_id):
         if self.images_of_model(model_id, only_latest=True):
             return True

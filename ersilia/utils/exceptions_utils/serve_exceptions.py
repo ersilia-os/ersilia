@@ -15,3 +15,10 @@ class BadGatewayError(ErsiliaError):
             url
         )
         ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class DockerNotActiveError(ErsiliaError):
+    def __init__(self):
+        self.message = "Docker is not active. Cannot serve model"
+        self.hints = "Please activate docker and try again"
+        ErsiliaError.__init__(self, self.message, self.hints)

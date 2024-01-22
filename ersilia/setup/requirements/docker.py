@@ -9,7 +9,7 @@ class DockerRequirement(object):
     def is_inside_docker(self):
         return is_inside_docker()
 
-    def is_installed(self):
+    def is_working(self):
         cmd = "docker run --platform {0} --name my_hello_world hello-world".format(
             resolve_platform()
         )
@@ -21,9 +21,26 @@ class DockerRequirement(object):
         else:
             return False
 
-    def install(self):
-        # TODO
-        msg = """
-        Install docker
-        """
-        print(msg)
+    def is_active(self):
+        cmd = "docker ps"
+        output = run_command_check_output(cmd)
+        if "CONTAINER ID" in output:
+            return True
+        else:
+            return False
+
+    def is_installed(self):
+        cmd = "docker --version"
+        output = run_command_check_output(cmd)
+        if "Docker version" in output:
+            return True
+        else:
+            return False
+
+    def is_logged_in(self):
+        cmd = "docker info"
+        output = run_command_check_output(cmd)
+        if "Username" in output:
+            return True
+        else:
+            return False
