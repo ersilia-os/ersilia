@@ -603,10 +603,10 @@
 </li>
       <li><a href="source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.delete.delete_cmd">delete_cmd() (in module ersilia.cli.commands.delete)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.delete_containers">delete_containers() (ersilia.db.environments.managers.DockerManager method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelLakeDeleter.delete_if_exists">delete_if_exists() (ersilia.hub.delete.delete.ModelLakeDeleter method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.delete_image">delete_image() (ersilia.db.environments.managers.DockerManager method)</a>
@@ -652,6 +652,8 @@
       <li><a href="source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize">dockerize() (ersilia.hub.fetch.actions.toolize.ModelToolizer method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager">DockerManager (class in ersilia.db.environments.managers)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.DockerNotActiveError">DockerNotActiveError</a>, <a href="source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.serve_exceptions.DockerNotActiveError">[1]</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.pack.html#ersilia.hub.fetch.pack.runners.DockerPack">DockerPack (class in ersilia.hub.fetch.pack.runners)</a>
 </li>
@@ -2565,8 +2567,6 @@
 </li>
         <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement.install">(ersilia.setup.requirements.conda.CondaRequirement method)</a>
 </li>
-        <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.install">(ersilia.setup.requirements.docker.DockerRequirement method)</a>
-</li>
         <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement.install">(ersilia.setup.requirements.git.GithubCliRequirement method)</a>
 </li>
         <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.install">(ersilia.setup.requirements.git.GitLfsRequirement method)</a>
@@ -2594,6 +2594,12 @@
         <li><a href="source/autodoc/ersilia.io.types.html#ersilia.io.types.naive.IO">(class in ersilia.io.types.naive)</a>
 </li>
         <li><a href="source/autodoc/ersilia.io.types.html#ersilia.io.types.text.IO">(class in ersilia.io.types.text)</a>
+</li>
+      </ul></li>
+      <li><a href="source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_active">is_active() (ersilia.db.environments.managers.DockerManager method)</a>
+
+      <ul>
+        <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_active">(ersilia.setup.requirements.docker.DockerRequirement method)</a>
 </li>
       </ul></li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_amenable">is_amenable() (ersilia.serve.standard_api.StandardCSVRunApi method)</a>
@@ -2655,6 +2661,8 @@
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_csv">is_csv() (ersilia.io.readers.file.FileTyper method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_docker">is_docker() (ersilia.hub.bundle.status.ModelStatus method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_active">is_docker_active() (ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_installed">is_docker_installed() (ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher method)</a>
 
@@ -2722,6 +2730,8 @@
       </ul></li>
       <li><a href="source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header">is_key_header() (ersilia.utils.identifiers.compound.CompoundIdentifier method)</a>
 </li>
+      <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_logged_in">is_logged_in() (ersilia.setup.requirements.docker.DockerRequirement method)</a>
+</li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_output_csv_file">is_output_csv_file() (ersilia.serve.standard_api.StandardCSVRunApi method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_output_type_standardizable">is_output_type_standardizable() (ersilia.serve.standard_api.StandardCSVRunApi method)</a>
@@ -2775,6 +2785,8 @@
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_valid_input_file">is_valid_input_file() (ersilia.io.readers.file.FileTyper method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_valid_output_file">is_valid_output_file() (ersilia.io.readers.file.FileTyper method)</a>
+</li>
+      <li><a href="source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_working">is_working() (ersilia.setup.requirements.docker.DockerRequirement method)</a>
 </li>
       <li><a href="source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.is_worth_splitting">is_worth_splitting() (ersilia.io.readers.file.StandardJsonFileReader method)</a>
 

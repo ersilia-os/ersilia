@@ -291,7 +291,8 @@
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">dm</span><span class="o">.</span><span class="n">delete_images</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
+        <span class="k">if</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
+            <span class="n">dm</span><span class="o">.</span><span class="n">delete_images</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ModelFetchedEntryDeleter"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelFetchedEntryDeleter">[docs]</a><span class="k">class</span> <span class="nc">ModelFetchedEntryDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>

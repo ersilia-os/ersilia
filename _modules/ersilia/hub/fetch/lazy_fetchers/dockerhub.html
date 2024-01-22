@@ -76,7 +76,7 @@
   <h1>Source code for ersilia.hub.fetch.lazy_fetchers.dockerhub</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">..register.register</span> <span class="kn">import</span> <span class="n">ModelRegisterer</span>
 
-<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">EOS</span>
 <span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
 
@@ -84,6 +84,7 @@
 <span class="kn">from</span> <span class="nn">....serve.services</span> <span class="kn">import</span> <span class="n">PulledDockerImageService</span>
 <span class="kn">from</span> <span class="nn">....setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
 <span class="kn">from</span> <span class="nn">....utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
+<span class="kn">from</span> <span class="nn">....utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="n">DockerNotActiveError</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span>
 
 
@@ -95,6 +96,9 @@
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_docker_installed"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_installed">[docs]</a>    <span class="k">def</span> <span class="nf">is_docker_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ModelDockerHubFetcher.is_docker_active"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_active">[docs]</a>    <span class="k">def</span> <span class="nf">is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_active</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_available"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_available">[docs]</a>    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span>
@@ -147,7 +151,10 @@
             <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelDockerHubFetcher.fetch"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="nd">@throw_ersilia_exception</span>
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">DockerNotActiveError</span><span class="p">()</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">mp</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModelRegisterer</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
@@ -155,7 +162,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">write_apis</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">copy_information</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">copy_metadata</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">copy_status</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_status</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
