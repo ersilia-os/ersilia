@@ -24,7 +24,7 @@ jobs:
             AIRTABLE_BASE_ID: 'appgxpCzCDNyGjWc8'
             AIRTABLE_TABLE_NAME: 'Models'
         run: |
-          python .github/scripts/convert_airtable_to_csv.py $AIRTABLE_API_KEY $AIRTABLE_BASE_ID $AIRTABLE_TABLE_NAME models_from_airtable.csv
+          python .github/scripts/convert_airtable_to_csv.py $AIRTABLE_API_KEY $AIRTABLE_BASE_ID $AIRTABLE_TABLE_NAME
 
       - name: Commit and push file
         uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # pin@v1.4
