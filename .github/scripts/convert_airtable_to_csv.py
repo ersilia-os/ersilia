@@ -6,7 +6,7 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 
 data_directory = os.path.join(current_directory, '../../ersilia/hub/content/data')
 os.makedirs(data_directory, exist_ok=True)
-file_path= os.path.join(data_directory, 'models.csv')
+file_path= os.path.abspath(os.path.join(data_directory, 'models.csv'))
 
 def convert_airtable_to_csv(airtable_api_key, airtable_base_id,airtable_table_id,file_path):
  
