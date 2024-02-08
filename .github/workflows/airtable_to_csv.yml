@@ -30,7 +30,7 @@ jobs:
           python .github/scripts/convert_airtable_to_csv.py $AIRTABLE_API_KEY $AIRTABLE_BASE_ID $AIRTABLE_TABLE_NAME
           ls ersilia/hub/content/data/*
 
-      - name: Commit and push changes done to the static version file
+      - name: Commit and push changes done to the table CSV
         uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # pin@v1.4
         with:
           author_name: "ersilia-bot"
