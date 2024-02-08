@@ -12,7 +12,7 @@ jobs:
     
     steps:
       - name: Checkout persist credentials
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # pin@v3.5.2
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
@@ -29,6 +29,8 @@ jobs:
         run: |
           python .github/scripts/convert_airtable_to_csv.py $AIRTABLE_API_KEY $AIRTABLE_BASE_ID $AIRTABLE_TABLE_NAME
           ls ersilia/hub/content/data/*
+          wc -l ersilia/hub/content/data/models.csv
+          git status
 
       - name: Commit and push changes done to the table CSV
         uses: actions-js/push@156f2b10c3aa000c44dbe75ea7018f32ae999772 # pin@v1.4
