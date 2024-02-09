@@ -1,6 +1,7 @@
 import os
-from airtable import Airtable
 import csv
+import re
+from airtable import Airtable
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -17,6 +18,10 @@ def convert_airtable_to_tsv(airtable_api_key, airtable_base_id,airtable_table_id
         writer = csv.writer(f, delimiter="\t")
         writer.writerow(records[0]["fields"].keys())
         for record in records:
+            clean_values= []
+            for value in record["fields"].values():
+                clean_value= re.sub(r'[\r\n]', '', str(value))
+                clean_values.append(clean_value)
             writer.writerow(record["fields"].values())
     
 if __name__ == "__main__":
