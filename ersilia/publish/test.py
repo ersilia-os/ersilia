@@ -15,6 +15,7 @@ from .. import ErsiliaBase
 from .. import throw_ersilia_exception
 from .. import ErsiliaModel
 from ..utils.exceptions_utils import test_exceptions as texc
+from ..utils.terminal import run_command_check_output
 from ..core.session import Session
 from ..default import INFORMATION_FILE
 
@@ -41,6 +42,7 @@ class ModelTester(ErsiliaBase):
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         self._info = self._read_information()
         self._input = self._info["card"]["Input"]
+        self._output_type = self._info["card"]["Output Type"]
         self.RUN_FILE = "run.sh"
         self.information_check = False
         self.single_input = False
@@ -512,6 +514,13 @@ class ModelTester(ErsiliaBase):
             header = lines[0].strip().split(",")
             for line in lines[1:]:
                 values = line.strip().split(",")
+                print("VALUES:", values)
+                print(self._output_type)
+                if self._output_type == ["Float"]:
+                    print("FLOAT HERE")
+                    values = [float(x) for x in values]
+                if self._output_type == ["Integer"]:
+                    values = [int(x) for x in values]
                 data.append(dict(zip(header, values)))
         return data
 
@@ -655,9 +664,14 @@ class ModelTester(ErsiliaBase):
             # Compare values in the common columns within a 5% tolerance`
             for column in common_columns:
                 for i in range(len(ersilia_run)):
+                    print(type(ersilia_run[i][column]))
+                    print(ersilia_run[i][column])
+                    print(type(bash_run[i][column]))
+                    print(bash_run[i][column])
                     if isinstance(ersilia_run[i][column], (float, int)) and isinstance(
-                        ersilia_run[i][column], (float, int)
+                        bash_run[i][column], (float, int)
                     ):
+                        print("HERE")
                         if not all(
                             self._compare_tolerance(a, b, DIFFERENCE_THRESHOLD)
                             for a, b in zip(ersilia_run[i][column], bash_run[i][column])
@@ -672,8 +686,9 @@ class ModelTester(ErsiliaBase):
                             print(bash_run[i][column])
                             raise texc.InconsistentOutputs(self.model_id)
                     elif isinstance(ersilia_run[i][column], str) and isinstance(
-                        ersilia_run[i][column], str
+                        bash_run[i][column], str
                     ):
+                        print("THERE")
                         if not all(
                             self._compare_string_similarity(a, b, 95)
                             for a, b in zip(ersilia_run[i][column], bash_run[i][column])
