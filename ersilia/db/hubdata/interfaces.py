@@ -20,7 +20,7 @@ class AirtableInterface(ErsiliaBase):
 
     @staticmethod
     def _get_read_only_airtable_api_key():
-        url = "https://raw.githubusercontent.com/ersilia-os/ersilia/master/config/read_only_keys.json"
+        url = "https://ersilia-model-hub.s3.eu-central-1.amazonaws.com/read_only_keys.json"
         r = requests.get(url)
         data = r.json()
         return data["AIRTABLE_READONLY_API_KEY"]
