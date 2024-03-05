@@ -111,6 +111,9 @@ eos3xip	['Compound']	Pretrained	https://github.com/ersilia-os/eos3xip	https://pa
 "	Ready	grover-qm8	Electronic spectra and excited state energy	['MoleculeNet', 'Chemical graph model', 'Quantum properties']	Single	['eos3xip', 'grover-qm8']	Predicted electronic spectra and excited state energy	['Regression']	Amna-28	List	['Float']	https://hub.docker.com/r/ersiliaos/eos3xip	['AMD64', 'ARM64']	https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos3xip.zip	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos3xip'}	"$ ersilia serve grover-qm8
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2022-07-13	https://github.com/Amna-28
+eos5guo	https://github.com/ersilia-os/eos5guo	https://pubs.acs.org/doi/10.1021/ci050457y	https://www.rdkit.org/docs/source/rdkit.Chem.rdReducedGraphs.html	In progress	erg-descs	ErG 2D Descriptors	GemmaTuron	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos5guo'}	"$ ersilia serve erg-descs
+$ ersilia api -i 'CCCOCCC'
+$ ersilia close"	2024-03-06	https://github.com/GemmaTuron
 eos4e41	['Compound']	Pretrained	https://github.com/ersilia-os/eos4e41	https://pubmed.ncbi.nlm.nih.gov/32084340/	http://chemprop.csail.mit.edu/checkpoints	MIT	['Probability']	"Based on a simple E.coli growth inhibition assay, the authors trained a model capable of identifying antibiotic potential in compounds structurally divergent from conventional antibiotic drugs. One of the predicted active molecules, Halicin (SU3327), was experimentally validated in vitro and in vivo. Halicin is a drug under development as a treatment for diabetes.
 This model contains a reduced version of the model for training purposes. Please use the eos4e40 for the full prediction capabilities.
 
@@ -161,6 +164,9 @@ eos935d	['Compound']	Pretrained	https://github.com/ersilia-os/eos935d	https://pu
 "	Ready	meta-trans	MetaTrans: human drug metabolites	['Metabolism']	Single	['eos935d', 'drug-metabolites']	A maximum of 10 human metabolites generated from the input molecule	['Generative']	carcablop	List	['String']	https://hub.docker.com/r/ersiliaos/eos935d	['AMD64']	https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos935d.zip	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos935d'}	"$ ersilia serve meta-trans
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2022-12-20	https://github.com/carcablop
+eos24ur	https://github.com/ersilia-os/eos24ur	https://www.nature.com/articles/s42004-018-0043-x	https://github.com/grisoniFr/scaffold_hopping_whales	In progress	whales-scaled	WHALES scaled	miquelduranfrigola	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos24ur'}	"$ ersilia serve whales-scaled
+$ ersilia api -i 'CCCOCCC'
+$ ersilia close"	2024-03-05	https://github.com/miquelduranfrigola
 eos3nl8	https://github.com/ersilia-os/eos3nl8	https://arxiv.org/abs/2007.10261v1	https://github.com/gnn4dr/DRKG	Archived	COVID-19-Drug-Repurposing	DRKG_COVID19	Inyrkz	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos3nl8'}	"$ ersilia serve COVID-19-Drug-Repurposing
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2023-12-05	https://github.com/Inyrkz
@@ -329,7 +335,7 @@ eos81ew	['Compound']	Pretrained	https://github.com/ersilia-os/eos81ew	https://ww
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2023-01-29	https://github.com/pauline-banye
 eos7e3s	['Compound']	Retrained	https://github.com/ersilia-os/eos7e3s	https://pubmed.ncbi.nlm.nih.gov/30325042/	https://github.com/cptbern/QSAR_DILI_2019	None	['Probability']	"Prediction of clinically relevant drug-induced-liver-injury (DILI), based solely on drug structure using binary classification methods. The authors collected a public dataset of 475 molecules with associated DILI outcomes, and built a model with an accuracy of 0.89. The model checkpoints have not been provided so Ersilia has used the provided data to retrain the model.
-"	Ready	dili-pred	Drug-induced liver injury prediction	['Metabolism', 'Toxicity']	Single	Probability that a drug causes DILI	['Classification']	leilayesufu	Single	['Float']	https://hub.docker.com/r/ersiliaos/eos7e3s	['AMD64', 'ARM64']	https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos7e3s.zip	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos7e3s'}	"$ ersilia serve dili-pred
+"	Archived	dili-pred	Drug-induced liver injury prediction	['Metabolism', 'Toxicity']	Single	Probability that a drug causes DILI	['Classification']	leilayesufu	Single	['Float']	https://hub.docker.com/r/ersiliaos/eos7e3s	['AMD64', 'ARM64']	https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos7e3s.zip	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos7e3s'}	"$ ersilia serve dili-pred
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2024-01-02	https://github.com/leilayesufu
 eos4avb	['Compound']	Pretrained	https://github.com/ersilia-os/eos4avb	https://www.nature.com/articles/s42256-022-00557-6	https://github.com/HongxinXiang/ImageMol	MIT	['Descriptor']	"Representation Learning Framework that utilizes molecule images for encoding molecular inputs as machine readable vectors for downstream tasks such as bio-activity prediction, drug metabolism analysis, or drug toxicity prediction. The approach utilizes transfer learning, that is, pre-training the model on massive unlabeled datasets to help it in generalizing feature extraction and then fine tuning on specific tasks.
@@ -422,9 +428,6 @@ eos6o0z	['Compound']	Pretrained	https://github.com/ersilia-os/eos6o0z	https://pa
 "	Ready	grover-qm7	Atomization energy of small molecules	['MoleculeNet', 'Chemical graph model', 'Quantum properties']	Single	['eos6o0z', 'grover-qm7']	Atomization energy of the molecue	['Regression']	Amna-28	Single	['Float']	https://hub.docker.com/r/ersiliaos/eos6o0z	['AMD64', 'ARM64']	https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos6o0z.zip	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos6o0z'}	"$ ersilia serve grover-qm7
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2022-07-13	https://github.com/Amna-28
-eos7uix	https://github.com/ersilia-os/eos7uix	https://example.com	https://example.com	In progress	test-model-bentolite	Test model bentlite	miquelduranfrigola	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos7uix'}	"$ ersilia serve test-model-bentolite
-$ ersilia api -i 'CCCOCCC'
-$ ersilia close"	2023-08-07	https://github.com/miquelduranfrigola
 eos18ie	['Compound']	Pretrained	https://github.com/ersilia-os/eos18ie	https://www.nature.com/articles/s41586-023-06887-8	https://github.com/felixjwong/antibioticsai	MIT	['Probability']	"The authors use a large dataset (>30k) to train an explainable graph-based model to identify potential antibiotics with low cytotoxicity. The model uses a substructure-based approach to explore the chemical space. Using this method, they were able to screen 283 compounds and identify a candidate active against methicillin-resistant S. aureus (MRSA) and vancomycin-resistant enterococci.
 "	Ready	antibiotics-ai	Substructure-based search of novel antibiotics	['Cytotoxicity', 'Antimicrobial activity', 'ESKAPE']	Single	Probability off growth inhibition (80% cut off at 50uM)	['Classification']	Richiio	Single	['Float']	https://hub.docker.com/r/ersiliaos/eos18ie	['AMD64', 'ARM64']	https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos18ie.zip	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos18ie'}	"$ ersilia serve antibiotics-ai
 $ ersilia api -i 'CCCOCCC'
