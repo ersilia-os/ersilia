@@ -169,11 +169,18 @@ https://github.com/KavrakiLab/MetaTrans	https://pubs.rsc.org/en/content/articlel
 "	carcablop	BSD-3.0	Ready	https://hub.docker.com/r/ersiliaos/eos935d	Pretrained	eos935d	https://github.com/ersilia-os/eos935d	['Metabolism']	['String']	['Compound']	['Generative']	List	MetaTrans: human drug metabolites	['AMD64']	A maximum of 10 human metabolites generated from the input molecule	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos935d'}	"$ ersilia serve meta-trans
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2022-12-20	https://github.com/carcablop
+<<<<<<< HEAD
 https://github.com/grisoniFr/scaffold_hopping_whales	https://www.nature.com/articles/s42004-018-0043-x	['Descriptor']	Single	https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos24ur.zip	whales-scaled	"Scaled version of the WHALES descriptors (see eos3ae6). WHALES are holistic molecular descriptors useful for scaffold hopping, based on 3D structure to facilitate natural product featurization. The scaling uses sklearn's Robust Scaler trained on a random set of 100K molecules from ChEMBL.
 "	miquelduranfrigola	MIT	Ready	https://hub.docker.com/r/ersiliaos/eos24ur	Pretrained	eos24ur	https://github.com/ersilia-os/eos24ur	['Natural product', 'Descriptor']	['Float']	['Compound']	['Representation']	List	WHALES scaled	['AMD64', 'ARM64']	Scaled vector representation of a molecule	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos24ur'}	"$ ersilia serve whales-scaled
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2024-03-05	https://github.com/miquelduranfrigola
 https://github.com/gnn4dr/DRKG	https://arxiv.org/abs/2007.10261v1	COVID-19-Drug-Repurposing	Inyrkz	Archived	eos3nl8	https://github.com/ersilia-os/eos3nl8	DRKG_COVID19	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos3nl8'}	"$ ersilia serve COVID-19-Drug-Repurposing
+=======
+eos24ur	https://github.com/ersilia-os/eos24ur	https://www.nature.com/articles/s42004-018-0043-x	https://github.com/grisoniFr/scaffold_hopping_whales	In progress	whales-scaled	WHALES scaled	miquelduranfrigola	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos24ur'}	"$ ersilia serve whales-scaled
+$ ersilia api -i 'CCCOCCC'
+$ ersilia close"	2024-03-05	https://github.com/miquelduranfrigola
+eos3nl8	https://github.com/ersilia-os/eos3nl8	https://arxiv.org/abs/2007.10261v1	https://github.com/gnn4dr/DRKG	Archived	COVID-19-Drug-Repurposing	DRKG_COVID19	Inyrkz	{'label': 'GitHub', 'url': 'https://github.com/ersilia-os/eos3nl8'}	"$ ersilia serve COVID-19-Drug-Repurposing
+>>>>>>> update airtable csv [skip ci]
 $ ersilia api -i 'CCCOCCC'
 $ ersilia close"	2023-12-05	https://github.com/Inyrkz
 https://github.com/swansonk14/admet_ai	https://www.biorxiv.org/content/10.1101/2023.12.28.573531v1	['Probability', 'Score']	Single	https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos7d58.zip	admet-ai-prediction	"A framework based on ensemble of five Chemprop-RDKit models, for fast batch prediction of ADMET properties of small molecules. The framework exists as a CLI tool, a Python API, and a web server. We incorporate it using the API.
