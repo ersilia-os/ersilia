@@ -1,0 +1,30 @@
+name: Convert Back-end Airtable to JSON file
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: '0 2 * * *' 
+
+jobs:
+  convert-airtable-to-json:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout persist credentials
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+          
+      - name: Install dependencies
+        run:
+          pip install airtable-python-wrapper
+
+      - name: Convert to backend of Airtable to JSON FILE
+        env:
+            AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          python .github/scripts/convert_airtable_to_json.py $AIRTABLE_API_KEY $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY

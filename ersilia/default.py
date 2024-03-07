@@ -13,6 +13,7 @@ CONDA_ENV_YML_FILE = "environment.yml"
 DOCKERFILE_FILE = "Dockerfile"
 GITHUB_ORG = "ersilia-os"
 GITHUB_ERSILIA_REPO = "ersilia"
+ERSILIA_MODEL_HUB_S3_BUCKET = 'ersilia-model-hub'
 ERSILIA_MODELS_S3_BUCKET = "ersilia-models"
 ERSILIA_MODELS_ZIP_S3_BUCKET = "ersilia-models-zipped"
 CONFIG_JSON = "config.json"
