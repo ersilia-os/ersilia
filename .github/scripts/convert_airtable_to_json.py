@@ -4,7 +4,7 @@ import logging
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 import requests
-from ...ersilia.default import AIRTABLE_MODEL_HUB_BASE_ID, ERSILIA_MODEL_HUB_S3_BUCKET
+from ersilia.default import AIRTABLE_MODEL_HUB_BASE_ID, ERSILIA_MODEL_HUB_S3_BUCKET
 
 AIRTABLE_TABLE_ID: 'tblZGe2a2XeBxrEHP'
 AWS_ACCOUNT_REGION = "eu-central-1"
