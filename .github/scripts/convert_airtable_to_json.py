@@ -4,10 +4,11 @@ import logging
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 import requests
-from ersilia.default import AIRTABLE_MODEL_HUB_BASE_ID, ERSILIA_MODEL_HUB_S3_BUCKET
 
+AIRTABLE_MODEL_HUB_BASE_ID= "appgxpCzCDNyGjWc8"
 AIRTABLE_TABLE_ID: 'tblZGe2a2XeBxrEHP'
 AWS_ACCOUNT_REGION = "eu-central-1"
+ERSILIA_MODEL_HUB_S3_BUCKET= 'ersilia-model-hub'
 
 def convert_airtable_to_json(airtable_api_key, aws_access_key_id, aws_secret_access_key):
  
