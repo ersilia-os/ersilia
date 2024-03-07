@@ -88,7 +88,7 @@
 <span class="kn">from</span> <span class="nn">..db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
 <span class="kn">from</span> <span class="nn">..db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
 <span class="kn">from</span> <span class="nn">..setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
-<span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
+<span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span><span class="p">,</span> <span class="n">StandaloneConda</span>
 <span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
 <span class="kn">from</span> <span class="nn">..utils.venv</span> <span class="kn">import</span> <span class="n">SimpleVenv</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_VENV</span>
@@ -100,6 +100,7 @@
     <span class="n">BadGatewayError</span><span class="p">,</span>
     <span class="n">DockerNotActiveError</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..setup.requirements.conda</span> <span class="kn">import</span> <span class="n">CondaRequirement</span>
 
 <span class="n">SLEEP_SECONDS</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">TIMEOUT_SECONDS</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -361,9 +362,20 @@
             <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
             <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">CondaEnvironmentService</span><span class="o">.</span><span class="n">is_single_model_without_conda</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_singe</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">StandaloneConda</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_singe</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CondaEnvironmentService.is_single_model_without_conda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.is_single_model_without_conda">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_single_model_without_conda</span><span class="p">():</span>
+        <span class="n">conda_checker</span> <span class="o">=</span> <span class="n">CondaRequirement</span><span class="p">()</span>
+        <span class="c1"># Returns True if conda is not installed and False otherwise</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">conda_checker</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
@@ -373,11 +385,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_get_env_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">envs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">envs_of_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">env</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_singe</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">envs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">envs_of_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">env</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_env_name</span><span class="p">()</span>
