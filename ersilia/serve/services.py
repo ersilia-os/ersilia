@@ -12,7 +12,7 @@ from ..utils.ports import find_free_port
 from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
 from ..setup.requirements.docker import DockerRequirement
-from ..utils.conda import SimpleConda
+from ..utils.conda import SimpleConda, StandaloneConda
 from ..utils.docker import SimpleDocker
 from ..utils.venv import SimpleVenv
 from ..default import DEFAULT_VENV
@@ -24,6 +24,7 @@ from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
 )
+from ..setup.requirements.conda import CondaRequirement
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -285,9 +286,20 @@ class CondaEnvironmentService(_BentoMLService):
             config_json=config_json,
             preferred_port=preferred_port,
         )
-        self.db = EnvironmentDb()
-        self.db.table = "conda"
-        self.conda = SimpleConda()
+        if CondaEnvironmentService.is_single_model_without_conda():
+            self._is_singe = True
+            self.conda = StandaloneConda()
+        else:
+            self._is_singe = False
+            self.db = EnvironmentDb()
+            self.db.table = "conda"
+            self.conda = SimpleConda()
+
+    @staticmethod
+    def is_single_model_without_conda():
+        conda_checker = CondaRequirement()
+        # Returns True if conda is not installed and False otherwise
+        return not conda_checker.is_installed()
 
     def __enter__(self):
         self.serve()
@@ -297,11 +309,14 @@ class CondaEnvironmentService(_BentoMLService):
         self.close()
 
     def _get_env_name(self):
-        envs = list(self.db.envs_of_model(self.model_id))
-        for env in envs:
-            if self.conda.exists(env):
-                return env
-        return None
+        if self._is_singe:
+            return self.model_id
+        else:
+            envs = list(self.db.envs_of_model(self.model_id))
+            for env in envs:
+                if self.conda.exists(env):
+                    return env
+            return None
 
     def _run_command(self, cmd):
         env = self._get_env_name()
