@@ -5,8 +5,8 @@ import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 import requests
 
-AIRTABLE_MODEL_HUB_BASE_ID= "appgxpCzCDNyGjWc8"
-AIRTABLE_TABLE_ID: 'tblZGe2a2XeBxrEHP'
+AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
+AIRTABLE_TABLE_ID = 'tblZGe2a2XeBxrEHP'
 AWS_ACCOUNT_REGION = "eu-central-1"
 ERSILIA_MODEL_HUB_S3_BUCKET= 'ersilia-model-hub'
 
@@ -17,12 +17,14 @@ def convert_airtable_to_json(airtable_api_key, aws_access_key_id, aws_secret_acc
 
     data=response.json()
     records_models= [record['fields'] for record in data['records']]
-    models_json=json.dump(records_models)
+
+    with open("models.json", "w") as f:
+        json.dump(records_models, f)
 
     #Load json file in AWS S3 bucket
     s3 = boto3.client('s3',aws_access_key_id=aws_access_key_id,aws_secret_access_key=aws_secret_access_key,region_name=AWS_ACCOUNT_REGION)
     try:
-        s3.response = s3.upload_file( models_json,ERSILIA_MODEL_HUB_S3_BUCKET,'models.json',ExtraArgs={'ACL': 'public-read'})
+        s3.response = s3.upload_file('models.json',ERSILIA_MODEL_HUB_S3_BUCKET,'models.json',ExtraArgs={'ACL': 'public-read'})
         print("file models.json uploaded")
     except NoCredentialsError:
             logging.error("Unable to upload tracking data to AWS: Credentials not found")
