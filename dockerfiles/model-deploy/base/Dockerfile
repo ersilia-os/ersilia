@@ -14,7 +14,7 @@ RUN bash /root/download-miniconda.sh && \
     mkdir -p /usr/bin/conda && \
     bash /root/miniconda.sh -b -u -p /usr/bin/conda && \
     rm /root/miniconda.sh && \
-    git clone https://github.com/DhanshreeA/ersilia.git
+    git clone https://github.com/ersilia-os/ersilia.git
 
 # Copy these here so we can retain them in the model image
 COPY docker-entrypoint.sh docker-entrypoint.sh
@@ -26,4 +26,4 @@ ENV PATH="/venv/bin:$PATH"
 RUN python -m venv /venv && \
     pip install --upgrade pip && \
     cd /root/ersilia && \
-    pip install .
+    pip install -e .
