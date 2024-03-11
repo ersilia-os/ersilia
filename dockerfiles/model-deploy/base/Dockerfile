@@ -15,6 +15,11 @@ RUN bash /root/download-miniconda.sh && \
     bash /root/miniconda.sh -b -u -p /usr/bin/conda && \
     rm /root/miniconda.sh && \
     git clone https://github.com/DhanshreeA/ersilia.git
+
+# Copy these here so we can retain them in the model image
+COPY docker-entrypoint.sh docker-entrypoint.sh
+COPY nginx.conf nginx.conf
+
 # Add venv in path and create a virtutalenv to install ersilia in, 
 # so we can retain this env in a later image
 ENV PATH="/venv/bin:$PATH"

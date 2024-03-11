@@ -37,8 +37,8 @@ COPY --from=build /root/eos /root/eos
 # Copy bentoml artifacts so it doesn't complain about model bento not being found
 COPY --from=build /root/bentoml /root/bentoml
 
-COPY --from=build docker-entrypoint.sh docker-entrypoint.sh
-COPY --from=build nginx.conf /etc/nginx/sites-available/default
+COPY --from=build /root/docker-entrypoint.sh docker-entrypoint.sh
+COPY --from=build /root/nginx.conf /etc/nginx/sites-available/default
 RUN chmod + docker-entrypoint.sh
 EXPOSE 80
 ENTRYPOINT [ "sh", "docker-entrypoint.sh"]
