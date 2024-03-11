@@ -23,5 +23,7 @@ jobs:
       - name: Update model workflows using script
         run: |
           git lfs install
+          git config --global user.name "ersilia-bot"
+          git config --global user.email "ersilia-bot@users.noreply.github.com"
           wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/update_model_workflows_from_template.py
           python update_model_workflows_from_template.py $MODEL_ID
