@@ -26,4 +26,4 @@ ENV PATH="/venv/bin:$PATH"
 RUN python -m venv /venv && \
     pip install --upgrade pip && \
     cd /root/ersilia && \
-    pip install -e .
+    pip install .
