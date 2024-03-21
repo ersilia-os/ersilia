@@ -132,6 +132,8 @@ class CondaUtils(BaseConda):
             exec = r.split(" ")[0]
             if exec not in ["conda", "pip", "pip3"]:  # TODO write better
                 is_valid = False
+            if r.startswith("python -m pip") or r.startswith("python3 -m pip"):
+                is_valid = True
             if " -y " not in r and exec == "conda":
                 runs_ += [r + " -y"]
             else:
