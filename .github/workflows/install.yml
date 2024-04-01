@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+    - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c
       with:
@@ -35,7 +35,7 @@ jobs:
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+    - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c
       with:
@@ -57,7 +57,7 @@ jobs:
         platform: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v3.5.3
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v3.5.3
 
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
