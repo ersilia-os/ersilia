@@ -17,20 +17,17 @@ def convert_airtable_to_json(airtable_api_key, aws_access_key_id, aws_secret_acc
 
     data=response.json()
     records_models= [record['fields'] for record in data['records']]
+    models_json=json.dumps(records_models)
 
-    with open("models.json", "w") as f:
-        json.dump(records_models, f)
-
-    #Load json file in AWS S3 bucket
+    #Load JSON in AWS S3 bucket
     s3 = boto3.client('s3',aws_access_key_id=aws_access_key_id,aws_secret_access_key=aws_secret_access_key,region_name=AWS_ACCOUNT_REGION)
     try:
-        s3.response = s3.upload_file('models.json',ERSILIA_MODEL_HUB_S3_BUCKET,'models.json',ExtraArgs={'ACL': 'public-read'})
+        s3.put_object(Body=models_json, Bucket=ERSILIA_MODEL_HUB_S3_BUCKET, Key='models.json', ACL='public-read')
         print("file models.json uploaded")
     except NoCredentialsError:
-            logging.error("Unable to upload tracking data to AWS: Credentials not found")
+        logging.error("Unable to upload tracking data to AWS: Credentials not found")
     except ClientError as e:
         logging.error(e)
-        return False
     
 if __name__ == "__main__":
 
