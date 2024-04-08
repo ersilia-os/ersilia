@@ -157,6 +157,7 @@
     <span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_available_locally</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Environment flag PULL_IMAGE set to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PULL_IMAGE</span><span class="p">))</span>
                 <span class="n">do_pull</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
                     <span class="s2">&quot;Requested image </span><span class="si">{0}</span><span class="s2"> is available locally. Do you still want to fetch it? [Y/n]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
