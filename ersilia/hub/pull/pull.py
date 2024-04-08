@@ -11,7 +11,8 @@ from ...utils.exceptions_utils.pull_exceptions import DockerImageNotAvailableErr
 from ...utils.docker import SimpleDocker
 from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 
-
+PULL_IMAGE = os.environ.get('PULL_IMAGE', 'Y')
+    
 class ModelPuller(ErsiliaBase):
     def __init__(self, model_id, overwrite=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -84,7 +85,7 @@ class ModelPuller(ErsiliaBase):
                     "Requested image {0} is available locally. Do you still want to fetch it? [Y/n]".format(
                         self.model_id
                     ),
-                    default_answer="Y",
+                    default_answer=PULL_IMAGE,
                 )
             elif self.overwrite:
                 do_pull = True

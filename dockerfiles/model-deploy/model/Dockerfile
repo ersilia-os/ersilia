@@ -39,9 +39,14 @@ COPY --from=build /root/bentoml /root/bentoml
 
 COPY --from=build /root/docker-entrypoint.sh docker-entrypoint.sh
 COPY --from=build /root/nginx.conf /etc/nginx/sites-available/default
-COPY patch_python_path.sh /root/patch_python_path.sh
-RUN chmod +x /root/patch_python_path.sh
-RUN ./patch_python_path.sh
+
+# TODO this is very hacky, we want to get rid of this somehow
+RUN echo -e "#!/bin/bash\nset -eux\n\
+cd ~/bentoml/repository/$MODEL/*/$MODEL/artifacts/framework\n\
+sed -i -n 's/\/usr\/bin\/conda\/envs//p' run.sh" > patch_python_path.sh && \
+chmod +x patch_python_path.sh && \
+./patch_python_path.sh
+
 RUN chmod + docker-entrypoint.sh
 EXPOSE 80
 ENTRYPOINT [ "sh", "docker-entrypoint.sh"]
