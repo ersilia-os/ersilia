@@ -12,7 +12,7 @@ RUN /$MODEL/bin/conda-unpack
 
 # Now we can create a new image that only contains
 # the ersilia environment, the model environment, 
-# and the model itsel (as a bentoml bundle)
+# and the model itself (as a bentoml bundle)
 
 FROM python:3.7-slim-buster
 WORKDIR /root
@@ -40,10 +40,14 @@ COPY --from=build /root/bentoml /root/bentoml
 COPY --from=build /root/docker-entrypoint.sh docker-entrypoint.sh
 COPY --from=build /root/nginx.conf /etc/nginx/sites-available/default
 
-# TODO this is very hacky, we want to get rid of this somehow
+# Writing this script here because the Dockerfile gets copied to the model directory
+# and the model directory is not known until the build stage. Either we copy this script
+# within the build context or we write it here.
 RUN echo -e "#!/bin/bash\nset -eux\n\
-cd ~/bentoml/repository/$MODEL/*/$MODEL/artifacts/framework\n\
-sed -i -n 's/\/usr\/bin\/conda\/envs//p' run.sh" > patch_python_path.sh && \
+cd ~/bentoml/repository/$MODEL/*/$MODEL/artifacts/\n\
+if [ -f framework/run.sh ]; then\n\
+  sed -i -n 's/\/usr\/bin\/conda\/envs//p' framework/run.sh\n\
+fi" > patch_python_path.sh && \
 chmod +x patch_python_path.sh && \
 ./patch_python_path.sh
 
