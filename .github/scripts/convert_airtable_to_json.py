@@ -17,7 +17,7 @@ def convert_airtable_to_json(airtable_api_key, aws_access_key_id, aws_secret_acc
 
     data=response.json()
     records_models= [record['fields'] for record in data['records']]
-    models_json=json.dumps(records_models)
+    models_json=json.dumps(records_models, indent=4)
 
     #Load JSON in AWS S3 bucket
     s3 = boto3.client('s3',aws_access_key_id=aws_access_key_id,aws_secret_access_key=aws_secret_access_key,region_name=AWS_ACCOUNT_REGION)
