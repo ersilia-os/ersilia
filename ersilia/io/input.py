@@ -179,7 +179,7 @@ class GenericInputAdapter(object):
 
 class ExampleGenerator(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
-        self.check_model_id(model_id)
+        self.model_id = model_id
         self.IO = BaseIOGetter(config_json=config_json).get(model_id)
         ErsiliaBase.__init__(self, config_json=config_json)
         self.input_shape = self.IO.input_shape
@@ -260,9 +260,11 @@ class ExampleGenerator(ErsiliaBase):
         else:
             return False
 
-    def example(self, n_samples, file_name, simple, try_predefined=False):
+    def example(self, n_samples, file_name, simple, try_predefined):
         predefined_done = False
         if try_predefined is True and file_name is not None:
+            self.logger.debug("Trying with predefined input")
             predefined_done = self.predefined_example(file_name)
         if not predefined_done:
+            self.logger.debug("Randomly sampling input")
             self.random_example(n_samples=n_samples, file_name=file_name, simple=simple)
