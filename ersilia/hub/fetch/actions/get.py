@@ -287,7 +287,12 @@ class ModelRepositoryGetter(BaseAction):
         file_name = os.path.join(self._model_path(self.model_id), "model", "framework", PREDEFINED_EXAMPLE_FILENAME)
         dest_file = os.path.join(self._model_path(self.model_id), PREDEFINED_EXAMPLE_FILENAME)
         if os.path.exists(file_name):
+            self.logger.debug("HERE!!!!")
+            self.logger.debug("Example file exists")
             shutil.copy(file_name, dest_file)
+        else:
+            self.logger.debug("HERE!!!!")
+            self.logger.debug("Example file {0} does not exist".format(file_name))
 
     @throw_ersilia_exception
     def get(self):
