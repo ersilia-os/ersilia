@@ -20,7 +20,8 @@ def example_cmd():
     @click.option("--n_samples", "-n", default=5, type=click.INT)
     @click.option("--file_name", "-f", default=None, type=click.STRING)
     @click.option("--simple/--complete", "-s/-c", default=True)
-    def example(model, n_samples, file_name, simple):
+    @click.option("--predefined/--random", "-p/-r", default=False)
+    def example(model, n_samples, file_name, simple, predefined):
         if model is not None:
             model_id = ModelBase(model).model_id
         else:
@@ -28,6 +29,6 @@ def example_cmd():
             model_id = session.current_model_id()
         eg = ExampleGenerator(model_id=model_id)
         if file_name is None:
-            echo(json.dumps(eg.example(n_samples, file_name, simple), indent=4))
+            echo(json.dumps(eg.example(n_samples, file_name, simple, predefined), indent=4))
         else:
             eg.example(n_samples, file_name, simple)
