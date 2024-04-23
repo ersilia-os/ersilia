@@ -1,4 +1,4 @@
-FROM ersiliaos/base:latest as build
+FROM ersiliaos/base-v2:latest as build
 ARG MODEL=eos_identifier
 ENV MODEL=$MODEL
 RUN ersilia -v fetch $MODEL --from_github
