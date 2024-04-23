@@ -5,8 +5,20 @@ on:
     types:
       - completed
 
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-      
+    inputs:
+      build_version:
+        description: 'Docker build version (v2 is default; v1 - single stage build and v2 - multi stage build)'
+        required: false
+        type: string
+        default: v2
+
+  workflow_dispatch:
+
+env: 
+  BUILD_VERSION: ${{ github.event.inputs.build_version }}
+
 jobs:
   upload_ersilia_base_to_dockerhub:
     runs-on: ubuntu-latest
@@ -41,7 +53,7 @@ jobs:
 
       - name: Copy Dockerfile to base directory
         run: |
-          cp dockerfiles/model-deploy/base/* .
+          cp dockerfiles/model-deploy-$BUILD_VERSION/base/* .
             
       - name: Docker meta
         id: docker_meta
