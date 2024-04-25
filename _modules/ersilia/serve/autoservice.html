@@ -466,6 +466,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Metadata needs to be calculated&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_latest_meta</span> <span class="o">=</span> <span class="n">_api</span><span class="o">.</span><span class="n">meta</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">api_name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_meta</span><span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
             <span class="k">if</span> <span class="n">api_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">api_name</span><span class="p">:</span> <span class="n">_api</span><span class="o">.</span><span class="n">meta</span><span class="p">()}</span>
             <span class="k">yield</span> <span class="n">result</span></div></div>

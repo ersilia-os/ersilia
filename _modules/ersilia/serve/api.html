@@ -96,8 +96,12 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="n">save_to_lake</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_adapter</span> <span class="o">=</span> <span class="n">GenericInputAdapter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_adapter</span> <span class="o">=</span> <span class="n">GenericOutputAdapter</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_adapter</span> <span class="o">=</span> <span class="n">GenericInputAdapter</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_adapter</span> <span class="o">=</span> <span class="n">GenericOutputAdapter</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lake</span> <span class="o">=</span> <span class="n">IsauraInterface</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
         <span class="p">)</span>
