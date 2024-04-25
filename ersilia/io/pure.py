@@ -79,6 +79,8 @@ class PureDataTyper(ErsiliaBase):
             return
         dest = self._model_path(self.model_id)
         meta_file = os.path.join(dest, METADATA_JSON_FILE)
+        if not os.path.exists(meta_file):
+            return
         with open(meta_file, "r") as f:
             meta = json.load(f)
         output_type = meta["Output Type"]
