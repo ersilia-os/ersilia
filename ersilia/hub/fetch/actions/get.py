@@ -284,8 +284,15 @@ class ModelRepositoryGetter(BaseAction):
         TemplatePreparer(model_id=self.model_id, config_json=self.config_json).prepare()
 
     def _copy_example_file_if_available(self):
-        file_name = os.path.join(self._model_path(self.model_id), "model", "framework", PREDEFINED_EXAMPLE_FILENAME)
-        dest_file = os.path.join(self._model_path(self.model_id), PREDEFINED_EXAMPLE_FILENAME)
+        file_name = os.path.join(
+            self._model_path(self.model_id),
+            "model",
+            "framework",
+            PREDEFINED_EXAMPLE_FILENAME,
+        )
+        dest_file = os.path.join(
+            self._model_path(self.model_id), PREDEFINED_EXAMPLE_FILENAME
+        )
         if os.path.exists(file_name):
             self.logger.debug("Example file exists")
             shutil.copy(file_name, dest_file)

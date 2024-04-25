@@ -76,7 +76,9 @@ class ModelDockerHubFetcher(ErsiliaBase):
         )
 
     def copy_example_if_available(self, model_id):
-        fr_file = "/root/eos/dest/{0}/model/framework/{1}".format(model_id, PREDEFINED_EXAMPLE_FILENAME)
+        fr_file = "/root/eos/dest/{0}/model/framework/{1}".format(
+            model_id, PREDEFINED_EXAMPLE_FILENAME
+        )
         to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, PREDEFINED_EXAMPLE_FILENAME)
         try:
             self.simple_docker.cp_from_image(

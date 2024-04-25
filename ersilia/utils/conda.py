@@ -413,9 +413,9 @@ class StandaloneConda(object):
     def __init__(self):
         pass
 
-    def exists(self,environment):
+    def exists(self, environment):
         return os.path.exists(os.path.join("/", environment))
-            
+
     def run_commandlines(self, environment, commandlines):
         """
         Run commands in a given conda environment.
@@ -425,7 +425,7 @@ class StandaloneConda(object):
 
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
-        
+
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.debug("Activating environment")
@@ -433,7 +433,9 @@ class StandaloneConda(object):
         bash_script = """
         source /{0}/bin/activate
         {1}
-        """.format(environment, commandlines)
+        """.format(
+            environment, commandlines
+        )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
 

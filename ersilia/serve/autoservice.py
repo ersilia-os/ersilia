@@ -390,6 +390,8 @@ class AutoService(ErsiliaBase):
                 self.logger.debug("Metadata needs to be calculated")
                 self._latest_meta = _api.meta()
                 self._meta = {api_name: self._latest_meta}
+            else:
+                pass
             if api_name not in self._meta:
                 self._meta = {api_name: _api.meta()}
             yield result

@@ -1,9 +1,15 @@
+import json
+import os
 import numpy as np
+from .. import ErsiliaBase
+from ..default import METADATA_JSON_FILE
 
 
-class PureDataTyper(object):
-    def __init__(self, data):
+class PureDataTyper(ErsiliaBase):
+    def __init__(self, data, model_id=None, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.data = data
+        self.model_id = model_id
 
     def _is_string(self):
         if type(self.data) is str:
@@ -68,7 +74,42 @@ class PureDataTyper(object):
         else:
             return False
 
+    def get_type_from_metadata(self):
+        if self.model_id is None:
+            return
+        dest = self._model_path(self.model_id)
+        meta_file = os.path.join(dest, METADATA_JSON_FILE)
+        with open(meta_file, "r") as f:
+            meta = json.load(f)
+        output_type = meta["Output Type"]
+        output_shape = meta["Output Shape"]
+        if len(output_type) > 1:
+            return
+        if output_shape == "Flexible List":
+            return
+        output_type = output_type[0]
+        if output_shape == "Single":
+            if output_type == "Integer":
+                return {"type": "numeric"}
+            if output_type == "Float":
+                return {"type": "numeric"}
+            if output_type == "String":
+                return {"type": "string"}
+            return
+        if output_shape == "List":
+            if output_type == "Integer":
+                return {"type": "numeric_array", "shape": np.array(self.data).shape}
+            if output_type == "Float":
+                return {"type": "numeric_array", "shape": np.array(self.data).shape}
+            if output_type == "String":
+                return {"type": "string_array", "shape": np.array(self.data).shape}
+            return
+        return
+
     def get_type(self):
+        data_type = self.get_type_from_metadata()
+        if data_type is not None:
+            return data_type
         if self._is_string():
             return {"type": "string"}
         if self._is_numeric():
