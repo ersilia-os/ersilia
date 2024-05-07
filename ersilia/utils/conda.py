@@ -132,6 +132,8 @@ class CondaUtils(BaseConda):
             exec = r.split(" ")[0]
             if exec not in ["conda", "pip", "pip3"]:  # TODO write better
                 is_valid = False
+            if r.startswith("python -m pip") or r.startswith("python3 -m pip"):
+                is_valid = True
             if " -y " not in r and exec == "conda":
                 runs_ += [r + " -y"]
             else:
@@ -404,4 +406,48 @@ class SimpleConda(CondaUtils):
             critical_errors = self._catch_critical_errors_in_conda(log_file)
             if len(critical_errors) > 0:
                 raise ModelPackageInstallError(cmd)
+        logger.debug("Activation done")
+
+
+class StandaloneConda(object):
+    def __init__(self):
+        pass
+
+    def exists(self, environment):
+        return os.path.exists(os.path.join("/", environment))
+
+    def run_commandlines(self, environment, commandlines):
+        """
+        Run commands in a given conda environment.
+        """
+        logger.debug("Run commandlines on {0}".format(environment))
+        logger.debug(commandlines)
+
+        if not self.exists(environment):
+            raise Exception("{0} environment does not exist".format(environment))
+
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_script = os.path.join(tmp_folder, "script.sh")
+        logger.debug("Activating environment")
+        logger.debug("Current working directory: {0}".format(os.getcwd()))
+        bash_script = """
+        source /{0}/bin/activate
+        {1}
+        """.format(
+            environment, commandlines
+        )
+        with open(tmp_script, "w") as f:
+            f.write(bash_script)
+
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_log = os.path.join(tmp_folder, "command_outputs.log")
+        cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
+        logger.debug("Running {0}".format(cmd))
+        run_command(cmd)
+        with open(tmp_log, "r") as f:
+            log_file = f.read()
+        logger.debug(log_file)
+        if "ERROR" in log_file:
+            logger.debug("Error occurred while running: {0}".format(cmd))
+            # TODO do we catch critical errors here?
         logger.debug("Activation done")

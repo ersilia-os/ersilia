@@ -20,7 +20,7 @@ class DockerRequirement(object):
             return True
         else:
             return False
-        
+
     def is_logged_in(self):
         cmd = "docker info"
         output = run_command_check_output(cmd)

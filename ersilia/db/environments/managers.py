@@ -38,7 +38,7 @@ class DockerManager(ErsiliaBase):
 
     def is_installed(self):
         return DockerRequirement().is_installed()
-    
+
     def is_logged_in(self):
         return DockerRequirement().is_logged_in()
 

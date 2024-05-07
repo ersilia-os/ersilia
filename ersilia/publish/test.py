@@ -517,7 +517,6 @@ class ModelTester(ErsiliaBase):
                 print("VALUES:", values)
                 print(self._output_type)
                 if self._output_type == ["Float"]:
-                    print("FLOAT HERE")
                     values = [float(x) for x in values]
                 if self._output_type == ["Integer"]:
                     values = [int(x) for x in values]
@@ -671,7 +670,6 @@ class ModelTester(ErsiliaBase):
                     if isinstance(ersilia_run[i][column], (float, int)) and isinstance(
                         bash_run[i][column], (float, int)
                     ):
-                        print("HERE")
                         if not all(
                             self._compare_tolerance(a, b, DIFFERENCE_THRESHOLD)
                             for a, b in zip(ersilia_run[i][column], bash_run[i][column])
@@ -688,7 +686,6 @@ class ModelTester(ErsiliaBase):
                     elif isinstance(ersilia_run[i][column], str) and isinstance(
                         bash_run[i][column], str
                     ):
-                        print("THERE")
                         if not all(
                             self._compare_string_similarity(a, b, 95)
                             for a, b in zip(ersilia_run[i][column], bash_run[i][column])

@@ -20,8 +20,12 @@ class Api(object):
     def __init__(self, model_id, url, api_name, save_to_lake, config_json):
         self.config_json = config_json
         self.model_id = model_id
-        self.input_adapter = GenericInputAdapter(self.model_id, config_json=config_json)
-        self.output_adapter = GenericOutputAdapter(config_json=config_json)
+        self.input_adapter = GenericInputAdapter(
+            model_id=self.model_id, config_json=config_json
+        )
+        self.output_adapter = GenericOutputAdapter(
+            model_id=self.model_id, config_json=config_json
+        )
         self.lake = IsauraInterface(
             model_id=model_id, api_name=api_name, config_json=config_json
         )
