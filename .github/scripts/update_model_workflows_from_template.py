@@ -14,12 +14,12 @@ subprocess.Popen(
     "git clone https://github.com/ersilia-os/{0}.git".format(model_repo), shell=True
 ).wait()
 
-workflows_folder = os.path.join("{0}/.github/workflows".format(model_repo))
+github_folder = os.path.join("{0}/.github/".format(model_repo))
 
-if os.path.exists(workflows_folder):
-    shutil.rmtree(workflows_folder)
+if os.path.exists(github_folder):
+    shutil.rmtree(github_folder)
 
-shutil.copytree("eos-template/.github/workflows", workflows_folder)
+shutil.copytree("eos-template/.github/", github_folder)
 
 subprocess.Popen(
     "cd {0};git add .; git commit -m 'updated workflow files'; git push; cd ..".format(

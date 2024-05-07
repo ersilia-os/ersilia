@@ -125,13 +125,14 @@ class ResponseRefactor(ErsiliaBase):
 
 
 class GenericOutputAdapter(ResponseRefactor):
-    def __init__(self, config_json):
+    def __init__(self, model_id=None, config_json=None):
         ResponseRefactor.__init__(self, config_json=config_json)
         self.api_schema = None
         self._schema = None
         self._array_types = set(
             ["array", "numeric_array", "string_array", "mixed_array"]
         )
+        self.model_id = model_id
 
     @staticmethod
     def _is_string(output):
@@ -179,7 +180,7 @@ class GenericOutputAdapter(ResponseRefactor):
         return v
 
     def _guess_pure_dtype_if_absent(self, vals):
-        pdt = PureDataTyper(vals)
+        pdt = PureDataTyper(vals, model_id=self.model_id)
         dtype = pdt.get_type()
         self.logger.debug("Guessed pure datatype: {0}".format(dtype))
         if dtype is None:
@@ -194,13 +195,17 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             merge_key = True
         current_pure_dtype = {}
-        for v, ok in zip(vals, output_keys):
+        for key_index, val_out in enumerate(zip(vals, output_keys)):
+            v, ok = val_out
             self.logger.debug("Data: {0}".format(ok))
-            self.logger.debug("Values: {0}".format(v))
+            self.logger.debug("Values: {0}".format(str(v)[:100]))
             m = self.__meta_by_key(ok)
             if ok not in current_pure_dtype:
                 self.logger.debug("Getting pure dtype for {0}".format(ok))
-                t = self.__pure_dtype(ok)
+                if self.dtypes is not None:
+                    t = self.dtypes[key_index]
+                else:
+                    t = self.__pure_dtype(ok)
                 self.logger.debug("This is the pure datatype: {0}".format(t))
                 if t is None:
                     t = self._guess_pure_dtype_if_absent(v)
@@ -255,6 +260,7 @@ class GenericOutputAdapter(ResponseRefactor):
         R = []
         output_keys = None
         output_keys_expanded = None
+        self.dtypes = None
         for r in result:
             inp = r["input"]
             out = r["output"]
@@ -265,9 +271,11 @@ class GenericOutputAdapter(ResponseRefactor):
                 if output_keys is None:
                     output_keys = [k for k in out.keys()]
                 vals = [out[k] for k in output_keys]
-                dtypes = [self.__pure_dtype(k) for k in output_keys]
+                # if dtypes has been resolved previously, then it is not necessary to resolve it again
+                if self.dtypes is None:
+                    self.dtypes = [self.__pure_dtype(k) for k in output_keys]
                 are_dtypes_informative = False
-                for dtype in dtypes:
+                for dtype in self.dtypes:
                     if dtype is not None:
                         are_dtypes_informative = True
                 if output_keys_expanded is None:
@@ -275,8 +283,8 @@ class GenericOutputAdapter(ResponseRefactor):
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
-                        dtypes = [t]
-                vals = self.__cast_values(vals, dtypes, output_keys)
+                        self.dtypes = [t]
+                vals = self.__cast_values(vals, self.dtypes, output_keys)
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)

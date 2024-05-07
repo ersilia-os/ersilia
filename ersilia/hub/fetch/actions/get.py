@@ -17,7 +17,7 @@ from ....utils.exceptions_utils.fetch_exceptions import (
     S3DownloaderError,
 )
 
-from ....default import S3_BUCKET_URL_ZIP
+from ....default import S3_BUCKET_URL_ZIP, PREDEFINED_EXAMPLE_FILENAME
 
 MODEL_DIR = "model"
 ROOT = os.path.basename(os.path.abspath(__file__))
@@ -283,6 +283,23 @@ class ModelRepositoryGetter(BaseAction):
         self.logger.debug("Preparing inner template if necessary")
         TemplatePreparer(model_id=self.model_id, config_json=self.config_json).prepare()
 
+    def _copy_example_file_if_available(self):
+        file_name = os.path.join(
+            self._model_path(self.model_id),
+            "model",
+            "framework",
+            PREDEFINED_EXAMPLE_FILENAME,
+        )
+        dest_file = os.path.join(
+            self._model_path(self.model_id), PREDEFINED_EXAMPLE_FILENAME
+        )
+        if os.path.exists(file_name):
+            self.logger.debug("Example file exists")
+            shutil.copy(file_name, dest_file)
+        else:
+
+            self.logger.debug("Example file {0} does not exist".format(file_name))
+
     @throw_ersilia_exception
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
@@ -314,6 +331,7 @@ class ModelRepositoryGetter(BaseAction):
         self._prepare_inner_template()
         self._change_py_version_in_dockerfile_if_necessary()
         self._remove_sudo_if_root()
+        self._copy_example_file_if_available()
 
 
 #  TODO: work outside GIT LFS

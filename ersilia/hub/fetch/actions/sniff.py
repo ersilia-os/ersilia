@@ -93,7 +93,7 @@ class ModelSniffer(BaseAction):
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
-        mbytes = size / (1024**2)
+        mbytes = size / (1024 ** 2)
         return mbytes
 
     def _get_output_ann_type(self):
@@ -217,7 +217,7 @@ class ModelSniffer(BaseAction):
                 result for result in self.model.autoservice.api(api_name, self.inputs)
             ]
             self.logger.debug("These are the results for API {0}".format(api_name))
-            self.logger.debug(results)
+            self.logger.debug(str(results)[:1000])
             for r in results:
                 if not r["output"]:
                     raise EmptyOutputError(model_id=self.model_id, api_name=api_name)

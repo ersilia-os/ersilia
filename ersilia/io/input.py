@@ -1,4 +1,5 @@
 import os
+import shutil
 import json
 import csv
 import importlib
@@ -14,6 +15,8 @@ from .shape import InputShape
 from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 from .readers.pyinput import PyInputReader
 from .readers.file import TabularFileReader, JsonFileReader
+
+from ..default import PREDEFINED_EXAMPLE_FILENAME
 
 
 class BaseIOGetter(ErsiliaBase):
@@ -176,7 +179,7 @@ class GenericInputAdapter(object):
 
 class ExampleGenerator(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
-        self.check_model_id(model_id)
+        self.model_id = model_id
         self.IO = BaseIOGetter(config_json=config_json).get(model_id)
         ErsiliaBase.__init__(self, config_json=config_json)
         self.input_shape = self.IO.input_shape
@@ -218,7 +221,7 @@ class ExampleGenerator(ErsiliaBase):
     def test(self):
         return self.IO.test()
 
-    def example(self, n_samples, file_name, simple):
+    def random_example(self, n_samples, file_name, simple):
         if not self._force_simple:
             simple = simple
         else:
@@ -247,3 +250,21 @@ class ExampleGenerator(ErsiliaBase):
                         writer.writerow(["key", "input", "text"])
                         for v in self.IO.example(n_samples):
                             writer.writerow([v["key"], v["input"], v["text"]])
+
+    def predefined_example(self, file_name):
+        dest_folder = self._model_path(self.model_id)
+        example_file = os.path.join(dest_folder, PREDEFINED_EXAMPLE_FILENAME)
+        if os.path.exists(example_file):
+            shutil.copy(example_file, file_name)
+            return True
+        else:
+            return False
+
+    def example(self, n_samples, file_name, simple, try_predefined):
+        predefined_done = False
+        if try_predefined is True and file_name is not None:
+            self.logger.debug("Trying with predefined input")
+            predefined_done = self.predefined_example(file_name)
+        if not predefined_done:
+            self.logger.debug("Randomly sampling input")
+            self.random_example(n_samples=n_samples, file_name=file_name, simple=simple)

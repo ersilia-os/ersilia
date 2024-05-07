@@ -175,7 +175,7 @@ class SimpleDocker(object):
 
     def delete(self, org, img, tag):
         if not self._with_udocker:
-            cmd = "docker rmi %s" % self._image_name(org, img, tag)
+            cmd = "docker rmi -f %s" % self._image_name(org, img, tag)
             run_command(cmd)
         else:
             cmd = "sudo -u {0} udocker rmi {1}".format(
