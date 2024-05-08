@@ -109,6 +109,7 @@ class ModelPuller(ErsiliaBase):
                 tmp_file = os.path.join(
                     tempfile.mkdtemp(prefix="ersilia-"), "docker_pull.log"
                 )
+                self.logger.debug("Keeping logs of pull in {0}".format(tmp_file))
                 run_command(
                     "docker pull {0}/{1}:{2} 2>&1 > {3}".format(
                         DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG, tmp_file
@@ -118,6 +119,7 @@ class ModelPuller(ErsiliaBase):
                     pull_log = f.read()
                     self.logger.log(pull_log)
                 if "no matching manifest" in pull_log:
+                    self.logger.warning("No matching manifest for image {0}".format(self.model_id))
                     raise Exception
                 self.logger.debug("Image pulled succesfully!")
             except:
