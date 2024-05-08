@@ -28,6 +28,12 @@ def fetch_cmd():
         help="Overwrite environment or reuse using already available environment for this model",
     )
     @click.option(
+        "--from_dir",
+        default=None,
+        type=click.STRING,
+        help="Local path where the model is stored"
+    )
+    @click.option(
         "--from_github",
         is_flag=True,
         default=False,
@@ -60,6 +66,7 @@ def fetch_cmd():
         mode,
         dockerize,
         overwrite,
+        from_dir,
         from_github,
         from_dockerhub,
         from_s3,
@@ -68,6 +75,9 @@ def fetch_cmd():
     ):
         if repo_path is not None:
             mdl = ModelBase(repo_path=repo_path)
+        elif from_dir is not None:
+            mdl = ModelBase(repo_path=from_dir)
+            repo_path = from_dir
         else:
             mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id
