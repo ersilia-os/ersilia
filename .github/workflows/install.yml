@@ -51,38 +51,30 @@ jobs:
       run: |
         ersilia -v fetch molecular-weight --from_dockerhub
 
-  test:
+  test-os:
     strategy:
       matrix:
         platform: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
       - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v3.5.3
-
-      - name: Add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
-
-      - name: Source conda
-        run: source $CONDA/etc/profile.d/conda.sh
-
-      - name: Set Python to 3.10.10
-        run: |
-          conda install -y python=3.10.10 
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
 
       - name: Install ersilia from source
         run: |
-          source activate
           python --version
-          echo "After conda init"
-          conda init
           python -m pip install -e .
 
       - name: Ersilia help
