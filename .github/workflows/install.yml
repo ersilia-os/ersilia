@@ -68,18 +68,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
 
       - name: Install ersilia from source
         run: |
-          source activate
           python --version
-          echo "After conda init"
-          conda init
           python -m pip install -e .
 
       - name: Ersilia help
