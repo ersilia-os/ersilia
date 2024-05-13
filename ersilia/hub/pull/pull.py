@@ -117,7 +117,7 @@ class ModelPuller(ErsiliaBase):
                 )
                 with open(tmp_file, "r") as f:
                     pull_log = f.read()
-                    self.logger.log(pull_log)
+                    self.logger.debug(pull_log)
                 if "no matching manifest" in pull_log:
                     self.logger.warning("No matching manifest for image {0}".format(self.model_id))
                     raise Exception
