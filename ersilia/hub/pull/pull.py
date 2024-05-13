@@ -6,7 +6,7 @@ import os
 from ... import ErsiliaBase
 from ...utils.terminal import yes_no_input, run_command
 from ... import throw_ersilia_exception
-from ...utils.exceptions_utils.pull_exceptions import DockerImageNotAvailableError
+from ...utils.exceptions_utils.pull_exceptions import DockerImageNotAvailableError, DockerConventionalPullError
 
 from ...utils.docker import SimpleDocker
 from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
@@ -120,9 +120,9 @@ class ModelPuller(ErsiliaBase):
                     self.logger.debug(pull_log)
                 if "no matching manifest" in pull_log:
                     self.logger.warning("No matching manifest for image {0}".format(self.model_id))
-                    raise Exception
+                    raise DockerConventionalPullError(model=self.model_id)
                 self.logger.debug("Image pulled succesfully!")
-            except:
+            except DockerConventionalPullError:
                 self.logger.warning(
                     "Conventional pull did not work, Ersilia is now forcing linux/amd64 architecture"
                 )
