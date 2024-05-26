@@ -34,13 +34,87 @@ body:
       placeholder: "antimicrobial-activity-prediction"
     validations:
       required: true
-
-  - type: input
+        
+  - type: dropdown
     id: tag
     attributes:
       label: Tag
+      multiple: true
       description: "Please provide (or suggest) keywords ('tag') for your model. Tags are used to categorize your model. Tags should be short and appear as comma separated items. Please check our [model repository](https://airtable.com/shrUcrUnd7jB9ChZV) to explore valid tags. At least one tag is required"
-      placeholder: "Malaria,P.falciparum,IC50"
+      options:
+        - AIDS
+        - Alzheimer
+        - Cancer
+        - Cardiotoxicity
+        - Cytotoxicity
+        - COVID19
+        - Dengue
+        - Malaria
+        - Neglected tropical disease
+        - Schistosomiasis
+        - Tuberculosis
+        - A.baumannii
+        - E.coli
+        - E.faecium
+        - HBV
+        - HIV
+        - HDAC1
+        - Human
+        - K.pneumoniae
+        - Mouse
+        - M.tuberculosis
+        - P.aeruginosa
+        - P.falciparum
+        - N.gonorrhoeae
+        - Rat
+        - Sars-CoV-2
+        - S.aureus
+        - ESKAPE
+        - BACE
+        - CYP450
+        - GPCR
+        - hERG
+        - Fraction bound
+        - IC50
+        - Half-life
+        - LogD
+        - LogP
+        - LogS
+        - MIC90
+        - Molecular weight
+        - Papp
+        - pKa
+        - ADME
+        - Antimicrobial activity
+        - Antiviral activity
+        - Bioactivity profile
+        - Lipophilicity
+        - Metabolism
+        - Microsomal stability
+        - Natural product
+        - Price
+        - Quantum properties
+        - Permeability
+        - Side effects
+        - Solubility
+        - Synthetic accessibility
+        - Target identification
+        - Therapeutic indication
+        - Toxicity
+        - ChEMBL
+        - DrugBank
+        - MoleculeNet
+        - Tox21
+        - ToxCast
+        - TDCommons
+        - ZINC
+        - Fingerprint
+        - Similarity
+        - Biomedical text
+        - Mycetoma
+        - Antifungal activity
+    validations:
+      required: true
 
   - type: input
     id: model-publication
@@ -54,12 +128,25 @@ body:
       label: Source Code
       description: "Is code for the model available? If so, please provide link to repository (GitHub, GitLab, BitBucket...)?"
 
-  - type: input
+  - type: dropdown
     id: model-license
     attributes:
       label: License
+      multiple: false
       description: "If there is a license, please provide the name of the license (or None if there is no license specified). Please check our [model repository](https://airtable.com/shrUcrUnd7jB9ChZV) to explore valid licenses."
-      placeholder: "MIT"
+      options:
+        - MIT
+        - GPL-3.0
+        - LGPL-3.0
+        - AGPL-3.0
+        - Apache-2.0
+        - BSD-2.0
+        - BSD-3.0
+        - Mozilla
+        - CC
+        - Proprietary
+        - Non-commercial
+        - None 
     validations:
       required: true
 
