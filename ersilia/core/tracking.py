@@ -484,7 +484,7 @@ class RunTracker(ErsiliaBase):
         json_dict = {}
         input_data = read_csv(input)
         result_data = read_csv(result)
-
+        
         model_id = meta["metadata"].get("Identifier", "Unknown")
         json_dict["model_id"] = model_id
 
@@ -512,4 +512,3 @@ class RunTracker(ErsiliaBase):
         self.log_result(result)
         self.log_meta(meta)
         self.log_logs()
-        
