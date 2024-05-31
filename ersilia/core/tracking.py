@@ -18,13 +18,6 @@ import re
 import requests
 
 
-<<<<<<< HEAD
-=======
-
-PERSISTENT_FILE_PATH = None
-
-
->>>>>>> 6c918d3c (Reroute session file to the EOS directory)
 # Temporary path to log files until log files are fixed
 TEMP_FILE_LOGS = os.path.abspath("")
 
@@ -119,49 +112,26 @@ def persistent_file(model_id):
     
 
 def open_persistent_file(model_id):
-
     """
     Opens a new persistent file, specifically for a run of model_id
     :param model_id: The currently running model
     """
-<<<<<<< HEAD
   
     file_name = persistent_file(model_id)
     with open(file_name, "w") as f:
-=======
-    global PERSISTENT_FILE_PATH
-    persistent_file_dir = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id)
-    os.makedirs(persistent_file_dir, exist_ok=True)  
-    PERSISTENT_FILE_PATH = os.path.join(persistent_file_dir, "current_session.txt")
-    with open(PERSISTENT_FILE_PATH, "w") as f:
->>>>>>> 6c918d3c (Reroute session file to the EOS directory)
         f.write("Session started for model: {0}\n".format(model_id))
         
         
 def write_persistent_file(contents, model_id):
 
-<<<<<<< HEAD
-=======
-
-def write_persistent_file(contents):
-
->>>>>>> 6c918d3c (Reroute session file to the EOS directory)
     """
     Writes contents to the current persistent file. Only writes if the file actually exists.
     :param contents: The contents to write to the file.
     """
-<<<<<<< HEAD
     
     file_name = persistent_file(model_id)
     if file_name and os.path.isfile(file_name):
         with open(file_name, "a") as f:
-=======
-	
-    # Only write to file if it already exists (we're meant to be tracking this run)
-    global PERSISTENT_FILE_PATH
-    if PERSISTENT_FILE_PATH and os.path.isfile(PERSISTENT_FILE_PATH):
-        with open(PERSISTENT_FILE_PATH, "a") as f:
->>>>>>> 6c918d3c (Reroute session file to the EOS directory)
             f.write(f"{contents}\n")
 
 
@@ -349,10 +319,6 @@ class RunTracker(ErsiliaBase):
         os.makedirs(self.logs_folder, exist_ok=True)
         
         self.tabular_result_logger = TabularResultLogger()
-<<<<<<< HEAD
-=======
-        self.PERSISTENT_FILE_PATH = open_persistent_file(model_id)
->>>>>>> 6c918d3c (Reroute session file to the EOS directory)
         
 
     def start_tracking(self):
@@ -400,6 +366,8 @@ class RunTracker(ErsiliaBase):
             column_stats["min"] = min(values)
             column_stats["max"] = max(values)
             column_stats["std"] = statistics.stdev(values) if len(values) > 1 else 0
+
+            stats[column] = column_stats
 
         return stats
         
@@ -516,7 +484,7 @@ class RunTracker(ErsiliaBase):
         json_dict = {}
         input_data = read_csv(input)
         result_data = read_csv(result)
-        
+
         model_id = meta["metadata"].get("Identifier", "Unknown")
         json_dict["model_id"] = model_id
 
