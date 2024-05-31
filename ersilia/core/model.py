@@ -11,7 +11,7 @@ import csv
 from .. import logger
 from .base import ErsiliaBase
 from .modelbase import ModelBase
-from .session import Session, RunLogger
+from .session import Session
 from .tracking import RunTracker
 from ..serve.autoservice import AutoService
 from ..serve.schema import ApiSchema
@@ -126,14 +126,14 @@ class ErsiliaModel(ErsiliaBase):
         self._set_apis()
         self.session = Session(config_json=self.config_json)
         if log_runs:
-            self._run_logger = RunLogger(
+            self._run_logger = RunTracker(
                 model_id=self.model_id, config_json=self.config_json
             )
         else:
             self._run_logger = None
 
         if track_runs:
-            self._run_tracker = RunTracker()
+            self._run_tracker = self._run_logger
         else:
             self._run_tracker = None
 
@@ -448,9 +448,9 @@ class ErsiliaModel(ErsiliaBase):
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )
         if self._run_logger is not None:
-            self._run_logger.log(result=result, meta=self._model_info)
+            self._run_logger.log(result_path=result, meta=self._model_info)
         if self._run_tracker is not None and track_run:
-            self._run_tracker.track(input=input, result=result, meta=self._model_info)
+            self._run_tracker.track_run(input_path=input, result_path=result, meta=self._model_info)
         return result
 
     def _standard_run(self, input=None, output=None):
@@ -546,3 +546,4 @@ class ErsiliaModel(ErsiliaBase):
     @property
     def _model_info(self):
         return self.info()
+
