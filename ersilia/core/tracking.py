@@ -401,8 +401,6 @@ class RunTracker(ErsiliaBase):
             column_stats["max"] = max(values)
             column_stats["std"] = statistics.stdev(values) if len(values) > 1 else 0
 
-            stats[column] = column_stats
-
         return stats
         
         
