@@ -314,8 +314,11 @@ class RunTracker:
         :output_df: Pandas dataframe containing the output data
         :return: dictionary containing the input size, output size, average input size, and average output size
         """
-        input_size = sum(sum(len(str(value)) for value in row.values()) for row in input_df) / 1024
-        output_size = sum(sum(len(str(value)) for value in row.values()) for row in output_df) / 1024
+        # input_size = sum(sum(len(str(value)) for value in row.values()) for row in input_df) / 1024
+        # output_size = sum(sum(len(str(value)) for value in row.values()) for row in output_df) / 1024
+
+        input_size = os.stat(input_df).st_size / 1024
+        output_size = os.stat(output_df).st_size / 1024
 
         input_avg_row_size = input_size / len(input_df)
         output_avg_row_size = output_size / len(output_df)
