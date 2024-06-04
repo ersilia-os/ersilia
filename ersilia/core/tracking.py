@@ -3,6 +3,7 @@ import json
 import csv
 import statistics
 from collections import defaultdict
+import sys
 import tracemalloc
 import tempfile
 import logging
@@ -239,6 +240,30 @@ def read_csv(file_path):
         data = [row for row in reader]
     return data
 
+def get_nan_counts(data_list):
+        """
+        Calculates the number of None values in each key of a list of dictionaries.
+
+        :param data_list: List of dictionaries containing the data
+        :return: Dictionary containing the count of None values for each key
+        """
+        nan_count = {}
+    
+        # Collect all keys from data_list
+        all_keys = set(key for item in data_list for key in item.keys())
+
+        # Initialize nan_count with all keys
+        for key in all_keys:
+            nan_count[key] = 0
+
+        # Count None values for each key
+        for item in data_list:
+            for key, value in item.items():
+                if value is None:
+                    nan_count[key] += 1
+
+        return nan_count
+
 
 class RunTracker:
     """
@@ -315,8 +340,8 @@ class RunTracker:
         :return: dictionary containing the input size, output size, average input size, and average output size
         """
 
-        input_size = os.stat(input_file).st_size / 1024
-        output_size = os.stat(output_file).st_size / 1024
+        input_size = sys.getsizeof(input_file) / 1024
+        output_size = sys.getsizeof(output_file) / 1024
 
         input_avg_row_size = input_size / len(input_file)
         output_avg_row_size = output_size / len(output_file)
@@ -338,29 +363,36 @@ class RunTracker:
         :return: A dictionary containing the number of mismatched types and a boolean for whether the shape is correct
         """
 
-        type_dict = {"float64": "Float", "int64": "Int"}
+        type_dict = {"float": "Float", "int": "Int"}
         count = 0
 
-        # ignore key and input columns
-        dtypes_list = {col: result[col] for col in result if col not in ["key", "input"]}
+        # Collect data types for each column, ignoring "key" and "input" columns
+        dtypes_list = {}
+        for item in result:
+            for key, value in item.items():
+                if key not in ["key", "input"]:
+                    if key not in dtypes_list:
+                        dtypes_list[key] = set()
+                    dtypes_list[key].add(type(value).__name__)
 
-        for column, dtype in dtypes_list.items():
-            if type_dict.get(str(dtype)) != metadata["Output Type"][0]:
-                count += 1
+        mismatched_types = 0
+        for column, types in dtypes_list.items():
+            if not all(type_dict.get(dtype) == metadata["Output Type"][0] for dtype in types):
+                mismatched_types += 1
 
+        # Check if the shape is correct
+        correct_shape = True
         if len(dtypes_list) > 1 and metadata["Output Shape"] != "List":
             logging.warning("Not right shape. Expected List but got Single")
             correct_shape = False
         elif len(dtypes_list) == 1 and metadata["Output Shape"] != "Single":
             logging.warning("Not right shape. Expected Single but got List")
             correct_shape = False
-        else:
-            correct_shape = True
 
         logging.info("Output has", count, "mismatched types.\n")
 
         return {"mismatched_types": count, "correct_shape": correct_shape}
-    
+        
     def get_peak_memory(self):
         """
         Calculates the peak memory usage of ersilia's Python instance during the run.
@@ -373,16 +405,17 @@ class RunTracker:
 
         return peak_memory
     
+
     def track(self, input, result, meta):
         """
         Tracks the results after a model run.
         """
         json_dict = {}
-        input_dataframe = read_csv(input)
-        result_dataframe = read_csv(result)
+        input_data = read_csv(input)
+        result_data = read_csv(result)
 
-        json_dict["input_dataframe"] = input_dataframe
-        json_dict["result_dataframe"] = result_dataframe
+        json_dict["input_data"] = input_data
+        json_dict["result_data"] = result_data
 
         json_dict["meta"] = meta
 
@@ -392,21 +425,15 @@ class RunTracker:
         time = datetime.now() - self.time_start
         json_dict["time_taken"] = str(time)
 
-         # Convert result_dataframe (list of dicts) to columns (dict of lists)
-        columns = defaultdict(list)
-        for row in result_dataframe:
-            for key, value in row.items():
-                columns[key].append(value)
-
         # checking for mismatched types
-        nan_count = {column: sum(1 for value in values if value == '') for column, values in columns.items()}
+        nan_count = get_nan_counts(result_data)
         json_dict["nan_count"] = nan_count
 
-        json_dict["check_types"] = self.check_types(columns, meta["metadata"])
+        json_dict["check_types"] = self.check_types(result_data, meta["metadata"])
 
         json_dict["stats"] = self.stats(result)
 
-        json_dict["file_sizes"] = self.get_file_sizes(input_dataframe, result_dataframe)
+        json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
 
         json_dict["peak_memory_use"] = self.get_peak_memory()
 
@@ -418,4 +445,3 @@ class RunTracker:
 
         # Upload run stats to s3
         upload_to_s3(json_dict)
-
