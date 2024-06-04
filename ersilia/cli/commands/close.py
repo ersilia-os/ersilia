@@ -22,4 +22,4 @@ def close_cmd():
         echo(":no_entry: Model {0} closed".format(mdl.model_id), fg="green")
 
         # Close our persistent tracking file
-        close_persistent_file()
+        close_persistent_file(mdl.model_id)
