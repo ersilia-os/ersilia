@@ -1,7 +1,8 @@
 import requests
-from pyairtable import Table
+import importlib
 from ... import ErsiliaBase
 from ...default import AIRTABLE_MODEL_HUB_BASE_ID, AIRTABLE_MODEL_HUB_TABLE_NAME
+from ...setup.requirements.pyairtable import PyAirtableRequirement
 
 AIRTABLE_MAX_ROWS = 100000
 AIRTABLE_PAGE_SIZE = 100
@@ -16,7 +17,15 @@ class AirtableInterface(ErsiliaBase):
         self.max_rows = AIRTABLE_MAX_ROWS
         self.page_size = AIRTABLE_PAGE_SIZE
         self.write_api_key = None
-        self.table = Table(self.api_key, self.base_id, self.table_name)
+        self.table = self._create_table()
+
+    def _create_table(self):
+        pyairtable_req = PyAirtableRequirement()
+        if not pyairtable_req.is_installed():
+            self.logger.debug("Installing PyAirTable from pip")
+            pyairtable_req.install()
+        pyairtable = importlib.import_module("pyairtable")
+        return pyairtable.Table(self.api_key, self.base_id, self.table_name)
 
     @staticmethod
     def _get_read_only_airtable_api_key():
