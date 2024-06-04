@@ -229,7 +229,7 @@ def upload_to_cddvault(output_df, api_key):
 
 def read_csv(file_path):
     """
-    Reads a CSV file using the native csv module and returns the data as a list of dictionaries.
+    Reads a CSV file and returns the data as a list of dictionaries.
 
     :param file_path: Path to the CSV file.
     :return: A list of dictionaries containing the CSV data.
@@ -306,20 +306,20 @@ class RunTracker:
 
         return stats
     
-    def get_file_sizes(self, input_df, output_df):
+    def get_file_sizes(self, input_file, output_file):
         """
         Calculates the size of the input and output dataframes, as well as the average size of each row.
 
-        :input_df: Pandas dataframe containing the input data
-        :output_df: Pandas dataframe containing the output data
+        :input_file: Pandas dataframe containing the input data
+        :output_file: Pandas dataframe containing the output data
         :return: dictionary containing the input size, output size, average input size, and average output size
         """
 
-        input_size = os.stat(input_df).st_size / 1024
-        output_size = os.stat(output_df).st_size / 1024
+        input_size = os.stat(input_file).st_size / 1024
+        output_size = os.stat(output_file).st_size / 1024
 
-        input_avg_row_size = input_size / len(input_df)
-        output_avg_row_size = output_size / len(output_df)
+        input_avg_row_size = input_size / len(input_file)
+        output_avg_row_size = output_size / len(output_file)
 
         return {
             "input_size": input_size,
@@ -328,12 +328,12 @@ class RunTracker:
             "avg_output_size": output_avg_row_size,
         }
     
-    def check_types(self, result_df, metadata):
+    def check_types(self, result, metadata):
         """
-        This class is responsible for checking the types of the output dataframe against the expected types.
-        This includes checking the shape of the output dataframe (list vs single) and the types of each column.
+        This class is responsible for checking the types of the output file against the expected types.
+        This includes checking the shape of the output file (list vs single) and the types of each column.
 
-        :param result_df: The output dataframe
+        :param result: The output file
         :param metadata: The metadata dictionary
         :return: A dictionary containing the number of mismatched types and a boolean for whether the shape is correct
         """
@@ -342,7 +342,7 @@ class RunTracker:
         count = 0
 
         # ignore key and input columns
-        dtypes_list = {col: result_df[col] for col in result_df if col not in ["key", "input"]}
+        dtypes_list = {col: result[col] for col in result if col not in ["key", "input"]}
 
         for column, dtype in dtypes_list.items():
             if type_dict.get(str(dtype)) != metadata["Output Type"][0]:
