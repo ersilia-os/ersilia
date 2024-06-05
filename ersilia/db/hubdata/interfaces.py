@@ -11,21 +11,20 @@ AIRTABLE_PAGE_SIZE = 100
 class AirtableInterface(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
-        self.api_key = self._get_read_only_airtable_api_key()
         self.base_id = AIRTABLE_MODEL_HUB_BASE_ID
         self.table_name = AIRTABLE_MODEL_HUB_TABLE_NAME
         self.max_rows = AIRTABLE_MAX_ROWS
         self.page_size = AIRTABLE_PAGE_SIZE
         self.write_api_key = None
-        self.table = self._create_table()
+        self.table = self._create_table(api_key=self._get_read_only_airtable_api_key())
 
-    def _create_table(self):
+    def _create_table(self, api_key):
         pyairtable_req = PyAirtableRequirement()
         if not pyairtable_req.is_installed():
             self.logger.debug("Installing PyAirTable from pip")
             pyairtable_req.install()
         pyairtable = importlib.import_module("pyairtable")
-        return pyairtable.Table(self.api_key, self.base_id, self.table_name)
+        return pyairtable.Table(api_key, self.base_id, self.table_name)
 
     @staticmethod
     def _get_read_only_airtable_api_key():
@@ -36,7 +35,7 @@ class AirtableInterface(ErsiliaBase):
 
     def set_write_api_key(self, write_api_key):
         self.write_api_key = write_api_key
-        self.table = Table(self.write_api_key, self.base_id, self.table_name)
+        self.table = self._create_table(api_key=write_api_key)
 
     def items(self):
         for records in self.table.iterate(
