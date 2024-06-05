@@ -53,7 +53,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            ersiliaos/base-${{ env.BUILD_VERSION }} 
+            ersiliaos/base-${{ matrix.build-version }} 
           # Docker tags based on the following events/attributes
           tags: |
             type=raw,value=latest
