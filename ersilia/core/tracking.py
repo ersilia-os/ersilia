@@ -355,7 +355,7 @@ class RunTracker:
     
     def check_types(self, result, metadata):
         """
-        This class is responsible for checking the types of the output file against the expected types.
+        This method is responsible for checking the types of the output file against the expected types.
         This includes checking the shape of the output file (list vs single) and the types of each column.
 
         :param result: The output file
