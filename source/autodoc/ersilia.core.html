@@ -312,13 +312,13 @@ inputs, outputs, and other run-specific features, before uploading them to AWS t
 to Ersilia’s Splunk dashboard.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.check_types">
-<span class="sig-name descname"><span class="pre">check_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.check_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.check_types" title="Permalink to this definition"></a></dt>
-<dd><p>This class is responsible for checking the types of the output dataframe against the expected types.
-This includes checking the shape of the output dataframe (list vs single) and the types of each column.</p>
+<span class="sig-name descname"><span class="pre">check_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.check_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.check_types" title="Permalink to this definition"></a></dt>
+<dd><p>This method is responsible for checking the types of the output file against the expected types.
+This includes checking the shape of the output file (list vs single) and the types of each column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>result_df</strong> – The output dataframe</p></li>
+<li><p><strong>result</strong> – The output file</p></li>
 <li><p><strong>metadata</strong> – The metadata dictionary</p></li>
 </ul>
 </dd>
@@ -330,13 +330,13 @@ This includes checking the shape of the output dataframe (list vs single) and th
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.get_file_sizes">
-<span class="sig-name descname"><span class="pre">get_file_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_file_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_file_sizes" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_file_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_file_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_file_sizes" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates the size of the input and output dataframes, as well as the average size of each row.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Input_df<span class="colon">:</span></dt>
+<dt class="field-odd">Input_file<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Pandas dataframe containing the input data</p>
 </dd>
-<dt class="field-even">Output_df<span class="colon">:</span></dt>
+<dt class="field-even">Output_file<span class="colon">:</span></dt>
 <dd class="field-even"><p>Pandas dataframe containing the output data</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -395,6 +395,20 @@ mode (if applicable), minimum, maximum, and standard deviation.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ersilia.core.tracking.get_nan_counts">
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">get_nan_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#get_nan_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.get_nan_counts" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the number of None values in each key of a list of dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_list</strong> – List of dictionaries containing the data</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing the count of None values for each key</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.core.tracking.log_files_metrics">
 <span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">log_files_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#log_files_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.log_files_metrics" title="Permalink to this definition"></a></dt>
 <dd><p>This function will log the number of errors and warnings in the log files.</p>
@@ -413,6 +427,20 @@ mode (if applicable), minimum, maximum, and standard deviation.</p>
 <span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">open_persistent_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#open_persistent_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.open_persistent_file" title="Permalink to this definition"></a></dt>
 <dd><p>Opens a new persistent file, specifically for a run of model_id
 :param model_id: The currently running model</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.core.tracking.read_csv">
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">read_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#read_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.read_csv" title="Permalink to this definition"></a></dt>
+<dd><p>Reads a CSV file and returns the data as a list of dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> – Path to the CSV file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of dictionaries containing the CSV data.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
