@@ -448,9 +448,9 @@ class ErsiliaModel(ErsiliaBase):
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )
         if self._run_logger is not None:
-            self._run_logger.log(result_path=result, meta=self._model_info)
+            self._run_logger.log(result=result, meta=self._model_info)
         if self._run_tracker is not None and track_run:
-            self._run_tracker.track_run(input_path=input, result_path=result, meta=self._model_info)
+            self._run_tracker.track(input=input, result=result, meta=self._model_info)
         return result
 
     def _standard_run(self, input=None, output=None):
