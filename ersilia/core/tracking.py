@@ -1,6 +1,9 @@
 from datetime import datetime
 import json
-import pandas as pd
+import csv
+import statistics
+from collections import defaultdict
+import sys
 import tracemalloc
 import tempfile
 import logging
@@ -86,7 +89,7 @@ def log_files_metrics(file):
         write_persistent_file(f"Warning count: {warning_count}")
     except (IsADirectoryError, FileNotFoundError):
         logging.warning("Unable to calculate metrics for log file: log file not found")
-
+        
 
 def open_persistent_file(model_id):
     """
@@ -95,8 +98,8 @@ def open_persistent_file(model_id):
     """
     with open(PERSISTENT_FILE_PATH, "w") as f:
         f.write("Session started for model: {0}\n".format(model_id))
-
-
+        
+        
 def write_persistent_file(contents):
     """
     Writes contents to the current persistent file. Only writes if the file actually exists.
@@ -123,7 +126,7 @@ def close_persistent_file():
             datetime.now().strftime("%Y-%m-%d%_H-%M-%S.txt"),
         )
         os.rename(PERSISTENT_FILE_PATH, new_file_path)
-
+        
 
 def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
@@ -225,6 +228,43 @@ def upload_to_cddvault(output_df, api_key):
         return False
 
 
+def read_csv(file_path):
+    """
+    Reads a CSV file and returns the data as a list of dictionaries.
+
+    :param file_path: Path to the CSV file.
+    :return: A list of dictionaries containing the CSV data.
+    """
+    with open(file_path, mode='r') as file:
+        reader = csv.DictReader(file)
+        data = [row for row in reader]
+    return data
+
+def get_nan_counts(data_list):
+        """
+        Calculates the number of None values in each key of a list of dictionaries.
+
+        :param data_list: List of dictionaries containing the data
+        :return: Dictionary containing the count of None values for each key
+        """
+        nan_count = {}
+    
+        # Collect all keys from data_list
+        all_keys = set(key for item in data_list for key in item.keys())
+
+        # Initialize nan_count with all keys
+        for key in all_keys:
+            nan_count[key] = 0
+
+        # Count None values for each key
+        for item in data_list:
+            for key, value in item.items():
+                if value is None:
+                    nan_count[key] += 1
+
+        return nan_count
+
+
 class RunTracker:
     """
     This class will be responsible for tracking model runs. It calculates the desired metadata based on a model's
@@ -261,41 +301,50 @@ class RunTracker:
         :return: A dictionary containing the stats for each column of the result.
         """
 
-        dat = pd.read_csv(result)
+        data = read_csv(result)
 
         # drop first two columns (key, input)
-        dat = dat.drop(["key", "input"], axis=1)
+        for row in data:
+            row.pop('key', None)
+            row.pop('input', None)
+            
+        # Convert data to a column-oriented format
+        columns = defaultdict(list)
+        for row in data:
+            for key, value in row.items():
+                columns[key].append(float(value))
 
-        # calculate statistics
+        # Calculate statistics
         stats = {}
-        for column in dat:
+        for column, values in columns.items():
             column_stats = {}
-            column_stats["mean"] = dat[column].mean()
-            if len(dat[column].mode()) == 1:
-                column_stats["mode"] = dat[column].mode().iloc[0]
-            else:
+            column_stats["mean"] = statistics.mean(values)
+            try:
+                column_stats["mode"] = statistics.mode(values)
+            except statistics.StatisticsError:
                 column_stats["mode"] = None
-            column_stats["min"] = dat[column].min()
-            column_stats["max"] = dat[column].max()
-            column_stats["std"] = dat[column].std()
+            column_stats["min"] = min(values)
+            column_stats["max"] = max(values)
+            column_stats["std"] = statistics.stdev(values) if len(values) > 1 else 0
 
             stats[column] = column_stats
 
         return stats
-
-    def get_file_sizes(self, input_df, output_df):
+    
+    def get_file_sizes(self, input_file, output_file):
         """
         Calculates the size of the input and output dataframes, as well as the average size of each row.
 
-        :input_df: Pandas dataframe containing the input data
-        :output_df: Pandas dataframe containing the output data
+        :input_file: Pandas dataframe containing the input data
+        :output_file: Pandas dataframe containing the output data
         :return: dictionary containing the input size, output size, average input size, and average output size
         """
-        input_size = input_df.memory_usage(deep=True).sum() / 1024
-        output_size = output_df.memory_usage(deep=True).sum() / 1024
 
-        input_avg_row_size = input_size / len(input_df)
-        output_avg_row_size = output_size / len(output_df)
+        input_size = sys.getsizeof(input_file) / 1024
+        output_size = sys.getsizeof(output_file) / 1024
+
+        input_avg_row_size = input_size / len(input_file)
+        output_avg_row_size = output_size / len(output_file)
 
         return {
             "input_size": input_size,
@@ -303,40 +352,47 @@ class RunTracker:
             "avg_input_size": input_avg_row_size,
             "avg_output_size": output_avg_row_size,
         }
-
-    def check_types(self, result_df, metadata):
+    
+    def check_types(self, result, metadata):
         """
-        This class is responsible for checking the types of the output dataframe against the expected types.
-        This includes checking the shape of the output dataframe (list vs single) and the types of each column.
+        This method is responsible for checking the types of the output file against the expected types.
+        This includes checking the shape of the output file (list vs single) and the types of each column.
 
-        :param result_df: The output dataframe
+        :param result: The output file
         :param metadata: The metadata dictionary
         :return: A dictionary containing the number of mismatched types and a boolean for whether the shape is correct
         """
 
-        type_dict = {"float64": "Float", "int64": "Int"}
+        type_dict = {"float": "Float", "int": "Int"}
         count = 0
 
-        # ignore key and input columns
-        dtypes_list = result_df.loc[:, ~result_df.columns.isin(["key", "input"])].dtypes
+        # Collect data types for each column, ignoring "key" and "input" columns
+        dtypes_list = {}
+        for item in result:
+            for key, value in item.items():
+                if key not in ["key", "input"]:
+                    if key not in dtypes_list:
+                        dtypes_list[key] = set()
+                    dtypes_list[key].add(type(value).__name__)
 
-        for i in dtypes_list:
-            if type_dict[str(i)] != metadata["Output Type"][0]:
-                count += 1
+        mismatched_types = 0
+        for column, types in dtypes_list.items():
+            if not all(type_dict.get(dtype) == metadata["Output Type"][0] for dtype in types):
+                mismatched_types += 1
 
+        # Check if the shape is correct
+        correct_shape = True
         if len(dtypes_list) > 1 and metadata["Output Shape"] != "List":
             logging.warning("Not right shape. Expected List but got Single")
             correct_shape = False
         elif len(dtypes_list) == 1 and metadata["Output Shape"] != "Single":
             logging.warning("Not right shape. Expected Single but got List")
             correct_shape = False
-        else:
-            correct_shape = True
 
         logging.info("Output has", count, "mismatched types.\n")
 
         return {"mismatched_types": count, "correct_shape": correct_shape}
-
+        
     def get_peak_memory(self):
         """
         Calculates the peak memory usage of ersilia's Python instance during the run.
@@ -348,17 +404,18 @@ class RunTracker:
         tracemalloc.stop()
 
         return peak_memory
+    
 
     def track(self, input, result, meta):
         """
         Tracks the results after a model run.
         """
         json_dict = {}
-        input_dataframe = pd.read_csv(input)
-        result_dataframe = pd.read_csv(result)
+        input_data = read_csv(input)
+        result_data = read_csv(result)
 
-        json_dict["input_dataframe"] = input_dataframe.to_dict()
-        json_dict["result_dataframe"] = result_dataframe.to_dict()
+        json_dict["input_data"] = input_data
+        json_dict["result_data"] = result_data
 
         json_dict["meta"] = meta
 
@@ -369,14 +426,14 @@ class RunTracker:
         json_dict["time_taken"] = str(time)
 
         # checking for mismatched types
-        nan_count = result_dataframe.isna().sum()
-        json_dict["nan_count"] = nan_count.to_dict()
+        nan_count = get_nan_counts(result_data)
+        json_dict["nan_count"] = nan_count
 
-        json_dict["check_types"] = self.check_types(result_dataframe, meta["metadata"])
+        json_dict["check_types"] = self.check_types(result_data, meta["metadata"])
 
         json_dict["stats"] = self.stats(result)
 
-        json_dict["file_sizes"] = self.get_file_sizes(input_dataframe, result_dataframe)
+        json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
 
         json_dict["peak_memory_use"] = self.get_peak_memory()
 
