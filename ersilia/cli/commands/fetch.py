@@ -31,7 +31,7 @@ def fetch_cmd():
         "--from_dir",
         default=None,
         type=click.STRING,
-        help="Local path where the model is stored"
+        help="Local path where the model is stored",
     )
     @click.option(
         "--from_github",
@@ -60,6 +60,12 @@ def fetch_cmd():
         default=None,
         help="Fetch a model based on a URL. This only creates a basic folder structure for the model, the model is not actually downloaded.",
     )
+    @click.option(
+        "--with_bentoml",
+        is_flag=True,
+        default=False,
+        help="Force fetch using BentoML",
+    )
     def fetch(
         model,
         repo_path,
@@ -72,6 +78,7 @@ def fetch_cmd():
         from_s3,
         from_hosted,
         from_url,
+        with_bentoml,
     ):
         if repo_path is not None:
             mdl = ModelBase(repo_path=repo_path)
@@ -94,6 +101,7 @@ def fetch_cmd():
             force_from_s3=from_s3,
             force_from_dockerhub=from_dockerhub,
             force_from_hosted=from_hosted,
+            force_with_bentoml=with_bentoml,
             hosted_url=from_url,
         )
         _fetch(mf, model_id)

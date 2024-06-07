@@ -297,7 +297,6 @@ class ModelRepositoryGetter(BaseAction):
             self.logger.debug("Example file exists")
             shutil.copy(file_name, dest_file)
         else:
-
             self.logger.debug("Example file {0} does not exist".format(file_name))
 
     @throw_ersilia_exception

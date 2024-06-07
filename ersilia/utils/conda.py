@@ -253,6 +253,10 @@ class SimpleConda(CondaUtils):
                 envs += [l.rstrip()]
         return envs
 
+    def create(self, environment, python_version):
+        cmd = "conda create -n {0} python={1} -y".format(environment, python_version)
+        run_command(cmd)
+
     def active_env(self):
         envs = self._env_list()
         for l in envs:

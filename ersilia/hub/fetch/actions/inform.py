@@ -26,7 +26,8 @@ class ModelInformer(BaseAction):
         sf = ServiceFile(
             path=os.path.join(self._get_bundle_location(self.model_id), self.model_id)
         )
-        sf.add_info_api(information_file=self.information_file)
+        if os.path.exists(sf.get_file()):
+            sf.add_info_api(information_file=self.information_file)
 
     def inform(self):
         self._write_information_json()

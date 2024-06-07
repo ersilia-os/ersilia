@@ -1,5 +1,6 @@
 import platform
 import os
+from ..utils.docker import is_inside_docker
 
 
 class SystemChecker(object):
@@ -18,3 +19,6 @@ class SystemChecker(object):
             return True
         else:
             return False
+
+    def is_inside_docker(self):
+        return is_inside_docker()

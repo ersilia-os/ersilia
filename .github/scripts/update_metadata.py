@@ -106,10 +106,12 @@ class UpdateMetadata:
             # Check if model_description is a list
             if isinstance(self.json_input["model_description"], list):
                 # Join the list elements into a single string separated by commas
-                self.metadata["Description"] = ", ".join(self.json_input["model_description"])
+                self.metadata["Description"] = ", ".join(
+                    self.json_input["model_description"]
+                )
             else:
                 # If it's already a string, just assign it directly
-                self.metadata["Description"] = self.json_input["model_description"] 
+                self.metadata["Description"] = self.json_input["model_description"]
         if self.metadata["Publication"] == "":
             self.metadata["Publication"] = self.json_input["publication"]
         if self.metadata["Source Code"] == "":
