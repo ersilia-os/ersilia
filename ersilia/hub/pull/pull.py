@@ -119,7 +119,7 @@ class ModelPuller(ErsiliaBase):
                 with open(tmp_file, "r") as f:
                     pull_log = f.read()
                     self.logger.debug(pull_log)
-                if re.search(r"no match.*platform.*manifest", pull_log):
+                if re.search(r"no match.*manifest", pull_log):
                     self.logger.warning("No matching manifest for image {0}".format(self.model_id))
                     raise DockerConventionalPullError(model=self.model_id)
                 self.logger.debug("Image pulled succesfully!")
