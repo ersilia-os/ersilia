@@ -96,31 +96,23 @@ def log_files_metrics(file):
 
 
 
-def persistent_file(model_id):
+def create_persistent_file(model_id):
 
     """
     Create the persistent path file 
-    :param model_id: Te currently running model
+    :param model_id: The currently running model
     """
 
     persistent_file_dir = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id)
     os.makedirs(persistent_file_dir, exist_ok=True)  
     file_name = os.path.join(persistent_file_dir, "current_session.txt")
     
+    with open(file_name, "w") as f:
+        f.write("Session started for model: {0}\n".format(model_id))
+    
     return file_name
 
     
-
-def open_persistent_file(model_id):
-    """
-    Opens a new persistent file, specifically for a run of model_id
-    :param model_id: The currently running model
-    """
-  
-    file_name = persistent_file(model_id)
-    with open(file_name, "w") as f:
-        f.write("Session started for model: {0}\n".format(model_id))
-        
         
 def write_persistent_file(contents, model_id):
 
@@ -129,7 +121,7 @@ def write_persistent_file(contents, model_id):
     :param contents: The contents to write to the file.
     """
     
-    file_name = persistent_file(model_id)
+    file_name = create_persistent_file(model_id)
     if file_name and os.path.isfile(file_name):
         with open(file_name, "a") as f:
             f.write(f"{contents}\n")
@@ -140,7 +132,7 @@ def close_persistent_file(model_id):
     Closes the persistent file, renaming it to a unique name.
     """
         
-    file_name = persistent_file(model_id)
+    file_name = create_persistent_file(model_id)
     if os.path.isfile(file_name):
         log_files_metrics(TEMP_FILE_LOGS)
 
