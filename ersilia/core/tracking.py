@@ -1,21 +1,21 @@
 import os
-import json
+import re
 import sys
-import shutil
 import csv
+import json
+import boto3
+import shutil
 import logging
-import tracemalloc
+import requests
+import tempfile
 import statistics
-from collections import defaultdict
+import tracemalloc
 from datetime import datetime
 from .base import ErsiliaBase
-from ..io.output_logger import TabularResultLogger
-from ..default import EOS, ERSILIA_RUNS_FOLDER 
-import tempfile
-import boto3
+from collections import defaultdict
+from ..default import EOS, ERSILIA_RUNS_FOLDER
+from ..io.output_logger import TabularResultLogger 
 from botocore.exceptions import ClientError, NoCredentialsError
-import re
-import requests
 
 
 # Temporary path to log files until log files are fixed
@@ -96,6 +96,17 @@ def log_files_metrics(file):
 
 
 
+
+def get_persistent_file_path(model_id):
+    """
+    Construct the persistent file path.
+    :param model_id: The currently running model
+    :return: The path to the persistent file
+    """
+    return os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt")
+
+
+
 def create_persistent_file(model_id):
 
     """
@@ -103,13 +114,14 @@ def create_persistent_file(model_id):
     :param model_id: The currently running model
     """
 
-    persistent_file_dir = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id)
+    persistent_file_dir = os.path.dirname(get_persistent_file_path(model_id))
     os.makedirs(persistent_file_dir, exist_ok=True)  
-    file_name = os.path.join(persistent_file_dir, "current_session.txt")
+    file_name = get_persistent_file_path(model_id)
     
     with open(file_name, "w") as f:
         f.write("Session started for model: {0}\n".format(model_id))
     
+
 
 def check_file_exists(model_id):
     """
@@ -117,9 +129,8 @@ def check_file_exists(model_id):
     :param model_id: The currently running model
     :return: True if the file exists, False otherwise.
     """
-    persistent_file_dir = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id)
-    file_name = os.path.join(persistent_file_dir, "current_session.txt")
-    return os.path.isfile(file_name)
+        
+    return os.path.isfile(get_persistent_file_path(model_id))
     
        
         
@@ -130,13 +141,14 @@ def write_persistent_file(contents, model_id):
     :param model_id: The currently running model
     """
     if check_file_exists(model_id):
-        file_name = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt")
+        file_name = get_persistent_file_path(model_id)
         with open(file_name, "a") as f:
             f.write(f"{contents}\n")
 
     else:
         raise FileNotFoundError(f"The persistent file for model {model_id} does not exist. Cannot write contents.")
         
+
         
 def close_persistent_file(model_id):
     """
@@ -144,8 +156,8 @@ def close_persistent_file(model_id):
     :param model_id: The currently running model
     """
     if check_file_exists(model_id):
-        file_name = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt")
-        log_files_metrics(TEMP_FILE_LOGS)  # Assuming this function is defined elsewhere
+        file_name = get_persistent_file_path(model_id)
+        log_files_metrics(TEMP_FILE_LOGS)
         
         new_file_path = os.path.join(
             os.path.dirname(file_name),
