@@ -110,37 +110,51 @@ def create_persistent_file(model_id):
     with open(file_name, "w") as f:
         f.write("Session started for model: {0}\n".format(model_id))
     
-    return file_name
 
+def check_file_exists(model_id):
+    """
+    Check if the persistent file exists.
+    :param model_id: The currently running model
+    :return: True if the file exists, False otherwise.
+    """
+    persistent_file_dir = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id)
+    file_name = os.path.join(persistent_file_dir, "current_session.txt")
+    return os.path.isfile(file_name)
     
+       
         
 def write_persistent_file(contents, model_id):
-
     """
     Writes contents to the current persistent file. Only writes if the file actually exists.
     :param contents: The contents to write to the file.
+    :param model_id: The currently running model
     """
-    
-    file_name = create_persistent_file(model_id)
-    if file_name and os.path.isfile(file_name):
+    if check_file_exists(model_id):
+        file_name = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt")
         with open(file_name, "a") as f:
             f.write(f"{contents}\n")
 
-
+    else:
+        raise FileNotFoundError(f"The persistent file for model {model_id} does not exist. Cannot write contents.")
+        
+        
 def close_persistent_file(model_id):
     """
     Closes the persistent file, renaming it to a unique name.
+    :param model_id: The currently running model
     """
+    if check_file_exists(model_id):
+        file_name = os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt")
+        log_files_metrics(TEMP_FILE_LOGS)  # Assuming this function is defined elsewhere
         
-    file_name = create_persistent_file(model_id)
-    if os.path.isfile(file_name):
-        log_files_metrics(TEMP_FILE_LOGS)
-
         new_file_path = os.path.join(
             os.path.dirname(file_name),
-            datetime.now().strftime("%Y-%m-%d%_H-%M-%S.txt"),
+            datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt"),
         )
         os.rename(file_name, new_file_path)
+        
+    else:
+        raise FileNotFoundError(f"The persistent file for model {model_id} does not exist. Cannot close file.")
         
 
 
