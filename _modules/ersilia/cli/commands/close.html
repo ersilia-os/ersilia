@@ -81,7 +81,7 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaModel</span>
 <span class="kn">from</span> <span class="nn">...core.session</span> <span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span> <span class="nn">...core.tracking</span> <span class="kn">import</span> <span class="n">close_persistent_file</span>
+<span class="kn">from</span> <span class="nn">...core.tracking</span> <span class="kn">import</span> <span class="n">check_file_exists</span><span class="p">,</span> <span class="n">close_persistent_file</span>
 
 
 <div class="viewcode-block" id="close_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.close.close_cmd">[docs]</a><span class="k">def</span> <span class="nf">close_cmd</span><span class="p">():</span>
@@ -99,7 +99,8 @@
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:no_entry: Model </span><span class="si">{0}</span><span class="s2"> closed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
 
         <span class="c1"># Close our persistent tracking file</span>
-        <span class="n">close_persistent_file</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="n">check_file_exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+            <span class="n">close_persistent_file</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

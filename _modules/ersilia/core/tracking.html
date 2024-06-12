@@ -74,22 +74,26 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.core.tracking</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">statistics</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">tracemalloc</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">boto3</span>
-<span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span><span class="p">,</span> <span class="n">NoCredentialsError</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">boto3</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">statistics</span>
+<span class="kn">import</span> <span class="nn">tracemalloc</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">ERSILIA_RUNS_FOLDER</span>
+<span class="kn">from</span> <span class="nn">..io.output_logger</span> <span class="kn">import</span> <span class="n">TabularResultLogger</span> 
+<span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span><span class="p">,</span> <span class="n">NoCredentialsError</span>
 
-<span class="n">PERSISTENT_FILE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;current_session.txt&quot;</span><span class="p">)</span>
+
 <span class="c1"># Temporary path to log files until log files are fixed</span>
 <span class="n">TEMP_FILE_LOGS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
@@ -157,52 +161,90 @@
                 <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
                     <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error count: </span><span class="si">{</span><span class="n">error_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error count: </span><span class="si">{</span><span class="n">error_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Breakdown by error types:&quot;</span><span class="p">)</span>
+            <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Breakdown by error types:&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
-                <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">errors</span><span class="p">[</span><span class="n">error</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning count: </span><span class="si">{</span><span class="n">warning_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">errors</span><span class="p">[</span><span class="n">error</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+        <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning count: </span><span class="si">{</span><span class="n">warning_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">IsADirectoryError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Unable to calculate metrics for log file: log file not found&quot;</span><span class="p">)</span></div>
-        
 
-<div class="viewcode-block" id="open_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.open_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">open_persistent_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+
+
+
+<div class="viewcode-block" id="get_persistent_file_path"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.get_persistent_file_path">[docs]</a><span class="k">def</span> <span class="nf">get_persistent_file_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Opens a new persistent file, specifically for a run of model_id</span>
+<span class="sd">    Construct the persistent file path.</span>
+<span class="sd">    :param model_id: The currently running model</span>
+<span class="sd">    :return: The path to the persistent file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">ERSILIA_RUNS_FOLDER</span><span class="p">,</span> <span class="s2">&quot;session&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot;current_session.txt&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.create_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">create_persistent_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the persistent path file </span>
 <span class="sd">    :param model_id: The currently running model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+
+    <span class="n">persistent_file_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">get_persistent_file_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">persistent_file_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">get_persistent_file_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Session started for model: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span></div>
+    
+
+
+<div class="viewcode-block" id="check_file_exists"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.check_file_exists">[docs]</a><span class="k">def</span> <span class="nf">check_file_exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the persistent file exists.</span>
+<span class="sd">    :param model_id: The currently running model</span>
+<span class="sd">    :return: True if the file exists, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
         
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">get_persistent_file_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span></div>
+    
+       
         
-<div class="viewcode-block" id="write_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.write_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">write_persistent_file</span><span class="p">(</span><span class="n">contents</span><span class="p">):</span>
+<div class="viewcode-block" id="write_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.write_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">write_persistent_file</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes contents to the current persistent file. Only writes if the file actually exists.</span>
 <span class="sd">    :param contents: The contents to write to the file.</span>
+<span class="sd">    :param model_id: The currently running model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">check_file_exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">get_persistent_file_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">contents</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Only write to file if it already exists (we&#39;re meant to be tracking this run)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">contents</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The persistent file for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> does not exist. Cannot write contents.&quot;</span><span class="p">)</span></div>
+        
 
-
-<div class="viewcode-block" id="close_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.close_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">close_persistent_file</span><span class="p">():</span>
+        
+<div class="viewcode-block" id="close_persistent_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.close_persistent_file">[docs]</a><span class="k">def</span> <span class="nf">close_persistent_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Closes the persistent file, renaming it to a unique name.</span>
+<span class="sd">    :param model_id: The currently running model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Make sure the file actually exists before we try renaming</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">check_file_exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">get_persistent_file_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">log_files_metrics</span><span class="p">(</span><span class="n">TEMP_FILE_LOGS</span><span class="p">)</span>
-
-        <span class="n">new_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">),</span>
-            <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">%_H-%M-%S.txt&quot;</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">PERSISTENT_FILE_PATH</span><span class="p">,</span> <span class="n">new_file_path</span><span class="p">)</span></div>
         
+        <span class="n">new_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file_name</span><span class="p">),</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S.txt&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">new_file_path</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The persistent file for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> does not exist. Cannot close file.&quot;</span><span class="p">)</span></div>
+        
+
 
 <div class="viewcode-block" id="upload_to_s3"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_s3">[docs]</a><span class="k">def</span> <span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">json_dict</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;ersilia-tracking&quot;</span><span class="p">,</span> <span class="n">object_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a file to an S3 bucket</span>
@@ -304,6 +346,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
+
 <div class="viewcode-block" id="read_csv"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.read_csv">[docs]</a><span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads a CSV file and returns the data as a list of dictionaries.</span>
@@ -315,6 +358,8 @@
         <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">data</span></div>
+    
+    
 
 <div class="viewcode-block" id="get_nan_counts"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.get_nan_counts">[docs]</a><span class="k">def</span> <span class="nf">get_nan_counts</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -339,35 +384,48 @@
                     <span class="n">nan_count</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">nan_count</span></div>
+        
+<div class="viewcode-block" id="RunTracker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker">[docs]</a><span class="k">class</span> <span class="nc">RunTracker</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 
-
-<div class="viewcode-block" id="RunTracker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker">[docs]</a><span class="k">class</span> <span class="nc">RunTracker</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class will be responsible for tracking model runs. It calculates the desired metadata based on a model&#39;s</span>
 <span class="sd">    inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested</span>
 <span class="sd">    to Ersilia&#39;s Splunk dashboard.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory_usage_start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
-    <span class="c1"># function to be called before model is run</span>
+        <span class="c1"># Initialize folders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ersilia_runs_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">ERSILIA_RUNS_FOLDER</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ersilia_runs_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ersilia_runs_folder</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ersilia_runs_folder</span><span class="p">,</span> <span class="s2">&quot;lake&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">logs_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ersilia_runs_folder</span><span class="p">,</span> <span class="s2">&quot;logs&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logs_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span> <span class="o">=</span> <span class="n">TabularResultLogger</span><span class="p">()</span>
+        
+
 <div class="viewcode-block" id="RunTracker.start_tracking"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.start_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">start_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Runs any code necessary for the beginning of the run.</span>
-<span class="sd">        Currently necessary for tracking the runtime and memory usage of a run.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">	Runs any code necessary for the beginning of the run.</span>
+<span class="sd">	Currently necessary for tracking the runtime and memory usage of a run.</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="n">tracemalloc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory_usage_start</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="RunTracker.sample_df"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.sample_df">[docs]</a>    <span class="k">def</span> <span class="nf">sample_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a sample of the dataframe, with the specified number of rows and columns.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_cols</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
-
+        
+        
 <div class="viewcode-block" id="RunTracker.stats"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.stats">[docs]</a>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stats function: calculates the basic statistics of the output file from a model. This includes the</span>
@@ -406,7 +464,8 @@
             <span class="n">stats</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_stats</span>
 
         <span class="k">return</span> <span class="n">stats</span></div>
-    
+        
+        
 <div class="viewcode-block" id="RunTracker.get_file_sizes"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_file_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the size of the input and output dataframes, as well as the average size of each row.</span>
@@ -428,7 +487,8 @@
             <span class="s2">&quot;avg_input_size&quot;</span><span class="p">:</span> <span class="n">input_avg_row_size</span><span class="p">,</span>
             <span class="s2">&quot;avg_output_size&quot;</span><span class="p">:</span> <span class="n">output_avg_row_size</span><span class="p">,</span>
         <span class="p">}</span></div>
-    
+        
+        
 <div class="viewcode-block" id="RunTracker.check_types"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.check_types">[docs]</a>    <span class="k">def</span> <span class="nf">check_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method is responsible for checking the types of the output file against the expected types.</span>
@@ -469,58 +529,84 @@
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;mismatched_types&quot;</span><span class="p">:</span> <span class="n">count</span><span class="p">,</span> <span class="s2">&quot;correct_shape&quot;</span><span class="p">:</span> <span class="n">correct_shape</span><span class="p">}</span></div>
         
+        
+        
 <div class="viewcode-block" id="RunTracker.get_peak_memory"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_peak_memory">[docs]</a>    <span class="k">def</span> <span class="nf">get_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the peak memory usage of ersilia&#39;s Python instance during the run.</span>
-<span class="sd">        :return: The peak memory usage in bytes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Compare memory between peak and amount when we started</span>
+<span class="sd">	Calculates the peak memory usage of ersilia&#39;s Python instance during the run.</span>
+<span class="sd">	:return: The peak memory usage in bytes.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
         <span class="n">peak_memory</span> <span class="o">=</span> <span class="n">tracemalloc</span><span class="o">.</span><span class="n">get_traced_memory</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_usage_start</span>
         <span class="n">tracemalloc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="n">peak_memory</span></div>
-    
+
+
+<div class="viewcode-block" id="RunTracker.log_result"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_result">[docs]</a>    <span class="k">def</span> <span class="nf">log_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_lake.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">tabular_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tabular_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">tabular_result</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RunTracker.log_meta"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_meta">[docs]</a>    <span class="k">def</span> <span class="nf">log_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RunTracker.log_logs"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_logs">[docs]</a>    <span class="k">def</span> <span class="nf">log_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logs_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.log&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="n">session_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;session.json&quot;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">session_file</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="RunTracker.track"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Tracks the results after a model run.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    	Tracks the results of a model run.</span>
+<span class="sd">    	&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_tracking</span><span class="p">()</span>
         <span class="n">json_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">input_data</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="n">result_data</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
-        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;input_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_data</span>
-        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;result_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result_data</span>
-
-        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span>
-
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
         <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_id</span>
 
-        <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span>
-        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;time_taken&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+        <span class="n">time_taken</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span>
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;time_taken&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time_taken</span><span class="p">)</span>
 
         <span class="c1"># checking for mismatched types</span>
         <span class="n">nan_count</span> <span class="o">=</span> <span class="n">get_nan_counts</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
         <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;nan_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan_count</span>
-
+        
         <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;check_types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_types</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
-
+        
         <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;stats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
         <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;file_sizes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_sizes</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">result_data</span><span class="p">)</span>
-
+         
         <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;peak_memory_use&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
 
-        <span class="c1"># TODO: Call CDD Vault tracking and upload API success to splunk</span>
-
-        <span class="c1"># log results to persistent tracking file</span>
         <span class="n">json_object</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-        <span class="n">write_persistent_file</span><span class="p">(</span><span class="n">json_object</span><span class="p">)</span>
+        <span class="n">write_persistent_file</span><span class="p">(</span><span class="n">json_object</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+        <span class="n">upload_to_s3</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span></div>
 
-        <span class="c1"># Upload run stats to s3</span>
-        <span class="n">upload_to_s3</span><span class="p">(</span><span class="n">json_dict</span><span class="p">)</span></div></div>
+    <span class="c1"># Log results, metadata, and session logs</span>
+<div class="viewcode-block" id="RunTracker.log"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_meta</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_logs</span><span class="p">()</span></div></div>
+        
 </pre></div>
 
            </div>
