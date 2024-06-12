@@ -1,19 +1,23 @@
-from datetime import datetime
-import json
-import csv
-import statistics
-from collections import defaultdict
-import sys
-import tracemalloc
-import tempfile
-import logging
-import boto3
-from botocore.exceptions import ClientError, NoCredentialsError
 import os
 import re
+import sys
+import csv
+import json
+import boto3
+import shutil
+import logging
 import requests
+import tempfile
+import statistics
+import tracemalloc
+from datetime import datetime
+from .base import ErsiliaBase
+from collections import defaultdict
+from ..default import EOS, ERSILIA_RUNS_FOLDER
+from ..io.output_logger import TabularResultLogger 
+from botocore.exceptions import ClientError, NoCredentialsError
 
-PERSISTENT_FILE_PATH = os.path.abspath("current_session.txt")
+
 # Temporary path to log files until log files are fixed
 TEMP_FILE_LOGS = os.path.abspath("")
 
@@ -81,52 +85,90 @@ def log_files_metrics(file):
                 if misc_error_flag:
                     errors[error_name] += 1
 
-        write_persistent_file(f"Error count: {error_count}")
+        write_persistent_file(f"Error count: {error_count}", model_id)
         if len(errors) > 0:
-            write_persistent_file(f"Breakdown by error types:")
+            write_persistent_file(f"Breakdown by error types:", model_id)
             for error in errors:
-                write_persistent_file(f"{error}: {errors[error]}")
-        write_persistent_file(f"Warning count: {warning_count}")
+                write_persistent_file(f"{error}: {errors[error]}", model_id)
+        write_persistent_file(f"Warning count: {warning_count}", model_id)
     except (IsADirectoryError, FileNotFoundError):
         logging.warning("Unable to calculate metrics for log file: log file not found")
-        
 
-def open_persistent_file(model_id):
+
+
+
+def get_persistent_file_path(model_id):
     """
-    Opens a new persistent file, specifically for a run of model_id
+    Construct the persistent file path.
+    :param model_id: The currently running model
+    :return: The path to the persistent file
+    """
+    return os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt")
+
+
+
+def create_persistent_file(model_id):
+
+    """
+    Create the persistent path file 
     :param model_id: The currently running model
     """
-    with open(PERSISTENT_FILE_PATH, "w") as f:
+
+    persistent_file_dir = os.path.dirname(get_persistent_file_path(model_id))
+    os.makedirs(persistent_file_dir, exist_ok=True)  
+    file_name = get_persistent_file_path(model_id)
+    
+    with open(file_name, "w") as f:
         f.write("Session started for model: {0}\n".format(model_id))
+    
+
+
+def check_file_exists(model_id):
+    """
+    Check if the persistent file exists.
+    :param model_id: The currently running model
+    :return: True if the file exists, False otherwise.
+    """
         
+    return os.path.isfile(get_persistent_file_path(model_id))
+    
+       
         
-def write_persistent_file(contents):
+def write_persistent_file(contents, model_id):
     """
     Writes contents to the current persistent file. Only writes if the file actually exists.
     :param contents: The contents to write to the file.
+    :param model_id: The currently running model
     """
-
-    # Only write to file if it already exists (we're meant to be tracking this run)
-    if os.path.isfile(PERSISTENT_FILE_PATH):
-        with open(PERSISTENT_FILE_PATH, "a") as f:
+    if check_file_exists(model_id):
+        file_name = get_persistent_file_path(model_id)
+        with open(file_name, "a") as f:
             f.write(f"{contents}\n")
 
+    else:
+        raise FileNotFoundError(f"The persistent file for model {model_id} does not exist. Cannot write contents.")
+        
 
-def close_persistent_file():
+        
+def close_persistent_file(model_id):
     """
     Closes the persistent file, renaming it to a unique name.
+    :param model_id: The currently running model
     """
-
-    # Make sure the file actually exists before we try renaming
-    if os.path.isfile(PERSISTENT_FILE_PATH):
+    if check_file_exists(model_id):
+        file_name = get_persistent_file_path(model_id)
         log_files_metrics(TEMP_FILE_LOGS)
-
-        new_file_path = os.path.join(
-            os.path.dirname(PERSISTENT_FILE_PATH),
-            datetime.now().strftime("%Y-%m-%d%_H-%M-%S.txt"),
-        )
-        os.rename(PERSISTENT_FILE_PATH, new_file_path)
         
+        new_file_path = os.path.join(
+            os.path.dirname(file_name),
+            datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt"),
+        )
+        os.rename(file_name, new_file_path)
+        
+    else:
+        raise FileNotFoundError(f"The persistent file for model {model_id} does not exist. Cannot close file.")
+        
+
 
 def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
@@ -228,6 +270,7 @@ def upload_to_cddvault(output_df, api_key):
         return False
 
 
+
 def read_csv(file_path):
     """
     Reads a CSV file and returns the data as a list of dictionaries.
@@ -239,6 +282,8 @@ def read_csv(file_path):
         reader = csv.DictReader(file)
         data = [row for row in reader]
     return data
+    
+    
 
 def get_nan_counts(data_list):
         """
@@ -263,35 +308,48 @@ def get_nan_counts(data_list):
                     nan_count[key] += 1
 
         return nan_count
+        
+class RunTracker(ErsiliaBase):
 
-
-class RunTracker:
     """
     This class will be responsible for tracking model runs. It calculates the desired metadata based on a model's
     inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested
     to Ersilia's Splunk dashboard.
     """
-
-    def __init__(self):
+    
+    def __init__(self, model_id, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.time_start = None
         self.memory_usage_start = 0
+        self.model_id = model_id
 
-    # function to be called before model is run
+        # Initialize folders
+        self.ersilia_runs_folder = os.path.join(EOS, ERSILIA_RUNS_FOLDER)
+        os.makedirs(self.ersilia_runs_folder, exist_ok=True)
+        
+        self.metadata_folder = os.path.join(self.ersilia_runs_folder, "metadata")
+        os.makedirs(self.metadata_folder, exist_ok=True)
+        
+        self.lake_folder = os.path.join(self.ersilia_runs_folder, "lake")
+        os.makedirs(self.lake_folder, exist_ok=True)
+        
+        self.logs_folder = os.path.join(self.ersilia_runs_folder, "logs")
+        os.makedirs(self.logs_folder, exist_ok=True)
+        
+        self.tabular_result_logger = TabularResultLogger()
+        
+
     def start_tracking(self):
         """
-        Runs any code necessary for the beginning of the run.
-        Currently necessary for tracking the runtime and memory usage of a run.
-        """
+	Runs any code necessary for the beginning of the run.
+	Currently necessary for tracking the runtime and memory usage of a run.
+	
+	"""
         self.time_start = datetime.now()
         tracemalloc.start()
         self.memory_usage_start = tracemalloc.get_traced_memory()[0]
-
-    def sample_df(self, df, num_rows, num_cols):
-        """
-        Returns a sample of the dataframe, with the specified number of rows and columns.
-        """
-        return df.sample(num_rows, axis=0).sample(num_cols, axis=1)
-
+        
+        
     def stats(self, result):
         """
         Stats function: calculates the basic statistics of the output file from a model. This includes the
@@ -330,7 +388,8 @@ class RunTracker:
             stats[column] = column_stats
 
         return stats
-    
+        
+        
     def get_file_sizes(self, input_file, output_file):
         """
         Calculates the size of the input and output dataframes, as well as the average size of each row.
@@ -352,7 +411,8 @@ class RunTracker:
             "avg_input_size": input_avg_row_size,
             "avg_output_size": output_avg_row_size,
         }
-    
+        
+        
     def check_types(self, result, metadata):
         """
         This method is responsible for checking the types of the output file against the expected types.
@@ -393,55 +453,81 @@ class RunTracker:
 
         return {"mismatched_types": count, "correct_shape": correct_shape}
         
+        
+        
     def get_peak_memory(self):
         """
-        Calculates the peak memory usage of ersilia's Python instance during the run.
-        :return: The peak memory usage in bytes.
-        """
-
-        # Compare memory between peak and amount when we started
+	Calculates the peak memory usage of ersilia's Python instance during the run.
+	:return: The peak memory usage in bytes.
+	"""
         peak_memory = tracemalloc.get_traced_memory()[1] - self.memory_usage_start
         tracemalloc.stop()
-
         return peak_memory
-    
+
+
+    def log_result(self, result):
+        output_dir = os.path.join(self.lake_folder, self.model_id)
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+        file_name = os.path.join(output_dir, "{0}_lake.csv".format(self.model_id))
+        tabular_result = self.tabular_result_logger.tabulate(result)
+        if tabular_result is None:
+            return
+        with open(file_name, "w") as f:
+            writer = csv.writer(f, delimiter=",")
+            for r in tabular_result:
+                writer.writerow(r)
+
+    def log_meta(self, meta):
+        output_dir = os.path.join(self.metadata_folder, self.model_id)
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+        file_name = os.path.join(output_dir, "{0}.json".format(self.model_id))
+        with open(file_name, "w") as f:
+            json.dump(meta, f)
+
+    def log_logs(self):
+        output_dir = os.path.join(self.logs_folder, self.model_id)
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+        file_name = os.path.join(output_dir, "{0}.log".format(self.model_id))
+        session_file = os.path.join(EOS, "session.json")
+        shutil.copyfile(session_file, file_name)
 
     def track(self, input, result, meta):
         """
-        Tracks the results after a model run.
-        """
+    	Tracks the results of a model run.
+    	"""
+        self.start_tracking()
         json_dict = {}
         input_data = read_csv(input)
         result_data = read_csv(result)
 
-        json_dict["input_data"] = input_data
-        json_dict["result_data"] = result_data
-
-        json_dict["meta"] = meta
-
         model_id = meta["metadata"].get("Identifier", "Unknown")
         json_dict["model_id"] = model_id
 
-        time = datetime.now() - self.time_start
-        json_dict["time_taken"] = str(time)
+        time_taken = datetime.now() - self.time_start
+        json_dict["time_taken"] = str(time_taken)
 
         # checking for mismatched types
         nan_count = get_nan_counts(result_data)
         json_dict["nan_count"] = nan_count
-
+        
         json_dict["check_types"] = self.check_types(result_data, meta["metadata"])
-
+        
         json_dict["stats"] = self.stats(result)
 
         json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
-
+         
         json_dict["peak_memory_use"] = self.get_peak_memory()
 
-        # TODO: Call CDD Vault tracking and upload API success to splunk
-
-        # log results to persistent tracking file
         json_object = json.dumps(json_dict, indent=4)
-        write_persistent_file(json_object)
-
-        # Upload run stats to s3
+        write_persistent_file(json_object, model_id)
         upload_to_s3(json_dict)
+
+    # Log results, metadata, and session logs
+    def log(self, result, meta):
+        self.log_result(result)
+        self.log_meta(meta)
+        self.log_logs()
+        
