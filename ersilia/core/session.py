@@ -42,12 +42,26 @@ class Session(ErsiliaBase):
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
 
-    def open(self, model_id):
+    def tracking_status(self):
+        data = self.get()
+        if data is None:
+            return None
+        else:
+            return data["track_status"]
+
+    def register_tracking_status(self, track_status):
+        data = self.get()
+        data["track_status"] = track_status
+        with open(self.session_file, "w") as f:
+            json.dump(data, f, indent=4)
+
+    def open(self, model_id,track_status):
         self.logger.debug("Opening session {0}".format(self.session_file))
         session = {
             "model_id": model_id,
             "timestamp": str(time.time()),
             "identifier": str(uuid.uuid4()),
+            "track_status":track_status
         }
         with open(self.session_file, "w") as f:
             json.dump(session, f, indent=4)
@@ -66,3 +80,6 @@ class Session(ErsiliaBase):
         self.logger.debug("Closing session {0}".format(self.session_file))
         if os.path.isfile(self.session_file):
             os.remove(self.session_file)
+
+
+
