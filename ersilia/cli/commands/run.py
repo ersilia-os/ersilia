@@ -6,6 +6,7 @@ from . import ersilia_cli
 from .. import echo
 from ... import ErsiliaModel
 from ...core.session import Session
+from ...core.tracking import RunTracker
 
 
 def run_cmd():
@@ -61,3 +62,4 @@ def run_cmd():
                     echo("Something went wrong", fg="red")
         else:
             echo(result)
+

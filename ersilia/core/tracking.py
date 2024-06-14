@@ -3,13 +3,18 @@ import re
 import sys
 import csv
 import json
+import time
 import boto3
+import docker
 import shutil
+import psutil
 import logging
 import requests
 import tempfile
+import resource
 import statistics
 import tracemalloc
+from .session import Session
 from datetime import datetime
 from .base import ErsiliaBase
 from collections import defaultdict
@@ -20,6 +25,67 @@ from botocore.exceptions import ClientError, NoCredentialsError
 
 # Temporary path to log files until log files are fixed
 TEMP_FILE_LOGS = os.path.abspath("")
+
+
+def docker_stats(container_name=None):
+
+    """
+    This function will calculate the memory usage of the Docker container running Ersilia Models.
+    it wil return a message if a container is not running.
+    """
+    try:
+        
+        client = docker.from_env()
+
+        if container_name:
+            containers = [client.containers.get(container_name)]
+        else:
+            containers = client.containers.list()
+
+        if not containers:
+            return ["No running containers found."]
+
+        result = []
+        for container in containers:
+            stats = container.stats(stream=False)
+            mem_usage = stats['memory_stats']['usage'] / (1024 * 1024)
+
+            cpu_stats = stats['cpu_stats']
+            total_cpu_time = cpu_stats['cpu_usage']['total_usage'] / 1e9
+            
+            minutes = total_cpu_time // 60
+            seconds = total_cpu_time % 60
+            
+            
+            peak_memory = None
+            # Get the peak memory usage recorded (if available)
+            if 'max_usage' in stats['memory_stats']:
+                peak_memory = stats['memory_stats']['max_usage'] / (1024 * 1024)
+            else:
+                cgroup_path = f"/sys/fs/cgroup/system.slice/docker-{container.id}.scope/memory.peak"
+            try:
+                with open(cgroup_path, 'r') as file:
+                    peak_memory = int(file.read().strip()) / (1024 * 1024)
+            except FileNotFoundError:
+                print(f"cgroup file {cgroup_path} not found")
+            except Exception as e:
+                print(f"An error occurred while reading cgroup file: {e}")
+                
+                
+        return (
+                f"Total memory consumed by container '{container.name}': {mem_usage:.2f}MiB",
+                f"Total CPU time used by container '{container.name}': {int(minutes)} minutes {seconds:.2f} seconds",
+                f"Peak memory Used by container '{container.name}': {int(peak_memory)} MiB"
+                    )
+
+    except docker.errors.NotFound:
+        return [f"Error: Container '{container_name}' not found."]
+    except docker.errors.APIError as e:
+        return [f"Error: Docker API error: {e}"]
+    except KeyError as e:
+        return [f"KeyError: {e} in stats for container."]
+    except Exception as e:
+        return [f"An unexpected error occurred: {e}"]
 
 
 def log_files_metrics(file):
@@ -337,20 +403,8 @@ class RunTracker(ErsiliaBase):
         os.makedirs(self.logs_folder, exist_ok=True)
         
         self.tabular_result_logger = TabularResultLogger()
-        
 
-    def start_tracking(self):
-        """
-	Runs any code necessary for the beginning of the run.
-	Currently necessary for tracking the runtime and memory usage of a run.
-	
-	"""
-        self.time_start = datetime.now()
-        tracemalloc.start()
-        self.memory_usage_start = tracemalloc.get_traced_memory()[0]
-        
- 
- 
+
 #    TODO: see the following link for more details
 #    https://github.com/ersilia-os/ersilia/issues/1165?notification_referrer_id=NT_kwDOAsB0trQxMTEyNTc5MDIxNzo0NjE2NzIyMg#issuecomment-2178596998
     
@@ -358,7 +412,6 @@ class RunTracker(ErsiliaBase):
 #        """
 #        Stats function: calculates the basic statistics of the output file from a model. This includes the
 #        mode (if applicable), minimum, maximum, and standard deviation.
-
 #        :param result: The path to the model's output file.
 #        :return: A dictionary containing the stats for each column of the result.
 #        """
@@ -462,12 +515,42 @@ class RunTracker(ErsiliaBase):
     def get_peak_memory(self):
         """
 	Calculates the peak memory usage of ersilia's Python instance during the run.
-	:return: The peak memory usage in bytes.
+	:return: The peak memory usage in Megabytes.
 	"""
-        peak_memory = tracemalloc.get_traced_memory()[1] - self.memory_usage_start
-        tracemalloc.stop()
+	
+        usage = resource.getrusage(resource.RUSAGE_SELF)
+        peak_memory_kb = usage.ru_maxrss
+        peak_memory = peak_memory_kb / 1024 
         return peak_memory
+        
 
+ 
+    def get_memory_info(self, process="ersilia"):
+        """
+        Retrieves the memory information of the current process
+        """
+        try:
+            current_process = psutil.Process()
+            process_name = current_process.name()
+            cpu_times = current_process.cpu_times()
+        
+            if process_name != process:
+                raise Exception(f"Unexpected process. Expected: {process}, but got: {process_name}")
+                     
+               
+            uss_mb = current_process.memory_full_info().uss / (1024 * 1024)
+            total_cpu_time = sum(cpu_time for cpu_time in (cpu_times.user, 
+                                                            cpu_times.system, 
+                                                            cpu_times.children_user,
+                                                            cpu_times.children_system, 
+                                                            cpu_times.iowait))
+            
+            return uss_mb, total_cpu_time
+            
+        except psutil.NoSuchProcess:
+            return "No such process found."
+        except Exception as e:
+            return str(e)
 
     def log_result(self, result):
         output_dir = os.path.join(self.lake_folder, self.model_id)
@@ -502,16 +585,17 @@ class RunTracker(ErsiliaBase):
         """
     	Tracks the results of a model run.
     	"""
-        self.start_tracking()
+        self.time_start = datetime.now()
         json_dict = {}
         input_data = read_csv(input)
         result_data = read_csv(result)
 
+        session = Session(config_json=self.config_json)
         model_id = meta["metadata"].get("Identifier", "Unknown")
         json_dict["model_id"] = model_id
 
         time_taken = datetime.now() - self.time_start
-        json_dict["time_taken"] = str(time_taken)
+        json_dict["time_taken in seconds"] = str(time_taken)
 
         # checking for mismatched types
         nan_count = get_nan_counts(result_data)
@@ -520,9 +604,20 @@ class RunTracker(ErsiliaBase):
         json_dict["check_types"] = self.check_types(result_data, meta["metadata"])
 
         json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
-         
-        json_dict["peak_memory_use"] = self.get_peak_memory()
 
+        json_dict["Docker Container"] = docker_stats()
+
+
+        # Get the memory stats of the run processs
+        peak_memory = self.get_peak_memory()      
+        total_memory, cpu_time = self.get_memory_info()
+        
+        # Update the session file with the stats 
+        session.update_peak_memory(peak_memory)
+        session.update_total_memory(total_memory)
+        session.update_cpu_time(cpu_time)
+        self.log_logs()
+        
         json_object = json.dumps(json_dict, indent=4)
         write_persistent_file(json_object, model_id)
         upload_to_s3(json_dict)
@@ -532,4 +627,3 @@ class RunTracker(ErsiliaBase):
         self.log_result(result)
         self.log_meta(meta)
         self.log_logs()
-        

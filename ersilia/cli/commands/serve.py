@@ -1,10 +1,9 @@
 import click
-from . import ersilia_cli
+
 from .. import echo
+from . import ersilia_cli
 from ... import ErsiliaModel
 from ..messages import ModelNotFound
-from ...core.tracking import create_persistent_file
-
 
 def serve_cmd():
     """Creates serve command"""
@@ -41,6 +40,7 @@ def serve_cmd():
             service_class=service_class,
             preferred_port=port,
             track_runs=track,
+
         )
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
@@ -68,7 +68,3 @@ def serve_cmd():
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
-
-        # Setup persistent tracking
-        if track:
-            create_persistent_file(mdl.model_id)
