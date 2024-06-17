@@ -5,6 +5,7 @@ from . import ersilia_cli
 from ... import ErsiliaModel
 from ..messages import ModelNotFound
 
+
 def serve_cmd():
     """Creates serve command"""
 
@@ -40,7 +41,6 @@ def serve_cmd():
             service_class=service_class,
             preferred_port=port,
             track_runs=track,
-
         )
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()

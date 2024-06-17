@@ -48,7 +48,6 @@ class ErsiliaModel(ErsiliaBase):
         fetch_if_not_available=True,
         preferred_port=None,
         track_runs=False,
-        track_serve=False
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -125,8 +124,8 @@ class ErsiliaModel(ErsiliaBase):
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
-        
-        if track_runs or track_serve:
+
+        if track_runs:
             self._run_tracker = RunTracker(
                 model_id=self.model_id, config_json=self.config_json
             )
@@ -415,11 +414,7 @@ class ErsiliaModel(ErsiliaBase):
             for key, values in models.items():
                 f.write(f"{key},{values}\n")
 
-   
     def serve(self):
-        # Start tracking to get the peak memory in serve
-        if self._run_tracker is not None:
-            create_persistent_file(self.model_id)
         self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track_runs)
         self.autoservice.serve()
@@ -428,10 +423,10 @@ class ErsiliaModel(ErsiliaBase):
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
         # self.update_model_usage_time(self.model_id) TODO: Check and reactivate
-        
-        # Get the memory usage and cpu time of the Model server(autoservice)
-        if self._run_tracker is not None:
 
+        # Start tracking to get the peak memory, memory usage and cpu time of the Model server(autoservice)
+        if self._run_tracker is not None:
+            create_persistent_file(self.model_id)
             memory_usage_serve, cpu_time_serve = self._run_tracker.get_memory_info()
             peak_memory_serve = self._run_tracker.get_peak_memory()
 
@@ -455,7 +450,7 @@ class ErsiliaModel(ErsiliaBase):
         result = self.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )
-       
+
         return result
 
     def _standard_run(self, input=None, output=None):
@@ -501,10 +496,12 @@ class ErsiliaModel(ErsiliaBase):
             result = self._run(
                 input=input, output=output, batch_size=batch_size, track_run=track_run
             )
-            # Start tracking model run
+            # Start tracking model run if track flag is used in serve
             if self._run_tracker is not None and track_run:
-                self._run_tracker.track(input=input, result=result, meta=self._model_info)
-                self._run_tracker.log(result=result, meta=self._model_info)               
+                self._run_tracker.track(
+                    input=input, result=result, meta=self._model_info
+                )
+                self._run_tracker.log(result=result, meta=self._model_info)
             return result
 
     @property

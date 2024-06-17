@@ -9,7 +9,6 @@ from ..default import EOS
 from .base import ErsiliaBase
 
 
-
 class Session(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -70,7 +69,6 @@ class Session(ErsiliaBase):
             self.logger.debug("No session exists")
             return None
 
-
     def update_total_memory(self, additional_memory):
         """
         Methods to get the the total memory of processess during serving and running.
@@ -83,7 +81,7 @@ class Session(ErsiliaBase):
         data["total memory used by model(MB)"] = f"{new_memory:.5f}"
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
-    
+
     def update_cpu_time(self, cpu_time):
         """
         Methods to get the total cpu time of processess during serving and running
@@ -93,10 +91,9 @@ class Session(ErsiliaBase):
             data = {}
         current_cpu = float(data.get("CPU time used by model(seconds)", 0))
         new_cpu = current_cpu + cpu_time
-        data["CPU time used by model(seconds)"] = f"{new_cpu}"       
+        data["CPU time used by model(seconds)"] = f"{new_cpu}"
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
-
 
     def update_peak_memory(self, peak_memory):
         """
@@ -111,9 +108,8 @@ class Session(ErsiliaBase):
             data["peak memory used by model(MiB)"] = f"{peak_memory:.5f}"
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
-            
+
     def close(self):
         self.logger.debug("Closing session {0}".format(self.session_file))
         if os.path.isfile(self.session_file):
             os.remove(self.session_file)
-
