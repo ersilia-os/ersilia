@@ -9,7 +9,6 @@ from .base import ErsiliaBase
 from ..default import EOS
 
 
-
 class Session(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -42,12 +41,20 @@ class Session(ErsiliaBase):
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
 
-    def open(self, model_id):
+    def tracking_status(self):
+        data = self.get()
+        if data is None:
+            return None
+        else:
+            return data["track_runs"]
+
+    def open(self, model_id, track_runs):
         self.logger.debug("Opening session {0}".format(self.session_file))
         session = {
             "model_id": model_id,
             "timestamp": str(time.time()),
             "identifier": str(uuid.uuid4()),
+            "track_runs": track_runs,
         }
         with open(self.session_file, "w") as f:
             json.dump(session, f, indent=4)

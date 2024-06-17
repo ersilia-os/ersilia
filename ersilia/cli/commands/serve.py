@@ -23,19 +23,24 @@ def serve_cmd():
     )
     # Add the new flag for tracking the serve session
     @click.option(
-        "-t/",
-        "--track_serve/--no_track_serve",
-        "track_serve",
+        "-t",
+        "--track",
+        "track",
+        is_flag=True,
         required=False,
         default=False,
     )
-    def serve(model, lake, docker, port, track_serve):
+    def serve(model, lake, docker, port, track):
         if docker:
             service_class = "docker"
         else:
             service_class = None
         mdl = ErsiliaModel(
-            model, save_to_lake=lake, service_class=service_class, preferred_port=port
+            model,
+            save_to_lake=lake,
+            service_class=service_class,
+            preferred_port=port,
+            track_runs=track,
         )
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
@@ -65,5 +70,5 @@ def serve_cmd():
         echo("   - info", fg="blue")
 
         # Setup persistent tracking
-        if track_serve:
+        if track:
             create_persistent_file(mdl.model_id)

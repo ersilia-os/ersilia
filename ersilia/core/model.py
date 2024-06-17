@@ -81,6 +81,7 @@ class ErsiliaModel(ErsiliaBase):
             "hosted",
         ], "Wrong service class"
         self.service_class = service_class
+        self.track_runs = track_runs
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
         assert (
@@ -421,7 +422,7 @@ class ErsiliaModel(ErsiliaBase):
 
     def serve(self):
         self.close()
-        self.session.open(model_id=self.model_id)
+        self.session.open(model_id=self.model_id, track_runs=self.track_runs)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
         self.url = self.autoservice.service.url
@@ -546,4 +547,3 @@ class ErsiliaModel(ErsiliaBase):
     @property
     def _model_info(self):
         return self.info()
-
