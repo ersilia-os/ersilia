@@ -45,7 +45,7 @@ RUN /bin/bash <<EOF
 set -eux
 cd /root/bentoml/repository/$MODEL/*/$MODEL/artifacts/
 if [ -f framework/run.sh ]; then
-  sed -E 's/(.usr.bin.conda.envs(.*bin.*python)(.*))/\2 \3/' framework/run.sh
+  sed -i -E 's/(.usr.bin.conda.envs(.*bin.*python)(.*))/\2 \3/' framework/run.sh
 fi
 EOF
 
