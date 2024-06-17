@@ -36,8 +36,11 @@ def serve_cmd():
         else:
             service_class = None
         mdl = ErsiliaModel(
-            model, save_to_lake=lake, service_class=service_class, preferred_port=port,
-            track_status=track
+            model,
+            save_to_lake=lake,
+            service_class=service_class,
+            preferred_port=port,
+            track_runs=track,
         )
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
@@ -69,6 +72,3 @@ def serve_cmd():
         # Setup persistent tracking
         if track:
             create_persistent_file(mdl.model_id)
-
-
-

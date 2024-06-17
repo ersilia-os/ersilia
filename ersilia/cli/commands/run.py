@@ -30,28 +30,29 @@ def run_cmd():
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
-        track_status=session.tracking_status()
-        
+        track_runs = session.tracking_status()
+
         if model_id is None:
             echo(
                 "No model seems to be served. Please run 'ersilia serve ...' before.",
                 fg="red",
             )
             return
-        
+
         mdl = ErsiliaModel(
             model_id,
             service_class=service_class,
             config_json=None,
-            track_status=track_status,
+            track_runs=track_runs,
         )
         result = mdl.run(
             input=input,
             output=output,
             batch_size=batch_size,
-            track_run=track_status,
+            track_run=track_runs,
             try_standard=standard,
         )
+
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:

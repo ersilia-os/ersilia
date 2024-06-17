@@ -49,7 +49,7 @@ class ErsiliaModel(ErsiliaBase):
         fetch_if_not_available=True,
         preferred_port=None,
         log_runs=True,
-        track_status=False,
+        track_runs=False,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -81,7 +81,7 @@ class ErsiliaModel(ErsiliaBase):
             "hosted",
         ], "Wrong service class"
         self.service_class = service_class
-        self.track_status=track_status
+        self.track_runs = track_runs
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
         assert (
@@ -133,7 +133,7 @@ class ErsiliaModel(ErsiliaBase):
         else:
             self._run_logger = None
 
-        if track_status:
+        if track_runs:
             self._run_tracker = self._run_logger
         else:
             self._run_tracker = None
@@ -422,10 +422,9 @@ class ErsiliaModel(ErsiliaBase):
 
     def serve(self):
         self.close()
-        self.session.open(model_id=self.model_id,track_status=self.track_status)
+        self.session.open(model_id=self.model_id, track_runs=self.track_runs)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
-        self.session.register_tracking_status(self.track_status)
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
@@ -548,4 +547,3 @@ class ErsiliaModel(ErsiliaBase):
     @property
     def _model_info(self):
         return self.info()
-
