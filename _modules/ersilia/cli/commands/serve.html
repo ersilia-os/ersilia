@@ -100,19 +100,24 @@
     <span class="p">)</span>
     <span class="c1"># Add the new flag for tracking the serve session</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-t/&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--track_serve/--no_track_serve&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;track_serve&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--track&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;track&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">lake</span><span class="p">,</span> <span class="n">docker</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">track_serve</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">lake</span><span class="p">,</span> <span class="n">docker</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">track</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">docker</span><span class="p">:</span>
             <span class="n">service_class</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">service_class</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span> <span class="n">save_to_lake</span><span class="o">=</span><span class="n">lake</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">save_to_lake</span><span class="o">=</span><span class="n">lake</span><span class="p">,</span>
+            <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span>
+            <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+            <span class="n">track_runs</span><span class="o">=</span><span class="n">track</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
             <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
@@ -142,7 +147,7 @@
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - info&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
 
         <span class="c1"># Setup persistent tracking</span>
-        <span class="k">if</span> <span class="n">track_serve</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
             <span class="n">create_persistent_file</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 </pre></div>
 

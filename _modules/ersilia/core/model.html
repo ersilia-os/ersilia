@@ -157,6 +157,7 @@
             <span class="s2">&quot;hosted&quot;</span><span class="p">,</span>
         <span class="p">],</span> <span class="s2">&quot;Wrong service class&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service_class</span> <span class="o">=</span> <span class="n">service_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_runs</span> <span class="o">=</span> <span class="n">track_runs</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
         <span class="k">assert</span> <span class="p">(</span>
@@ -497,7 +498,7 @@
 
 <div class="viewcode-block" id="ErsiliaModel.serve"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.serve">[docs]</a>    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">track_runs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_runs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_service_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">url</span>
@@ -622,7 +623,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_model_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">()</span></div>
-
 </pre></div>
 
            </div>
