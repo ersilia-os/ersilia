@@ -22,7 +22,7 @@ from botocore.exceptions import ClientError, NoCredentialsError
 TEMP_FILE_LOGS = os.path.abspath("")
 
 
-def log_files_metrics(file):
+def log_files_metrics(file, model_id):
     """
     This function will log the number of errors and warnings in the log files.
 
@@ -157,8 +157,13 @@ def close_persistent_file(model_id):
     """
     if check_file_exists(model_id):
         file_name = get_persistent_file_path(model_id)
+<<<<<<< HEAD
         log_files_metrics(TEMP_FILE_LOGS)
         
+=======
+        log_files_metrics(TEMP_FILE_LOGS, model_id)
+
+>>>>>>> c2993d37 (Fix log_files_metric)
         new_file_path = os.path.join(
             os.path.dirname(file_name),
             datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt"),
