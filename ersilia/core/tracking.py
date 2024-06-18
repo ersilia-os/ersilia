@@ -23,7 +23,6 @@ from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
 
-
 def docker_stats(container_name=None):
     """
     This function will calculate the memory usage of the Docker container running Ersilia Models.
@@ -121,7 +120,9 @@ def log_files_metrics(file_log, model_id):
                     # encountering new logs
                     # make sure error flags are closed
                     if ersilia_error_flag:
-                        errors["Unknown Ersilia exception class"] = errors.get("Unknown Ersilia exception class", 0) + 1
+                        errors["Unknown Ersilia exception class"] = (
+                            errors.get("Unknown Ersilia exception class", 0) + 1
+                        )
                         ersilia_error_flag = False
                     if misc_error_flag:
                         errors[error_name] = errors.get(error_name, 0) + 1
@@ -146,15 +147,15 @@ def log_files_metrics(file_log, model_id):
                     errors["Unknown Ersilia exception class"] += 1
                 if misc_error_flag:
                     errors[error_name] += 1
-        
+
         json_dict = {}
         json_dict["Error count"] = error_count
-        
+
         if len(errors) > 0:
             json_dict["Breakdown by error types"] = {}
             for error in errors:
-                json_dict["Breakdown by error types"][error] = errors[error]      
-        json_dict["Warning count"] = warning_count      
+                json_dict["Breakdown by error types"][error] = errors[error]
+        json_dict["Warning count"] = warning_count
         json_object = json.dumps(json_dict, indent=4)
         write_persistent_file(json_object, model_id)
     except (IsADirectoryError, FileNotFoundError):
@@ -220,9 +221,7 @@ def close_persistent_file(model_id):
     """
     if check_file_exists(model_id):
         file_name = get_persistent_file_path(model_id)
-        file_log = os.path.join(
-        EOS,  "console.log"
-    )
+        file_log = os.path.join(EOS, "console.log")
         log_files_metrics(file_log, model_id)
 
         new_file_path = os.path.join(
@@ -235,9 +234,8 @@ def close_persistent_file(model_id):
         raise FileNotFoundError(
             f"The persistent file for model {model_id} does not exist. Cannot close file."
         )
-        
-        
-        
+
+
 def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
 
@@ -554,8 +552,6 @@ class RunTracker(ErsiliaBase):
             return "No such process found."
         except Exception as e:
             return str(e)
-            
-            
 
     def log_result(self, result):
         output_dir = os.path.join(self.lake_folder, self.model_id)
@@ -585,9 +581,7 @@ class RunTracker(ErsiliaBase):
         file_name = os.path.join(output_dir, "{0}.log".format(self.model_id))
         session_file = os.path.join(EOS, "session.json")
         shutil.copyfile(session_file, file_name)
-        
-        
-        
+
     def track(self, input, result, meta):
         """
         Tracks the results of a model run.
