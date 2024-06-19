@@ -19,69 +19,7 @@ from botocore.exceptions import ClientError, NoCredentialsError
 
 
 
-<<<<<<< HEAD
-def log_files_metrics(file, model_id):
-=======
-def docker_stats(container_name=None):
-    """
-    This function will calculate the memory usage of the Docker container running Ersilia Models.
-    it wil return a message if a container is not running.
-    """
-    try:
-
-        client = docker.from_env()
-
-        if container_name:
-            containers = [client.containers.get(container_name)]
-        else:
-            containers = client.containers.list()
-
-        if not containers:
-            return ["No running containers found."]
-
-        result = []
-        for container in containers:
-            stats = container.stats(stream=False)
-            mem_usage = stats["memory_stats"]["usage"] / (1024 * 1024)
-
-            cpu_stats = stats["cpu_stats"]
-            total_cpu_time = cpu_stats["cpu_usage"]["total_usage"] / 1e9
-
-            minutes = total_cpu_time // 60
-            seconds = total_cpu_time % 60
-
-            peak_memory = None
-            # Get the peak memory usage recorded (if available)
-            if "max_usage" in stats["memory_stats"]:
-                peak_memory = stats["memory_stats"]["max_usage"] / (1024 * 1024)
-            else:
-                cgroup_path = f"/sys/fs/cgroup/system.slice/docker-{container.id}.scope/memory.peak"
-            try:
-                with open(cgroup_path, "r") as file:
-                    peak_memory = int(file.read().strip()) / (1024 * 1024)
-            except FileNotFoundError:
-                print(f"cgroup file {cgroup_path} not found")
-            except Exception as e:
-                print(f"An error occurred while reading cgroup file: {e}")
-
-        return (
-            f"Total memory consumed by container '{container.name}': {mem_usage:.2f}MiB",
-            f"Total CPU time used by container '{container.name}': {int(minutes)} minutes {seconds:.2f} seconds",
-            f"Peak memory Used by container '{container.name}': {int(peak_memory)} MiB",
-        )
-
-    except docker.errors.NotFound:
-        return [f"Error: Container '{container_name}' not found."]
-    except docker.errors.APIError as e:
-        return [f"Error: Docker API error: {e}"]
-    except KeyError as e:
-        return [f"KeyError: {e} in stats for container."]
-    except Exception as e:
-        return [f"An unexpected error occurred: {e}"]
-
-
 def log_files_metrics(file_log, model_id):
->>>>>>> e2642866 (Implement the log_file_metrics method)
     """
     This function will log the number of errors and warnings in the log files.
 
@@ -222,20 +160,10 @@ def close_persistent_file(model_id):
     """
     if check_file_exists(model_id):
         file_name = get_persistent_file_path(model_id)
-<<<<<<< HEAD
-<<<<<<< HEAD
-        log_files_metrics(TEMP_FILE_LOGS)
-        
-=======
-        log_files_metrics(TEMP_FILE_LOGS, model_id)
-=======
         file_log = os.path.join(
         EOS,  "console.log"
     )
         log_files_metrics(file_log, model_id)
->>>>>>> e2642866 (Implement the log_file_metrics method)
-
->>>>>>> c2993d37 (Fix log_files_metric)
         new_file_path = os.path.join(
             os.path.dirname(file_name),
             datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt"),
@@ -243,19 +171,11 @@ def close_persistent_file(model_id):
         os.rename(file_name, new_file_path)
         
     else:
-<<<<<<< HEAD
-        raise FileNotFoundError(f"The persistent file for model {model_id} does not exist. Cannot close file.")
-        
-
-
-=======
+    
         raise FileNotFoundError(
             f"The persistent file for model {model_id} does not exist. Cannot close file."
         )
         
-        
-        
->>>>>>> e2642866 (Implement the log_file_metrics method)
 def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
 
@@ -550,44 +470,7 @@ class RunTracker(ErsiliaBase):
         tracemalloc.stop()
         return peak_memory
 
-<<<<<<< HEAD
-=======
-    def get_memory_info(self, process="ersilia"):
-        """
-        Retrieves the memory information of the current process
-        """
-        try:
-            current_process = psutil.Process()
-            process_name = current_process.name()
-            cpu_times = current_process.cpu_times()
-
-            if process_name != process:
-                raise Exception(
-                    f"Unexpected process. Expected: {process}, but got: {process_name}"
-                )
-
-            uss_mb = current_process.memory_full_info().uss / (1024 * 1024)
-            total_cpu_time = sum(
-                cpu_time
-                for cpu_time in (
-                    cpu_times.user,
-                    cpu_times.system,
-                    cpu_times.children_user,
-                    cpu_times.children_system,
-                    cpu_times.iowait,
-                )
-            )
-
-            return uss_mb, total_cpu_time
-
-        except psutil.NoSuchProcess:
-            return "No such process found."
-        except Exception as e:
-            return str(e)
-            
-            
->>>>>>> e2642866 (Implement the log_file_metrics method)
-
+           
     def log_result(self, result):
         output_dir = os.path.join(self.lake_folder, self.model_id)
         if not os.path.exists(output_dir):
