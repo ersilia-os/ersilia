@@ -156,7 +156,7 @@ def log_files_metrics(file):
         write_persistent_file(f"Warning count: {warning_count}", model_id)
     except (IsADirectoryError, FileNotFoundError):
         logging.warning("Unable to calculate metrics for log file: log file not found")
-        
+
 
 def get_persistent_file_path(model_id):
     """
@@ -545,6 +545,8 @@ class RunTracker(ErsiliaBase):
             return "No such process found."
         except Exception as e:
             return str(e)
+            
+            
 
     def log_result(self, result):
         output_dir = os.path.join(self.lake_folder, self.model_id)
@@ -574,7 +576,9 @@ class RunTracker(ErsiliaBase):
         file_name = os.path.join(output_dir, "{0}.log".format(self.model_id))
         session_file = os.path.join(EOS, "session.json")
         shutil.copyfile(session_file, file_name)
-
+        
+        
+        
     def track(self, input, result, meta):
         """
         Tracks the results of a model run.
