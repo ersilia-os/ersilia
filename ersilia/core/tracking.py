@@ -34,7 +34,6 @@ def log_files_metrics(file_log, model_id):
     misc_error_flag = False
     error_name = ""
     errors = {}
-    json_dict = {}
 
     try:
         with open(file_log, "r") as file:
