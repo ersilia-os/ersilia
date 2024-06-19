@@ -81,7 +81,7 @@ def docker_stats(container_name=None):
         return [f"An unexpected error occurred: {e}"]
 
 
-def log_files_metrics(file_log, model_id):
+def log_files_metrics(file):
     """
     This function will log the number of errors and warnings in the log files.
 
@@ -221,8 +221,7 @@ def close_persistent_file(model_id):
     """
     if check_file_exists(model_id):
         file_name = get_persistent_file_path(model_id)
-        file_log = os.path.join(EOS, "console.log")
-        log_files_metrics(file_log, model_id)
+        log_files_metrics(TEMP_FILE_LOGS)
 
         new_file_path = os.path.join(
             os.path.dirname(file_name),
