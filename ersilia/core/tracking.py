@@ -5,7 +5,6 @@ import csv
 import json
 import time
 import boto3
-import docker
 import shutil
 import psutil
 import logging
@@ -19,70 +18,13 @@ from datetime import datetime
 from .base import ErsiliaBase
 from collections import defaultdict
 from ..default import EOS, ERSILIA_RUNS_FOLDER
+from ..utils.docker import SimpleDocker
 from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
 
 # Temporary path to log files until log files are fixed
 TEMP_FILE_LOGS = os.path.abspath("")
-
-
-def docker_stats(container_name=None):
-    """
-    This function will calculate the memory usage of the Docker container running Ersilia Models.
-    it wil return a message if a container is not running.
-    """
-    try:
-
-        client = docker.from_env()
-
-        if container_name:
-            containers = [client.containers.get(container_name)]
-        else:
-            containers = client.containers.list()
-
-        if not containers:
-            return ["No running containers found."]
-
-        result = []
-        for container in containers:
-            stats = container.stats(stream=False)
-            mem_usage = stats["memory_stats"]["usage"] / (1024 * 1024)
-
-            cpu_stats = stats["cpu_stats"]
-            total_cpu_time = cpu_stats["cpu_usage"]["total_usage"] / 1e9
-
-            minutes = total_cpu_time // 60
-            seconds = total_cpu_time % 60
-
-            peak_memory = None
-            # Get the peak memory usage recorded (if available)
-            if "max_usage" in stats["memory_stats"]:
-                peak_memory = stats["memory_stats"]["max_usage"] / (1024 * 1024)
-            else:
-                cgroup_path = f"/sys/fs/cgroup/system.slice/docker-{container.id}.scope/memory.peak"
-            try:
-                with open(cgroup_path, "r") as file:
-                    peak_memory = int(file.read().strip()) / (1024 * 1024)
-            except FileNotFoundError:
-                print(f"cgroup file {cgroup_path} not found")
-            except Exception as e:
-                print(f"An error occurred while reading cgroup file: {e}")
-
-        return (
-            f"Total memory consumed by container '{container.name}': {mem_usage:.2f}MiB",
-            f"Total CPU time used by container '{container.name}': {int(minutes)} minutes {seconds:.2f} seconds",
-            f"Peak memory Used by container '{container.name}': {int(peak_memory)} MiB",
-        )
-
-    except docker.errors.NotFound:
-        return [f"Error: Container '{container_name}' not found."]
-    except docker.errors.APIError as e:
-        return [f"Error: Docker API error: {e}"]
-    except KeyError as e:
-        return [f"KeyError: {e} in stats for container."]
-    except Exception as e:
-        return [f"An unexpected error occurred: {e}"]
 
 
 def log_files_metrics(file):
@@ -584,6 +526,7 @@ class RunTracker(ErsiliaBase):
         Tracks the results of a model run.
         """
         self.time_start = datetime.now()
+        self.docker_client = SimpleDocker()
         json_dict = {}
         input_data = read_csv(input)
         result_data = read_csv(result)
@@ -602,8 +545,14 @@ class RunTracker(ErsiliaBase):
         json_dict["check_types"] = self.check_types(result_data, meta["metadata"])
 
         json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
-
-        json_dict["Docker Container"] = docker_stats()
+   
+        docker_info = (self.docker_client.container_memory(), 
+        self.docker_client.container_cpu(), 
+        self.docker_client.container_peak()
+        )
+        
+        
+        json_dict["Docker Container"] = docker_info
 
         # Get the memory stats of the run processs
         peak_memory = self.get_peak_memory()
