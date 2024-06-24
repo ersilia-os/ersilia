@@ -23,11 +23,8 @@ from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
 
-# Temporary path to log files until log files are fixed
-TEMP_FILE_LOGS = os.path.abspath("")
 
-
-def log_files_metrics(file):
+def log_files_metrics(file_log, model_id):
     """
     This function will log the number of errors and warnings in the log files.
 
@@ -44,15 +41,16 @@ def log_files_metrics(file):
     errors = {}
 
     try:
-        with open(file, "r") as file:
+        with open(file_log, "r") as file:
             line = None
             for line in file:
                 if not re.match(r"^\d{2}.\d{2}.\d{2} \| ", line):
-                    # continuation of log
                     if ersilia_error_flag:
-                        # catch the error name if hinted by previous line
                         error_name = line.rstrip()
-                        errors[error_name] += 1
+                        if error_name in errors:
+                            errors[error_name] += 1
+                        else:
+                            errors[error_name] = 1
                         ersilia_error_flag = False
                         continue
                     elif misc_error_flag:
@@ -64,10 +62,10 @@ def log_files_metrics(file):
                     # encountering new logs
                     # make sure error flags are closed
                     if ersilia_error_flag:
-                        errors["Unknown Ersilia exception class"] += 1
+                        errors["Unknown Ersilia exception class"] = errors.get("Unknown Ersilia exception class", 0) + 1
                         ersilia_error_flag = False
                     if misc_error_flag:
-                        errors[error_name] += 1
+                        errors[error_name] = errors.get(error_name, 0) + 1
                         misc_error_flag = False
                     if "| ERROR" in line:
                         error_count += 1
@@ -89,13 +87,17 @@ def log_files_metrics(file):
                     errors["Unknown Ersilia exception class"] += 1
                 if misc_error_flag:
                     errors[error_name] += 1
-
-        write_persistent_file(f"Error count: {error_count}", model_id)
+        
+        json_dict = {}
+        json_dict["Error count"] = error_count
+        
         if len(errors) > 0:
-            write_persistent_file(f"Breakdown by error types:", model_id)
+            json_dict["Breakdown by error types"] = {}
             for error in errors:
-                write_persistent_file(f"{error}: {errors[error]}", model_id)
-        write_persistent_file(f"Warning count: {warning_count}", model_id)
+                json_dict["Breakdown by error types"][error] = errors[error]      
+        json_dict["Warning count"] = warning_count      
+        json_object = json.dumps(json_dict, indent=4)
+        write_persistent_file(json_object, model_id)
     except (IsADirectoryError, FileNotFoundError):
         logging.warning("Unable to calculate metrics for log file: log file not found")
 
@@ -159,8 +161,10 @@ def close_persistent_file(model_id):
     """
     if check_file_exists(model_id):
         file_name = get_persistent_file_path(model_id)
-        log_files_metrics(TEMP_FILE_LOGS)
-        
+        file_log = os.path.join(
+        EOS,  "console.log"
+    )
+        log_files_metrics(file_log, model_id)
         new_file_path = os.path.join(
             os.path.dirname(file_name),
             datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt"),
@@ -168,9 +172,15 @@ def close_persistent_file(model_id):
         os.rename(file_name, new_file_path)
         
     else:
-        raise FileNotFoundError(f"The persistent file for model {model_id} does not exist. Cannot close file.")
+    
+        raise FileNotFoundError(
+            f"The persistent file for model {model_id} does not exist. Cannot close file."
+        )
         
+<<<<<<< HEAD
         
+=======
+>>>>>>> 85b9c049 (Implement the method to log the number of errors and warnings during model run. (#1168))
 def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
 
@@ -455,6 +465,7 @@ class RunTracker(ErsiliaBase):
         peak_memory = peak_memory_kb / 1024
         return peak_memory
 
+<<<<<<< HEAD
     def get_memory_info(self, process="ersilia"):
         """
         Retrieves the memory information of the current process
@@ -490,6 +501,9 @@ class RunTracker(ErsiliaBase):
             
             
 
+=======
+           
+>>>>>>> 85b9c049 (Implement the method to log the number of errors and warnings during model run. (#1168))
     def log_result(self, result):
         output_dir = os.path.join(self.lake_folder, self.model_id)
         if not os.path.exists(output_dir):
