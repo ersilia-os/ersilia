@@ -94,11 +94,8 @@
 <span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span><span class="p">,</span> <span class="n">NoCredentialsError</span>
 
 
-<span class="c1"># Temporary path to log files until log files are fixed</span>
-<span class="n">TEMP_FILE_LOGS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="log_files_metrics"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.log_files_metrics">[docs]</a><span class="k">def</span> <span class="nf">log_files_metrics</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="log_files_metrics"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.log_files_metrics">[docs]</a><span class="k">def</span> <span class="nf">log_files_metrics</span><span class="p">(</span><span class="n">file_log</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function will log the number of errors and warnings in the log files.</span>
 
@@ -115,15 +112,16 @@
     <span class="n">errors</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_log</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\d</span><span class="si">{2}</span><span class="s2">.\d</span><span class="si">{2}</span><span class="s2">.\d</span><span class="si">{2}</span><span class="s2"> \| &quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
-                    <span class="c1"># continuation of log</span>
                     <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
-                        <span class="c1"># catch the error name if hinted by previous line</span>
                         <span class="n">error_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                        <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">error_name</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+                            <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
                         <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
                         <span class="k">continue</span>
                     <span class="k">elif</span> <span class="n">misc_error_flag</span><span class="p">:</span>
@@ -135,10 +133,10 @@
                     <span class="c1"># encountering new logs</span>
                     <span class="c1"># make sure error flags are closed</span>
                     <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
-                        <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
                         <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
-                        <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">error_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
                         <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">if</span> <span class="s2">&quot;| ERROR&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
                         <span class="n">error_count</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -160,13 +158,17 @@
                     <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
                     <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error count: </span><span class="si">{</span><span class="n">error_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+        
+        <span class="n">json_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;Error count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_count</span>
+        
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Breakdown by error types:&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+            <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;Breakdown by error types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
-                <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">errors</span><span class="p">[</span><span class="n">error</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
-        <span class="n">write_persistent_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning count: </span><span class="si">{</span><span class="n">warning_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+                <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;Breakdown by error types&quot;</span><span class="p">][</span><span class="n">error</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">error</span><span class="p">]</span>      
+        <span class="n">json_dict</span><span class="p">[</span><span class="s2">&quot;Warning count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">warning_count</span>      
+        <span class="n">json_object</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">write_persistent_file</span><span class="p">(</span><span class="n">json_object</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">IsADirectoryError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Unable to calculate metrics for log file: log file not found&quot;</span><span class="p">)</span></div>
 
@@ -233,8 +235,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">check_file_exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">get_persistent_file_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">log_files_metrics</span><span class="p">(</span><span class="n">TEMP_FILE_LOGS</span><span class="p">)</span>
-        
+        <span class="n">file_log</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">EOS</span><span class="p">,</span>  <span class="s2">&quot;console.log&quot;</span>
+    <span class="p">)</span>
+        <span class="n">log_files_metrics</span><span class="p">(</span><span class="n">file_log</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="n">new_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file_name</span><span class="p">),</span>
             <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S.txt&quot;</span><span class="p">),</span>
@@ -242,10 +246,11 @@
         <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">new_file_path</span><span class="p">)</span>
         
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The persistent file for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> does not exist. Cannot close file.&quot;</span><span class="p">)</span></div>
+    
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The persistent file for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> does not exist. Cannot close file.&quot;</span>
+        <span class="p">)</span></div>
         
-
-
 <div class="viewcode-block" id="upload_to_s3"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_s3">[docs]</a><span class="k">def</span> <span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">json_dict</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;ersilia-tracking&quot;</span><span class="p">,</span> <span class="n">object_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a file to an S3 bucket</span>
 
@@ -544,7 +549,7 @@
         <span class="n">tracemalloc</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">peak_memory</span></div>
 
-
+           
 <div class="viewcode-block" id="RunTracker.log_result"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_result">[docs]</a>    <span class="k">def</span> <span class="nf">log_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
         <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
@@ -573,7 +578,9 @@
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.log&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
         <span class="n">session_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;session.json&quot;</span><span class="p">)</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">session_file</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span></div>
-
+        
+        
+        
 <div class="viewcode-block" id="RunTracker.track"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.track">[docs]</a>    <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    	Tracks the results of a model run.</span>
