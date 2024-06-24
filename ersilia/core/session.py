@@ -30,7 +30,7 @@ class Session(ErsiliaBase):
 
     def current_service_class(self):
         data = self.get()
-        if data is None:
+        if data is None or data.get("service_class") is None:
             return None
         else:
             return data["service_class"]
