@@ -177,10 +177,7 @@ def close_persistent_file(model_id):
             f"The persistent file for model {model_id} does not exist. Cannot close file."
         )
         
-<<<<<<< HEAD
-        
-=======
->>>>>>> 85b9c049 (Implement the method to log the number of errors and warnings during model run. (#1168))
+
 def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
 
@@ -465,7 +462,7 @@ class RunTracker(ErsiliaBase):
         peak_memory = peak_memory_kb / 1024
         return peak_memory
 
-<<<<<<< HEAD
+
     def get_memory_info(self, process="ersilia"):
         """
         Retrieves the memory information of the current process
@@ -500,10 +497,6 @@ class RunTracker(ErsiliaBase):
             return str(e)
             
             
-
-=======
-           
->>>>>>> 85b9c049 (Implement the method to log the number of errors and warnings during model run. (#1168))
     def log_result(self, result):
         output_dir = os.path.join(self.lake_folder, self.model_id)
         if not os.path.exists(output_dir):
