@@ -22,7 +22,6 @@ from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
 
-
 def log_files_metrics(file_log, model_id):
     """
     This function will log the number of errors and warnings in the log files.
@@ -61,7 +60,9 @@ def log_files_metrics(file_log, model_id):
                     # encountering new logs
                     # make sure error flags are closed
                     if ersilia_error_flag:
-                        errors["Unknown Ersilia exception class"] = errors.get("Unknown Ersilia exception class", 0) + 1
+                        errors["Unknown Ersilia exception class"] = (
+                            errors.get("Unknown Ersilia exception class", 0) + 1
+                        )
                         ersilia_error_flag = False
                     if misc_error_flag:
                         errors[error_name] = errors.get(error_name, 0) + 1
@@ -86,15 +87,15 @@ def log_files_metrics(file_log, model_id):
                     errors["Unknown Ersilia exception class"] += 1
                 if misc_error_flag:
                     errors[error_name] += 1
-        
+
         json_dict = {}
         json_dict["Error count"] = error_count
-        
+
         if len(errors) > 0:
             json_dict["Breakdown by error types"] = {}
             for error in errors:
-                json_dict["Breakdown by error types"][error] = errors[error]      
-        json_dict["Warning count"] = warning_count      
+                json_dict["Breakdown by error types"][error] = errors[error]
+        json_dict["Warning count"] = warning_count
         json_object = json.dumps(json_dict, indent=4)
         write_persistent_file(json_object, model_id)
     except (IsADirectoryError, FileNotFoundError):
@@ -295,12 +296,7 @@ def read_csv(file_path):
     :return: A list of dictionaries containing the CSV data.
     """
 
-    with open("output.csv", "w", newline="") as csvfile:
-        csvWriter = csv.writer(csvfile)
-        for row in file_path:
-            csvWriter.writerow(row)
-
-    with open("output.csv", mode="r") as file:
+    with open(file_path, mode="r") as file:
         reader = csv.DictReader(file)
         data = [row for row in reader]
     return data
@@ -543,9 +539,7 @@ class RunTracker(ErsiliaBase):
         file_name = os.path.join(output_dir, "{0}.log".format(self.model_id))
         session_file = os.path.join(EOS, "session.json")
         shutil.copyfile(session_file, file_name)
-        
-        
-        
+
     def track(self, input, result, meta):
         """
         Tracks the results of a model run.
@@ -553,7 +547,28 @@ class RunTracker(ErsiliaBase):
         self.start_tracking()
         json_dict = {}
         input_data = read_csv(input)
-        result_data = read_csv(result)
+
+        # Create a temporary file to store the result if it is a generator
+        if isinstance(result, types.GeneratorType):
+
+            # Ensure EOS/tmp directory exists
+            tmp_dir = os.path.join(EOS, "tmp")
+            if not os.path.exists(tmp_dir):
+                os.makedirs(tmp_dir, exist_ok=True)
+
+            # Create a temporary file to store the generator output
+            temp_output_file = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".csv", dir=tmp_dir
+            )
+            temp_output_path = temp_output_file.name
+            with open(temp_output_path, "w", newline="") as csvfile:
+                csvWriter = csv.writer(csvfile)
+                for row in result:
+                    csvWriter.writerow(row)
+            result_data = read_csv(temp_output_path)
+            os.remove(temp_output_path)
+        else:
+            result_data = read_csv(result)
 
         session = Session(config_json=self.config_json)
         model_id = meta["metadata"].get("Identifier", "Unknown")
