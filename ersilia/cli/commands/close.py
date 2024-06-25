@@ -4,7 +4,7 @@ from . import ersilia_cli
 from .. import echo
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...core.tracking import check_file_exists, close_persistent_file
+from ...core.tracking import check_file_exists,  close_persistent_file
 
 
 def close_cmd():
@@ -23,4 +23,4 @@ def close_cmd():
 
         # Close our persistent tracking file
         if check_file_exists(model_id):
-            close_persistent_file(mdl.model_id)
+           close_persistent_file(mdl.model_id)

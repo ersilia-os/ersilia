@@ -3,18 +3,23 @@ import re
 import sys
 import csv
 import json
+import time
 import boto3
 import shutil
+import psutil
 import logging
 import requests
 import tempfile
+import resource
 import statistics
 import tracemalloc
+from .session import Session
 from datetime import datetime
 from .base import ErsiliaBase
 from collections import defaultdict
 from ..default import EOS, ERSILIA_RUNS_FOLDER
-from ..io.output_logger import TabularResultLogger 
+from ..utils.docker import SimpleDocker
+from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
 
@@ -97,32 +102,29 @@ def log_files_metrics(file_log, model_id):
         logging.warning("Unable to calculate metrics for log file: log file not found")
 
 
-
-
 def get_persistent_file_path(model_id):
     """
     Construct the persistent file path.
     :param model_id: The currently running model
     :return: The path to the persistent file
     """
-    return os.path.join(EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt")
-
+    return os.path.join(
+        EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt"
+    )
 
 
 def create_persistent_file(model_id):
-
     """
-    Create the persistent path file 
+    Create the persistent path file
     :param model_id: The currently running model
     """
 
     persistent_file_dir = os.path.dirname(get_persistent_file_path(model_id))
-    os.makedirs(persistent_file_dir, exist_ok=True)  
+    os.makedirs(persistent_file_dir, exist_ok=True)
     file_name = get_persistent_file_path(model_id)
-    
+
     with open(file_name, "w") as f:
         f.write("Session started for model: {0}\n".format(model_id))
-    
 
 
 def check_file_exists(model_id):
@@ -131,11 +133,10 @@ def check_file_exists(model_id):
     :param model_id: The currently running model
     :return: True if the file exists, False otherwise.
     """
-        
+
     return os.path.isfile(get_persistent_file_path(model_id))
-    
-       
-        
+
+
 def write_persistent_file(contents, model_id):
     """
     Writes contents to the current persistent file. Only writes if the file actually exists.
@@ -148,10 +149,11 @@ def write_persistent_file(contents, model_id):
             f.write(f"{contents}\n")
 
     else:
-        raise FileNotFoundError(f"The persistent file for model {model_id} does not exist. Cannot write contents.")
-        
+        raise FileNotFoundError(
+            f"The persistent file for model {model_id} does not exist. Cannot write contents."
+        )
 
-        
+
 def close_persistent_file(model_id):
     """
     Closes the persistent file, renaming it to a unique name.
@@ -175,6 +177,7 @@ def close_persistent_file(model_id):
             f"The persistent file for model {model_id} does not exist. Cannot close file."
         )
         
+
 def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
 
@@ -275,7 +278,6 @@ def upload_to_cddvault(output_df, api_key):
         return False
 
 
-
 def read_csv(file_path):
     """
     Reads a CSV file and returns the data as a list of dictionaries.
@@ -283,45 +285,44 @@ def read_csv(file_path):
     :param file_path: Path to the CSV file.
     :return: A list of dictionaries containing the CSV data.
     """
-    with open(file_path, mode='r') as file:
+    with open(file_path, mode="r") as file:
         reader = csv.DictReader(file)
         data = [row for row in reader]
     return data
-    
-    
+
 
 def get_nan_counts(data_list):
-        """
-        Calculates the number of None values in each key of a list of dictionaries.
+    """
+    Calculates the number of None values in each key of a list of dictionaries.
 
-        :param data_list: List of dictionaries containing the data
-        :return: Dictionary containing the count of None values for each key
-        """
-        nan_count = {}
-    
-        # Collect all keys from data_list
-        all_keys = set(key for item in data_list for key in item.keys())
+    :param data_list: List of dictionaries containing the data
+    :return: Dictionary containing the count of None values for each key
+    """
+    nan_count = {}
 
-        # Initialize nan_count with all keys
-        for key in all_keys:
-            nan_count[key] = 0
+    # Collect all keys from data_list
+    all_keys = set(key for item in data_list for key in item.keys())
 
-        # Count None values for each key
-        for item in data_list:
-            for key, value in item.items():
-                if value is None:
-                    nan_count[key] += 1
+    # Initialize nan_count with all keys
+    for key in all_keys:
+        nan_count[key] = 0
 
-        return nan_count
-        
+    # Count None values for each key
+    for item in data_list:
+        for key, value in item.items():
+            if value is None:
+                nan_count[key] += 1
+
+    return nan_count
+
+
 class RunTracker(ErsiliaBase):
-
     """
     This class will be responsible for tracking model runs. It calculates the desired metadata based on a model's
     inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested
     to Ersilia's Splunk dashboard.
     """
-    
+
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.time_start = None
@@ -331,31 +332,19 @@ class RunTracker(ErsiliaBase):
         # Initialize folders
         self.ersilia_runs_folder = os.path.join(EOS, ERSILIA_RUNS_FOLDER)
         os.makedirs(self.ersilia_runs_folder, exist_ok=True)
-        
+
         self.metadata_folder = os.path.join(self.ersilia_runs_folder, "metadata")
         os.makedirs(self.metadata_folder, exist_ok=True)
-        
+
         self.lake_folder = os.path.join(self.ersilia_runs_folder, "lake")
         os.makedirs(self.lake_folder, exist_ok=True)
-        
+
         self.logs_folder = os.path.join(self.ersilia_runs_folder, "logs")
         os.makedirs(self.logs_folder, exist_ok=True)
-        
-        self.tabular_result_logger = TabularResultLogger()
-        
 
-    def start_tracking(self):
-        """
-	Runs any code necessary for the beginning of the run.
-	Currently necessary for tracking the runtime and memory usage of a run.
-	
-	"""
-        self.time_start = datetime.now()
-        tracemalloc.start()
-        self.memory_usage_start = tracemalloc.get_traced_memory()[0]
-        
- 
- 
+        self.tabular_result_logger = TabularResultLogger()
+
+
 #    TODO: see the following link for more details
 #    https://github.com/ersilia-os/ersilia/issues/1165?notification_referrer_id=NT_kwDOAsB0trQxMTEyNTc5MDIxNzo0NjE2NzIyMg#issuecomment-2178596998
     
@@ -363,7 +352,6 @@ class RunTracker(ErsiliaBase):
 #        """
 #        Stats function: calculates the basic statistics of the output file from a model. This includes the
 #        mode (if applicable), minimum, maximum, and standard deviation.
-
 #        :param result: The path to the model's output file.
 #        :return: A dictionary containing the stats for each column of the result.
 #        """
@@ -374,7 +362,7 @@ class RunTracker(ErsiliaBase):
 #        for row in data:
 #            row.pop('key', None)
 #            row.pop('input', None)
-            
+
         # Convert data to a column-oriented format
 #        columns = defaultdict(list)
 #        for row in data:
@@ -396,8 +384,8 @@ class RunTracker(ErsiliaBase):
 #
 #            stats[column] = column_stats
 
+
 #        return stats
-        
         
     def get_file_sizes(self, input_file, output_file):
         """
@@ -420,8 +408,7 @@ class RunTracker(ErsiliaBase):
             "avg_input_size": input_avg_row_size,
             "avg_output_size": output_avg_row_size,
         }
-        
-        
+
     def check_types(self, result, metadata):
         """
         This method is responsible for checking the types of the output file against the expected types.
@@ -446,7 +433,9 @@ class RunTracker(ErsiliaBase):
 
         mismatched_types = 0
         for column, types in dtypes_list.items():
-            if not all(type_dict.get(dtype) == metadata["Output Type"][0] for dtype in types):
+            if not all(
+                type_dict.get(dtype) == metadata["Output Type"][0] for dtype in types
+            ):
                 mismatched_types += 1
 
         # Check if the shape is correct
@@ -461,19 +450,53 @@ class RunTracker(ErsiliaBase):
         logging.info("Output has", count, "mismatched types.\n")
 
         return {"mismatched_types": count, "correct_shape": correct_shape}
-        
-        
-        
+
     def get_peak_memory(self):
         """
-	Calculates the peak memory usage of ersilia's Python instance during the run.
-	:return: The peak memory usage in bytes.
-	"""
-        peak_memory = tracemalloc.get_traced_memory()[1] - self.memory_usage_start
-        tracemalloc.stop()
+        Calculates the peak memory usage of ersilia's Python instance during the run.
+        :return: The peak memory usage in Megabytes.
+        """
+
+        usage = resource.getrusage(resource.RUSAGE_SELF)
+        peak_memory_kb = usage.ru_maxrss
+        peak_memory = peak_memory_kb / 1024
         return peak_memory
 
-           
+
+    def get_memory_info(self, process="ersilia"):
+        """
+        Retrieves the memory information of the current process
+        """
+        try:
+            current_process = psutil.Process()
+            process_name = current_process.name()
+            cpu_times = current_process.cpu_times()
+
+            if process_name != process:
+                raise Exception(
+                    f"Unexpected process. Expected: {process}, but got: {process_name}"
+                )
+
+            uss_mb = current_process.memory_full_info().uss / (1024 * 1024)
+            total_cpu_time = sum(
+                cpu_time
+                for cpu_time in (
+                    cpu_times.user,
+                    cpu_times.system,
+                    cpu_times.children_user,
+                    cpu_times.children_system,
+                    cpu_times.iowait,
+                )
+            )
+
+            return uss_mb, total_cpu_time
+
+        except psutil.NoSuchProcess:
+            return "No such process found."
+        except Exception as e:
+            return str(e)
+            
+            
     def log_result(self, result):
         output_dir = os.path.join(self.lake_folder, self.model_id)
         if not os.path.exists(output_dir):
@@ -507,28 +530,46 @@ class RunTracker(ErsiliaBase):
         
     def track(self, input, result, meta):
         """
-    	Tracks the results of a model run.
-    	"""
-        self.start_tracking()
+        Tracks the results of a model run.
+        """
+        self.time_start = datetime.now()
+        self.docker_client = SimpleDocker()
         json_dict = {}
         input_data = read_csv(input)
         result_data = read_csv(result)
 
+        session = Session(config_json=self.config_json)
         model_id = meta["metadata"].get("Identifier", "Unknown")
         json_dict["model_id"] = model_id
 
         time_taken = datetime.now() - self.time_start
-        json_dict["time_taken"] = str(time_taken)
+        json_dict["time_taken in seconds"] = str(time_taken)
 
         # checking for mismatched types
         nan_count = get_nan_counts(result_data)
         json_dict["nan_count"] = nan_count
-        
+
         json_dict["check_types"] = self.check_types(result_data, meta["metadata"])
 
         json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
-         
-        json_dict["peak_memory_use"] = self.get_peak_memory()
+   
+        docker_info = (self.docker_client.container_memory(), 
+        self.docker_client.container_cpu(), 
+        self.docker_client.container_peak()
+        )
+        
+        
+        json_dict["Docker Container"] = docker_info
+
+        # Get the memory stats of the run processs
+        peak_memory = self.get_peak_memory()
+        total_memory, cpu_time = self.get_memory_info()
+
+        # Update the session file with the stats
+        session.update_peak_memory(peak_memory)
+        session.update_total_memory(total_memory)
+        session.update_cpu_time(cpu_time)
+        self.log_logs()
 
         json_object = json.dumps(json_dict, indent=4)
         write_persistent_file(json_object, model_id)
@@ -539,4 +580,3 @@ class RunTracker(ErsiliaBase):
         self.log_result(result)
         self.log_meta(meta)
         self.log_logs()
-        
