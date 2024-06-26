@@ -197,7 +197,7 @@ class ModelCatalog(ErsiliaBase):
                 status = self._get_status(card)
                 inputs = self._get_input(card)
                 output = self._get_output(card)
-                service_class = mc.service_class(model_id)
+                service_class = mc.get_service_class(model_id)
                 R += [[model_id, slug, title, status, inputs, output, service_class]]
             columns = ["Identifier", "Slug", "Title", "Status", "Input", "Output", "Service Class"]
         logger.info("Found {0} models".format(len(R)))
