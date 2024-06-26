@@ -177,7 +177,7 @@ class ModelCatalog(ErsiliaBase):
             columns = ["Identifier", "Slug", "Title"]
         logger.info("Found {0} models".format(len(R)))
         if len(R) == 0:
-            return None
+            return CatalogTable(data=[], columns=columns)
         return CatalogTable(data=R, columns=columns)
 
     def bentoml(self):
