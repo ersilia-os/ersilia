@@ -16,6 +16,7 @@ import statistics
 import tracemalloc
 from .session import Session
 from datetime import datetime
+from datetime import timedelta
 from .base import ErsiliaBase
 from collections import defaultdict
 from ..default import EOS, ERSILIA_RUNS_FOLDER
@@ -387,6 +388,50 @@ class RunTracker(ErsiliaBase):
 
 
 #        return stats
+
+
+    def update_total_time(self, model_id, start_time):
+        """
+        Method to track and update the Total time taken by model.
+        :Param model_id: The currently running model.
+        :Param start_time: The start time of the running model. 
+        """
+        
+        end_time = time.time()
+        duration = end_time - start_time
+        if check_file_exists(model_id):
+            file_name = get_persistent_file_path(model_id)
+            with open(file_name, "r") as f:
+                lines = f.readlines()
+               
+            updated_lines = []
+            total_time_found = False
+
+            for line in lines:
+                if "Total time taken" in line and not total_time_found:
+                    try:
+                        total_time_str = line.split(":")[1].strip()
+                        total_time = float(total_time_str)
+                        total_time += duration
+                        formatted_time = str(timedelta(seconds=total_time))
+                        updated_lines.append(f"Total time taken: {formatted_time}\n")
+                        total_time_found = True
+                    except (ValueError, IndexError) as e:
+                        print(f"Error parsing 'Total time taken' value: {e}")
+                else:
+                    updated_lines.append(line)
+        
+            if not total_time_found:
+                updated_lines.append(f"Total time taken: {formatted_duration}\n")
+
+            new_content = "".join(updated_lines)
+            with open(file_name, "w") as f:
+                f.write(f"{new_content}\n")
+        else:
+            new_content = f"Total time: {formatted_duration}\n"
+            with open(file_name, "w") as f:
+                f.write(f"{new_content}\n")
+        
         
     def get_file_sizes(self, input_file, output_file):
         """
@@ -533,7 +578,7 @@ class RunTracker(ErsiliaBase):
         """
         Tracks the results of a model run.
         """
-        self.time_start = datetime.now()
+        
         self.docker_client = SimpleDocker()
         json_dict = {}
         input_data = read_csv(input)
@@ -562,9 +607,6 @@ class RunTracker(ErsiliaBase):
         session = Session(config_json=self.config_json)
         model_id = meta["metadata"].get("Identifier", "Unknown")
         json_dict["model_id"] = model_id
-
-        time_taken = datetime.now() - self.time_start
-        json_dict["time_taken in seconds"] = str(time_taken)
 
         # checking for mismatched types
         nan_count = get_nan_counts(result_data)
