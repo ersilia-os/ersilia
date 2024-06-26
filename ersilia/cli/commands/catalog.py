@@ -1,7 +1,6 @@
 import click
 
 from . import ersilia_cli
-from .. import echo
 from ...hub.content.catalog import ModelCatalog
 from ...hub.content.search import ModelSearcher
 
@@ -44,26 +43,19 @@ def catalog_cmd():
         if browser:
             mc.airtable()
             return
-        if local:
-            catalog_table = mc.local()
-            if not catalog_table.data:
-                click.echo(
-                    click.style(
-                        "No local model is available. Please fetch a model by running 'ersilia fetch ...'",
-                        fg="red",
-                    )
+        catalog_table = mc.local() if local else mc.hub()
+        if local and not catalog_table.data:
+            click.echo(
+                click.style(
+                    "No local model is available. Please fetch a model by running 'ersilia fetch ...'",
+                    fg="red",
                 )
-                return
-            if file_name is None:
-                catalog = catalog_table.as_json()
-            else:
-                catalog_table.write(file_name)
-                catalog = None
+            )
+            return
+        if file_name is None:
+            catalog = catalog_table.as_json()
         else:
-            catalog_table = mc.hub()
-            if file_name is None:
-                catalog = catalog_table.as_json()
-            else:
-                catalog_table.write(file_name)
-                catalog = None
+            catalog_table.write(file_name)
+            catalog = None
+
         click.echo(catalog)
