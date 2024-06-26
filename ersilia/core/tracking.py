@@ -10,6 +10,7 @@ import psutil
 import logging
 import requests
 import tempfile
+import types
 import resource
 import statistics
 import tracemalloc
@@ -536,7 +537,27 @@ class RunTracker(ErsiliaBase):
         self.docker_client = SimpleDocker()
         json_dict = {}
         input_data = read_csv(input)
-        result_data = read_csv(result)
+        # Create a temporary file to store the result if it is a generator
+        if isinstance(result, types.GeneratorType):
+
+            # Ensure EOS/tmp directory exists
+            tmp_dir = os.path.join(EOS, "tmp")
+            if not os.path.exists(tmp_dir):
+                os.makedirs(tmp_dir, exist_ok=True)
+
+            # Create a temporary file to store the generator output
+            temp_output_file = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".csv", dir=tmp_dir
+            )
+            temp_output_path = temp_output_file.name
+            with open(temp_output_path, "w", newline="") as csvfile:
+                csvWriter = csv.writer(csvfile)
+                for row in result:
+                    csvWriter.writerow(row)
+            result_data = read_csv(temp_output_path)
+            os.remove(temp_output_path)
+        else:
+            result_data = read_csv(result)
 
         session = Session(config_json=self.config_json)
         model_id = meta["metadata"].get("Identifier", "Unknown")
