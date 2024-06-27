@@ -5,19 +5,19 @@ Thank you for taking your time to contribute to Ersilia, just a few checks befor
 
 **Description**
 
-Replace this line with a short description here...
+_Replace this line with a short description here..._
 
 **Changes to be made**
 
-Replace this line with how do you intend to go about getting this done...
+_Replace this line with how do you intend to go about getting this done..._
 
 **Status**
 
-Replace this line with what you have done so far...
+_Replace this line with what you have done so far..._
 
 **To do**
 
-If this is a work in progress, Replace this line with your next steps
+_If this is a work in progress, Replace this line with your next steps_
 
 Is this pull request related to any open issue? If yes, replace issueID below with the issue ID
 
