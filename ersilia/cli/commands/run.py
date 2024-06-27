@@ -42,8 +42,6 @@ def run_cmd():
             )
             return
         
-        start_time = time.time()
-        
         mdl = ErsiliaModel(
             model_id,
             service_class=service_class,
