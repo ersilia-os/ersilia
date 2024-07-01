@@ -496,13 +496,13 @@ class ErsiliaModel(ErsiliaBase):
             result = self._run(
                 input=input, output=output, batch_size=batch_size, track_run=track_run
             )
-            # Start tracking model run if track flag is used in serve
-            if self._run_tracker is not None and track_run:
-                self._run_tracker.track(
-                    input=input, result=result, meta=self._model_info
-                )
-                self._run_tracker.log(result=result, meta=self._model_info)
-            return result
+        # Start tracking model run if track flag is used in serve
+        if self._run_tracker is not None and track_run:
+            self._run_tracker.track(
+                input=input, result=result, meta=self._model_info
+            )
+            self._run_tracker.log(result=result, meta=self._model_info)
+        return result
 
     @property
     def paths(self):

@@ -20,9 +20,26 @@ from .base import ErsiliaBase
 from collections import defaultdict
 from ..default import EOS, ERSILIA_RUNS_FOLDER
 from ..utils.docker import SimpleDocker
+from ..utils.csvfile import CsvDataLoader
 from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
+
+
+
+def flatten_dict(data):
+    """
+    This will flatten the nested dictionaries from the generator into a single-level dictionary,
+    where keys from all levels are merged into one dictionary.
+    
+    :flat_dict: Result returned in a dictionary
+    """
+    flat_dict = {}
+    for outer_key, inner_dict in data.items():
+        for inner_key, value in inner_dict.items():
+            flat_dict[inner_key] = value
+    return flat_dict
+    
 
 
 def log_files_metrics(file_log, model_id):
@@ -279,19 +296,6 @@ def upload_to_cddvault(output_df, api_key):
         return False
 
 
-def read_csv(file_path):
-    """
-    Reads a CSV file and returns the data as a list of dictionaries.
-
-    :param file_path: Path to the CSV file.
-    :return: A list of dictionaries containing the CSV data.
-    """
-    with open(file_path, mode="r") as file:
-        reader = csv.DictReader(file)
-        data = [row for row in reader]
-    return data
-
-
 def get_nan_counts(data_list):
     """
     Calculates the number of None values in each key of a list of dictionaries.
@@ -535,8 +539,14 @@ class RunTracker(ErsiliaBase):
         """
         self.time_start = datetime.now()
         self.docker_client = SimpleDocker()
+        self.data = CsvDataLoader()
         json_dict = {}
-        input_data = read_csv(input)
+        
+        if os.path.isfile(input):
+            input_data = self.data.read(input)
+        else:
+            input_data = [{"SMILES": input}]
+        
         # Create a temporary file to store the result if it is a generator
         if isinstance(result, types.GeneratorType):
 
@@ -549,15 +559,20 @@ class RunTracker(ErsiliaBase):
             temp_output_file = tempfile.NamedTemporaryFile(
                 delete=False, suffix=".csv", dir=tmp_dir
             )
-            temp_output_path = temp_output_file.name
+            
+            flat_data_list = [flatten_dict(row) for row in result]
+            if flat_data_list:
+                header = list(flat_data_list[0].keys())                
+            temp_output_path = temp_output_file.name    
             with open(temp_output_path, "w", newline="") as csvfile:
-                csvWriter = csv.writer(csvfile)
-                for row in result:
-                    csvWriter.writerow(row)
-            result_data = read_csv(temp_output_path)
-            os.remove(temp_output_path)
+                csvWriter = csv.DictWriter(csvfile, fieldnames=header)
+                csvWriter.writeheader()
+                for flat_data in flat_data_list:
+                    csvWriter.writerow(flat_data)                    
+            result_data = self.data.read(temp_output_path)
+            os.remove(temp_output_path)            
         else:
-            result_data = read_csv(result)
+            result_data = self.data.read(result)
 
         session = Session(config_json=self.config_json)
         model_id = meta["metadata"].get("Identifier", "Unknown")
