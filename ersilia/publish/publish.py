@@ -6,7 +6,6 @@ from . import EOS_TEMPLATE_REPOSITORY
 
 from ..utils.terminal import run_command
 from .. import ErsiliaBase
-from ..utils.dvc import DVCSetup
 from ..default import GITHUB_ORG
 
 
@@ -58,12 +57,6 @@ class ModelPublisher(ErsiliaBase):
         )
         self.message = "Initial commit"
 
-    def dvc(self):
-        dvc = DVCSetup(local_repo_path=self.repo_path, model_id=self.model_id)
-        dvc.gdrive_setup()
-        dvc.set_dvc_gdrive()
-        dvc.git_add_and_commit()
-
     def git_push(self, message=None):
         if not message:
             message = self.message
@@ -75,7 +68,6 @@ class ModelPublisher(ErsiliaBase):
         os.chdir(self.cwd)
 
     def push(self):
-        self.dvc()
         self.git_push()
 
     def test(self):

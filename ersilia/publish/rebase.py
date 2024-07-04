@@ -68,12 +68,6 @@ class TemplateRebaser(ErsiliaBase):
         run_command("gh repo clone {0}/{1}".format(GITHUB_ORG, self.model_id))
         os.chdir(self.cwd)
 
-    def dvc_part(self):
-        # TODO: Better overwritting functionality
-        self.file_folder_rebaser.do_file("data.h5", overwrite=False)
-        self.file_folder_rebaser.do_file(".dvcignore", overwrite=False)
-        self.file_folder_rebaser.do_folder(".dvc", overwrite=False)
-
     def clean(self):
         if os.path.exists(self.template_path):
             self.logger.debug("Cleaning {0}".format(self.template_path))
@@ -86,4 +80,3 @@ class TemplateRebaser(ErsiliaBase):
     def rebase(self):
         self.clone_template()
         self.clone_current_model()
-        self.dvc_part()
