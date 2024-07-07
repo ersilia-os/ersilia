@@ -5,6 +5,8 @@ import importlib
 import requests
 
 from .. import ErsiliaBase
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
 from ..default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
@@ -210,7 +212,8 @@ class StandardCSVRunApi(ErsiliaBase):
             is_list = False
         with open(output_data, "w") as f:
             writer = csv.writer(f)
-            writer.writerow(self.header)
+            if not os.path.exists(output_data):
+                writer.writerow(self.header)
             for i_d, r_d in zip(input_data, result):
                 v = r_d[k]
                 if not is_list:
@@ -220,8 +223,26 @@ class StandardCSVRunApi(ErsiliaBase):
                 writer.writerow(r)
         return output_data
 
-    def post(self, input, output):
+    def post(self, input, output, output_source=OutputSource.LOCAL_ONLY):
         input_data = self.serialize_to_json(input)
+        if OutputSource.is_cloud(output_source):
+            #
+            # HERE (send to store and get back results dict + missing inputs list)
+            #
+            store = InferenceStoreApi(model_id=self.model_id)
+            # print(self.model_id)
+            # print(input_data)
+            result_from_store = store.get_precalculations(input_data)
+            # print(result_from_store)
+            # print(missing_keys)
+            
+            # if output_source == OutputSource.CLOUD_ONLY:
+            output_data = self.serialize_to_csv(input_data, result_from_store, output)
+            return output_data # should missing keys be returned too in a file/message?
+        
+            # if output_source == OutputSource.CLOUD_FIRST and len(missing_keys):
+            #     input_data = missing_keys
+            
         url = "{0}/{1}".format(self.url, self.api_name)
         response = requests.post(url, json=input_data)
         if response.status_code == 200:

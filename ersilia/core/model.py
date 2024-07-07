@@ -25,6 +25,8 @@ from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.csvfile import CsvDataLoader
 from ..utils.terminal import yes_no_input
 from ..lake.base import LakeBase
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
 
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 
@@ -41,6 +43,7 @@ class ErsiliaModel(ErsiliaBase):
     def __init__(
         self,
         model,
+        output_source=OutputSource.LOCAL_ONLY,
         save_to_lake=True,
         service_class=None,
         config_json=None,
@@ -92,6 +95,7 @@ class ErsiliaModel(ErsiliaBase):
         self.model_id = mdl.model_id
         self.slug = mdl.slug
         self.text = mdl.text
+        self.output_source = output_source
         self._is_available_locally = mdl.is_available_locally()
         if not self._is_available_locally and fetch_if_not_available:
             self.logger.info("Model is not available locally")
@@ -280,7 +284,7 @@ class ErsiliaModel(ErsiliaBase):
             )
             return None
         self.logger.debug("Starting standard runner")
-        result = scra.post(input=input, output=output)
+        result = scra.post(input=input, output=output, output_source=self.output_source)
         return result
 
     @staticmethod
@@ -366,6 +370,19 @@ class ErsiliaModel(ErsiliaBase):
     def api(
         self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
     ):
+        if OutputSource.is_cloud(self.output_source):
+            # here (send to store and get back results dict + missing inputs list)
+            store = InferenceStoreApi(model_id=self.model_id)
+            print(self.model_id)
+            print(input)
+            result_from_store = store.get_precalculations(input)
+            print(result_from_store)
+            
+            # if self.output_source == OutputSource.CLOUD_ONLY:
+            return "this is the result returned to CLI" # should missing keys be returned too in a file/message?
+            
+            # if self.output_source == OutputSource.CLOUD_FIRST and len(missing_keys):
+            #     pass # save missing keys to file to use in subsequent steps below
         if self._do_cache_splits(input=input, output=output):
             splitted_inputs = self.tfr.split_in_cache()
             self.logger.debug("Split inputs:")
@@ -424,6 +441,7 @@ class ErsiliaModel(ErsiliaBase):
         self.session.open(model_id=self.model_id)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
+        self.session.register_output_source(self.output_source)
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class

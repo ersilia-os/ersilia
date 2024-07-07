@@ -27,13 +27,18 @@ def api_cmd():
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
+        output_source = session.current_output_source()
         if model_id is None:
             echo(
                 "No model seems to be served. Please run 'ersilia serve ...' before.",
                 fg="red",
             )
             return
-        mdl = ErsiliaModel(model_id, service_class=service_class, config_json=None)
+        mdl = ErsiliaModel(model_id,
+                           output_source=output_source,
+                           service_class=service_class,
+                           config_json=None
+                           )
         result = mdl.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )

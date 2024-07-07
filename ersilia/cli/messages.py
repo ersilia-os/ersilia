@@ -1,5 +1,6 @@
 from .echo import echo
 from ..default import ERSILIA_MODEL_HUB_URL
+from ..store.utils import OutputSource
 
 import sys
 
@@ -36,5 +37,23 @@ class ModelNotInLocal(object):
             "Please fetch the model from the Ersilia Model Hub: ersilia fetch {0}".format(
                 self.model_id
             )
+        )
+        sys.exit(0)
+
+
+class ModelNotInStore(object):
+    def __init__(self, model_id):
+        self.model_id = model_id
+
+    def echo(self):
+        echo(
+            "Model {0} could not be found in inference store".format(self.model_id),
+            fg="red",
+        )
+        echo(
+            "Please serve the model locally: ersilia serve {0} --output-source {1}".format(
+                self.model_id,
+                OutputSource.LOCAL_ONLY
+                )
         )
         sys.exit(0)
