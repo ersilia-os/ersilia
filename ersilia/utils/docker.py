@@ -7,6 +7,7 @@ import tempfile
 from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
+from .. import logger
 from ..default import DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME
 from ..utils.system import SystemChecker
 
@@ -49,7 +50,6 @@ def is_udocker_installed():
 class SimpleDocker(object):
     def __init__(self, use_udocker=None):
         self.identifier = LongIdentifier()
-        self.client = docker.from_env()
         if use_udocker is None:
             self._with_udocker = self._use_udocker()
         else:
@@ -250,17 +250,17 @@ class SimpleDocker(object):
         self.exec_container(name, cmd)
         self.kill(name)
 
-    def get_container(self):
+    def _get_containers(self):
         """
-        This function will get the Docker container running Ersilia Models.
-        it wil return a message if a container is not running.
+        This function will get the Docker container running an ersilia model
         """
 
         try:
-            containers = self.client.containers.list()
+            client = docker.from_env()
+            containers = client.containers.list()
 
             if not containers:
-                return ["No running containers found"]
+                logger.debug("No containers found")
             return containers
 
         except docker.errors.APIError as e:
@@ -272,21 +272,21 @@ class SimpleDocker(object):
 
     def container_memory(self):
         """
-        This function will get the total memory usage of the Docker container running Ersilia Models.
+        This function will get the total memory usage of the Docker container running an ersilia model.
         """
 
         containers = self.get_container()
-        if isinstance(containers, list) and isinstance(containers[0], str):
-            return containers[0]
 
-        result = []
-        for container in containers:
-            stats = container.stats(stream=False)
-            mem_usage = stats["memory_stats"]["usage"] / (1024 * 1024)
+        if len(containers) > 0:
+            result = []
+            for container in containers:
+                stats = container.stats(stream=False)
+                mem_usage = stats["memory_stats"]["usage"] / (1024 * 1024)
 
-        return (
-            f"Total memory consumed by container '{container.name}': {mem_usage:.2f}MiB",
-        )
+            return (
+                f"Total memory consumed by container '{container.name}': {mem_usage:.2f}MiB",
+            )
+        return 
 
     def container_cpu(self):
         """
@@ -294,20 +294,19 @@ class SimpleDocker(object):
         """
 
         containers = self.get_container()
-        if isinstance(containers, list) and isinstance(containers[0], str):
-            return containers[0]
 
-        for container in containers:
-            stats = container.stats(stream=False)
-            cpu_stats = stats["cpu_stats"]
-            total_cpu_time = cpu_stats["cpu_usage"]["total_usage"] / 1e9
+        if len(containers) > 0:
+            for container in containers:
+                stats = container.stats(stream=False)
+                cpu_stats = stats["cpu_stats"]
+                total_cpu_time = cpu_stats["cpu_usage"]["total_usage"] / 1e9
 
-            minutes = total_cpu_time // 60
-            seconds = total_cpu_time % 60
+                minutes = total_cpu_time // 60
+                seconds = total_cpu_time % 60
 
-        return (
-            f"Total CPU time used by container '{container.name}': {int(minutes)} minutes {seconds:.2f} seconds",
-        )
+            return (
+                f"Total CPU time used by container '{container.name}': {int(minutes)} minutes {seconds:.2f} seconds",
+            )
 
     def container_peak(self):
         """
