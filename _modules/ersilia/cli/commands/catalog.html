@@ -109,7 +109,8 @@
     <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">more</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">local</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">browser</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                <span class="s2">&quot;You cannot show the local model catalog in the browser&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
+                <span class="s2">&quot;You cannot show the local model catalog in the browser&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">more</span><span class="p">:</span>
             <span class="n">only_identifier</span> <span class="o">=</span> <span class="kc">False</span>
@@ -119,18 +120,21 @@
         <span class="k">if</span> <span class="n">browser</span><span class="p">:</span>
             <span class="n">mc</span><span class="o">.</span><span class="n">airtable</span><span class="p">()</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">catalog</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">()</span><span class="o">.</span><span class="n">as_json</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-                <span class="n">catalog</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">()</span> <span class="k">if</span> <span class="n">local</span> <span class="k">else</span> <span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">local</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
+                    <span class="s2">&quot;No local model is available. Please fetch a model by running &#39;ersilia fetch ...&#39;&quot;</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">catalog</span> <span class="o">=</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">as_json</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">catalog</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span><span class="o">.</span><span class="n">as_json</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-                <span class="n">catalog</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">catalog_table</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="n">catalog</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span></div>
 </pre></div>
 

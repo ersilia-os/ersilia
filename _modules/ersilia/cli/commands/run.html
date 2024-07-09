@@ -78,11 +78,13 @@
 <span></span><span class="kn">import</span> <span class="nn">click</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaModel</span>
 <span class="kn">from</span> <span class="nn">...core.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">...core.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span>
 
 
 <div class="viewcode-block" id="run_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.run.run_cmd">[docs]</a><span class="k">def</span> <span class="nf">run_cmd</span><span class="p">():</span>
@@ -104,6 +106,7 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Assume that the run is standard and, therefore, do not do so many checks.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">standard</span><span class="p">):</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
@@ -115,7 +118,7 @@
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span>
-
+        
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
             <span class="n">model_id</span><span class="p">,</span>
             <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span>
@@ -137,7 +140,21 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Something went wrong&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+            <span class="n">echo</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">track_runs</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Retrieve the time taken to run the model and update the total. </span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">time_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span>
+            
+            <span class="n">time_tracker</span><span class="o">.</span><span class="n">update_total_time</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span>
+            <span class="p">)</span>      </div>
 </pre></div>
 
            </div>

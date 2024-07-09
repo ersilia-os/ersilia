@@ -75,35 +75,34 @@
              
   <h1>Source code for ersilia.core.model</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">__main__</span> <span class="k">as</span> <span class="nn">main</span>
-<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">__main__</span> <span class="k">as</span> <span class="nn">main</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">.modelbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
-<span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span> <span class="nn">.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span>
-<span class="kn">from</span> <span class="nn">..serve.autoservice</span> <span class="kn">import</span> <span class="n">AutoService</span>
-<span class="kn">from</span> <span class="nn">..serve.schema</span> <span class="kn">import</span> <span class="n">ApiSchema</span>
 <span class="kn">from</span> <span class="nn">..serve.api</span> <span class="kn">import</span> <span class="n">Api</span>
-<span class="kn">from</span> <span class="nn">..serve.standard_api</span> <span class="kn">import</span> <span class="n">StandardCSVRunApi</span>
-<span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span><span class="p">,</span> <span class="n">BaseIOGetter</span>
-<span class="kn">from</span> <span class="nn">..io.output</span> <span class="kn">import</span> <span class="n">TabularOutputStacker</span>
-<span class="kn">from</span> <span class="nn">..io.readers.file</span> <span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
+<span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">..lake.base</span> <span class="kn">import</span> <span class="n">LakeBase</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
+<span class="kn">from</span> <span class="nn">.modelbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+<span class="kn">from</span> <span class="nn">..serve.schema</span> <span class="kn">import</span> <span class="n">ApiSchema</span>
 <span class="kn">from</span> <span class="nn">..utils.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
 <span class="kn">from</span> <span class="nn">..utils.csvfile</span> <span class="kn">import</span> <span class="n">CsvDataLoader</span>
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
-<span class="kn">from</span> <span class="nn">..lake.base</span> <span class="kn">import</span> <span class="n">LakeBase</span>
-
+<span class="kn">from</span> <span class="nn">..serve.autoservice</span> <span class="kn">import</span> <span class="n">AutoService</span>
+<span class="kn">from</span> <span class="nn">..io.output</span> <span class="kn">import</span> <span class="n">TabularOutputStacker</span>
+<span class="kn">from</span> <span class="nn">..serve.standard_api</span> <span class="kn">import</span> <span class="n">StandardCSVRunApi</span>
+<span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span><span class="p">,</span> <span class="n">BaseIOGetter</span>
+<span class="kn">from</span> <span class="nn">.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span><span class="p">,</span> <span class="n">create_persistent_file</span>
+<span class="kn">from</span> <span class="nn">..io.readers.file</span> <span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils.api_exceptions</span> <span class="kn">import</span> <span class="n">ApiSpecifiedOutputError</span>
-
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">FETCHED_MODELS_FILENAME</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span> <span class="n">CARD_FILE</span><span class="p">,</span> <span class="n">EOS</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">APIS_LIST_FILE</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span>
 
@@ -124,7 +123,6 @@
         <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">fetch_if_not_available</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">log_runs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">track_runs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -202,15 +200,11 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_apis</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">log_runs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
-                <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">track_runs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
+                <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -503,8 +497,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_service_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">pid</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span>
         <span class="c1"># self.update_model_usage_time(self.model_id) TODO: Check and reactivate</span>
+
+        <span class="c1"># Start tracking to get the peak memory, memory usage and cpu time of the Model server(autoservice)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">create_persistent_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="n">memory_usage_serve</span><span class="p">,</span> <span class="n">cpu_time_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_memory_info</span><span class="p">()</span>
+            <span class="n">peak_memory_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
+
+            <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">update_peak_memory</span><span class="p">(</span><span class="n">peak_memory_serve</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">update_total_memory</span><span class="p">(</span><span class="n">memory_usage_serve</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">update_cpu_time</span><span class="p">(</span><span class="n">cpu_time_serve</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ErsiliaModel.close"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -516,18 +521,12 @@
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">track_run</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
-        <span class="c1"># Init some tracking before the run starts</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">start_tracking</span><span class="p">()</span>
 
         <span class="n">api_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">(</span>
             <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">_standard_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -573,7 +572,13 @@
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span>
                 <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">track_run</span><span class="o">=</span><span class="n">track_run</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="n">result</span></div>
+        <span class="c1"># Start tracking model run if track flag is used in serve</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
+                <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
