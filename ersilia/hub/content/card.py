@@ -46,7 +46,7 @@ try:
 except:
     Hdf5Explorer = None
 
-from ...default import EOS, LOCAL_CARD_FILE, METADATA_JSON_FILE
+from ...default import EOS, LOCAL_CARD_FILE, METADATA_JSON_FILE, SERVICE_CLASS_FILE
 
 
 class BaseInformation(ErsiliaBase):
@@ -761,6 +761,15 @@ class ModelCard(object):
 
     def _get(self, model_id):
         card = self.lc.get(model_id)
+        if card is not None:
+            return card
+        card = self.mc.get(model_id)
+        if card is not None:
+            return card
+        card = self.ac.get(model_id)
+        if card is not None:
+            return card
+        card = self.rc.get(model_id)
         if card is not None:
             return card
 
