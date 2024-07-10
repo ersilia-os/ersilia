@@ -8,6 +8,7 @@ from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 import validators
+from functools import lru_cache
 
 try:
     from validators import ValidationFailure
@@ -45,7 +46,7 @@ try:
 except:
     Hdf5Explorer = None
 
-from ...default import CARD_FILE, METADATA_JSON_FILE, SERVICE_CLASS_FILE
+from ...default import EOS, LOCAL_CARD_FILE, METADATA_JSON_FILE
 
 
 class BaseInformation(ErsiliaBase):
@@ -60,6 +61,7 @@ class BaseInformation(ErsiliaBase):
         self._mode = None
         self._task = None
         self._input = None
+        
         self._input_shape = None
         self._output = None
         self._output_type = None
@@ -704,30 +706,33 @@ class AirtableCard(AirtableInterface):
 class LocalCard(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
-
+    
+    @lru_cache(maxsize=32)
     def get(self, model_id):
-        model_path = self._model_path(model_id)
-        card_path = os.path.join(model_path, CARD_FILE)
+        model_path = os.path.join(EOS,  "dest", model_id)
+        card_path = os.path.join(model_path, LOCAL_CARD_FILE)
         if os.path.exists(card_path):
             with open(card_path, "r") as f:
-                card = json.load(f)
+                data = json.load(f)
+            card = data.get("card")
             return card
         else:
             return None
-            
+        
+    @lru_cache(maxsize=32)        
     def get_service_class(self, model_id):
         """
         This method returns information about how the model was fetched by reading 
         the service class file located in the model's bundle directory. If the service 
         class file does not exist, it returns None.
         """
-        service_class_path = os.path.join(
-                self._get_bundle_location(model_id), SERVICE_CLASS_FILE
-            )
+        model_path = os.path.join(EOS,  "dest", model_id)
+        service_class_path = os.path.join(model_path, LOCAL_CARD_FILE)
         
         if os.path.exists(service_class_path):
             with open(service_class_path, "r") as f:
-                service_class = f.read().strip()
+                data = json.load(f)
+            service_class = data.get("service_class")
             return service_class
         else:
             return None
@@ -756,15 +761,6 @@ class ModelCard(object):
 
     def _get(self, model_id):
         card = self.lc.get(model_id)
-        if card is not None:
-            return card
-        card = self.mc.get(model_id)
-        if card is not None:
-            return card
-        card = self.ac.get(model_id)
-        if card is not None:
-            return card
-        card = self.rc.get(model_id)
         if card is not None:
             return card
 
