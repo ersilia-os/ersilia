@@ -33,9 +33,14 @@ def get_latest_semver_tag():
                     return tag
     return None
 
+def increment_patch_version(version):
+    version = version.split(".")
+    version[2] = str(int(version[2]) + 1)
+    return ".".join(version)
 
 def get_version_for_setup():
-    version = get_latest_semver_tag()
+    # version = get_latest_semver_tag()
+    version = increment_patch_version(get_version_from_static())
     with open(os.path.join(root, STATIC_VERSION_FILE), "w") as f:
         f.write('version = "{0}"\n'.format(version))
     return version
