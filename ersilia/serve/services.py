@@ -330,7 +330,9 @@ class _LocalService(ErsiliaBase):
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json)
-        pack_method = resolve_pack_method(model_path=self._get_bundle_location(model_id))
+        pack_method = resolve_pack_method(
+            model_path=self._get_bundle_location(model_id)
+        )
         self.logger.debug("Pack method is: {0}".format(pack_method))
         if pack_method == "fastapi":
             self.server = _FastApiService(
