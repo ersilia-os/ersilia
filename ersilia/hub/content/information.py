@@ -24,7 +24,7 @@ class Information(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.repository_folder = os.path.join(
-            self._get_bento_location(model_id=self.model_id)
+            self._get_bundle_location(model_id=self.model_id)
         )
         self.dest_folder = os.path.join(self._model_path(model_id=model_id))
 

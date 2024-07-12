@@ -8,7 +8,10 @@ from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
 from ... import ErsiliaBase
 from ...hub.fetch.actions.template_resolver import TemplateResolver
-from ...utils.exceptions_utils.fetch_exceptions import NotInstallableWithFastAPI, NotInstallableWithBentoML
+from ...utils.exceptions_utils.fetch_exceptions import (
+    NotInstallableWithFastAPI,
+    NotInstallableWithBentoML,
+)
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 
 from . import STATUS_FILE, DONE_TAG
@@ -73,7 +76,15 @@ class ModelFetcher(ErsiliaBase):
     def _fetch_from_fastapi(self):
         self.logger.debug("Fetching using Ersilia Pack (FastAPI)")
         fetch = importlib.import_module("ersilia.hub.fetch.fetch_fastapi")
-        mf = fetch.ModelFetcherFromFastAPI()
+        mf = fetch.ModelFetcherFromFastAPI(
+            config_json=self.config_json,
+            credentials_json=self.credentials_json,
+            overwrite=self.overwrite,
+            repo_path=self.repo_path,
+            mode=self.mode,
+            force_from_github=self.force_from_github,
+            force_from_s3=self.force_from_s3,
+        )
         if mf.seems_installable(model_id=self.model_id):
             mf.fetch(model_id=self.model_id)
         else:
@@ -84,7 +95,17 @@ class ModelFetcher(ErsiliaBase):
     def _fetch_from_bentoml(self):
         self.logger.debug("Fetching using BentoML")
         fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
-        mf = fetch.ModelFetcherFromBentoML()
+        mf = fetch.ModelFetcherFromBentoML(
+            config_json=self.config_json,
+            credentials_json=self.credentials_json,
+            overwrite=self.overwrite,
+            repo_path=self.repo_path,
+            mode=self.mode,
+            pip=self.do_pip,
+            dockerize=self.do_docker,
+            force_from_github=self.force_from_github,
+            force_from_s3=self.force_from_s3,
+        )
         if mf.seems_installable(model_id=self.model_id):
             mf.fetch(model_id=self.model_id)
         else:
@@ -107,7 +128,7 @@ class ModelFetcher(ErsiliaBase):
                 return
             else:
                 self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
-                fetcher_type = self._decide_fetcher(model_id) 
+                fetcher_type = self._decide_fetcher(model_id)
                 if fetcher_type == "fastapi":
                     self._fetch_from_fastapi()
                 if fetcher_type == "bentoml":

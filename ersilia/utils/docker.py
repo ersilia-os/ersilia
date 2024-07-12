@@ -279,7 +279,7 @@ class SimpleDocker(object):
             return (
                 f"Total memory consumed by container '{container.name}': {mem_usage:.2f}MiB",
             )
-        return 
+        return
 
     def container_cpu(self):
         """

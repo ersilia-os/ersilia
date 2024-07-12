@@ -4,7 +4,7 @@ import urllib.parse
 
 from . import BaseAction
 
-from ....default import GITHUB_ORG
+from ....default import GITHUB_ORG, ALLOWED_API_NAMES
 
 
 class TemplateResolver(BaseAction):
@@ -26,7 +26,7 @@ class TemplateResolver(BaseAction):
             GITHUB_ORG, self.model_id, file_path
         )
         parsed_url = urllib.parse.urlparse(url)
-        conn = http.client.HTTPSConnection(parsed_url.netloc) 
+        conn = http.client.HTTPSConnection(parsed_url.netloc)
         try:
             conn.request("HEAD", parsed_url.path)
             response = conn.getresponse()
@@ -43,11 +43,11 @@ class TemplateResolver(BaseAction):
             return self._check_file_in_github(file_path)
 
     def is_fastapi(self):
-        if not self._check_file("Dockerfile") or not self._check_file("install.yml"):
+        if not self._check_file("Dockerfile") and not self._check_file("install.yml"):
             return False
         has_sh = False
-        for fn in os.listdir(os.path.join(self.repo_path, "model", "framework")):
-            if fn.endswith(".sh"):
+        for allowed_api in ALLOWED_API_NAMES:
+            if self._check_file("model/framework/{0}.sh".format(allowed_api)):
                 has_sh = True
         if not has_sh:
             return False

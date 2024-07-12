@@ -50,6 +50,7 @@ IS_FETCHED_FROM_HOSTED_FILE = "from_hosted.json"
 DEFAULT_UDOCKER_USERNAME = "udockerusername"
 DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 ERSILIA_RUNS_FOLDER = "ersilia_runs"
+ALLOWED_API_NAMES = ["run", "fit"]  # This can grow in the future based on needs
 
 # Isaura data lake
 H5_EXTENSION = ".h5"

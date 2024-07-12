@@ -9,7 +9,7 @@ from .actions.template_resolver import TemplateResolver
 from .actions.setup import SetupChecker
 from .actions.prepare import ModelPreparer
 from .actions.get import ModelGetter
-from .actions.pack_bentoml import ModelPacker
+from .actions.pack_fastapi import ModelPacker
 from .actions.content import CardGetter
 from .actions.check import ModelChecker
 from .actions.sniff_fastapi import ModelSniffer

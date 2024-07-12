@@ -19,6 +19,8 @@ class _Symlinker(ErsiliaBase):
             shutil.rmtree(model_path)
         bundle_dir = self._get_bundle_location(model_id)
         src = os.path.join(bundle_dir, "model")
+        self.logger.debug("Creating symlink from {0}".format(src))
+        self.logger.debug("Creating symlink to {0}".format(model_path))
         os.symlink(src, model_path, target_is_directory=True)
 
     def _dest_lake_symlink(self):

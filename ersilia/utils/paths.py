@@ -55,3 +55,11 @@ class Paths(object):
             return True
         else:
             return False
+
+
+def resolve_pack_method(model_path):
+    if os.path.exists(os.path.join(model_path, "installs", "install.sh")):
+        return "fastapi"
+    elif os.path.exists(os.path.join(model_path, "bentoml.yml")):
+        return "bentoml"
+    return None

@@ -445,7 +445,6 @@ class ErsiliaModel(ErsiliaBase):
     def _run(
         self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False
     ):
-
         api_name = self.get_apis()[0]
         result = self.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
@@ -498,9 +497,7 @@ class ErsiliaModel(ErsiliaBase):
             )
         # Start tracking model run if track flag is used in serve
         if self._run_tracker is not None and track_run:
-            self._run_tracker.track(
-                input=input, result=result, meta=self._model_info
-            )
+            self._run_tracker.track(input=input, result=result, meta=self._model_info)
             self._run_tracker.log(result=result, meta=self._model_info)
         return result
 

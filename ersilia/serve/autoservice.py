@@ -38,7 +38,7 @@ class AutoService(ErsiliaBase):
         url=None,
     ):
         ErsiliaBase.__init__(self, config_json=config_json)
-        self.logger.debug("Setting AutoService for {0}".format(model_id))
+        self.logger.debug("Setting BentoML AutoService for {0}".format(model_id))
         self.config_json = config_json
         self.model_id = model_id
         self._meta = None
@@ -182,33 +182,6 @@ class AutoService(ErsiliaBase):
             else:
                 self.service = None
         self._set_apis()
-
-    def _is_bentoml_bundle(self):
-        self.logger.debug("Check if it is a BentoML bundle")
-        bundle_dir = self._get_bento_location(self.model_id)
-        check_file = os.path.join(bundle_dir, "bentoml.yml")
-        if os.path.exists(check_file):
-            return True
-        else:
-            return False
-        
-    def _is_fastapi_bundle(self):
-        self.logger.debug("Check if it is a FastAPI bundle")
-        bundle_dir = self._get_bundle_location(self.model_id)
-        check_file = os.path.join(bundle_dir, "app", "main.py")
-        if os.path.exists(check_file):
-            return True
-        else:
-            return False
-        
-    def _is_fastapi_service(self, url):
-        self.logger.debug("Check if it is a FastAPI service")
-        # TODO
-        pass
-    
-    def _is_bentoml_service(self, url):
-        # TODO
-        pass
 
     def _was_fetched_from_dockerhub(self):
         from_dockerhub_file = os.path.join(

@@ -12,11 +12,17 @@ from .... import ErsiliaModel
 from ....io.input import ExampleGenerator
 from ....io.pure import PureDataTyper
 from ....io.annotated import AnnotatedDataTyper
-from ....default import API_SCHEMA_FILE, MODEL_SIZE_FILE, METADATA_JSON_FILE, PREDEFINED_EXAMPLE_FILENAME
+from ....default import (
+    API_SCHEMA_FILE,
+    MODEL_SIZE_FILE,
+    METADATA_JSON_FILE,
+    PREDEFINED_EXAMPLE_FILENAME,
+)
 from ....utils.exceptions_utils.exceptions import EmptyOutputError
 from ....utils.exceptions_utils.fetch_exceptions import (
     OutputDataTypesNotConsistentError,
 )
+
 
 class BuiltinExampleReader(ErsiliaBase):
     def __init__(self, model_id, config_json):
@@ -190,10 +196,9 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Schema: {0}".format(schema))
         self.logger.debug("Done with the schema!")
         return schema
-    
+
     @throw_ersilia_exception
     def _get_schema_type_for_simple_run_api_case(self):
-        
         # read metadata
         dest_dir = self._model_path(self.model_id)
         metadata_file = os.path.join(dest_dir, METADATA_JSON_FILE)
@@ -217,7 +222,7 @@ class ModelSniffer(BaseAction):
             return None
         if output_type not in ["Float", "String"]:
             return None
-        
+
         # get output shape from metadata.json
         output_shape = metadata["Output Shape"]
         if output_shape not in ["Single", "List"]:
@@ -249,7 +254,7 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")
         size = self._get_size_in_mb()
-        self.logger.debug("Mode size is {0} MB".format(size))
+        self.logger.debug("Model size is {0} MB".format(size))
         path = os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE)
         with open(path, "w") as f:
             json.dump({"size": size, "units": "MB"}, f, indent=4)
@@ -291,7 +296,10 @@ class ModelSniffer(BaseAction):
                         if schema["output"]["outcome"]["type"] is None:
                             schema["output"]["outcome"]["type"] = schema_type_backup
                         if "shape" not in schema["output"]["outcome"]:
-                            shape = self._try_to_resolve_output_shape(schema["output"]["outcome"]["meta"], schema["output"]["outcome"]["type"])
+                            shape = self._try_to_resolve_output_shape(
+                                schema["output"]["outcome"]["meta"],
+                                schema["output"]["outcome"]["type"],
+                            )
                             if shape is not None:
                                 schema["output"]["outcome"]["shape"] = shape
                 all_schemas[api_name] = schema

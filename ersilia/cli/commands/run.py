@@ -41,7 +41,7 @@ def run_cmd():
                 fg="red",
             )
             return
-        
+
         mdl = ErsiliaModel(
             model_id,
             service_class=service_class,
@@ -64,17 +64,11 @@ def run_cmd():
                     echo("Something went wrong", fg="red")
         else:
             echo(result)
-            
+
         if track_runs:
             """
-            Retrieve the time taken to run the model and update the total. 
+            Retrieve the time taken to run the model and update the total.
             """
-            time_tracker = RunTracker(
-            model_id=model_id,
-            config_json=None
-            )
-            
-            time_tracker.update_total_time(
-            model_id=model_id,
-            start_time=start_time
-            )      
+            time_tracker = RunTracker(model_id=model_id, config_json=None)
+
+            time_tracker.update_total_time(model_id=model_id, start_time=start_time)

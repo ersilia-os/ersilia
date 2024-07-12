@@ -714,23 +714,24 @@ class LocalCard(ErsiliaBase):
             return card
         else:
             return None
-            
+
     def get_service_class(self, model_id):
         """
-        This method returns information about how the model was fetched by reading 
-        the service class file located in the model's bundle directory. If the service 
+        This method returns information about how the model was fetched by reading
+        the service class file located in the model's bundle directory. If the service
         class file does not exist, it returns None.
         """
         service_class_path = os.path.join(
-                self._get_bundle_location(model_id), SERVICE_CLASS_FILE
-            )
-        
+            self._get_bundle_location(model_id), SERVICE_CLASS_FILE
+        )
+
         if os.path.exists(service_class_path):
             with open(service_class_path, "r") as f:
                 service_class = f.read().strip()
             return service_class
         else:
             return None
+
 
 class LakeCard(ErsiliaBase):
     def __init__(self, config_json=None):
@@ -776,7 +777,7 @@ class ModelCard(object):
             return json.dumps(card, indent=4)
         else:
             return card
-     
+
     def get_service_class(self, model_id, as_json=False):
         service = self.lc.get_service_class(model_id)
         if service is None:

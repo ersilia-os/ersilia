@@ -47,8 +47,7 @@ def serve_cmd():
         )
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
-            
-        
+
         mdl.serve()
         if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")
@@ -73,7 +72,7 @@ def serve_cmd():
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
-        
+
         if track:
             """
             Retrieve the time taken in seconds to serve the Model.

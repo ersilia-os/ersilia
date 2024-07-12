@@ -1,10 +1,11 @@
 import os
-import tempfile
+import yaml
 
 from . import BasePack
 from .....utils.terminal import run_command
 from .....db.environments.localdb import EnvironmentDb
 from .....utils.conda import SimpleConda
+from .....utils.docker import SimpleDockerfileParser
 
 from ..... import throw_ersilia_exception
 from .....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
@@ -20,8 +21,8 @@ class SystemPack(BasePack):
     def _run(self):
         self.logger.debug("Packing model with system installation")
         dest_dir = self._model_path(self.model_id)
-        bundle_dir = os.path.join(EOS, "repository", self.model_id)
-        cmd = "ersilia_model_pack --repo_path {0} --bundle_path {1}".format(
+        bundle_dir = os.path.join(EOS, "repository")
+        cmd = "ersilia_model_pack --repo_path {0} --bundles_repo_path {1}".format(
             dest_dir, bundle_dir
         )
         self.logger.debug("Running packing command {0}".format(cmd))
@@ -39,8 +40,22 @@ class CondaPack(BasePack):
         self.logger.debug("Initializing conda packer")
 
     def _decide_python_version(self):
-        # TODO
-        return "3.10"
+        install_yml_file = os.path.join(self._model_path(self.model_id), "install.yml")
+        if os.path.exists(install_yml_file):
+            self.logger.debug("Reading python version from install.yml")
+            with open(install_yml_file, "r") as f:
+                data = yaml.safe_load(f)
+                return data["python"]
+        dockerfile_file = os.path.join(self._model_path(self.model_id), "Dockerfile")
+        if os.path.exists(dockerfile_file):
+            self.logger.debug("Reading python version from Dockerfile")
+            pyver = (
+                SimpleDockerfileParser(dockerfile_file).get_baseimage().split("-py")[-1]
+            )
+            pyver = pyver[0] + "." + pyver[1:]
+            return pyver
+        self.logger.error("Could not find python version in install.yml or Dockerfile")
+        return None
 
     def _setup(self):
         self.logger.debug("Setting up")
@@ -50,7 +65,7 @@ class CondaPack(BasePack):
         self.logger.debug("Conda environment {0}".format(env))
         if not self.conda.exists(env):
             self.logger.debug("Environment {0} does not exist".format(env))
-            self.conda.create(environment=env, python=python_version)
+            self.conda.create(environment=env, python_version=python_version)
             self.logger.debug("Creating base conda environment")
             commandlines = [
                 "python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git"
@@ -75,16 +90,17 @@ class CondaPack(BasePack):
         env = self._setup()
         self.logger.debug("Using environment {0}".format(env))
         dest_dir = self._model_path(self.model_id)
-        bundle_dir = os.path.join(EOS, "repository", self.model_id)
-        cmd = "ersilia_model_pack --repo_path {0} --bundle_path {1}".format(
+        bundle_dir = os.path.join(EOS, "repository")
+        cmd = "ersilia_model_pack --repo_path {0} --bundles_repo_path {1}".format( # TODO Add environment name
             dest_dir, bundle_dir
         )
         self.logger.debug("Running command: {0}".format(cmd))
-        self.conda.run_commandlines(environment=env, commandlines=[cmd])
+        self.conda.run_commandlines(environment=env, commandlines=cmd)
         self.logger.debug(
             "Packing command successfully run inside {0} conda environment".format(env)
         )
         self._symlinks()
+        self.logger.debug("Symlinks created")
 
     @throw_ersilia_exception
     def run(self):

@@ -17,14 +17,7 @@ class ModelPacker(BaseAction):
         self.mode = mode
 
     def _setup(self):
-        folder = self._model_path(self.model_id)
-        cwd = os.getcwd()
-        self.folder = folder
-        self.cwd = cwd
-
-    def _reset(self):
-        os.chdir(self.cwd)
-        sys.path.remove(self.folder)
+        self.folder = self._model_path(self.model_id)
 
     def _decide_pack_mode(self):
         if self.mode is None:
@@ -46,4 +39,3 @@ class ModelPacker(BaseAction):
         self._setup()
         self._decide_pack_mode()
         self._run()
-        self._reset()

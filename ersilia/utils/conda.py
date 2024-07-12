@@ -377,6 +377,8 @@ class SimpleConda(CondaUtils):
         """
         Run commands in a given conda environment.
         """
+        if type(commandlines) is list:
+            commandlines = " && ".join(commandlines)
         logger.debug("Run commandlines on {0}".format(environment))
         logger.debug(commandlines)
         if not self.exists(environment):

@@ -179,9 +179,11 @@ class NotInstallableError(ErsiliaError):
         text = f"This model is not compatible with {self.packing_strategy}. Please check the model structure or reach out to Ersilia directly to report this error."
         return text
 
+
 class NotInstallableWithFastAPI(NotInstallableError):
     def __init__(self, model_id):
         super.__init__(model_id, "FastAPI")
+
 
 class NotInstallableWithBentoML(NotInstallableError):
     def __init__(self, model_id):
