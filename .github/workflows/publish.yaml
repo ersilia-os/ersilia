@@ -1,0 +1,105 @@
+# Single workflow to increment ersilia version in pyproject.toml,
+# tag and push the commit to the repository, release to GitHub, PyPI, Conda, and DockerHub
+
+name: Ersilia Release
+
+on:
+  workflow_dispatch: # run manually
+  schedule:
+    - cron: ' 0 3 1 * *' # run at 3:00 AM on the first day of the month
+  
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.version.outputs.VERSION }}
+    steps:
+
+      - name: Checkout persist credentials
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+      
+      - name: Increment package version
+        id: version
+        run: |
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/static_version_writer.py
+          echo "VERSION=$(python static_version_writer.py)" >> "$GITHUB_OUTPUT"
+          rm static_version_writer.py
+      
+      - name: Create a release tag
+        id: tag
+        run: |
+          git config --local user.email "ersilia-bot@users.noreply.github.com"
+          git config --local user.name "ersilia-bot"
+          git tag -a "v${{ steps.version.outputs.VERSION }}" -m "v${{ steps.version.outputs.VERSION }}"
+
+      - name: Commit and push changes done to the static version file and pyproject.toml
+        uses: actions-js/push@5a7cbd780d82c0c937b5977586e641b2fd94acc5 # pin@v1.5
+        with:
+          author_name: "ersilia-bot"
+          author_email: "ersilia-bot@users.noreply.github.com"
+          message: "update version [skip ci]"
+          repository: "ersilia-os/${{ github.event.repository.name }}"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          amend: true
+          force: true
+          branch: "master"
+
+  gh-release:
+    runs-on: ubuntu-latest
+    needs: version
+    steps:
+
+      - name: Get Month
+        id: month
+        run: |
+          echo "MONTH=$(date +'%B')" >> $GITHUB_OUTPUT
+
+      - name: Get Year
+        id: year
+        run: |
+          echo "YEAR=$(date +'%Y')" >> $GITHUB_OUTPUT
+
+      - name: Release Title
+        id: title
+        run: |
+          echo "TITLE=${{ steps.month.outputs.MONTH }}  ${{ steps.year.outputs.YEAR }}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub release
+        id: gh_release
+        run: |
+          pip install gh
+          gh release create "v${{ needs.jobs.version.outputs.VERSION }}" --title "v${{ steps.title.outputs.TITLE }}" --notes-from-tag
+
+  pypi-release:
+    runs-on: ubuntu-latest
+    needs: version
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+
+      - name: Set up Python
+        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        with:
+          python-version: '3.7'
+          # cache: 'pip' # caching pip dependencies
+
+      - name: Get version
+        run: |
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
+          mv _static_version.py ersilia/.
+
+      - name: Python Poetry Action
+        uses: abatilo/actions-poetry@v3.0.0
+            
+      - name: Build and publish
+        env:
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+
+        run: |
+          poetry config -- http-basic.pypi $PYPI_USERNAME $PYPI_PASSWORD
+          poetry --build publish 
+
+

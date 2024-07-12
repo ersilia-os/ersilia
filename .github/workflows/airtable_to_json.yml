@@ -5,14 +5,19 @@ on:
 
   schedule:
     - cron: '0 2 * * *' 
-
+    
 jobs:
   convert-airtable-to-json:
+    if: |
+       github.repository == 'example/example_repo' &&
+       (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout persist credentials
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # pin@v3.5.3
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
