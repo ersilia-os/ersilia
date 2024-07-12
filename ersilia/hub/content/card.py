@@ -46,7 +46,7 @@ try:
 except:
     Hdf5Explorer = None
 
-from ...default import EOS, LOCAL_CARD_FILE, METADATA_JSON_FILE, SERVICE_CLASS_FILE
+from ...default import EOS, INFORMATION_FILE, METADATA_JSON_FILE, SERVICE_CLASS_FILE
 
 
 class BaseInformation(ErsiliaBase):
@@ -710,7 +710,7 @@ class LocalCard(ErsiliaBase):
     @lru_cache(maxsize=32)
     def get(self, model_id):
         model_path = os.path.join(EOS,  "dest", model_id)
-        card_path = os.path.join(model_path, LOCAL_CARD_FILE)
+        card_path = os.path.join(model_path, INFORMATION_FILE)
         if os.path.exists(card_path):
             with open(card_path, "r") as f:
                 data = json.load(f)
@@ -727,7 +727,7 @@ class LocalCard(ErsiliaBase):
         class file does not exist, it returns None.
         """
         model_path = os.path.join(EOS,  "dest", model_id)
-        service_class_path = os.path.join(model_path, LOCAL_CARD_FILE)
+        service_class_path = os.path.join(model_path, INFORMATION_FILE)
         
         if os.path.exists(service_class_path):
             with open(service_class_path, "r") as f:
