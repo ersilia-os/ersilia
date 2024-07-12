@@ -2,6 +2,7 @@
 
 import subprocess
 import requests
+import shutil
 import os
 import json
 import csv
@@ -9,7 +10,7 @@ from .card import ModelCard
 from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
 from ...auth.auth import Auth
-from ...default import GITHUB_ORG
+from ...default import GITHUB_ORG, BENTOML_PATH
 from ... import logger
 
 try:
@@ -182,9 +183,13 @@ class ModelCatalog(ErsiliaBase):
 
     def bentoml(self):
         """List models available as BentoServices"""
-        result = subprocess.run(
-            ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ
-        )
+        try:
+            result = subprocess.run(
+                ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ, timeout=10
+            )
+        except Exception as e:
+            shutil.rmtree(BENTOML_PATH)
+            return None
         result = [r for r in result.stdout.decode("utf-8").split("\n") if r]
         if len(result) == 1:
             return

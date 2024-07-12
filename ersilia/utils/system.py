@@ -1,6 +1,12 @@
 import platform
 import os
-from ..utils.docker import is_inside_docker
+
+
+def is_inside_docker():
+    if os.path.isfile("/.dockerenv"):
+        return True
+    else:
+        return False
 
 
 class SystemChecker(object):

@@ -10,13 +10,6 @@ from ..default import DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME
 from ..utils.system import SystemChecker
 
 
-def is_inside_docker():
-    if os.path.isfile("/.dockerenv"):
-        return True
-    else:
-        return False
-
-
 def resolve_platform():
     if SystemChecker().is_arm64():
         return "linux/arm64"

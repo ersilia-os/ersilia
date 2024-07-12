@@ -199,21 +199,6 @@ class ModelRepositoryGetter(BaseAction):
         self.force_from_s3 = force_from_s3
         self.repo_path = repo_path
 
-    def _dev_model_path(self):
-        pt = Paths()
-        path = pt.models_development_path()
-        if path is not None:
-            path = os.path.join(path, self.model_id)
-        if pt.exists(path):
-            return path
-        else:
-            path = pt.ersilia_development_path()
-            if path is not None:
-                path = os.path.join(path, "test", "models", self.model_id)
-            if pt.exists(path):
-                return path
-        return None
-
     @staticmethod
     def _copy_from_local(src, dst):
         shutil.copytree(src, dst)
@@ -303,30 +288,23 @@ class ModelRepositoryGetter(BaseAction):
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
         folder = self._model_path(self.model_id)
-        dev_model_path = self._dev_model_path()
-        if dev_model_path is not None:
-            self.logger.debug(
-                "Copying from local {0} to {1}".format(dev_model_path, folder)
-            )
-            self._copy_from_local(dev_model_path, folder)
+        if self.repo_path is not None:
+            self._copy_from_local(self.repo_path, folder)
         else:
-            if self.repo_path is not None:
-                self._copy_from_local(self.repo_path, folder)
+            if self.force_from_github:
+                self._copy_from_github(folder)
             else:
-                if self.force_from_github:
-                    self._copy_from_github(folder)
-                else:
-                    try:
-                        self.logger.debug("Trying to download from S3")
-                        self._copy_zip_from_s3(folder)
-                    except:
-                        self.logger.debug(
-                            "Could not download in zip format in S3. Downloading from GitHub repository."
-                        )
-                        if self.force_from_s3:
-                            raise S3DownloaderError(model_id=self.model_id)
-                        else:
-                            self._copy_from_github(folder)
+                try:
+                    self.logger.debug("Trying to download from S3")
+                    self._copy_zip_from_s3(folder)
+                except:
+                    self.logger.debug(
+                        "Could not download in zip format in S3. Downloading from GitHub repository."
+                    )
+                    if self.force_from_s3:
+                        raise S3DownloaderError(model_id=self.model_id)
+                    else:
+                        self._copy_from_github(folder)
         self._prepare_inner_template()
         self._change_py_version_in_dockerfile_if_necessary()
         self._remove_sudo_if_root()
@@ -388,8 +366,11 @@ class ModelGetter(BaseAction):
 
     @throw_ersilia_exception
     def get(self):
+        self.logger.debug("Getting repository")
         self._get_repository()
         if self.repo_path is None:
+            self.logger.debug("Getting model parameters")
             self._get_model_parameters()
+        self.logger.debug("Done getting model")
         if not os.path.exists(self._model_path(self.model_id)):
             raise FolderNotFoundError(os.path.exists(self._model_path(self.model_id)))

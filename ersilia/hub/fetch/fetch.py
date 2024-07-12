@@ -7,6 +7,9 @@ from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
 from ... import ErsiliaBase
+from ...hub.fetch.actions.template_resolver import TemplateResolver
+from ...utils.exceptions_utils.fetch_exceptions import NotInstallableWithFastAPI, NotInstallableWithBentoML
+from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 
 from . import STATUS_FILE, DONE_TAG
 
@@ -26,6 +29,7 @@ class ModelFetcher(ErsiliaBase):
         force_from_dockerhub=False,
         force_from_hosted=False,
         force_with_bentoml=False,
+        force_with_fastapi=False,
         hosted_url=None,
     ):
         ErsiliaBase.__init__(
@@ -52,22 +56,64 @@ class ModelFetcher(ErsiliaBase):
         self.force_from_dockerhub = force_from_dockerhub
         self.force_from_hosted = force_from_hosted
         self.force_with_bentoml = force_with_bentoml
+        self.force_with_fastapi = force_with_fastapi
         self.hosted_url = hosted_url
 
+    @throw_ersilia_exception
+    def _decide_fetcher(self, model_id):
+        tr = TemplateResolver(model_id=model_id, repo_path=self.repo_path)
+        if tr.is_bentoml():
+            return "bentoml"
+        elif tr.is_fastapi():
+            return "fastapi"
+        else:
+            raise Exception("No fetcher available")
+
+    @throw_ersilia_exception
+    def _fetch_from_fastapi(self):
+        self.logger.debug("Fetching using Ersilia Pack (FastAPI)")
+        fetch = importlib.import_module("ersilia.hub.fetch.fetch_fastapi")
+        mf = fetch.ModelFetcherFromFastAPI()
+        if mf.seems_installable(model_id=self.model_id):
+            mf.fetch(model_id=self.model_id)
+        else:
+            self.logger.debug("Not installable with FastAPI")
+            raise NotInstallableWithFastAPI(model_id=self.model_id)
+
+    @throw_ersilia_exception
+    def _fetch_from_bentoml(self):
+        self.logger.debug("Fetching using BentoML")
+        fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
+        mf = fetch.ModelFetcherFromBentoML()
+        if mf.seems_installable(model_id=self.model_id):
+            mf.fetch(model_id=self.model_id)
+        else:
+            self.logger.debug("Not installable with BentoML")
+            raise NotInstallableWithBentoML(model_id=self.model_id)
+
+    @throw_ersilia_exception
     def _fetch_not_from_dockerhub(self, model_id):
         self.model_id = model_id
-        if not self.force_with_bentoml:
-            self.logger.debug("Fetching using Ersilia Pack (FastAPI)")
-            fetch = importlib.import_module("ersilia.hub.fetch.fetch_fastapi")
-            mf = fetch.ModelFetcherFromFastAPI()
-            if mf.seems_installable():
-                mf.fetch()
+        is_fetched = False
         if not self.exists(model_id):
-            self.logger.debug("Fetching using BentoML")
-            fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
-            mf = fetch.ModelFetcherFromBentoML()
-            if mf.seems_installable():
-                mf.fetch()
+            self.logger.debug("Model doesn't exist in your local, fetching it now")
+            if self.force_with_fastapi:
+                self._fetch_from_fastapi()
+                is_fetched = True
+            if self.force_with_bentoml:
+                self._fetch_from_bentoml()
+                is_fetched = True
+            if is_fetched:
+                return
+            else:
+                self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
+                fetcher_type = self._decide_fetcher(model_id) 
+                if fetcher_type == "fastapi":
+                    self._fetch_from_fastapi()
+                if fetcher_type == "bentoml":
+                    self._fetch_from_bentoml()
+        else:
+            self.logger.debug("Model already exists in your local, skipping fetching")
 
     def _fetch_from_dockerhub(self, model_id):
         self.logger.debug("Fetching from DockerHub")
@@ -135,14 +181,18 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Starting fetching procedure")
         do_hosted = self._decide_if_use_hosted(model_id=model_id)
         if do_hosted:
+            self.logger.debug("Fetching from hosted")
             self._fetch_from_hosted(model_id=model_id)
             return
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
+            self.logger.debug("Fetching from DockerHub")
             self._fetch_from_dockerhub(model_id=model_id)
             return
         if self.overwrite is None:
+            self.logger.debug("Overwriting")
             self.overwrite = True
+        self.logger.debug("Fetching in your system, not from DockerHub")
         self._fetch_not_from_dockerhub(model_id=model_id)
 
     def fetch(self, model_id):

@@ -17,7 +17,7 @@ class SetupChecker(BaseAction):
             self.logger.debug("GitHub CLI is installed")
         else:
             self.logger.info(
-                "GitHub CLI is not installed. Ersilia can work without it, but we highy recommend that you install this tool."
+                "GitHub CLI is not installed. Ersilia can work without it, but we highly recommend that you install this tool."
             )
 
     def _git_lfs(self):

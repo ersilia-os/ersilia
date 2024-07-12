@@ -5,7 +5,7 @@ from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
 from ...utils.conda import SimpleConda
-from ...utils.docker import is_inside_docker
+from ...utils.system import is_inside_docker
 from ..content.catalog import ModelCatalog
 from ...db.environments.localdb import EnvironmentDb
 from ...db.hubdata.localslugs import SlugDb

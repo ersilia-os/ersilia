@@ -71,6 +71,7 @@ class ModelFetcherFromBentoML(ErsiliaBase):
             force_from_s3=self.force_from_s3,
         )
         mg.get()
+        print("ModelGetter done")
 
     def _lake(self):
         ml = LakeGetter(model_id=self.model_id, config_json=self.config_json)
@@ -142,6 +143,7 @@ class ModelFetcherFromBentoML(ErsiliaBase):
         tr = TemplateResolver(
             model_id=model_id, repo_path=self.repo_path, config_json=self.config_json
         )
+        self.logger.debug("Checking if the model is installable with BentoML")
         return tr.is_bentoml()
 
     def fetch(self, model_id):

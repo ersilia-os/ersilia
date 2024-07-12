@@ -7,14 +7,14 @@ from ...core.base import ErsiliaBase
 from ...setup.requirements.docker import DockerRequirement
 from ...utils.paths import Paths
 from ...utils.terminal import run_command
-from ...utils.docker import SimpleDocker, is_inside_docker, resolve_platform
+from ...utils.docker import SimpleDocker, resolve_platform
+from ...utils.system import is_inside_docker
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
 from .localdb import EnvironmentDb
 
 from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 
-import subprocess
 import sys
 
 BENTOML_DOCKERPORT = 5000

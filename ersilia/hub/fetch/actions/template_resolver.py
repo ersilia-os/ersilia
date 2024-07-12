@@ -15,7 +15,8 @@ class TemplateResolver(BaseAction):
         self.repo_path = repo_path
 
     def _check_file_in_repo(self, file_path):
-        if os.path.exists(os.path.join(self.repo_path, file_path)):
+        file_path = os.path.join(self.repo_path, file_path)
+        if os.path.exists(file_path):
             return True
         else:
             return False
@@ -25,13 +26,12 @@ class TemplateResolver(BaseAction):
             GITHUB_ORG, self.model_id, file_path
         )
         parsed_url = urllib.parse.urlparse(url)
-        conn = http.client.HTTPConnection(parsed_url.netloc)
+        conn = http.client.HTTPSConnection(parsed_url.netloc) 
         try:
             conn.request("HEAD", parsed_url.path)
             response = conn.getresponse()
             return response.status == 200
         except Exception as e:
-            print(f"Error checking URL: {e}")
             return False
         finally:
             conn.close()
@@ -43,9 +43,21 @@ class TemplateResolver(BaseAction):
             return self._check_file_in_github(file_path)
 
     def is_fastapi(self):
-        return self._check_file(
-            "README.md"
-        )  # TODO: For now, it is just a placeholder. It always returns True.
+        if not self._check_file("Dockerfile") or not self._check_file("install.yml"):
+            return False
+        has_sh = False
+        for fn in os.listdir(os.path.join(self.repo_path, "model", "framework")):
+            if fn.endswith(".sh"):
+                has_sh = True
+        if not has_sh:
+            return False
+        return True
 
     def is_bentoml(self):
-        return self._check_file("pack.yml")
+        if not self._check_file("pack.py"):
+            return False
+        if not self._check_file("Dockerfile"):
+            return False
+        if not self._check_file("src/service.py"):
+            return False
+        return True
