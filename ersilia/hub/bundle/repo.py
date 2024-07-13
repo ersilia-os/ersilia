@@ -223,7 +223,7 @@ class DockerfileFile(object):
                 fn
             )
         )
-        if runs:
+        if runs is not None:
             exclusive_conda_and_pip = True
         else:
             exclusive_conda_and_pip = False
