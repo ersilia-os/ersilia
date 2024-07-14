@@ -704,38 +704,48 @@ class AirtableCard(AirtableInterface):
 
 
 class LocalCard(ErsiliaBase):
+    """
+    This class provides information on models that have been fetched and are available locally.
+    It retrieves and caches information about the models.
+    """
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
-    
+                
     @lru_cache(maxsize=32)
-    def get(self, model_id):
-        model_path = os.path.join(EOS,  "dest", model_id)
-        card_path = os.path.join(model_path, INFORMATION_FILE)
-        if os.path.exists(card_path):
-            with open(card_path, "r") as f:
-                data = json.load(f)
-            card = data.get("card")
-            return card
-        else:
-            return None
+    def _load_data(self, model_id):
+        """
+        Loads the JSON data from the model's information file.
+        """
+        model_path = self._model_path(model_id)
+        file_path = os.path.join(model_path, INFORMATION_FILE)
         
-    @lru_cache(maxsize=32)        
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, "r") as f:
+                    return json.load(f)
+            except json.JSONDecodeError:
+                return None
+        return None
+        
+    def get(self, model_id):
+        """
+        Returns the 'card' information for the specified model.
+        """
+        data = self._load_data(model_id)
+        if data:
+            return data.get("card")
+        return None
+               
     def get_service_class(self, model_id):
         """
-        This method returns information about how the model was fetched by reading 
-        the service class file located in the model's bundle directory. If the service 
-        class file does not exist, it returns None.
+        Returns the 'service class' information for the specified model.
         """
-        model_path = os.path.join(EOS,  "dest", model_id)
-        service_class_path = os.path.join(model_path, INFORMATION_FILE)
-        
-        if os.path.exists(service_class_path):
-            with open(service_class_path, "r") as f:
-                data = json.load(f)
-            service_class = data.get("service_class")
-            return service_class
-        else:
-            return None
+    
+        data = self._load_data(model_id)
+        if data:
+            return data.get("service_class")
+        return None
+
 
 class LakeCard(ErsiliaBase):
     def __init__(self, config_json=None):
