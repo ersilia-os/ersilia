@@ -16,7 +16,7 @@ from ....default import (
     API_SCHEMA_FILE,
     MODEL_SIZE_FILE,
     METADATA_JSON_FILE,
-    PREDEFINED_EXAMPLE_FILENAME,
+    PREDEFINED_EXAMPLE_FILES,
 )
 from ....utils.exceptions_utils.exceptions import EmptyOutputError
 from ....utils.exceptions_utils.fetch_exceptions import (
@@ -28,15 +28,18 @@ class BuiltinExampleReader(ErsiliaBase):
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
-        self.example_file = os.path.join(
-            self._get_bundle_location(self.model_id),
-            self.model_id,
-            "artifacts",
-            "framework",
-            PREDEFINED_EXAMPLE_FILENAME,
-        )
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            example_file = os.path.join(
+                self._model_path(self.model_id),
+                pf,
+            )
+            if os.path.exists(example_file):
+                self.example_file = example_file
+                break
 
     def has_builtin_example(self):
+        if self.example_file is None:
+            return False
         if os.path.exists(self.example_file):
             return True
         else:

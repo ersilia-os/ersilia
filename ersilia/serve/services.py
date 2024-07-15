@@ -257,7 +257,9 @@ class _FastApiService(BaseServing):
         sl += ["_pid=$!"]
         sl += ['echo "$_pid" > {0}'.format(tmp_pid)]
         self.logger.debug("Writing on {0}".format(tmp_script))
-        self.conda.create_executable_bash_script(environment=self.model_id, commandlines=sl, file_name=tmp_script)
+        self.conda.create_executable_bash_script(
+            environment=self.model_id, commandlines=sl, file_name=tmp_script
+        )
         cmd = "bash {0}".format(tmp_script)
         if runcommand_func is None:
             self.logger.debug("Run command function not available. Running from shell")

@@ -371,7 +371,7 @@ class SimpleConda(CondaUtils):
                 if "dependency resolver" not in l:
                     critical_errors += [l]
         return critical_errors
-    
+
     def create_executable_bash_script(self, environment, commandlines, file_name):
         if type(commandlines) is list:
             commandlines = "\n".join(commandlines)

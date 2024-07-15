@@ -16,7 +16,7 @@ from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 from .readers.pyinput import PyInputReader
 from .readers.file import TabularFileReader, JsonFileReader
 
-from ..default import PREDEFINED_EXAMPLE_FILENAME
+from ..default import PREDEFINED_EXAMPLE_FILES
 
 
 class BaseIOGetter(ErsiliaBase):
@@ -253,12 +253,13 @@ class ExampleGenerator(ErsiliaBase):
 
     def predefined_example(self, file_name):
         dest_folder = self._model_path(self.model_id)
-        example_file = os.path.join(dest_folder, PREDEFINED_EXAMPLE_FILENAME)
-        if os.path.exists(example_file):
-            shutil.copy(example_file, file_name)
-            return True
-        else:
-            return False
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            example_file = os.path.join(dest_folder, pf)
+            if os.path.exists(example_file):
+                shutil.copy(example_file, file_name)
+                return True
+            else:
+                return False
 
     def example(self, n_samples, file_name, simple, try_predefined):
         predefined_done = False
