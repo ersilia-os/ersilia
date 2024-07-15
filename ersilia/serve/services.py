@@ -231,6 +231,7 @@ class _FastApiService(BaseServing):
         self.SEARCH_PRE_STRING = "Uvicorn running on "
         self.SEARCH_SUF_STRING = "(Press CTRL+C to quit)"
         self.ERROR_STRING = "error"
+        self.conda = SimpleConda()
 
     def serve(self, runcommand_func=None):
         bundle_path = self._get_bundle_location(self.model_id)
@@ -248,8 +249,7 @@ class _FastApiService(BaseServing):
         tmp_script = os.path.join(tmp_folder, "serve.sh")
         tmp_file = os.path.join(tmp_folder, "serve.log")
         tmp_pid = os.path.join(tmp_folder, "serve.pid")
-        sl = ["#!/bin/bash"]
-        sl += [
+        sl = [
             "ersilia_model_serve --bundle_path {0} --port {1} &> {2} &".format(
                 bundle_path, self.port, tmp_file
             )
@@ -257,10 +257,7 @@ class _FastApiService(BaseServing):
         sl += ["_pid=$!"]
         sl += ['echo "$_pid" > {0}'.format(tmp_pid)]
         self.logger.debug("Writing on {0}".format(tmp_script))
-        with open(tmp_script, "w") as f:
-            for l in sl:
-                self.logger.debug(l)
-                f.write(l + os.linesep)
+        self.conda.create_executable_bash_script(environment=self.model_id, commandlines=sl, file_name=tmp_script)
         cmd = "bash {0}".format(tmp_script)
         if runcommand_func is None:
             self.logger.debug("Run command function not available. Running from shell")

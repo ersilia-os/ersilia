@@ -91,8 +91,8 @@ class CondaPack(BasePack):
         self.logger.debug("Using environment {0}".format(env))
         dest_dir = self._model_path(self.model_id)
         bundle_dir = os.path.join(EOS, "repository")
-        cmd = "ersilia_model_pack --repo_path {0} --bundles_repo_path {1}".format(  # TODO Add environment name
-            dest_dir, bundle_dir
+        cmd = "ersilia_model_pack --repo_path {0} --bundles_repo_path {1} --conda_env_name {2}".format(
+            dest_dir, bundle_dir, env
         )
         self.logger.debug("Running command: {0}".format(cmd))
         self.conda.run_commandlines(environment=env, commandlines=cmd)
