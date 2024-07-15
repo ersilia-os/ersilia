@@ -1,0 +1,85 @@
+name: Install Ersilia
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  base:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Ersilia
+      run: |
+        pip install --upgrade pip
+        python -m pip install git+https://github.com/ersilia-os/bentoml-ersilia.git
+        python -m pip install -e .
+    - name: Test help command
+      run: |
+        ersilia --help
+        ersilia --version
+
+  test-docker:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Ersilia without pre-installing BentoML
+      run: |
+        pip install --upgrade pip
+        python -m pip install -e .
+    - name: Test help command again
+      run: |
+        ersilia --help
+        ersilia --version
+    - name: Fetch molecular weight model from DockerHub
+      run: |
+        ersilia -v fetch molecular-weight --from_dockerhub
+
+  test-os:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
+
+      - name: Install dependencies
+        run: |
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+
+      - name: Install ersilia from source
+        run: |
+          pip install --upgrade pip
+          python --version
+          python -m pip install -e .
+
+      - name: Ersilia help
+        run: |
+          ersilia --help
