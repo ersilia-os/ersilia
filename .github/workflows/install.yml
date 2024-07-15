@@ -22,6 +22,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Ersilia
       run: |
+        pip install --upgrade pip
         python -m pip install git+https://github.com/ersilia-os/bentoml-ersilia.git
         python -m pip install -e .
     - name: Test help command
@@ -42,6 +43,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Ersilia without pre-installing BentoML
       run: |
+        pip install --upgrade pip
         python -m pip install -e .
     - name: Test help command again
       run: |
@@ -74,6 +76,7 @@ jobs:
 
       - name: Install ersilia from source
         run: |
+          pip install --upgrade pip
           python --version
           python -m pip install -e .
 
