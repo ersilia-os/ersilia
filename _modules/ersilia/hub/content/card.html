@@ -84,6 +84,7 @@
 <span class="kn">from</span> <span class="nn">...auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
 <span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">AirtableInterface</span>
 <span class="kn">import</span> <span class="nn">validators</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationFailure</span>
@@ -121,7 +122,7 @@
 <span class="k">except</span><span class="p">:</span>
     <span class="n">Hdf5Explorer</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">CARD_FILE</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">,</span> <span class="n">SERVICE_CLASS_FILE</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">,</span> <span class="n">SERVICE_CLASS_FILE</span>
 
 
 <div class="viewcode-block" id="BaseInformation"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation">[docs]</a><span class="k">class</span> <span class="nc">BaseInformation</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -136,6 +137,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="kc">None</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="kc">None</span>
@@ -778,35 +780,48 @@
 
 
 <div class="viewcode-block" id="LocalCard"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LocalCard">[docs]</a><span class="k">class</span> <span class="nc">LocalCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class provides information on models that have been fetched and are available locally.</span>
+<span class="sd">    It retrieves and caches information about the models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-
-<div class="viewcode-block" id="LocalCard.get"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LocalCard.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+                
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the JSON data from the model&#39;s information file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">card_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">CARD_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">card_path</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">card_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">card</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">card</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span></div>
-            
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="kc">None</span>
+        
+<div class="viewcode-block" id="LocalCard.get"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LocalCard.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the &#39;card&#39; information for the specified model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_data</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;card&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+               
 <div class="viewcode-block" id="LocalCard.get_service_class"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LocalCard.get_service_class">[docs]</a>    <span class="k">def</span> <span class="nf">get_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method returns information about how the model was fetched by reading </span>
-<span class="sd">        the service class file located in the model&#39;s bundle directory. If the service </span>
-<span class="sd">        class file does not exist, it returns None.</span>
+<span class="sd">        Returns the &#39;service class&#39; information for the specified model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">service_class_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">SERVICE_CLASS_FILE</span>
-            <span class="p">)</span>
-        
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">service_class_path</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">service_class_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">service_class</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">service_class</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span></div></div>
+    
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_data</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service_class&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div></div>
+
 
 <div class="viewcode-block" id="LakeCard"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LakeCard">[docs]</a><span class="k">class</span> <span class="nc">LakeCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
