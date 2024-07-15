@@ -1,33 +1,32 @@
 import os
-import json
-import tempfile
-import types
-import collections
-import importlib
-import __main__ as main
-import time
 import csv
+import json
+import time
+import types
+import tempfile
+import importlib
+import collections
+import __main__ as main
 
 from .. import logger
-from .base import ErsiliaBase
-from .modelbase import ModelBase
-from .session import Session, RunLogger
-from .tracking import RunTracker
-from ..serve.autoservice import AutoService
-from ..serve.schema import ApiSchema
 from ..serve.api import Api
-from ..serve.standard_api import StandardCSVRunApi
-from ..io.input import ExampleGenerator, BaseIOGetter
-from ..io.output import TabularOutputStacker
-from ..io.readers.file import FileTyper, TabularFileReader
+from .session import Session
+from datetime import datetime
+from .base import ErsiliaBase
+from ..lake.base import LakeBase
 from ..utils import tmp_pid_file
+from .modelbase import ModelBase
+from ..serve.schema import ApiSchema
 from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.csvfile import CsvDataLoader
 from ..utils.terminal import yes_no_input
-from ..lake.base import LakeBase
-
+from ..serve.autoservice import AutoService
+from ..io.output import TabularOutputStacker
+from ..serve.standard_api import StandardCSVRunApi
+from ..io.input import ExampleGenerator, BaseIOGetter
+from .tracking import RunTracker, create_persistent_file
+from ..io.readers.file import FileTyper, TabularFileReader
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
-
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
 from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
 
@@ -48,7 +47,6 @@ class ErsiliaModel(ErsiliaBase):
         verbose=None,
         fetch_if_not_available=True,
         preferred_port=None,
-        log_runs=True,
         track_runs=False,
     ):
         ErsiliaBase.__init__(
@@ -81,6 +79,7 @@ class ErsiliaModel(ErsiliaBase):
             "hosted",
         ], "Wrong service class"
         self.service_class = service_class
+        self.track_runs = track_runs
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
         assert (
@@ -125,15 +124,11 @@ class ErsiliaModel(ErsiliaBase):
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
-        if log_runs:
-            self._run_logger = RunLogger(
-                model_id=self.model_id, config_json=self.config_json
-            )
-        else:
-            self._run_logger = None
 
         if track_runs:
-            self._run_tracker = RunTracker()
+            self._run_tracker = RunTracker(
+                model_id=self.model_id, config_json=self.config_json
+            )
         else:
             self._run_tracker = None
 
@@ -421,13 +416,24 @@ class ErsiliaModel(ErsiliaBase):
 
     def serve(self):
         self.close()
-        self.session.open(model_id=self.model_id)
+        self.session.open(model_id=self.model_id, track_runs=self.track_runs)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
         # self.update_model_usage_time(self.model_id) TODO: Check and reactivate
+
+        # Start tracking to get the peak memory, memory usage and cpu time of the Model server(autoservice)
+        if self._run_tracker is not None:
+            create_persistent_file(self.model_id)
+            memory_usage_serve, cpu_time_serve = self._run_tracker.get_memory_info()
+            peak_memory_serve = self._run_tracker.get_peak_memory()
+
+            session = Session(config_json=None)
+            session.update_peak_memory(peak_memory_serve)
+            session.update_total_memory(memory_usage_serve)
+            session.update_cpu_time(cpu_time_serve)
 
     def close(self):
         self.autoservice.close()
@@ -439,18 +445,12 @@ class ErsiliaModel(ErsiliaBase):
     def _run(
         self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False
     ):
-        # Init some tracking before the run starts
-        if self._run_tracker is not None and track_run:
-            self._run_tracker.start_tracking()
 
         api_name = self.get_apis()[0]
         result = self.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
         )
-        if self._run_logger is not None:
-            self._run_logger.log(result=result, meta=self._model_info)
-        if self._run_tracker is not None and track_run:
-            self._run_tracker.track(input=input, result=result, meta=self._model_info)
+
         return result
 
     def _standard_run(self, input=None, output=None):
@@ -496,7 +496,13 @@ class ErsiliaModel(ErsiliaBase):
             result = self._run(
                 input=input, output=output, batch_size=batch_size, track_run=track_run
             )
-            return result
+        # Start tracking model run if track flag is used in serve
+        if self._run_tracker is not None and track_run:
+            self._run_tracker.track(
+                input=input, result=result, meta=self._model_info
+            )
+            self._run_tracker.log(result=result, meta=self._model_info)
+        return result
 
     @property
     def paths(self):

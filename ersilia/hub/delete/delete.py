@@ -125,7 +125,6 @@ class ModelBentoDeleter(ErsiliaBase):
         ml = ModelCatalog()
         try:
             catalog = ml.bentoml()
-            self.logger.debug(catalog)
         except:
             self.logger.debug("No BentoML Catalog available")
             catalog = None

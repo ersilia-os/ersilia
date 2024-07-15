@@ -32,7 +32,8 @@ def catalog_cmd():
     def catalog(local=False, file_name=None, browser=False, more=False):
         if local is True and browser is True:
             click.echo(
-                "You cannot show the local model catalog in the browser", fg="red"
+                "You cannot show the local model catalog in the browser",
+                fg="red",
             )
         if more:
             only_identifier = False
@@ -42,16 +43,19 @@ def catalog_cmd():
         if browser:
             mc.airtable()
             return
-        if local:
-            if file_name is None:
-                catalog = mc.local().as_json()
-            else:
-                mc.local().write(file_name)
-                catalog = None
+        catalog_table = mc.local() if local else mc.hub()
+        if local and not catalog_table.data:
+            click.echo(
+                click.style(
+                    "No local model is available. Please fetch a model by running 'ersilia fetch' command",
+                    fg="red",
+                )
+            )
+            return
+        if file_name is None:
+            catalog = catalog_table.as_json()
         else:
-            if file_name is None:
-                catalog = mc.hub().as_json()
-            else:
-                mc.hub().write(file_name)
-                catalog = None
+            catalog_table.write(file_name)
+            catalog = None
+
         click.echo(catalog)

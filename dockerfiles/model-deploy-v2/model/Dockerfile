@@ -1,4 +1,4 @@
-FROM ersiliaos/base-v2:latest as build
+FROM ersiliaos/base-v2:latest AS build
 ARG MODEL=eos_identifier
 ENV MODEL=$MODEL
 RUN ersilia -v fetch $MODEL --from_github
@@ -40,16 +40,14 @@ COPY --from=build /root/bentoml /root/bentoml
 COPY --from=build /root/docker-entrypoint.sh docker-entrypoint.sh
 COPY --from=build /root/nginx.conf /etc/nginx/sites-available/default
 
-# Writing this script here because the Dockerfile gets copied to the model directory
-# and the model directory is not known until the build stage. Either we copy this script
-# within the build context or we write it here.
-RUN echo -e "#!/bin/bash\nset -eux\n\
-cd ~/bentoml/repository/$MODEL/*/$MODEL/artifacts/\n\
-if [ -f framework/run.sh ]; then\n\
-  sed -i -n 's/\/usr\/bin\/conda\/envs//p' framework/run.sh\n\
-fi" > patch_python_path.sh && \
-chmod +x patch_python_path.sh && \
-./patch_python_path.sh
+# Patch the python path so we call the correct python binary
+RUN /bin/bash <<EOF
+set -eux
+cd /root/bentoml/repository/$MODEL/*/$MODEL/artifacts/
+if [ -f framework/run.sh ]; then
+  sed -i -E 's/(.usr.bin.conda.envs(.*bin.*python)(.*))/\2 \3/' framework/run.sh
+fi
+EOF
 
 RUN chmod + docker-entrypoint.sh
 EXPOSE 80

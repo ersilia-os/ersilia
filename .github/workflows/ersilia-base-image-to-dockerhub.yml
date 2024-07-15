@@ -7,18 +7,12 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-    inputs:
-      build_version:
-        description: 'Docker build version (v2 is default; v1 - single stage build and v2 - multi stage build)'
-        required: false
-        type: string
-        default: v2
-
-env: 
-  BUILD_VERSION: ${{ github.event.inputs.build_version }}
 
 jobs:
   upload_ersilia_base_to_dockerhub:
+    strategy:
+      matrix:
+        build-version: ["v1", "v2"]
     runs-on: ubuntu-latest
     steps:
       # https://github.com/docker/setup-qemu-action
@@ -51,7 +45,7 @@ jobs:
 
       - name: Copy Dockerfile to base directory
         run: |
-          cp dockerfiles/model-deploy-${{ env.BUILD_VERSION }}/base/* .
+          cp dockerfiles/model-deploy-${{ matrix.build-version }}/base/* .
             
       - name: Docker meta
         id: docker_meta
@@ -59,7 +53,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            ersiliaos/base-${{ env.BUILD_VERSION }} 
+            ersiliaos/base-${{ matrix.build-version }} 
           # Docker tags based on the following events/attributes
           tags: |
             type=raw,value=latest
@@ -71,7 +65,7 @@ jobs:
             type=sha
             
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64

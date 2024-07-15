@@ -49,6 +49,7 @@ IS_FETCHED_FROM_DOCKERHUB_FILE = "from_dockerhub.json"
 IS_FETCHED_FROM_HOSTED_FILE = "from_hosted.json"
 DEFAULT_UDOCKER_USERNAME = "udockerusername"
 DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
+ERSILIA_RUNS_FOLDER = "ersilia_runs"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"
