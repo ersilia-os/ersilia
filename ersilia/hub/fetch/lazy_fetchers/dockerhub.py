@@ -2,7 +2,7 @@ from ..register.register import ModelRegisterer
 
 from .... import ErsiliaBase, throw_ersilia_exception
 from .... import EOS
-from ....default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, PREDEFINED_EXAMPLE_FILENAME
+from ....default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, PREDEFINED_EXAMPLE_FILENAME, INFORMATION_FILE, API_SCHEMA_FILE
 
 from ...pull.pull import ModelPuller
 from ....serve.services import PulledDockerImageService
@@ -43,8 +43,8 @@ class ModelDockerHubFetcher(ErsiliaBase):
         di.close()
 
     def copy_information(self, model_id):
-        fr_file = "/root/eos/dest/{0}/information.json".format(model_id)
-        to_file = "{0}/dest/{1}/information.json".format(EOS, model_id)
+        fr_file = "/root/eos/dest/{0}/{1}".format(model_id, INFORMATION_FILE)
+        to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, INFORMATION_FILE)
         self.simple_docker.cp_from_image(
             img_path=fr_file,
             local_path=to_file,
@@ -54,13 +54,14 @@ class ModelDockerHubFetcher(ErsiliaBase):
         )
 
     def copy_metadata(self, model_id):
-        fr_file = "/root/eos/dest/{0}/api_schema.json".format(model_id)
-        to_file = "{0}/dest/{1}/api_schema.json".format(EOS, model_id)
+        fr_file = "/root/eos/dest/{0}/{1}".format(model_id, API_SCHEMA_FILE)
+        to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, API_SCHEMA_FILE)
         self.simple_docker.cp_from_image(
             img_path=fr_file,
             local_path=to_file,
             org=DOCKERHUB_ORG,
             img=model_id,
+            
             tag=DOCKERHUB_LATEST_TAG,
         )
 
