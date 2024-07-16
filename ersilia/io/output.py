@@ -12,7 +12,7 @@ from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..db.hubdata.interfaces import AirtableInterface
-from ..default import FEATURE_MERGE_PATTERN
+from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
 from ..utils.paths import resolve_pack_method
 
 
@@ -135,7 +135,7 @@ class GenericOutputAdapter(ResponseRefactor):
         )
         self.model_id = model_id
         self.was_fast_api = (
-            resolve_pack_method(self._get_bundle_location(self.model_id)) == "fastapi"
+            resolve_pack_method(self._get_bundle_location(self.model_id)) == PACK_METHOD_FASTAPI
         )
 
     @staticmethod
