@@ -8,6 +8,7 @@ from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 import validators
+from functools import lru_cache
 
 try:
     from validators import ValidationFailure
@@ -47,7 +48,6 @@ except:
 
 from ...default import CARD_FILE, METADATA_JSON_FILE, SERVICE_CLASS_FILE, INFORMATION_FILE
 
-
 class BaseInformation(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -60,6 +60,7 @@ class BaseInformation(ErsiliaBase):
         self._mode = None
         self._task = None
         self._input = None
+        
         self._input_shape = None
         self._output = None
         self._output_type = None
@@ -702,10 +703,18 @@ class AirtableCard(AirtableInterface):
 
 
 class LocalCard(ErsiliaBase):
+    """
+    This class provides information on models that have been fetched and are available locally.
+    It retrieves and caches information about the models.
+    """
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
-
-    def get(self, model_id):
+                
+    @lru_cache(maxsize=32)
+    def _load_data(self, model_id):
+        """
+        Loads the JSON data from the model's information file.
+        """
         model_path = self._model_path(model_id)
         info_file = os.path.join(self._get_bundle_location(model_id), INFORMATION_FILE)
         if os.path.exists(info_file):
