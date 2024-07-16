@@ -56,6 +56,8 @@ DEFAULT_UDOCKER_USERNAME = "udockerusername"
 DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 ERSILIA_RUNS_FOLDER = "ersilia_runs"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
+PACK_METHOD_FASTAPI = "fastapi"
+PACK_METHOD_BENTOML = "bentoml"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"
