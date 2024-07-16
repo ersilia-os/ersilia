@@ -9,13 +9,13 @@ import yaml
 from . import BaseAction
 from .... import ErsiliaBase
 from ....utils.download import GitHubDownloader, S3Downloader
-from ....utils.paths import Paths
 from ...bundle.repo import PackFile, DockerfileFile
 from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.exceptions_utils.fetch_exceptions import (
     FolderNotFoundError,
     S3DownloaderError,
 )
+from .template_resolver import TemplateResolver
 
 from ....default import S3_BUCKET_URL_ZIP, PREDEFINED_EXAMPLE_FILES
 
@@ -91,7 +91,6 @@ class DockerfileCreator(ErsiliaBase):
                 run_section_end_line = i
             if line != "":
                 sanitized.append(line)
-        print(sanitized, run_section_end_line)
         if sanitized[run_section_end_line + 2].startswith("RUN"):
             raise BaseException(
                 "There are more instalation than the standard 'RUN pip install rdkit'"
@@ -284,6 +283,7 @@ class ModelRepositoryGetter(BaseAction):
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
         folder = self._model_path(self.model_id)
+        tr = TemplateResolver(model_id=self.model_id, repo_path=folder, config_json=self.config_json)
         if self.repo_path is not None:
             self._copy_from_local(self.repo_path, folder)
         else:
@@ -301,8 +301,11 @@ class ModelRepositoryGetter(BaseAction):
                         raise S3DownloaderError(model_id=self.model_id)
                     else:
                         self._copy_from_github(folder)
-        self._prepare_inner_template()
-        self._change_py_version_in_dockerfile_if_necessary()
+
+        if tr.is_bentoml():
+            self._prepare_inner_template()
+            self._change_py_version_in_dockerfile_if_necessary()
+        
         self._remove_sudo_if_root()
         self._copy_example_file_if_available()
 
@@ -328,6 +331,9 @@ class ModelParametersGetter(BaseAction):
         """Create a ./model folder in the model repository"""
         model_path = self._model_path(self.model_id)
         folder = self._get_destination()
+        tr = TemplateResolver(model_id=self.model_id, repo_path=model_path, config_json=self.config_json)
+        if tr.is_fastapi():
+            return None
         if not os.path.exists(folder):
             os.mkdir(folder)
         if not self._requires_parameters(model_path):
