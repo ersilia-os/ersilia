@@ -21,6 +21,7 @@ from ..default import PACKMODE_FILE, APIS_LIST_FILE
 from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 from ..default import IS_FETCHED_FROM_HOSTED_FILE
 from ..default import INFORMATION_FILE
+from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
@@ -57,7 +58,7 @@ class BaseServing(ErsiliaBase):
     def _get_info_from_bento(self):
         """Get info available from the Bento"""
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "info.json")
+        tmp_file = os.path.join(tmp_folder, "information.json")
         cmd = "bentoml info --quiet {0}:{1} > {2}".format(
             self.model_id, self.bundle_tag, tmp_file
         )
@@ -94,10 +95,10 @@ class BaseServing(ErsiliaBase):
             pack_method = resolve_pack_method(
                 model_path=self._get_bundle_location(self.model_id)
             )
-            if pack_method == "fastapi":
+            if pack_method == PACK_METHOD_FASTAPI:
                 self.logger.debug("Getting APIs from FastAPI")
                 apis_list = self._get_apis_from_fastapi()
-            elif pack_method == "bentoml":
+            elif pack_method == PACK_METHOD_BENTOML:
                 self.logger.debug("Getting APIs from BentoML")
                 apis_list = self._get_apis_from_bento()
             else:
@@ -333,13 +334,13 @@ class _LocalService(ErsiliaBase):
             model_path=self._get_bundle_location(model_id)
         )
         self.logger.debug("Pack method is: {0}".format(pack_method))
-        if pack_method == "fastapi":
+        if pack_method == PACK_METHOD_FASTAPI:
             self.server = _FastApiService(
                 model_id,
                 config_json=config_json,
                 preferred_port=preferred_port,
             )
-        elif pack_method == "bentoml":
+        elif pack_method == PACK_METHOD_BENTOML:
             self.server = _BentoMLService(
                 model_id,
                 config_json=config_json,
