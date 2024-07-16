@@ -2,6 +2,8 @@ import re
 import os
 import collections
 from pathlib import Path
+from ersilia import logger
+from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 
 MODELS_DEVEL_DIRNAME = "models"
 
@@ -59,7 +61,8 @@ class Paths(object):
 
 def resolve_pack_method(model_path):
     if os.path.exists(os.path.join(model_path, "installs", "install.sh")):
-        return "fastapi"
+        return PACK_METHOD_FASTAPI
     elif os.path.exists(os.path.join(model_path, "bentoml.yml")):
-        return "bentoml"
+        return PACK_METHOD_BENTOML
+    logger.warning("Could not resolve pack method")
     return None
