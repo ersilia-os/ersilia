@@ -45,7 +45,7 @@ try:
 except:
     Hdf5Explorer = None
 
-from ...default import CARD_FILE, METADATA_JSON_FILE, SERVICE_CLASS_FILE
+from ...default import CARD_FILE, METADATA_JSON_FILE, SERVICE_CLASS_FILE, INFORMATION_FILE
 
 
 class BaseInformation(ErsiliaBase):
@@ -533,7 +533,7 @@ class ReadmeMetadata(ErsiliaBase):
         )
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
-        print(bi.as_dict())
+        self.logger.info(bi.as_dict())
         return bi
 
     def write_information(self, data: BaseInformation, readme_path=None):
@@ -707,7 +707,11 @@ class LocalCard(ErsiliaBase):
 
     def get(self, model_id):
         model_path = self._model_path(model_id)
-        card_path = os.path.join(model_path, CARD_FILE)
+        info_file = os.path.join(self._get_bundle_location(model_id), INFORMATION_FILE)
+        if os.path.exists(info_file):
+            card_path = info_file
+        else:
+            card_path = os.path.join(model_path, CARD_FILE)
         if os.path.exists(card_path):
             with open(card_path, "r") as f:
                 card = json.load(f)
@@ -750,6 +754,7 @@ class LakeCard(ErsiliaBase):
 
 class ModelCard(object):
     def __init__(self, config_json=None):
+
         self.lc = LocalCard(config_json=config_json)
         self.mc = MetadataCard(config_json=config_json)
         self.ac = AirtableCard(config_json=config_json)
