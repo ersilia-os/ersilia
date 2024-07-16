@@ -13,6 +13,7 @@ from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithBentoML,
 )
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 
 from . import STATUS_FILE, DONE_TAG
 
@@ -66,9 +67,9 @@ class ModelFetcher(ErsiliaBase):
     def _decide_fetcher(self, model_id):
         tr = TemplateResolver(model_id=model_id, repo_path=self.repo_path)
         if tr.is_bentoml():
-            return "bentoml"
+            return PACK_METHOD_BENTOML
         elif tr.is_fastapi():
-            return "fastapi"
+            return PACK_METHOD_FASTAPI
         else:
             raise Exception("No fetcher available")
 
@@ -129,9 +130,9 @@ class ModelFetcher(ErsiliaBase):
             else:
                 self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
                 fetcher_type = self._decide_fetcher(model_id)
-                if fetcher_type == "fastapi":
+                if fetcher_type == PACK_METHOD_FASTAPI:
                     self._fetch_from_fastapi()
-                if fetcher_type == "bentoml":
+                if fetcher_type == PACK_METHOD_BENTOML:
                     self._fetch_from_bentoml()
         else:
             self.logger.debug("Model already exists in your local, skipping fetching")
