@@ -15,6 +15,8 @@ class TemplateResolver(BaseAction):
         self.repo_path = repo_path
 
     def _check_file_in_repo(self, file_path):
+        print(f"This is the repo path: {self.repo_path}")
+        print(f"Checking for file: {file_path}")
         file_path = os.path.join(self.repo_path, file_path)
         if os.path.exists(file_path):
             return True
@@ -37,6 +39,8 @@ class TemplateResolver(BaseAction):
             conn.close()
 
     def _check_file(self, file_path):
+        print(f"Checking for file: {file_path} in _check_file")
+        print(f"Is repo path None? {self.repo_path is None}")
         if self.repo_path is not None:
             return self._check_file_in_repo(file_path)
         else:
@@ -54,6 +58,7 @@ class TemplateResolver(BaseAction):
         return True
 
     def is_bentoml(self):
+        print("We're here")
         if not self._check_file("pack.py"):
             return False
         if not self._check_file("Dockerfile"):

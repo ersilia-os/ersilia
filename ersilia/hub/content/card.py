@@ -716,7 +716,7 @@ class LocalCard(ErsiliaBase):
         Loads the JSON data from the model's information file.
         """
         model_path = self._model_path(model_id)
-        info_file = os.path.join(self._get_bundle_location(model_id), INFORMATION_FILE)
+        info_file = os.path.join(model_path, INFORMATION_FILE)
         if os.path.exists(info_file):
             card_path = info_file
         else:
