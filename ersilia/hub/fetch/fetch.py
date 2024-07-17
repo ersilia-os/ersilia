@@ -14,7 +14,7 @@ from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithBentoML,
 )
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
-from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
+from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, MODEL_SOURCE_FILE
 
 from . import STATUS_FILE, DONE_TAG
 
@@ -63,6 +63,20 @@ class ModelFetcher(ErsiliaBase):
         self.force_with_bentoml = force_with_bentoml
         self.force_with_fastapi = force_with_fastapi
         self.hosted_url = hosted_url
+        
+        self.logger.debug("Getting model source")        
+        sources = {
+            self.force_from_github: "GitHub",
+            self.force_from_s3: "Amazon S3",
+            self.force_from_dockerhub: "DockerHub",
+            self.force_from_hosted: "Hosted services",
+            self.force_with_bentoml: "Bentoml",
+            self.force_with_fastapi: "Fastapi",
+            self.hosted_url is not None: "Hosted URL"
+        }
+        
+        self.model_source = next((source for condition, source in sources.items() if condition), "DockerHub")       
+        self.logger.debug("Model was fetched from {0}".format(self.model_source))
 
     @throw_ersilia_exception
     def _decide_fetcher(self, model_id):
@@ -219,6 +233,13 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Fetching in your system, not from DockerHub")
         self._fetch_not_from_dockerhub(model_id=model_id)
 
+        model_source_file = os.path.join(
+                self._get_bundle_location(model_id), MODEL_SOURCE_FILE
+            )
+        with open(model_source_file, "w") as f:
+            f.write(self.model_source)
+            
+            
     def fetch(self, model_id):
         self._fetch(model_id)
         self._standard_csv_example(model_id)
