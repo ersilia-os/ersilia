@@ -36,6 +36,7 @@ class ModelFetcher(ErsiliaBase):
         force_with_bentoml=False,
         force_with_fastapi=False,
         hosted_url=None,
+        local_dir =None,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -63,6 +64,7 @@ class ModelFetcher(ErsiliaBase):
         self.force_with_bentoml = force_with_bentoml
         self.force_with_fastapi = force_with_fastapi
         self.hosted_url = hosted_url
+        self.local_dir = local_dir 
         
         self.logger.debug("Getting model source")        
         sources = {
@@ -72,7 +74,8 @@ class ModelFetcher(ErsiliaBase):
             self.force_from_hosted: "Hosted services",
             self.force_with_bentoml: "Bentoml",
             self.force_with_fastapi: "Fastapi",
-            self.hosted_url is not None: "Hosted URL"
+            self.hosted_url is not None: "Hosted URL",
+            self.local_dir is not None: "Local path"
         }
         
         self.model_source = next((source for condition, source in sources.items() if condition), "DockerHub")       
