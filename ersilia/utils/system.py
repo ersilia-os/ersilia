@@ -2,6 +2,13 @@ import platform
 import os
 
 
+def is_inside_docker():
+    if os.path.isfile("/.dockerenv"):
+        return True
+    else:
+        return False
+
+
 class SystemChecker(object):
     def __init__(self):
         self.uname = platform.uname()
@@ -18,3 +25,6 @@ class SystemChecker(object):
             return True
         else:
             return False
+
+    def is_inside_docker(self):
+        return is_inside_docker()

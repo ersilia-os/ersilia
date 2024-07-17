@@ -1,26 +1,20 @@
-"""Fetch model from the Ersilia Model Hub"""
+"""Fetch Model from the Ersilia Model Hub."""
 
-import json
 import os
-from timeit import default_timer as timer
-from datetime import timedelta
+import json
+import importlib
 
-from .actions.setup import SetupChecker
-from .actions.prepare import ModelPreparer
-from .actions.get import ModelGetter
-from .actions.lake import LakeGetter
-from .actions.pack import ModelPacker
-from .actions.toolize import ModelToolizer
-from .actions.content import CardGetter
-from .actions.check import ModelChecker
-from .actions.sniff import ModelSniffer
-from .actions.inform import ModelInformer
-from .register.register import ModelRegisterer
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
-
 from ... import ErsiliaBase
+from ...hub.fetch.actions.template_resolver import TemplateResolver
+from ...utils.exceptions_utils.fetch_exceptions import (
+    NotInstallableWithFastAPI,
+    NotInstallableWithBentoML,
+)
+from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 
 from . import STATUS_FILE, DONE_TAG
 
@@ -39,6 +33,8 @@ class ModelFetcher(ErsiliaBase):
         force_from_s3=False,
         force_from_dockerhub=False,
         force_from_hosted=False,
+        force_with_bentoml=False,
+        force_with_fastapi=False,
         hosted_url=None,
     ):
         ErsiliaBase.__init__(
@@ -64,89 +60,83 @@ class ModelFetcher(ErsiliaBase):
         self.force_from_s3 = force_from_s3
         self.force_from_dockerhub = force_from_dockerhub
         self.force_from_hosted = force_from_hosted
+        self.force_with_bentoml = force_with_bentoml
+        self.force_with_fastapi = force_with_fastapi
         self.hosted_url = hosted_url
 
-    def _setup_check(self):
-        sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
-        sc.check()
+    @throw_ersilia_exception
+    def _decide_fetcher(self, model_id):
+        tr = TemplateResolver(model_id=model_id, repo_path=self.repo_path)
+        if tr.is_bentoml():
+            return PACK_METHOD_BENTOML
+        elif tr.is_fastapi():
+            return PACK_METHOD_FASTAPI
+        else:
+            raise Exception("No fetcher available")
 
-    def _prepare(self):
-        mp = ModelPreparer(
-            model_id=self.model_id,
+    @throw_ersilia_exception
+    def _fetch_from_fastapi(self):
+        self.logger.debug("Fetching using Ersilia Pack (FastAPI)")
+        fetch = importlib.import_module("ersilia.hub.fetch.fetch_fastapi")
+        mf = fetch.ModelFetcherFromFastAPI(
+            config_json=self.config_json,
+            credentials_json=self.credentials_json,
             overwrite=self.overwrite,
-            config_json=self.config_json,
-        )
-        mp.prepare()
-
-    def _get(self):
-        mg = ModelGetter(
-            model_id=self.model_id,
             repo_path=self.repo_path,
-            config_json=self.config_json,
-            force_from_gihtub=self.force_from_github,
+            mode=self.mode,
+            force_from_github=self.force_from_github,
             force_from_s3=self.force_from_s3,
         )
-        mg.get()
+        if mf.seems_installable(model_id=self.model_id):
+            mf.fetch(model_id=self.model_id)
+        else:
+            self.logger.debug("Not installable with FastAPI")
+            raise NotInstallableWithFastAPI(model_id=self.model_id)
 
-    def _lake(self):
-        ml = LakeGetter(model_id=self.model_id, config_json=self.config_json)
-        ml.get()
-
-    def _pack(self):
-        mp = ModelPacker(
-            model_id=self.model_id, mode=self.mode, config_json=self.config_json
+    @throw_ersilia_exception
+    def _fetch_from_bentoml(self):
+        self.logger.debug("Fetching using BentoML")
+        fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
+        mf = fetch.ModelFetcherFromBentoML(
+            config_json=self.config_json,
+            credentials_json=self.credentials_json,
+            overwrite=self.overwrite,
+            repo_path=self.repo_path,
+            mode=self.mode,
+            pip=self.do_pip,
+            dockerize=self.do_docker,
+            force_from_github=self.force_from_github,
+            force_from_s3=self.force_from_s3,
         )
-        mp.pack()
+        if mf.seems_installable(model_id=self.model_id):
+            mf.fetch(model_id=self.model_id)
+        else:
+            self.logger.debug("Not installable with BentoML")
+            raise NotInstallableWithBentoML(model_id=self.model_id)
 
-    def _toolize(self):
-        mt = ModelToolizer(model_id=self.model_id, config_json=self.config_json)
-        mt.toolize(do_pip=self.do_pip, do_docker=self.do_docker)
-
-    def _content(self):
-        cg = CardGetter(self.model_id, self.config_json)
-        cg.get()
-
-    def _check(self):
-        mc = ModelChecker(self.model_id, self.config_json)
-        mc.check()
-
-    def _sniff(self):
-        sn = ModelSniffer(self.model_id, self.config_json)
-        sn.sniff()
-
-    def _inform(self):
-        mi = ModelInformer(self.model_id, self.config_json)
-        mi.inform()
-
-    def _success(self):
-        done = {DONE_TAG: True}
-        status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
-        with open(status_file, "w") as f:
-            json.dump(done, f, indent=4)
-        mr = ModelRegisterer(self.model_id, config_json=self.config_json)
-        mr.register(is_from_dockerhub=False)
-
+    @throw_ersilia_exception
     def _fetch_not_from_dockerhub(self, model_id):
-        start = timer()
         self.model_id = model_id
-        self._setup_check()
-        self._prepare()
-        self._get()
-        self._pack()
-        self._toolize()
-        self._content()
-        self._check()
-        self._sniff()
-        self._inform()
-        self._success()
-        end = timer()
-        elapsed_time = timedelta(seconds=end - start)
-        self.logger.debug(
-            "Fetching {0} done in time: {1}s".format(model_id, abs(elapsed_time))
-        )
-        self.logger.info(
-            "Fetching {0} done successfully: {1}".format(model_id, elapsed_time)
-        )
+        is_fetched = False
+        if not self.exists(model_id):
+            self.logger.debug("Model doesn't exist in your local, fetching it now")
+            if self.force_with_fastapi:
+                self._fetch_from_fastapi()
+                is_fetched = True
+            if self.force_with_bentoml:
+                self._fetch_from_bentoml()
+                is_fetched = True
+            if is_fetched:
+                return
+            else:
+                self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
+                fetcher_type = self._decide_fetcher(model_id)
+                if fetcher_type == PACK_METHOD_FASTAPI:
+                    self._fetch_from_fastapi()
+                if fetcher_type == PACK_METHOD_BENTOML:
+                    self._fetch_from_bentoml()
+        else:
+            self.logger.debug("Model already exists in your local, skipping fetching")
 
     def _fetch_from_dockerhub(self, model_id):
         self.logger.debug("Fetching from DockerHub")
@@ -214,14 +204,19 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Starting fetching procedure")
         do_hosted = self._decide_if_use_hosted(model_id=model_id)
         if do_hosted:
+            self.logger.debug("Fetching from hosted")
             self._fetch_from_hosted(model_id=model_id)
             return
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
+            print("Fetching from DockerHub")
+            self.logger.debug("Fetching from DockerHub")
             self._fetch_from_dockerhub(model_id=model_id)
             return
         if self.overwrite is None:
+            self.logger.debug("Overwriting")
             self.overwrite = True
+        self.logger.debug("Fetching in your system, not from DockerHub")
         self._fetch_not_from_dockerhub(model_id=model_id)
 
     def fetch(self, model_id):

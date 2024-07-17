@@ -11,8 +11,9 @@ from .pure import PureDataTyper
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
-from ..default import FEATURE_MERGE_PATTERN
 from ..db.hubdata.interfaces import AirtableInterface
+from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
+from ..utils.paths import resolve_pack_method
 
 
 class DataFrame(object):
@@ -133,6 +134,10 @@ class GenericOutputAdapter(ResponseRefactor):
             ["array", "numeric_array", "string_array", "mixed_array"]
         )
         self.model_id = model_id
+        self.was_fast_api = (
+            resolve_pack_method(self._get_bundle_location(self.model_id))
+            == PACK_METHOD_FASTAPI
+        )
 
     @staticmethod
     def _is_string(output):
@@ -322,7 +327,7 @@ class GenericOutputAdapter(ResponseRefactor):
                             fo.write(l)
                     use_header = False
 
-    def adapt(self, result, output, model_id=None, api_name=None):
+    def _adapt_generic(self, result, output, model_id=None, api_name=None):
         if model_id is not None and api_name is not None and self.api_schema is None:
             self.api_schema = ApiSchema(model_id=model_id, config_json=self.config_json)
         if self.api_schema is not None:
@@ -331,7 +336,7 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             self.api_schema = None
         if output is not None and self._schema is None:
-            raise Exception
+            raise Exception("Schema not available")
         if self._has_extension(output, "json"):
             data = json.loads(result)
             with open(output, "w") as f:
@@ -346,6 +351,63 @@ class GenericOutputAdapter(ResponseRefactor):
             df = self._to_dataframe(result, model_id)
             df.write(output)
         return result
+
+    def _adapt_when_fastapi_was_used(
+        self, result, output, model_id=None, api_name=None
+    ):
+        if api_name != "run":
+            return None
+        if model_id is None:
+            return None
+        if output is None:
+            return None
+        if not self.was_fast_api:
+            return None
+        if self._has_extension(output, "csv"):
+            extension = "csv"
+        elif self._has_extension(output, "tsv"):
+            extension = "tsv"
+        elif self._has_extension(output, "h5"):
+            extension = "h5"
+        elif self._has_extension(output, "json"):
+            extension = "json"
+        else:
+            extension = None
+        delimiters = {"csv": ",", "tsv": "\t"}
+        if extension in ["csv", "tsv"]:
+            R = []
+            for r in json.loads(result):
+                inp = r["input"]
+                out = r["output"]
+                vals = [out[k] for k in out.keys()]
+                R += [[inp["key"], inp["input"]] + vals]
+            header = ["key", "input"] + [k for k in out.keys()]
+            with open(output, "w") as f:
+                writer = csv.writer(f, delimiter=delimiters[extension])
+                writer.writerow(header)
+                for r in R:
+                    writer.writerow(r)
+        elif extension == "json":
+            data = json.loads(result)
+            with open(output, "w") as f:
+                json.dump(data, f, indent=4)
+        elif extension == "h5":
+            df = self._to_dataframe(
+                result, model_id
+            )  # TODO: we can potentially simplify this and get rid of the to_dataframe method for conversion to HDF5.
+            df.write(output)
+        else:
+            pass
+        return result
+
+    def adapt(self, result, output, model_id=None, api_name=None):
+        adapted_result = self._adapt_when_fastapi_was_used(
+            result, output, model_id, api_name
+        )
+        if adapted_result is None:
+            return self._adapt_generic(result, output, model_id, api_name)
+        else:
+            return adapted_result
 
 
 class DictlistDataframeConverter(GenericOutputAdapter):

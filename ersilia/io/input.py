@@ -16,7 +16,7 @@ from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 from .readers.pyinput import PyInputReader
 from .readers.file import TabularFileReader, JsonFileReader
 
-from ..default import PREDEFINED_EXAMPLE_FILENAME
+from ..default import PREDEFINED_EXAMPLE_FILES
 
 
 class BaseIOGetter(ErsiliaBase):
@@ -26,7 +26,11 @@ class BaseIOGetter(ErsiliaBase):
 
     def _read_input_from_card(self, model_id):
         self.logger.debug("Reading card from {0}".format(model_id))
-        input_type = self.mc.get(model_id)["Input"]
+        # This is because ersilia-pack adds another level in the JSON with the key "card"
+        if "Input" not in self.mc.get(model_id):
+            input_type = self.mc.get(model_id)["card"]["Input"]
+        else:
+            input_type = self.mc.get(model_id)["Input"]
         if len(input_type) != 1:
             self.logger.error("Ersilia does not deal with multiple inputs yet..!")
         else:
@@ -35,6 +39,7 @@ class BaseIOGetter(ErsiliaBase):
 
     def _read_shape_from_card(self, model_id):
         self.logger.debug("Reading shape from {0}".format(model_id))
+
         try:
             input_shape = self.mc.get(model_id)["Input Shape"]
         except:
@@ -253,12 +258,13 @@ class ExampleGenerator(ErsiliaBase):
 
     def predefined_example(self, file_name):
         dest_folder = self._model_path(self.model_id)
-        example_file = os.path.join(dest_folder, PREDEFINED_EXAMPLE_FILENAME)
-        if os.path.exists(example_file):
-            shutil.copy(example_file, file_name)
-            return True
-        else:
-            return False
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            example_file = os.path.join(dest_folder, pf)
+            if os.path.exists(example_file):
+                shutil.copy(example_file, file_name)
+                return True
+            else:
+                return False
 
     def example(self, n_samples, file_name, simple, try_predefined):
         predefined_done = False

@@ -2,6 +2,7 @@
 
 import subprocess
 import requests
+import shutil
 import os
 import json
 import csv
@@ -9,7 +10,7 @@ from .card import ModelCard
 from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
 from ...auth.auth import Auth
-from ...default import GITHUB_ORG
+from ...default import GITHUB_ORG, BENTOML_PATH
 from ... import logger
 
 try:
@@ -93,21 +94,21 @@ class ModelCatalog(ErsiliaBase):
         if "Status" in card:
             return card["Status"]
         return None
-    
+
     def _get_input(self, card):
         if "input" in card:
             return card["input"][0]
         if "Input" in card:
             return card["Input"][0]
         return None
-        
+
     def _get_output(self, card):
         if "output" in card:
             return card["output"][0]
         if "Output" in card:
             return card["Output"][0]
         return None
-                
+
     def airtable(self):
         """List models available in AirTable Ersilia Model Hub base"""
         if webbrowser:
@@ -199,7 +200,15 @@ class ModelCatalog(ErsiliaBase):
                 output = self._get_output(card)
                 service_class = mc.get_service_class(model_id)
                 R += [[model_id, slug, title, status, inputs, output, service_class]]
-            columns = ["Identifier", "Slug", "Title", "Status", "Input", "Output", "Service Class"]
+            columns = [
+                "Identifier",
+                "Slug",
+                "Title",
+                "Status",
+                "Input",
+                "Output",
+                "Service Class",
+            ]
         logger.info("Found {0} models".format(len(R)))
         if len(R) == 0:
             return CatalogTable(data=[], columns=columns)
@@ -207,9 +216,13 @@ class ModelCatalog(ErsiliaBase):
 
     def bentoml(self):
         """List models available as BentoServices"""
-        result = subprocess.run(
-            ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ
-        )
+        try:
+            result = subprocess.run(
+                ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ, timeout=10
+            )
+        except Exception as e:
+            shutil.rmtree(BENTOML_PATH)
+            return None
         result = [r for r in result.stdout.decode("utf-8").split("\n") if r]
         if len(result) == 1:
             return

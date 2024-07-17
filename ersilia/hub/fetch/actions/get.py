@@ -9,15 +9,15 @@ import yaml
 from . import BaseAction
 from .... import ErsiliaBase
 from ....utils.download import GitHubDownloader, S3Downloader
-from ....utils.paths import Paths
 from ...bundle.repo import PackFile, DockerfileFile
 from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.exceptions_utils.fetch_exceptions import (
     FolderNotFoundError,
     S3DownloaderError,
 )
+from .template_resolver import TemplateResolver
 
-from ....default import S3_BUCKET_URL_ZIP, PREDEFINED_EXAMPLE_FILENAME
+from ....default import S3_BUCKET_URL_ZIP, PREDEFINED_EXAMPLE_FILES
 
 MODEL_DIR = "model"
 ROOT = os.path.basename(os.path.abspath(__file__))
@@ -91,7 +91,6 @@ class DockerfileCreator(ErsiliaBase):
                 run_section_end_line = i
             if line != "":
                 sanitized.append(line)
-        print(sanitized, run_section_end_line)
         if sanitized[run_section_end_line + 2].startswith("RUN"):
             raise BaseException(
                 "There are more instalation than the standard 'RUN pip install rdkit'"
@@ -199,21 +198,6 @@ class ModelRepositoryGetter(BaseAction):
         self.force_from_s3 = force_from_s3
         self.repo_path = repo_path
 
-    def _dev_model_path(self):
-        pt = Paths()
-        path = pt.models_development_path()
-        if path is not None:
-            path = os.path.join(path, self.model_id)
-        if pt.exists(path):
-            return path
-        else:
-            path = pt.ersilia_development_path()
-            if path is not None:
-                path = os.path.join(path, "test", "models", self.model_id)
-            if pt.exists(path):
-                return path
-        return None
-
     @staticmethod
     def _copy_from_local(src, dst):
         shutil.copytree(src, dst)
@@ -284,52 +268,46 @@ class ModelRepositoryGetter(BaseAction):
         TemplatePreparer(model_id=self.model_id, config_json=self.config_json).prepare()
 
     def _copy_example_file_if_available(self):
-        file_name = os.path.join(
-            self._model_path(self.model_id),
-            "model",
-            "framework",
-            PREDEFINED_EXAMPLE_FILENAME,
-        )
-        dest_file = os.path.join(
-            self._model_path(self.model_id), PREDEFINED_EXAMPLE_FILENAME
-        )
-        if os.path.exists(file_name):
-            self.logger.debug("Example file exists")
-            shutil.copy(file_name, dest_file)
-        else:
-
-            self.logger.debug("Example file {0} does not exist".format(file_name))
+        self.logger.debug("Copying example file if available")
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            file_name = os.path.join(self._model_path(self.model_id), pf)
+            dest_file = os.path.join(self._model_path(self.model_id), "input.csv")
+            if os.path.exists(file_name):
+                self.logger.debug("Example file exists")
+                shutil.copy(file_name, dest_file)
+                return
+            else:
+                self.logger.debug("Example file {0} does not exist".format(file_name))
 
     @throw_ersilia_exception
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
         folder = self._model_path(self.model_id)
-        dev_model_path = self._dev_model_path()
-        if dev_model_path is not None:
-            self.logger.debug(
-                "Copying from local {0} to {1}".format(dev_model_path, folder)
-            )
-            self._copy_from_local(dev_model_path, folder)
+        tr = TemplateResolver(
+            model_id=self.model_id, repo_path=folder, config_json=self.config_json
+        )
+        if self.repo_path is not None:
+            self._copy_from_local(self.repo_path, folder)
         else:
-            if self.repo_path is not None:
-                self._copy_from_local(self.repo_path, folder)
+            if self.force_from_github:
+                self._copy_from_github(folder)
             else:
-                if self.force_from_github:
-                    self._copy_from_github(folder)
-                else:
-                    try:
-                        self.logger.debug("Trying to download from S3")
-                        self._copy_zip_from_s3(folder)
-                    except:
-                        self.logger.debug(
-                            "Could not download in zip format in S3. Downloading from GitHub repository."
-                        )
-                        if self.force_from_s3:
-                            raise S3DownloaderError(model_id=self.model_id)
-                        else:
-                            self._copy_from_github(folder)
-        self._prepare_inner_template()
-        self._change_py_version_in_dockerfile_if_necessary()
+                try:
+                    self.logger.debug("Trying to download from S3")
+                    self._copy_zip_from_s3(folder)
+                except:
+                    self.logger.debug(
+                        "Could not download in zip format in S3. Downloading from GitHub repository."
+                    )
+                    if self.force_from_s3:
+                        raise S3DownloaderError(model_id=self.model_id)
+                    else:
+                        self._copy_from_github(folder)
+
+        if tr.is_bentoml():
+            self._prepare_inner_template()
+            self._change_py_version_in_dockerfile_if_necessary()
+
         self._remove_sudo_if_root()
         self._copy_example_file_if_available()
 
@@ -355,6 +333,11 @@ class ModelParametersGetter(BaseAction):
         """Create a ./model folder in the model repository"""
         model_path = self._model_path(self.model_id)
         folder = self._get_destination()
+        tr = TemplateResolver(
+            model_id=self.model_id, repo_path=model_path, config_json=self.config_json
+        )
+        if tr.is_fastapi():
+            return None
         if not os.path.exists(folder):
             os.mkdir(folder)
         if not self._requires_parameters(model_path):
@@ -389,8 +372,11 @@ class ModelGetter(BaseAction):
 
     @throw_ersilia_exception
     def get(self):
+        self.logger.debug("Getting repository")
         self._get_repository()
         if self.repo_path is None:
+            self.logger.debug("Getting model parameters")
             self._get_model_parameters()
+        self.logger.debug("Done getting model")
         if not os.path.exists(self._model_path(self.model_id)):
             raise FolderNotFoundError(os.path.exists(self._model_path(self.model_id)))

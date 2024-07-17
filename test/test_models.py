@@ -1,3 +1,4 @@
+import os
 from ersilia.hub.fetch.fetch import ModelFetcher
 from ersilia import ErsiliaModel
 
@@ -20,7 +21,9 @@ def test_model_1():
 def test_model_2():
     MODEL_ID = MODELS[1]
     INPUT = "CCCC"
-    ModelFetcher().fetch(MODEL_ID)
+    ModelFetcher(repo_path=os.path.join(os.getcwd(), "test/models", MODEL_ID)).fetch(
+        MODEL_ID
+    )
     em = ErsiliaModel(MODEL_ID)
     em.serve()
     em.predict(INPUT)

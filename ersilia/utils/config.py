@@ -2,6 +2,7 @@
 
 The Config provide access to all sort of useful parameters.
 """
+
 import os
 import json
 from ..default import (
@@ -206,19 +207,6 @@ class Secrets(object):
         for k, v in sj.items():
             secrets[k] = "'{0}'".format(v)
         cred["SECRETS"] = secrets
-        # Local paths
-        from .paths import Paths
-
-        pt = Paths()
-        local = {}
-        # .. development models path
-        dev_mod_path = pt.models_development_path()
-        if dev_mod_path is None:
-            v = "None"
-        else:
-            v = "'{0}'".format(dev_mod_path)
-        local["DEVEL_MODELS_PATH"] = v
-        cred["LOCAL"] = local
         with open(json_file, "w") as f:
             json.dump(cred, f, indent=4, sort_keys=True)
         return True

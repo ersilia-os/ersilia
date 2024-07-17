@@ -9,6 +9,7 @@ import docker
 from .. import ErsiliaBase, throw_ersilia_exception
 from ..utils.terminal import run_command
 from ..utils.ports import find_free_port
+from ..utils.paths import resolve_pack_method
 from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
 from ..setup.requirements.docker import DockerRequirement
@@ -20,6 +21,7 @@ from ..default import PACKMODE_FILE, APIS_LIST_FILE
 from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 from ..default import IS_FETCHED_FROM_HOSTED_FILE
 from ..default import INFORMATION_FILE
+from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
@@ -37,10 +39,26 @@ class BaseServing(ErsiliaBase):
         self.bundle_tag = self._get_latest_bundle_tag(model_id=self.model_id)
         self.port = preferred_port
 
+    def _get_apis_from_apis_list(self):
+        self.logger.debug("Getting APIs from list file")
+        file_name = os.path.join(
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
+        )
+        if not os.path.exists(file_name):
+            return None
+        with open(file_name, "r") as f:
+            apis_list = []
+            for l in f:
+                apis_list += [l.rstrip()]
+        if len(apis_list) > 0:
+            return apis_list
+        else:
+            return None
+
     def _get_info_from_bento(self):
         """Get info available from the Bento"""
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "info.json")
+        tmp_file = os.path.join(tmp_folder, "information.json")
         cmd = "bentoml info --quiet {0}:{1} > {2}".format(
             self.model_id, self.bundle_tag, tmp_file
         )
@@ -62,27 +80,29 @@ class BaseServing(ErsiliaBase):
             apis_list += [item["name"]]
         return apis_list
 
-    def _get_apis_from_apis_list(self):
-        self.logger.debug("Getting APIs from list file")
-        file_name = os.path.join(
-            self._get_bundle_location(self.model_id), APIS_LIST_FILE
-        )
-        if not os.path.exists(file_name):
-            return None
-        with open(file_name, "r") as f:
-            apis_list = []
-            for l in f:
-                apis_list += [l.rstrip()]
-        print(apis_list)
-        if len(apis_list) > 0:
-            return apis_list
-        else:
-            return None
+    def _get_apis_from_fastapi(self):
+        bundle_path = self._model_path(self.model_id)
+        apis_list = []
+        for fn in os.listdir(os.path.join(bundle_path, "model", "framework")):
+            if fn.endswith(".sh"):
+                api_name = fn.split(".")[0]
+                apis_list += [api_name]
+        return apis_list
 
     def _get_apis_from_where_available(self):
         apis_list = self._get_apis_from_apis_list()
         if apis_list is None:
-            apis_list = self._get_apis_from_bento()
+            pack_method = resolve_pack_method(
+                model_path=self._get_bundle_location(self.model_id)
+            )
+            if pack_method == PACK_METHOD_FASTAPI:
+                self.logger.debug("Getting APIs from FastAPI")
+                apis_list = self._get_apis_from_fastapi()
+            elif pack_method == PACK_METHOD_BENTOML:
+                self.logger.debug("Getting APIs from BentoML")
+                apis_list = self._get_apis_from_bento()
+            else:
+                raise
         if apis_list is None:
             apis_list = []
         for api in apis_list:
@@ -108,7 +128,7 @@ class _BentoMLService(BaseServing):
         self.SEARCH_SUF_STRING = "Press CTRL+C to quit"
         self.ERROR_STRING = "error"
 
-    def _bentoml_serve(self, runcommand_func=None):
+    def serve(self, runcommand_func=None):
         self.logger.debug("Trying to serve model with BentoML locally")
         preferred_port = self.port
         self.port = find_free_port(preferred_port=preferred_port)
@@ -194,16 +214,157 @@ class _BentoMLService(BaseServing):
         self.logger.debug("No URL found")
         self.url = None
 
-    def _close(self):
+    def close(self):
         try:
             os.kill(self.pid, 9)
         except:
             self.logger.info("PID {0} is unassigned".format(self.pid))
 
 
-class SystemBundleService(_BentoMLService):
+class _FastApiService(BaseServing):
+    def __init__(self, model_id, config_json=None, preferred_port=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
+        self.SEARCH_PRE_STRING = "Uvicorn running on "
+        self.SEARCH_SUF_STRING = "(Press CTRL+C to quit)"
+        self.ERROR_STRING = "error"
+        self.conda = SimpleConda()
+
+    def serve(self, runcommand_func=None):
+        bundle_path = self._get_bundle_location(self.model_id)
+        self.logger.debug("Trying to serve model with FastAPI locally")
+        preferred_port = self.port
+        self.port = find_free_port(preferred_port=preferred_port)
+        if self.port != preferred_port:
+            self.logger.warning(
+                "Port {0} was already in use. Using {1} instead".format(
+                    preferred_port, self.port
+                )
+            )
+        self.logger.debug("Free port: {0}".format(self.port))
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_script = os.path.join(tmp_folder, "serve.sh")
+        tmp_file = os.path.join(tmp_folder, "serve.log")
+        tmp_pid = os.path.join(tmp_folder, "serve.pid")
+        sl = [
+            "ersilia_model_serve --bundle_path {0} --port {1} &> {2} &".format(
+                bundle_path, self.port, tmp_file
+            )
+        ]
+        sl += ["_pid=$!"]
+        sl += ['echo "$_pid" > {0}'.format(tmp_pid)]
+        self.logger.debug("Writing on {0}".format(tmp_script))
+        self.conda.create_executable_bash_script(
+            environment=self.model_id, commandlines=sl, file_name=tmp_script
+        )
+        cmd = "bash {0}".format(tmp_script)
+        if runcommand_func is None:
+            self.logger.debug("Run command function not available. Running from shell")
+            run_command(cmd)
+        else:
+            self.logger.debug("Run command function available")
+            runcommand_func(cmd)
+        with open(tmp_pid, "r") as f:
+            self.pid = int(f.read().strip())
+            self.logger.debug("Process id: {0}".format(self.pid))
+        _logged_file_done = False
+        _logged_server_done = False
+        for it in range(int(TIMEOUT_SECONDS / SLEEP_SECONDS)):
+            self.logger.debug("Trying to wake up. Iteration: {0}".format(it))
+            self.logger.debug(
+                "Timeout: {0} Sleep time: {1}".format(TIMEOUT_SECONDS, SLEEP_SECONDS)
+            )
+            if not os.path.exists(tmp_file):
+                if not _logged_file_done:
+                    self.logger.debug("Waiting for file {0}".format(tmp_file))
+                _logged_file_done = True
+                time.sleep(SLEEP_SECONDS)
+                continue
+            self.logger.debug("Temporary file available: {0}".format(tmp_file))
+            # If error string is identified, finish
+            with open(tmp_file, "r") as f:
+                r = f.read()
+                if self.ERROR_STRING in r.lower():
+                    self.logger.warning("Error string found in: {0}".format(r))
+                    # TODO perhaps find a better error string.
+                    # self.url = None
+                    # return
+            self.logger.debug("No error strings found in temporary file")
+            # If everything looks good, wait until server is ready
+            with open(tmp_file, "r") as f:
+                r = f.read()
+                if self.SEARCH_PRE_STRING not in r or self.SEARCH_SUF_STRING not in r:
+                    if not _logged_server_done:
+                        self.logger.debug("Waiting for server")
+                    else:
+                        self.logger.debug("Server logging done")
+                    time.sleep(SLEEP_SECONDS)
+                    _logged_server_done = True
+                    continue
+            self.logger.debug("Server is ready. Trying to get URL")
+            # When the search strings are found get url
+            with open(tmp_file, "r") as f:
+                for l in f:
+                    if self.SEARCH_PRE_STRING in l:
+                        self.url = (
+                            l.split(self.SEARCH_PRE_STRING)[1].split(" ")[0].rstrip()
+                        )
+                        self.logger.debug("URL found: {0}".format(self.url))
+                        return
+                self.logger.debug("Search strings not found yet")
+        self.logger.debug("No URL found")
+        self.url = None
+
+    def close(self):
+        try:
+            os.kill(self.pid, 9)
+        except:
+            self.logger.info("PID {0} is unassigned".format(self.pid))
+
+
+class _LocalService(ErsiliaBase):
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
-        _BentoMLService.__init__(
+        self.model_id = model_id
+        ErsiliaBase.__init__(self, config_json=config_json)
+        pack_method = resolve_pack_method(
+            model_path=self._get_bundle_location(model_id)
+        )
+        self.logger.debug("Pack method is: {0}".format(pack_method))
+        if pack_method == PACK_METHOD_FASTAPI:
+            self.server = _FastApiService(
+                model_id,
+                config_json=config_json,
+                preferred_port=preferred_port,
+            )
+        elif pack_method == PACK_METHOD_BENTOML:
+            self.server = _BentoMLService(
+                model_id,
+                config_json=config_json,
+                preferred_port=preferred_port,
+            )
+        else:
+            raise Exception("Model is not a valid BentoML or FastAPI model")
+
+    def _get_apis_from_where_available(self):
+        return self.server._get_apis_from_where_available()
+
+    def local_serve(self, runcommand_func=None):
+        self.server.serve(runcommand_func=runcommand_func)
+        self.url = self.server.url
+        self.pid = self.server.pid
+        self.port = self.server.port
+
+    def local_close(self):
+        self.server.close()
+
+
+class SystemBundleService(_LocalService):
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        _LocalService.__init__(
             self,
             model_id=model_id,
             config_json=config_json,
@@ -232,18 +393,18 @@ class SystemBundleService(_BentoMLService):
         return avail
 
     def serve(self):
-        self._bentoml_serve()
+        self.local_serve()
 
     def close(self):
-        self._close()
+        self.local_close()
 
     def api(self, api_name, input):
         return self._api_with_url(api_name, input)
 
 
-class VenvEnvironmentService(_BentoMLService):
+class VenvEnvironmentService(_LocalService):
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
-        _BentoMLService.__init__(
+        _LocalService.__init__(
             self,
             model_id=model_id,
             config_json=config_json,
@@ -269,18 +430,18 @@ class VenvEnvironmentService(_BentoMLService):
             return False
 
     def serve(self):
-        self._bentoml_serve(self._run_command)
+        self.local_serve(self._run_command)
 
     def close(self):
-        self._close()
+        self.local_close()
 
     def api(self, api_name, input):
         return self._api_with_url(api_name, input)
 
 
-class CondaEnvironmentService(_BentoMLService):
+class CondaEnvironmentService(_LocalService):
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
-        _BentoMLService.__init__(
+        _LocalService.__init__(
             self,
             model_id=model_id,
             config_json=config_json,
@@ -331,10 +492,10 @@ class CondaEnvironmentService(_BentoMLService):
             return False
 
     def serve(self):
-        self._bentoml_serve(self._run_command)
+        self.local_serve(self._run_command)
 
     def close(self):
-        self._close()
+        self.local_close()
 
     def api(self, api_name, input):
         return self._api_with_url(api_name, input)

@@ -12,25 +12,35 @@ from .... import ErsiliaModel
 from ....io.input import ExampleGenerator
 from ....io.pure import PureDataTyper
 from ....io.annotated import AnnotatedDataTyper
-from ....default import API_SCHEMA_FILE, MODEL_SIZE_FILE, METADATA_JSON_FILE, PREDEFINED_EXAMPLE_FILENAME
+from ....default import (
+    API_SCHEMA_FILE,
+    MODEL_SIZE_FILE,
+    METADATA_JSON_FILE,
+    PREDEFINED_EXAMPLE_FILES,
+)
 from ....utils.exceptions_utils.exceptions import EmptyOutputError
 from ....utils.exceptions_utils.fetch_exceptions import (
     OutputDataTypesNotConsistentError,
 )
 
+
 class BuiltinExampleReader(ErsiliaBase):
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
-        self.example_file = os.path.join(
-            self._get_bundle_location(self.model_id),
-            self.model_id,
-            "artifacts",
-            "framework",
-            PREDEFINED_EXAMPLE_FILENAME,
-        )
+        self.example_file = None
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            example_file = os.path.join(
+                self._model_path(self.model_id),
+                pf,
+            )
+            if os.path.exists(example_file):
+                self.example_file = example_file
+                break
 
     def has_builtin_example(self):
+        if self.example_file is None:
+            return False
         if os.path.exists(self.example_file):
             return True
         else:
@@ -87,7 +97,7 @@ class ModelSniffer(BaseAction):
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
-        mbytes = size / (1024 ** 2)
+        mbytes = size / (1024**2)
         return mbytes
 
     def _get_output_ann_type(self):
@@ -190,10 +200,9 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Schema: {0}".format(schema))
         self.logger.debug("Done with the schema!")
         return schema
-    
+
     @throw_ersilia_exception
     def _get_schema_type_for_simple_run_api_case(self):
-        
         # read metadata
         dest_dir = self._model_path(self.model_id)
         metadata_file = os.path.join(dest_dir, METADATA_JSON_FILE)
@@ -217,7 +226,7 @@ class ModelSniffer(BaseAction):
             return None
         if output_type not in ["Float", "String"]:
             return None
-        
+
         # get output shape from metadata.json
         output_shape = metadata["Output Shape"]
         if output_shape not in ["Single", "List"]:
@@ -249,7 +258,7 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")
         size = self._get_size_in_mb()
-        self.logger.debug("Mode size is {0} MB".format(size))
+        self.logger.debug("Model size is {0} MB".format(size))
         path = os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE)
         with open(path, "w") as f:
             json.dump({"size": size, "units": "MB"}, f, indent=4)
@@ -291,7 +300,10 @@ class ModelSniffer(BaseAction):
                         if schema["output"]["outcome"]["type"] is None:
                             schema["output"]["outcome"]["type"] = schema_type_backup
                         if "shape" not in schema["output"]["outcome"]:
-                            shape = self._try_to_resolve_output_shape(schema["output"]["outcome"]["meta"], schema["output"]["outcome"]["type"])
+                            shape = self._try_to_resolve_output_shape(
+                                schema["output"]["outcome"]["meta"],
+                                schema["output"]["outcome"]["type"],
+                            )
                             if shape is not None:
                                 schema["output"]["outcome"]["shape"] = shape
                 all_schemas[api_name] = schema

@@ -253,6 +253,10 @@ class SimpleConda(CondaUtils):
                 envs += [l.rstrip()]
         return envs
 
+    def create(self, environment, python_version):
+        cmd = "conda create -n {0} python={1} -y".format(environment, python_version)
+        run_command(cmd)
+
     def active_env(self):
         envs = self._env_list()
         for l in envs:
@@ -368,11 +372,28 @@ class SimpleConda(CondaUtils):
                     critical_errors += [l]
         return critical_errors
 
+    def create_executable_bash_script(self, environment, commandlines, file_name):
+        if type(commandlines) is list:
+            commandlines = "\n".join(commandlines)
+        bash_script = self.activate_base()
+        bash_script += """
+        source {0}/etc/profile.d/conda.sh
+        conda activate {1}
+        {2}
+        """.format(
+            self.conda_prefix(True), environment, commandlines
+        )
+        with open(file_name, "w") as f:
+            f.write(bash_script)
+        return file_name
+
     @throw_ersilia_exception
     def run_commandlines(self, environment, commandlines):
         """
         Run commands in a given conda environment.
         """
+        if type(commandlines) is list:
+            commandlines = " && ".join(commandlines)
         logger.debug("Run commandlines on {0}".format(environment))
         logger.debug(commandlines)
         if not self.exists(environment):
@@ -381,18 +402,7 @@ class SimpleConda(CondaUtils):
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.debug("Activating base environment")
         logger.debug("Current working directory: {0}".format(os.getcwd()))
-        bash_script = self.activate_base()
-        bash_script += """
-        source {0}/etc/profile.d/conda.sh
-        conda activate {1}
-        conda env list
-        {2}
-        """.format(
-            self.conda_prefix(True), environment, commandlines
-        )
-        with open(tmp_script, "w") as f:
-            f.write(bash_script)
-
+        self.create_executable_bash_script(environment, commandlines, tmp_script)
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         tmp_log = os.path.join(tmp_folder, "command_outputs.log")
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)

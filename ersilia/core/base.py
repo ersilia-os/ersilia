@@ -2,6 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 from ..utils.config import Config, Credentials
+from ..utils.paths import resolve_pack_method
 from ..default import EOS
 from .. import logger
 
@@ -89,8 +90,10 @@ class ErsiliaBase(object):
         else:
             return path
 
-    @staticmethod
-    def _get_bento_location(model_id):
+    def _get_bento_location(self, model_id):
+        bundle_path = self._get_bundle_location(model_id)
+        if resolve_pack_method(bundle_path) != "bentoml":
+            return None
         cmd = ["bentoml", "get", "%s:latest" % model_id, "--print-location", "--quiet"]
         result = subprocess.run(cmd, stdout=subprocess.PIPE)
         result = result.stdout.decode("utf-8").rstrip()

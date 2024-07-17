@@ -33,10 +33,12 @@ def get_latest_semver_tag():
                     return tag
     return None
 
+
 def increment_patch_version(version):
     version = version.split(".")
     version[2] = str(int(version[2]) + 1)
     return ".".join(version)
+
 
 def get_version_for_setup():
     # version = get_latest_semver_tag()

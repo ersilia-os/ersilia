@@ -26,13 +26,11 @@ from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
 
-
-
 def flatten_dict(data):
     """
     This will flatten the nested dictionaries from the generator into a single-level dictionary,
     where keys from all levels are merged into one dictionary.
-    
+
     :flat_dict: Result returned in a dictionary
     """
     flat_dict = {}
@@ -40,7 +38,6 @@ def flatten_dict(data):
         for inner_key, value in inner_dict.items():
             flat_dict[inner_key] = value
     return flat_dict
-    
 
 
 def log_files_metrics(file_log, model_id):
@@ -81,7 +78,9 @@ def log_files_metrics(file_log, model_id):
                     # encountering new logs
                     # make sure error flags are closed
                     if ersilia_error_flag:
-                        errors["Unknown Ersilia exception class"] = errors.get("Unknown Ersilia exception class", 0) + 1
+                        errors["Unknown Ersilia exception class"] = (
+                            errors.get("Unknown Ersilia exception class", 0) + 1
+                        )
                         ersilia_error_flag = False
                     if misc_error_flag:
                         errors[error_name] = errors.get(error_name, 0) + 1
@@ -106,15 +105,15 @@ def log_files_metrics(file_log, model_id):
                     errors["Unknown Ersilia exception class"] += 1
                 if misc_error_flag:
                     errors[error_name] += 1
-        
+
         json_dict = {}
         json_dict["Error count"] = error_count
-        
+
         if len(errors) > 0:
             json_dict["Breakdown by error types"] = {}
             for error in errors:
-                json_dict["Breakdown by error types"][error] = errors[error]      
-        json_dict["Warning count"] = warning_count      
+                json_dict["Breakdown by error types"][error] = errors[error]
+        json_dict["Warning count"] = warning_count
         json_object = json.dumps(json_dict, indent=4)
         write_persistent_file(json_object, model_id)
     except (IsADirectoryError, FileNotFoundError):
@@ -180,22 +179,19 @@ def close_persistent_file(model_id):
     """
     if check_file_exists(model_id):
         file_name = get_persistent_file_path(model_id)
-        file_log = os.path.join(
-        EOS,  "console.log"
-    )
+        file_log = os.path.join(EOS, "console.log")
         log_files_metrics(file_log, model_id)
         new_file_path = os.path.join(
             os.path.dirname(file_name),
             datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt"),
         )
         os.rename(file_name, new_file_path)
-        
+
     else:
-    
         raise FileNotFoundError(
             f"The persistent file for model {model_id} does not exist. Cannot close file."
         )
-        
+
 
 def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     """Upload a file to an S3 bucket
@@ -350,64 +346,61 @@ class RunTracker(ErsiliaBase):
 
         self.tabular_result_logger = TabularResultLogger()
 
+    #    TODO: see the following link for more details
+    #    https://github.com/ersilia-os/ersilia/issues/1165?notification_referrer_id=NT_kwDOAsB0trQxMTEyNTc5MDIxNzo0NjE2NzIyMg#issuecomment-2178596998
 
-#    TODO: see the following link for more details
-#    https://github.com/ersilia-os/ersilia/issues/1165?notification_referrer_id=NT_kwDOAsB0trQxMTEyNTc5MDIxNzo0NjE2NzIyMg#issuecomment-2178596998
-    
-#    def stats(self, result):
-#        """
-#        Stats function: calculates the basic statistics of the output file from a model. This includes the
-#        mode (if applicable), minimum, maximum, and standard deviation.
-#        :param result: The path to the model's output file.
-#        :return: A dictionary containing the stats for each column of the result.
-#        """
+    #    def stats(self, result):
+    #        """
+    #        Stats function: calculates the basic statistics of the output file from a model. This includes the
+    #        mode (if applicable), minimum, maximum, and standard deviation.
+    #        :param result: The path to the model's output file.
+    #        :return: A dictionary containing the stats for each column of the result.
+    #        """
 
-#        data = read_csv(result)
+    #        data = read_csv(result)
 
-        # drop first two columns (key, input)
-#        for row in data:
-#            row.pop('key', None)
-#            row.pop('input', None)
+    # drop first two columns (key, input)
+    #        for row in data:
+    #            row.pop('key', None)
+    #            row.pop('input', None)
 
-        # Convert data to a column-oriented format
-#        columns = defaultdict(list)
-#        for row in data:
-#            for key, value in row.items():
-#                columns[key].append(float(value))
+    # Convert data to a column-oriented format
+    #        columns = defaultdict(list)
+    #        for row in data:
+    #            for key, value in row.items():
+    #                columns[key].append(float(value))
 
-        # Calculate statistics
-#        stats = {}
-#        for column, values in columns.items():
-#            column_stats = {}
-#            column_stats["mean"] = statistics.mean(values)
-#            try:
-#                column_stats["mode"] = statistics.mode(values)
-#            except statistics.StatisticsError:
-#                column_stats["mode"] = None
-#            column_stats["min"] = min(values)
-#            column_stats["max"] = max(values)
-#            column_stats["std"] = statistics.stdev(values) if len(values) > 1 else 0
-#
-#            stats[column] = column_stats
+    # Calculate statistics
+    #        stats = {}
+    #        for column, values in columns.items():
+    #            column_stats = {}
+    #            column_stats["mean"] = statistics.mean(values)
+    #            try:
+    #                column_stats["mode"] = statistics.mode(values)
+    #            except statistics.StatisticsError:
+    #                column_stats["mode"] = None
+    #            column_stats["min"] = min(values)
+    #            column_stats["max"] = max(values)
+    #            column_stats["std"] = statistics.stdev(values) if len(values) > 1 else 0
+    #
+    #            stats[column] = column_stats
 
-
-#        return stats
-
+    #        return stats
 
     def update_total_time(self, model_id, start_time):
         """
         Method to track and update the Total time taken by model.
         :Param model_id: The currently running model.
-        :Param start_time: The start time of the running model. 
+        :Param start_time: The start time of the running model.
         """
-        
+
         end_time = time.time()
         duration = end_time - start_time
         if check_file_exists(model_id):
             file_name = get_persistent_file_path(model_id)
             with open(file_name, "r") as f:
                 lines = f.readlines()
-               
+
             updated_lines = []
             total_time_found = False
 
@@ -424,7 +417,7 @@ class RunTracker(ErsiliaBase):
                         print(f"Error parsing 'Total time taken' value: {e}")
                 else:
                     updated_lines.append(line)
-        
+
             if not total_time_found:
                 updated_lines.append(f"Total time taken: {formatted_duration}\n")
 
@@ -435,8 +428,7 @@ class RunTracker(ErsiliaBase):
             new_content = f"Total time: {formatted_duration}\n"
             with open(file_name, "w") as f:
                 f.write(f"{new_content}\n")
-        
-        
+
     def get_file_sizes(self, input_file, output_file):
         """
         Calculates the size of the input and output dataframes, as well as the average size of each row.
@@ -512,7 +504,6 @@ class RunTracker(ErsiliaBase):
         peak_memory = peak_memory_kb / 1024
         return peak_memory
 
-
     def get_memory_info(self, process="ersilia"):
         """
         Retrieves the memory information of the current process
@@ -545,8 +536,7 @@ class RunTracker(ErsiliaBase):
             return "No such process found."
         except Exception as e:
             return str(e)
-            
-            
+
     def log_result(self, result):
         output_dir = os.path.join(self.lake_folder, self.model_id)
         if not os.path.exists(output_dir):
@@ -575,26 +565,23 @@ class RunTracker(ErsiliaBase):
         file_name = os.path.join(output_dir, "{0}.log".format(self.model_id))
         session_file = os.path.join(EOS, "session.json")
         shutil.copyfile(session_file, file_name)
-        
-        
-        
+
     def track(self, input, result, meta):
         """
         Tracks the results of a model run.
         """
-        
+
         self.docker_client = SimpleDocker()
         self.data = CsvDataLoader()
         json_dict = {}
-        
+
         if os.path.isfile(input):
             input_data = self.data.read(input)
         else:
             input_data = [{"SMILES": input}]
-        
+
         # Create a temporary file to store the result if it is a generator
         if isinstance(result, types.GeneratorType):
-
             # Ensure EOS/tmp directory exists
             tmp_dir = os.path.join(EOS, "tmp")
             if not os.path.exists(tmp_dir):
@@ -604,18 +591,18 @@ class RunTracker(ErsiliaBase):
             temp_output_file = tempfile.NamedTemporaryFile(
                 delete=False, suffix=".csv", dir=tmp_dir
             )
-            
+
             flat_data_list = [flatten_dict(row) for row in result]
             if flat_data_list:
-                header = list(flat_data_list[0].keys())                
-            temp_output_path = temp_output_file.name    
+                header = list(flat_data_list[0].keys())
+            temp_output_path = temp_output_file.name
             with open(temp_output_path, "w", newline="") as csvfile:
                 csvWriter = csv.DictWriter(csvfile, fieldnames=header)
                 csvWriter.writeheader()
                 for flat_data in flat_data_list:
-                    csvWriter.writerow(flat_data)                    
+                    csvWriter.writerow(flat_data)
             result_data = self.data.read(temp_output_path)
-            os.remove(temp_output_path)            
+            os.remove(temp_output_path)
         else:
             result_data = self.data.read(result)
 
@@ -630,13 +617,13 @@ class RunTracker(ErsiliaBase):
         json_dict["check_types"] = self.check_types(result_data, meta["metadata"])
 
         json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
-   
-        docker_info = (self.docker_client.container_memory(), 
-        self.docker_client.container_cpu(), 
-        self.docker_client.container_peak()
+
+        docker_info = (
+            self.docker_client.container_memory(),
+            self.docker_client.container_cpu(),
+            self.docker_client.container_peak(),
         )
-        
-        
+
         json_dict["Docker Container"] = docker_info
 
         # Get the memory stats of the run processs

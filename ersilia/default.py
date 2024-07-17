@@ -39,7 +39,12 @@ FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"
 EXAMPLE_STANDARD_INPUT_CSV_FILENAME = "example_standard_input.csv"
 EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
-PREDEFINED_EXAMPLE_FILENAME = "example.csv"
+PREDEFINED_EXAMPLE_FILES = [
+    "model/framework/examples/input.csv",
+    "model/framework/input.csv",
+    "model/framework/example.csv",
+    "example.csv",
+]
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
 SERVICE_CLASS_FILE = "service_class.txt"
@@ -50,6 +55,9 @@ IS_FETCHED_FROM_HOSTED_FILE = "from_hosted.json"
 DEFAULT_UDOCKER_USERNAME = "udockerusername"
 DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 ERSILIA_RUNS_FOLDER = "ersilia_runs"
+ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
+PACK_METHOD_FASTAPI = "fastapi"
+PACK_METHOD_BENTOML = "bentoml"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"

@@ -2,7 +2,13 @@ from ..register.register import ModelRegisterer
 
 from .... import ErsiliaBase, throw_ersilia_exception
 from .... import EOS
-from ....default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, PREDEFINED_EXAMPLE_FILENAME, INFORMATION_FILE, API_SCHEMA_FILE
+from ....default import (
+    DOCKERHUB_ORG,
+    DOCKERHUB_LATEST_TAG,
+    PREDEFINED_EXAMPLE_FILES,
+    INFORMATION_FILE,
+    API_SCHEMA_FILE,
+)
 
 from ...pull.pull import ModelPuller
 from ....serve.services import PulledDockerImageService
@@ -61,7 +67,6 @@ class ModelDockerHubFetcher(ErsiliaBase):
             local_path=to_file,
             org=DOCKERHUB_ORG,
             img=model_id,
-            
             tag=DOCKERHUB_LATEST_TAG,
         )
 
@@ -77,20 +82,20 @@ class ModelDockerHubFetcher(ErsiliaBase):
         )
 
     def copy_example_if_available(self, model_id):
-        fr_file = "/root/eos/dest/{0}/model/framework/{1}".format(
-            model_id, PREDEFINED_EXAMPLE_FILENAME
-        )
-        to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, PREDEFINED_EXAMPLE_FILENAME)
-        try:
-            self.simple_docker.cp_from_image(
-                img_path=fr_file,
-                local_path=to_file,
-                org=DOCKERHUB_ORG,
-                img=model_id,
-                tag=DOCKERHUB_LATEST_TAG,
-            )
-        except:
-            self.logger.debug("Could not find example file in docker image")
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            fr_file = "/root/eos/dest/{0}/{1}".format(model_id, pf)
+            to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, "input.csv")
+            try:
+                self.simple_docker.cp_from_image(
+                    img_path=fr_file,
+                    local_path=to_file,
+                    org=DOCKERHUB_ORG,
+                    img=model_id,
+                    tag=DOCKERHUB_LATEST_TAG,
+                )
+                return
+            except:
+                self.logger.debug("Could not find example file in docker image")
 
     @throw_ersilia_exception
     def fetch(self, model_id):

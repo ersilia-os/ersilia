@@ -1,5 +1,6 @@
 from ...utils.terminal import run_command_check_output
-from ...utils.docker import is_inside_docker, resolve_platform
+from ...utils.docker import resolve_platform
+from ...utils.system import is_inside_docker
 
 
 class DockerRequirement(object):

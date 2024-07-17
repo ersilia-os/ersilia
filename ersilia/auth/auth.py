@@ -2,6 +2,7 @@
 Deal with privileges in Ersilia.
 Base on GitHub login.
 """
+
 from pathlib import Path
 import os
 import yaml
