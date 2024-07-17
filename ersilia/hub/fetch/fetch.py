@@ -231,15 +231,15 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("Overwriting")
             self.overwrite = True
         self.logger.debug("Fetching in your system, not from DockerHub")
-        self._fetch_not_from_dockerhub(model_id=model_id)
-
+        self._fetch_not_from_dockerhub(model_id=model_id)   
+            
+    def fetch(self, model_id):
+        self.logger.debug("Writing model source to file")
         model_source_file = os.path.join(
                 self._get_bundle_location(model_id), MODEL_SOURCE_FILE
             )
         with open(model_source_file, "w") as f:
             f.write(self.model_source)
-            
-            
-    def fetch(self, model_id):
         self._fetch(model_id)
         self._standard_csv_example(model_id)
+
