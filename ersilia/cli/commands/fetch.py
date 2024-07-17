@@ -113,6 +113,7 @@ def fetch_cmd():
             force_with_bentoml=with_bentoml,
             force_with_fastapi=with_fastapi,
             hosted_url=from_url,
+            local_dir=from_dir,
         )
         _fetch(mf, model_id)
         echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
