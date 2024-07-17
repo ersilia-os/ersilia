@@ -744,6 +744,13 @@ class LocalCard(ErsiliaBase):
             return service_class
         else:
             return None
+        
+    def get(self, model_id):
+        """
+        This method returns the card for a model. If the model does not exist, it returns None.
+        """
+        card = self._load_data(model_id)
+        return card
 
 
 class LakeCard(ErsiliaBase):
