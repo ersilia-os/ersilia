@@ -68,6 +68,11 @@ ISAURA_FILE_TAG_LOCAL = "_local"
 ISAURA_GDRIVE = "1LSCMHrCuXUDNH3WRbrLMW2FoiwMCxF2n"
 ISAURA_TEAM_GDRIVE = "0AG4WDDaU_00XUk9PVA"
 ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
+SESSIONS_DIR = os.path.join(EOS, "sessions")
+if not os.path.exists(SESSIONS_DIR):
+    os.makedirs(SESSIONS_DIR, exist_ok=True)
+SESSION_HISTORY_FILE = "history.txt"
+SESSION_JSON = "session.json"
 
 # Other
 FEATURE_MERGE_PATTERN = "---"
