@@ -17,9 +17,9 @@ def set_secrets_file():
     secrets = Secrets()
     if not os.path.exists(secrets.gdrive_client_secrets_json):
         secrets.fetch_gdrive_secrets_from_github()
-    GoogleAuth.DEFAULT_SETTINGS[
-        "client_config_file"
-    ] = secrets.gdrive_client_secrets_json
+    GoogleAuth.DEFAULT_SETTINGS["client_config_file"] = (
+        secrets.gdrive_client_secrets_json
+    )
     return GoogleAuth
 
 

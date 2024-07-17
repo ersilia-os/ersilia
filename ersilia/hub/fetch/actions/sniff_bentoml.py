@@ -28,6 +28,7 @@ class BuiltinExampleReader(ErsiliaBase):
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
+        self.example_file = None
         for pf in PREDEFINED_EXAMPLE_FILES:
             example_file = os.path.join(
                 self._model_path(self.model_id),

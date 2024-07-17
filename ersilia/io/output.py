@@ -135,7 +135,8 @@ class GenericOutputAdapter(ResponseRefactor):
         )
         self.model_id = model_id
         self.was_fast_api = (
-            resolve_pack_method(self._get_bundle_location(self.model_id)) == PACK_METHOD_FASTAPI
+            resolve_pack_method(self._get_bundle_location(self.model_id))
+            == PACK_METHOD_FASTAPI
         )
 
     @staticmethod

@@ -2,7 +2,13 @@ from ..register.register import ModelRegisterer
 
 from .... import ErsiliaBase, throw_ersilia_exception
 from .... import EOS
-from ....default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, PREDEFINED_EXAMPLE_FILES, INFORMATION_FILE, API_SCHEMA_FILE
+from ....default import (
+    DOCKERHUB_ORG,
+    DOCKERHUB_LATEST_TAG,
+    PREDEFINED_EXAMPLE_FILES,
+    INFORMATION_FILE,
+    API_SCHEMA_FILE,
+)
 
 from ...pull.pull import ModelPuller
 from ....serve.services import PulledDockerImageService
@@ -61,7 +67,6 @@ class ModelDockerHubFetcher(ErsiliaBase):
             local_path=to_file,
             org=DOCKERHUB_ORG,
             img=model_id,
-            
             tag=DOCKERHUB_LATEST_TAG,
         )
 

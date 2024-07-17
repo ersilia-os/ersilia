@@ -46,7 +46,13 @@ try:
 except:
     Hdf5Explorer = None
 
-from ...default import CARD_FILE, METADATA_JSON_FILE, SERVICE_CLASS_FILE, INFORMATION_FILE
+from ...default import (
+    CARD_FILE,
+    METADATA_JSON_FILE,
+    SERVICE_CLASS_FILE,
+    INFORMATION_FILE,
+)
+
 
 class BaseInformation(ErsiliaBase):
     def __init__(self, config_json):
@@ -60,7 +66,7 @@ class BaseInformation(ErsiliaBase):
         self._mode = None
         self._task = None
         self._input = None
-        
+
         self._input_shape = None
         self._output = None
         self._output_type = None
@@ -707,9 +713,10 @@ class LocalCard(ErsiliaBase):
     This class provides information on models that have been fetched and are available locally.
     It retrieves and caches information about the models.
     """
+
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
-                
+
     @lru_cache(maxsize=32)
     def _load_data(self, model_id):
         """
@@ -744,7 +751,7 @@ class LocalCard(ErsiliaBase):
             return service_class
         else:
             return None
-        
+
     def get(self, model_id):
         """
         This method returns the card for a model. If the model does not exist, it returns None.

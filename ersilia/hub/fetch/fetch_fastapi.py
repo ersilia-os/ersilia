@@ -1,4 +1,5 @@
 """Fetch model from the Ersilia Model Hub using FastAPI."""
+
 import os
 import json
 

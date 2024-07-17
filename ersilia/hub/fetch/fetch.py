@@ -1,4 +1,5 @@
 """Fetch Model from the Ersilia Model Hub."""
+
 import os
 import json
 import importlib
@@ -208,6 +209,7 @@ class ModelFetcher(ErsiliaBase):
             return
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
+            print("Fetching from DockerHub")
             self.logger.debug("Fetching from DockerHub")
             self._fetch_from_dockerhub(model_id=model_id)
             return

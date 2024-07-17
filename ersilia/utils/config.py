@@ -2,6 +2,7 @@
 
 The Config provide access to all sort of useful parameters.
 """
+
 import os
 import json
 from ..default import (

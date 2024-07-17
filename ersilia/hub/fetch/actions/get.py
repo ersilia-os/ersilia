@@ -283,7 +283,9 @@ class ModelRepositoryGetter(BaseAction):
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
         folder = self._model_path(self.model_id)
-        tr = TemplateResolver(model_id=self.model_id, repo_path=folder, config_json=self.config_json)
+        tr = TemplateResolver(
+            model_id=self.model_id, repo_path=folder, config_json=self.config_json
+        )
         if self.repo_path is not None:
             self._copy_from_local(self.repo_path, folder)
         else:
@@ -305,7 +307,7 @@ class ModelRepositoryGetter(BaseAction):
         if tr.is_bentoml():
             self._prepare_inner_template()
             self._change_py_version_in_dockerfile_if_necessary()
-        
+
         self._remove_sudo_if_root()
         self._copy_example_file_if_available()
 
@@ -331,7 +333,9 @@ class ModelParametersGetter(BaseAction):
         """Create a ./model folder in the model repository"""
         model_path = self._model_path(self.model_id)
         folder = self._get_destination()
-        tr = TemplateResolver(model_id=self.model_id, repo_path=model_path, config_json=self.config_json)
+        tr = TemplateResolver(
+            model_id=self.model_id, repo_path=model_path, config_json=self.config_json
+        )
         if tr.is_fastapi():
             return None
         if not os.path.exists(folder):
