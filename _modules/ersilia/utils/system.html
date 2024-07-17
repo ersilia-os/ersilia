@@ -79,6 +79,13 @@
 <span class="kn">import</span> <span class="nn">os</span>
 
 
+<div class="viewcode-block" id="is_inside_docker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.is_inside_docker">[docs]</a><span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;/.dockerenv&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
 <div class="viewcode-block" id="SystemChecker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.SystemChecker">[docs]</a><span class="k">class</span> <span class="nc">SystemChecker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()</span>
@@ -94,7 +101,10 @@
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;GITHUB_ACTIONS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div></div>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="SystemChecker.is_inside_docker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.SystemChecker.is_inside_docker">[docs]</a>    <span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">is_inside_docker</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>

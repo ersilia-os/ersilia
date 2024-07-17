@@ -22,7 +22,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="ersilia.hub.fetch.register package" href="ersilia.hub.fetch.register.html" />
+    <link rel="next" title="ersilia.hub.fetch.pack.bentoml_pack package" href="ersilia.hub.fetch.pack.bentoml_pack.html" />
     <link rel="prev" title="ersilia.hub.fetch.lazy_fetchers package" href="ersilia.hub.fetch.lazy_fetchers.html" /> 
 </head>
 
@@ -105,88 +105,79 @@
              
   <section id="ersilia-hub-fetch-pack-package">
 <h1>ersilia.hub.fetch.pack package<a class="headerlink" href="#ersilia-hub-fetch-pack-package" title="Permalink to this heading"></a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
-</section>
-<section id="module-ersilia.hub.fetch.pack.mode">
-<span id="ersilia-hub-fetch-pack-mode-module"></span><h2>ersilia.hub.fetch.pack.mode module<a class="headerlink" href="#module-ersilia.hub.fetch.pack.mode" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.mode.PackModeDecision">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.pack.mode.</span></span><span class="sig-name descname"><span class="pre">PackModeDecision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/mode.html#PackModeDecision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.mode.PackModeDecision" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.mode.PackModeDecision.decide">
-<span class="sig-name descname"><span class="pre">decide</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/mode.html#PackModeDecision.decide"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.mode.PackModeDecision.decide" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.mode.PackModeDecision.decide_from_config_file_if_available">
-<span class="sig-name descname"><span class="pre">decide_from_config_file_if_available</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/mode.html#PackModeDecision.decide_from_config_file_if_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.mode.PackModeDecision.decide_from_config_file_if_available" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="module-ersilia.hub.fetch.pack.runners">
-<span id="ersilia-hub-fetch-pack-runners-module"></span><h2>ersilia.hub.fetch.pack.runners module<a class="headerlink" href="#module-ersilia.hub.fetch.pack.runners" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.CondaPack">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.pack.runners.</span></span><span class="sig-name descname"><span class="pre">CondaPack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/runners.html#CondaPack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.CondaPack" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.pack.BasePack" title="ersilia.hub.fetch.pack.BasePack"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePack</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.CondaPack.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.CondaPack.run" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.DockerPack">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.pack.runners.</span></span><span class="sig-name descname"><span class="pre">DockerPack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/runners.html#DockerPack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.DockerPack" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.pack.BasePack" title="ersilia.hub.fetch.pack.BasePack"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePack</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.DockerPack.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/runners.html#DockerPack.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.DockerPack.run" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.SystemPack">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.pack.runners.</span></span><span class="sig-name descname"><span class="pre">SystemPack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/runners.html#SystemPack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.SystemPack" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.pack.BasePack" title="ersilia.hub.fetch.pack.BasePack"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePack</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.SystemPack.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/runners.html#SystemPack.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.SystemPack.run" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.VenvPack">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.pack.runners.</span></span><span class="sig-name descname"><span class="pre">VenvPack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/runners.html#VenvPack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.VenvPack" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.pack.BasePack" title="ersilia.hub.fetch.pack.BasePack"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePack</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.VenvPack.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/runners.html#VenvPack.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.VenvPack.run" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.runners.get_runner">
-<span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.pack.runners.</span></span><span class="sig-name descname"><span class="pre">get_runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pack_mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/runners.html#get_runner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.runners.get_runner" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html">ersilia.hub.fetch.pack.bentoml_pack package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#module-ersilia.hub.fetch.pack.bentoml_pack.mode">ersilia.hub.fetch.pack.bentoml_pack.mode module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision"><code class="docutils literal notranslate"><span class="pre">PackModeDecision</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision.decide"><code class="docutils literal notranslate"><span class="pre">PackModeDecision.decide()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision.decide_from_config_file_if_available"><code class="docutils literal notranslate"><span class="pre">PackModeDecision.decide_from_config_file_if_available()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#module-ersilia.hub.fetch.pack.bentoml_pack.runners">ersilia.hub.fetch.pack.bentoml_pack.runners module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.CondaPack"><code class="docutils literal notranslate"><span class="pre">CondaPack</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.CondaPack.run"><code class="docutils literal notranslate"><span class="pre">CondaPack.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.DockerPack"><code class="docutils literal notranslate"><span class="pre">DockerPack</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.DockerPack.run"><code class="docutils literal notranslate"><span class="pre">DockerPack.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.SystemPack"><code class="docutils literal notranslate"><span class="pre">SystemPack</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.SystemPack.run"><code class="docutils literal notranslate"><span class="pre">SystemPack.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.VenvPack"><code class="docutils literal notranslate"><span class="pre">VenvPack</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.VenvPack.run"><code class="docutils literal notranslate"><span class="pre">VenvPack.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.get_runner"><code class="docutils literal notranslate"><span class="pre">get_runner()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#module-ersilia.hub.fetch.pack.bentoml_pack">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.BasePack"><code class="docutils literal notranslate"><span class="pre">BasePack</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html">ersilia.hub.fetch.pack.fastapi_pack package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#module-ersilia.hub.fetch.pack.fastapi_pack.mode">ersilia.hub.fetch.pack.fastapi_pack.mode module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.mode.PackModeDecision"><code class="docutils literal notranslate"><span class="pre">PackModeDecision</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.mode.PackModeDecision.decide"><code class="docutils literal notranslate"><span class="pre">PackModeDecision.decide()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.mode.PackModeDecision.decide_from_config_file_if_available"><code class="docutils literal notranslate"><span class="pre">PackModeDecision.decide_from_config_file_if_available()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#module-ersilia.hub.fetch.pack.fastapi_pack.runners">ersilia.hub.fetch.pack.fastapi_pack.runners module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.CondaPack"><code class="docutils literal notranslate"><span class="pre">CondaPack</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.CondaPack.run"><code class="docutils literal notranslate"><span class="pre">CondaPack.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.SystemPack"><code class="docutils literal notranslate"><span class="pre">SystemPack</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.SystemPack.run"><code class="docutils literal notranslate"><span class="pre">SystemPack.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.get_runner"><code class="docutils literal notranslate"><span class="pre">get_runner()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#module-ersilia.hub.fetch.pack.fastapi_pack">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.BasePack"><code class="docutils literal notranslate"><span class="pre">BasePack</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 <section id="module-ersilia.hub.fetch.pack">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.hub.fetch.pack" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.hub.fetch.pack.BasePack">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.pack.</span></span><span class="sig-name descname"><span class="pre">BasePack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack.html#BasePack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.BasePack" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Deleter</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_Symlinker</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_Writer</span></code></p>
-</dd></dl>
-
 </section>
 </section>
 
@@ -195,7 +186,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="ersilia.hub.fetch.lazy_fetchers.html" class="btn btn-neutral float-left" title="ersilia.hub.fetch.lazy_fetchers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="ersilia.hub.fetch.register.html" class="btn btn-neutral float-right" title="ersilia.hub.fetch.register package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ersilia.hub.fetch.pack.bentoml_pack.html" class="btn btn-neutral float-right" title="ersilia.hub.fetch.pack.bentoml_pack package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

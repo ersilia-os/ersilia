@@ -182,6 +182,9 @@
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.GetFetchErsiliaError"><code class="docutils literal notranslate"><span class="pre">GetFetchErsiliaError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.InvalidUrlError"><code class="docutils literal notranslate"><span class="pre">InvalidUrlError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.ModelPackageInstallError"><code class="docutils literal notranslate"><span class="pre">ModelPackageInstallError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.NotInstallableError"><code class="docutils literal notranslate"><span class="pre">NotInstallableError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.NotInstallableWithBentoML"><code class="docutils literal notranslate"><span class="pre">NotInstallableWithBentoML</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.NotInstallableWithFastAPI"><code class="docutils literal notranslate"><span class="pre">NotInstallableWithFastAPI</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.OutputDataTypesNotConsistentError"><code class="docutils literal notranslate"><span class="pre">OutputDataTypesNotConsistentError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.S3DownloaderError"><code class="docutils literal notranslate"><span class="pre">S3DownloaderError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.StandardModelExampleError"><code class="docutils literal notranslate"><span class="pre">StandardModelExampleError</span></code></a></li>
@@ -445,6 +448,16 @@ one of the commands is not conda … or pip … or pip3 …</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.conda.SimpleConda.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python_version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/conda.html#SimpleConda.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.conda.SimpleConda.create" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.conda.SimpleConda.create_executable_bash_script">
+<span class="sig-name descname"><span class="pre">create_executable_bash_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commandlines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/conda.html#SimpleConda.create_executable_bash_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.conda.SimpleConda.create_executable_bash_script" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.conda.SimpleConda.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/conda.html#SimpleConda.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.conda.SimpleConda.delete" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -680,11 +693,6 @@ one of the commands is not conda … or pip … or pip3 …</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.utils.docker.is_docker_installed">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.docker.</span></span><span class="sig-name descname"><span class="pre">is_docker_installed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#is_docker_installed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.is_docker_installed" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ersilia.utils.docker.is_inside_docker">
-<span class="sig-prename descclassname"><span class="pre">ersilia.utils.docker.</span></span><span class="sig-name descname"><span class="pre">is_inside_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#is_inside_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.is_inside_docker" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1099,19 +1107,17 @@ It is mainly used to make a base environment for the models.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.paths.Paths.models_development_path">
-<span class="sig-name descname"><span class="pre">models_development_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/paths.html#Paths.models_development_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.paths.Paths.models_development_path" title="Permalink to this definition"></a></dt>
-<dd><p>Try to guess the models path in the local computer.
-The directory with more ‘eos0xxx’ subdirectories will be returned.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.paths.Paths.org_development_path">
 <span class="sig-name descname"><span class="pre">org_development_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/paths.html#Paths.org_development_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.paths.Paths.org_development_path" title="Permalink to this definition"></a></dt>
 <dd><p>Guess generic development path</p>
 </dd></dl>
 
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.paths.resolve_pack_method">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.paths.</span></span><span class="sig-name descname"><span class="pre">resolve_pack_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/paths.html#resolve_pack_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.paths.resolve_pack_method" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-ersilia.utils.ports">
@@ -1158,7 +1164,17 @@ The directory with more ‘eos0xxx’ subdirectories will be returned.</p>
 <span class="sig-name descname"><span class="pre">is_github_action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/system.html#SystemChecker.is_github_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.system.SystemChecker.is_github_action" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.system.SystemChecker.is_inside_docker">
+<span class="sig-name descname"><span class="pre">is_inside_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/system.html#SystemChecker.is_inside_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.system.SystemChecker.is_inside_docker" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.system.is_inside_docker">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.system.</span></span><span class="sig-name descname"><span class="pre">is_inside_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/system.html#is_inside_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.system.is_inside_docker" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-ersilia.utils.terminal">

@@ -94,9 +94,9 @@
     <span class="n">secrets</span> <span class="o">=</span> <span class="n">Secrets</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">gdrive_client_secrets_json</span><span class="p">):</span>
         <span class="n">secrets</span><span class="o">.</span><span class="n">fetch_gdrive_secrets_from_github</span><span class="p">()</span>
-    <span class="n">GoogleAuth</span><span class="o">.</span><span class="n">DEFAULT_SETTINGS</span><span class="p">[</span>
-        <span class="s2">&quot;client_config_file&quot;</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="n">secrets</span><span class="o">.</span><span class="n">gdrive_client_secrets_json</span>
+    <span class="n">GoogleAuth</span><span class="o">.</span><span class="n">DEFAULT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;client_config_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">secrets</span><span class="o">.</span><span class="n">gdrive_client_secrets_json</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">GoogleAuth</span></div>
 
 

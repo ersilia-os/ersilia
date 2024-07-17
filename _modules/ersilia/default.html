@@ -115,7 +115,12 @@
 <span class="n">MODEL_CONFIG_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;config.json&quot;</span>
 <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;example_standard_input.csv&quot;</span>
 <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;example_standard_output.csv&quot;</span>
-<span class="n">PREDEFINED_EXAMPLE_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;example.csv&quot;</span>
+<span class="n">PREDEFINED_EXAMPLE_FILES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;model/framework/examples/input.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model/framework/input.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model/framework/example.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;example.csv&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 <span class="n">DEFAULT_ERSILIA_ERROR_EXIT_CODE</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">METADATA_JSON_FILE</span> <span class="o">=</span> <span class="s2">&quot;metadata.json&quot;</span>
 <span class="n">SERVICE_CLASS_FILE</span> <span class="o">=</span> <span class="s2">&quot;service_class.txt&quot;</span>
@@ -126,6 +131,9 @@
 <span class="n">DEFAULT_UDOCKER_USERNAME</span> <span class="o">=</span> <span class="s2">&quot;udockerusername&quot;</span>
 <span class="n">DEFAULT_UDOCKER_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;udockerpassword&quot;</span>
 <span class="n">ERSILIA_RUNS_FOLDER</span> <span class="o">=</span> <span class="s2">&quot;ersilia_runs&quot;</span>
+<span class="n">ALLOWED_API_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">]</span>  <span class="c1"># This can grow in the future based on needs</span>
+<span class="n">PACK_METHOD_FASTAPI</span> <span class="o">=</span> <span class="s2">&quot;fastapi&quot;</span>
+<span class="n">PACK_METHOD_BENTOML</span> <span class="o">=</span> <span class="s2">&quot;bentoml&quot;</span>
 
 <span class="c1"># Isaura data lake</span>
 <span class="n">H5_EXTENSION</span> <span class="o">=</span> <span class="s2">&quot;.h5&quot;</span>

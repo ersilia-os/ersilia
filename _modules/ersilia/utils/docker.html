@@ -89,13 +89,6 @@
 <span class="kn">from</span> <span class="nn">..utils.system</span> <span class="kn">import</span> <span class="n">SystemChecker</span>
 
 
-<div class="viewcode-block" id="is_inside_docker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.is_inside_docker">[docs]</a><span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">():</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;/.dockerenv&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
-
-
 <div class="viewcode-block" id="resolve_platform"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.resolve_platform">[docs]</a><span class="k">def</span> <span class="nf">resolve_platform</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">SystemChecker</span><span class="p">()</span><span class="o">.</span><span class="n">is_arm64</span><span class="p">():</span>
         <span class="k">return</span> <span class="s2">&quot;linux/arm64&quot;</span>
@@ -363,7 +356,7 @@
             <span class="k">return</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Total memory consumed by container &#39;</span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">mem_usage</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">MiB&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">return</span> </div>
+        <span class="k">return</span></div>
 
 <div class="viewcode-block" id="SimpleDocker.container_cpu"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.container_cpu">[docs]</a>    <span class="k">def</span> <span class="nf">container_cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

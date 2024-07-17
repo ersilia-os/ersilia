@@ -83,7 +83,10 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span><span class="p">,</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
-<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.pull_exceptions</span> <span class="kn">import</span> <span class="n">DockerImageNotAvailableError</span><span class="p">,</span> <span class="n">DockerConventionalPullError</span>
+<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.pull_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DockerImageNotAvailableError</span><span class="p">,</span>
+    <span class="n">DockerConventionalPullError</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
@@ -196,7 +199,9 @@
                     <span class="n">pull_log</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">pull_log</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;no match.*manifest&quot;</span><span class="p">,</span> <span class="n">pull_log</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No matching manifest for image </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;No matching manifest for image </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+                    <span class="p">)</span>
                     <span class="k">raise</span> <span class="n">DockerConventionalPullError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Image pulled succesfully!&quot;</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">DockerConventionalPullError</span><span class="p">:</span>

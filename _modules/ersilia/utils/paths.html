@@ -79,6 +79,8 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">ersilia</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span>
 
 <span class="n">MODELS_DEVEL_DIRNAME</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>
 
@@ -124,24 +126,6 @@
                 <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">path</span></div>
 
-<div class="viewcode-block" id="Paths.models_development_path"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.models_development_path">[docs]</a>    <span class="k">def</span> <span class="nf">models_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to guess the models path in the local computer.</span>
-<span class="sd">        The directory with more &#39;eos0xxx&#39; subdirectories will be returned.&quot;&quot;&quot;</span>
-        <span class="n">org_dev_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">org_development_path</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">org_dev_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="n">regex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eos_regex</span><span class="p">()</span>
-        <span class="n">cands</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">org_dev_path</span><span class="p">):</span>
-            <span class="n">ap</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
-            <span class="n">bn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">bn</span> <span class="o">==</span> <span class="n">MODELS_DEVEL_DIRNAME</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="n">dirnames</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">dn</span><span class="p">):</span>
-                        <span class="n">cands</span><span class="p">[</span><span class="n">ap</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cands</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="o">-</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">path</span></div>
-
 <div class="viewcode-block" id="Paths.exists"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.exists">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -150,6 +134,15 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div></div>
+
+
+<div class="viewcode-block" id="resolve_pack_method"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.resolve_pack_method">[docs]</a><span class="k">def</span> <span class="nf">resolve_pack_method</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;installs&quot;</span><span class="p">,</span> <span class="s2">&quot;install.sh&quot;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;bentoml.yml&quot;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not resolve pack method&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
 </pre></div>
 
            </div>

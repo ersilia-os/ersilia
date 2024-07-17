@@ -370,6 +370,8 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.html#module-ersilia.hub.fetch.fetch">ersilia.hub.fetch.fetch module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.html#module-ersilia.hub.fetch.fetch_bentoml">ersilia.hub.fetch.fetch_bentoml module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.html#module-ersilia.hub.fetch.fetch_fastapi">ersilia.hub.fetch.fetch_fastapi module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.hub.fetch.html#module-ersilia.hub.fetch">Module contents</a></li>
 </ul>
 </li>
@@ -928,6 +930,8 @@
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda"><code class="docutils literal notranslate"><span class="pre">SimpleConda</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.active_env"><code class="docutils literal notranslate"><span class="pre">SimpleConda.active_env()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.clone"><code class="docutils literal notranslate"><span class="pre">SimpleConda.clone()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.create"><code class="docutils literal notranslate"><span class="pre">SimpleConda.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.create_executable_bash_script"><code class="docutils literal notranslate"><span class="pre">SimpleConda.create_executable_bash_script()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.delete"><code class="docutils literal notranslate"><span class="pre">SimpleConda.delete()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.delete_one"><code class="docutils literal notranslate"><span class="pre">SimpleConda.delete_one()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.conda.SimpleConda.exists"><code class="docutils literal notranslate"><span class="pre">SimpleConda.exists()</span></code></a></li>
@@ -994,7 +998,6 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.is_docker_installed"><code class="docutils literal notranslate"><span class="pre">is_docker_installed()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.is_inside_docker"><code class="docutils literal notranslate"><span class="pre">is_inside_docker()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.is_udocker_installed"><code class="docutils literal notranslate"><span class="pre">is_udocker_installed()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.resolve_platform"><code class="docutils literal notranslate"><span class="pre">resolve_platform()</span></code></a></li>
 </ul>
@@ -1121,10 +1124,10 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.exists"><code class="docutils literal notranslate"><span class="pre">Paths.exists()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.home"><code class="docutils literal notranslate"><span class="pre">Paths.home()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.model_id_from_path"><code class="docutils literal notranslate"><span class="pre">Paths.model_id_from_path()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.models_development_path"><code class="docutils literal notranslate"><span class="pre">Paths.models_development_path()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.Paths.org_development_path"><code class="docutils literal notranslate"><span class="pre">Paths.org_development_path()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.paths.resolve_pack_method"><code class="docutils literal notranslate"><span class="pre">resolve_pack_method()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.ports">ersilia.utils.ports module</a><ul>
@@ -1143,8 +1146,10 @@
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.system.SystemChecker"><code class="docutils literal notranslate"><span class="pre">SystemChecker</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.system.SystemChecker.is_arm64"><code class="docutils literal notranslate"><span class="pre">SystemChecker.is_arm64()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.system.SystemChecker.is_github_action"><code class="docutils literal notranslate"><span class="pre">SystemChecker.is_github_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.system.SystemChecker.is_inside_docker"><code class="docutils literal notranslate"><span class="pre">SystemChecker.is_inside_docker()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.system.is_inside_docker"><code class="docutils literal notranslate"><span class="pre">is_inside_docker()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.terminal">ersilia.utils.terminal module</a><ul>
