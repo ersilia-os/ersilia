@@ -2,7 +2,7 @@ import sys
 import os
 import json
 from loguru import logger
-from ..default import EOS, LOGGING_FILE, CURRENT_LOGGING_FILE, VERBOSE_FILE
+from ..default import LOGGING_FILE, CURRENT_LOGGING_FILE, VERBOSE_FILE
 
 
 ROTATION = "10 MB"
@@ -15,7 +15,7 @@ class Logger(object):
         self._console = None
         self._file = None
         self.fmt = "{time:HH:mm:ss} | {level: <8} | {message}"
-        self._verbose_file = os.path.join(EOS, VERBOSE_FILE)
+        self._verbose_file = VERBOSE_FILE
         self._log_to_console()
         self._log_to_file()
         self._log_to_current_file()
@@ -23,16 +23,16 @@ class Logger(object):
 
     def _log_to_file(self):
         self._file = self.logger.add(
-            os.path.join(EOS, LOGGING_FILE), format=self.fmt, rotation=ROTATION
+            LOGGING_FILE, format=self.fmt, rotation=ROTATION
         )
 
     def _log_to_current_file(self):
-        current_log_file = os.path.join(EOS, CURRENT_LOGGING_FILE)
+        current_log_file = CURRENT_LOGGING_FILE
 
         if os.path.exists(current_log_file):
             os.remove(current_log_file)
         self._current_file = self.logger.add(
-            os.path.join(EOS, CURRENT_LOGGING_FILE), format=self.fmt, rotation=ROTATION
+            CURRENT_LOGGING_FILE, format=self.fmt, rotation=ROTATION
         )
 
     def _log_to_console(self):

@@ -27,11 +27,7 @@ DEFAULT_MODEL_ID = "eos0zzz"
 DEFAULT_VENV = "env"
 DEFAULT_API_NAME = "run"
 PACKMODE_FILE = "pack_mode.txt"
-LOGGING_FILE = "console.log"
-CURRENT_LOGGING_FILE = "current.log"
 CARD_FILE = "card.json"
-SILENCE_FILE = ".silence.json"
-VERBOSE_FILE = ".verbose.json"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
@@ -60,6 +56,19 @@ ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on nee
 PACK_METHOD_FASTAPI = "fastapi"
 PACK_METHOD_BENTOML = "bentoml"
 
+# Session and logging
+SESSIONS_DIR = os.path.join(EOS, "sessions")
+if not os.path.exists(SESSIONS_DIR):
+    os.makedirs(SESSIONS_DIR, exist_ok=True)
+SESSION_HISTORY_FILE = "history.txt"
+SESSION_JSON = "session.json"
+LOGS_DIR = os.path.join(SESSIONS_DIR, "logs")
+CONTAINER_LOGS_DIR = os.path.join(SESSIONS_DIR, "_logs")
+LOGGING_FILE = os.path.join(LOGS_DIR, "console.log")
+CURRENT_LOGGING_FILE = os.path.join(LOGS_DIR, "current.log")
+SILENCE_FILE = os.path.join(SESSIONS_DIR, ".silence.json")
+VERBOSE_FILE = os.path.join(SESSIONS_DIR, ".verbose.json")
+
 # Isaura data lake
 H5_EXTENSION = ".h5"
 H5_DATA_FILE = "data.h5"
@@ -68,11 +77,6 @@ ISAURA_FILE_TAG_LOCAL = "_local"
 ISAURA_GDRIVE = "1LSCMHrCuXUDNH3WRbrLMW2FoiwMCxF2n"
 ISAURA_TEAM_GDRIVE = "0AG4WDDaU_00XUk9PVA"
 ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
-SESSIONS_DIR = os.path.join(EOS, "sessions")
-if not os.path.exists(SESSIONS_DIR):
-    os.makedirs(SESSIONS_DIR, exist_ok=True)
-SESSION_HISTORY_FILE = "history.txt"
-SESSION_JSON = "session.json"
 
 # Other
 FEATURE_MERGE_PATTERN = "---"
