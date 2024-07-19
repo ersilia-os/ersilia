@@ -1,6 +1,7 @@
 import requests
 import subprocess
 import tempfile
+import json
 import os
 import re
 
@@ -13,7 +14,7 @@ from ...utils.exceptions_utils.pull_exceptions import (
 )
 
 from ...utils.docker import SimpleDocker
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, EOS, MODEL_SIZE_FILE
 
 PULL_IMAGE = os.environ.get("PULL_IMAGE", "Y")
 
@@ -140,6 +141,10 @@ class ModelPuller(ErsiliaBase):
             size = self._get_size_of_local_docker_image_in_mb()
             if size:
                 self.logger.debug("Size of image {0} MB".format(size))
+                path = os.path.join(EOS, MODEL_SIZE_FILE)
+                with open(path, "w") as f:
+                    json.dump({"size": size, "units": "MB"}, f, indent=4)
+                self.logger.debug("Size written to {}".format(path))
             else:
                 self.logger.warning("Could not obtain size of image")
             # except: #TODO add better error
