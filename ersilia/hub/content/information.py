@@ -16,6 +16,8 @@ from ...default import (
     CARD_FILE,
     SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
+    EOS,
+    MODEL_SOURCE_FILE,
 )
 
 
@@ -44,6 +46,14 @@ class Information(ErsiliaBase):
         else:
             return None
 
+    def _get_model_source(self):
+        model_source_file = os.path.join(EOS, MODEL_SOURCE_FILE)
+        if os.path.exists(model_source_file):
+            with open(model_source_file) as f:
+                return f.read().rstrip()
+        else:
+            return None
+        
     def _get_api_schema(self):
         api_schema_file = os.path.join(self.dest_folder, API_SCHEMA_FILE)
         if os.path.exists(api_schema_file):
@@ -88,6 +98,7 @@ class Information(ErsiliaBase):
         data = {
             "pack_mode": self._get_pack_mode(),
             "service_class": self._get_service_class(),
+            "model_source": self._get_model_source(),
             "apis_list": self._get_apis_list(),
             "api_schema": self._get_api_schema(),
             "size": self._get_size(),
@@ -171,3 +182,4 @@ class InformationDisplayer(ErsiliaBase):
         self._docker_info()
         text = "For more information, please visit https://ersilia.io/model-hub"
         self._echo(text, fg="black")
+

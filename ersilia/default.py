@@ -48,6 +48,7 @@ PREDEFINED_EXAMPLE_FILES = [
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
 SERVICE_CLASS_FILE = "service_class.txt"
+MODEL_SOURCE_FILE = "model_source.txt"
 APIS_LIST_FILE = "apis_list.txt"
 INFORMATION_FILE = "information.json"
 IS_FETCHED_FROM_DOCKERHUB_FILE = "from_dockerhub.json"
