@@ -1,3 +1,5 @@
+import os
+import json
 from ..register.register import ModelRegisterer
 
 from .... import ErsiliaBase, throw_ersilia_exception
@@ -8,6 +10,8 @@ from ....default import (
     PREDEFINED_EXAMPLE_FILES,
     INFORMATION_FILE,
     API_SCHEMA_FILE,
+    SERVICE_CLASS_FILE,
+    MODEL_SIZE_FILE,
 )
 
 from ...pull.pull import ModelPuller
@@ -97,6 +101,43 @@ class ModelDockerHubFetcher(ErsiliaBase):
             except:
                 self.logger.debug("Could not find example file in docker image")
 
+
+    def modify_information(self, model_id):
+        """
+        Modify the information file being copied from docker container to the host machine.
+        :param file: The model information file being copied.
+        :param service_class_file: File containing the model service class.
+        :size_file: File containing the size of the pulled docker image.
+        """
+        file = "{0}/dest/{1}/{2}".format(EOS, model_id, INFORMATION_FILE)
+        service_class_file = os.path.join(self._get_bundle_location(model_id), SERVICE_CLASS_FILE)
+        size_file = os.path.join(EOS, MODEL_SIZE_FILE)
+    
+        try:
+            with open(service_class_file, "r") as f:
+                service_class = f.read().strip()
+        except FileNotFoundError:
+            return None
+
+        try:
+            with open(size_file, "r") as m:
+                size = json.load(m)
+        except FileNotFoundError:
+            return None
+
+        try:
+            with open(file, "r") as infile:
+                data = json.load(infile)
+        except FileNotFoundError:
+            return None
+
+        data["service_class"] = service_class
+        data["size"] = size
+
+        with open(file, "w") as outfile:
+            json.dump(data, outfile, indent=4)
+
+
     @throw_ersilia_exception
     def fetch(self, model_id):
         if not DockerRequirement().is_active():
@@ -107,6 +148,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         mr.register(is_from_dockerhub=True)
         self.write_apis(model_id)
         self.copy_information(model_id)
+        self.modify_information(model_id)
         self.copy_metadata(model_id)
         self.copy_status(model_id)
         self.copy_example_if_available(model_id)
