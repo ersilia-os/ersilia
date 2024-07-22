@@ -9,7 +9,7 @@ on:
 jobs:
   convert-airtable-to-json:
     if: |
-       github.repository == 'example/example_repo' &&
+       github.repository == 'ersilia-os/ersilia' &&
        (github.event_name != 'pull_request' ||
        github.event.pull_request.head.repo.full_name == github.repository)
     
@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
           
       - name: Install dependencies
-        run:
+        run: |
           pip install pyairtable
           pip install airtable-python-wrapper
           pip install boto3
