@@ -62,12 +62,13 @@ if not os.path.exists(SESSIONS_DIR):
     os.makedirs(SESSIONS_DIR, exist_ok=True)
 SESSION_HISTORY_FILE = "history.txt"
 SESSION_JSON = "session.json"
-LOGS_DIR = os.path.join(SESSIONS_DIR, "logs")
-CONTAINER_LOGS_DIR = os.path.join(SESSIONS_DIR, "_logs")
-LOGGING_FILE = os.path.join(LOGS_DIR, "console.log")
-CURRENT_LOGGING_FILE = os.path.join(LOGS_DIR, "current.log")
-SILENCE_FILE = os.path.join(SESSIONS_DIR, ".silence.json")
-VERBOSE_FILE = os.path.join(SESSIONS_DIR, ".verbose.json")
+LOGS_DIR = "logs"
+CONTAINER_LOGS_TMP_DIR = "_logs/tmp"
+CONTAINER_LOGS_EOS_DIR = "_logs/eos" # This is not used
+LOGGING_FILE = "console.log"
+CURRENT_LOGGING_FILE = "current.log"
+SILENCE_FILE = ".silence.json"
+VERBOSE_FILE = ".verbose.json"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"

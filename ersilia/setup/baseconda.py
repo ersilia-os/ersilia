@@ -6,6 +6,7 @@ from ..utils.conda import SimpleConda
 from ..utils.terminal import run_command
 from ..utils.versioning import Versioner
 from .utils.clone import ErsiliaCloner
+from ..utils.logging import make_temp_dir
 
 from .. import logger
 
@@ -58,7 +59,7 @@ class SetupBaseConda(object):
         return self.versions.base_conda_name(org, tag)
 
     def find_closest_python_version(self, python_version):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "conda_search_python.txt")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         is_base = self.conda.is_base()
@@ -96,7 +97,7 @@ class SetupBaseConda(object):
             return
         ptag = self._parse_tag(tag)
         cmd = self._install_command(org, tag)
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         if self._is_ersiliaos(org):
             tmp_repo = self.cloner.clone(tmp_folder, version=ptag["ver"])
         else:

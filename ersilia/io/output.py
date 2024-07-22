@@ -14,6 +14,7 @@ from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..db.hubdata.interfaces import AirtableInterface
 from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
 from ..utils.paths import resolve_pack_method
+from ..utils.logging import make_temp_dir
 
 
 class DataFrame(object):
@@ -415,7 +416,7 @@ class DictlistDataframeConverter(GenericOutputAdapter):
         GenericOutputAdapter.__init__(self, config_json=config_json)
 
     def dictlist2dataframe(self, dl, model_id, api_name):
-        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_dir = make_temp_dir(prefix="ersilia-")
         df_file = os.path.join(tmp_dir, "data.csv")
         self.adapt(dl, df_file, model_id, api_name)
         df = Dataframe()

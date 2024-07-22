@@ -11,6 +11,7 @@ from ..utils.exceptions_utils.fetch_exceptions import (
 )
 from .. import throw_ersilia_exception
 from .. import logger
+from ..utils.logging import make_temp_dir
 
 
 class SimpleVenv(ErsiliaBase):
@@ -47,7 +48,7 @@ class SimpleVenv(ErsiliaBase):
     def run_commandlines(self, environment, commandlines):
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         tmp_log = os.path.join(tmp_folder, "installs.log")  # new
         with open(tmp_script, "w") as f:

@@ -232,8 +232,9 @@ class TmpCleaner(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def delete(self):
-        os.rmdir(self._tmp_dir)
-        os.makedirs(self._tmp_dir)
+        if os.path.exists(self._tmp_dir):
+            os.rmdir(self._tmp_dir)
+            os.makedirs(self._tmp_dir)
 
 
 class ModelFullDeleter(ErsiliaBase):

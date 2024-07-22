@@ -10,6 +10,7 @@ from .terminal import run_command, run_command_check_output
 from .. import logger
 from ..default import DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME
 from ..utils.system import SystemChecker
+from ..utils.logging import make_temp_dir
 
 
 def resolve_platform():
@@ -77,7 +78,7 @@ class SimpleDocker(object):
         return "%s/%s:%s" % (org, img, tag)
 
     def images(self):
-        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_dir = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_dir, "images.txt")
         if not self._with_udocker:
             cmd = "docker images > {0}".format(tmp_file)
@@ -109,7 +110,7 @@ class SimpleDocker(object):
             return img_dict
 
     def containers(self, only_run):
-        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_dir = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_dir, "containers.txt")
         if not only_run:
             all_str = "-a"
@@ -145,7 +146,7 @@ class SimpleDocker(object):
           echo "False"
         fi
         """
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "exists.sh")
         with open(tmp_script, "w") as f:
             f.write(bash_script)
@@ -214,7 +215,7 @@ class SimpleDocker(object):
     @staticmethod
     def cp_from_container(name, img_path, local_path, org=None, img=None, tag=None):
         local_path = os.path.abspath(local_path)
-        tmp_file = os.path.join(tempfile.mkdtemp(prefix="ersilia-"), "tmp.txt")
+        tmp_file = os.path.join(make_temp_dir(prefix="ersilia-"), "tmp.txt")
         cmd = "docker cp %s:%s %s &> %s" % (name, img_path, local_path, tmp_file)
         run_command(cmd)
         with open(tmp_file, "r") as f:

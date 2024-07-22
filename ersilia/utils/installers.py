@@ -11,6 +11,7 @@ from .config import Checker
 from .terminal import run_command
 from .versioning import Versioner
 import click
+from .logging import make_temp_dir
 
 INSTALL_LOG_FILE = ".install.log"
 
@@ -156,7 +157,7 @@ class Installer(BaseInstaller):
         sc = SimpleConda()
         if sc.exists(eos_base_env):
             return
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_repo = self._clone_repo(tmp_folder)
         tmp_script = os.path.join(tmp_folder, "script.sh")
         tmp_python_script = os.path.join(tmp_folder, "base_installer.py")
@@ -217,7 +218,7 @@ class Installer(BaseInstaller):
         if docker.exists(org, img, tag):
             return
         # get a copy of the repository in a temporary directory
-        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_dir = make_temp_dir(prefix="ersilia-")
         tmp_repo = self._clone_repo(tmp_dir)
         # write the dockerfile
         dockerfile = """

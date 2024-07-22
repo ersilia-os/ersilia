@@ -5,6 +5,7 @@ import tempfile
 import zipfile
 
 from ..utils.terminal import run_command
+from ..utils.logging import make_temp_dir
 from .. import ErsiliaBase
 from ..default import ERSILIA_MODELS_S3_BUCKET, ERSILIA_MODELS_ZIP_S3_BUCKET
 
@@ -16,8 +17,8 @@ class S3BucketRepoUploader(ErsiliaBase):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.cwd = os.getcwd()
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
-        self.tmp_zip_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.tmp_folder = make_temp_dir(prefix="ersilia-")
+        self.tmp_zip_folder = make_temp_dir(prefix="ersilia-")
         self.aws_access_key_id = None
         self.aws_secret_access_key = None
         self.ignore = ["upload_model_to_s3.py"]

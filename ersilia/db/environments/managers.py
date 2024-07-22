@@ -12,8 +12,9 @@ from ...utils.system import is_inside_docker
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
 from .localdb import EnvironmentDb
-
 from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ...utils.session import get_session_dir
+from ...utils.logging import make_temp_dir
 
 import sys
 
@@ -99,7 +100,7 @@ class DockerManager(ErsiliaBase):
 
     def build_with_bentoml(self, model_id, use_cache=True):
         bundle_path = self._get_bundle_location(model_id)
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "build.sh")
         cmdlines = ["cd {0}".format(bundle_path)]
         if use_cache:
@@ -128,7 +129,7 @@ class DockerManager(ErsiliaBase):
 
     def _build_ersilia_base(self):
         self.logger.debug("Creating docker image of ersilia base")
-        path = tempfile.mkdtemp(prefix="ersilia-")
+        path = make_temp_dir(prefix="ersilia-")
         base_folder = os.path.join(path, "base")
         os.mkdir(base_folder)
         base_files = [
@@ -153,7 +154,7 @@ class DockerManager(ErsiliaBase):
             pass
         else:
             self._build_ersilia_base()
-        path = tempfile.mkdtemp(prefix="ersilia-model")
+        path = make_temp_dir(prefix="ersilia-model")
         model_folder = os.path.join(path, model_id)
         os.mkdir(model_folder)
         cmd = "cd {0}; wget {1}/model/Dockerfile".format(
@@ -281,7 +282,7 @@ class DockerManager(ErsiliaBase):
             return
         if not self.is_installed():
             return
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
         cmd = "docker ps > {0}".format(tmp_file)
         self.logger.debug("Running {0}".format(cmd))
@@ -305,7 +306,7 @@ class DockerManager(ErsiliaBase):
             return
         if not self.is_installed():
             return
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
         cmd = "docker ps > {0}".format(tmp_file)
         self.logger.debug("Running {0}".format(cmd))
@@ -332,7 +333,7 @@ class DockerManager(ErsiliaBase):
         self._stop_containers_with_model_id(model_id)
         self._stop_containers_with_entrypoint_sh()
         self.remove_stopped_containers()
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-ps.txt")
         cmd = "docker ps > {0}".format(tmp_file)
         self.logger.debug("Running {0}".format(cmd))
@@ -356,7 +357,7 @@ class DockerManager(ErsiliaBase):
         run_command(cmd)
 
     def delete_image(self, img):
-        fn = os.path.join(self._tmp_dir, "rm_image_output.txt")
+        fn = os.path.join(get_session_dir(), "rm_image_output.txt")
         cmd = "docker image rm {0} --force 2> {1}".format(img, fn)
         run_command(cmd)
         with open(fn, "r") as f:
@@ -382,7 +383,7 @@ class DockerManager(ErsiliaBase):
             return
         self.stop_containers(model_id)
         self.prune()
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "docker-images.txt")
         cmd = "docker images > {0}".format(tmp_file)
         self.logger.debug("Running {0}".format(cmd))
