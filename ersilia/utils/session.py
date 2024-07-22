@@ -3,7 +3,6 @@ import shutil
 import psutil
 
 from ..default import SESSIONS_DIR, LOGS_DIR, CONTAINER_LOGS_TMP_DIR
-from ..utils.exceptions_utils import throw_ersilia_exception
 
 def get_current_pid():
     return os.getpid()
@@ -42,7 +41,6 @@ def determine_orphaned_session():
                 _sessions.append(session)
     return _sessions
 
-@throw_ersilia_exception
 def remove_orphaned_sessions():
     orphaned_sessions = determine_orphaned_session()
     for session in orphaned_sessions:
