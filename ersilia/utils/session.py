@@ -3,6 +3,7 @@ import shutil
 import psutil
 
 from ..default import SESSIONS_DIR, LOGS_DIR, CONTAINER_LOGS_TMP_DIR
+from ..utils.exceptions_utils import throw_ersilia_exception
 
 def get_current_pid():
     return os.getpid()
@@ -41,10 +42,14 @@ def determine_orphaned_session():
                 _sessions.append(session)
     return _sessions
 
+@throw_ersilia_exception
 def remove_orphaned_sessions():
     orphaned_sessions = determine_orphaned_session()
     for session in orphaned_sessions:
-        remove_session_dir(session)
+        try:
+            remove_session_dir(session)
+        except PermissionError:  #TODO Is there a better way to handle this?
+            raise Exception(f"Could not remove session {session}, permission denied")
 
 def get_session_id():
     return f"session_{get_parent_pid()}"
