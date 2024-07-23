@@ -31,6 +31,7 @@ def convert_airtable_to_json(
         if not offset:
             break
     
+    print(f"Number of records: {len(model_records)}")
     models_json = json.dumps(model_records, indent=4)
 
     # Load JSON in AWS S3 bucket
