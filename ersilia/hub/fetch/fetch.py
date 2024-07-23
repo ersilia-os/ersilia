@@ -240,7 +240,7 @@ class ModelFetcher(ErsiliaBase):
 
     def fetch(self, model_id):
         self.logger.debug("Writing model source to file")
-        model_source_file = os.path.join(EOS, MODEL_SOURCE_FILE)
+        model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
         with open(model_source_file, "w") as f:
             f.write(self.model_source)
         self._fetch(model_id)

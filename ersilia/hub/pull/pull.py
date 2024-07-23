@@ -141,7 +141,7 @@ class ModelPuller(ErsiliaBase):
             size = self._get_size_of_local_docker_image_in_mb()
             if size:
                 self.logger.debug("Size of image {0} MB".format(size))
-                path = os.path.join(EOS, MODEL_SIZE_FILE)
+                path = os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE)
                 with open(path, "w") as f:
                     json.dump({"size": size, "units": "MB"}, f, indent=4)
                 self.logger.debug("Size written to {}".format(path))
