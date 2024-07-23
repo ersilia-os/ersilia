@@ -22,6 +22,7 @@ def convert_airtable_to_json(
 
     data = response.json()
     print(f"Keys from data response: {data.keys()}")
+    print(f"Offset from data response: {data.get('offset')}")
     records_models = [record["fields"] for record in data["records"]]
     models_json = json.dumps(records_models, indent=4)
 
