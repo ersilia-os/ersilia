@@ -15,16 +15,23 @@ def convert_airtable_to_json(
     airtable_api_key, aws_access_key_id, aws_secret_access_key
 ):
     headers = {"Authorization": f"Bearer {airtable_api_key}"}
-    response = requests.get(
-        f"https://api.airtable.com/v0/{AIRTABLE_MODEL_HUB_BASE_ID}/{AIRTABLE_TABLE_ID}",
-        headers=headers,
-    )
-
-    data = response.json()
-    print(f"Keys from data response: {data.keys()}")
-    print(f"Offset from data response: {data.get('offset')}")
-    records_models = [record["fields"] for record in data["records"]]
-    models_json = json.dumps(records_models, indent=4)
+    url = f"https://api.airtable.com/v0/{AIRTABLE_MODEL_HUB_BASE_ID}/{AIRTABLE_TABLE_ID}"
+    offset = None
+    model_records = []
+    while True:
+        if offset:
+            url += f"?offset={offset}"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            print(f"Error: {response.status_code}")
+            break
+        data = response.json()
+        offset = data.get("offset", None)
+        model_records.extend([record["fields"] for record in data["records"]])
+        if not offset:
+            break
+    
+    models_json = json.dumps(model_records, indent=4)
 
     # Load JSON in AWS S3 bucket
     s3 = boto3.client(
