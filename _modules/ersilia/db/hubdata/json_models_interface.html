@@ -77,34 +77,31 @@
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">boto3</span>
 
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">ERSILIA_MODEL_HUB_S3_BUCKET</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">ERSILIA_MODEL_HUB_S3_BUCKET</span><span class="p">,</span> <span class="n">MODELS_JSON</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 
-<span class="n">AWS_ACCOUNT_REGION</span> <span class="o">=</span> <span class="s2">&quot;eu-central-1&quot;</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 
 
-<div class="viewcode-block" id="JsonModelsInterface"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.json_models_interface.JsonModelsInterface">[docs]</a><span class="k">class</span> <span class="nc">JsonModelsInterface</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_file_name</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span> <span class="o">=</span> <span class="n">json_file_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="n">AWS_ACCOUNT_REGION</span><span class="p">)</span>
+<div class="viewcode-block" id="JsonModelsInterface"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.json_models_interface.JsonModelsInterface">[docs]</a><span class="k">class</span> <span class="nc">JsonModelsInterface</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span> <span class="o">=</span> <span class="n">MODELS_JSON</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="n">ERSILIA_MODEL_HUB_S3_BUCKET</span><span class="si">}</span><span class="s2">.s3.eu-central-1.amazonaws.com/</span><span class="si">{</span><span class="n">MODELS_JSON</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">def</span> <span class="nf">_read_json_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">s3_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3_client</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span>
-            <span class="n">Bucket</span><span class="o">=</span><span class="n">ERSILIA_MODEL_HUB_S3_BUCKET</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span>
-        <span class="p">)</span>
-        <span class="n">s3_object_body</span> <span class="o">=</span> <span class="n">s3_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Body&quot;</span><span class="p">)</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="n">s3_object_body</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-        <span class="n">json_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">json_dict</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">models_list</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">models_list</span>
 
 <div class="viewcode-block" id="JsonModelsInterface.items"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.json_models_interface.JsonModelsInterface.items">[docs]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">json_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">json_dict</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span></div>
+        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">mdl</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">mdl</span></div>
 
 <div class="viewcode-block" id="JsonModelsInterface.items_all"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.json_models_interface.JsonModelsInterface.items_all">[docs]</a>    <span class="k">def</span> <span class="nf">items_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">items</span></div></div>
+        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">models</span></div></div>
 </pre></div>
 
            </div>

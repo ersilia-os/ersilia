@@ -64,6 +64,7 @@
       <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../ersilia.html">ersilia</a></li>
+          <li class="breadcrumb-item"><a href="../fetch.html">ersilia.hub.fetch</a></li>
       <li class="breadcrumb-item active">ersilia.hub.fetch.fetch</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -112,7 +113,7 @@
         <span class="n">force_with_bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">force_with_fastapi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">hosted_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">local_dir</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">local_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -140,9 +141,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">force_with_bentoml</span> <span class="o">=</span> <span class="n">force_with_bentoml</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_with_fastapi</span> <span class="o">=</span> <span class="n">force_with_fastapi</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hosted_url</span> <span class="o">=</span> <span class="n">hosted_url</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">local_dir</span> <span class="o">=</span> <span class="n">local_dir</span> 
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting model source&quot;</span><span class="p">)</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_dir</span> <span class="o">=</span> <span class="n">local_dir</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting model source&quot;</span><span class="p">)</span>
         <span class="n">sources</span> <span class="o">=</span> <span class="p">{</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span><span class="p">:</span> <span class="s2">&quot;GitHub&quot;</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">force_from_s3</span><span class="p">:</span> <span class="s2">&quot;Amazon S3&quot;</span><span class="p">,</span>
@@ -151,10 +152,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">force_with_bentoml</span><span class="p">:</span> <span class="s2">&quot;Bentoml&quot;</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">force_with_fastapi</span><span class="p">:</span> <span class="s2">&quot;Fastapi&quot;</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hosted_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;Hosted URL&quot;</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">local_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;Local path&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">local_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;Local path&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_source</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">source</span> <span class="k">for</span> <span class="n">condition</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">condition</span><span class="p">),</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">)</span>       
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_source</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">source</span> <span class="k">for</span> <span class="n">condition</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">condition</span><span class="p">),</span> <span class="s2">&quot;DockerHub&quot;</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model was fetched from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_source</span><span class="p">))</span>
 
     <span class="nd">@throw_ersilia_exception</span>
@@ -310,8 +313,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Overwriting&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching in your system, not from DockerHub&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>   
-            
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
+
 <div class="viewcode-block" id="ModelFetcher.fetch"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher.fetch">[docs]</a>    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing model source to file&quot;</span><span class="p">)</span>
         <span class="n">model_source_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">)</span>

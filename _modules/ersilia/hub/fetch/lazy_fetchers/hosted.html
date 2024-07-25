@@ -64,6 +64,7 @@
       <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../../ersilia.html">ersilia</a></li>
+          <li class="breadcrumb-item"><a href="../../fetch.html">ersilia.hub.fetch</a></li>
       <li class="breadcrumb-item active">ersilia.hub.fetch.lazy_fetchers.hosted</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -77,16 +78,14 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">validators</span>
 
 <span class="kn">from</span> <span class="nn">..register.register</span> <span class="kn">import</span> <span class="n">ModelRegisterer</span>
 <span class="kn">from</span> <span class="nn">....serve.services</span> <span class="kn">import</span> <span class="n">HostedService</span>
-<span class="kn">from</span> <span class="nn">....db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">AirtableInterface</span>
-
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">EOS</span>
 <span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">API_SCHEMA_FILE</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span>
+<span class="kn">from</span> <span class="nn">...fetch</span> <span class="kn">import</span> <span class="n">ModelURLResolver</span>
 
 
 <div class="viewcode-block" id="ModelHostedFetcher"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher">[docs]</a><span class="k">class</span> <span class="nc">ModelHostedFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -108,28 +107,14 @@
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_is_available_unknown_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying to find an available URL where the model is hosted&quot;</span><span class="p">)</span>
-        <span class="n">url_field</span> <span class="o">=</span> <span class="s2">&quot;Host URL&quot;</span>
-        <span class="n">identifier_field</span> <span class="o">=</span> <span class="s2">&quot;Identifier&quot;</span>
-        <span class="n">ai</span> <span class="o">=</span> <span class="n">AirtableInterface</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">ai</span><span class="o">.</span><span class="n">items_all</span><span class="p">():</span>
-            <span class="n">fields</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">fields</span><span class="p">[</span><span class="n">identifier_field</span><span class="p">]</span> <span class="o">==</span> <span class="n">model_id</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">url_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No hosted URL found for this model&quot;</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="kc">False</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="n">url_field</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="s2">&quot;This model has an associated URL: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-                    <span class="p">)</span>
-                    <span class="k">return</span> <span class="kc">True</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="s2">&quot;This doesn&#39;t seem to be a valid URL: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-                    <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model was not found in AirTable&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Trying to find an available URL where the model is hosted using Models JSON or Airtable&quot;</span>
+        <span class="p">)</span>
+        <span class="n">mdl_url_resolver</span> <span class="o">=</span> <span class="n">ModelURLResolver</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
+        <span class="p">)</span>
+        <span class="n">is_valid_url</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">mdl_url_resolver</span><span class="o">.</span><span class="n">resolve_valid_hosted_model_url</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">is_valid_url</span>
 
 <div class="viewcode-block" id="ModelHostedFetcher.is_available"><a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.hosted.ModelHostedFetcher.is_available">[docs]</a>    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
