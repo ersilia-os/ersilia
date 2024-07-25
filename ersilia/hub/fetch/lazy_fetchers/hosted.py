@@ -6,6 +6,7 @@ import validators
 from ..register.register import ModelRegisterer
 from ....serve.services import HostedService
 from ....db.hubdata.interfaces import AirtableInterface
+from ....db.hubdata.json_models_interface import JsonModelsInterface
 
 from .... import ErsiliaBase
 from .... import EOS
@@ -31,8 +32,8 @@ class ModelHostedFetcher(ErsiliaBase):
             )
             return False
 
-    def _is_available_unknown_url(self, model_id):
-        self.logger.debug("Trying to find an available URL where the model is hosted")
+    def _is_available_unknown_url_airtable(self, model_id):
+        self.logger.debug("Trying to find an available URL where the model is hosted using AirTable")
         url_field = "Host URL"
         identifier_field = "Identifier"
         ai = AirtableInterface(config_json=self.config_json)
