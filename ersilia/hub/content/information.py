@@ -53,7 +53,7 @@ class Information(ErsiliaBase):
                 return f.read().rstrip()
         else:
             return None
-        
+
     def _get_api_schema(self):
         api_schema_file = os.path.join(self.dest_folder, API_SCHEMA_FILE)
         if os.path.exists(api_schema_file):
@@ -182,4 +182,3 @@ class InformationDisplayer(ErsiliaBase):
         self._docker_info()
         text = "For more information, please visit https://ersilia.io/model-hub"
         self._echo(text, fg="black")
-

@@ -101,7 +101,6 @@ class ModelDockerHubFetcher(ErsiliaBase):
             except:
                 self.logger.debug("Could not find example file in docker image")
 
-
     def modify_information(self, model_id):
         """
         Modify the information file being copied from docker container to the host machine.
@@ -110,9 +109,11 @@ class ModelDockerHubFetcher(ErsiliaBase):
         :size_file: File containing the size of the pulled docker image.
         """
         file = "{0}/dest/{1}/{2}".format(EOS, model_id, INFORMATION_FILE)
-        service_class_file = os.path.join(self._get_bundle_location(model_id), SERVICE_CLASS_FILE)
+        service_class_file = os.path.join(
+            self._get_bundle_location(model_id), SERVICE_CLASS_FILE
+        )
         size_file = os.path.join(EOS, MODEL_SIZE_FILE)
-    
+
         try:
             with open(service_class_file, "r") as f:
                 service_class = f.read().strip()
@@ -136,7 +137,6 @@ class ModelDockerHubFetcher(ErsiliaBase):
 
         with open(file, "w") as outfile:
             json.dump(data, outfile, indent=4)
-
 
     @throw_ersilia_exception
     def fetch(self, model_id):
