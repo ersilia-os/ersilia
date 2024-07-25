@@ -14,6 +14,7 @@ from ....default import (
 )
 from ....db.hubdata.interfaces import AirtableInterface
 from ....utils.exceptions_utils.fetch_exceptions import InvalidUrlError
+from ...fetch import ModelURLResolver
 
 
 class ModelRegisterer(ErsiliaBase):
@@ -62,28 +63,16 @@ class ModelRegisterer(ErsiliaBase):
             json.dump(data, f)
 
     def _resolve_url(self):
-        self.logger.debug("Trying to find an available URL where the model is hosted")
-        url_field = "Host URL"
-        identifier_field = "Identifier"
-        ai = AirtableInterface(config_json=self.config_json)
-        for record in ai.items_all():
-            fields = record["fields"]
-            if fields[identifier_field] == self.model_id:
-                if url_field not in fields:
-                    self.logger.debug("No hosted URL found for this model")
-                    return None
-                url = fields[url_field]
-                if validators.url(url):
-                    self.logger.debug(
-                        "This model has an associated URL: {0}".format(url)
-                    )
-                    return url
-                else:
-                    self.logger.debug(
-                        "This doesn't seem to be a valid URL: {0}".format(url)
-                    )
-        self.logger.debug("Model was not found in AirTable")
-        return None
+        mdl_url_resolver = ModelURLResolver(
+            model_id=self.model_id, config_json=self.config_json
+        )
+        is_valid_url, url = mdl_url_resolver.resolve_valid_hosted_model_url(
+            self.model_id
+        )
+        if is_valid_url:
+            return url
+        else:
+            return None
 
     @throw_ersilia_exception
     def register_from_hosted(self, url=None):

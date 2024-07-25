@@ -36,7 +36,7 @@ class ModelFetcher(ErsiliaBase):
         force_with_bentoml=False,
         force_with_fastapi=False,
         hosted_url=None,
-        local_dir =None,
+        local_dir=None,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -64,9 +64,9 @@ class ModelFetcher(ErsiliaBase):
         self.force_with_bentoml = force_with_bentoml
         self.force_with_fastapi = force_with_fastapi
         self.hosted_url = hosted_url
-        self.local_dir = local_dir 
-        
-        self.logger.debug("Getting model source")        
+        self.local_dir = local_dir
+
+        self.logger.debug("Getting model source")
         sources = {
             self.force_from_github: "GitHub",
             self.force_from_s3: "Amazon S3",
@@ -75,10 +75,12 @@ class ModelFetcher(ErsiliaBase):
             self.force_with_bentoml: "Bentoml",
             self.force_with_fastapi: "Fastapi",
             self.hosted_url is not None: "Hosted URL",
-            self.local_dir is not None: "Local path"
+            self.local_dir is not None: "Local path",
         }
-        
-        self.model_source = next((source for condition, source in sources.items() if condition), "DockerHub")       
+
+        self.model_source = next(
+            (source for condition, source in sources.items() if condition), "DockerHub"
+        )
         self.logger.debug("Model was fetched from {0}".format(self.model_source))
 
     @throw_ersilia_exception
@@ -234,8 +236,8 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("Overwriting")
             self.overwrite = True
         self.logger.debug("Fetching in your system, not from DockerHub")
-        self._fetch_not_from_dockerhub(model_id=model_id)   
-            
+        self._fetch_not_from_dockerhub(model_id=model_id)
+
     def fetch(self, model_id):
         self.logger.debug("Writing model source to file")
         model_source_file = os.path.join(EOS, MODEL_SOURCE_FILE)

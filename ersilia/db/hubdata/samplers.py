@@ -23,6 +23,7 @@ _ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY = "ersilia-model-hub-maintained-inp
 
 class ModelSampler(ErsiliaBase):
     """Get a random working model from the model hub to use in downstream automations."""
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -38,9 +39,13 @@ class ModelSampler(ErsiliaBase):
     def _get_models_from_s3_models_json(self):
         json_models_interface = JsonModelsInterface(config_json=self.config_json)
         models = json_models_interface.items_all()
-        model_ids = [model[_MODEL_ID_FIELD] for model in models if model[_STATUS_FIELD] == _MODEL_STATUS_READY]
+        model_ids = [
+            model[_MODEL_ID_FIELD]
+            for model in models
+            if model[_STATUS_FIELD] == _MODEL_STATUS_READY
+        ]
         return model_ids
-    
+
     def sample(self, n_samples, file_name=None):
         entities = self._get_models_from_s3_models_json()
         if len(entities) == 0:
@@ -100,7 +105,7 @@ class InputSampler(ErsiliaBase):
                 if model_id == self.model_id:
                     return input_type, input_shape
         return None
-    
+
     def _get_input_type_and_shape(self):
         res = self._get_input_type_and_shape_from_metadata()
         if res is not None:

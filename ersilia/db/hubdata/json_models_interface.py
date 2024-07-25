@@ -6,6 +6,7 @@ from ... import ErsiliaBase
 
 import requests
 
+
 class JsonModelsInterface(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -25,5 +26,3 @@ class JsonModelsInterface(ErsiliaBase):
     def items_all(self):
         models = self._read_json_file()
         return models
-    
-    

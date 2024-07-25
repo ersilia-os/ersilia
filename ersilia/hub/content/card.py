@@ -775,6 +775,7 @@ class LakeCard(ErsiliaBase):
         else:
             return card
 
+
 class S3JsonCard(JsonModelsInterface):
     def __init__(self, config_json=None):
         JsonModelsInterface.__init__(self, config_json=config_json)
@@ -784,7 +785,6 @@ class S3JsonCard(JsonModelsInterface):
         for model in all_models:
             if model["Identifier"] == model_id:
                 return model
-
 
 
 class ModelCard(object):
