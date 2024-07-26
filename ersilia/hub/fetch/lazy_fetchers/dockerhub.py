@@ -10,8 +10,6 @@ from ....default import (
     PREDEFINED_EXAMPLE_FILES,
     INFORMATION_FILE,
     API_SCHEMA_FILE,
-    SERVICE_CLASS_FILE,
-    MODEL_SIZE_FILE,
 )
 
 from ...pull.pull import ModelPuller
@@ -108,32 +106,19 @@ class ModelDockerHubFetcher(ErsiliaBase):
         :param service_class_file: File containing the model service class.
         :size_file: File containing the size of the pulled docker image.
         """
-        file = "{0}/dest/{1}/{2}".format(EOS, model_id, INFORMATION_FILE)
-        service_class_file = os.path.join(self._get_bundle_location(model_id), SERVICE_CLASS_FILE)
-        size_file = os.path.join(self._model_path(model_id), MODEL_SIZE_FILE)
-    
+        information_file = "{0}/dest/{1}/{2}".format(EOS, model_id, INFORMATION_FILE)
+        mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         try:
-            with open(service_class_file, "r") as f:
-                service_class = f.read().strip()
-        except FileNotFoundError:
-            return None
-
-        try:
-            with open(size_file, "r") as m:
-                size = json.load(m)
-        except FileNotFoundError:
-            return None
-
-        try:
-            with open(file, "r") as infile:
+            with open(information_file, "r") as infile:
                 data = json.load(infile)
         except FileNotFoundError:
+            self.logger.error("Information file not found, not modifying anything")
             return None
 
-        data["service_class"] = service_class
-        data["size"] = size
-
-        with open(file, "w") as outfile:
+        data["service_class"] = "pulled_docker" # Using this literal here to prevent a file read 
+        # from service class file for a model fetched through DockerHub since we already know the service class.
+        data["size"] = mp._get_size_of_local_docker_image_in_mb()
+        with open(information_file, "w") as outfile:
             json.dump(data, outfile, indent=4)
 
     @throw_ersilia_exception
@@ -141,6 +126,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         if not DockerRequirement().is_active():
             raise DockerNotActiveError()
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
+        self.logger.debug("Pulling model image from DockerHub")
         mp.pull()
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
         mr.register(is_from_dockerhub=True)
