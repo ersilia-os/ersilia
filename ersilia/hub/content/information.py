@@ -16,7 +16,6 @@ from ...default import (
     CARD_FILE,
     SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
-    EOS,
     MODEL_SOURCE_FILE,
 )
 
@@ -47,7 +46,7 @@ class Information(ErsiliaBase):
             return None
 
     def _get_model_source(self):
-        model_source_file = os.path.join(EOS, MODEL_SOURCE_FILE)
+        model_source_file = os.path.join((self.dest_folder), MODEL_SOURCE_FILE)
         if os.path.exists(model_source_file):
             with open(model_source_file) as f:
                 return f.read().rstrip()

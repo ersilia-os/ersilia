@@ -81,7 +81,7 @@ class ModelFetcher(ErsiliaBase):
         self.model_source = next(
             (source for condition, source in sources.items() if condition), "DockerHub"
         )
-        self.logger.debug("Model was fetched from {0}".format(self.model_source))
+        self.logger.debug("Model getting fetched from {0}".format(self.model_source))
 
     @throw_ersilia_exception
     def _decide_fetcher(self, model_id):
@@ -228,8 +228,7 @@ class ModelFetcher(ErsiliaBase):
             return
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
-            print("Fetching from DockerHub")
-            self.logger.debug("Fetching from DockerHub")
+            self.logger.debug("Decided to fetch from DockerHub")
             self._fetch_from_dockerhub(model_id=model_id)
             return
         if self.overwrite is None:
@@ -239,9 +238,9 @@ class ModelFetcher(ErsiliaBase):
         self._fetch_not_from_dockerhub(model_id=model_id)
 
     def fetch(self, model_id):
-        self.logger.debug("Writing model source to file")
-        model_source_file = os.path.join(EOS, MODEL_SOURCE_FILE)
-        with open(model_source_file, "w") as f:
-            f.write(self.model_source)
         self._fetch(model_id)
         self._standard_csv_example(model_id)
+        self.logger.debug("Writing model source to file")
+        model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
+        with open(model_source_file, "w") as f:
+            f.write(self.model_source)

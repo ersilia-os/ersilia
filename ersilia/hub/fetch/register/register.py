@@ -125,7 +125,7 @@ class ModelRegisterer(ErsiliaBase):
             raise Exception
         if is_from_dockerhub and not is_from_hosted:
             self.register_from_dockerhub()
-            self.register_not_from_dockerhub()
+            self.register_not_from_hosted()
         if not is_from_dockerhub and is_from_hosted:
             self.register_from_hosted()
             self.register_not_from_dockerhub()
