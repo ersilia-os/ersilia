@@ -106,7 +106,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         :param service_class_file: File containing the model service class.
         :size_file: File containing the size of the pulled docker image.
         """
-        information_file = "{0}/dest/{1}/{2}".format(EOS, model_id, INFORMATION_FILE)
+        information_file = os.path.join(self._model_path(model_id), INFORMATION_FILE)
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         try:
             with open(information_file, "r") as infile:
@@ -115,9 +115,11 @@ class ModelDockerHubFetcher(ErsiliaBase):
             self.logger.error("Information file not found, not modifying anything")
             return None
 
-        data["service_class"] = "pulled_docker" # Using this literal here to prevent a file read 
-        # from service class file for a model fetched through DockerHub since we already know the service class.
-        data["size"] = mp._get_size_of_local_docker_image_in_mb()
+        # Using this literal here to prevent a file read 
+        # from service class file for a model fetched through DockerHub
+        # since we already know the service class.
+        data["service_class"] = "pulled_docker"
+        data["size"] = mp._get_size_of_local_docker_image_in_mb()  # TODO this should probably be a util function 
         with open(information_file, "w") as outfile:
             json.dump(data, outfile, indent=4)
 

@@ -18,14 +18,16 @@ from ..utils.docker import SimpleDocker
 from ..utils.venv import SimpleVenv
 from ..default import DEFAULT_VENV
 from ..default import PACKMODE_FILE, APIS_LIST_FILE
-from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, CONTAINER_LOGS_TMP_DIR
 from ..default import IS_FETCHED_FROM_HOSTED_FILE
 from ..default import INFORMATION_FILE
 from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
+from ..utils.session import get_session_dir
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
 )
+from ..utils.logging import make_temp_dir
 from ..setup.requirements.conda import CondaRequirement
 
 SLEEP_SECONDS = 1
@@ -57,7 +59,7 @@ class BaseServing(ErsiliaBase):
 
     def _get_info_from_bento(self):
         """Get info available from the Bento"""
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "information.json")
         cmd = "bentoml info --quiet {0}:{1} > {2}".format(
             self.model_id, self.bundle_tag, tmp_file
@@ -139,7 +141,7 @@ class _BentoMLService(BaseServing):
                 )
             )
         self.logger.debug("Free port: {0}".format(self.port))
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "serve.sh")
         tmp_file = os.path.join(tmp_folder, "serve.log")
         tmp_pid = os.path.join(tmp_folder, "serve.pid")
@@ -246,7 +248,7 @@ class _FastApiService(BaseServing):
                 )
             )
         self.logger.debug("Free port: {0}".format(self.port))
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "serve.sh")
         tmp_file = os.path.join(tmp_folder, "serve.log")
         tmp_pid = os.path.join(tmp_folder, "serve.pid")
@@ -653,12 +655,14 @@ class PulledDockerImageService(BaseServing):
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
         self.logger.debug("Starting Docker Daemon service")
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.container_tmp_logs = os.path.join(get_session_dir(), CONTAINER_LOGS_TMP_DIR)
         self.logger.debug(
-            "Creating temporary folder {0} and mounting as volume in container".format(
-                self.tmp_folder
+            "Creating container tmp logs folder {0} and mounting as volume in container".format(
+                self.container_tmp_logs
             )
         )
+        if not os.path.exists(self.container_tmp_logs):
+            os.makedirs(self.container_tmp_logs)
         self.simple_docker = SimpleDocker()
         self.pid = -1
         self._mem_gb = self._get_memory()
@@ -778,7 +782,7 @@ class PulledDockerImageService(BaseServing):
     def serve(self):
         self._stop_all_containers_of_image()
         self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
-        self.volumes = {self.tmp_folder: {"bind": "/ersilia_tmp", "mode": "rw"}}
+        self.volumes = {self.container_tmp_logs: {"bind": "/tmp", "mode": "rw"}}
         self.logger.debug("Trying to run container")
         if self._mem_gb is None:
             self.container = self.client.containers.run(

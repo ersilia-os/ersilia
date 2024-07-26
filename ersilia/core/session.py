@@ -4,15 +4,17 @@ import json
 import time
 import uuid
 import shutil
+from ..utils.session import get_session_dir
 
-from ..default import EOS
+from ..default import SESSIONS_DIR
 from .base import ErsiliaBase
 
 
 class Session(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-        self.session_file = os.path.join(EOS, "session.json")
+        session_dir = get_session_dir()
+        self.session_file = os.path.join(session_dir, "session.json")
 
     def current_model_id(self):
         data = self.get()
