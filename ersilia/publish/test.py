@@ -15,6 +15,7 @@ from .. import ErsiliaBase
 from .. import throw_ersilia_exception
 from .. import ErsiliaModel
 from ..utils.exceptions_utils import test_exceptions as texc
+from ..utils.logging import make_temp_dir
 from ..utils.terminal import run_command_check_output
 from ..core.session import Session
 from ..default import INFORMATION_FILE
@@ -39,7 +40,7 @@ class ModelTester(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.model_size = 0
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.tmp_folder = make_temp_dir(prefix="ersilia-")
         self._info = self._read_information()
         self._input = self._info["card"]["Input"]
         self._output_type = self._info["card"]["Output Type"]

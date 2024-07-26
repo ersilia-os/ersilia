@@ -15,6 +15,7 @@ from ...utils.exceptions_utils.pull_exceptions import (
 
 from ...utils.docker import SimpleDocker
 from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, EOS, MODEL_SIZE_FILE
+from ...utils.logging import make_temp_dir
 
 PULL_IMAGE = os.environ.get("PULL_IMAGE", "Y")
 
@@ -112,7 +113,7 @@ class ModelPuller(ErsiliaBase):
                     "Trying to pull image {0}/{1}".format(DOCKERHUB_ORG, self.model_id)
                 )
                 tmp_file = os.path.join(
-                    tempfile.mkdtemp(prefix="ersilia-"), "docker_pull.log"
+                    make_temp_dir(prefix="ersilia-"), "docker_pull.log"
                 )
                 self.logger.debug("Keeping logs of pull in {0}".format(tmp_file))
                 run_command(

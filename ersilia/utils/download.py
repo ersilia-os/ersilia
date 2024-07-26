@@ -14,7 +14,7 @@ from .terminal import run_command
 from .. import logger
 
 from ..default import S3_BUCKET_URL, S3_BUCKET_URL_ZIP
-
+from ..utils.logging import make_temp_dir
 
 class PseudoDownloader(object):
     def __init__(self, overwrite):
@@ -125,7 +125,7 @@ class GitHubDownloader(object):
             return False
 
     def _clone_with_git(self, org, repo, destination):
-        tmp_folder = os.path.abspath(tempfile.mkdtemp(prefix="ersilia-"))
+        tmp_folder = os.path.abspath(make_temp_dir(prefix="ersilia-"))
         script = """
         #Disabling automatic LFS clone (s3 feature) by adding GIT_LFS_SKIP_SMUDGE=1
         cd {0}
@@ -136,7 +136,7 @@ class GitHubDownloader(object):
             tmp_folder, org, repo, destination
         )
         run_file = os.path.join(
-            os.path.abspath(tempfile.mkdtemp(prefix="ersilia")), "run.sh"
+            os.path.abspath(make_temp_dir(prefix="ersilia")), "run.sh"
         )
         with open(run_file, "w") as f:
             f.write(script)
@@ -225,7 +225,7 @@ class GitHubDownloader(object):
         # not downloaded from an S3 bucket or have unexpected sha256 value.
         self.logger.debug("⏳ Trying LFS clone for file {0}".format(filename))
         script = "cd {0}; git lfs pull --include {1}".format(destination, filename)
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         run_file = os.path.join(tmp_folder, "run_lfs.sh")
         with open(run_file, "w") as f:
             f.write(script)

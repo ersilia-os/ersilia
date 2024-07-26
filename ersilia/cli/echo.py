@@ -5,12 +5,13 @@ except:
 import click
 import os
 import json
-from ..default import EOS, SILENCE_FILE
+from ..default import SILENCE_FILE
+from ..utils.session import get_session_dir
 
 
 class Silencer(object):
     def __init__(self):
-        self.silence_file = os.path.join(EOS, SILENCE_FILE)
+        self.silence_file = os.path.join(get_session_dir(), SILENCE_FILE)
         if not os.path.exists(self.silence_file):
             self.speak()
 

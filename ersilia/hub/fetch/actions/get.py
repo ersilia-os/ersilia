@@ -18,6 +18,7 @@ from ....utils.exceptions_utils.fetch_exceptions import (
 from .template_resolver import TemplateResolver
 
 from ....default import S3_BUCKET_URL_ZIP, PREDEFINED_EXAMPLE_FILES
+from ....utils.logging import make_temp_dir
 
 MODEL_DIR = "model"
 ROOT = os.path.basename(os.path.abspath(__file__))
@@ -207,7 +208,7 @@ class ModelRepositoryGetter(BaseAction):
 
     def _copy_zip_from_s3(self, dst):
         self.logger.debug("Downloading model from S3 in zipped format")
-        tmp_file = os.path.join(tempfile.mkdtemp("ersilia-"), "model.zip")
+        tmp_file = os.path.join(make_temp_dir("ersilia-"), "model.zip")
         self.s3_down.download_from_s3(
             bucket_url=S3_BUCKET_URL_ZIP,
             file_name=self.model_id + ".zip",

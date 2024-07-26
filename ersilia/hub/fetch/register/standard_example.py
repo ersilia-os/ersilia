@@ -46,9 +46,8 @@ class ModelStandardExample(ErsiliaBase):
         self.logger.debug(cmd_output)
         if "Welcome to Ersilia" in cmd_output:
             self.logger.debug("No need to use Conda!")
-            for cmd in commands:
-                self.logger.debug(cmd)
-                run_command(cmd)
+            cmd = " && ".join(commands)
+            run_command(cmd)
         else:
             self.logger.debug("Will run this through Conda")
             env_name = os.environ.get("CONDA_DEFAULT_ENV")

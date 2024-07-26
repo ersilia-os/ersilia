@@ -12,6 +12,7 @@ import tempfile
 import subprocess
 import csv
 
+from .....utils.logging import make_temp_dir
 CHECKPOINTS_BASEDIR = "checkpoints"
 FRAMEWORK_BASEDIR = "framework"
 
@@ -62,7 +63,7 @@ class Model(object):
         self.framework_dir = os.path.abspath(dest)
 
     def run(self, input_list):
-        tmp_folder = tempfile.mkdtemp(prefix="eos-")
+        tmp_folder = make_temp_dir(prefix="eos-")
         data_file = os.path.join(tmp_folder, self.DATA_FILE)
         output_file = os.path.join(tmp_folder, self.OUTPUT_FILE)
         log_file = os.path.join(tmp_folder, self.LOG_FILE)

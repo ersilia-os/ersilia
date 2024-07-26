@@ -3,6 +3,7 @@ import tempfile
 
 from ..hub.content.card import ReadmeMetadata, AirtableMetadata, RepoMetadataFile
 from ..utils.terminal import run_command
+from ..utils.logging import make_temp_dir
 from .. import ErsiliaBase
 
 from ..default import GITHUB_ORG
@@ -16,7 +17,7 @@ class ReadmeUpdater(ErsiliaBase):
         else:
             self.repo_path = None
         self.commit = commit
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-os")
+        self.tmp_folder = make_temp_dir(prefix="ersilia-os")
         self.cwd = os.getcwd()
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
@@ -68,7 +69,7 @@ class ReadmeUpdater(ErsiliaBase):
 class JsonUpdater(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
         self.model_id = model_id
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-os")
+        self.tmp_folder = make_temp_dir(prefix="ersilia-os")
         self.cwd = os.getcwd()
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 

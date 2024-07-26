@@ -11,6 +11,7 @@ from .supp.conda_env_resolve import CHECKSUM_NCHAR, CHECKSUM_FILE
 from ..default import CONDA_ENV_YML_FILE
 from .. import logger
 from ..utils.exceptions_utils.fetch_exceptions import ModelPackageInstallError
+from ..utils.logging import make_temp_dir
 from .. import throw_ersilia_exception
 
 BASE = "base"
@@ -235,7 +236,7 @@ class SimpleConda(CondaUtils):
         CondaUtils.__init__(self, config_json=config_json)
 
     def _env_list(self):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "env_list.tsv")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = """
@@ -281,7 +282,7 @@ class SimpleConda(CondaUtils):
         return envs_list
 
     def get_python_path_env(self, environment):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "tmp.txt")
         self.run_commandlines(environment, "which python > {0}".format(tmp_file))
         with open(tmp_file, "r") as f:
@@ -291,7 +292,7 @@ class SimpleConda(CondaUtils):
     def delete_one(self, environment):
         if not self.exists(environment):
             return
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
@@ -327,7 +328,7 @@ class SimpleConda(CondaUtils):
         if self.is_base():
             return
         yml_file = os.path.join(dest, CONDA_ENV_YML_FILE)
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
@@ -350,7 +351,7 @@ class SimpleConda(CondaUtils):
             raise Exception("{0} source environment does not exist".format(src_env))
         if self.exists(dst_env):
             raise Exception("{0} destination environment exists".format(dst_env))
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
@@ -398,12 +399,12 @@ class SimpleConda(CondaUtils):
         logger.debug(commandlines)
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.debug("Activating base environment")
         logger.debug("Current working directory: {0}".format(os.getcwd()))
         self.create_executable_bash_script(environment, commandlines, tmp_script)
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_log = os.path.join(tmp_folder, "command_outputs.log")
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
@@ -436,7 +437,7 @@ class StandaloneConda(object):
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
 
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.debug("Activating environment")
         logger.debug("Current working directory: {0}".format(os.getcwd()))
@@ -449,7 +450,7 @@ class StandaloneConda(object):
         with open(tmp_script, "w") as f:
             f.write(bash_script)
 
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_log = os.path.join(tmp_folder, "command_outputs.log")
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))

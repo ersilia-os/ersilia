@@ -29,6 +29,7 @@ from ..io.readers.file import FileTyper, TabularFileReader
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
 from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
+from ..utils.logging import make_temp_dir
 
 try:
     import pandas as pd
@@ -222,7 +223,7 @@ class ErsiliaModel(ErsiliaBase):
                 R += [r]
             return json.dumps(R, indent=4)
         else:
-            tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+            tmp_folder = make_temp_dir(prefix="ersilia-")
             is_h5_serializable = self.api_schema.is_h5_serializable(
                 api_name=api.api_name
             )

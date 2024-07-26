@@ -41,6 +41,7 @@ from ...utils.exceptions_utils.card_exceptions import (
     MemoryGbBaseInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
+from ...utils.logging import make_temp_dir
 
 try:
     from isaura.core.hdf5 import Hdf5Explorer
@@ -622,7 +623,7 @@ class ReadmeCard(ErsiliaBase):
         return url
 
     def _gh_view(self, model_id):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "view.md")
         cmd = "gh repo view {0}/{1} > {2}".format("ersilia-os", model_id, tmp_file)
         run_command(cmd)

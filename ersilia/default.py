@@ -28,11 +28,7 @@ DEFAULT_MODEL_ID = "eos0zzz"
 DEFAULT_VENV = "env"
 DEFAULT_API_NAME = "run"
 PACKMODE_FILE = "pack_mode.txt"
-LOGGING_FILE = "console.log"
-CURRENT_LOGGING_FILE = "current.log"
 CARD_FILE = "card.json"
-SILENCE_FILE = ".silence.json"
-VERBOSE_FILE = ".verbose.json"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
@@ -60,6 +56,20 @@ ERSILIA_RUNS_FOLDER = "ersilia_runs"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
 PACK_METHOD_FASTAPI = "fastapi"
 PACK_METHOD_BENTOML = "bentoml"
+
+# Session and logging
+SESSIONS_DIR = os.path.join(EOS, "sessions")
+if not os.path.exists(SESSIONS_DIR):
+    os.makedirs(SESSIONS_DIR, exist_ok=True)
+SESSION_HISTORY_FILE = "history.txt"
+SESSION_JSON = "session.json"
+LOGS_DIR = "logs"
+CONTAINER_LOGS_TMP_DIR = "_logs/tmp"
+CONTAINER_LOGS_EOS_DIR = "_logs/eos" # This is not used
+LOGGING_FILE = "console.log"
+CURRENT_LOGGING_FILE = "current.log"
+SILENCE_FILE = ".silence.json"
+VERBOSE_FILE = ".verbose.json"
 
 # Isaura data lake
 H5_EXTENSION = ".h5"
