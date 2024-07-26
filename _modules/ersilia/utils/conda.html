@@ -373,7 +373,7 @@
         <span class="n">bash_script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activate_base</span><span class="p">()</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        source </span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
-<span class="s2">        conda env remove --name </span><span class="si">{1}</span>
+<span class="s2">        conda env remove --name </span><span class="si">{1}</span><span class="s2"> -y</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="n">environment</span>
         <span class="p">)</span>
