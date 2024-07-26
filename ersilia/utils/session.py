@@ -47,7 +47,7 @@ def remove_orphaned_sessions():
         try:
             remove_session_dir(session)
         except PermissionError:  #TODO Is there a better way to handle this?
-            raise Exception(f"Could not remove session {session}, permission denied")
+            pass  # TODO we should at least log this somehow
 
 def get_session_id():
     return f"session_{get_parent_pid()}"
