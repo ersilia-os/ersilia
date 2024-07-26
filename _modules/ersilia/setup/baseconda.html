@@ -82,6 +82,7 @@
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">..utils.versioning</span> <span class="kn">import</span> <span class="n">Versioner</span>
 <span class="kn">from</span> <span class="nn">.utils.clone</span> <span class="kn">import</span> <span class="n">ErsiliaCloner</span>
+<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
 
@@ -134,7 +135,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">base_conda_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SetupBaseConda.find_closest_python_version"><a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.find_closest_python_version">[docs]</a>    <span class="k">def</span> <span class="nf">find_closest_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_version</span><span class="p">):</span>
-        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;conda_search_python.txt&quot;</span><span class="p">)</span>
         <span class="n">tmp_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;script.sh&quot;</span><span class="p">)</span>
         <span class="n">is_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">is_base</span><span class="p">()</span>
@@ -172,7 +173,7 @@
             <span class="k">return</span>
         <span class="n">ptag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_install_command</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
-        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_ersiliaos</span><span class="p">(</span><span class="n">org</span><span class="p">):</span>
             <span class="n">tmp_repo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cloner</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">ptag</span><span class="p">[</span><span class="s2">&quot;ver&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>

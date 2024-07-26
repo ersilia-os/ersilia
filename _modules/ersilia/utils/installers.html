@@ -88,6 +88,7 @@
 <span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">.versioning</span> <span class="kn">import</span> <span class="n">Versioner</span>
 <span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">from</span> <span class="nn">.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 
 <span class="n">INSTALL_LOG_FILE</span> <span class="o">=</span> <span class="s2">&quot;.install.log&quot;</span>
 
@@ -233,7 +234,7 @@
         <span class="n">sc</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">eos_base_env</span><span class="p">):</span>
             <span class="k">return</span>
-        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_repo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone_repo</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">)</span>
         <span class="n">tmp_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;script.sh&quot;</span><span class="p">)</span>
         <span class="n">tmp_python_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;base_installer.py&quot;</span><span class="p">)</span>
@@ -294,7 +295,7 @@
         <span class="k">if</span> <span class="n">docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="c1"># get a copy of the repository in a temporary directory</span>
-        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_repo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone_repo</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
         <span class="c1"># write the dockerfile</span>
         <span class="n">dockerfile</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>

@@ -96,6 +96,7 @@
 <span class="kn">from</span> <span class="nn">.template_resolver</span> <span class="kn">import</span> <span class="n">TemplateResolver</span>
 
 <span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">S3_BUCKET_URL_ZIP</span><span class="p">,</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span>
+<span class="kn">from</span> <span class="nn">....utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 
 <span class="n">MODEL_DIR</span> <span class="o">=</span> <span class="s2">&quot;model&quot;</span>
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
@@ -285,7 +286,7 @@
 
     <span class="k">def</span> <span class="nf">_copy_zip_from_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Downloading model from S3 in zipped format&quot;</span><span class="p">)</span>
-        <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">),</span> <span class="s2">&quot;model.zip&quot;</span><span class="p">)</span>
+        <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">make_temp_dir</span><span class="p">(</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">),</span> <span class="s2">&quot;model.zip&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s3_down</span><span class="o">.</span><span class="n">download_from_s3</span><span class="p">(</span>
             <span class="n">bucket_url</span><span class="o">=</span><span class="n">S3_BUCKET_URL_ZIP</span><span class="p">,</span>
             <span class="n">file_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span><span class="p">,</span>
