@@ -297,7 +297,7 @@ class SimpleConda(CondaUtils):
         bash_script = self.activate_base()
         bash_script += """
         source {0}/etc/profile.d/conda.sh
-        conda env remove --name {1}
+        conda env remove --name {1} -y
         """.format(
             self.conda_prefix(True), environment
         )

@@ -7,6 +7,7 @@ from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
+from ...db.hubdata.json_models_interface import JsonModelsInterface
 import validators
 from functools import lru_cache
 
@@ -776,11 +777,23 @@ class LakeCard(ErsiliaBase):
             return card
 
 
+class S3JsonCard(JsonModelsInterface):
+    def __init__(self, config_json=None):
+        JsonModelsInterface.__init__(self, config_json=config_json)
+
+    def get(self, model_id):
+        all_models = self.items_all()
+        for model in all_models:
+            if model["Identifier"] == model_id:
+                return model
+
+
 class ModelCard(object):
     def __init__(self, config_json=None):
 
         self.lc = LocalCard(config_json=config_json)
         self.mc = MetadataCard(config_json=config_json)
+        self.jc = S3JsonCard(config_json=config_json)
         self.ac = AirtableCard(config_json=config_json)
         self.rc = ReadmeCard(config_json=config_json)
 
@@ -789,6 +802,9 @@ class ModelCard(object):
         if card is not None:
             return card
         card = self.mc.get(model_id)
+        if card is not None:
+            return card
+        card = self.jc.get(model_id)
         if card is not None:
             return card
         card = self.ac.get(model_id)

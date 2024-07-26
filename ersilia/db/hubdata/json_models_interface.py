@@ -1,31 +1,28 @@
 import json
 import boto3
 
-from ...default import ERSILIA_MODEL_HUB_S3_BUCKET
+from ...default import ERSILIA_MODEL_HUB_S3_BUCKET, MODELS_JSON
+from ... import ErsiliaBase
 
-AWS_ACCOUNT_REGION = "eu-central-1"
+import requests
 
 
-class JsonModelsInterface:
-    def __init__(self, json_file_name):
-        self.json_file_name = json_file_name
-        self.s3_client = boto3.client("s3", region_name=AWS_ACCOUNT_REGION)
+class JsonModelsInterface(ErsiliaBase):
+    def __init__(self, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        self.json_file_name = MODELS_JSON
+        self.url = f"https://{ERSILIA_MODEL_HUB_S3_BUCKET}.s3.eu-central-1.amazonaws.com/{MODELS_JSON}"
 
     def _read_json_file(self):
-        s3_response = self.s3_client.get_object(
-            Bucket=ERSILIA_MODEL_HUB_S3_BUCKET, Key=self.json_file_name
-        )
-        s3_object_body = s3_response.get("Body")
-        content = s3_object_body.read().decode("utf-8")
-        json_dict = json.loads(content)
-
-        return json_dict
+        response = requests.get(self.url)
+        models_list = response.json()
+        return models_list
 
     def items(self):
-        json_dict = self._read_json_file()
-        for key, value in json_dict.items:
-            yield key, value
+        models = self._read_json_file()
+        for mdl in models:
+            yield mdl
 
     def items_all(self):
-        items = self._read_json_file()
-        return items
+        models = self._read_json_file()
+        return models

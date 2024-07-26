@@ -1,16 +1,14 @@
 import os
 import requests
 import json
-import validators
 
 from ..register.register import ModelRegisterer
 from ....serve.services import HostedService
-from ....db.hubdata.interfaces import AirtableInterface
-
 from .... import ErsiliaBase
 from .... import EOS
 from ....default import API_SCHEMA_FILE, INFORMATION_FILE, IS_FETCHED_FROM_HOSTED_FILE
 from .. import STATUS_FILE
+from ...fetch import ModelURLResolver
 
 
 class ModelHostedFetcher(ErsiliaBase):
@@ -32,28 +30,14 @@ class ModelHostedFetcher(ErsiliaBase):
             return False
 
     def _is_available_unknown_url(self, model_id):
-        self.logger.debug("Trying to find an available URL where the model is hosted")
-        url_field = "Host URL"
-        identifier_field = "Identifier"
-        ai = AirtableInterface(config_json=self.config_json)
-        for record in ai.items_all():
-            fields = record["fields"]
-            if fields[identifier_field] == model_id:
-                if url_field not in fields:
-                    self.logger.debug("No hosted URL found for this model")
-                    return False
-                url = fields[url_field]
-                if validators.url(url):
-                    self.logger.debug(
-                        "This model has an associated URL: {0}".format(url)
-                    )
-                    return True
-                else:
-                    self.logger.debug(
-                        "This doesn't seem to be a valid URL: {0}".format(url)
-                    )
-        self.logger.debug("Model was not found in AirTable")
-        return False
+        self.logger.debug(
+            "Trying to find an available URL where the model is hosted using Models JSON or Airtable"
+        )
+        mdl_url_resolver = ModelURLResolver(
+            model_id=model_id, config_json=self.config_json
+        )
+        is_valid_url, _ = mdl_url_resolver.resolve_valid_hosted_model_url(model_id)
+        return is_valid_url
 
     def is_available(self, model_id):
         if self.url is None:
