@@ -1,6 +1,7 @@
 """
 Utility functions to get information about the working environment.
 """
+
 import pkg_resources
 
 

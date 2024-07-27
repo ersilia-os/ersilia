@@ -7,18 +7,19 @@ except:
     bentoml = None
 
 from . import BasePack
-from ....utils.terminal import run_command
-from ....db.environments.localdb import EnvironmentDb
-from ....db.environments.managers import DockerManager
-from ....utils.venv import SimpleVenv
-from ....utils.conda import SimpleConda
-from ....utils.docker import SimpleDocker
-from ....setup.baseconda import SetupBaseConda
+from .....utils.terminal import run_command
+from .....db.environments.localdb import EnvironmentDb
+from .....db.environments.managers import DockerManager
+from .....utils.venv import SimpleVenv
+from .....utils.conda import SimpleConda
+from .....utils.docker import SimpleDocker
+from .....setup.baseconda import SetupBaseConda
 
-from ....default import DEFAULT_VENV
-from .. import MODEL_INSTALL_COMMANDS_FILE
-from .... import throw_ersilia_exception
-from ....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
+from .....default import DEFAULT_VENV
+from ... import MODEL_INSTALL_COMMANDS_FILE
+from ..... import throw_ersilia_exception
+from .....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
+from .....utils.logging import make_temp_dir
 
 USE_CHECKSUM = False
 
@@ -199,7 +200,7 @@ class DockerPack(BasePack):
         self.logger.debug("Executing container {0}".format(name))
         self.docker.exec_container(name, "python %s" % self.cfg.HUB.PACK_SCRIPT)
         self.logger.debug("Copying bundle from docker image to host")
-        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_dir = make_temp_dir(prefix="ersilia-")
         self.logger.debug("Using this temporary directory: {0}".format(tmp_dir))
         self.docker.cp_from_container(
             name, "/root/bentoml/repository/%s" % model_id, tmp_dir

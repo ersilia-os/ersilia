@@ -6,6 +6,7 @@ from ...bundle.repo import ServiceFile
 from . import BaseAction
 
 from ....default import INFORMATION_FILE
+from ....utils.paths import resolve_pack_method
 
 
 class ModelInformer(BaseAction):
@@ -26,8 +27,10 @@ class ModelInformer(BaseAction):
         sf = ServiceFile(
             path=os.path.join(self._get_bundle_location(self.model_id), self.model_id)
         )
-        sf.add_info_api(information_file=self.information_file)
+        if os.path.exists(sf.get_file()):
+            sf.add_info_api(information_file=self.information_file)
 
     def inform(self):
         self._write_information_json()
-        self._add_info_api()
+        if resolve_pack_method(self._get_bundle_location(self.model_id)) == "bentoml":
+            self._add_info_api()

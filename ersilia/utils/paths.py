@@ -2,6 +2,8 @@ import re
 import os
 import collections
 from pathlib import Path
+from ersilia import logger
+from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 
 MODELS_DEVEL_DIRNAME = "models"
 
@@ -47,24 +49,6 @@ class Paths(object):
                 return None
         return path
 
-    def models_development_path(self):
-        """Try to guess the models path in the local computer.
-        The directory with more 'eos0xxx' subdirectories will be returned."""
-        org_dev_path = self.org_development_path()
-        if org_dev_path is None:
-            return
-        regex = self._eos_regex()
-        cands = collections.defaultdict(int)
-        for dirpath, dirnames, filenames in os.walk(org_dev_path):
-            ap = os.path.abspath(dirpath)
-            bn = os.path.basename(ap)
-            if bn == MODELS_DEVEL_DIRNAME:
-                for dn in dirnames:
-                    if regex.match(dn):
-                        cands[ap] += 1
-        path = sorted(cands.items(), key=lambda item: -item[1])[0][0]
-        return path
-
     @staticmethod
     def exists(path):
         if path is None:
@@ -73,3 +57,12 @@ class Paths(object):
             return True
         else:
             return False
+
+
+def resolve_pack_method(model_path):
+    if os.path.exists(os.path.join(model_path, "installs", "install.sh")):
+        return PACK_METHOD_FASTAPI
+    elif os.path.exists(os.path.join(model_path, "bentoml.yml")):
+        return PACK_METHOD_BENTOML
+    logger.warning("Could not resolve pack method")
+    return None

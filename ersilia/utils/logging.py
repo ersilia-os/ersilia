@@ -1,11 +1,26 @@
-import sys
 import os
+import sys
 import json
+from pathlib import Path
+import tempfile
 from loguru import logger
-from ..default import EOS, LOGGING_FILE, CURRENT_LOGGING_FILE, VERBOSE_FILE
+from ..default import LOGGING_FILE, CURRENT_LOGGING_FILE, VERBOSE_FILE
+from ..utils.session import get_session_dir
 
 
 ROTATION = "10 MB"
+
+
+def make_temp_dir(prefix):
+    tmp_dir = tempfile.mkdtemp(prefix=prefix)
+    tmp_dirname = os.path.basename(tmp_dir)
+    logs_tmp_dir = os.path.join(get_session_dir(), "logs", "tmp")
+    if not os.path.exists(logs_tmp_dir):
+        os.makedirs(logs_tmp_dir)
+    dst = Path(os.path.join(logs_tmp_dir, tmp_dirname))
+    src = Path(tmp_dir)
+    dst.symlink_to(src, target_is_directory=True)
+    return tmp_dir
 
 
 class Logger(object):
@@ -15,24 +30,23 @@ class Logger(object):
         self._console = None
         self._file = None
         self.fmt = "{time:HH:mm:ss} | {level: <8} | {message}"
-        self._verbose_file = os.path.join(EOS, VERBOSE_FILE)
+        self._verbose_file = os.path.join(get_session_dir(), VERBOSE_FILE)
         self._log_to_console()
         self._log_to_file()
         self._log_to_current_file()
         self._log_terminal_commands_to_console()
 
     def _log_to_file(self):
+        logging_file = os.path.join(get_session_dir(), LOGGING_FILE)    
         self._file = self.logger.add(
-            os.path.join(EOS, LOGGING_FILE), format=self.fmt, rotation=ROTATION
+            logging_file, format=self.fmt, rotation=ROTATION
         )
 
     def _log_to_current_file(self):
-        current_log_file = os.path.join(EOS, CURRENT_LOGGING_FILE)
-
-        if os.path.exists(current_log_file):
-            os.remove(current_log_file)
+        session_dir = get_session_dir()
+        current_log_file = os.path.join(session_dir, CURRENT_LOGGING_FILE)
         self._current_file = self.logger.add(
-            os.path.join(EOS, CURRENT_LOGGING_FILE), format=self.fmt, rotation=ROTATION
+            current_log_file, format=self.fmt, rotation=ROTATION
         )
 
     def _log_to_console(self):

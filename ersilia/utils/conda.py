@@ -11,6 +11,7 @@ from .supp.conda_env_resolve import CHECKSUM_NCHAR, CHECKSUM_FILE
 from ..default import CONDA_ENV_YML_FILE
 from .. import logger
 from ..utils.exceptions_utils.fetch_exceptions import ModelPackageInstallError
+from ..utils.logging import make_temp_dir
 from .. import throw_ersilia_exception
 
 BASE = "base"
@@ -235,7 +236,7 @@ class SimpleConda(CondaUtils):
         CondaUtils.__init__(self, config_json=config_json)
 
     def _env_list(self):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "env_list.tsv")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = """
@@ -252,6 +253,10 @@ class SimpleConda(CondaUtils):
             for l in f:
                 envs += [l.rstrip()]
         return envs
+
+    def create(self, environment, python_version):
+        cmd = "conda create -n {0} python={1} -y".format(environment, python_version)
+        run_command(cmd)
 
     def active_env(self):
         envs = self._env_list()
@@ -277,7 +282,7 @@ class SimpleConda(CondaUtils):
         return envs_list
 
     def get_python_path_env(self, environment):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "tmp.txt")
         self.run_commandlines(environment, "which python > {0}".format(tmp_file))
         with open(tmp_file, "r") as f:
@@ -287,12 +292,12 @@ class SimpleConda(CondaUtils):
     def delete_one(self, environment):
         if not self.exists(environment):
             return
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
         source {0}/etc/profile.d/conda.sh
-        conda env remove --name {1}
+        conda env remove --name {1} -y
         """.format(
             self.conda_prefix(True), environment
         )
@@ -323,7 +328,7 @@ class SimpleConda(CondaUtils):
         if self.is_base():
             return
         yml_file = os.path.join(dest, CONDA_ENV_YML_FILE)
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
@@ -346,7 +351,7 @@ class SimpleConda(CondaUtils):
             raise Exception("{0} source environment does not exist".format(src_env))
         if self.exists(dst_env):
             raise Exception("{0} destination environment exists".format(dst_env))
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         bash_script = self.activate_base()
         bash_script += """
@@ -368,32 +373,38 @@ class SimpleConda(CondaUtils):
                     critical_errors += [l]
         return critical_errors
 
+    def create_executable_bash_script(self, environment, commandlines, file_name):
+        if type(commandlines) is list:
+            commandlines = "\n".join(commandlines)
+        bash_script = self.activate_base()
+        bash_script += """
+        source {0}/etc/profile.d/conda.sh
+        conda activate {1}
+        {2}
+        """.format(
+            self.conda_prefix(True), environment, commandlines
+        )
+        with open(file_name, "w") as f:
+            f.write(bash_script)
+        return file_name
+
     @throw_ersilia_exception
     def run_commandlines(self, environment, commandlines):
         """
         Run commands in a given conda environment.
         """
+        if type(commandlines) is list:
+            commandlines = " && ".join(commandlines)
         logger.debug("Run commandlines on {0}".format(environment))
         logger.debug(commandlines)
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.debug("Activating base environment")
         logger.debug("Current working directory: {0}".format(os.getcwd()))
-        bash_script = self.activate_base()
-        bash_script += """
-        source {0}/etc/profile.d/conda.sh
-        conda activate {1}
-        conda env list
-        {2}
-        """.format(
-            self.conda_prefix(True), environment, commandlines
-        )
-        with open(tmp_script, "w") as f:
-            f.write(bash_script)
-
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.create_executable_bash_script(environment, commandlines, tmp_script)
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_log = os.path.join(tmp_folder, "command_outputs.log")
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
@@ -426,7 +437,7 @@ class StandaloneConda(object):
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
 
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.debug("Activating environment")
         logger.debug("Current working directory: {0}".format(os.getcwd()))
@@ -439,7 +450,7 @@ class StandaloneConda(object):
         with open(tmp_script, "w") as f:
             f.write(bash_script)
 
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_log = os.path.join(tmp_folder, "command_outputs.log")
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))

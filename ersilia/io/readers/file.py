@@ -7,8 +7,8 @@ import numpy as np
 
 from ..shape import InputShape
 from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
-
 from ... import logger
+from ...utils.logging import make_temp_dir
 
 MIN_COLUMN_VALIDITY = 0.8
 FLATTENED_EVIDENCE = 0.2
@@ -68,7 +68,7 @@ class FileTyper(object):
 
 class BatchCacher(object):
     def __init__(self):
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.tmp_folder = make_temp_dir(prefix="ersilia-")
 
     def get_cached_files(self, prefix):
         idx2fn = {}
@@ -554,7 +554,7 @@ class StandardTabularFileReader(BatchCacher):
 class TabularFileReader(StandardTabularFileReader):
     def __init__(self, path, IO, sniff_line_limit=100):
         self.src_path = os.path.abspath(path)
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.tmp_folder = make_temp_dir(prefix="ersilia-")
         self.dst_path = os.path.join(self.tmp_folder, "standard_input_file.csv")
         self.path = self.dst_path
         self.IO = IO
@@ -720,7 +720,7 @@ class StandardJsonFileReader(BatchCacher):
 class JsonFileReader(StandardJsonFileReader):
     def __init__(self, path, IO):
         self.src_path = os.path.abspath(path)
-        self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        self.tmp_folder = make_temp_dir(prefix="ersilia-")
         self.dst_path = os.path.join(self.tmp_folder, "standard_input_file.json")
         self.path = self.dst_path
         self.IO = IO

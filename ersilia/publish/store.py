@@ -3,6 +3,7 @@ Class used to store model when done developing it.
 
 This functionality is used when developing of a model is done.
 """
+
 import os
 import shutil
 from .. import ErsiliaBase

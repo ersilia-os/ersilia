@@ -10,11 +10,13 @@ except:
     inputimeout = None
     TimeoutOccurred = None
 
-from ..default import EOS, VERBOSE_FILE
+from ..default import VERBOSE_FILE
+from ..utils.session import get_session_dir
+from ..utils.logging import make_temp_dir
 
 
 def is_quiet():
-    verbose_file = os.path.join(EOS, VERBOSE_FILE)
+    verbose_file = os.path.join(get_session_dir(), VERBOSE_FILE)
     if not os.path.exists(verbose_file):
         return False
     with open(verbose_file, "r") as f:
@@ -51,7 +53,8 @@ def run_command(cmd, quiet=None):
 def run_command_check_output(cmd):
     if type(cmd) is str:
         assert ">" not in cmd
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
+        os.listdir(tmp_folder)
         tmp_file = os.path.join(tmp_folder, "out.txt")
         cmd = cmd + " > " + tmp_file
         with open(os.devnull, "w") as fp:

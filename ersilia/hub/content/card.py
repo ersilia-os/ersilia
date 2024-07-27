@@ -7,7 +7,9 @@ from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
+from ...db.hubdata.json_models_interface import JsonModelsInterface
 import validators
+from functools import lru_cache
 
 try:
     from validators import ValidationFailure
@@ -39,13 +41,19 @@ from ...utils.exceptions_utils.card_exceptions import (
     MemoryGbBaseInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
+from ...utils.logging import make_temp_dir
 
 try:
     from isaura.core.hdf5 import Hdf5Explorer
 except:
     Hdf5Explorer = None
 
-from ...default import CARD_FILE, METADATA_JSON_FILE
+from ...default import (
+    CARD_FILE,
+    METADATA_JSON_FILE,
+    SERVICE_CLASS_FILE,
+    INFORMATION_FILE,
+)
 
 
 class BaseInformation(ErsiliaBase):
@@ -60,6 +68,7 @@ class BaseInformation(ErsiliaBase):
         self._mode = None
         self._task = None
         self._input = None
+
         self._input_shape = None
         self._output = None
         self._output_type = None
@@ -533,7 +542,7 @@ class ReadmeMetadata(ErsiliaBase):
         )
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
-        print(bi.as_dict())
+        self.logger.info(bi.as_dict())
         return bi
 
     def write_information(self, data: BaseInformation, readme_path=None):
@@ -614,7 +623,7 @@ class ReadmeCard(ErsiliaBase):
         return url
 
     def _gh_view(self, model_id):
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "view.md")
         cmd = "gh repo view {0}/{1} > {2}".format("ersilia-os", model_id, tmp_file)
         run_command(cmd)
@@ -702,18 +711,55 @@ class AirtableCard(AirtableInterface):
 
 
 class LocalCard(ErsiliaBase):
+    """
+    This class provides information on models that have been fetched and are available locally.
+    It retrieves and caches information about the models.
+    """
+
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    def get(self, model_id):
+    @lru_cache(maxsize=32)
+    def _load_data(self, model_id):
+        """
+        Loads the JSON data from the model's information file.
+        """
         model_path = self._model_path(model_id)
-        card_path = os.path.join(model_path, CARD_FILE)
+        info_file = os.path.join(model_path, INFORMATION_FILE)
+        if os.path.exists(info_file):
+            card_path = info_file
+        else:
+            card_path = os.path.join(model_path, CARD_FILE)
         if os.path.exists(card_path):
             with open(card_path, "r") as f:
                 card = json.load(f)
             return card
         else:
             return None
+
+    def get_service_class(self, model_id):
+        """
+        This method returns information about how the model was fetched by reading
+        the service class file located in the model's bundle directory. If the service
+        class file does not exist, it returns None.
+        """
+        service_class_path = os.path.join(
+            self._get_bundle_location(model_id), SERVICE_CLASS_FILE
+        )
+
+        if os.path.exists(service_class_path):
+            with open(service_class_path, "r") as f:
+                service_class = f.read().strip()
+            return service_class
+        else:
+            return None
+
+    def get(self, model_id):
+        """
+        This method returns the card for a model. If the model does not exist, it returns None.
+        """
+        card = self._load_data(model_id)
+        return card
 
 
 class LakeCard(ErsiliaBase):
@@ -731,10 +777,23 @@ class LakeCard(ErsiliaBase):
             return card
 
 
+class S3JsonCard(JsonModelsInterface):
+    def __init__(self, config_json=None):
+        JsonModelsInterface.__init__(self, config_json=config_json)
+
+    def get(self, model_id):
+        all_models = self.items_all()
+        for model in all_models:
+            if model["Identifier"] == model_id:
+                return model
+
+
 class ModelCard(object):
     def __init__(self, config_json=None):
+
         self.lc = LocalCard(config_json=config_json)
         self.mc = MetadataCard(config_json=config_json)
+        self.jc = S3JsonCard(config_json=config_json)
         self.ac = AirtableCard(config_json=config_json)
         self.rc = ReadmeCard(config_json=config_json)
 
@@ -743,6 +802,9 @@ class ModelCard(object):
         if card is not None:
             return card
         card = self.mc.get(model_id)
+        if card is not None:
+            return card
+        card = self.jc.get(model_id)
         if card is not None:
             return card
         card = self.ac.get(model_id)
@@ -760,3 +822,10 @@ class ModelCard(object):
             return json.dumps(card, indent=4)
         else:
             return card
+
+    def get_service_class(self, model_id, as_json=False):
+        service = self.lc.get_service_class(model_id)
+        if service is None:
+            return
+        else:
+            return service

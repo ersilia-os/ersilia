@@ -12,37 +12,41 @@ from .... import ErsiliaModel
 from ....io.input import ExampleGenerator
 from ....io.pure import PureDataTyper
 from ....io.annotated import AnnotatedDataTyper
-from ....default import API_SCHEMA_FILE, MODEL_SIZE_FILE, METADATA_JSON_FILE
+from ....default import (
+    API_SCHEMA_FILE,
+    MODEL_SIZE_FILE,
+    METADATA_JSON_FILE,
+    PREDEFINED_EXAMPLE_FILES,
+)
 from ....utils.exceptions_utils.exceptions import EmptyOutputError
 from ....utils.exceptions_utils.fetch_exceptions import (
     OutputDataTypesNotConsistentError,
 )
 
 
-N = 3
-
-BUILTIN_EXAMPLE_FILE_NAME = "example.csv"
-
-
 class BuiltinExampleReader(ErsiliaBase):
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
-        self.example_file = os.path.join(
-            self._get_bundle_location(self.model_id),
-            self.model_id,
-            "artifacts",
-            "framework",
-            BUILTIN_EXAMPLE_FILE_NAME,
-        )
+        self.example_file = None
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            example_file = os.path.join(
+                self._model_path(self.model_id),
+                pf,
+            )
+            if os.path.exists(example_file):
+                self.example_file = example_file
+                break
 
     def has_builtin_example(self):
+        if self.example_file is None:
+            return False
         if os.path.exists(self.example_file):
             return True
         else:
             return False
 
-    def example(self, n):
+    def example(self, n=3):
         data = []
         with open(self.example_file, "r") as f:
             reader = csv.reader(f)
@@ -66,7 +70,7 @@ class ModelSniffer(BaseAction):
         er = BuiltinExampleReader(model_id, config_json=config_json)
         if er.has_builtin_example():
             self.logger.debug("Built-in example found")
-            self.inputs = er.example(N)
+            self.inputs = er.example()
         else:
             self.logger.debug("No built-in example available. Generating a test one.")
             eg = ExampleGenerator(model_id, config_json=config_json)
@@ -93,7 +97,7 @@ class ModelSniffer(BaseAction):
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
-        mbytes = size / (1024 ** 2)
+        mbytes = size / (1024**2)
         return mbytes
 
     def _get_output_ann_type(self):
@@ -198,11 +202,63 @@ class ModelSniffer(BaseAction):
         return schema
 
     @throw_ersilia_exception
+    def _get_schema_type_for_simple_run_api_case(self):
+        # read metadata
+        dest_dir = self._model_path(self.model_id)
+        metadata_file = os.path.join(dest_dir, METADATA_JSON_FILE)
+        if not os.path.exists(metadata_file):
+            self.logger.debug("Metadata file not available (yet)")
+            return None
+        with open(metadata_file, "r") as f:
+            metadata = json.load(f)
+
+        # get output type from metadata.json
+        output_type = metadata["Output Type"]
+        if len(output_type) == 1:
+            self.logger.debug("Output type is {0}".format(output_type[0]))
+            output_type = output_type[0]
+        elif len(output_type) == 2:
+            if set(output_type) == set(["Integer", "Float"]):
+                output_type = "Float"
+            else:
+                return None
+        else:
+            return None
+        if output_type not in ["Float", "String"]:
+            return None
+
+        # get output shape from metadata.json
+        output_shape = metadata["Output Shape"]
+        if output_shape not in ["Single", "List"]:
+            return None
+
+        def resolve_output_meta_in_schema(output_type, output_shape):
+            if output_shape == "Single" and output_type == "Float":
+                return "numeric"
+            if output_shape == "Single" and output_type == "String":
+                return "string"
+            if output_shape == "List" and output_type == "Float":
+                return "numeric_array"
+            if output_shape == "List" and output_type == "String":
+                return "string_array"
+
+        output_meta_in_schema = resolve_output_meta_in_schema(output_type, output_shape)
+
+        return output_meta_in_schema
+
+    def _try_to_resolve_output_shape(self, meta, output_type):
+        if output_type == "numeric_array" or output_type == "string_array":
+            if type(meta) is list:
+                shape = (len(meta),)
+                return shape
+        return None
+
+    @throw_ersilia_exception
     def sniff(self):
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")
         size = self._get_size_in_mb()
-        self.logger.debug("Mode size is {0} MB".format(size))
+        self.logger.debug("Model size is {0} MB".format(size))
         path = os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE)
         with open(path, "w") as f:
             json.dump({"size": size, "units": "MB"}, f, indent=4)
@@ -210,7 +266,11 @@ class ModelSniffer(BaseAction):
         self.model.autoservice.serve()
         self.logger.debug("Iterating over APIs")
         all_schemas = {}
-        for api_name in self.model.autoservice.get_apis():
+
+        is_schema_done = False
+        api_names = self.model.autoservice.get_apis()
+
+        def get_results(api_name):
             self.logger.debug("Running API: {0}".format(api_name))
             self.logger.debug(self.inputs)
             results = [
@@ -221,10 +281,33 @@ class ModelSniffer(BaseAction):
             for r in results:
                 if not r["output"]:
                     raise EmptyOutputError(model_id=self.model_id, api_name=api_name)
-            self.logger.debug("Getting schema for API {0}...".format(api_name))
-            schema = self._get_schema(results)
-            self.logger.debug("This is the schema {0}".format(schema))
-            all_schemas[api_name] = schema
+            return results
+
+        # try to get schema without making calculations, just reading metadata and output file
+        # this only works when the 'run' API is the only one.
+        if len(api_names) == 1 and api_names[0] == "run":
+            schema_type_backup = self._get_schema_type_for_simple_run_api_case()
+            self.logger.debug("This is the schema {0}".format(schema_type_backup))
+
+        if not is_schema_done:
+            for api_name in self.model.autoservice.get_apis():
+                self.logger.debug("Getting schema for API {0}...".format(api_name))
+                results = get_results(api_name)
+                schema = self._get_schema(results)
+                self.logger.debug("This is the schema {0}".format(schema))
+                if api_name == "run":
+                    if "outcome" in schema["output"]:
+                        if schema["output"]["outcome"]["type"] is None:
+                            schema["output"]["outcome"]["type"] = schema_type_backup
+                        if "shape" not in schema["output"]["outcome"]:
+                            shape = self._try_to_resolve_output_shape(
+                                schema["output"]["outcome"]["meta"],
+                                schema["output"]["outcome"]["type"],
+                            )
+                            if shape is not None:
+                                schema["output"]["outcome"]["shape"] = shape
+                all_schemas[api_name] = schema
+
         path = os.path.join(self._model_path(self.model_id), API_SCHEMA_FILE)
         with open(path, "w") as f:
             json.dump(all_schemas, f, indent=4)

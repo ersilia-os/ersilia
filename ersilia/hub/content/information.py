@@ -16,6 +16,7 @@ from ...default import (
     CARD_FILE,
     SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
+    MODEL_SOURCE_FILE,
 )
 
 
@@ -24,7 +25,7 @@ class Information(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.repository_folder = os.path.join(
-            self._get_bento_location(model_id=self.model_id)
+            self._get_bundle_location(model_id=self.model_id)
         )
         self.dest_folder = os.path.join(self._model_path(model_id=model_id))
 
@@ -40,6 +41,14 @@ class Information(ErsiliaBase):
         service_class_file = os.path.join(self.repository_folder, SERVICE_CLASS_FILE)
         if os.path.exists(service_class_file):
             with open(service_class_file, "r") as f:
+                return f.read().rstrip()
+        else:
+            return None
+
+    def _get_model_source(self):
+        model_source_file = os.path.join((self.dest_folder), MODEL_SOURCE_FILE)
+        if os.path.exists(model_source_file):
+            with open(model_source_file) as f:
                 return f.read().rstrip()
         else:
             return None
@@ -88,6 +97,7 @@ class Information(ErsiliaBase):
         data = {
             "pack_mode": self._get_pack_mode(),
             "service_class": self._get_service_class(),
+            "model_source": self._get_model_source(),
             "apis_list": self._get_apis_list(),
             "api_schema": self._get_api_schema(),
             "size": self._get_size(),

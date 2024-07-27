@@ -1,4 +1,5 @@
 """Search for models"""
+
 from .catalog import CatalogTable
 import numpy as np
 import re

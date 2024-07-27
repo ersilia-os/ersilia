@@ -5,7 +5,7 @@ from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
 from ...utils.conda import SimpleConda
-from ...utils.docker import is_inside_docker
+from ...utils.system import is_inside_docker
 from ..content.catalog import ModelCatalog
 from ...db.environments.localdb import EnvironmentDb
 from ...db.hubdata.localslugs import SlugDb
@@ -125,7 +125,6 @@ class ModelBentoDeleter(ErsiliaBase):
         ml = ModelCatalog()
         try:
             catalog = ml.bentoml()
-            self.logger.debug(catalog)
         except:
             self.logger.debug("No BentoML Catalog available")
             catalog = None
@@ -233,8 +232,9 @@ class TmpCleaner(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def delete(self):
-        os.rmdir(self._tmp_dir)
-        os.makedirs(self._tmp_dir)
+        if os.path.exists(self._tmp_dir):
+            os.rmdir(self._tmp_dir)
+            os.makedirs(self._tmp_dir)
 
 
 class ModelFullDeleter(ErsiliaBase):

@@ -20,6 +20,7 @@ class DockerImageArchitectureNotAvailableError(ErsiliaError):
         self.hints = "If you are using an Apple M1/M2 chip, it is possible that this model is not supported for your architecture, unfortunately.\nOne possible alternative is to use GitHub Codespaces to run Ersilia on the cloud, and fetch the model from there. If you absolutely want this model to run on a Mac, please reach out to us and we will try to help."
         ErsiliaError.__init__(self, self.message, self.hints)
 
+
 class DockerConventionalPullError(ErsiliaError):
     def __init__(self, model):
         self.message = "Conventional pull did not work for model {0}".format(model)

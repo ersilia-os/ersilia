@@ -1,9 +1,11 @@
 import click
-from . import ersilia_cli
+import time
+
 from .. import echo
+from . import ersilia_cli
 from ... import ErsiliaModel
 from ..messages import ModelNotFound, ModelNotInStore
-from ...core.tracking import open_persistent_file
+from ...core.tracking import write_persistent_file
 from ...store.api import InferenceStoreApi
 from ...store.utils import OutputSource
 
@@ -34,13 +36,15 @@ def serve_cmd():
     )
     # Add the new flag for tracking the serve session
     @click.option(
-        "-t/",
-        "--track_serve/--no_track_serve",
-        "track_serve",
+        "-t",
+        "--track",
+        "track",
+        is_flag=True,
         required=False,
         default=False,
     )
-    def serve(model, output_source, lake, docker, port, track_serve):
+    def serve(model, output_source, lake, docker, port, track):
+        start_time = time.time()
         if docker:
             service_class = "docker"
         else:
@@ -58,10 +62,15 @@ def serve_cmd():
             else:
                 echo("Model {0} found in inference store.".format(model))
         mdl = ErsiliaModel(
-            model, output_source=output_source, save_to_lake=lake, service_class=service_class, preferred_port=port
+            model,
+            output_source=output_source, save_to_lake=lake,
+            service_class=service_class,
+            preferred_port=port,
+            track_runs=track,
         )
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
+
         mdl.serve()
         if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")
@@ -88,6 +97,11 @@ def serve_cmd():
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
 
-        # Setup persistent tracking
-        if track_serve:
-            open_persistent_file(mdl.model_id)
+        if track:
+            """
+            Retrieve the time taken in seconds to serve the Model.
+            """
+            end_time = time.time()
+            duration = end_time - start_time
+            content = "Total time taken: {0}\n".format(duration)
+            write_persistent_file(content, mdl.model_id)

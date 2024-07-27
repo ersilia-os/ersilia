@@ -2,6 +2,7 @@ from ... import ErsiliaBase
 import os
 import tempfile
 from ...utils.terminal import run_command
+from ...utils.logging import make_temp_dir
 
 
 class ErsiliaError(Exception):
@@ -90,7 +91,7 @@ class EmptyOutputError(ErsiliaError):
         exec_file = os.path.join(framework_dir, exec_file)
         input_file = os.path.join(framework_dir, "example_input.csv")
         output_file = os.path.join(framework_dir, "example_output.csv")
-        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        tmp_folder = make_temp_dir(prefix="ersilia-")
         log_file = os.path.join(tmp_folder, "terminal.log")
         run_command("ersilia example {0} -n 3 -f {1}".format(self.model_id, input_file))
         cmd = "bash {0} {1} {2} {3} 2>&1 | tee -a {4}".format(

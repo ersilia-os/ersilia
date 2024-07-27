@@ -1,16 +1,21 @@
 import requests
 import subprocess
 import tempfile
+import json
 import os
 import re
 
 from ... import ErsiliaBase
 from ...utils.terminal import yes_no_input, run_command
 from ... import throw_ersilia_exception
-from ...utils.exceptions_utils.pull_exceptions import DockerImageNotAvailableError, DockerConventionalPullError
+from ...utils.exceptions_utils.pull_exceptions import (
+    DockerImageNotAvailableError,
+    DockerConventionalPullError,
+)
 
 from ...utils.docker import SimpleDocker
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, EOS, MODEL_SIZE_FILE
+from ...utils.logging import make_temp_dir
 
 PULL_IMAGE = os.environ.get("PULL_IMAGE", "Y")
 
@@ -108,7 +113,7 @@ class ModelPuller(ErsiliaBase):
                     "Trying to pull image {0}/{1}".format(DOCKERHUB_ORG, self.model_id)
                 )
                 tmp_file = os.path.join(
-                    tempfile.mkdtemp(prefix="ersilia-"), "docker_pull.log"
+                    make_temp_dir(prefix="ersilia-"), "docker_pull.log"
                 )
                 self.logger.debug("Keeping logs of pull in {0}".format(tmp_file))
                 run_command(
@@ -119,8 +124,10 @@ class ModelPuller(ErsiliaBase):
                 with open(tmp_file, "r") as f:
                     pull_log = f.read()
                     self.logger.debug(pull_log)
-                if re.search(r"no match.*platform.*manifest", pull_log):
-                    self.logger.warning("No matching manifest for image {0}".format(self.model_id))
+                if re.search(r"no match.*manifest", pull_log):
+                    self.logger.warning(
+                        "No matching manifest for image {0}".format(self.model_id)
+                    )
                     raise DockerConventionalPullError(model=self.model_id)
                 self.logger.debug("Image pulled succesfully!")
             except DockerConventionalPullError:
@@ -135,10 +142,13 @@ class ModelPuller(ErsiliaBase):
             size = self._get_size_of_local_docker_image_in_mb()
             if size:
                 self.logger.debug("Size of image {0} MB".format(size))
+                # path = os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE)
+                # with open(path, "w") as f:
+                #     json.dump({"size": size, "units": "MB"}, f, indent=4)
+                # self.logger.debug("Size written to {}".format(path))
             else:
                 self.logger.warning("Could not obtain size of image")
-            # except: #TODO add better error
-            #    raise DockerImageArchitectureNotAvailableError(model=self.model_id)
+            return size
         else:
             self.logger.info("Image {0} is not available".format(self.image_name))
             raise DockerImageNotAvailableError(model=self.model_id)

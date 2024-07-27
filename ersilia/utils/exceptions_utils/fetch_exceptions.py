@@ -1,3 +1,4 @@
+from typing import Any
 from .exceptions import ErsiliaError
 
 
@@ -160,3 +161,30 @@ class DockerNotActiveError(ErsiliaError):
     def _get_hints(self):
         text = "Make sure that Docker is running on your computer. We recommend to use Docker Desktop."
         return text
+
+
+class NotInstallableError(ErsiliaError):
+    def __init__(self, model_id, packing_strategy):
+        self.packing_strategy = packing_strategy
+        self.model_id = model_id
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = f"Model {self.model_id} is not installable with {self.packing_strategy}"
+        return text
+
+    def _get_hints(self):
+        text = f"This model is not compatible with {self.packing_strategy}. Please check the model structure or reach out to Ersilia directly to report this error."
+        return text
+
+
+class NotInstallableWithFastAPI(NotInstallableError):
+    def __init__(self, model_id):
+        super.__init__(model_id, "FastAPI")
+
+
+class NotInstallableWithBentoML(NotInstallableError):
+    def __init__(self, model_id):
+        super.__init__(model_id, "BentoML")

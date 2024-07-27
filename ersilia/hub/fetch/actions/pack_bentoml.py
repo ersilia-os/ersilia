@@ -3,8 +3,8 @@ import sys
 
 from . import BaseAction
 from .modify import ModelModifier
-from ..pack.mode import PackModeDecision, AVAILABLE_MODES
-from ..pack.runners import get_runner
+from ..pack.bentoml_pack.mode import PackModeDecision, AVAILABLE_MODES
+from ..pack.bentoml_pack.runners import get_runner
 from ...bundle.repo import ServiceFile, DockerfileFile
 from ....default import PACKMODE_FILE
 
