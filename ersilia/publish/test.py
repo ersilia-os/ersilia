@@ -1,5 +1,6 @@
 # TODO adapt to input-type agnostic. For now, it works only with Compound input types.
 
+from collections import defaultdict
 import os
 import json
 import click
@@ -19,6 +20,8 @@ from ..utils.logging import make_temp_dir
 from ..utils.terminal import run_command_check_output
 from ..core.session import Session
 from ..default import INFORMATION_FILE
+from ..default import EOS
+
 
 try:
     from fuzzywuzzy import fuzz
@@ -358,16 +361,15 @@ class ModelTester(ErsiliaBase):
         session = Session(config_json=None)
         service_class = session.current_service_class()
         eg = ExampleGenerator(model_id=self.model_id)
-        input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True)
-
+        input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False) # EDIT 2
         click.echo(
             BOLD
             + "\nTesting model on input of 5 smiles given by 'example' command...\n"
             + RESET
         )
+        self.logger.debug("This is the input: {0}".format(input))
         mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         result = mdl.run(input=input, output=output, batch_size=100)
-
         if output is not None:
             self.example_input = True
         else:
@@ -379,7 +381,7 @@ class ModelTester(ErsiliaBase):
     it is not consistent, an InconsistentOutput error is raised. Lastly, it makes sure that the number of 
     outputs equals the number of inputs.  
     """
-
+    
     @throw_ersilia_exception
     def check_consistent_output(self):
         # self.logger.debug("Confirming model produces consistent output...")
@@ -389,7 +391,7 @@ class ModelTester(ErsiliaBase):
         service_class = session.current_service_class()
 
         eg = ExampleGenerator(model_id=self.model_id)
-        input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True)
+        input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False) # EDIT 3
 
         mdl1 = ErsiliaModel(
             self.model_id, service_class=service_class, config_json=None
@@ -523,20 +525,108 @@ class ModelTester(ErsiliaBase):
                     values = [int(x) for x in values]
                 data.append(dict(zip(header, values)))
         return data
-
+    
     @throw_ersilia_exception
     def run_bash(self):
-        click.echo(BOLD + "Calculating model size..." + RESET)
+        # NEW METHODS
+        def get_directory_size(path):
+            total_size = 0
+            for dirpath, dirnames, filenames in os.walk(path):
+                for f in filenames:
+                    fp = os.path.join(dirpath, f)
+                    # Skip if it is symbolic link
+                    if not os.path.islink(fp):
+                        total_size += os.path.getsize(fp)
+            return total_size
+    
+        
+        # END NEW METHODS
 
+        click.echo(BOLD + "Calculating model size and checking model path validity..." + RESET)
+        
+        # original method
+        # with tempfile.TemporaryDirectory() as temp_dir:
+        #     self._set_model_size(
+        #         os.path.join(
+        #             self.conda_prefix(self.is_base()),
+        #             "../eos/dest/{0}".format(self.model_id),
+        #         )
+        #     )
+
+
+
+        # EOS method
+        # with tempfile.TemporaryDirectory() as temp_dir:
+        #     # Print size of model
+        #     # model_path = os.path.join(
+        #     #         self.conda_prefix(self.is_base()),
+        #     #         "../eos/dest/{0}".format(self.model_id),
+        #     #     )
+
+        #     model_path =  os.path.join(EOS, "dest", self.model_id)
+        #     model_repository = os.path.join(EOS, "repository", self.model_id)
+        #     self._set_model_size(model_path)
+
+        #     # Debug Check: Valid Model Path
+        #     if os.path.exists(model_path):
+        #             click.echo(BOLD + f"\nModel path exists at: {model_path}" + RESET)
+        #             for root, dirs, files in os.walk(model_path):
+        #                 for name in files:
+        #                      self.logger.debug(os.path.join(root, name))
+        #     else:
+        #         click.echo(BOLD + f"\n Model path does not exist at: {model_path}" + RESET)
+
+
+        # REPO_PATH METHOD
         with tempfile.TemporaryDirectory() as temp_dir:
-            # Print size of model
-            self._set_model_size(
-                os.path.join(
-                    self.conda_prefix(self.is_base()),
-                    "../eos/dest/{0}".format(self.model_id),
-                )
-            )
-            size_kb = self.model_size / 1024
+            # Construct the repo_path dynamically
+            repo_path = os.path.expanduser(os.path.join("~/Desktop", self.model_id))
+            model_path = os.path.join(repo_path, "model")
+            framework_path = os.path.join(model_path, "framework")
+            
+            # Calculate the size of the 'checkpoints' subfolder
+            checkpoints_path = os.path.join(model_path, "checkpoints")
+
+            # NEW LOGGING METHOD:
+            def analyze_files(path):
+                file_sizes = []
+                file_types = defaultdict(int)
+                for dirpath, dirnames, filenames in os.walk(path):
+                    for f in filenames:
+                        fp = os.path.join(dirpath, f)
+                        if not os.path.islink(fp): # ignore symbolic links
+                            file_size = os.path.getsize(fp)
+                            file_sizes.append((file_size, fp))
+                            file_extension = os.path.splitext(f)[1]
+                            file_types[file_extension] += 1
+                return file_sizes, file_types
+            
+
+            # Calcuate Size of Contents in Checkpoints Folder
+            if os.path.exists(checkpoints_path):
+                checkpoints_size = get_directory_size(checkpoints_path)
+                self.logger.debug(f"Size of 'checkpoints' subfolder: {checkpoints_size} bytes")
+                file_sizes, file_types = analyze_files(checkpoints_path)
+                self.logger.debug(f"File types & count in checkpoints folder: {file_types}")
+            else:
+                checkpoints_size = 0
+                print(f"'checkpoints' subfolder does not exist in {model_path}")
+
+
+            # Calculate Size of framework folder
+            if os.path.exists(framework_path):
+                frameworks_size = get_directory_size(framework_path)
+                self.logger.debug(f"Size of frameworks folder: {frameworks_size} bytes")
+                file_sizes, file_types = analyze_files(framework_path)
+                self.logger.debug(f"File types & count in frameworks folder: {file_types}")
+            else:
+                file_size = 0
+                print(f"framworks  path does not exist: {framework_path}")
+           # END NEW LOGGING METHOD
+
+
+            size_kb = checkpoints_size + frameworks_size
+           # size_kb = self.model_size / 1024
             size_mb = size_kb / 1024
             size_gb = size_mb / 1024
             print("\nModel Size:")
@@ -544,50 +634,50 @@ class ModelTester(ErsiliaBase):
             print("MB:", size_mb)
             print("GB:", size_gb)
 
+            
+
             click.echo(BOLD + "\nRunning the model bash script..." + RESET)
 
             # Create an example input
             eg = ExampleGenerator(model_id=self.model_id)
-            input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True)
-
+            input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False) # EDIT 4
             # Read it into a temp file
             ex_file = os.path.abspath(os.path.join(temp_dir, "example_file.csv"))
+            
             with open(ex_file, "w") as f:
                 f.write("smiles")
                 for item in input:
                     f.write(str(item) + "\n")
 
+            run_sh_path = os.path.join(framework_path, "run.sh")
+            print(f"Checking if run.sh exists at: {run_sh_path}")
             # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
-            if not os.path.exists(
-                os.path.join(
-                    self.conda_prefix(self.is_base()),
-                    "../eos/dest/{0}/model/framework/run.sh".format(self.model_id),
-                )
-            ):
+            if not os.path.exists (run_sh_path):
                 print(
                     "Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3."
                 )
                 return
 
             # Navigate into the temporary directory
-            subdirectory_path = os.path.join(
-                self.conda_prefix(self.is_base()),
-                "../eos/dest/{0}/model/framework".format(self.model_id),
-            )
+            # NEW
+            
+            subdirectory_path = framework_path
+            self.logger.debug(f"Changing directory to: {subdirectory_path}")
             os.chdir(subdirectory_path)
+            
+            # OLD METHOD
+            # subdirectory_path = os.path.join(
+            #     self.conda_prefix(self.is_base()),
+            #     "../eos/dest/{0}/model/framework".format(self.model_id),
+            # )
+            # os.chdir(subdirectory_path)
 
             try:
-                run_path = os.path.abspath(
-                    os.path.join(
-                        self.conda_prefix(self.is_base()),
-                        "../eos/dest/{0}/model/framework/".format(self.model_id),
-                    )
-                )
+                run_path = os.path.abspath(subdirectory_path)
                 tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
                 arg1 = os.path.join(temp_dir, "bash_output.csv")
                 output_log = os.path.abspath(os.path.join(temp_dir, "output.txt"))
                 error_log = os.path.abspath(os.path.join(temp_dir, "error.txt"))
-
                 bash_script = """
     source {0}/etc/profile.d/conda.sh 
     conda activate {1}
@@ -758,6 +848,5 @@ class ModelTester(ErsiliaBase):
 
         end = time.time()
         seconds_taken = end - start
-
         if output_file is not None:
             self.make_output(output_file, seconds_taken)
