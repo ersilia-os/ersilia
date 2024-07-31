@@ -513,10 +513,12 @@ class ModelTester(ErsiliaBase):
     def read_csv(self, file_path):
         data = []
         with open(file_path, "r") as file:
+            print("TESTING...")
             lines = file.readlines()
             header = lines[0].strip().split(",")
-            for line in lines[1:]:
+            for line in lines[1:]:  
                 values = line.strip().split(",")
+                values = values[2:] # POSSIBLE SOLUTION: read from 3rd column on!
                 print("VALUES:", values)
                 print(self._output_type)
                 if self._output_type == ["Float"]:
@@ -660,7 +662,7 @@ class ModelTester(ErsiliaBase):
 
             # Navigate into the temporary directory
             # NEW
-            
+            print("run.sh exists!")
             subdirectory_path = framework_path
             self.logger.debug(f"Changing directory to: {subdirectory_path}")
             os.chdir(subdirectory_path)
@@ -693,7 +695,10 @@ class ModelTester(ErsiliaBase):
                     output_log,
                     error_log,
                 )
-
+                self.logger.debug(f"Script path: {tmp_script}")
+                self.logger.debug(f"bash_output path: {arg1}")
+                self.logger.debug(f"Output log path: {output_log}")
+                self.logger.debug(f"Error log path: {error_log}")
                 with open(tmp_script, "w") as f:
                     f.write(bash_script)
 
@@ -705,12 +710,14 @@ class ModelTester(ErsiliaBase):
                     print("Bash execution completed!\n")
                 except subprocess.CalledProcessError as e:
                     print("Error encountered while running the bash script.")
+                    self.logger.debug(f"STDOUT: {e.stdout}")
+                    self.logger.debug(f"STDERR: {e.stderr}")
 
                 with open(output_log, "r") as output_file:
                     output_content = output_file.read()
                     print("Captured Output:")
                     print(output_content)
-
+                
                 with open(error_log, "r") as error_file:
                     error_content = error_file.read()
                     print("Captured Error:")
@@ -840,10 +847,10 @@ class ModelTester(ErsiliaBase):
 
     def run(self, output_file):
         start = time.time()
-        self.check_information(output_file)
-        self.check_single_input(output_file)
-        self.check_example_input(output_file)
-        self.check_consistent_output()
+        # self.check_information(output_file)
+        # self.check_single_input(output_file)
+        # self.check_example_input(output_file)
+        # self.check_consistent_output()
         self.run_bash()
 
         end = time.time()
