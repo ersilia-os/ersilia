@@ -677,14 +677,16 @@ class ModelTester(ErsiliaBase):
             try:
                 run_path = os.path.abspath(subdirectory_path)
                 tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
-                arg1 = os.path.join(temp_dir, "bash_output.csv")
+                arg1 = os.path.abspath(os.path.join(temp_dir, "bash_output.csv"))
                 output_log = os.path.abspath(os.path.join(temp_dir, "output.txt"))
                 error_log = os.path.abspath(os.path.join(temp_dir, "error.txt"))
+                # TRIED ERROR FIXING, DID NOT WORK.
                 bash_script = """
-    source {0}/etc/profile.d/conda.sh 
-    conda activate {1}
-    cd {2}
-    bash run.sh . {3} {4} > {5} 2> {6}
+    source {0}$CONDA_PREFIX/etc/profile.d/conda.sh
+    conda init {1}
+    conda activate {2}
+    cd {3}
+    bash run.sh . {4} {5} > {6} 2> {7}
     conda deactivate
     """.format(
                     self.conda_prefix(self.is_base()),
