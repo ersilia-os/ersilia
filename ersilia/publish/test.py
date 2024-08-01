@@ -590,18 +590,6 @@ class ModelTester(ErsiliaBase):
         #         self.logger.debug(f"File: {os.path.join(dirpath, filename)}")
         return env_dir
     
-    def analyze_files(path):
-        file_sizes = []
-        file_types = defaultdict(int)
-        for dirpath, dirnames, filenames in os.walk(path):
-            for f in filenames:
-                fp = os.path.join(dirpath, f)
-                if not os.path.islink(fp):  # ignore symbolic links
-                    file_size = os.path.getsize(fp)
-                    file_sizes.append((file_size, fp))
-                    file_extension = os.path.splitext(f)[1]
-                    file_types[file_extension] += 1
-        return file_sizes, file_types
 
     def get_directories_sizes(self):
         click.echo(BOLD + "Calculating model size...")
