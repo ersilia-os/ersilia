@@ -160,7 +160,7 @@ jobs:
 
       # comment on the issue comment with further instructions for the user
       - name: comment
-        uses: GrantBirki/comment@1e63d57e8ccc14dd83f5db2af382279aa12a0bbb # pin@v2.0.10
+        uses: GrantBirki/comment@f524ee31407667c05061bad41e1758b40298bd82 # pin@v2.1.0
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/new-model.md
@@ -171,7 +171,7 @@ jobs:
       # steps to run if the workflow fails for any reason
       - name: comment on failure
         if: failure()
-        uses: GrantBirki/comment@1e63d57e8ccc14dd83f5db2af382279aa12a0bbb # pin@v2.0.10
+        uses: GrantBirki/comment@f524ee31407667c05061bad41e1758b40298bd82 # pin@v2.1.0
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/approve-workflow-failed.md
