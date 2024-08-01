@@ -10,6 +10,8 @@ import subprocess
 import shutil
 import time
 import re
+
+from ersilia.utils.conda import SimpleConda
 from ..cli import echo
 from ..io.input import ExampleGenerator
 from .. import ErsiliaBase
@@ -528,24 +530,76 @@ class ModelTester(ErsiliaBase):
                 data.append(dict(zip(header, values)))
         return data
     
+    @staticmethod
+    def get_directory_size_without_symlinks(directory):
+        if directory is None:
+            return 0
+        if not os.path.exists(directory):
+            return 0
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(directory):
+            for filename in filenames:
+                filepath = os.path.join(dirpath, filename)
+                if not os.path.islink(filepath):
+                    total_size += os.path.getsize(filepath)
+        return total_size
+
+    @staticmethod
+    def get_directory_size_with_symlinks(directory):
+        if directory is None:
+            return 0
+        if not os.path.exists(directory):
+            return 0
+        total_size = 0
+        for dirpath, dirnames, filenames in os.walk(directory):
+            for filename in filenames:
+                filepath = os.path.join(dirpath, filename)
+                total_size += os.path.getsize(filepath)
+        return total_size
+    
+    # Get location of conda environment
+    def _get_environment_location(self):
+        conda = SimpleConda()
+        python_path = conda.get_python_path_env(environment=self.model_id)
+        env_dir = os.path.dirname(python_path).split("/")
+        env_dir = "/".join(env_dir[:-1])
+        return env_dir
+    
+    def get_directories_sizes(self):
+        click.echo(BOLD + "Calculating model size...")
+        dest_dir = self._model_path(model_id=self.model_id)
+        bundle_dir = self._get_bundle_location(model_id=self.model_id)
+        bentoml_dir = self._get_bentoml_location(model_id=self.model_id)
+        env_dir = self._get_environment_location()
+
+        self.logger.debug("Calculating sizes for the following paths:")
+        self.logger.debug(f"dest_dir: {dest_dir}")
+        self.logger.debug(f"bundle_dir: {bundle_dir}")
+        self.logger.debug(f"bentoml_dir: {bentoml_dir}")
+        self.logger.debug(f"env_dir: {env_dir}")
+
+        dest_size = self.get_directory_size_without_symlinks(dest_dir)
+        bundle_size = self.get_directory_size_without_symlinks(bundle_dir)
+        bentoml_size = self.get_directory_size_without_symlinks(bentoml_dir)
+        env_size = self.get_directory_size_with_symlinks(env_dir)
+
+        size_kb = dest_size + bundle_size + bentoml_size + env_size
+        size_mb = size_kb / 1024
+        size_gb = size_mb / 1024
+        print("\nModel Size:")
+        print("KB:", size_kb)
+        print("MB:", size_mb)
+        print("GB:", size_gb)
+
+        self.logger.debug("Sizes of directories:")
+        self.logger.debug(f"dest_size: {dest_size} bytes")
+        self.logger.debug(f"bundle_size: {bundle_size} bytes")
+        self.logger.debug(f"bentoml_size: {bentoml_size} bytes")
+        self.logger.debug(f"env_size: {env_size} bytes")
+
+
     @throw_ersilia_exception
     def run_bash(self):
-        # NEW METHODS
-        def get_directory_size(path):
-            total_size = 0
-            for dirpath, dirnames, filenames in os.walk(path):
-                for f in filenames:
-                    fp = os.path.join(dirpath, f)
-                    # Skip if it is symbolic link
-                    if not os.path.islink(fp):
-                        total_size += os.path.getsize(fp)
-            return total_size
-    
-        
-        # END NEW METHODS
-
-        click.echo(BOLD + "Calculating model size and checking model path validity..." + RESET)
-        
         # original method
         # with tempfile.TemporaryDirectory() as temp_dir:
         #     self._set_model_size(
@@ -585,57 +639,7 @@ class ModelTester(ErsiliaBase):
             repo_path = os.path.expanduser(os.path.join("~/Desktop", self.model_id))
             model_path = os.path.join(repo_path, "model")
             framework_path = os.path.join(model_path, "framework")
-            
-            # Calculate the size of the 'checkpoints' subfolder
-            checkpoints_path = os.path.join(model_path, "checkpoints")
-
-            # NEW LOGGING METHOD:
-            def analyze_files(path):
-                file_sizes = []
-                file_types = defaultdict(int)
-                for dirpath, dirnames, filenames in os.walk(path):
-                    for f in filenames:
-                        fp = os.path.join(dirpath, f)
-                        if not os.path.islink(fp): # ignore symbolic links
-                            file_size = os.path.getsize(fp)
-                            file_sizes.append((file_size, fp))
-                            file_extension = os.path.splitext(f)[1]
-                            file_types[file_extension] += 1
-                return file_sizes, file_types
-            
-
-            # Calcuate Size of Contents in Checkpoints Folder
-            if os.path.exists(checkpoints_path):
-                checkpoints_size = get_directory_size(checkpoints_path)
-                self.logger.debug(f"Size of 'checkpoints' subfolder: {checkpoints_size} bytes")
-                file_sizes, file_types = analyze_files(checkpoints_path)
-                self.logger.debug(f"File types & count in checkpoints folder: {file_types}")
-            else:
-                checkpoints_size = 0
-                print(f"'checkpoints' subfolder does not exist in {model_path}")
-
-
-            # Calculate Size of framework folder
-            if os.path.exists(framework_path):
-                frameworks_size = get_directory_size(framework_path)
-                self.logger.debug(f"Size of frameworks folder: {frameworks_size} bytes")
-                file_sizes, file_types = analyze_files(framework_path)
-                self.logger.debug(f"File types & count in frameworks folder: {file_types}")
-            else:
-                file_size = 0
-                print(f"framworks  path does not exist: {framework_path}")
-           # END NEW LOGGING METHOD
-
-
-            size_kb = checkpoints_size + frameworks_size
-           # size_kb = self.model_size / 1024
-            size_mb = size_kb / 1024
-            size_gb = size_mb / 1024
-            print("\nModel Size:")
-            print("KB:", size_kb)
-            print("MB:", size_mb)
-            print("GB:", size_gb)
-
+         
             
 
             click.echo(BOLD + "\nRunning the model bash script..." + RESET)
@@ -682,7 +686,7 @@ class ModelTester(ErsiliaBase):
                 error_log = os.path.abspath(os.path.join(temp_dir, "error.txt"))
                 # TRIED ERROR FIXING, DID NOT WORK.
                 bash_script = """
-    source {0}$CONDA_PREFIX/etc/profile.d/conda.sh
+    source {0}/etc/profile.d/conda.sh     
     conda init {1}
     conda activate {2}
     cd {3}
@@ -690,6 +694,7 @@ class ModelTester(ErsiliaBase):
     conda deactivate
     """.format(
                     self.conda_prefix(self.is_base()),
+                    "",
                     self.model_id,
                     run_path,
                     ex_file,
@@ -853,6 +858,7 @@ class ModelTester(ErsiliaBase):
         # self.check_single_input(output_file)
         # self.check_example_input(output_file)
         # self.check_consistent_output()
+        self.get_directories_sizes()
         self.run_bash()
 
         end = time.time()
