@@ -878,13 +878,13 @@ class ModelTester(ErsiliaBase):
 
     def run(self, output_file):
         start = time.time()
-        # self.check_information(output_file)
-        # self.check_single_input(output_file)
-        # self.check_example_input(output_file)
-        # self.check_consistent_output()
+        self.check_information(output_file)
+        self.check_single_input(output_file)
+        self.check_example_input(output_file)
+        self.check_consistent_output()
         self.get_directories_sizes()
         self.run_bash()
-
+    
         end = time.time()
         seconds_taken = end - start
         if output_file is not None:
