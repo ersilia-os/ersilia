@@ -679,7 +679,7 @@ class ModelTester(ErsiliaBase):
                 for item in input:
                     f.write(str(item) + "\n")
 
-            run_sh_path = os.path.join(model_path, "framework", "run.sh")
+            run_sh_path = os.path.join(model_path, "model", "framework", "run.sh")
             print(f"Checking if run.sh exists at: {run_sh_path}")
             # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
             if not os.path.exists (run_sh_path):
@@ -691,7 +691,7 @@ class ModelTester(ErsiliaBase):
             # Navigate into the temporary directory
             # NEW
             print("run.sh exists!")
-            subdirectory_path = os.path.join(model_path, self.model_id, "framework")
+            subdirectory_path = os.path.join(model_path, "model", "framework")
             self.logger.debug(f"Changing directory to: {subdirectory_path}")
             os.chdir(subdirectory_path)
             
