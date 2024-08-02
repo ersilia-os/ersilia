@@ -698,7 +698,7 @@ class ModelTester(ErsiliaBase):
             try:
                 run_path = os.path.abspath(subdirectory_path)
                 tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
-                arg1 = os.path.abspath(os.path.join(temp_dir, "bash_output.csv"))
+                bash_output_path = os.path.abspath(os.path.join(temp_dir, "bash_output.csv"))
                 output_log = os.path.abspath(os.path.join(temp_dir, "output.txt"))
                 error_log = os.path.abspath(os.path.join(temp_dir, "error.txt"))
                 bash_script = """
@@ -712,12 +712,12 @@ class ModelTester(ErsiliaBase):
                     self.model_id,
                     run_path,
                     ex_file,
-                    arg1,
+                    bash_output_path,
                     output_log,
                     error_log,
                 )
                 self.logger.debug(f"Script path: {tmp_script}")
-                self.logger.debug(f"bash output path: {arg1}")
+                self.logger.debug(f"bash output path: {bash_output_path}")
                 self.logger.debug(f"Output log path: {output_log}")
                 self.logger.debug(f"Error log path: {error_log}")
                 with open(tmp_script, "w") as f:
@@ -734,13 +734,13 @@ class ModelTester(ErsiliaBase):
                     self.logger.debug(f"STDOUT: {e.stdout}")
                     self.logger.debug(f"STDERR: {e.stderr}")
 
-                if os.path.exists(arg1):
-                    with open(arg1, "r") as output_file:
-                        output_content = output_file.read()
+                if os.path.exists(bash_output_path):
+                    with open(bash_output_path, "r") as bash_output_file:
+                        output_content = bash_output_file.read()
                         print("Captured Bash Output:")
                         print(output_content)
                 else:
-                    self.logger.debug(f"Bash output file not found: {arg1}")
+                    self.logger.debug(f"Bash output file not found when reading the path: {bash_output_path}")
              
                 with open(error_log, "r") as error_file:
                     error_content = error_file.read()
@@ -751,25 +751,35 @@ class ModelTester(ErsiliaBase):
                 print(f"Error while activating the conda environment: {e}")
 
             print("Executing ersilia run...")
-            output_file = os.path.abspath(os.path.join(temp_dir, "ersilia_output.csv"))
+            ersilia_output_path = os.path.abspath(os.path.join(temp_dir, "ersilia_output.csv"))
+            print(f"Ersilia output will be written to: {ersilia_output_path}")
 
             session = Session(config_json=None)
             service_class = session.current_service_class()
             mdl = ErsiliaModel(
                 self.model_id, service_class=service_class, config_json=None
             )
-            result = mdl.run(input=ex_file, output=output_file, batch_size=100)
+            result = mdl.run(input=ex_file, output=ersilia_output_path, batch_size=100) # ?
             print("Ersilia run completed!\n")
 
-            print(f"This is the ersilia output before comparison: {output_file}")
-            ersilia_run = self.read_csv(output_file)
+            #print(f"This is the ersilia output before read_csv: {output_file}")
+            if os.path.exists(ersilia_output_path):
+                with open(ersilia_output_path, "r") as ersilia_output_file:
+                    output_content = ersilia_output_file.read()
+                    print("Captured Ersilia Output:")
+                    print(output_content)
+                    self.logger.debug("Captured Ersilia Output:")
+                    self.logger.debug(output_content)
+            else:
+                self.logger.debug(f"Ersilia output file not found: {ersilia_output_path}")
+            ersilia_run = self.read_csv(ersilia_output_path)
+            print("Ersilia run after read_csv :\n", ersilia_run)
             remove_cols = ["key", "input"]
             for row in ersilia_run:
                 for col in remove_cols:
                     if col in row:
                         del row[col]
-            print(f"This is the bash output before comparsison: {0}".format(arg1))
-            bash_run = self.read_csv(arg1)
+            bash_run = self.read_csv(bash_output_path)
             print("Bash output:\n", bash_run)
             print("\nErsilia output:\n", ersilia_run)
 
@@ -777,16 +787,21 @@ class ModelTester(ErsiliaBase):
             ersilia_columns = set()
             for row in ersilia_run:
                 ersilia_columns.update(row.keys())
+            print("\n Ersilia columns: ", ersilia_columns)
+
 
             bash_columns = set()
             for row in bash_run:
                 bash_columns.update(row.keys())
+            print("\n Bash columns: ", bash_columns)
 
             common_columns = ersilia_columns & bash_columns
+            print("Common columns:", common_columns, "\n")
 
             # Compare values in the common columns within a 5% tolerance`
             for column in common_columns:
                 for i in range(len(ersilia_run)):
+                    print("New Section... printing output types between ersilia and bash run")
                     print(type(ersilia_run[i][column]))
                     print(ersilia_run[i][column])
                     print(type(bash_run[i][column]))
