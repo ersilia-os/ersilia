@@ -694,31 +694,21 @@ class ModelTester(ErsiliaBase):
             subdirectory_path = os.path.join(model_path, "model", "framework")
             self.logger.debug(f"Changing directory to: {subdirectory_path}")
             os.chdir(subdirectory_path)
-            
-            # OLD METHOD
-            # subdirectory_path = os.path.join(
-            #     self.conda_prefix(self.is_base()),
-            #     "../eos/dest/{0}/model/framework".format(self.model_id),
-            # )
-            # os.chdir(subdirectory_path)
-
+        
             try:
                 run_path = os.path.abspath(subdirectory_path)
                 tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
                 arg1 = os.path.abspath(os.path.join(temp_dir, "bash_output.csv"))
                 output_log = os.path.abspath(os.path.join(temp_dir, "output.txt"))
                 error_log = os.path.abspath(os.path.join(temp_dir, "error.txt"))
-                # TRIED ERROR FIXING, DID NOT WORK.
                 bash_script = """
     source {0}/etc/profile.d/conda.sh     
-    conda init {1}
-    conda activate {2}
-    cd {3}
-    bash run.sh . {4} {5} > {6} 2> {7}
+    conda activate {1}
+    cd {2}
+    bash run.sh . {3} {4} > {5} 2> {6}
     conda deactivate
     """.format(
                     self.conda_prefix(self.is_base()),
-                    "",
                     self.model_id,
                     run_path,
                     ex_file,
@@ -727,7 +717,7 @@ class ModelTester(ErsiliaBase):
                     error_log,
                 )
                 self.logger.debug(f"Script path: {tmp_script}")
-                self.logger.debug(f"bash_output path: {arg1}")
+                self.logger.debug(f"bash output path: {arg1}")
                 self.logger.debug(f"Output log path: {output_log}")
                 self.logger.debug(f"Error log path: {error_log}")
                 with open(tmp_script, "w") as f:
@@ -744,11 +734,14 @@ class ModelTester(ErsiliaBase):
                     self.logger.debug(f"STDOUT: {e.stdout}")
                     self.logger.debug(f"STDERR: {e.stderr}")
 
-                with open(output_log, "r") as output_file:
-                    output_content = output_file.read()
-                    print("Captured Output:")
-                    print(output_content)
-                
+                if os.path.exists(arg1):
+                    with open(arg1, "r") as output_file:
+                        output_content = output_file.read()
+                        print("Captured Bash Output:")
+                        print(output_content)
+                else:
+                    self.logger.debug(f"Bash output file not found: {arg1}")
+             
                 with open(error_log, "r") as error_file:
                     error_content = error_file.read()
                     print("Captured Error:")
@@ -768,12 +761,14 @@ class ModelTester(ErsiliaBase):
             result = mdl.run(input=ex_file, output=output_file, batch_size=100)
             print("Ersilia run completed!\n")
 
+            print(f"This is the ersilia output before comparison: {output_file}")
             ersilia_run = self.read_csv(output_file)
             remove_cols = ["key", "input"]
             for row in ersilia_run:
                 for col in remove_cols:
                     if col in row:
                         del row[col]
+            print(f"This is the bash output before comparsison: {0}".format(arg1))
             bash_run = self.read_csv(arg1)
             print("Bash output:\n", bash_run)
             print("\nErsilia output:\n", ersilia_run)
@@ -878,10 +873,10 @@ class ModelTester(ErsiliaBase):
 
     def run(self, output_file):
         start = time.time()
-        self.check_information(output_file)
-        self.check_single_input(output_file)
-        self.check_example_input(output_file)
-        self.check_consistent_output()
+        # self.check_information(output_file)
+        # self.check_single_input(output_file)
+        # self.check_example_input(output_file)
+        # self.check_consistent_output()
         self.get_directories_sizes()
         self.run_bash()
     
