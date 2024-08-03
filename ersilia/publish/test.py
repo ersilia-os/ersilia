@@ -745,47 +745,30 @@ class ModelTester(ErsiliaBase):
             print("Ersilia run completed!\n")
 
             # UPDATED READ_CSV
-            def updated_read_csv(self, file_path):
+            def updated_read_csv(self, file_path, ersilia_flag = False):
                 data = []
                 with open(file_path, "r") as file:
                     lines = file.readlines()
-                    if not lines:
-                        print("No lines read from the file.")
-                        self.logger.debug(f"No lines read from {file_path}")
-                        return data
-            
-                header = lines[0].strip().split(",")
-                print(f"Header: {header}")
-                self.logger.debug(f"Header: {header}")
+                    
+                    headers = lines[0].strip().split(",")
+                    if ersilia_flag == True:
+                        headers = headers[-2:] 
 
-                # Extract only the last two columns from the header
-                if len(header) < 2:
-                    print("Insufficient columns in header.")
-                    self.logger.debug(f"Insufficient columns in header: {header}")
-                    return data
-
-                selected_columns = header[-2:]
-                print(f"Selected Columns: {selected_columns}")
-                self.logger.debug(f"Selected Columns: {selected_columns}")
-
-                for line in lines[1:]:
-                    values = line.strip().split(",")
-                    if len(values) < 2:
-                        continue  # Skip lines with insufficient columns
-
-                    selected_values = values[-2:]
-                    if self._output_type == ["Float"]:
-                        selected_values = [float(x) if x else None for x in selected_values]
-                    elif self._output_type == ["Integer"]:
-                        selected_values = [int(x) if x else None for x in selected_values]
-
-                    print(f"Selected Values: {selected_values}")
-                    self.logger.debug(f"Selected Values: {selected_values}")
-
-                    data.append(dict(zip(selected_columns, selected_values)))
-                    print(f"Data appended: {data[-1]}")
-                    self.logger.debug(f"Data appended: {data[-1]}")
-            
+                    print("\n", "\n")
+                    
+                    for line in lines[1:]: 
+                        self.logger.debug(f"Processing line: {line}")
+                        values = line.strip().split(",")
+                        selected_value = values[-2:]
+                        self.logger.debug(f"Selected Values: {selected_value} and their type {self._output_type}")
+                        if self._output_type == ["Float"]:
+                            selected_value = [float(x) for x in selected_value]
+                            data.append(dict(zip(headers, selected_value)))
+                            self.logger.debug(f"these values are floats: {selected_value}")
+                        elif self._output_type == ["Integer"]:
+                            selected_value = [int(x) for x in selected_value]
+                            data.append(dict(zip(headers, selected_value)))
+                            self.logger.debug(f"these values are integers: {selected_value}")
                     return data
                 # END OF UPDATED READ_CSV
             if os.path.exists(ersilia_output_path):
@@ -797,15 +780,19 @@ class ModelTester(ErsiliaBase):
                 self.logger.debug(f"Ersilia output file not found: {ersilia_output_path}")
             print("Processing ersilia csv output...")
             # ersilia_run = self.read_csv(ersilia_output_path)
-            ersilia_run = updated_read_csv(self, ersilia_output_path)
+            ersilia_run = updated_read_csv(self, ersilia_output_path, True)
             # remove_cols = ["key", "input"]
             # for row in ersilia_run:
             #     for col in remove_cols:
             #         if col in row:
             #             del row[col]
-            print("Processing raw bash output...")
+            with open(bash_output_path, "r") as bash_output_file:
+                    output_content = bash_output_file.read()
+                    print("Captured Raw Bash Output:")
+                    print(output_content)
+            print("Processing raw bash output...: ")
             # bash_run = self.read_csv(bash_output_path)
-            bash_run = updated_read_csv(self, bash_output_path)
+            bash_run = updated_read_csv(self, bash_output_path, False)
             print("\nBash output:\n", bash_run)
             print("\nErsilia output:\n", ersilia_run)
 
@@ -822,7 +809,6 @@ class ModelTester(ErsiliaBase):
             print("\n Bash columns: ", bash_columns)
 
             common_columns = ersilia_columns & bash_columns
-            print("Common columns:", common_columns, "\n")
 
             # Compare values in the common columns within a 5% tolerance`
             for column in common_columns:
