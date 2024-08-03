@@ -310,6 +310,8 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def check_information(self, output):
+        print(f"check_information called with output: {output}")
+
         self.logger.debug("Checking that model information is correct")
         print(
             BOLD
@@ -340,6 +342,7 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def check_single_input(self, output):
+        print(f"check_single_input called with output: {output}")
         session = Session(config_json=None)
         service_class = session.current_service_class()
         input = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
@@ -360,6 +363,7 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def check_example_input(self, output):
+        print(f"check_example_input called with output: {output}")
         session = Session(config_json=None)
         service_class = session.current_service_class()
         eg = ExampleGenerator(model_id=self.model_id)
@@ -604,8 +608,10 @@ class ModelTester(ErsiliaBase):
         log_file_analysis(bundle_size, bundle_file_types, bundle_file_sizes, "bundle_dir")
         log_file_analysis(bentoml_size, bentoml_file_types, bentoml_file_sizes, "bentoml_dir")
         log_file_analysis(env_size, env_file_types, env_file_sizes, "env_dir")
-
-        size_kb = dest_size + bundle_size + bentoml_size + env_size
+        
+        model_size = dest_size + bundle_size + bentoml_size + env_size
+        self.model_size = model_size
+        size_kb = model_size / 1024
         size_mb = size_kb / 1024
         size_gb = size_mb / 1024
         print("\nModel Size:")
@@ -808,7 +814,7 @@ class ModelTester(ErsiliaBase):
                     self.logger.debug(f"Comparing type and values in column {column} for row {idx}")
                     idx += 1
                     print('Ersilia: ' ,type(ersilia_run[i][column]))
-                    print(ersilia_run[i][column], "\n")
+                    print(ersilia_run[i][column])
                     print('Bash: ',type(bash_run[i][column]))
                     print(bash_run[i][column], "\n")
                     if isinstance(ersilia_run[i][column], (float, int)) and isinstance(
