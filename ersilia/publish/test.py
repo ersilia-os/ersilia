@@ -1,6 +1,8 @@
 # TODO adapt to input-type agnostic. For now, it works only with Compound input types.
 
 from collections import defaultdict
+import time
+from datetime import datetime
 import os
 import json
 import click
@@ -716,7 +718,7 @@ class ModelTester(ErsiliaBase):
                     error_content = error_file.read()
                     print("Captured Error:")
                     if error_content == "":
-                        print("No errors found 😄")
+                        print("No errors found 😄 \n")
                         self.run_using_bash = True # bash run was successful
                     else:
                         print(error_content)
@@ -733,7 +735,7 @@ class ModelTester(ErsiliaBase):
             mdl = ErsiliaModel(
                 self.model_id, service_class=service_class, config_json=None
             )
-            result = mdl.run(input=ex_file, output=ersilia_output_path, batch_size=100) # ?
+            result = mdl.run(input=ex_file, output=ersilia_output_path, batch_size=100) 
             print("Ersilia run completed!\n")
 
             # UPDATED READ_CSV
@@ -884,7 +886,10 @@ class ModelTester(ErsiliaBase):
         size_mb = size_kb / 1024
         size_gb = size_mb / 1024
 
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         data = {
+            "date and time run": timestamp,  # Add date and time field
             "model size": {"KB": size_kb, "MB": size_mb, "GB": size_gb},
             "time to run tests (seconds)": time,
             "basic checks passed": self.information_check,
@@ -896,7 +901,7 @@ class ModelTester(ErsiliaBase):
         with open(output, "w") as json_file:
             json.dump(data, json_file, indent=4)
 
-    print("about to run")
+
     def run(self, output_file):
         output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv")
         start = time.time()
@@ -906,11 +911,11 @@ class ModelTester(ErsiliaBase):
         self.check_consistent_output()
         self.get_directories_sizes()
         self.run_bash()
-        print(f"The output file: {output_file}")
         end = time.time()
         seconds_taken = end - start
         
         if output_file:
             self.make_output(output_file, seconds_taken)
+            print(f"The output file is located at: {output_file}")
         else:
             print("No output file specified. Skipping output file generation.")
