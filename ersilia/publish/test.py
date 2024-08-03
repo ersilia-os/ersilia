@@ -751,25 +751,31 @@ class ModelTester(ErsiliaBase):
                     lines = file.readlines()
                     
                     headers = lines[0].strip().split(",")
-                    if ersilia_flag == True:
-                        headers = headers[-2:] 
-
+                    if ersilia_flag:
+                        headers = headers[-2:]
+                    
                     print("\n", "\n")
                     
-                    for line in lines[1:]: 
+                    for line in lines[1:]:
                         self.logger.debug(f"Processing line: {line}")
                         values = line.strip().split(",")
-                        selected_value = values[-2:]
-                        self.logger.debug(f"Selected Values: {selected_value} and their type {self._output_type}")
+                        selected_values = values[-2:]
+                        self.logger.debug(f"Selected Values: {selected_values} and their type {self._output_type}")
+                        
                         if self._output_type == ["Float"]:
-                            selected_value = [float(x) for x in selected_value]
-                            data.append(dict(zip(headers, selected_value)))
-                            self.logger.debug(f"these values are floats: {selected_value}")
+                            selected_values = [float(x) for x in selected_values]
+                            self.logger.debug(f"Converted to floats: {selected_values}")
                         elif self._output_type == ["Integer"]:
-                            selected_value = [int(x) for x in selected_value]
-                            data.append(dict(zip(headers, selected_value)))
-                            self.logger.debug(f"these values are integers: {selected_value}")
-                    return data
+                            selected_values = [int(x) for x in selected_values]
+                            self.logger.debug(f"Converted to integers: {selected_values}")
+                        else:
+                            self.logger.debug(f"Unknown type, keeping as strings: {selected_values}")
+                        
+                        row_data = dict(zip(headers, selected_values))
+                        self.logger.debug(f"Appending row data: {row_data}")
+                        data.append(row_data)
+                
+                return data
                 # END OF UPDATED READ_CSV
             if os.path.exists(ersilia_output_path):
                 with open(ersilia_output_path, "r") as ersilia_output_file:
