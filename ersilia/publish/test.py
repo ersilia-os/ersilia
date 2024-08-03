@@ -628,24 +628,8 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def run_bash(self):
-        # original method
-        # with tempfile.TemporaryDirectory() as temp_dir:
-        #     self._set_model_size(
-        #         os.path.join(
-        #             self.conda_prefix(self.is_base()),
-        #             "../eos/dest/{0}".format(self.model_id),
-        #         )
-        #     )
-
-
-
         # EOS method
         with tempfile.TemporaryDirectory() as temp_dir:
-            # Print size of model
-            # model_path = os.path.join(
-            #         self.conda_prefix(self.is_base()),
-            #         "../eos/dest/{0}".format(self.model_id),
-            #     )
             click.echo(BOLD + "\nRunning the model bash script..." + RESET)  
             model_path =  os.path.join(EOS, "dest", self.model_id)
             model_repository = os.path.join(EOS, "repository", self.model_id)
@@ -671,7 +655,7 @@ class ModelTester(ErsiliaBase):
                 return
 
             # Navigate into the temporary directory
-            # NEW
+            
             print("run.sh exists!")
             subdirectory_path = os.path.join(model_path, "model", "framework")
             self.logger.debug(f"Changing directory to: {subdirectory_path}")
