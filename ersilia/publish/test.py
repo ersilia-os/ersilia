@@ -515,14 +515,15 @@ class ModelTester(ErsiliaBase):
     def read_csv(self, file_path):
         data = []
         with open(file_path, "r") as file:
-            print("TESTING...")
+            print("Prcoessing CSV File for the path: ", file_path)
             lines = file.readlines()
             header = lines[0].strip().split(",")
+            self.logger.debug(f"Header: {header}")
+
             for line in lines[1:]:  
                 values = line.strip().split(",")
                 values = values[2:] # POSSIBLE SOLUTION: read from 3rd column on!
-                print("VALUES:", values)
-                print(self._output_type)
+                self.logger.debug(f"raw values: {values}")
                 if self._output_type == ["Float"]:
                     values = [float(x) for x in values]
                 if self._output_type == ["Integer"]:
@@ -581,18 +582,11 @@ class ModelTester(ErsiliaBase):
         python_path = conda.get_python_path_env(environment=self.model_id)
         env_dir = os.path.dirname(python_path).split("/")
         env_dir = "/".join(env_dir[:-1])
-        # Log the contents of the environment directory
-        # for dirpath, dirnames, filenames in os.walk(env_dir):
-        #     self.logger.debug(f"Directory: {dirpath}")
-        #     for dirname in dirnames:
-        #         self.logger.debug(f"Subdirectory: {os.path.join(dirpath, dirname)}")
-        #     for filename in filenames:
-        #         self.logger.debug(f"File: {os.path.join(dirpath, filename)}")
         return env_dir
     
 
     def get_directories_sizes(self):
-        click.echo(BOLD + "Calculating model size...")
+        click.echo(BOLD + "Calculating model size... " + RESET)
         def log_file_analysis(size, file_types, file_sizes, label):
             self.logger.debug(f"Analyzing files in {label}:")
             self.logger.debug(f"File types & counts: {dict(file_types)}")
@@ -655,18 +649,6 @@ class ModelTester(ErsiliaBase):
             click.echo(BOLD + "\nRunning the model bash script..." + RESET)  
             model_path =  os.path.join(EOS, "dest", self.model_id)
             model_repository = os.path.join(EOS, "repository", self.model_id)
-            
-
-        # REPO_PATH METHOD
-        # with tempfile.TemporaryDirectory() as temp_dir:
-        #     # Construct the repo_path dynamically
-        #     repo_path = os.path.expanduser(os.path.join("~/Desktop", self.model_id))
-        #     model_path = os.path.join(repo_path, "model")
-        #     framework_path = os.path.join(model_path, "framework")
-         
-            
-
-        #     click.echo(BOLD + "\nRunning the model bash script..." + RESET)
 
             # Create an example input
             eg = ExampleGenerator(model_id=self.model_id)
@@ -725,10 +707,10 @@ class ModelTester(ErsiliaBase):
 
                 print("Executing 'bash run.sh'...")
                 try:
-                    subprocess.run(
+                    bash_result = subprocess.run(
                         ["bash", tmp_script], capture_output=True, text=True, check=True
                     )
-                    print("Bash execution completed!\n")
+                    print(f"Bash execution completed! Return code: {bash_result.returncode} \n")
                 except subprocess.CalledProcessError as e:
                     print("Error encountered while running the bash script.")
                     self.logger.debug(f"STDOUT: {e.stdout}")
@@ -737,7 +719,7 @@ class ModelTester(ErsiliaBase):
                 if os.path.exists(bash_output_path):
                     with open(bash_output_path, "r") as bash_output_file:
                         output_content = bash_output_file.read()
-                        print("Captured Bash Output:")
+                        print("Captured Raw Bash Output:")
                         print(output_content)
                 else:
                     self.logger.debug(f"Bash output file not found when reading the path: {bash_output_path}")
@@ -752,7 +734,7 @@ class ModelTester(ErsiliaBase):
 
             print("Executing ersilia run...")
             ersilia_output_path = os.path.abspath(os.path.join(temp_dir, "ersilia_output.csv"))
-            print(f"Ersilia output will be written to: {ersilia_output_path}")
+            self.logger.debug(f"Ersilia output will be written to: {ersilia_output_path}")
 
             session = Session(config_json=None)
             service_class = session.current_service_class()
@@ -762,25 +744,69 @@ class ModelTester(ErsiliaBase):
             result = mdl.run(input=ex_file, output=ersilia_output_path, batch_size=100) # ?
             print("Ersilia run completed!\n")
 
-            #print(f"This is the ersilia output before read_csv: {output_file}")
+            # UPDATED READ_CSV
+            def updated_read_csv(self, file_path):
+                data = []
+                with open(file_path, "r") as file:
+                    lines = file.readlines()
+                    if not lines:
+                        print("No lines read from the file.")
+                        self.logger.debug(f"No lines read from {file_path}")
+                        return data
+            
+                header = lines[0].strip().split(",")
+                print(f"Header: {header}")
+                self.logger.debug(f"Header: {header}")
+
+                # Extract only the last two columns from the header
+                if len(header) < 2:
+                    print("Insufficient columns in header.")
+                    self.logger.debug(f"Insufficient columns in header: {header}")
+                    return data
+
+                selected_columns = header[-2:]
+                print(f"Selected Columns: {selected_columns}")
+                self.logger.debug(f"Selected Columns: {selected_columns}")
+
+                for line in lines[1:]:
+                    values = line.strip().split(",")
+                    if len(values) < 2:
+                        continue  # Skip lines with insufficient columns
+
+                    selected_values = values[-2:]
+                    if self._output_type == ["Float"]:
+                        selected_values = [float(x) if x else None for x in selected_values]
+                    elif self._output_type == ["Integer"]:
+                        selected_values = [int(x) if x else None for x in selected_values]
+
+                    print(f"Selected Values: {selected_values}")
+                    self.logger.debug(f"Selected Values: {selected_values}")
+
+                    data.append(dict(zip(selected_columns, selected_values)))
+                    print(f"Data appended: {data[-1]}")
+                    self.logger.debug(f"Data appended: {data[-1]}")
+            
+                    return data
+                # END OF UPDATED READ_CSV
             if os.path.exists(ersilia_output_path):
                 with open(ersilia_output_path, "r") as ersilia_output_file:
                     output_content = ersilia_output_file.read()
-                    print("Captured Ersilia Output:")
+                    print("Captured Raw Ersilia Output:")
                     print(output_content)
-                    self.logger.debug("Captured Ersilia Output:")
-                    self.logger.debug(output_content)
             else:
                 self.logger.debug(f"Ersilia output file not found: {ersilia_output_path}")
-            ersilia_run = self.read_csv(ersilia_output_path)
-            print("Ersilia run after read_csv :\n", ersilia_run)
-            remove_cols = ["key", "input"]
-            for row in ersilia_run:
-                for col in remove_cols:
-                    if col in row:
-                        del row[col]
-            bash_run = self.read_csv(bash_output_path)
-            print("Bash output:\n", bash_run)
+            print("Processing ersilia csv output...")
+            # ersilia_run = self.read_csv(ersilia_output_path)
+            ersilia_run = updated_read_csv(self, ersilia_output_path)
+            # remove_cols = ["key", "input"]
+            # for row in ersilia_run:
+            #     for col in remove_cols:
+            #         if col in row:
+            #             del row[col]
+            print("Processing raw bash output...")
+            # bash_run = self.read_csv(bash_output_path)
+            bash_run = updated_read_csv(self, bash_output_path)
+            print("\nBash output:\n", bash_run)
             print("\nErsilia output:\n", ersilia_run)
 
             # Select common columns for comparison
