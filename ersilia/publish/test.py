@@ -801,9 +801,11 @@ class ModelTester(ErsiliaBase):
             common_columns = ersilia_columns & bash_columns
 
             # Compare values in the common columns within a 5% tolerance`
+            idx = 1
             for column in common_columns:
                 for i in range(len(ersilia_run)):
-                    print("New Section... printing output types between ersilia and bash run")
+                    print(f"Comparing values in column {column} for row {idx}")
+                    idx += 1
                     print(type(ersilia_run[i][column]))
                     print(ersilia_run[i][column])
                     print(type(bash_run[i][column]))
@@ -811,10 +813,7 @@ class ModelTester(ErsiliaBase):
                     if isinstance(ersilia_run[i][column], (float, int)) and isinstance(
                         bash_run[i][column], (float, int)
                     ):
-                        if not all(
-                            self._compare_tolerance(a, b, DIFFERENCE_THRESHOLD)
-                            for a, b in zip(ersilia_run[i][column], bash_run[i][column])
-                        ):
+                        if not self._compare_tolerance(ersilia_run[i][column], bash_run[i][column], DIFFERENCE_THRESHOLD):
                             click.echo(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results."
