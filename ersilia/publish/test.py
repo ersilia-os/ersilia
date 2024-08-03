@@ -310,7 +310,6 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def check_information(self, output):
-        print(f"check_information called with output: {output}")
 
         self.logger.debug("Checking that model information is correct")
         print(
@@ -638,7 +637,6 @@ class ModelTester(ErsiliaBase):
         with tempfile.TemporaryDirectory() as temp_dir:
             click.echo(BOLD + "\nRunning the model bash script..." + RESET)  
             model_path =  os.path.join(EOS, "dest", self.model_id)
-            model_repository = os.path.join(EOS, "repository", self.model_id)
 
             # Create an example input
             eg = ExampleGenerator(model_id=self.model_id)
@@ -717,7 +715,11 @@ class ModelTester(ErsiliaBase):
                 with open(error_log, "r") as error_file:
                     error_content = error_file.read()
                     print("Captured Error:")
-                    print(error_content)
+                    if error_content == "":
+                        print("No errors found 😄")
+                        self.run_using_bash = True # bash run was successful
+                    else:
+                        print(error_content)
 
             except Exception as e:
                 print(f"Error while activating the conda environment: {e}")
@@ -896,6 +898,7 @@ class ModelTester(ErsiliaBase):
 
     print("about to run")
     def run(self, output_file):
+        output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv")
         start = time.time()
         self.check_information(output_file)
         self.check_single_input(output_file)
