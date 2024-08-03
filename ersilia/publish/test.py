@@ -802,14 +802,15 @@ class ModelTester(ErsiliaBase):
 
             # Compare values in the common columns within a 5% tolerance`
             idx = 1
+            click.echo(BOLD + "\nComparing outputs from Ersilia and Bash runs..." + RESET)
             for column in common_columns:
                 for i in range(len(ersilia_run)):
-                    print(f"Comparing values in column {column} for row {idx}")
+                    self.logger.debug(f"Comparing type and values in column {column} for row {idx}")
                     idx += 1
-                    print(type(ersilia_run[i][column]))
-                    print(ersilia_run[i][column])
-                    print(type(bash_run[i][column]))
-                    print(bash_run[i][column])
+                    print('Ersilia: ' ,type(ersilia_run[i][column]))
+                    print(ersilia_run[i][column], "\n")
+                    print('Bash: ',type(bash_run[i][column]))
+                    print(bash_run[i][column], "\n")
                     if isinstance(ersilia_run[i][column], (float, int)) and isinstance(
                         bash_run[i][column], (float, int)
                     ):
@@ -887,16 +888,20 @@ class ModelTester(ErsiliaBase):
         with open(output, "w") as json_file:
             json.dump(data, json_file, indent=4)
 
+    print("about to run")
     def run(self, output_file):
         start = time.time()
-        # self.check_information(output_file)
-        # self.check_single_input(output_file)
-        # self.check_example_input(output_file)
-        # self.check_consistent_output()
+        self.check_information(output_file)
+        self.check_single_input(output_file)
+        self.check_example_input(output_file)
+        self.check_consistent_output()
         self.get_directories_sizes()
         self.run_bash()
-    
+        print(f"The output file: {output_file}")
         end = time.time()
         seconds_taken = end - start
-        if output_file is not None:
+        
+        if output_file:
             self.make_output(output_file, seconds_taken)
+        else:
+            print("No output file specified. Skipping output file generation.")
