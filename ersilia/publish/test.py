@@ -391,7 +391,6 @@ class ModelTester(ErsiliaBase):
     
     @throw_ersilia_exception
     def check_consistent_output(self):
-        # self.logger.debug("Confirming model produces consistent output...")
         click.echo(BOLD + "\nConfirming model produces consistent output..." + RESET)
 
         session = Session(config_json=None)
@@ -450,6 +449,11 @@ class ModelTester(ErsiliaBase):
                             elem1, float
                         ):  # if one of the outputs is a float, then that means the other is a float too
                             if not self._is_below_difference_threshold(elem1, elem2):
+                                print("\n")
+                                self.logger.debug(f"Difference for {key1}: {abs(elem1 - elem2)}")
+                                self.logger.debug(f"Percentage difference for {key1}: {100 * (abs(elem1 - elem2) / ((elem1 + elem2) / 2))}")
+                                print("\n")
+
                                 for item1, item2 in zipped:
                                     print(item1)
                                     print(item2)
@@ -661,12 +665,10 @@ class ModelTester(ErsiliaBase):
                 return
 
             # Navigate into the temporary directory
-            
             print("run.sh exists!")
             subdirectory_path = os.path.join(model_path, "model", "framework")
             self.logger.debug(f"Changing directory to: {subdirectory_path}")
             os.chdir(subdirectory_path)
-        
             try:
                 run_path = os.path.abspath(subdirectory_path)
                 tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
@@ -743,7 +745,6 @@ class ModelTester(ErsiliaBase):
                 data = []
                 with open(file_path, "r") as file:
                     lines = file.readlines()
-                    
                     headers = lines[0].strip().split(",")
                     if ersilia_flag:
                         headers = headers[-2:]
@@ -903,7 +904,7 @@ class ModelTester(ErsiliaBase):
 
 
     def run(self, output_file):
-        output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv")
+       # output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv")
         start = time.time()
         self.check_information(output_file)
         self.check_single_input(output_file)
