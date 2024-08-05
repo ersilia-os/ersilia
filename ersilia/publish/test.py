@@ -450,7 +450,7 @@ class ModelTester(ErsiliaBase):
                         ):  # if one of the outputs is a float, then that means the other is a float too
                             if not self._is_below_difference_threshold(elem1, elem2):
                                 print("\n")
-                                self.logger.debug(f"Difference for {key1}: {abs(elem1 - elem2)}")
+                                self.logger.debug(f"Outputs that raise error: {elem1}, {elem2}. Difference: {abs(elem1 - elem2)}")
                                 self.logger.debug(f"Percentage difference for {key1}: {100 * (abs(elem1 - elem2) / ((elem1 + elem2) / 2))}")
                                 print("\n")
 
