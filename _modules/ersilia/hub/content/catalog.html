@@ -269,6 +269,8 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
                     <span class="k">continue</span>
                 <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+                    <span class="n">card</span> <span class="o">=</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
                 <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_slug</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
                 <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_title</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
                 <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_status</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
@@ -276,6 +278,7 @@
                 <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
                 <span class="n">service_class</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get_service_class</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">service_class</span><span class="p">]]</span>
+
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="s2">&quot;Identifier&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Slug&quot;</span><span class="p">,</span>
