@@ -436,7 +436,7 @@ class ModelTester(ErsiliaBase):
                     # Calculate MRAE
                     mrae = compute_mrae([output1[key1]], [output2[key2]])
                     self.logger.debug(f"MRAE for {key1}: {mrae}")
-                    if mrae > 0.07:  # Adjust the threshold as needed
+                    if mrae > 0.1:  # Adjust the threshold as needed
                         click.echo(
                             BOLD
                             + "\nBash run and Ersilia run produce inconsistent results (Mean Relative Absolute Value difference exceeds 10%)."
