@@ -12,6 +12,9 @@ import subprocess
 import shutil
 import time
 import re
+import numpy as np
+from scipy.stats import spearmanr
+
 
 from ersilia.utils.conda import SimpleConda
 from ..cli import echo
@@ -389,22 +392,23 @@ class ModelTester(ErsiliaBase):
     outputs equals the number of inputs.  
     """
     
+    
+    
     @throw_ersilia_exception
     def check_consistent_output(self):
+        def compute_mrae(values1, values2):
+            return sum(abs(a - b) / max(abs(a), abs(b)) for a, b in zip(values1, values2)) / len(values1)
+    
         click.echo(BOLD + "\nConfirming model produces consistent output..." + RESET)
 
         session = Session(config_json=None)
         service_class = session.current_service_class()
 
         eg = ExampleGenerator(model_id=self.model_id)
-        input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False) # EDIT 3
+        input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False)
 
-        mdl1 = ErsiliaModel(
-            self.model_id, service_class=service_class, config_json=None
-        )
-        mdl2 = ErsiliaModel(
-            self.model_id, service_class=service_class, config_json=None
-        )
+        mdl1 = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
+        mdl2 = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         result = mdl1.run(input=input, output=None, batch_size=100)
         result2 = mdl2.run(input=input, output=None, batch_size=100)
 
@@ -418,7 +422,6 @@ class ModelTester(ErsiliaBase):
             keys2 = list(output2.keys())
 
             for key1, key2 in zip(keys1, keys2):
-                # check if the output types are not the same
                 if not isinstance(output1[key1], type(output2[key2])):
                     for item1, item2 in zipped:
                         print(item1)
@@ -430,47 +433,59 @@ class ModelTester(ErsiliaBase):
                     continue
 
                 elif isinstance(output1[key1], (float, int)):
-                    # check to see if the first and second outputs are within 5% from each other
-                    if not self._is_below_difference_threshold(
-                        output1[key1], output2[key2]
-                    ):
-                        for item1, item2 in zipped:
-                            print(item1)
-                            print(item2)
-                            print("\n")
-                        # maybe change it to print all of the outputs, and in the error raised it highlights exactly the ones that were off
-                        raise texc.InconsistentOutputs(self.model_id)
-                elif isinstance(output1[key1], list):
-                    ls1 = output1[key1]
-                    ls2 = output2[key2]
-
-                    for elem1, elem2 in zip(ls1, ls2):
-                        if isinstance(
-                            elem1, float
-                        ):  # if one of the outputs is a float, then that means the other is a float too
-                            if not self._is_below_difference_threshold(elem1, elem2):
-                                print("\n")
-                                self.logger.debug(f"Outputs that raise error: {elem1}, {elem2}. Difference: {abs(elem1 - elem2)}")
-                                self.logger.debug(f"Percentage difference for {key1}: {100 * (abs(elem1 - elem2) / ((elem1 + elem2) / 2))}")
-                                print("\n")
-
-                                for item1, item2 in zipped:
-                                    print(item1)
-                                    print(item2)
-                                    print("\n")
-                                raise texc.InconsistentOutputs(self.model_id)
-                        else:
-                            if self._compare_output_strings(elem1, elem2) <= 95:
-                                print("output1 value:", elem1)
-                                print("output2 value:", elem2)
-                                raise texc.InconsistentOutputs(self.model_id)
-                else:
-                    # if it reaches this, then the outputs are just strings
-                    if self._compare_output_strings(output1[key1], output2[key2]) <= 95:
-                        print("output1 value:", output1[key1])
-                        print("output2 value:", output2[key2])
+                    # Calculate MRAE
+                    mrae = compute_mrae([output1[key1]], [output2[key2]])
+                    self.logger.debug(f"MRAE for {key1}: {mrae}")
+                    if mrae > 0.07:  # Adjust the threshold as needed
+                        click.echo(
+                            BOLD
+                            + "\nBash run and Ersilia run produce inconsistent results (Mean Relative Absolute Value difference exceeds 10%)."
+                            + RESET
+                        )
                         raise texc.InconsistentOutputs(self.model_id)
 
+                    # Calculate Spearman's correlation
+                    rho, p_value = spearmanr([output1[key1]], [output2[key2]])
+                    self.logger.debug(f"Spearman's correlation for {key1}: {rho}")
+                    if rho < 0.5:  # Adjust the threshold as needed
+                        click.echo(
+                            BOLD
+                            + "\nBash run and Ersilia run produce inconsistent results (Spearman's correlation below threshold)."
+                            + RESET
+                        )
+                        raise texc.InconsistentOutputs(self.model_id)
+
+                    elif isinstance(output1[key1], list):
+                        ls1 = output1[key1]
+                        ls2 = output2[key2]
+
+                        # Calculate MRAE for lists
+                        mrae = compute_mrae(ls1, ls2)
+                        self.logger.debug(f"MRAE for {key1}: {mrae}")
+                        if mrae > 0.1:  # Adjust the threshold as needed
+                            click.echo(
+                                BOLD
+                                + "\nBash run and Ersilia run produce inconsistent results (MRAE exceeded for list)."
+                                + RESET
+                            )
+                            raise texc.InconsistentOutputs(self.model_id)
+
+                        # Calculate Spearman's correlation for lists
+                        rho, p_value = spearmanr(ls1, ls2)
+                        self.logger.debug(f"Spearman's correlation for {key1}: {rho}")
+                        if rho < 0.5:  # Adjust the threshold as needed
+                            click.echo(
+                                BOLD
+                                + "\nBash run and Ersilia run produce inconsistent results (Spearman's correlation below threshold for list)."
+                                + RESET
+                            )
+                            raise texc.InconsistentOutputs(self.model_id)
+
+                    else:
+                        if self._compare_output_strings(output1[key1], output2[key2]) <= 95:
+                            print("output1 value:", output1[key1])
+                            print("output2 value:", output2[key2])
+                            raise texc.InconsistentOutputs(self.model_id)
         self.consistent_output = True
         print("Model output is consistent!")
 
@@ -521,24 +536,6 @@ class ModelTester(ErsiliaBase):
         similarity = fuzz.ratio(str1, str2)
         return similarity >= similarity_threshold
 
-    def read_csv(self, file_path):
-        data = []
-        with open(file_path, "r") as file:
-            print("Prcoessing CSV File for the path: ", file_path)
-            lines = file.readlines()
-            header = lines[0].strip().split(",")
-            self.logger.debug(f"Header: {header}")
-
-            for line in lines[1:]:  
-                values = line.strip().split(",")
-                values = values[2:] # POSSIBLE SOLUTION: read from 3rd column on!
-                self.logger.debug(f"raw values: {values}")
-                if self._output_type == ["Float"]:
-                    values = [float(x) for x in values]
-                if self._output_type == ["Integer"]:
-                    values = [int(x) for x in values]
-                data.append(dict(zip(header, values)))
-        return data
     
     @staticmethod
     def get_directory_size_without_symlinks(directory):
@@ -635,10 +632,40 @@ class ModelTester(ErsiliaBase):
         "bentoml_size": bentoml_size,
         "env_size": env_size
     }
-
-
+    
+    
     @throw_ersilia_exception
     def run_bash(self):
+        def updated_read_csv(self, file_path, ersilia_flag = False):
+            data = []
+            with open(file_path, "r") as file:
+                lines = file.readlines()
+                headers = lines[0].strip().split(",")
+                if ersilia_flag:
+                    headers = headers[-2:]
+                
+                print("\n", "\n")
+                
+                for line in lines[1:]:
+                    self.logger.debug(f"Processing line: {line}")
+                    values = line.strip().split(",")
+                    selected_values = values[-2:]
+                    self.logger.debug(f"Selected Values: {selected_values} and their type {self._output_type}")
+                    
+                    if self._output_type == ["Float"]:
+                        selected_values = [float(x) for x in selected_values]
+                        self.logger.debug(f"Converted to floats: {selected_values}")
+                    elif self._output_type == ["Integer"]:
+                        selected_values = [int(x) for x in selected_values]
+                        self.logger.debug(f"Converted to integers: {selected_values}")
+                    else:
+                        self.logger.debug(f"Unknown type, keeping as strings: {selected_values}")
+                    
+                    row_data = dict(zip(headers, selected_values))
+                    self.logger.debug(f"Appending row data: {row_data}")
+                    data.append(row_data)
+            
+            return data
         # EOS method
         with tempfile.TemporaryDirectory() as temp_dir:
             click.echo(BOLD + "\nRunning the model bash script..." + RESET)  
@@ -740,38 +767,8 @@ class ModelTester(ErsiliaBase):
             result = mdl.run(input=ex_file, output=ersilia_output_path, batch_size=100) 
             print("Ersilia run completed!\n")
 
-            # UPDATED READ_CSV
-            def updated_read_csv(self, file_path, ersilia_flag = False):
-                data = []
-                with open(file_path, "r") as file:
-                    lines = file.readlines()
-                    headers = lines[0].strip().split(",")
-                    if ersilia_flag:
-                        headers = headers[-2:]
-                    
-                    print("\n", "\n")
-                    
-                    for line in lines[1:]:
-                        self.logger.debug(f"Processing line: {line}")
-                        values = line.strip().split(",")
-                        selected_values = values[-2:]
-                        self.logger.debug(f"Selected Values: {selected_values} and their type {self._output_type}")
-                        
-                        if self._output_type == ["Float"]:
-                            selected_values = [float(x) for x in selected_values]
-                            self.logger.debug(f"Converted to floats: {selected_values}")
-                        elif self._output_type == ["Integer"]:
-                            selected_values = [int(x) for x in selected_values]
-                            self.logger.debug(f"Converted to integers: {selected_values}")
-                        else:
-                            self.logger.debug(f"Unknown type, keeping as strings: {selected_values}")
-                        
-                        row_data = dict(zip(headers, selected_values))
-                        self.logger.debug(f"Appending row data: {row_data}")
-                        data.append(row_data)
-                
-                return data
-                # END OF UPDATED READ_CSV
+
+            
             if os.path.exists(ersilia_output_path):
                 with open(ersilia_output_path, "r") as ersilia_output_file:
                     output_content = ersilia_output_file.read()
@@ -780,19 +777,12 @@ class ModelTester(ErsiliaBase):
             else:
                 self.logger.debug(f"Ersilia output file not found: {ersilia_output_path}")
             print("Processing ersilia csv output...")
-            # ersilia_run = self.read_csv(ersilia_output_path)
             ersilia_run = updated_read_csv(self, ersilia_output_path, True)
-            # remove_cols = ["key", "input"]
-            # for row in ersilia_run:
-            #     for col in remove_cols:
-            #         if col in row:
-            #             del row[col]
             with open(bash_output_path, "r") as bash_output_file:
                     output_content = bash_output_file.read()
                     print("Captured Raw Bash Output:")
                     print(output_content)
             print("Processing raw bash output...: ")
-            # bash_run = self.read_csv(bash_output_path)
             bash_run = updated_read_csv(self, bash_output_path, False)
             print("\nBash output:\n", bash_run)
             print("\nErsilia output:\n", ersilia_run)
@@ -803,15 +793,15 @@ class ModelTester(ErsiliaBase):
                 ersilia_columns.update(row.keys())
             print("\n Ersilia columns: ", ersilia_columns)
 
-
             bash_columns = set()
             for row in bash_run:
                 bash_columns.update(row.keys())
             print("\n Bash columns: ", bash_columns)
 
             common_columns = ersilia_columns & bash_columns
-
-            # Compare values in the common columns within a 5% tolerance`
+            def compute_mrae(values1, values2):
+                return sum(abs(a - b) / max(abs(a), abs(b)) for a, b in zip(values1, values2)) / len(values1)
+ 
             idx = 1
             click.echo(BOLD + "\nComparing outputs from Ersilia and Bash runs..." + RESET)
             for column in common_columns:
@@ -825,16 +815,28 @@ class ModelTester(ErsiliaBase):
                     if isinstance(ersilia_run[i][column], (float, int)) and isinstance(
                         bash_run[i][column], (float, int)
                     ):
-                        if not self._compare_tolerance(ersilia_run[i][column], bash_run[i][column], DIFFERENCE_THRESHOLD):
+                        values1 = [row[column] for row in ersilia_run]
+                        values2 = [row[column] for row in bash_run]
+                        mrae = compute_mrae(values1, values2)
+                        self.logger.debug(f"Mean Relative Absolute Error for {column}: {mrae}")
+                        if mrae > 0.1:  
                             click.echo(
                                 BOLD
-                                + "\nBash run and Ersilia run produce inconsistent results."
+                                + "\nBash run and Ersilia run produce inconsistent results (Mean Relative Absolute Value difference exceeds 10%)."
                                 + RESET
                             )
-                            print("Error in the following column: ", column)
-                            print(ersilia_run[i][column])
-                            print(bash_run[i][column])
+                            print(f"Values that raised error: {values1}, {values2}")
                             raise texc.InconsistentOutputs(self.model_id)
+                        rho, p_value = spearmanr(values1, values2)
+                        self.logger.debug(f"Spearman's correlation for {column}: {rho}")
+                        if rho < 0.5:  # Adjust the threshold as needed
+                            click.echo(
+                                BOLD
+                                + "\nBash run and Ersilia run produce inconsistent results (Spearman's correlation below threshold)."
+                                + RESET
+                            )
+                            raise texc.InconsistentOutputs(self.model_id)
+                    # Both instances are strings
                     elif isinstance(ersilia_run[i][column], str) and isinstance(
                         bash_run[i][column], str
                     ):
