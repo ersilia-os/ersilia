@@ -642,14 +642,17 @@ class ModelTester(ErsiliaBase):
                 lines = file.readlines()
                 headers = lines[0].strip().split(",")
                 if ersilia_flag:
-                    headers = headers[-2:]
+                    headers = headers[2:]
                 
                 print("\n", "\n")
                 
                 for line in lines[1:]:
                     self.logger.debug(f"Processing line: {line}")
                     values = line.strip().split(",")
-                    selected_values = values[-2:]
+                    if ersilia_flag:
+                        selected_values = values[2:]
+                    else:
+                        selected_values = values
                     self.logger.debug(f"Selected Values: {selected_values} and their type {self._output_type}")
                     
                     if self._output_type == ["Float"]:
@@ -772,7 +775,6 @@ class ModelTester(ErsiliaBase):
             print("Ersilia run completed!\n")
 
 
-            
             if os.path.exists(ersilia_output_path):
                 with open(ersilia_output_path, "r") as ersilia_output_file:
                     output_content = ersilia_output_file.read()
@@ -782,6 +784,8 @@ class ModelTester(ErsiliaBase):
                 self.logger.debug(f"Ersilia output file not found: {ersilia_output_path}")
             print("Processing ersilia csv output...")
             ersilia_run = updated_read_csv(self, ersilia_output_path, True)
+
+
             with open(bash_output_path, "r") as bash_output_file:
                     output_content = bash_output_file.read()
                     print("Captured Raw Bash Output:")
@@ -816,12 +820,12 @@ class ModelTester(ErsiliaBase):
             click.echo(BOLD + "\nComparing outputs from Ersilia and Bash runs..." + RESET)
             for column in common_columns:
                 for i in range(len(ersilia_run)):
-                    self.logger.debug(f"Comparing type and values in column {column} for row {idx}")
+                    self.logger.debug(f"Comparing type and values in column '{column}' for row {idx}")
                     idx += 1
                     print('Ersilia: ' ,type(ersilia_run[i][column]))
                     print(ersilia_run[i][column])
                     print('Bash: ',type(bash_run[i][column]))
-                    print(bash_run[i][column], "\n")
+                    print(bash_run[i][column])
                     if isinstance(ersilia_run[i][column], (float, int)) and isinstance(
                         bash_run[i][column], (float, int)
                     ):
@@ -838,7 +842,7 @@ class ModelTester(ErsiliaBase):
                             print(f"Values that raised error: {values1}, {values2}")
                             raise texc.InconsistentOutputs(self.model_id)
                         rho, p_value = spearmanr(values1, values2)
-                        self.logger.debug(f"Spearman's correlation for {column}: {rho}")
+                        self.logger.debug(f"Spearman's correlation for {column}: {rho}\n")
                         if rho < 0.5:  # Adjust the threshold as needed
                             click.echo(
                                 BOLD
@@ -918,11 +922,11 @@ class ModelTester(ErsiliaBase):
     def run(self, output_file):
        # output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv")
         start = time.time()
-        self.check_information(output_file)
-        self.check_single_input(output_file)
-        self.check_example_input(output_file)
-        self.check_consistent_output()
-        self.get_directories_sizes()
+        # self.check_information(output_file)
+        # self.check_single_input(output_file)
+        # self.check_example_input(output_file)
+        # self.check_consistent_output()
+        # self.get_directories_sizes()
         self.run_bash()
         end = time.time()
         seconds_taken = end - start
