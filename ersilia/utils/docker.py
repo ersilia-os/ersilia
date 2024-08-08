@@ -269,7 +269,7 @@ class SimpleDocker(object):
         This function will get the total memory usage of the Docker container running an ersilia model.
         """
 
-        containers = self.get_container()
+        containers = self._get_containers()
 
         if len(containers) > 0:
             result = []
@@ -287,7 +287,7 @@ class SimpleDocker(object):
         This function will get the CPU time of the Docker container running Ersilia Models.
         """
 
-        containers = self.get_container()
+        containers = self._get_containers()
 
         if len(containers) > 0:
             for container in containers:
@@ -307,7 +307,7 @@ class SimpleDocker(object):
         This function will get the peak memory of the Docker container running Ersilia Models.
         """
         try:
-            containers = self.get_container()
+            containers = self._get_containers()
             if isinstance(containers, list) and isinstance(containers[0], str):
                 return containers[0]
 

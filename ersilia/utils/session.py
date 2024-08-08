@@ -1,6 +1,7 @@
 import os
 import shutil
 import psutil
+import uuid
 
 from ..default import SESSIONS_DIR, LOGS_DIR, CONTAINER_LOGS_TMP_DIR
 
@@ -11,8 +12,15 @@ def get_parent_pid():
     pid = os.getppid()
     return pid
 
+def get_session_uuid():
+    with open(os.path.join(get_session_dir(), "session"), "r") as f:
+        return f.read().strip()
+
 def create_session_files(session_name):
+    # Create session directory and necessary files
     session_dir = os.path.join(SESSIONS_DIR, session_name)
+    with open(os.path.join(session_dir, "session"), "w") as f:
+        f.write(f"{str(uuid.uuid4())}\n")
     os.makedirs(os.path.join(session_dir, LOGS_DIR), exist_ok=True)
     os.makedirs(os.path.join(session_dir, CONTAINER_LOGS_TMP_DIR), exist_ok=True)
 

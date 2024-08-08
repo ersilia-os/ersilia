@@ -5,25 +5,29 @@ import csv
 import json
 import time
 import boto3
-import shutil
 import psutil
-import logging
+from loguru import logger as logging
 import requests
 import tempfile
 import types
 import resource
-import statistics
-import tracemalloc
 from .session import Session
 from datetime import datetime
 from datetime import timedelta
 from .base import ErsiliaBase
-from collections import defaultdict
-from ..default import EOS, ERSILIA_RUNS_FOLDER
 from ..utils.docker import SimpleDocker
+from ..utils.session import get_session_dir, get_session_uuid
 from ..utils.csvfile import CsvDataLoader
+from ..default import SESSION_JSON
 from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
+
+
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.environ.get("AWS_REGIOIN", "eu-central-1")
+TRACKING_BUCKET = os.environ.get("TRACKING_BUCKET", "ersilia-models-runs")
+SESSION_SUMMARY_FILE = "session_summary.txt"
 
 
 def flatten_dict(data):
@@ -120,40 +124,27 @@ def log_files_metrics(file_log, model_id):
         logging.warning("Unable to calculate metrics for log file: log file not found")
 
 
-def get_persistent_file_path(model_id):
+def get_persistent_file_path():
     """
-    Construct the persistent file path.
+    Construct the file path for recording results from tracking the model run.
     :param model_id: The currently running model
     :return: The path to the persistent file
     """
     return os.path.join(
-        EOS, ERSILIA_RUNS_FOLDER, "session", model_id, "current_session.txt"
+        get_session_dir(), SESSION_SUMMARY_FILE
     )
-
 
 def create_persistent_file(model_id):
     """
-    Create the persistent path file
+    Create file for recording results from tracking the model run.
     :param model_id: The currently running model
     """
-
-    persistent_file_dir = os.path.dirname(get_persistent_file_path(model_id))
+    file_name = get_persistent_file_path()
+    persistent_file_dir = os.path.dirname(file_name)
     os.makedirs(persistent_file_dir, exist_ok=True)
-    file_name = get_persistent_file_path(model_id)
 
     with open(file_name, "w") as f:
         f.write("Session started for model: {0}\n".format(model_id))
-
-
-def check_file_exists(model_id):
-    """
-    Check if the persistent file exists.
-    :param model_id: The currently running model
-    :return: True if the file exists, False otherwise.
-    """
-
-    return os.path.isfile(get_persistent_file_path(model_id))
-
 
 def write_persistent_file(contents, model_id):
     """
@@ -161,8 +152,8 @@ def write_persistent_file(contents, model_id):
     :param contents: The contents to write to the file.
     :param model_id: The currently running model
     """
-    if check_file_exists(model_id):
-        file_name = get_persistent_file_path(model_id)
+    if os.path.isfile(get_persistent_file_path()):
+        file_name = get_persistent_file_path()
         with open(file_name, "a") as f:
             f.write(f"{contents}\n")
 
@@ -177,13 +168,14 @@ def close_persistent_file(model_id):
     Closes the persistent file, renaming it to a unique name.
     :param model_id: The currently running model
     """
-    if check_file_exists(model_id):
-        file_name = get_persistent_file_path(model_id)
-        file_log = os.path.join(EOS, "console.log")
+    if os.path.isfile(get_persistent_file_path((model_id))):
+        file_name = get_persistent_file_path()
+        file_log = os.path.join(get_session_dir(), "console.log")
         log_files_metrics(file_log, model_id)
+
         new_file_path = os.path.join(
             os.path.dirname(file_name),
-            datetime.now().strftime("%Y-%m-%d_%H-%M-%S.txt"),
+            get_session_uuid(),
         )
         os.rename(file_name, new_file_path)
 
@@ -193,8 +185,8 @@ def close_persistent_file(model_id):
         )
 
 
-def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
-    """Upload a file to an S3 bucket
+def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
+    """Upload a file to an S3 bucket    
 
     :param json_dict: JSON object to upload
     :param bucket: Bucket to upload to
@@ -202,31 +194,44 @@ def upload_to_s3(json_dict, bucket="ersilia-tracking", object_name=None):
     :return: True if file was uploaded, else False
     """
 
-    # If S3 object_name was not specified, use file_name
-    if object_name is None:
-        object_name = (
-            datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + "-" + json_dict["model_id"]
+    s3_client = boto3.client(
+        "s3",
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        region_name=AWS_REGION,
+    )
+    try:
+        # Upload metadata to S3 by first writing to a temporary file
+        tmp_metadata_file = tempfile.NamedTemporaryFile(mode="w", suffix=".json")
+        with open(tmp_metadata_file.name, "w") as f:
+            f.write(json.dumps(metadata, indent=4))
+
+        s3_client.upload_file(
+            tmp_metadata_file.name, bucket, f"metadata/{model_id}_metadata.json"
         )
 
-    # Dump JSON into a temporary file to upload
-    json_str = json.dumps(json_dict, indent=4)
-    tmp = tempfile.NamedTemporaryFile()
+        # Upload run output to S3
+        sid = get_session_uuid()
+        output_file_path = os.path.join(get_session_dir(), "lake", f"output_{sid}.csv")
+        s3_client.upload_file(
+            output_file_path, bucket, f"sessions/session_{sid}/output_{sid}.csv"
+        )
 
-    with open(tmp.name, "w") as f:
-        f.write(json_str)
-        f.flush()
+        # Upload session info to S3
+        session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
+        s3_client.upload_file(session_json_path, bucket, f"sessions/session_{sid}/session.json")
 
-        # Upload the file
-        s3_client = boto3.client("s3")
-        try:
-            s3_client.upload_file(tmp.name, bucket, f"{object_name}.json")
-        except NoCredentialsError:
-            logging.error(
-                "Unable to upload tracking data to AWS: Credentials not found"
-            )
-        except ClientError as e:
-            logging.error(e)
-            return False
+        # Upload tracking summary to S3
+        tracking_summary = get_persistent_file_path()
+        s3_client.upload_file(tracking_summary, bucket, f"sessions/session_{sid}/{sid}.txt")
+
+    except NoCredentialsError:
+        logging.error(
+            "Unable to upload tracking data to AWS: Credentials not found"
+        )
+    except ClientError as e:
+        logging.error(e)
+        return False
     return True
 
 
@@ -332,17 +337,10 @@ class RunTracker(ErsiliaBase):
         self.model_id = model_id
 
         # Initialize folders
-        self.ersilia_runs_folder = os.path.join(EOS, ERSILIA_RUNS_FOLDER)
-        os.makedirs(self.ersilia_runs_folder, exist_ok=True)
+        self.session_folder = get_session_dir()
 
-        self.metadata_folder = os.path.join(self.ersilia_runs_folder, "metadata")
-        os.makedirs(self.metadata_folder, exist_ok=True)
-
-        self.lake_folder = os.path.join(self.ersilia_runs_folder, "lake")
+        self.lake_folder = os.path.join(self.session_folder, "lake")
         os.makedirs(self.lake_folder, exist_ok=True)
-
-        self.logs_folder = os.path.join(self.ersilia_runs_folder, "logs")
-        os.makedirs(self.logs_folder, exist_ok=True)
 
         self.tabular_result_logger = TabularResultLogger()
 
@@ -396,8 +394,8 @@ class RunTracker(ErsiliaBase):
 
         end_time = time.time()
         duration = end_time - start_time
-        if check_file_exists(model_id):
-            file_name = get_persistent_file_path(model_id)
+        if os.path.isfile(get_persistent_file_path()):
+            file_name = get_persistent_file_path()
             with open(file_name, "r") as f:
                 lines = f.readlines()
 
@@ -419,13 +417,13 @@ class RunTracker(ErsiliaBase):
                     updated_lines.append(line)
 
             if not total_time_found:
-                updated_lines.append(f"Total time taken: {formatted_duration}\n")
+                updated_lines.append(f"Total time taken: {formatted_time}\n")
 
             new_content = "".join(updated_lines)
             with open(file_name, "w") as f:
                 f.write(f"{new_content}\n")
         else:
-            new_content = f"Total time: {formatted_duration}\n"
+            new_content = f"Total time: {formatted_time}\n"
             with open(file_name, "w") as f:
                 f.write(f"{new_content}\n")
 
@@ -504,19 +502,13 @@ class RunTracker(ErsiliaBase):
         peak_memory = peak_memory_kb / 1024
         return peak_memory
 
-    def get_memory_info(self, process="ersilia"):
+    def get_memory_info(self):
         """
         Retrieves the memory information of the current process
         """
         try:
             current_process = psutil.Process()
-            process_name = current_process.name()
             cpu_times = current_process.cpu_times()
-
-            if process_name != process:
-                raise Exception(
-                    f"Unexpected process. Expected: {process}, but got: {process_name}"
-                )
 
             uss_mb = current_process.memory_full_info().uss / (1024 * 1024)
             total_cpu_time = sum(
@@ -526,49 +518,35 @@ class RunTracker(ErsiliaBase):
                     cpu_times.system,
                     cpu_times.children_user,
                     cpu_times.children_system,
-                    cpu_times.iowait,
+                    # cpu_times.iowait,  # Is not platform agnostic
                 )
             )
 
             return uss_mb, total_cpu_time
 
         except psutil.NoSuchProcess:
+            logging.error("No such process found.")
             return "No such process found."
         except Exception as e:
             return str(e)
 
     def log_result(self, result):
-        output_dir = os.path.join(self.lake_folder, self.model_id)
-        if not os.path.exists(output_dir):
-            os.mkdir(output_dir)
-        file_name = os.path.join(output_dir, "{0}_lake.csv".format(self.model_id))
+        output_file = os.path.join(self.lake_folder, f"output_{get_session_uuid()}.csv")
         tabular_result = self.tabular_result_logger.tabulate(result)
         if tabular_result is None:
             return
-        with open(file_name, "w") as f:
+        with open(output_file, "w") as f:
             writer = csv.writer(f, delimiter=",")
             for r in tabular_result:
                 writer.writerow(r)
 
-    def log_meta(self, meta):
-        output_dir = os.path.join(self.metadata_folder, self.model_id)
-        if not os.path.exists(output_dir):
-            os.mkdir(output_dir)
-        file_name = os.path.join(output_dir, "{0}.json".format(self.model_id))
-        with open(file_name, "w") as f:
-            json.dump(meta, f)
-
-    def log_logs(self):
-        output_dir = os.path.join(self.logs_folder, self.model_id)
-        if not os.path.exists(output_dir):
-            os.mkdir(output_dir)
-        file_name = os.path.join(output_dir, "{0}.log".format(self.model_id))
-        session_file = os.path.join(EOS, "session.json")
-        shutil.copyfile(session_file, file_name)
 
     def track(self, input, result, meta):
         """
         Tracks the results of a model run.
+        :param input: The input data used in the model run.
+        :param result: The output data in the form of a csv file path or Generator from the model run.
+        :param meta: The metadata of the model.
         """
 
         self.docker_client = SimpleDocker()
@@ -578,14 +556,12 @@ class RunTracker(ErsiliaBase):
         if os.path.isfile(input):
             input_data = self.data.read(input)
         else:
-            input_data = [{"SMILES": input}]
+            input_data = [{"input": input}]
 
         # Create a temporary file to store the result if it is a generator
         if isinstance(result, types.GeneratorType):
-            # Ensure EOS/tmp directory exists
-            tmp_dir = os.path.join(EOS, "tmp")
-            if not os.path.exists(tmp_dir):
-                os.makedirs(tmp_dir, exist_ok=True)
+            tmp_dir = os.path.join(get_session_dir(), "tmp")
+            os.makedirs(tmp_dir, exist_ok=True)
 
             # Create a temporary file to store the generator output
             temp_output_file = tempfile.NamedTemporaryFile(
@@ -607,14 +583,14 @@ class RunTracker(ErsiliaBase):
             result_data = self.data.read(result)
 
         session = Session(config_json=self.config_json)
-        model_id = meta["metadata"].get("Identifier", "Unknown")
+        model_id = meta.get("Identifier", "Unknown")
         json_dict["model_id"] = model_id
 
         # checking for mismatched types
         nan_count = get_nan_counts(result_data)
         json_dict["nan_count"] = nan_count
 
-        json_dict["check_types"] = self.check_types(result_data, meta["metadata"])
+        json_dict["check_types"] = self.check_types(result_data, meta)
 
         json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
 
@@ -634,14 +610,8 @@ class RunTracker(ErsiliaBase):
         session.update_peak_memory(peak_memory)
         session.update_total_memory(total_memory)
         session.update_cpu_time(cpu_time)
-        self.log_logs()
+        self.log_result(result)
 
         json_object = json.dumps(json_dict, indent=4)
         write_persistent_file(json_object, model_id)
-        upload_to_s3(json_dict)
-
-    # Log results, metadata, and session logs
-    def log(self, result, meta):
-        self.log_result(result)
-        self.log_meta(meta)
-        self.log_logs()
+        upload_to_s3(model_id=self.model_id, metadata=meta)

@@ -425,10 +425,11 @@ class ErsiliaModel(ErsiliaBase):
         self.scl = self.autoservice._service_class
         # self.update_model_usage_time(self.model_id) TODO: Check and reactivate
 
-        # Start tracking to get the peak memory, memory usage and cpu time of the Model server(autoservice)
+        # Start tracking to get the peak memory, memory usage and cpu time of the Model server (autoservice)
         if self._run_tracker is not None:
             create_persistent_file(self.model_id)
             memory_usage_serve, cpu_time_serve = self._run_tracker.get_memory_info()
+            # print("HERE", self._run_tracker.get_memory_info())
             peak_memory_serve = self._run_tracker.get_peak_memory()
 
             session = Session(config_json=None)
@@ -498,8 +499,7 @@ class ErsiliaModel(ErsiliaBase):
             )
         # Start tracking model run if track flag is used in serve
         if self._run_tracker is not None and track_run:
-            self._run_tracker.track(input=input, result=result, meta=self._model_info)
-            self._run_tracker.log(result=result, meta=self._model_info)
+            self._run_tracker.track(input=input, result=result, meta=self._model_info["metadata"])
         return result
 
     @property
