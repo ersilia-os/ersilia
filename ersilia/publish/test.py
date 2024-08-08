@@ -729,7 +729,7 @@ class ModelTester(ErsiliaBase):
                     bash_result = subprocess.run(
                         ["bash", tmp_script], capture_output=True, text=True, check=True
                     )
-                    print(f"Bash execution completed! Return code: {bash_result.returncode} \n")
+                    print(f"Bash execution completed!\n")
                 except subprocess.CalledProcessError as e:
                     print("Error encountered while running the bash script.")
                     self.logger.debug(f"STDOUT: {e.stdout}")
@@ -741,7 +741,7 @@ class ModelTester(ErsiliaBase):
                         print("Captured Raw Bash Output:")
                         print(output_content)
                 else:
-                    self.logger.debug(f"Bash output file not found when reading the path: {bash_output_path}")
+                    self.logger.debug(f"WARNING: Bash output file not found when reading the path: {bash_output_path} \n Ersilia and Bash comparison will raise an error")
              
                 with open(error_log, "r") as error_file:
                     error_content = error_file.read()
