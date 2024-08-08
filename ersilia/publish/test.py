@@ -686,8 +686,8 @@ class ModelTester(ErsiliaBase):
             print(f"Checking if run.sh exists at: {run_sh_path}")
             # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
             if not os.path.exists (run_sh_path):
-                print(
-                    "Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3."
+                click.echo(
+                    BOLD + "\n Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3." + RESET
                 )
                 return
 
