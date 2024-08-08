@@ -922,11 +922,11 @@ class ModelTester(ErsiliaBase):
     def run(self, output_file):
        # output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv")
         start = time.time()
-        # self.check_information(output_file)
-        # self.check_single_input(output_file)
-        # self.check_example_input(output_file)
-        # self.check_consistent_output()
-        # self.get_directories_sizes()
+        self.check_information(output_file)
+        self.check_single_input(output_file)
+        self.check_example_input(output_file)
+        self.check_consistent_output()
+        self.get_directories_sizes()
         self.run_bash()
         end = time.time()
         seconds_taken = end - start
