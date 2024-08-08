@@ -800,7 +800,13 @@ class ModelTester(ErsiliaBase):
 
             common_columns = ersilia_columns & bash_columns
             def compute_mrae(values1, values2):
-                return sum(abs(a - b) / max(abs(a), abs(b)) for a, b in zip(values1, values2)) / len(values1)
+                total_error = 0
+                count = 0
+                for a, b in zip(values1, values2):
+                    if a != 0 or b != 0:
+                        total_error += abs(a - b) / max(abs(a), abs(b))
+                        count += 1
+                return total_error / count if count > 0 else 0
  
             idx = 1
             click.echo(BOLD + "\nComparing outputs from Ersilia and Bash runs..." + RESET)
