@@ -920,7 +920,7 @@ class ModelTester(ErsiliaBase):
 
 
     def run(self, output_file):
-       # output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv")
+        output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv") 
         start = time.time()
         self.check_information(output_file)
         self.check_single_input(output_file)
