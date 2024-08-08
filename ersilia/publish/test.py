@@ -666,7 +666,7 @@ class ModelTester(ErsiliaBase):
                     data.append(row_data)
             
             return data
-        # EOS method
+        
         with tempfile.TemporaryDirectory() as temp_dir:
             click.echo(BOLD + "\nRunning the model bash script..." + RESET)  
             model_path =  os.path.join(EOS, "dest", self.model_id)
@@ -724,6 +724,8 @@ class ModelTester(ErsiliaBase):
                 with open(tmp_script, "w") as f:
                     f.write(bash_script)
 
+                
+
                 print("Executing 'bash run.sh'...")
                 try:
                     bash_result = subprocess.run(
@@ -742,6 +744,8 @@ class ModelTester(ErsiliaBase):
                         print(output_content)
                 else:
                     self.logger.debug(f"WARNING: Bash output file not found when reading the path: {bash_output_path} \n Ersilia and Bash comparison will raise an error")
+                    print("Generating bash script content for debugging:\n")
+                    print("the temp script", bash_script)
              
                 with open(error_log, "r") as error_file:
                     error_content = error_file.read()
