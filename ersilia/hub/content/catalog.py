@@ -193,6 +193,8 @@ class ModelCatalog(ErsiliaBase):
                 if not self._is_eos(model_id):
                     continue
                 card = mc.get(model_id)
+                if "card" in card:
+                    card = card["card"]
                 slug = self._get_slug(card)
                 title = self._get_title(card)
                 status = self._get_status(card)
@@ -200,6 +202,7 @@ class ModelCatalog(ErsiliaBase):
                 output = self._get_output(card)
                 service_class = mc.get_service_class(model_id)
                 R += [[model_id, slug, title, status, inputs, output, service_class]]
+
             columns = [
                 "Identifier",
                 "Slug",
