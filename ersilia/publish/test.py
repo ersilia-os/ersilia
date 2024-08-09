@@ -37,9 +37,6 @@ except:
 
 RUN_FILE = "run.sh"
 DATA_FILE = "data.csv"
-DIFFERENCE_THRESHOLD = (
-    5  # outputs should be within this percent threshold to be considered consistent
-)
 NUM_SAMPLES = 5
 BOLD = "\033[1m"
 RESET = "\033[0m"
