@@ -10,9 +10,9 @@ from .card import ModelCard
 from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
 from ...auth.auth import Auth
-from ...default import GITHUB_ORG, BENTOML_PATH
+from ...default import GITHUB_ORG, BENTOML_PATH, MODEL_SOURCE_FILE
 from ... import logger
-from ...default import MODEL_SOURCE_FILE
+
 try:
     import webbrowser
 except ModuleNotFoundError as err:
