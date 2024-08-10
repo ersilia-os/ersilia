@@ -25,7 +25,8 @@ from ..io.output import TabularOutputStacker
 from ..serve.standard_api import StandardCSVRunApi
 from ..io.input import ExampleGenerator, BaseIOGetter
 from .tracking import RunTracker, create_persistent_file
-from ..io.readers.file import FileTyper, TabularFileReaderfrom ..store.api import InferenceStoreApi
+from ..io.readers.file import FileTyper, TabularFileReader
+from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
@@ -371,7 +372,8 @@ class ErsiliaModel(ErsiliaBase):
             store = InferenceStoreApi(model_id=self.model_id)
             print(self.model_id)
             print(input)
-            result_from_store = store.get_precalculations(input)
+            if store.has_model():
+                result_from_store = store.get_precalculations(input)
             print(result_from_store)
             
             # if self.output_source == OutputSource.CLOUD_ONLY:

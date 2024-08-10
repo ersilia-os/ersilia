@@ -1,6 +1,6 @@
-from .. import ErsiliaBase
-from ..io.input import GenericInputAdapter
-from .utils import InferenceStoreApiPayload
+from ersilia.core.base import ErsiliaBase
+from ersilia.io.input import GenericInputAdapter
+from ersilia.store.utils import InferenceStoreApiPayload
 import requests, uuid
 
 INFERENCE_STORE_UPLOAD_API_URL = ""
@@ -14,27 +14,36 @@ class InferenceStoreApi(ErsiliaBase):
         self.input_adapter = GenericInputAdapter(model_id=self.model_id)
 
     ### Call Lambda function to get upload URL ###
-    def _get_upload_url(self) -> str:
-        try:
-            upload_url = requests.get(
+    def _get_presigned_url(self) -> str:
+        presigned_url = requests.get(
                 INFERENCE_STORE_API_URL, params={"model_id": self.model_id}
             )
-        except:
-            upload_url = None
-        return upload_url
-
-    ### TODO: Send payload to S3 ###
-    def _post_inputs(self, payload, request_id) -> str:
-        return ""
-    
-    ### TODO: Get precalculations from S3 ###
-    def _get_outputs(self, model_id, request_id) -> dict:
-        return {}
+        
+        # try:
+        #     upload_url = requests.get(
+        #         INFERENCE_STORE_API_URL, params={"model_id": self.model_id}
+        #     )
+        # except:
+        #     upload_url = None
+        # return upload_url
 
     def has_model(self) -> bool:
-        if self._upload_url is None: # TODO: maybe another condition here to check if URL has expired
-            self._upload_url = self._get_upload_url()
-        return self._upload_url is not None
+        # GET request to check if model exists
+
+        # if self._upload_url is None: # TODO: maybe another condition here to check if URL has expired
+        #     self._upload_url = self._get_upload_url()
+        # return self._upload_url is not Non
+
+    ### TODO: Send payload to S3 ###
+    def _post_inputs(self, presigned_url) -> str:
+        adapted_input_generator = self.input_adapter.adapt_one_by_one(input)
+        smiles_list = [val["input"] for val in adapted_input_generator]
+        payload = InferenceStoreApiPayload(model=self.model_id, inputs=smiles_list)
+        return ""
+
+    ### TODO: Get precalculations from S3 ###
+    def _get_outputs(self, model_id=None, request_id=None) -> dict:
+        return {}
 
     def get_precalculations(self, input: str):
 
@@ -47,16 +56,16 @@ class InferenceStoreApi(ErsiliaBase):
         # print("GOT INPUT")
         # print(input)
         # print("ADAPTED INPUT")
-        adapted_input_generator = self.input_adapter.adapt_one_by_one(input)
-        smiles_list = [val["input"] for val in adapted_input_generator]
-        payload = InferenceStoreApiPayload(model=self.model_id, inputs=smiles_list)
+        
         # print(payload.model_id)
         # print(payload.inputs)
         # print(payload.model_dump())
         
         request_id = generate_request_id()
+        
+        presigned_url = self._get_presigned_url()
 
-        response = self._post_inputs(payload, request_id)
+        response = self._post_inputs(presigned_url)
         if response.status_code == 200:
             print('File uploaded successfully')
         else:
@@ -64,4 +73,9 @@ class InferenceStoreApi(ErsiliaBase):
 
         precalculations = self._get_outputs(self.model_id, request_id)
 
-        return "True"
+        return precalculations
+
+if __name__ == "__main__":
+    abc = 'https://bzr6zxw1k0.execute-api.ap-southeast-2.amazonaws.com/4-8-24'
+    response = requests.get(abc, params={"model_id": 'ey1829ey', "request_id": '12e1-2e-12e12e'})
+    print(response.json())

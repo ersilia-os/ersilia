@@ -232,7 +232,8 @@ class StandardCSVRunApi(ErsiliaBase):
             store = InferenceStoreApi(model_id=self.model_id)
             # print(self.model_id)
             # print(input_data)
-            result_from_store = store.get_precalculations(input_data)
+            if store.has_model():
+                result_from_store = store.get_precalculations(input_data)
             # print(result_from_store)
             # print(missing_keys)
             
