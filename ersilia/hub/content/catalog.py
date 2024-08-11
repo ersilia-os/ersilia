@@ -110,12 +110,12 @@ class ModelCatalog(ErsiliaBase):
         return None
     
     def _get_model_source(self, model_id):
-        model_source_file = os.path.join((self._model_path(model_id), MODEL_SOURCE_FILE)
-            if os.path.exists(model_source_file):
-                with open(model_source_file) as f:
-                    return f.read().rstrip()
-            else:
-                return None
+        model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
+        if os.path.exists(model_source_file):
+            with open(model_source_file) as f:
+                return f.read().rstrip()
+        else:
+            return None
         
     def _get_service_class(self, card):
         if "service_class" in card:
