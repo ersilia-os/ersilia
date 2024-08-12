@@ -378,7 +378,15 @@ class ModelTester(ErsiliaBase):
     @throw_ersilia_exception
     def check_consistent_output(self):
         def compute_mrae(values1, values2):
-            return sum(abs(a - b) / max(abs(a), abs(b)) for a, b in zip(values1, values2)) / len(values1)
+            total_error = 0
+            for a, b in zip(values1, values2):
+                if b != 0:
+                    total_error += abs(a - b) / abs(b)  # Standard MRAE calculation
+                elif a != 0:
+                    total_error += abs(a - b) / abs(a)  # If b is 0, use |a| in the denominator
+                else:
+                    total_error += 0  # Both a and b are 0, so the error is 0
+            return total_error / len(values1)
     
         click.echo(BOLD + "\nConfirming model produces consistent output..." + RESET)
 
