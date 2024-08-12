@@ -1,6 +1,8 @@
 # TODO adapt to input-type agnostic. For now, it works only with Compound input types.
 
 from collections import defaultdict
+from sklearn.metrics import mean_squared_error
+import numpy as np  
 import time
 from datetime import datetime
 import os
@@ -327,7 +329,6 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def check_single_input(self, output):
-        print(f"check_single_input called with output: {output}")
         session = Session(config_json=None)
         service_class = session.current_service_class()
         input = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
@@ -348,7 +349,6 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def check_example_input(self, output):
-        print(f"check_example_input called with output: {output}")
         session = Session(config_json=None)
         service_class = session.current_service_class()
         eg = ExampleGenerator(model_id=self.model_id)
@@ -377,16 +377,9 @@ class ModelTester(ErsiliaBase):
     
     @throw_ersilia_exception
     def check_consistent_output(self):
-        def compute_mrae(values1, values2):
-            total_error = 0
-            for a, b in zip(values1, values2):
-                if b != 0:
-                    total_error += abs(a - b) / abs(b)  # Standard MRAE calculation
-                elif a != 0:
-                    total_error += abs(a - b) / abs(a)  # If b is 0, use |a| in the denominator
-                else:
-                    total_error += 0  # Both a and b are 0, so the error is 0
-            return total_error / len(values1)
+        def compute_rmse(values1, values2):
+            return np.sqrt(mean_squared_error(values1, values2))
+
     
         click.echo(BOLD + "\nConfirming model produces consistent output..." + RESET)
 
@@ -423,12 +416,12 @@ class ModelTester(ErsiliaBase):
 
                 elif isinstance(output1[key1], (float, int)):
                     # Calculate MRAE
-                    mrae = compute_mrae([output1[key1]], [output2[key2]])
+                    rmse = compute_rmse([output1[key1]], [output2[key2]])
                     self.logger.debug(f"MRAE for {key1}: {mrae}")
-                    if mrae > 0.1:  # Adjust the threshold as needed
+                    if rmse > 0.1:  # Adjust the threshold as needed
                         click.echo(
                             BOLD
-                            + "\nBash run and Ersilia run produce inconsistent results (Mean Relative Absolute Value difference exceeds 10%)."
+                            + "\nBash run and Ersilia run produce inconsistent results (Root Mean Square Error difference exceeds 10%)."
                             + RESET
                         )
                         raise texc.InconsistentOutputs(self.model_id)
@@ -449,7 +442,7 @@ class ModelTester(ErsiliaBase):
                         ls2 = output2[key2]
 
                         # Calculate MRAE for lists
-                        mrae = compute_mrae(ls1, ls2)
+                        mrae = compute_rmse(ls1, ls2)
                         self.logger.debug(f"MRAE for {key1}: {mrae}")
                         if mrae > 0.1:  # Adjust the threshold as needed
                             click.echo(
@@ -796,14 +789,9 @@ class ModelTester(ErsiliaBase):
             print("\n Bash columns: ", bash_columns)
 
             common_columns = ersilia_columns & bash_columns
-            def compute_mrae(values1, values2):
-                total_error = 0
-                count = 0
-                for a, b in zip(values1, values2):
-                    if a != 0 or b != 0:
-                        total_error += abs(a - b) / max(abs(a), abs(b))
-                        count += 1
-                return total_error / count if count > 0 else 0
+            def compute_rmse(values1, values2):
+                    return np.sqrt(mean_squared_error(values1, values2))
+
  
             idx = 1
             click.echo(BOLD + "\nComparing outputs from Ersilia and Bash runs..." + RESET)
@@ -820,12 +808,12 @@ class ModelTester(ErsiliaBase):
                     ):
                         values1 = [row[column] for row in ersilia_run]
                         values2 = [row[column] for row in bash_run]
-                        mrae = compute_mrae(values1, values2)
-                        self.logger.debug(f"Mean Relative Absolute Error for {column}: {mrae}")
-                        if mrae > 0.1:  
+                        rmse = compute_rmse(values1, values2)
+                        self.logger.debug(f"Root Mean Square Error for {column}: {rmse}")
+                        if rmse > 0.10:  
                             click.echo(
                                 BOLD
-                                + "\nBash run and Ersilia run produce inconsistent results (Mean Relative Absolute Value difference exceeds 10%)."
+                                + "\nBash run and Ersilia run produce inconsistent results (Root Mean Square Error difference exceeds 10%)."
                                 + RESET
                             )
                             print(f"Values that raised error: {values1}, {values2}")
