@@ -52,26 +52,18 @@ jobs:
     needs: version
     steps:
 
-      - name: Get Month
-        id: month
-        run: |
-          echo "MONTH=$(date +'%B')" >> $GITHUB_OUTPUT
-
-      - name: Get Year
-        id: year
-        run: |
-          echo "YEAR=$(date +'%Y')" >> $GITHUB_OUTPUT
-
-      - name: Release Title
-        id: title
-        run: |
-          echo "TITLE=${{ steps.month.outputs.MONTH }}  ${{ steps.year.outputs.YEAR }}" >> $GITHUB_OUTPUT
-
       - name: Create GitHub release
         id: gh_release
         run: |
+          # Get the version file that we updated in the previous job
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
+
+          month=$(date +'%B')
+          year=$(date +'%Y')
+          title="Release $month $year"
+          version=`sed -n 's/.*version = "\([^"]*\)".*/\1/p' _static_version.py`
           pip install gh
-          gh release create "v${{ needs.jobs.version.outputs.VERSION }}" --title "v${{ steps.title.outputs.TITLE }}" --notes-from-tag
+          gh release create "v$version" --title "v$title" --notes-from-tag
 
   pypi-release:
     runs-on: ubuntu-latest
