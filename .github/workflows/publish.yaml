@@ -63,7 +63,7 @@ jobs:
           title="Release $month $year"
           version=`sed -n 's/.*version = "\([^"]*\)".*/\1/p' _static_version.py`
           pip install gh
-          gh release create "v$version" --title "v$title" --notes-from-tag
+          gh release create "v$version" --title "$title" --notes-from-tag
 
   pypi-release:
     runs-on: ubuntu-latest
