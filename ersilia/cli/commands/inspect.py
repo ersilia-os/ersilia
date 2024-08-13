@@ -25,6 +25,6 @@ def inspect_cmd():
              'extra_files_check': inspector.noExcessFiles(0),
              'extra_files_check_details': inspector.noExcessFiles(1),
         }
-        #print or return?
+        
         print(json.dumps(value))
         return json.dumps(value)
