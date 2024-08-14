@@ -860,7 +860,7 @@ class ModelTester(ErsiliaBase):
 
             click.echo(
                 BOLD
-                + "\nSUCCESS! Bash run and Ersilia run produce consistent results."
+                + "\nSUCCESS! Bash run and Ersilia run produce consistent results. Test Complete 🎉!"
                 + RESET
             )
 
