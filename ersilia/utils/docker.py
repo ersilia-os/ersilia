@@ -244,18 +244,21 @@ class SimpleDocker(object):
         self.exec_container(name, cmd)
         self.kill(name)
 
-    def _get_containers(self):
+    def _get_container_for_model(self, model_id=None):
         """
         This function will get the Docker container running an ersilia model
         """
-
+        if not model_id:
+            raise ValueError("Model ID is required")
         try:
             client = docker.from_env()
             containers = client.containers.list()
 
             if not containers:
                 logger.debug("No containers found")
-            return containers
+            for container in containers:
+                if model_id in container.name:
+                    return container
 
         except docker.errors.APIError as e:
             return [f"Error: Docker API error: {e}"]
@@ -264,56 +267,54 @@ class SimpleDocker(object):
         except Exception as e:
             return [f"An unexpected error occurred: {e}"]
 
-    def container_memory(self):
+    def container_memory(self, model_id):
         """
         This function will get the total memory usage of the Docker container running an ersilia model.
         """
 
-        containers = self._get_containers()
+        container = self._get_container_for_model(model_id)
 
-        if len(containers) > 0:
-            result = []
-            for container in containers:
-                stats = container.stats(stream=False)
-                mem_usage = stats["memory_stats"]["usage"] / (1024 * 1024)
-
+        if container:
+            stats = container.stats(stream=False)
+            mem_usage = stats["memory_stats"]["usage"] / (1024 * 1024)
             return (
                 f"Total memory consumed by container '{container.name}': {mem_usage:.2f}MiB",
             )
-        return
+        else:
+            logger.debug(f"No container found for model {model_id}")
+            return
 
-    def container_cpu(self):
+    def container_cpu(self, model_id):
         """
         This function will get the CPU time of the Docker container running Ersilia Models.
         """
 
-        containers = self._get_containers()
+        container = self._get_container_for_model(model_id)
 
-        if len(containers) > 0:
-            for container in containers:
-                stats = container.stats(stream=False)
-                cpu_stats = stats["cpu_stats"]
-                total_cpu_time = cpu_stats["cpu_usage"]["total_usage"] / 1e9
+        if container:
+            stats = container.stats(stream=False)
+            cpu_stats = stats["cpu_stats"]
+            total_cpu_time = cpu_stats["cpu_usage"]["total_usage"] / 1e9
 
-                minutes = total_cpu_time // 60
-                seconds = total_cpu_time % 60
+            minutes = total_cpu_time // 60
+            seconds = total_cpu_time % 60
 
             return (
                 f"Total CPU time used by container '{container.name}': {int(minutes)} minutes {seconds:.2f} seconds",
             )
+        else:
+            logger.debug(f"No container found for model {model_id}")
+            return
 
-    def container_peak(self):
+    def container_peak(self, model_id):
         """
         This function will get the peak memory of the Docker container running Ersilia Models.
         """
         try:
-            containers = self._get_containers()
-            if isinstance(containers, list) and isinstance(containers[0], str):
-                return containers[0]
-
-            for container in containers:
+            container = self._get_container_for_model(model_id)
+            peak_memory = None
+            if container:
                 stats = container.stats(stream=False)
-                peak_memory = None
                 if "memory_stats" in stats and "max_usage" in stats["memory_stats"]:
                     peak_memory = stats["memory_stats"]["max_usage"] / (1024 * 1024)
                     return peak_memory
@@ -332,26 +333,26 @@ class SimpleDocker(object):
                         print(
                             f"Could not find cgroup file for container '{container.name}'"
                         )
-                        continue
                     try:
                         with open(cgroup_path, "r") as file:
                             peak_memory = int(file.read().strip()) / (1024 * 1024)
                     except FileNotFoundError:
                         print(f"cgroup file {cgroup_path} not found")
-                        continue
                     except Exception as e:
                         print(
                             f"An error occurred while reading cgroup file {cgroup_path}: {e}"
                         )
-                        continue
-            if peak_memory is not None:
-                return (
-                    f"Peak memory Used by container '{container.name}': {int(peak_memory)} MiB",
-                )
+                if peak_memory is not None:
+                    return (
+                        f"Peak memory Used by container '{container.name}': {int(peak_memory)} MiB",
+                    )
+                else:
+                    logger.debug(f"Could not compute container peak memory for model {model_id}")
+                    return
+            else:
+                logger.debug(f"No container found for model {model_id}")
+                return
 
-            return (
-                f"Peak memory Used by container '{container.name}': {int(peak_memory)} MiB",
-            )
         except docker.errors.NotFound as e:
             print(f"Container {container.name} not found: {e}")
             return None
