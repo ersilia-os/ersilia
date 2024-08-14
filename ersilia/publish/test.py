@@ -415,7 +415,7 @@ class ModelTester(ErsiliaBase):
                     continue
 
                 elif isinstance(output1[key1], (float, int)):
-                    # Calculate MRAE
+                    # Calculate RMSE
                     rmse = compute_rmse([output1[key1]], [output2[key2]])
                     self.logger.debug(f"MRAE for {key1}: {mrae}")
                     if rmse > 0.1:  # Adjust the threshold as needed
@@ -441,13 +441,13 @@ class ModelTester(ErsiliaBase):
                         ls1 = output1[key1]
                         ls2 = output2[key2]
 
-                        # Calculate MRAE for lists
-                        mrae = compute_rmse(ls1, ls2)
+                        # Calculate rmse for lists
+                        rmse = compute_rmse(ls1, ls2)
                         self.logger.debug(f"MRAE for {key1}: {mrae}")
-                        if mrae > 0.1:  # Adjust the threshold as needed
+                        if rmse > 0.1:  # Adjust the threshold as needed
                             click.echo(
                                 BOLD
-                                + "\nBash run and Ersilia run produce inconsistent results (MRAE exceeded for list)."
+                                + "\nBash run and Ersilia run produce inconsistent results (Root Mean Square Error exceeded threshold of 10% for list)."
                                 + RESET
                             )
                             raise texc.InconsistentOutputs(self.model_id)
