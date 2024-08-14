@@ -1,9 +1,9 @@
 import os
 import shutil
 import psutil
-import uuid
+import json
 
-from ..default import SESSIONS_DIR, LOGS_DIR, CONTAINER_LOGS_TMP_DIR
+from ..default import SESSIONS_DIR, LOGS_DIR, CONTAINER_LOGS_TMP_DIR, SESSION_JSON
 
 def get_current_pid():
     return os.getpid()
@@ -13,14 +13,15 @@ def get_parent_pid():
     return pid
 
 def get_session_uuid():
-    with open(os.path.join(get_session_dir(), "session"), "r") as f:
-        return f.read().strip()
+    # TODO this should not be implemented here ideally, and callers should use the Session interface in ersilia/core/session.py
+    with open(os.path.join(get_session_dir(), SESSION_JSON), "r") as f:
+        session = json.load(f)
+        print(session)
+        return session["identifier"]
 
 def create_session_files(session_name):
     # Create session directory and necessary files
     session_dir = os.path.join(SESSIONS_DIR, session_name)
-    with open(os.path.join(session_dir, "session"), "w") as f:
-        f.write(f"{str(uuid.uuid4())}\n")
     os.makedirs(os.path.join(session_dir, LOGS_DIR), exist_ok=True)
     os.makedirs(os.path.join(session_dir, CONTAINER_LOGS_TMP_DIR), exist_ok=True)
 

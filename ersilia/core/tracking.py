@@ -19,6 +19,7 @@ from ..utils.docker import SimpleDocker
 from ..utils.session import get_session_dir, get_session_uuid
 from ..utils.csvfile import CsvDataLoader
 from ..default import SESSION_JSON
+from ..utils.session import get_session_dir, get_session_uuid
 from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
@@ -108,7 +109,7 @@ def log_files_metrics(file_log, model_id):
                 if ersilia_error_flag:
                     errors["Unknown Ersilia exception class"] += 1
                 if misc_error_flag:
-                    errors[error_name] += 1
+                    errors[error_name] = 1 + errors.get(error_name, 0)
 
         json_dict = {}
         json_dict["Error count"] = error_count
@@ -168,7 +169,7 @@ def close_persistent_file(model_id):
     Closes the persistent file, renaming it to a unique name.
     :param model_id: The currently running model
     """
-    if os.path.isfile(get_persistent_file_path((model_id))):
+    if os.path.isfile(get_persistent_file_path()):
         file_name = get_persistent_file_path()
         file_log = os.path.join(get_session_dir(), "console.log")
         log_files_metrics(file_log, model_id)
@@ -460,7 +461,6 @@ class RunTracker(ErsiliaBase):
         """
 
         type_dict = {"float": "Float", "int": "Int"}
-        count = 0
 
         # Collect data types for each column, ignoring "key" and "input" columns
         dtypes_list = {}
@@ -487,9 +487,9 @@ class RunTracker(ErsiliaBase):
             logging.warning("Not right shape. Expected Single but got List")
             correct_shape = False
 
-        logging.info("Output has", count, "mismatched types.\n")
+        logging.info(f"Output has {mismatched_types} mismatched types")
 
-        return {"mismatched_types": count, "correct_shape": correct_shape}
+        return {"mismatched_types": mismatched_types, "correct_shape": correct_shape}
 
     def get_peak_memory(self):
         """
@@ -531,11 +531,12 @@ class RunTracker(ErsiliaBase):
             return str(e)
 
     def log_result(self, result):
-        output_file = os.path.join(self.lake_folder, f"output_{get_session_uuid()}.csv")
-        tabular_result = self.tabular_result_logger.tabulate(result)
+        identifier = get_session_uuid() 
+        output_file = os.path.join(self.lake_folder, f"output_{identifier}.csv")
+        tabular_result = self.tabular_result_logger.tabulate(result, identifier=identifier, model_id=self.model_id)
         if tabular_result is None:
             return
-        with open(output_file, "w") as f:
+        with open(output_file, "a+") as f:
             writer = csv.writer(f, delimiter=",")
             for r in tabular_result:
                 writer.writerow(r)
