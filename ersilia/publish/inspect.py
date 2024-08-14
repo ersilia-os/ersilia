@@ -13,7 +13,7 @@ class ModelInspector(ErsiliaBase):
         self.model = model
 
 
-    def checkRepoExists(self, flag):
+    def check_repo_exists(self, flag):
         """
         Verify that the repository exists at a given link.
         
@@ -32,7 +32,7 @@ class ModelInspector(ErsiliaBase):
         return f"Connection invalid, no github repository found at https://github.com/ersilia-os/{self.model}. Please check that this repository exists in the ersilia-os database."
     
     
-    def metadataComplete(self, flag):
+    def metadata_complete(self, flag):
         """
         Search for specific keys in metadata JSON file.
         
@@ -106,7 +106,7 @@ class ModelInspector(ErsiliaBase):
         return "Check passed."
     
 
-    def folderStructureComplete(self, flag):
+    def folder_structure_complete(self, flag):
         """
         Validate folder structure of the repository.
         
@@ -145,7 +145,7 @@ class ModelInspector(ErsiliaBase):
         return details
 
 
-    def validateDependicies(self, flag):
+    def validate_dependencies(self, flag):
         """
         Check dependencies specified in the Dockerfile.
         
@@ -201,7 +201,7 @@ class ModelInspector(ErsiliaBase):
             return "Check passed."
         return details
     
-    def computationalPerformance(self, flag):
+    def computational_performance(self, flag):
         """
         Measure computational performance by serving the model and running predictions.
         
@@ -244,7 +244,7 @@ class ModelInspector(ErsiliaBase):
         return True
     
 
-    def noExcessFiles(self, flag):
+    def no_excess_files(self, flag):
         """
         Ensure that there are no excess files in the root directory of the repository.
         
