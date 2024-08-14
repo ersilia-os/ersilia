@@ -215,16 +215,16 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
         sid = get_session_uuid()
         output_file_path = os.path.join(get_session_dir(), "lake", f"output_{sid}.csv")
         s3_client.upload_file(
-            output_file_path, bucket, f"sessions/session_{sid}/output_{sid}.csv"
+            output_file_path, bucket, f"output/output_{sid}.csv"
         )
 
         # Upload session info to S3
         session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
-        s3_client.upload_file(session_json_path, bucket, f"sessions/session_{sid}/session.json")
+        s3_client.upload_file(session_json_path, bucket, f"summary/session_{sid}.json")
 
         # Upload tracking summary to S3
         tracking_summary = get_persistent_file_path()
-        s3_client.upload_file(tracking_summary, bucket, f"sessions/session_{sid}/{sid}.txt")
+        s3_client.upload_file(tracking_summary, bucket, f"tracking/track_{sid}.txt")
 
     except NoCredentialsError:
         logging.error(
@@ -596,9 +596,9 @@ class RunTracker(ErsiliaBase):
         json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
 
         docker_info = (
-            self.docker_client.container_memory(),
-            self.docker_client.container_cpu(),
-            self.docker_client.container_peak(),
+            self.docker_client.container_memory(self.model_id),
+            self.docker_client.container_cpu(self.model_id),
+            self.docker_client.container_peak(self.model_id),
         )
 
         json_dict["Docker Container"] = docker_info
