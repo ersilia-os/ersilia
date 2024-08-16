@@ -7,7 +7,6 @@ import time
 from datetime import datetime
 import os
 import json
-import click
 import tempfile
 import types
 import subprocess
@@ -124,7 +123,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_id(self, data):
-        print("Checking model ID...")
+        self.logger.debug("Checking model ID...")
         if data["card"]["Identifier"] != self.model_id:
             raise texc.WrongCardIdentifierError(self.model_id)
 
@@ -133,7 +132,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_slug(self, data):
-        print("Checking model slug...")
+        self.logger.debug("Checking model slug...")
         if not data["card"]["Slug"]:
             raise texc.EmptyField("slug")
 
@@ -142,7 +141,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_description(self, data):
-        print("Checking model description...")
+        self.logger.debug("Checking model description...")
         if not data["card"]["Description"]:
             raise texc.EmptyField("Description")
 
@@ -158,7 +157,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_task(self, data):
-        print("Checking model task...")
+        self.logger.debug("Checking model task...")
         valid_tasks = [
             "Classification",
             "Regression",
@@ -186,7 +185,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_input(self, data):
-        print("Checking model input...")
+        self.logger.debug("Checking model input...")
         valid_inputs = [["Compound"], ["Protein"], ["Text"]]
         if data["card"]["Input"] not in valid_inputs:
             raise texc.InvalidEntry("Input")
@@ -201,7 +200,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_input_shape(self, data):
-        print("Checking model input shape...")
+        self.logger.debug("Checking model input shape...")
         valid_input_shapes = [
             "Single",
             "Pair",
@@ -228,7 +227,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_output(self, data):
-        print("Checking model output...")
+        self.logger.debug("Checking model output...")
         valid_outputs = [
             "Boolean",
             "Compound",
@@ -260,7 +259,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_output_type(self, data):
-        print("Checking model output type...")
+        self.logger.debug("Checking model output type...")
         valid_output_types = [["String"], ["Float"], ["Integer"]]
         if data["card"]["Output Type"] not in valid_output_types:
             raise texc.InvalidEntry("Output Type")
@@ -275,7 +274,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_output_shape(self, data):
-        print("Checking model output shape...")
+        self.logger.debug("Checking model output shape...")
         valid_output_shapes = [
             "Single",
             "List",
@@ -300,7 +299,7 @@ class ModelTester(ErsiliaBase):
     def check_information(self, output):
 
         self.logger.debug("Checking that model information is correct")
-        print(
+        self.logger.debug(
             BOLD
             + "Beginning checks for {0} model information:".format(self.model_id)
             + RESET
@@ -318,7 +317,7 @@ class ModelTester(ErsiliaBase):
         self._check_model_output(data)
         self._check_model_output_type(data)
         self._check_model_output_shape(data)
-        print("SUCCESS! Model information verified.\n")
+        self.logger.debug("SUCCESS! Model information verified.\n")
 
         if output is not None:
             self.information_check = True
@@ -333,7 +332,7 @@ class ModelTester(ErsiliaBase):
         service_class = session.current_service_class()
         input = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
 
-        click.echo(BOLD + "Testing model on single smiles input...\n" + RESET)
+        self.logger.debug(BOLD + "Testing model on single smiles input...\n" + RESET)
         mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         result = mdl.run(input=input, output=output, batch_size=100)
 
@@ -353,7 +352,7 @@ class ModelTester(ErsiliaBase):
         service_class = session.current_service_class()
         eg = ExampleGenerator(model_id=self.model_id)
         input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False) 
-        click.echo(
+        self.logger.debug(
             BOLD
             + "\nTesting model on input of 5 smiles given by 'example' command...\n"
             + RESET
@@ -381,7 +380,7 @@ class ModelTester(ErsiliaBase):
             return np.sqrt(mean_squared_error(values1, values2))
 
     
-        click.echo(BOLD + "\nConfirming model produces consistent output..." + RESET)
+        self.logger.debug(BOLD + "\nConfirming model produces consistent output..." + RESET)
 
         session = Session(config_json=None)
         service_class = session.current_service_class()
@@ -406,9 +405,9 @@ class ModelTester(ErsiliaBase):
             for key1, key2 in zip(keys1, keys2):
                 if not isinstance(output1[key1], type(output2[key2])):
                     for item1, item2 in zipped:
-                        print(item1)
-                        print(item2)
-                        print("\n")
+                        self.logger.debug(item1)
+                        self.logger.debug(item2)
+                        self.logger.debug("\n")
                     raise texc.InconsistentOutputTypes(self.model_id)
 
                 if output1[key1] is None:
@@ -419,7 +418,7 @@ class ModelTester(ErsiliaBase):
                     rmse = compute_rmse([output1[key1]], [output2[key2]])
                     self.logger.debug(f"MRAE for {key1}: {mrae}")
                     if rmse > 0.1:  # Adjust the threshold as needed
-                        click.echo(
+                        self.logger.debug(
                             BOLD
                             + "\nBash run and Ersilia run produce inconsistent results (Root Mean Square Error difference exceeds 10%)."
                             + RESET
@@ -430,7 +429,7 @@ class ModelTester(ErsiliaBase):
                     rho, p_value = spearmanr([output1[key1]], [output2[key2]])
                     self.logger.debug(f"Spearman's correlation for {key1}: {rho}")
                     if rho < 0.5:  # Adjust the threshold as needed
-                        click.echo(
+                        self.logger.debug(
                             BOLD
                             + "\nBash run and Ersilia run produce inconsistent results (Spearman's correlation below threshold)."
                             + RESET
@@ -445,7 +444,7 @@ class ModelTester(ErsiliaBase):
                         rmse = compute_rmse(ls1, ls2)
                         self.logger.debug(f"MRAE for {key1}: {mrae}")
                         if rmse > 0.1:  # Adjust the threshold as needed
-                            click.echo(
+                            self.logger.debug(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results (Root Mean Square Error exceeded threshold of 10% for list)."
                                 + RESET
@@ -456,7 +455,7 @@ class ModelTester(ErsiliaBase):
                         rho, p_value = spearmanr(ls1, ls2)
                         self.logger.debug(f"Spearman's correlation for {key1}: {rho}")
                         if rho < 0.5:  # Adjust the threshold as needed
-                            click.echo(
+                            self.logger.debug(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results (Spearman's correlation below threshold for list)."
                                 + RESET
@@ -465,26 +464,26 @@ class ModelTester(ErsiliaBase):
                     # Check String Outputs
                     else: 
                         if self._compare_output_strings(output1[key1], output2[key2]) <= 95:
-                            print("output1 value:", output1[key1])
-                            print("output2 value:", output2[key2])
+                            self.logger.debug(f"output1 value: {output1[key1]}")
+                            self.logger.debug(f"output2 value: {output2[key2]}")
                             raise texc.InconsistentOutputs(self.model_id)
         self.consistent_output = True
-        click.echo(
+        self.logger.debug(
             BOLD + "\nModel output is consistent!" + RESET
         )
 
-        click.echo(
+        self.logger.debug(
             BOLD + "\nConfirming there are same number of outputs as inputs..." + RESET
         )
-        print("Number of inputs:", NUM_SAMPLES)
-        print("Number of outputs:", len(zipped))
+        self.logger.debug(f"Number of inputs: {NUM_SAMPLES}")
+        self.logger.debug(f"Number of outputs: {len(zipped)}")
 
         if NUM_SAMPLES != len(zipped):
-            self.logger.debug("Number of inputs:", NUM_SAMPLES)
-            self.logger.debug("Number of outputs:", len(zipped))
+            self.logger.debug("Number of inputs: {NUM_SAMPLES}")
+            self.logger.debug("Number of outputs: {len(zipped)}")
             raise texc.MissingOutputs()
         else:
-            click.echo(BOLD + "\nNumber of outputs and inputs are equal!" + RESET)
+            self.logger.debug(BOLD + "\nNumber of outputs and inputs are equal!" + RESET)
 
     @staticmethod
     def default_env():
@@ -575,7 +574,7 @@ class ModelTester(ErsiliaBase):
 
     @throw_ersilia_exception
     def get_directories_sizes(self):
-        click.echo(BOLD + "Calculating model size... " + RESET)
+        self.logger.debug(BOLD + "Calculating model size... " + RESET)
         def log_file_analysis(size, file_types, file_sizes, label):
             self.logger.debug(f"Analyzing files in {label}:")
             self.logger.debug(f"File types & counts: {dict(file_types)}")
@@ -600,10 +599,10 @@ class ModelTester(ErsiliaBase):
         size_mb = size_kb / 1024
         size_gb = size_mb / 1024
 
-        self.logger.debug(BOLD + "\nModel Size:" + RESET)
-        self.logger.debug("KB:", size_kb)
-        self.logger.debug("MB:", size_mb)
-        self.logger.debug("GB:", size_gb)
+        self.logger.debug(BOLD + "Model Size Breakdown:" + RESET)
+        self.logger.debug(f"KB: {size_kb}")
+        self.logger.debug(f"MB: {size_mb}")
+        self.logger.debug(f"GB: {size_gb}")
 
         self.logger.debug("Sizes of directories:")
         self.logger.debug(f"dest_size: {dest_size} bytes")
@@ -655,7 +654,7 @@ class ModelTester(ErsiliaBase):
             return data
         
         with tempfile.TemporaryDirectory() as temp_dir:
-            click.echo(BOLD + "\nRunning the model bash script..." + RESET)  
+            self.logger.debug(BOLD + "\nRunning the model bash script..." + RESET)  
             model_path =  os.path.join(EOS, "dest", self.model_id)
 
             # Create an example input
@@ -672,7 +671,7 @@ class ModelTester(ErsiliaBase):
             run_sh_path = os.path.join(model_path, "model", "framework", "run.sh")
             # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
             if not os.path.exists (run_sh_path):
-                click.echo(
+                self.logger.debug(
                     BOLD + "\n Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3." + RESET
                 )
                 return
@@ -711,12 +710,12 @@ class ModelTester(ErsiliaBase):
 
                 
 
-                click.echo(BOLD + "\nExecuting 'bash run.sh'..." + RESET)
+                self.logger.debug(BOLD + "\nExecuting 'bash run.sh'..." + RESET)
                 try:
                     bash_result = subprocess.run(
                         ["bash", tmp_script], capture_output=True, text=True, check=True
                     )
-                    click.echo(BOLD + "\nBash execution completed!" + RESET)
+                    self.logger.debug(BOLD + "\nBash execution completed!" + RESET)
                 except subprocess.CalledProcessError as e:
                     self.logger.debug(f"STDOUT: {e.stdout}")
                     self.logger.debug(f"STDERR: {e.stderr}")
@@ -728,23 +727,24 @@ class ModelTester(ErsiliaBase):
                         self.logger.debug("Captured Raw Bash Output:")
                         self.logger.debug(output_content)
                 else:
-                    click.echo(BOLD + f"\nWARNING: Bash output file not found when reading the path: {bash_output_path} \n Ersilia and Bash comparison will raise an error" + RESET)
+                    self.logger.debug(BOLD + "\nWARNING: Bash output file not found when reading the path:")
+                    self.logger.debug(bash_output_path)
+                    self.logger.debug("\n Ersilia and Bash comparison will raise an error + RESET")
                     self.logger.debug("Generating bash script content for debugging:\n")
-                    self.logger.debug("the temp script", bash_script)
              
                 with open(error_log, "r") as error_file:
                     error_content = error_file.read()
-                    click.echo(BOLD + "\nCaptured Error:" + RESET)
+                    self.logger.debug(BOLD + "\nCaptured Error:" + RESET)
                     if error_content == "":
-                        print("No errors found 😄 \n")
+                        self.logger.debug("No errors found 😄 \n")
                         self.run_using_bash = True # bash run was successful
                     else:
-                        click.echo(error_content)
+                        self.logger.debug(error_content)
 
             except Exception as e:
                 raise RuntimeError(f"Error while activating the conda environment: {e}")
 
-            click.echo(BOLD + "\nExecuting ersilia run..."+RESET)
+            self.logger.debug(BOLD + "\nExecuting ersilia run..."+RESET)
             ersilia_output_path = os.path.abspath(os.path.join(temp_dir, "ersilia_output.csv"))
             self.logger.debug(f"Ersilia output will be written to: {ersilia_output_path}")
 
@@ -754,7 +754,7 @@ class ModelTester(ErsiliaBase):
                 self.model_id, service_class=service_class, config_json=None
             )
             result = mdl.run(input=ex_file, output=ersilia_output_path, batch_size=100) 
-            click.echo("Ersilia run successful with no errors!\n")
+            self.logger.debug("Ersilia run successful with no errors!\n")
 
 
             if os.path.exists(ersilia_output_path):
@@ -774,19 +774,19 @@ class ModelTester(ErsiliaBase):
                     self.logger.debug(output_content)
             self.logger.debug("Processing raw bash output...: ")
             bash_run = updated_read_csv(self, bash_output_path, False)
-            self.logger.debug("\nBash output:\n", bash_run)
-            self.logger.debug("\nErsilia output:\n", ersilia_run)
+            self.logger.debug(f"\nBash output:\n {bash_run}")
+            self.logger.debug(f"\nErsilia output:\n {ersilia_run}")
 
             # Select common columns for comparison
             ersilia_columns = set()
             for row in ersilia_run:
                 ersilia_columns.update(row.keys())
-            self.logger.debug("\n Ersilia columns: ", ersilia_columns)
+            self.logger.debug(f"\n Ersilia columns:  {ersilia_columns}")
 
             bash_columns = set()
             for row in bash_run:
                 bash_columns.update(row.keys())
-            self.logger.debug("\n Bash columns: ", bash_columns)
+            self.logger.debug(f"\n Bash columns:  {bash_columns}")
 
             common_columns = ersilia_columns & bash_columns
             def compute_rmse(values1, values2):
@@ -794,15 +794,9 @@ class ModelTester(ErsiliaBase):
 
  
             idx = 1
-            click.echo(BOLD + "\nComparing outputs from Ersilia and Bash runs..." + RESET)
+            self.logger.debug(BOLD + "\nComparing outputs from Ersilia and Bash runs..." + RESET)
             for column in common_columns:
                 for i in range(len(ersilia_run)):
-                    self.logger.debug(f"Comparing type and values in column '{column}' for row {idx}")
-                    idx += 1
-                    self.logger.debug('Ersilia: ' ,type(ersilia_run[i][column]))
-                    self.logger.debug(ersilia_run[i][column])
-                    self.logger.debug('Bash: ',type(bash_run[i][column]))
-                    self.logger.debug(bash_run[i][column])
                     if isinstance(ersilia_run[i][column], (float, int)) and isinstance(
                         bash_run[i][column], (float, int)
                     ):
@@ -811,17 +805,17 @@ class ModelTester(ErsiliaBase):
                         rmse = compute_rmse(values1, values2)
                         self.logger.debug(f"Root Mean Square Error for {column}: {rmse}")
                         if rmse > 0.10:  
-                            click.echo(
+                            self.logger.debug(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results (Root Mean Square Error difference exceeds 10%)."
                                 + RESET
                             )
-                            print(f"Values that raised error: {values1}, {values2}")
+                            self.logger.debug(f"Values that raised error: {values1}, {values2}")
                             raise texc.InconsistentOutputs(self.model_id)
                         rho, p_value = spearmanr(values1, values2)
                         self.logger.debug(f"Spearman's correlation for {column}: {rho}\n")
                         if rho < 0.5:  # Adjust the threshold as needed
-                            click.echo(
+                            self.logger.debug(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results (Spearman's correlation below threshold)."
                                 + RESET
@@ -835,30 +829,30 @@ class ModelTester(ErsiliaBase):
                             self._compare_string_similarity(a, b, 95)
                             for a, b in zip(ersilia_run[i][column], bash_run[i][column])
                         ):
-                            click.echo(
+                            self.logger.debug(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results."
                                 + RESET
                             )
-                            print("Error in the following column: ", column)
-                            print(ersilia_run[i][column])
-                            print(bash_run[i][column])
+                            self.logger.debug(f"Error in the following column:  {column}")
+                            self.logger.debug(fersilia_run[i][column])
+                            self.logger.debug(bash_run[i][column])
                             raise texc.InconsistentOutputs(self.model_id)
                     elif isinstance(ersilia_run[i][column], bool) and isinstance(
                         ersilia_run[i][column], bool
                     ):
                         if not ersilia_run[i][column].equals(bash_run[i][column]):
-                            click.echo(
+                            self.logger.debug(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results."
                                 + RESET
                             )
-                            print("Error in the following column: ", column)
-                            print(ersilia_run[i][column])
-                            print(bash_run[i][column])
+                            self.logger.debug("Error in the following column: ", column)
+                            self.logger.debug(ersilia_run[i][column])
+                            self.logger.debug(bash_run[i][column])
                             raise texc.InconsistentOutputs(self.model_id)
 
-            click.echo(
+            self.logger.debug(
                 BOLD
                 + "\nSUCCESS! Bash run and Ersilia run produce consistent results. Test Complete 🎉!"
                 + RESET
@@ -910,6 +904,6 @@ class ModelTester(ErsiliaBase):
         
         if output_file:
             self.make_output(output_file, seconds_taken)
-            print(f"The output file is located at: {output_file}")
+            self.logger.debug(f"The output file is located at: {output_file}")
         else:
-            print("No output file specified. Skipping output file generation.")
+            self.logger.debug("No output file specified. Skipping output file generation.")
