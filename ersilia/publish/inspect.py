@@ -267,66 +267,47 @@ class ModelInspector(ErsiliaBase):
             return "Check passed."
         return details
 
-    def computational_performance(self, flag):
+    def computational_performance(self, verbose):
         """
         Measure computational performance by serving the model and running predictions.
 
         Args:
-            flag (int): Flag indicating whether to return boolean or detailed message.
+            verbose (int): Verbose indicating whether to return boolean or detailed message.
 
         Returns:
-            bool or str: Depending on the flag, returns boolean or a message indicating the check status.
+            bool or str: Depending on the verbose, returns boolean or a message indicating the check status.
         """
         details = ""
-        serve = subprocess.run(
-            f"ersilia serve {self.model}",
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        if serve.returncode != 0:
-            if flag == 0:
-                return False
-            return f"Error serving model: {serve.stdout}, {serve.stderr}"
 
         for n in (1, 10, 100):
 
-            example = subprocess.run(
-                f"ersilia example -f my_input.csv -n {n}",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
+            cmd = (
+                f"ersilia serve {self.model} && "
+                f"ersilia example -f my_input.csv -n {n} && "
+                "ersilia run -i my_input.csv"
             )
-            if example.returncode != 0:
-                if flag == 0:
-                    return False
-                return f"Error getting example for model: {example.stderr}"
 
             startTime = time.time()
 
-            run = subprocess.run(
-                "ersilia run -i my_input.csv",
+            process = subprocess.run(
+                cmd,
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
             )
-            if run.returncode != 0:
-                if flag == 0:
+
+            if process.returncode != 0:
+                if verbose == 0:
                     return False
-                return f"Error running model: {run.stderr}"
+                return f"Error serving model: {process.stdout}, {process.stderr}"
 
             endTime = time.time()
 
             executionTime = endTime - startTime
-            details = (
-                details
-                + f"Execution time ({n} Prediction(s)): {executionTime} seconds. "
-            )
+            details += f"Execution time ({n} Prediction(s)): {executionTime} seconds. "
 
-        if flag == 1:
+        if verbose == 1:
             return details
         return True
 
