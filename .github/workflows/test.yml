@@ -60,6 +60,7 @@ jobs:
           else
             echo "Tag file not modified"
             echo "modified=false" >> $GITHUB_ENV
+          fi
 
       - name: Run update_model_request script
         if: env.modified == 'true'
