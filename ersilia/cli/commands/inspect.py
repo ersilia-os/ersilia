@@ -14,20 +14,20 @@ class InspectCommand(ErsiliaBase):
         value = {
             "is_github_url_available": inspector.check_repo_exists(0),
             "is_github_url_available_details": inspector.check_repo_exists(1),
-            "metadata_complete": inspector.metadata_complete(0),
-            "metadata_complete_details": inspector.metadata_complete(1),
-            "folder_structure_complete": inspector.folder_structure_complete(0),
-            "folder_structure_complete_details": inspector.folder_structure_complete(1),
-            "docker_check": inspector.validate_dependencies(0),
-            "docker_check_details": inspector.validate_dependencies(1),
-            "computational_performance_tracking": inspector.computational_performance(
+            "complete_metadata": inspector.check_complete_metadata(0),
+            "complete_metadata_details": inspector.check_complete_metadata(1),
+            "complete_folder_structure": inspector.check_complete_folder_structure(0),
+            "complete_folder_structure_details": inspector.check_complete_folder_structure(1),
+            "docker_check": inspector.check_dependencies_are_valid(0),
+            "docker_check_details": inspector.check_dependencies_are_valid(1),
+            "computational_performance_tracking": inspector.check_comptuational_performance(
                 0
             ),
-            "computational_performance_tracking_details": inspector.computational_performance(
+            "computational_performance_tracking_details": inspector.check_comptuational_performance(
                 1
             ),
-            "extra_files_check": inspector.no_excess_files(0),
-            "extra_files_check_details": inspector.no_excess_files(1),
+            "extra_files_check": inspector.check_no_extra_files(0),
+            "extra_files_check_details": inspector.check_no_extra_files(1),
         }
 
         self.logger.debug(json.dumps(value, indent=2))
