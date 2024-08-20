@@ -1,8 +1,5 @@
 name: Run PyTest
 
-permissions:
-  contents: write
-
 on:
   pull_request:
     branches: [ master ]
@@ -48,13 +45,11 @@ jobs:
           pip install pytest
           pytest
 
-  paths-filter:
+  update-model-request_template:
     runs-on: ubuntu-latest
-    outputs:
-      tag-file-modified: ${{ steps.filter.outputs.tag-file }}
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Path Filter
         id: filter
         uses: dorny/paths-filter@v3
@@ -63,42 +58,32 @@ jobs:
             tag-file:
               - 'ersilia/hub/content/metadata/tag.txt'
 
-      - name: Tag file modified
-        if: steps.filter.outputs.tag-file == 'true'
-        run: echo "Tag file modified"
-
-      - name: Tag file not modified
-        if: steps.filter.outputs.tag-file != 'true'
-        run: echo "Tag file not modified"
-
-  update-model-request:
-    runs-on: ubuntu-latest
-    needs: paths-filter
-    if: needs.paths-filter.outputs.tag-file-modified == 'true'
-    steps:
-      - uses: actions/checkout@v4
-
       - name: Set up Python
+        if: steps.filter.outputs.tag-file == 'true'
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
       - name: Install dependencies
+        if: steps.filter.outputs.tag-file == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install pyyaml
 
       - name: Run update_model_request_template.py
+        if: steps.filter.outputs.tag-file == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python .github/scripts/update_model_request_template.py
 
       - name: Commit and push changes
-        run: |
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "actions@github.com"
-          git add .github/ISSUE_TEMPLATE/model_request.yml
-          git commit -m "Update model_request.yml with new tags from tag.txt"
-          git push origin HEAD:master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.filter.outputs.tag-file == 'true'
+        uses: actions-js/push@5a7cbd780d82c0c937b5977586e641b2fd94acc5 # pin@v1.5
+        with:
+          author_name: "ersilia-bot"
+          author_email: "ersilia-bot@users.noreply.github.com"
+          message: "Update model_request.yml with new tags from tag.txt"
+          directory: .
+          repository: "ersilia-os/ersilia"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
