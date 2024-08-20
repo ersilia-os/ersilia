@@ -2,7 +2,7 @@ import os
 
 # Paths to the tag files and the model_request template
 tag_file = "ersilia/hub/content/metadata/tag.txt"
-model_request_file = ".github/issue_template/model_request.yml"
+model_request_file = ".github/ISSUE_TEMPLATE/model_request.yml"
 
 def update_model_request():
     # Read and sort the tags
