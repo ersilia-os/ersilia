@@ -50,8 +50,9 @@ jobs:
   gh-release:
     runs-on: ubuntu-latest
     needs: version
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-
       - name: Create GitHub release
         id: gh_release
         run: |
@@ -62,8 +63,7 @@ jobs:
           year=$(date +'%Y')
           title="Release $month $year"
           version=`sed -n 's/.*version = "\([^"]*\)".*/\1/p' _static_version.py`
-          pip install gh
-          gh release create "v$version" --title "v$title" --notes-from-tag
+          gh release create "v$version" --title "$title" --notes-from-tag
 
   pypi-release:
     runs-on: ubuntu-latest
