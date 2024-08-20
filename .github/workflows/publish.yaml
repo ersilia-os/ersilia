@@ -50,28 +50,20 @@ jobs:
   gh-release:
     runs-on: ubuntu-latest
     needs: version
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-
-      - name: Get Month
-        id: month
-        run: |
-          echo "MONTH=$(date +'%B')" >> $GITHUB_OUTPUT
-
-      - name: Get Year
-        id: year
-        run: |
-          echo "YEAR=$(date +'%Y')" >> $GITHUB_OUTPUT
-
-      - name: Release Title
-        id: title
-        run: |
-          echo "TITLE=${{ steps.month.outputs.MONTH }}  ${{ steps.year.outputs.YEAR }}" >> $GITHUB_OUTPUT
-
       - name: Create GitHub release
         id: gh_release
         run: |
-          pip install gh
-          gh release create "v${{ needs.jobs.version.outputs.VERSION }}" --title "v${{ steps.title.outputs.TITLE }}" --notes-from-tag
+          # Get the version file that we updated in the previous job
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
+
+          month=$(date +'%B')
+          year=$(date +'%Y')
+          title="Release $month $year"
+          version=`sed -n 's/.*version = "\([^"]*\)".*/\1/p' _static_version.py`
+          gh release create "v$version" --title "$title" --notes-from-tag
 
   pypi-release:
     runs-on: ubuntu-latest
@@ -82,7 +74,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
         with:
-          python-version: '3.7'
+          python-version: '3.8'
           # cache: 'pip' # caching pip dependencies
 
       - name: Get version
