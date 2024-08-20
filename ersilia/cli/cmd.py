@@ -72,3 +72,7 @@ class Command(object):
     def test(self):
         m = importlib.import_module("ersilia.cli.commands.test")
         m.test_cmd()
+
+    def inspect(self):
+        m = importlib.import_module("ersilia.cli.commands.inspect")
+        m.inspect_cmd()
