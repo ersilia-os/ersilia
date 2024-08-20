@@ -96,6 +96,6 @@ jobs:
           git config --local user.email "actions@github.com"
           git add .github/ISSUE_TEMPLATE/model_request.yml
           git commit -m "Update model_request.yml with new tags from tag.txt"
-          git push
+          git push origin HEAD:master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
