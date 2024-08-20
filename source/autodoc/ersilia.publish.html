@@ -133,6 +133,115 @@
 </dd></dl>
 
 </section>
+<section id="module-ersilia.publish.inspect">
+<span id="ersilia-publish-inspect-module"></span><h2>ersilia.publish.inspect module<a class="headerlink" href="#module-ersilia.publish.inspect" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.inspect.</span></span><span class="sig-name descname"><span class="pre">ModelInspector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/inspect.html#ModelInspector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector.check_complete_folder_structure">
+<span class="sig-name descname"><span class="pre">check_complete_folder_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/inspect.html#ModelInspector.check_complete_folder_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.check_complete_folder_structure" title="Permalink to this definition"></a></dt>
+<dd><p>Validate folder structure of the repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing a boolean success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.inspect.Result" title="ersilia.publish.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector.check_complete_metadata">
+<span class="sig-name descname"><span class="pre">check_complete_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/inspect.html#ModelInspector.check_complete_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.check_complete_metadata" title="Permalink to this definition"></a></dt>
+<dd><p>Search for specific keys in metadata JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing a boolean success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.inspect.Result" title="ersilia.publish.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector.check_comptuational_performance">
+<span class="sig-name descname"><span class="pre">check_comptuational_performance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/inspect.html#ModelInspector.check_comptuational_performance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.check_comptuational_performance" title="Permalink to this definition"></a></dt>
+<dd><p>Measure computational performance by serving the model and running predictions.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Returns:</dt><dd><p>Result: A namedtuple containing a boolean success status and details of the check.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector.check_dependencies_are_valid">
+<span class="sig-name descname"><span class="pre">check_dependencies_are_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/inspect.html#ModelInspector.check_dependencies_are_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.check_dependencies_are_valid" title="Permalink to this definition"></a></dt>
+<dd><p>Check dependencies specified in the Dockerfile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing a boolean success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.inspect.Result" title="ersilia.publish.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector.check_no_extra_files">
+<span class="sig-name descname"><span class="pre">check_no_extra_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/inspect.html#ModelInspector.check_no_extra_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.check_no_extra_files" title="Permalink to this definition"></a></dt>
+<dd><p>Ensure that there are no excess files in the root directory of the repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing a boolean success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.inspect.Result" title="ersilia.publish.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector.check_repo_exists">
+<span class="sig-name descname"><span class="pre">check_repo_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/inspect.html#ModelInspector.check_repo_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.check_repo_exists" title="Permalink to this definition"></a></dt>
+<dd><p>Verify that the repository exists at a given link.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A namedtuple containing a boolean success status and details of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.publish.inspect.Result" title="ersilia.publish.inspect.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.Result">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.inspect.</span></span><span class="sig-name descname"><span class="pre">Result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">success</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.inspect.Result" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.Result.details">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">details</span></span><a class="headerlink" href="#ersilia.publish.inspect.Result.details" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ersilia.publish.inspect.Result.success">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">success</span></span><a class="headerlink" href="#ersilia.publish.inspect.Result.success" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-ersilia.publish.lake">
 <span id="ersilia-publish-lake-module"></span><h2>ersilia.publish.lake module<a class="headerlink" href="#module-ersilia.publish.lake" title="Permalink to this heading"></a></h2>
 <dl class="py class">

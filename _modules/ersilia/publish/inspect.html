@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ersilia.publish.inspect &mdash; Ersilia  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Ersilia
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/package.html">Package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/devel.html">For developers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Ersilia</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../ersilia.html">ersilia</a></li>
+      <li class="breadcrumb-item active">ersilia.publish.inspect</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ersilia.publish.inspect</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+<span class="kn">from</span> <span class="nn">..hub.content.card</span> <span class="kn">import</span> <span class="n">RepoMetadataFile</span>
+
+<span class="c1"># a namedtuple for the results</span>
+<span class="n">Result</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Result&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="ModelInspector"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector">[docs]</a><span class="k">class</span> <span class="nc">ModelInspector</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+<div class="viewcode-block" id="ModelInspector.check_repo_exists"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_repo_exists">[docs]</a>    <span class="k">def</span> <span class="nf">check_repo_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify that the repository exists at a given link.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Connection invalid, no github repository found at https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that this repository exists in the ersilia-os database.&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelInspector.check_complete_metadata"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">check_complete_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search for specific keys in metadata JSON file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/main/metadata.json&quot;</span>  <span class="c1"># Get raw file from GitHub</span>
+        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># Make sure repo exists</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Metadata file could not be loated for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that the link https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/main/metadata.json is valid.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>  <span class="c1"># Save as json object</span>
+
+        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">test</span> <span class="o">=</span> <span class="n">RepoMetadataFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">RepoMetadataFile</span><span class="o">.</span><span class="n">read_information</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">details</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Error encountered when parsing through metadata file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="p">)</span>
+            <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">file</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;Source Code&quot;</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]</span>
+                <span class="p">):</span>  <span class="c1"># Parse through json object and ensure</span>
+
+                    <span class="n">pub_url_works</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">pub_url_works</span><span class="p">:</span>
+                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">details</span>
+                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;The URL (</span><span class="si">{</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;Publication&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) listed in the publication field of the metadata was not found (Error code </span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;Publication&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Please verify that this link is accurate. &quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="n">source_url_works</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;Source Code&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">source_url_works</span><span class="p">:</span>
+                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">details</span>
+                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;The URL (</span><span class="si">{</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;Source Code&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) listed in the source code field of the metadata was not able to be accessed (Error code </span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;Source Code&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Please verify that this link is accurate. &quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="n">s3_url_works</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">s3_url_works</span><span class="p">:</span>
+                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">details</span>
+                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;The URL (</span><span class="si">{</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;S3&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) listed in the S3 field of the metadata was not able to be accessed (Error code </span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;S3&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Please verify that this link is accurate. &quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="n">docker_url_works</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">docker_url_works</span><span class="p">:</span>
+                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">details</span>
+                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;The URL (</span><span class="si">{</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;DockerHub&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) listed in the DockerHub field of the metadata was not able to be accessed (Error code </span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;DockerHub&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Please verify that this link is accurate. &quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">details</span>
+                        <span class="o">+</span> <span class="s2">&quot;A field in the metadata is empty. Please check that there are values listed for Publication, Source Code, S3, and DockerHub listed in the metadata. &quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># If a given key not present in json file return false</span>
+                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">details</span>
+                    <span class="o">+</span> <span class="s2">&quot;Not all required fields were found in the metadata. Please check that Publication, Source Code, S3, and DockerHub are all present in the metadata. &quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
+                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">details</span>
+                    <span class="o">+</span> <span class="s2">&quot;Connection failed when trying to access a URL listed in the metadata. Please check that URLs are all accurate and accessible. &quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelInspector.check_complete_folder_structure"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_folder_structure">[docs]</a>    <span class="k">def</span> <span class="nf">check_complete_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate folder structure of the repository.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># Make sure repo exists</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Repository could not be loated for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that the link https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> is valid.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">folders</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;.github/workflows&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;src&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model/checkpoints&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model/framework&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;/tree/main/&quot;</span> <span class="o">+</span> <span class="n">name</span>
+            <span class="p">)</span>  <span class="c1"># Check if the folders are present in a given repository</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">details</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;No </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> folder could be found. please check that the link </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/blob/main/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is valid. &quot;</span>
+                <span class="p">)</span>
+                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># If the folder URL is not valid return false</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span> <span class="s2">&quot;Dockerfile&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;/blob/main/&quot;</span> <span class="o">+</span> <span class="n">name</span>
+            <span class="p">)</span>  <span class="c1"># Check if the files are present in a given repository</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">details</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;No </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> file could be found. please check that the link </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/blob/main/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is valid. &quot;</span>
+                <span class="p">)</span>
+                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># If the folder URL is not valid return false</span>
+
+        <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelInspector.check_dependencies_are_valid"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_dependencies_are_valid">[docs]</a>    <span class="k">def</span> <span class="nf">check_dependencies_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check dependencies specified in the Dockerfile.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/main/Dockerfile&quot;</span>  <span class="c1"># Get raw file from GitHub</span>
+        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># Make sure repo exists</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Dockerfile could not be loated for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that the link https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/main/Dockerfile is valid.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">s</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;RUN pip install&quot;</span><span class="p">):</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;==&quot;</span><span class="p">)</span>
+                <span class="n">install</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;RUN &quot;</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="n">install</span><span class="p">,</span>
+                    <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error running </span><span class="si">{</span><span class="n">install</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">details</span>
+                        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;No version specification found for the line </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> in the Docker file. &quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">specification</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">specification</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">details</span>
+                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;No version specification found for the line </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> in the Docker file. &quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="s2">&quot;WORKDIR /repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">details</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Dockerfile is missing &#39;WORKDIR /repo&#39; in the right place. &quot;</span>
+            <span class="p">)</span>
+            <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;COPY . /repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="s2">&quot;COPY ./repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">details</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Dockerfile is missing &#39;COPY . /repo&#39; in the right place or has incorrect syntax. &quot;</span>
+            <span class="p">)</span>
+            <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelInspector.check_comptuational_performance"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_comptuational_performance">[docs]</a>    <span class="k">def</span> <span class="nf">check_comptuational_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Measure computational performance by serving the model and running predictions.</span>
+
+<span class="sd">         Returns:</span>
+<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
+
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> &amp;&amp; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;ersilia example -f my_input.csv -n </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> &amp;&amp; &quot;</span>
+                <span class="s2">&quot;ersilia run -i my_input.csv &amp;&amp; &quot;</span>
+                <span class="s2">&quot;ersilia close&quot;</span>
+            <span class="p">)</span>
+
+            <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">cmd</span><span class="p">,</span>
+                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                    <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error serving model: </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">endTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+            <span class="n">executionTime</span> <span class="o">=</span> <span class="n">endTime</span> <span class="o">-</span> <span class="n">startTime</span>
+            <span class="n">details</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Execution time (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> Prediction(s)): </span><span class="si">{</span><span class="n">executionTime</span><span class="si">}</span><span class="s2"> seconds. &quot;</span>
+
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelInspector.check_no_extra_files"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_no_extra_files">[docs]</a>    <span class="k">def</span> <span class="nf">check_no_extra_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensure that there are no excess files in the root directory of the repository.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://api.github.com/repos/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/contents&quot;</span>
+        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># Make sure repo exists</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Repository could not be loated for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that the link https://api.github.com/repos/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/contents is valid.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/vnd.github.v3+json&quot;</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="n">folders</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;.github&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;src&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;.gitignore&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Dockerfile&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;metadata.json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pack.py&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;.gitattributes&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">():</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">details</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Unexpected folder/file </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> found in root directory. Please check that </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is a valid folder/file. &quot;</span>
+                <span class="p">)</span>
+                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># If the folder URL is not valid return false</span>
+
+        <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ersilia Open Source Initiative.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
