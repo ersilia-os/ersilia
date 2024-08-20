@@ -4,6 +4,7 @@ import tempfile
 import os
 import shutil
 
+from ...utils.logging import make_temp_dir
 
 class BentoMLRequirement(object):
     def __init__(self):

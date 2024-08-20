@@ -267,10 +267,14 @@ class ExampleGenerator(ErsiliaBase):
                 return False
 
     def example(self, n_samples, file_name, simple, try_predefined):
-        predefined_done = False
+        predefined_available = False
         if try_predefined is True and file_name is not None:
             self.logger.debug("Trying with predefined input")
-            predefined_done = self.predefined_example(file_name)
-        if not predefined_done:
+            predefined_available = self.predefined_example(file_name)
+        elif predefined_available:
+            with open(file_name, "r") as f:
+                return f.read()
+        if not predefined_available:
             self.logger.debug("Randomly sampling input")
-            self.random_example(n_samples=n_samples, file_name=file_name, simple=simple)
+            return self.random_example(n_samples=n_samples, file_name=file_name, simple=simple)
+        
