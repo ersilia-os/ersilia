@@ -85,10 +85,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml
 
-      - name: Run update_model_request.py
+      - name: Run update_model_request_template.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python .github/scripts/update_model_request.py
+        run: python .github/scripts/update_model_request_template.py
 
       - name: Commit and push changes
         run: |
