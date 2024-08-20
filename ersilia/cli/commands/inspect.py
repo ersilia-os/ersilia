@@ -11,23 +11,31 @@ class InspectCommand(ErsiliaBase):
 
     def inspect(self, model):
         inspector = ModelInspector(model)
+
+        check_repo_exists_result = inspector.check_repo_exists()
+        check_complete_metadata_result = inspector.check_complete_metadata()
+        check_complete_folder_structure_result = (
+            inspector.check_complete_folder_structure()
+        )
+        check_dependencies_are_valid_result = inspector.check_dependencies_are_valid()
+        check_comptuational_performance_result = (
+            inspector.check_comptuational_performance()
+        )
+        check_no_extra_files_result = inspector.check_no_extra_files()
+
         value = {
-            "is_github_url_available": inspector.check_repo_exists(0),
-            "is_github_url_available_details": inspector.check_repo_exists(1),
-            "complete_metadata": inspector.check_complete_metadata(0),
-            "complete_metadata_details": inspector.check_complete_metadata(1),
-            "complete_folder_structure": inspector.check_complete_folder_structure(0),
-            "complete_folder_structure_details": inspector.check_complete_folder_structure(1),
-            "docker_check": inspector.check_dependencies_are_valid(0),
-            "docker_check_details": inspector.check_dependencies_are_valid(1),
-            "computational_performance_tracking": inspector.check_comptuational_performance(
-                0
-            ),
-            "computational_performance_tracking_details": inspector.check_comptuational_performance(
-                1
-            ),
-            "extra_files_check": inspector.check_no_extra_files(0),
-            "extra_files_check_details": inspector.check_no_extra_files(1),
+            "is_github_url_available": check_repo_exists_result.success,
+            "is_github_url_available_details": check_repo_exists_result.details,
+            "complete_metadata": check_complete_metadata_result.success,
+            "complete_metadata_details": check_complete_metadata_result.details,
+            "complete_folder_structure": check_complete_folder_structure_result.success,
+            "complete_folder_structure_details": check_complete_folder_structure_result.details,
+            "docker_check": check_dependencies_are_valid_result.success,
+            "docker_check_details": check_dependencies_are_valid_result.details,
+            "computational_performance_tracking": check_comptuational_performance_result.success,
+            "computational_performance_tracking_details": check_comptuational_performance_result.details,
+            "extra_files_check": check_no_extra_files_result.success,
+            "extra_files_check_details": check_no_extra_files_result.details,
         }
 
         self.logger.debug(json.dumps(value, indent=2))

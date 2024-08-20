@@ -3,8 +3,12 @@ import requests
 import subprocess
 import time
 import json
+from collections import namedtuple
 from urllib.request import urlopen
 from ..hub.content.card import RepoMetadataFile
+
+# a namedtuple for the results
+Result = namedtuple("Result", ["success", "details"])
 
 
 class ModelInspector(ErsiliaBase):
@@ -12,39 +16,36 @@ class ModelInspector(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model = model
 
-    def check_repo_exists(self, flag):
+    def check_repo_exists(self):
         """
         Verify that the repository exists at a given link.
 
-        Args:
-            flag (int): Flag indicating whether to return boolean or detailed message.
-
         Returns:
-            bool or str: Depending on the flag, returns boolean or a message indicating the check status.
+            Result: A namedtuple containing a boolean success status and details of the check.
         """
         url = f"https://github.com/ersilia-os/{self.model}"
         response = requests.head(url)
-        if flag == 0:
-            return response.status_code == 200
-        elif response.status_code == 200:
-            return "Check passed."
-        return f"Connection invalid, no github repository found at https://github.com/ersilia-os/{self.model}. Please check that this repository exists in the ersilia-os database."
+        if response.status_code == 200:
+            return Result(True, "Check passed.")
+        else:
+            return Result(
+                False,
+                f"Connection invalid, no github repository found at https://github.com/ersilia-os/{self.model}. Please check that this repository exists in the ersilia-os database.",
+            )
 
-    def check_complete_metadata(self, flag):
+    def check_complete_metadata(self):
         """
         Search for specific keys in metadata JSON file.
 
-        Args:
-            flag (int): Flag indicating whether to return boolean or detailed message.
-
         Returns:
-            bool or str: Depending on the flag, returns boolean or a message indicating the check status.
+            Result: A namedtuple containing a boolean success status and details of the check.
         """
         url = f"https://raw.githubusercontent.com/ersilia-os/{self.model}/main/metadata.json"  # Get raw file from GitHub
         if requests.head(url).status_code != 200:  # Make sure repo exists
-            if flag == 0:
-                return False
-            return f"Metadata file could not be loated for model {self.model}. Please check that the link https://raw.githubusercontent.com/ersilia-os/{self.model}/main/metadata.json is valid."
+            return Result(
+                False,
+                f"Metadata file could not be loated for model {self.model}. Please check that the link https://raw.githubusercontent.com/ersilia-os/{self.model}/main/metadata.json is valid.",
+            )
 
         response = requests.get(url)
         file = response.json()  # Save as json object
@@ -131,29 +132,26 @@ class ModelInspector(ErsiliaBase):
                     + "Connection failed when trying to access a URL listed in the metadata. Please check that URLs are all accurate and accessible. "
                 )
 
-        if flag == 0:
-            return check_passed
-        if details:
-            return details
-        return "Check passed."
+        if check_passed:
+            return Result(True, "Check passed.")
+        else:
+            return Result(False, details)
 
-    def check_complete_folder_structure(self, flag):
+    def check_complete_folder_structure(self):
         """
         Validate folder structure of the repository.
 
-        Args:
-            flag (int): Flag indicating whether to return boolean or detailed message.
-
         Returns:
-            bool or str: Depending on the flag, returns boolean or a message indicating the check status.
+            Result: A namedtuple containing a boolean success status and details of the check.
         """
         check_passed = True
         details = ""
         url = f"https://github.com/ersilia-os/{self.model}"
         if requests.head(url).status_code != 200:  # Make sure repo exists
-            if flag == 0:
-                return False
-            return f"Repository could not be loated for model {self.model}. Please check that the link https://github.com/ersilia-os/{self.model} is valid."
+            return Result(
+                False,
+                f"Repository could not be loated for model {self.model}. Please check that the link https://github.com/ersilia-os/{self.model} is valid.",
+            )
 
         folders = [
             ".github/workflows",
@@ -185,29 +183,25 @@ class ModelInspector(ErsiliaBase):
                 )
                 check_passed = False  # If the folder URL is not valid return false
 
-        if flag == 0:
-            return check_passed
         if check_passed:
-            return "Check passed."
-        return details
+            return Result(True, "Check passed.")
+        return Result(False, details)
 
-    def check_dependencies_are_valid(self, flag):
+    def check_dependencies_are_valid(self):
         """
         Check dependencies specified in the Dockerfile.
 
-        Args:
-            flag (int): Flag indicating whether to return boolean or detailed message.
-
         Returns:
-            bool or str: Depending on the flag, returns boolean or a message indicating the check status.
+            Result: A namedtuple containing a boolean success status and details of the check.
         """
         check_passed = True
         details = ""
         url = f"https://raw.githubusercontent.com/ersilia-os/{self.model}/main/Dockerfile"  # Get raw file from GitHub
         if requests.head(url).status_code != 200:  # Make sure repo exists
-            if flag == 0:
-                return False
-            return f"Dockerfile could not be loated for model {self.model}. Please check that the link https://raw.githubusercontent.com/ersilia-os/{self.model}/main/Dockerfile is valid."
+            return Result(
+                False,
+                f"Dockerfile could not be loated for model {self.model}. Please check that the link https://raw.githubusercontent.com/ersilia-os/{self.model}/main/Dockerfile is valid.",
+            )
 
         response = requests.get(url)
         file = response.text
@@ -225,10 +219,8 @@ class ModelInspector(ErsiliaBase):
                     stderr=subprocess.PIPE,
                     text=True,
                 )
-                if result.returncode != 0 and flag == 0:
-                    return False
-                if result.returncode != 0 and flag == 1:
-                    return f"Error running {install}, {result.stderr}"
+                if result.returncode != 0:
+                    return Result(False, f"Error running {install}, {result.stderr}")
 
                 if len(info) < 2:
                     details = (
@@ -261,21 +253,16 @@ class ModelInspector(ErsiliaBase):
             )
             check_passed = False
 
-        if flag == 0:
-            return check_passed
         if check_passed:
-            return "Check passed."
-        return details
+            return Result(True, "Check passed.")
+        return Result(False, details)
 
-    def check_comptuational_performance(self, verbose):
+    def check_comptuational_performance(self):
         """
         Measure computational performance by serving the model and running predictions.
 
-        Args:
-            verbose (int): Verbose indicating whether to return boolean or detailed message.
-
-        Returns:
-            bool or str: Depending on the verbose, returns boolean or a message indicating the check status.
+         Returns:
+            Result: A namedtuple containing a boolean success status and details of the check.
         """
         details = ""
 
@@ -299,36 +286,32 @@ class ModelInspector(ErsiliaBase):
             )
 
             if process.returncode != 0:
-                if verbose == 0:
-                    return False
-                return f"Error serving model: {process.stdout}, {process.stderr}"
+                return Result(
+                    False, f"Error serving model: {process.stdout}, {process.stderr}"
+                )
 
             endTime = time.time()
 
             executionTime = endTime - startTime
             details += f"Execution time ({n} Prediction(s)): {executionTime} seconds. "
 
-        if verbose == 1:
-            return details
-        return True
+        return Result(True, details)
 
-    def check_no_extra_files(self, flag):
+    def check_no_extra_files(self):
         """
         Ensure that there are no excess files in the root directory of the repository.
 
-        Args:
-            flag (int): Flag indicating whether to return boolean or detailed message.
-
         Returns:
-            bool or str: Depending on the flag, returns boolean or a message indicating the check status.
+            Result: A namedtuple containing a boolean success status and details of the check.
         """
         check_passed = True
         details = ""
         url = f"https://api.github.com/repos/ersilia-os/{self.model}/contents"
         if requests.head(url).status_code != 200:  # Make sure repo exists
-            if flag == 0:
-                return False
-            return f"Repository could not be loated for model {self.model}. Please check that the link https://api.github.com/repos/ersilia-os/{self.model}/contents is valid."
+            return Result(
+                False,
+                f"Repository could not be loated for model {self.model}. Please check that the link https://api.github.com/repos/ersilia-os/{self.model}/contents is valid.",
+            )
         headers = {"Accept": "application/vnd.github.v3+json"}
         response = requests.get(url)
 
@@ -353,8 +336,6 @@ class ModelInspector(ErsiliaBase):
                 )
                 check_passed = False  # If the folder URL is not valid return false
 
-        if flag == 0:
-            return check_passed
         if check_passed:
-            return "Check passed."
-        return details
+            return Result(True, "Check passed.")
+        return Result(False, details)
