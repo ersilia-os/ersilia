@@ -345,47 +345,6 @@ class RunTracker(ErsiliaBase):
 
         self.tabular_result_logger = TabularResultLogger()
 
-    #    TODO: see the following link for more details
-    #    https://github.com/ersilia-os/ersilia/issues/1165?notification_referrer_id=NT_kwDOAsB0trQxMTEyNTc5MDIxNzo0NjE2NzIyMg#issuecomment-2178596998
-
-    #    def stats(self, result):
-    #        """
-    #        Stats function: calculates the basic statistics of the output file from a model. This includes the
-    #        mode (if applicable), minimum, maximum, and standard deviation.
-    #        :param result: The path to the model's output file.
-    #        :return: A dictionary containing the stats for each column of the result.
-    #        """
-
-    #        data = read_csv(result)
-
-    # drop first two columns (key, input)
-    #        for row in data:
-    #            row.pop('key', None)
-    #            row.pop('input', None)
-
-    # Convert data to a column-oriented format
-    #        columns = defaultdict(list)
-    #        for row in data:
-    #            for key, value in row.items():
-    #                columns[key].append(float(value))
-
-    # Calculate statistics
-    #        stats = {}
-    #        for column, values in columns.items():
-    #            column_stats = {}
-    #            column_stats["mean"] = statistics.mean(values)
-    #            try:
-    #                column_stats["mode"] = statistics.mode(values)
-    #            except statistics.StatisticsError:
-    #                column_stats["mode"] = None
-    #            column_stats["min"] = min(values)
-    #            column_stats["max"] = max(values)
-    #            column_stats["std"] = statistics.stdev(values) if len(values) > 1 else 0
-    #
-    #            stats[column] = column_stats
-
-    #        return stats
-
     def update_total_time(self, model_id, start_time):
         """
         Method to track and update the Total time taken by model.
