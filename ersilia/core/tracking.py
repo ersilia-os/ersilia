@@ -136,7 +136,7 @@ def serialize_session_json_to_csv(json_file, csv_file):
         writer.writerow(header)
         writer.writerow(values)
 
-def serialize_session_json_to_csv(json_file, csv_file):
+def serialize_tracking_json_to_csv(json_file, csv_file):
     with open(json_file, "r") as f:
         data = json.load(f)
         header = ["model_id"] + list(data.keys())[2:] # Ignore model_id and runs
@@ -194,7 +194,7 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
         tracking_json_path = os.path.join(get_session_dir(), f"{get_session_uuid()}.json")
         s3_client.upload_file(tracking_json_path, bucket, f"tracking_raw/{sid}.json")
         tracking_csv_path = tracking_json_path.split('.json')[0]+'.csv'
-        serialize_session_json_to_csv(tracking_json_path, tracking_csv_path)
+        serialize_tracking_json_to_csv(tracking_json_path, tracking_csv_path)
         s3_client.upload_file(tracking_csv_path, bucket, f"tracking/{sid}.csv")
         os.remove(tracking_csv_path)
 
