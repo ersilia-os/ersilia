@@ -123,6 +123,34 @@ def log_files_metrics(file_log):
         logging.warning("Unable to calculate metrics for log file: log file not found")
 
 
+def serialize_session_json_to_csv(json_file, csv_file):
+    with open(json_file, "r") as f:
+        data = json.load(f)
+        header = []
+        values = []
+        for k,v in data.items():
+            header += [k]
+            values += [v]
+    with open(csv_file, "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerow(values)
+
+def serialize_session_json_to_csv(json_file, csv_file):
+    with open(json_file, "r") as f:
+        data = json.load(f)
+        header = ["model_id"] + list(data.keys())[2:] # Ignore model_id and runs
+        num_rows = data['runs']
+        rows = []
+        for i in range(num_rows):
+            row = [data['model_id']]+[data[k][i] for k in header[1:]]
+            rows.append(row)
+    with open(csv_file, "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        for row in rows:
+            writer.writerow(row)
+
 def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
     """Upload a file to an S3 bucket    
 
@@ -157,11 +185,18 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
 
         # Upload session info to S3
         session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
-        s3_client.upload_file(session_json_path, bucket, f"summary/session_{sid}.json")
-
+        session_csv_path = session_json_path.split('.json')[0]+'.csv'
+        serialize_session_json_to_csv(session_json_path, session_csv_path)
+        s3_client.upload_file(session_csv_path, bucket, f"summary/session_{sid}.csv")
+        os.remove(session_csv_path)
+        
         # Upload tracking summary to S3
-        tracking_summary_path = os.path.join(get_session_dir(), f"{get_session_uuid()}.json")
-        s3_client.upload_file(tracking_summary_path, bucket, f"tracking/track_{sid}.txt")
+        tracking_json_path = os.path.join(get_session_dir(), f"{get_session_uuid()}.json")
+        s3_client.upload_file(tracking_json_path, bucket, f"tracking_raw/{sid}.json")
+        tracking_csv_path = tracking_json_path.split('.json')[0]+'.csv'
+        serialize_session_json_to_csv(tracking_json_path, tracking_csv_path)
+        s3_client.upload_file(tracking_csv_path, bucket, f"tracking/{sid}.csv")
+        os.remove(tracking_csv_path)
 
     except NoCredentialsError:
         logging.error(
