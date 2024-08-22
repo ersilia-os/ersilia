@@ -275,33 +275,37 @@ class SimpleDocker(object):
         container = self._get_container_for_model(model_id)
 
         if container:
-            stats = container.stats(stream=False)
-            mem_usage = stats["memory_stats"]["usage"] / (1024 * 1024)
-            return (
-                f"Total memory consumed by container '{container.name}': {mem_usage:.2f}MiB",
-            )
+            try:
+                stats = container.stats(stream=False) # Same as cpu_perc, this isn't completely right.
+                mem_usage_mb = stats["memory_stats"]["usage"] / (1024 * 1024)
+                mem_available_mb =  stats["memory_stats"]["limit"] / (1024 * 1024)
+                mem_perc = round((mem_usage_mb / mem_available_mb) * 100)
+                return mem_perc
+            except KeyError:
+                return
         else:
             logger.debug(f"No container found for model {model_id}")
             return
 
     def container_cpu(self, model_id):
         """
-        This function will get the CPU time of the Docker container running Ersilia Models.
+        This function will get the CPU percentage utilisation of the Docker container running Ersilia Models.
         """
 
         container = self._get_container_for_model(model_id)
 
         if container:
-            stats = container.stats(stream=False)
-            cpu_stats = stats["cpu_stats"]
-            total_cpu_time = cpu_stats["cpu_usage"]["total_usage"] / 1e9
-
-            minutes = total_cpu_time // 60
-            seconds = total_cpu_time % 60
-
-            return (
-                f"Total CPU time used by container '{container.name}': {int(minutes)} minutes {seconds:.2f} seconds",
-            )
+            try: # Ref: https://stackoverflow.com/a/77924494/1887515
+                stats = container.stats(stream=False) # TODO This is not completley right, ideally we should be polling the container during the entirety of the model run
+                cpu_usage = (stats['cpu_stats']['cpu_usage']['total_usage']
+                            - stats['precpu_stats']['cpu_usage']['total_usage'])
+                cpu_system = (stats['cpu_stats']['system_cpu_usage']                    
+                            - stats['precpu_stats']['system_cpu_usage'])
+                num_cpus = stats['cpu_stats']["online_cpus"]
+                cpu_perc = round((float(cpu_usage) / float(cpu_system)) * num_cpus * 100.0)
+                return cpu_perc
+            except KeyError:
+                return
         else:
             logger.debug(f"No container found for model {model_id}")
             return
@@ -343,9 +347,7 @@ class SimpleDocker(object):
                             f"An error occurred while reading cgroup file {cgroup_path}: {e}"
                         )
                 if peak_memory is not None:
-                    return (
-                        f"Peak memory Used by container '{container.name}': {int(peak_memory)} MiB",
-                    )
+                    return peak_memory
                 else:
                     logger.debug(f"Could not compute container peak memory for model {model_id}")
                     return

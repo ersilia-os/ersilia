@@ -24,7 +24,7 @@ from ..serve.autoservice import AutoService
 from ..io.output import TabularOutputStacker
 from ..serve.standard_api import StandardCSVRunApi
 from ..io.input import ExampleGenerator, BaseIOGetter
-from .tracking import RunTracker, create_persistent_file
+from .tracking import RunTracker
 from ..io.readers.file import FileTyper, TabularFileReader
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
@@ -427,7 +427,6 @@ class ErsiliaModel(ErsiliaBase):
 
         # Start tracking to get the peak memory, memory usage and cpu time of the Model server (autoservice)
         if self._run_tracker is not None:
-            create_persistent_file(self.model_id)
             memory_usage_serve, cpu_time_serve = self._run_tracker.get_memory_info()
             # print("HERE", self._run_tracker.get_memory_info())
             peak_memory_serve = self._run_tracker.get_peak_memory()

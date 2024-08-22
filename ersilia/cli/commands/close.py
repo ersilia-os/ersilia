@@ -4,7 +4,6 @@ from . import ersilia_cli
 from .. import echo
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...core.tracking import get_persistent_file_path, close_persistent_file
 
 
 def close_cmd():
@@ -18,8 +17,5 @@ def close_cmd():
             echo("No model was served")
             return
         mdl = ErsiliaModel(model_id, service_class=service_class)
-        # Close our persistent tracking file before closing session so we have access to session info for the model through session.json
-        if os.path.isfile(get_persistent_file_path()):
-            close_persistent_file(mdl.model_id)
         mdl.close()
         echo(":no_entry: Model {0} closed".format(mdl.model_id), fg="green")

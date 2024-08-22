@@ -16,7 +16,6 @@ def get_session_uuid():
     # TODO this should not be implemented here ideally, and callers should use the Session interface in ersilia/core/session.py
     with open(os.path.join(get_session_dir(), SESSION_JSON), "r") as f:
         session = json.load(f)
-        print(session)
         return session["identifier"]
 
 def create_session_files(session_name):

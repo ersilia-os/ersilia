@@ -3,7 +3,7 @@ import re
 import sys
 import csv
 import json
-import time
+import copy
 import boto3
 import psutil
 from loguru import logger as logging
@@ -18,8 +18,9 @@ from .base import ErsiliaBase
 from ..utils.docker import SimpleDocker
 from ..utils.session import get_session_dir, get_session_uuid
 from ..utils.csvfile import CsvDataLoader
+from ..utils.tracking import init_tracking_summary, update_tracking_summary, RUN_DATA_STUB
+from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..default import SESSION_JSON
-from ..utils.session import get_session_dir, get_session_uuid
 from ..io.output_logger import TabularResultLogger
 from botocore.exceptions import ClientError, NoCredentialsError
 
@@ -28,8 +29,6 @@ AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = os.environ.get("AWS_REGIOIN", "eu-central-1")
 TRACKING_BUCKET = os.environ.get("TRACKING_BUCKET", "ersilia-models-runs")
-SESSION_SUMMARY_FILE = "session_summary.txt"
-
 
 def flatten_dict(data):
     """
@@ -45,7 +44,7 @@ def flatten_dict(data):
     return flat_dict
 
 
-def log_files_metrics(file_log, model_id):
+def log_files_metrics(file_log):
     """
     This function will log the number of errors and warnings in the log files.
 
@@ -111,79 +110,17 @@ def log_files_metrics(file_log, model_id):
                 if misc_error_flag:
                     errors[error_name] = 1 + errors.get(error_name, 0)
 
-        json_dict = {}
-        json_dict["Error count"] = error_count
+        res_dict = {}
+        res_dict["error_count"] = error_count
 
-        if len(errors) > 0:
-            json_dict["Breakdown by error types"] = {}
-            for error in errors:
-                json_dict["Breakdown by error types"][error] = errors[error]
-        json_dict["Warning count"] = warning_count
-        json_object = json.dumps(json_dict, indent=4)
-        write_persistent_file(json_object, model_id)
+        if len(errors) > 0: # TODO We are not consuming this right now
+            res_dict["error_details"] = {}
+            for err in errors:
+                res_dict["error_details"][err] = errors[err]
+        res_dict["warning_count"] = warning_count
+        return res_dict
     except (IsADirectoryError, FileNotFoundError):
         logging.warning("Unable to calculate metrics for log file: log file not found")
-
-
-def get_persistent_file_path():
-    """
-    Construct the file path for recording results from tracking the model run.
-    :param model_id: The currently running model
-    :return: The path to the persistent file
-    """
-    return os.path.join(
-        get_session_dir(), SESSION_SUMMARY_FILE
-    )
-
-def create_persistent_file(model_id):
-    """
-    Create file for recording results from tracking the model run.
-    :param model_id: The currently running model
-    """
-    file_name = get_persistent_file_path()
-    persistent_file_dir = os.path.dirname(file_name)
-    os.makedirs(persistent_file_dir, exist_ok=True)
-
-    with open(file_name, "w") as f:
-        f.write("Session started for model: {0}\n".format(model_id))
-
-def write_persistent_file(contents, model_id):
-    """
-    Writes contents to the current persistent file. Only writes if the file actually exists.
-    :param contents: The contents to write to the file.
-    :param model_id: The currently running model
-    """
-    if os.path.isfile(get_persistent_file_path()):
-        file_name = get_persistent_file_path()
-        with open(file_name, "a") as f:
-            f.write(f"{contents}\n")
-
-    else:
-        raise FileNotFoundError(
-            f"The persistent file for model {model_id} does not exist. Cannot write contents."
-        )
-
-
-def close_persistent_file(model_id):
-    """
-    Closes the persistent file, renaming it to a unique name.
-    :param model_id: The currently running model
-    """
-    if os.path.isfile(get_persistent_file_path()):
-        file_name = get_persistent_file_path()
-        file_log = os.path.join(get_session_dir(), "console.log")
-        log_files_metrics(file_log, model_id)
-
-        new_file_path = os.path.join(
-            os.path.dirname(file_name),
-            get_session_uuid(),
-        )
-        os.rename(file_name, new_file_path)
-
-    else:
-        raise FileNotFoundError(
-            f"The persistent file for model {model_id} does not exist. Cannot close file."
-        )
 
 
 def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
@@ -223,8 +160,8 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
         s3_client.upload_file(session_json_path, bucket, f"summary/session_{sid}.json")
 
         # Upload tracking summary to S3
-        tracking_summary = get_persistent_file_path()
-        s3_client.upload_file(tracking_summary, bucket, f"tracking/track_{sid}.txt")
+        tracking_summary_path = os.path.join(get_session_dir(), f"{get_session_uuid()}.json")
+        s3_client.upload_file(tracking_summary_path, bucket, f"tracking/track_{sid}.txt")
 
     except NoCredentialsError:
         logging.error(
@@ -320,8 +257,8 @@ def get_nan_counts(data_list):
         for key, value in item.items():
             if value is None:
                 nan_count[key] += 1
-
-    return nan_count
+    nan_count_agg = sum(nan_count.values())
+    return nan_count_agg
 
 
 class RunTracker(ErsiliaBase):
@@ -344,48 +281,6 @@ class RunTracker(ErsiliaBase):
         os.makedirs(self.lake_folder, exist_ok=True)
 
         self.tabular_result_logger = TabularResultLogger()
-
-    def update_total_time(self, model_id, start_time):
-        """
-        Method to track and update the Total time taken by model.
-        :Param model_id: The currently running model.
-        :Param start_time: The start time of the running model.
-        """
-
-        end_time = time.time()
-        duration = end_time - start_time
-        if os.path.isfile(get_persistent_file_path()):
-            file_name = get_persistent_file_path()
-            with open(file_name, "r") as f:
-                lines = f.readlines()
-
-            updated_lines = []
-            total_time_found = False
-
-            for line in lines:
-                if "Total time taken" in line and not total_time_found:
-                    try:
-                        total_time_str = line.split(":")[1].strip()
-                        total_time = float(total_time_str)
-                        total_time += duration
-                        formatted_time = str(timedelta(seconds=total_time))
-                        updated_lines.append(f"Total time taken: {formatted_time}\n")
-                        total_time_found = True
-                    except (ValueError, IndexError) as e:
-                        print(f"Error parsing 'Total time taken' value: {e}")
-                else:
-                    updated_lines.append(line)
-
-            if not total_time_found:
-                updated_lines.append(f"Total time taken: {formatted_time}\n")
-
-            new_content = "".join(updated_lines)
-            with open(file_name, "w") as f:
-                f.write(f"{new_content}\n")
-        else:
-            new_content = f"Total time: {formatted_time}\n"
-            with open(file_name, "w") as f:
-                f.write(f"{new_content}\n")
 
     def get_file_sizes(self, input_file, output_file):
         """
@@ -500,7 +395,7 @@ class RunTracker(ErsiliaBase):
             for r in tabular_result:
                 writer.writerow(r)
 
-
+    @throw_ersilia_exception
     def track(self, input, result, meta):
         """
         Tracks the results of a model run.
@@ -508,16 +403,19 @@ class RunTracker(ErsiliaBase):
         :param result: The output data in the form of a csv file path or Generator from the model run.
         :param meta: The metadata of the model.
         """
-
+        # Set up requirements for tracking the run
         self.docker_client = SimpleDocker()
         self.data = CsvDataLoader()
-        json_dict = {}
+        run_data = copy.deepcopy(RUN_DATA_STUB)
+        session = Session(config_json=self.config_json)
+        model_id = meta["Identifier"]
+        init_tracking_summary(model_id)
 
         if os.path.isfile(input):
             input_data = self.data.read(input)
         else:
             input_data = [{"input": input}]
-
+           
         # Create a temporary file to store the result if it is a generator
         if isinstance(result, types.GeneratorType):
             tmp_dir = os.path.join(get_session_dir(), "tmp")
@@ -542,25 +440,35 @@ class RunTracker(ErsiliaBase):
         else:
             result_data = self.data.read(result)
 
-        session = Session(config_json=self.config_json)
-        model_id = meta.get("Identifier", "Unknown")
-        json_dict["model_id"] = model_id
 
-        # checking for mismatched types
+        # Collect relevant data for the run
         nan_count = get_nan_counts(result_data)
-        json_dict["nan_count"] = nan_count
-
-        json_dict["check_types"] = self.check_types(result_data, meta)
-
-        json_dict["file_sizes"] = self.get_file_sizes(input_data, result_data)
+        type_and_shape_info = self.check_types(result_data, meta)
+        size_info = self.get_file_sizes(input_data, result_data)
 
         docker_info = (
             self.docker_client.container_memory(self.model_id),
-            self.docker_client.container_cpu(self.model_id),
             self.docker_client.container_peak(self.model_id),
+            self.docker_client.container_cpu(self.model_id),
         )
-
-        json_dict["Docker Container"] = docker_info
+        current_log_file_path = os.path.join(get_session_dir(), "current.log")
+        console_log_file_path = os.path.join(get_session_dir(), "console.log")
+        error_and_warning_info_current_log = log_files_metrics(current_log_file_path)
+        error_and_warning_info_console_log = log_files_metrics(console_log_file_path)
+        run_data["input_size"] = size_info["input_size"] if size_info["input_size"] else -1
+        run_data["output_size"] = size_info["output_size"] if size_info["output_size"] else -1
+        run_data["avg_input_size"] = size_info["avg_input_size"] if size_info["avg_input_size"] else -1
+        run_data["avg_output_size"] = size_info["avg_output_size"] if size_info["avg_output_size"] else -1
+        run_data["container_memory_perc"] = docker_info[0] if docker_info[0] else -1
+        run_data["peak_container_memory_MB"] = docker_info[1] if docker_info[1] else -1
+        run_data["container_cpu_perc"] = docker_info[2] if docker_info[2] else -1
+        run_data["nan_count_agg"] = nan_count if nan_count else -1
+        run_data["mismatched_type_count"] = type_and_shape_info["mismatched_types"]
+        run_data["correct_shape"] = type_and_shape_info["correct_shape"]
+        run_data["error_count"] = error_and_warning_info_current_log["error_count"] + error_and_warning_info_console_log["error_count"]
+        run_data["warning_count"] = error_and_warning_info_current_log["warning_count"] + error_and_warning_info_console_log["warning_count"]
+        
+        update_tracking_summary(model_id, run_data)
 
         # Get the memory stats of the run processs
         peak_memory = self.get_peak_memory()
@@ -571,7 +479,6 @@ class RunTracker(ErsiliaBase):
         session.update_total_memory(total_memory)
         session.update_cpu_time(cpu_time)
         self.log_result(result)
-
-        json_object = json.dumps(json_dict, indent=4)
-        write_persistent_file(json_object, model_id)
-        upload_to_s3(model_id=self.model_id, metadata=meta)
+        
+        if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+            upload_to_s3(model_id=self.model_id, metadata=meta)
