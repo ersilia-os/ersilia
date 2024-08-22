@@ -44,3 +44,46 @@ jobs:
           source activate          
           pip install pytest
           pytest
+
+  update-model-request_template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Path Filter
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            tag-file:
+              - 'ersilia/hub/content/metadata/tag.txt'
+
+      - name: Set up Python
+        if: steps.filter.outputs.tag-file == 'true'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        if: steps.filter.outputs.tag-file == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Run update_model_request_template.py
+        if: steps.filter.outputs.tag-file == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/update_model_request_template.py
+
+      - name: Commit and push changes
+        if: steps.filter.outputs.tag-file == 'true'
+        uses: actions-js/push@5a7cbd780d82c0c937b5977586e641b2fd94acc5 # pin@v1.5
+        with:
+          author_name: "ersilia-bot"
+          author_email: "ersilia-bot@users.noreply.github.com"
+          message: "Update model_request.yml with new tags from tag.txt"
+          directory: .
+          repository: "ersilia-os/ersilia"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
