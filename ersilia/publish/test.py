@@ -1,40 +1,34 @@
 # TODO adapt to input-type agnostic. For now, it works only with Compound input types.
 
-from collections import defaultdict
-from sklearn.metrics import mean_squared_error
-import numpy as np  
-import time
-from datetime import datetime
-import os
 import json
-import tempfile
-import types
+import os
 import subprocess
-import shutil
+import tempfile
 import time
-import re
-import numpy as np
-from scipy.stats import spearmanr
+import types
+from collections import defaultdict
+from datetime import datetime
 
+import numpy as np
 
 from ersilia.utils.conda import SimpleConda
+from .. import ErsiliaBase, ErsiliaModel, throw_ersilia_exception
 from ..cli import echo
+from ..core.session import Session
+from ..default import EOS, INFORMATION_FILE
 from ..io.input import ExampleGenerator
-from .. import ErsiliaBase
-from .. import throw_ersilia_exception
-from .. import ErsiliaModel
 from ..utils.exceptions_utils import test_exceptions as texc
 from ..utils.logging import make_temp_dir
 from ..utils.terminal import run_command_check_output
-from ..core.session import Session
-from ..default import INFORMATION_FILE
-from ..default import EOS
 
-
+# Check if we have the required imports in the environment
+MISSING_PACKAGES = False
 try:
+    from scipy.stats import spearmanr
+    from sklearn.metrics import mean_squared_error
     from fuzzywuzzy import fuzz
-except:
-    fuzz = None
+except ImportError:
+    MISSING_PACKAGES = True
 
 RUN_FILE = "run.sh"
 DATA_FILE = "data.csv"
@@ -891,6 +885,10 @@ class ModelTester(ErsiliaBase):
 
 
     def run(self, output_file):
+        if MISSING_PACKAGES:
+            raise ImportError(
+                "Missing packages required for testing, please install test extras as 'pip install ersilia[test]'"
+            )
         output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv") 
         start = time.time()
         self.check_information(output_file)
