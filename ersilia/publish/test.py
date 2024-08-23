@@ -488,7 +488,7 @@ class ModelTester(ErsiliaBase):
             self.logger.debug("Number of outputs: {len(zipped)}")
             raise texc.MissingOutputs()
         else:
-            click.echo(BOLD + "\nTest: Equal Inputs and Outputs, SUCCESS! ✅\n" + RESET)
+            click.echo(BOLD + "\nTest: Equal Inputs and Output90-s, SUCCESS! ✅\n" + RESET)
 
     @staticmethod
     def default_env():
