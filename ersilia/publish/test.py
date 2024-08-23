@@ -1,3 +1,4 @@
+# TODO adapt to input-type agnostic. For now, it works only with Compound input types.
 import json
 import os
 import subprocess
