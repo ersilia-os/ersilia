@@ -872,7 +872,7 @@ class ModelTester(ErsiliaBase):
                             self.logger.debug(bash_run[i][column])
                             raise texc.InconsistentOutputs(self.model_id)
 
-            self.logger.debug(
+            click.echo(
                 BOLD
                 + "Test: Bash and Ersilia run comparison check, SUCCESS! ✅  Test Complete 🎉!"
                 + RESET
