@@ -915,4 +915,4 @@ class ModelTester(ErsiliaBase):
             self.make_output(output_file, seconds_taken)
             click.echo(f"📁 The output file is located at: {output_file}")
         else:
-            click.echo("No output file specified. Skipping output file generation.")
+            click.echo("No output file specified! Skipping output file generation.")
