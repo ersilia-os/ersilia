@@ -10,7 +10,7 @@ import json
 import tempfile
 import types
 import subprocess
-import shutil
+import tempfile
 import time
 import re
 import numpy as np
@@ -19,10 +19,9 @@ from scipy.stats import spearmanr
 
 from ersilia.utils.conda import SimpleConda
 from ..cli import echo
+from ..core.session import Session
+from ..default import EOS, INFORMATION_FILE
 from ..io.input import ExampleGenerator
-from .. import ErsiliaBase
-from .. import throw_ersilia_exception
-from .. import ErsiliaModel
 from ..utils.exceptions_utils import test_exceptions as texc
 from ..utils.logging import make_temp_dir
 from ..utils.terminal import run_command_check_output
@@ -31,10 +30,14 @@ from ..default import INFORMATION_FILE
 from ..default import EOS
 
 
+# Check if we have the required imports in the environment
+MISSING_PACKAGES = False
 try:
+    from scipy.stats import spearmanr
+    from sklearn.metrics import mean_squared_error
     from fuzzywuzzy import fuzz
-except:
-    fuzz = None
+except ImportError:
+    MISSING_PACKAGES = True
 
 RUN_FILE = "run.sh"
 DATA_FILE = "data.csv"
@@ -81,6 +84,7 @@ class ModelTester(ErsiliaBase):
             return fuzz.ratio(output1, output2)
 
    
+   
     """
     When the user specifies an output file, the file will show the user how big the model is. This function 
     calculates the size of the model to allow this. 
@@ -124,6 +128,7 @@ class ModelTester(ErsiliaBase):
 
     def _check_model_id(self, data):
         self.logger.debug("Checking model ID...")
+        self.logger.debug("Checking model ID...")
         if data["card"]["Identifier"] != self.model_id:
             raise texc.WrongCardIdentifierError(self.model_id)
 
@@ -133,6 +138,7 @@ class ModelTester(ErsiliaBase):
 
     def _check_model_slug(self, data):
         self.logger.debug("Checking model slug...")
+        self.logger.debug("Checking model slug...")
         if not data["card"]["Slug"]:
             raise texc.EmptyField("slug")
 
@@ -141,6 +147,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_description(self, data):
+        self.logger.debug("Checking model description...")
         self.logger.debug("Checking model description...")
         if not data["card"]["Description"]:
             raise texc.EmptyField("Description")
@@ -157,6 +164,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_task(self, data):
+        self.logger.debug("Checking model task...")
         self.logger.debug("Checking model task...")
         valid_tasks = [
             "Classification",
@@ -186,6 +194,7 @@ class ModelTester(ErsiliaBase):
 
     def _check_model_input(self, data):
         self.logger.debug("Checking model input...")
+        self.logger.debug("Checking model input...")
         valid_inputs = [["Compound"], ["Protein"], ["Text"]]
         if data["card"]["Input"] not in valid_inputs:
             raise texc.InvalidEntry("Input")
@@ -200,6 +209,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_input_shape(self, data):
+        self.logger.debug("Checking model input shape...")
         self.logger.debug("Checking model input shape...")
         valid_input_shapes = [
             "Single",
@@ -227,6 +237,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_output(self, data):
+        self.logger.debug("Checking model output...")
         self.logger.debug("Checking model output...")
         valid_outputs = [
             "Boolean",
@@ -260,6 +271,7 @@ class ModelTester(ErsiliaBase):
 
     def _check_model_output_type(self, data):
         self.logger.debug("Checking model output type...")
+        self.logger.debug("Checking model output type...")
         valid_output_types = [["String"], ["Float"], ["Integer"]]
         if data["card"]["Output Type"] not in valid_output_types:
             raise texc.InvalidEntry("Output Type")
@@ -274,6 +286,7 @@ class ModelTester(ErsiliaBase):
     """
 
     def _check_model_output_shape(self, data):
+        self.logger.debug("Checking model output shape...")
         self.logger.debug("Checking model output shape...")
         valid_output_shapes = [
             "Single",
@@ -298,7 +311,9 @@ class ModelTester(ErsiliaBase):
     @throw_ersilia_exception
     def check_information(self, output):
 
+
         self.logger.debug("Checking that model information is correct")
+        self.logger.debug(
         self.logger.debug(
             BOLD
             + "Beginning checks for {0} model information:".format(self.model_id)
@@ -334,6 +349,7 @@ class ModelTester(ErsiliaBase):
         input = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
 
         self.logger.debug(BOLD + "Testing model on single smiles input...\n" + RESET)
+        self.logger.debug(BOLD + "Testing model on single smiles input...\n" + RESET)
         mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         result = mdl.run(input=input, output=output, batch_size=100)
 
@@ -355,10 +371,13 @@ class ModelTester(ErsiliaBase):
         eg = ExampleGenerator(model_id=self.model_id)
         input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False) 
         self.logger.debug(
+        input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False) 
+        self.logger.debug(
             BOLD
             + "\nTesting model on input of 5 smiles given by 'example' command...\n"
             + RESET
         )
+        self.logger.debug("This is the input: {0}".format(input))
         self.logger.debug("This is the input: {0}".format(input))
         mdl = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         result = mdl.run(input=input, output=output, batch_size=100)
@@ -377,6 +396,9 @@ class ModelTester(ErsiliaBase):
     
     
     
+    
+    
+    
     @throw_ersilia_exception
     def check_consistent_output(self):
         def compute_rmse(y_true, y_pred):
@@ -392,7 +414,10 @@ class ModelTester(ErsiliaBase):
 
         eg = ExampleGenerator(model_id=self.model_id)
         input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False)
+        input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False)
 
+        mdl1 = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
+        mdl2 = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         mdl1 = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         mdl2 = ErsiliaModel(self.model_id, service_class=service_class, config_json=None)
         result = mdl1.run(input=input, output=None, batch_size=100)
@@ -410,6 +435,9 @@ class ModelTester(ErsiliaBase):
             for key1, key2 in zip(keys1, keys2):
                 if not isinstance(output1[key1], type(output2[key2])):
                     for item1, item2 in zipped:
+                        self.logger.debug(item1)
+                        self.logger.debug(item2)
+                        self.logger.debug("\n")
                         self.logger.debug(item1)
                         self.logger.debug(item2)
                         self.logger.debug("\n")
@@ -482,8 +510,12 @@ class ModelTester(ErsiliaBase):
         )
         self.logger.debug(f"Number of inputs: {NUM_SAMPLES}")
         self.logger.debug(f"Number of outputs: {len(zipped)}")
+        self.logger.debug(f"Number of inputs: {NUM_SAMPLES}")
+        self.logger.debug(f"Number of outputs: {len(zipped)}")
 
         if NUM_SAMPLES != len(zipped):
+            self.logger.debug("Number of inputs: {NUM_SAMPLES}")
+            self.logger.debug("Number of outputs: {len(zipped)}")
             self.logger.debug("Number of inputs: {NUM_SAMPLES}")
             self.logger.debug("Number of outputs: {len(zipped)}")
             raise texc.MissingOutputs()
@@ -661,18 +693,23 @@ class ModelTester(ErsiliaBase):
         with tempfile.TemporaryDirectory() as temp_dir:
             self.logger.debug(BOLD + "\nRunning the model bash script..." + RESET)  
             model_path =  os.path.join(EOS, "dest", self.model_id)
+            self.logger.debug(BOLD + "\nRunning the model bash script..." + RESET)  
+            model_path =  os.path.join(EOS, "dest", self.model_id)
 
             # Create an example input
             eg = ExampleGenerator(model_id=self.model_id)
             input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False)
+            input = eg.example(n_samples=NUM_SAMPLES, file_name=None, simple=True, try_predefined=False)
             # Read it into a temp file
             ex_file = os.path.abspath(os.path.join(temp_dir, "example_file.csv"))
+            
             
             with open(ex_file, "w") as f:
                 f.write("smiles")
                 for item in input:
                     f.write(str(item) + "\n")
 
+            run_sh_path = os.path.join(model_path, "model", "framework", "run.sh")
             run_sh_path = os.path.join(model_path, "model", "framework", "run.sh")
             # Halt this check if the run.sh file does not exist (e.g. eos3b5e)
             if not os.path.exists (run_sh_path):
@@ -684,14 +721,19 @@ class ModelTester(ErsiliaBase):
             # Navigate into the temporary directory
             subdirectory_path = os.path.join(model_path, "model", "framework")
             self.logger.debug(f"Changing directory to: {subdirectory_path}")
+            subdirectory_path = os.path.join(model_path, "model", "framework")
+            self.logger.debug(f"Changing directory to: {subdirectory_path}")
             os.chdir(subdirectory_path)
             try:
                 run_path = os.path.abspath(subdirectory_path)
+                run_path = os.path.abspath(subdirectory_path)
                 tmp_script = os.path.abspath(os.path.join(temp_dir, "script.sh"))
+                bash_output_path = os.path.abspath(os.path.join(temp_dir, "bash_output.csv"))
                 bash_output_path = os.path.abspath(os.path.join(temp_dir, "bash_output.csv"))
                 output_log = os.path.abspath(os.path.join(temp_dir, "output.txt"))
                 error_log = os.path.abspath(os.path.join(temp_dir, "error.txt"))
                 bash_script = """
+    source {0}/etc/profile.d/conda.sh     
     source {0}/etc/profile.d/conda.sh     
     conda activate {1}
     cd {2}
@@ -703,9 +745,14 @@ class ModelTester(ErsiliaBase):
                     run_path,
                     ex_file,
                     bash_output_path,
+                    bash_output_path,
                     output_log,
                     error_log,
                 )
+                self.logger.debug(f"Script path: {tmp_script}")
+                self.logger.debug(f"bash output path: {bash_output_path}")
+                self.logger.debug(f"Output log path: {output_log}")
+                self.logger.debug(f"Error log path: {error_log}")
                 self.logger.debug(f"Script path: {tmp_script}")
                 self.logger.debug(f"bash output path: {bash_output_path}")
                 self.logger.debug(f"Output log path: {output_log}")
@@ -716,7 +763,11 @@ class ModelTester(ErsiliaBase):
                 
 
                 self.logger.debug(BOLD + "\nExecuting 'bash run.sh'..." + RESET)
+                
+
+                self.logger.debug(BOLD + "\nExecuting 'bash run.sh'..." + RESET)
                 try:
+                    bash_result = subprocess.run(
                     bash_result = subprocess.run(
                         ["bash", tmp_script], capture_output=True, text=True, check=True
                     )
@@ -788,10 +839,12 @@ class ModelTester(ErsiliaBase):
             for row in ersilia_run:
                 ersilia_columns.update(row.keys())
             self.logger.debug(f"\n Ersilia columns:  {ersilia_columns}")
+            self.logger.debug(f"\n Ersilia columns:  {ersilia_columns}")
 
             bash_columns = set()
             for row in bash_run:
                 bash_columns.update(row.keys())
+            self.logger.debug(f"\n Bash columns:  {bash_columns}")
             self.logger.debug(f"\n Bash columns:  {bash_columns}")
 
             common_columns = ersilia_columns & bash_columns
@@ -839,6 +892,7 @@ class ModelTester(ErsiliaBase):
                             for a, b in zip(ersilia_run[i][column], bash_run[i][column])
                         ):
                             self.logger.debug(
+                            self.logger.debug(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results."
                                 + RESET
@@ -852,6 +906,7 @@ class ModelTester(ErsiliaBase):
                     ):
                         if not ersilia_run[i][column].equals(bash_run[i][column]):
                             self.logger.debug(
+                            self.logger.debug(
                                 BOLD
                                 + "\nBash run and Ersilia run produce inconsistent results."
                                 + RESET
@@ -859,9 +914,12 @@ class ModelTester(ErsiliaBase):
                             self.logger.debug("Error in the following column: ", column)
                             self.logger.debug(ersilia_run[i][column])
                             self.logger.debug(bash_run[i][column])
+                            self.logger.debug("Error in the following column: ", column)
+                            self.logger.debug(ersilia_run[i][column])
+                            self.logger.debug(bash_run[i][column])
                             raise texc.InconsistentOutputs(self.model_id)
 
-            click.echo(
+            self.logger.debug(
                 BOLD
                 + "Test: Bash and Ersilia run comparison check, SUCCESS! ✅  Test Complete 🎉!"
                 + RESET
@@ -885,7 +943,10 @@ class ModelTester(ErsiliaBase):
 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         data = {
+            "date and time run": timestamp,  # Add date and time field
             "date and time run": timestamp,  # Add date and time field
             "model size": {"KB": size_kb, "MB": size_mb, "GB": size_gb},
             "time to run tests (seconds)": time,
@@ -899,6 +960,7 @@ class ModelTester(ErsiliaBase):
             json.dump(data, json_file, indent=4)
 
 
+
     def run(self, output_file):
         output_file = os.path.join(self._model_path(self.model_id), "TEST_MODULE_OUTPUT.csv") 
         start = time.time()
@@ -907,9 +969,12 @@ class ModelTester(ErsiliaBase):
         self.check_example_input(output_file)
         self.check_consistent_output()
         self.get_directories_sizes()
+        self.get_directories_sizes()
         self.run_bash()
         end = time.time()
         seconds_taken = end - start
+        
+        if output_file:
         
         if output_file:
             self.make_output(output_file, seconds_taken)
