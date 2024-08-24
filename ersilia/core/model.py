@@ -27,7 +27,7 @@ from ..io.input import ExampleGenerator, BaseIOGetter
 from .tracking import RunTracker, create_persistent_file
 from ..io.readers.file import FileTyper, TabularFileReader
 from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
+from ..store.utils import OutputSource, store_has_model
 
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
@@ -368,20 +368,13 @@ class ErsiliaModel(ErsiliaBase):
         self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
     ):
         if OutputSource.is_cloud(self.output_source):
-            # here (send to store and get back results dict + missing inputs list)
-            store = InferenceStoreApi(model_id=self.model_id)
-            print(self.model_id)
-            print(input)
-            if store.has_model():
+            if store_has_model(model_id=self.model_id):
+                store = InferenceStoreApi(model_id=self.model_id)
                 result_from_store = store.get_precalculations(input)
-            print(result_from_store)
-            
-            # if self.output_source == OutputSource.CLOUD_ONLY:
-            return "this is the result returned to CLI" # should missing keys be returned too in a file/message?
-            
-            # if self.output_source == OutputSource.CLOUD_FIRST and len(missing_keys):
-            #     pass # save missing keys to file to use in subsequent steps below
-        if self._do_cache_splits(input=input, output=output):
+            else:
+                result_from_store = "No precalculations found in store."
+            return result_from_store
+        elif self._do_cache_splits(input=input, output=output):
             splitted_inputs = self.tfr.split_in_cache()
             self.logger.debug("Split inputs:")
             self.logger.debug(" ".join(splitted_inputs))

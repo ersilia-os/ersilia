@@ -7,7 +7,7 @@ from ... import ErsiliaModel
 from ..messages import ModelNotFound, ModelNotInStore
 from ...core.tracking import write_persistent_file
 from ...store.api import InferenceStoreApi
-from ...store.utils import OutputSource
+from ...store.utils import OutputSource, store_has_model
 
 def serve_cmd():
     """Creates serve command"""
@@ -22,8 +22,6 @@ def serve_cmd():
         required=False,
         help=f"Get outputs from locally hosted model only ({OutputSource.LOCAL_ONLY}), \
             from cloud precalculation store only ({OutputSource.CLOUD_ONLY})"
-            # or from cloud precalculation store first then locally hosted model for any inputs \
-            # that haven't been precalculated ({OutputSource.CLOUD_FIRST})"
     )
     @click.option("--lake/--no-lake", is_flag=True, default=True)
     @click.option("--docker/--no-docker", is_flag=True, default=False)
@@ -50,17 +48,10 @@ def serve_cmd():
         else:
             service_class = None
         if OutputSource.is_cloud(output_source):
-            store = InferenceStoreApi(model_id=model)
-            if not store.has_model():
-                # if output_source == OutputSource.CLOUD_ONLY:
-                ModelNotInStore(model).echo()
-                # echo(
-                #     "Model {0} not found in inference store. Serving model with output-source={1}.".format(model, OutputSource.LOCAL_ONLY),
-                #     fg="yellow"
-                # )
-                # output_source = OutputSource.LOCAL_ONLY
-            else:
+            if store_has_model(model_id=model):
                 echo("Model {0} found in inference store.".format(model))
+            else:
+                ModelNotInStore(model).echo()
         mdl = ErsiliaModel(
             model,
             output_source=output_source, save_to_lake=lake,
