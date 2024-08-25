@@ -5,14 +5,16 @@ from pathlib import Path
 import tempfile
 from loguru import logger
 from ..default import LOGGING_FILE, CURRENT_LOGGING_FILE, VERBOSE_FILE
-from ..utils.session import get_session_dir
+from ..utils.session import get_session_dir, get_session_id
 
 
 ROTATION = "10 MB"
 
 
 def make_temp_dir(prefix):
-    tmp_dir = tempfile.mkdtemp(prefix=prefix)
+    session_id = get_session_id()
+    prefix_with_session = f"{prefix}{session_id}-"
+    tmp_dir = tempfile.mkdtemp(prefix=prefix_with_session)
     tmp_dirname = os.path.basename(tmp_dir)
     logs_tmp_dir = os.path.join(get_session_dir(), "logs", "tmp")
     if not os.path.exists(logs_tmp_dir):
@@ -98,3 +100,4 @@ class Logger(object):
 
 
 logger = Logger()
+

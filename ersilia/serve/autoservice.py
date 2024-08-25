@@ -16,6 +16,7 @@ from .api import Api
 from ..db.environments.managers import DockerManager
 from .. import ErsiliaBase
 from ..utils import tmp_pid_file
+from ..utils.session import get_session_id
 
 from ..default import (
     DEFAULT_BATCH_SIZE,
@@ -315,10 +316,11 @@ class AutoService(ErsiliaBase):
         self._kill_pids(pids)
 
     def clean_temp_dir(self):
+        session_id = get_session_id()
         self.logger.debug("Cleaning temp dir")
         tmp_folder = tempfile.gettempdir()
         for d in os.listdir(tmp_folder):
-            if "ersilia-" in d:
+            if f"ersilia-{session_id}-" in d:
                 d = os.path.join(tmp_folder, d)
                 self.logger.debug("Flushing temporary directory {0}".format(d))
                 try:
@@ -395,3 +397,4 @@ class AutoService(ErsiliaBase):
             if api_name not in self._meta:
                 self._meta = {api_name: _api.meta()}
             yield result
+
