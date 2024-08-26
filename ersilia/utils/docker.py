@@ -1,8 +1,10 @@
 import os
 import docker
 import subprocess
+import threading
+import time
+import json
 from dockerfile_parse import DockerfileParser
-import tempfile
 
 from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
@@ -244,78 +246,16 @@ class SimpleDocker(object):
         self.exec_container(name, cmd)
         self.kill(name)
 
-    def _get_container_for_model(self, model_id=None):
-        """
-        This function will get the Docker container running an ersilia model
-        """
-        if not model_id:
-            raise ValueError("Model ID is required")
-        try:
-            client = docker.from_env()
-            containers = client.containers.list()
-
-            if not containers:
-                logger.debug("No containers found")
-            for container in containers:
-                if model_id in container.name:
-                    return container
-
-        except docker.errors.APIError as e:
-            return [f"Error: Docker API error: {e}"]
-        except KeyError as e:
-            return [f"KeyError: {e} in stats for container."]
-        except Exception as e:
-            return [f"An unexpected error occurred: {e}"]
-
-    def container_memory(self, model_id):
-        """
-        This function will get the total memory usage of the Docker container running an ersilia model.
-        """
-
-        container = self._get_container_for_model(model_id)
-
-        if container:
-            try:
-                stats = container.stats(stream=False) # Same as cpu_perc, this isn't completely right.
-                mem_usage_mb = stats["memory_stats"]["usage"] / (1024 * 1024)
-                mem_available_mb =  stats["memory_stats"]["limit"] / (1024 * 1024)
-                mem_perc = round((mem_usage_mb / mem_available_mb) * 100)
-                return mem_perc
-            except KeyError:
-                return
-        else:
-            logger.debug(f"No container found for model {model_id}")
-            return
-
-    def container_cpu(self, model_id):
-        """
-        This function will get the CPU percentage utilisation of the Docker container running Ersilia Models.
-        """
-
-        container = self._get_container_for_model(model_id)
-
-        if container:
-            try: # Ref: https://stackoverflow.com/a/77924494/1887515
-                stats = container.stats(stream=False) # TODO This is not completley right, ideally we should be polling the container during the entirety of the model run
-                cpu_usage = (stats['cpu_stats']['cpu_usage']['total_usage']
-                            - stats['precpu_stats']['cpu_usage']['total_usage'])
-                cpu_system = (stats['cpu_stats']['system_cpu_usage']                    
-                            - stats['precpu_stats']['system_cpu_usage'])
-                num_cpus = stats['cpu_stats']["online_cpus"]
-                cpu_perc = round((float(cpu_usage) / float(cpu_system)) * num_cpus * 100.0)
-                return cpu_perc
-            except KeyError:
-                return
-        else:
-            logger.debug(f"No container found for model {model_id}")
-            return
-
     def container_peak(self, model_id):
         """
         This function will get the peak memory of the Docker container running Ersilia Models.
         """
         try:
-            container = self._get_container_for_model(model_id)
+            client = docker.from_env()
+            for ctr in client.containers.list():
+                if model_id in ctr.name:
+                    container = ctr
+                    break
             peak_memory = None
             if container:
                 stats = container.stats(stream=False)
@@ -349,7 +289,9 @@ class SimpleDocker(object):
                 if peak_memory is not None:
                     return peak_memory
                 else:
-                    logger.debug(f"Could not compute container peak memory for model {model_id}")
+                    logger.debug(
+                        f"Could not compute container peak memory for model {model_id}"
+                    )
                     return
             else:
                 logger.debug(f"No container found for model {model_id}")
@@ -384,3 +326,125 @@ class SimpleDockerfileParser(DockerfileParser):
                 for v in val.split("&&"):
                     runs += [v.strip()]
         return runs
+
+
+class ContainerMetricsSampler:
+    def __init__(self, model_id):
+        self.client = docker.from_env()
+        self.logger = logger
+        self.container = self._get_container_for_model(model_id)
+        self.cpu_samples = []
+        self.memory_samples = []
+        self.tracking_thread = None
+        self.tracking = False
+
+    def _get_container_for_model(self, model_id=None):
+        """
+        This function will get the Docker container running an ersilia model
+        """
+        if not model_id:
+            raise ValueError("Model ID is required")
+        try:
+            client = docker.from_env()
+            containers = client.containers.list()
+
+            if not containers:
+                self.logger.debug("No containers found")
+            for container in containers:
+                if model_id in container.name:
+                    return container
+
+        except docker.errors.APIError as e:
+            self.logger.debug(f"Error: Docker API error: {e}")
+        except KeyError as e:
+            self.logger.debug(f"KeyError: {e} in stats for container.")
+        except Exception as e:
+            self.logger.debug(f"An unexpected error occurred: {e}")
+
+    def _container_cpu(self, stats: dict):
+        """
+        This function will get the CPU percentage utilisation of the Docker container running Ersilia Models.
+        """
+
+        try:  # Ref: https://stackoverflow.com/a/77924494/1887515
+            cpu_usage = (
+                stats["cpu_stats"]["cpu_usage"]["total_usage"]
+                - stats["precpu_stats"]["cpu_usage"]["total_usage"]
+            )
+            cpu_system = (
+                stats["cpu_stats"]["system_cpu_usage"]
+                - stats["precpu_stats"]["system_cpu_usage"]
+            )
+            num_cpus = stats["cpu_stats"]["online_cpus"]
+            cpu_perc = round((float(cpu_usage) / float(cpu_system)) * num_cpus * 100.0)
+            self.logger.debug(f"CPU Percentage: {cpu_perc}")
+            return cpu_perc
+        except KeyError:
+            self.logger.debug(
+                "KeyError: 'cpu_stats' or 'precpu_stats' not found in stats for container."
+            )
+            return
+
+    def _container_memory(self, stats: dict):
+        """
+        This function will get the total memory usage of the Docker container running an ersilia model.
+        """
+        try:
+            mem_usage_mb = stats["memory_stats"]["usage"] / (1024 * 1024)
+            mem_available_mb = stats["memory_stats"]["limit"] / (1024 * 1024)
+            mem_perc = round((float(mem_usage_mb) / float(mem_available_mb)) * 100)
+            return mem_perc
+        except KeyError:
+            self.logger.debug(
+                "KeyError: 'memory_stats' not found in stats for container."
+            )
+            return
+
+    def _collect_metrics(self):
+        if self.container:
+            while self.tracking:
+                stat = self.container.stats(stream=False)
+                cpu_usage = self._container_cpu(stat)
+                memory_usage = self._container_memory(stat)
+                self.cpu_samples.append(cpu_usage)
+                self.memory_samples.append(memory_usage)
+                time.sleep(0.01)  # Sample every 10ms
+        else:
+            self.logger.debug("No container found for model")
+
+    def start_tracking(self):
+        if not self.tracking:
+            self.tracking = True
+            self.cpu_samples.clear()
+            self.memory_samples.clear()
+            self.tracking_thread = threading.Thread(target=self._collect_metrics)
+            self.tracking_thread.start()
+
+    def stop_tracking(self):
+        if self.tracking:
+            self.tracking = False
+            if self.tracking_thread is not None:
+                self.tracking_thread.join()
+                self.tracking_thread = None
+
+    def get_average_metrics(self):
+        metrics = {
+            "container_cpu_perc": 0,
+            "container_memory_perc": 0,
+            "peak_memory_perc": 0,
+            "peak_cpu_perc": 0,
+        }
+        if not self.cpu_samples or not self.memory_samples:
+            return metrics
+
+        metrics["container_cpu_perc"] = sum(self.cpu_samples) / len(self.cpu_samples)
+        metrics["container_memory_perc"] = sum(self.memory_samples) / len(
+            self.memory_samples
+        )
+        metrics["peak_memory"] = max(self.memory_samples)
+        metrics["peak_cpu_perc"] = max(self.cpu_samples)
+        self.logger.debug(f"Average CPU Percentage: {metrics['container_cpu_perc']}")
+        self.logger.debug(
+            f"Average Memory Percentage: {metrics['container_memory_perc']}"
+        )
+        return metrics

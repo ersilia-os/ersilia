@@ -20,6 +20,7 @@ from ..serve.schema import ApiSchema
 from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.csvfile import CsvDataLoader
 from ..utils.terminal import yes_no_input
+from ..utils.docker import ContainerMetricsSampler
 from ..serve.autoservice import AutoService
 from ..io.output import TabularOutputStacker
 from ..serve.standard_api import StandardCSVRunApi
@@ -130,8 +131,10 @@ class ErsiliaModel(ErsiliaBase):
             self._run_tracker = RunTracker(
                 model_id=self.model_id, config_json=self.config_json
             )
+            self.ct_tracker = ContainerMetricsSampler(model_id=self.model_id)
         else:
             self._run_tracker = None
+            self.ct_tracker = None
 
         self.logger.info("Done with initialization!")
 
@@ -474,6 +477,13 @@ class ErsiliaModel(ErsiliaBase):
         track_run=False,
         try_standard=True,
     ):
+        # TODO this should be smart enough to init the container sampler
+        # or a python process sampler based on how the model was fetched
+        # Presently we only deal with containers
+        
+        # Init the container metrics sampler
+        if self.ct_tracker and track_run:
+            self.ct_tracker.start_tracking()
         self.logger.info("Starting runner")
         standard_status_ok = False
         if try_standard:
@@ -497,8 +507,13 @@ class ErsiliaModel(ErsiliaBase):
                 input=input, output=output, batch_size=batch_size, track_run=track_run
             )
         # Start tracking model run if track flag is used in serve
-        if self._run_tracker is not None and track_run:
-            self._run_tracker.track(input=input, result=result, meta=self._model_info["metadata"])
+        if self._run_tracker and track_run:
+            self.ct_tracker.stop_tracking()
+            container_metrics = self.ct_tracker.get_average_metrics()
+            self._run_tracker.track(
+                input, result, self._model_info["metadata"], container_metrics
+            )
+
         return result
 
     @property

@@ -431,7 +431,7 @@ class RunTracker(ErsiliaBase):
                 writer.writerow(r)
 
     @throw_ersilia_exception
-    def track(self, input, result, meta):
+    def track(self, input, result, meta, container_metrics):
         """
         Tracks the results of a model run.
         :param input: The input data used in the model run.
@@ -439,7 +439,7 @@ class RunTracker(ErsiliaBase):
         :param meta: The metadata of the model.
         """
         # Set up requirements for tracking the run
-        self.docker_client = SimpleDocker()
+        # self.docker_client = SimpleDocker()
         self.data = CsvDataLoader()
         run_data = copy.deepcopy(RUN_DATA_STUB)
         session = Session(config_json=self.config_json)
@@ -481,11 +481,7 @@ class RunTracker(ErsiliaBase):
         type_and_shape_info = self.check_types(result_data, meta)
         size_info = self.get_file_sizes(input_data, result_data)
 
-        docker_info = (
-            self.docker_client.container_memory(self.model_id),
-            self.docker_client.container_peak(self.model_id),
-            self.docker_client.container_cpu(self.model_id),
-        )
+        # peak_memory = self.docker_client.container_peak(self.model_id)
         current_log_file_path = os.path.join(get_session_dir(), "current.log")
         console_log_file_path = os.path.join(get_session_dir(), "console.log")
         error_and_warning_info_current_log = log_files_metrics(current_log_file_path)
@@ -494,9 +490,10 @@ class RunTracker(ErsiliaBase):
         run_data["output_size"] = size_info["output_size"] if size_info["output_size"] else -1
         run_data["avg_input_size"] = size_info["avg_input_size"] if size_info["avg_input_size"] else -1
         run_data["avg_output_size"] = size_info["avg_output_size"] if size_info["avg_output_size"] else -1
-        run_data["container_memory_perc"] = docker_info[0] if docker_info[0] else -1
-        run_data["peak_container_memory_MB"] = docker_info[1] if docker_info[1] else -1
-        run_data["container_cpu_perc"] = docker_info[2] if docker_info[2] else -1
+        run_data["container_cpu_perc"] = container_metrics["container_cpu_perc"]
+        run_data["peak_container_cpu_perc"] = container_metrics["peak_cpu_perc"]
+        run_data["container_memory_perc"] = container_metrics["container_memory_perc"]
+        run_data["peak_container_memory_perc"] = container_metrics["peak_memory"]
         run_data["nan_count_agg"] = nan_count if nan_count else -1
         run_data["mismatched_type_count"] = type_and_shape_info["mismatched_types"]
         run_data["correct_shape"] = type_and_shape_info["correct_shape"]

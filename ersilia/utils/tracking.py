@@ -13,8 +13,9 @@ TRACKING_STUB = {
     "avg_input_size": [], # List of average input sizes, where len(avg_input_sizes) == runs
     "avg_output_size": [], # List of average output sizes, where len(avg_output_sizes) == runs
     "container_memory_perc": [], # List of container memory percentages, where len(cpu_time_seconds) == runs
-    "peak_container_memory_MB": [], # List of peak container memory in MB, where len(peak_container_memory_MB) == runs
+    "peak_container_memory_perc": [], # List of peak container memory in MB, where len(peak_container_memory_MB) == runs
     "container_cpu_perc": [], # List of container CPU utilisation percentages, where len(container_cpu_time_seconds) == runs
+    "peak_container_cpu_perc": [], # List of peak container CPU utilisation percentages, where len(peak_container_cpu_perc) == runs
     "nan_count_agg": [], # List of NaN count, where len(nan_count_agg) == runs
     "mismatched_type_count": [], # List of mismatched type count, where len(mismatched_type_agg) == runs
     "correct_shape": [], # List of correct shape count, where len(correct_shape) == runs
@@ -23,18 +24,19 @@ TRACKING_STUB = {
 }
 
 RUN_DATA_STUB = {  # This should not be used as is, always create a deep copy.
-    "input_size": -1,
-    "output_size": -1,
-    "avg_input_size": -1,
-    "avg_output_size": -1,
-    "container_memory_perc": -1,
-    "peak_container_memory_MB": -1,
-    "container_cpu_perc": -1,
-    "nan_count_agg": -1,
-    "mismatched_type_count": -1,
+    "input_size": 0,
+    "output_size": 0,
+    "avg_input_size": 0,
+    "avg_output_size": 0,
+    "container_memory_perc": 0,
+    "peak_container_memory_perc": 0,
+    "container_cpu_perc": 0,
+    "peak_container_cpu_perc": 0,  
+    "nan_count_agg": 0,
+    "mismatched_type_count": 0,
     "correct_shape": False,
-    "warning_count": -1,
-    "error_count": -1
+    "warning_count": 0,
+    "error_count": 0
 }
 
 @throw_ersilia_exception
