@@ -1,11 +1,9 @@
 import click
-import time
 
 from .. import echo
 from . import ersilia_cli
 from ... import ErsiliaModel
 from ..messages import ModelNotFound
-from ...core.tracking import write_persistent_file
 
 
 def serve_cmd():
@@ -33,7 +31,6 @@ def serve_cmd():
         default=False,
     )
     def serve(model, lake, docker, port, track):
-        start_time = time.time()
         if docker:
             service_class = "docker"
         else:
@@ -72,12 +69,3 @@ def serve_cmd():
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
-
-        if track:
-            """
-            Retrieve the time taken in seconds to serve the Model.
-            """
-            end_time = time.time()
-            duration = end_time - start_time
-            content = "Total time taken: {0}\n".format(duration)
-            write_persistent_file(content, mdl.model_id)
