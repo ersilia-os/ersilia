@@ -30,15 +30,27 @@ class TabularResultLogger(object):
             return "\t"
         return None
 
-    def tabulate(self, result):
+    def tabulate(self, result, identifier=None, model_id=None):
         if self._is_tabular_file(result):
             if result.endswith(".h5"):
                 return False  # TODO include HDF5 compatibility
             delimiter = self._get_delimiter(result)
             with open(result, "r") as f:
                 reader = csv.reader(f, delimiter=delimiter)
-                R = []
+                h = []
+                if identifier:
+                    h += ["identifier"]
+                if model_id:
+                    h += ["model_id"]
+                h += next(reader)[:MAX_LOG_COLUMNS]
+                R = [h]
                 for r in reader:
-                    R += [r[:MAX_LOG_COLUMNS]]
+                    s = []
+                    if identifier:
+                        s += [identifier]
+                    if model_id:
+                        s += [model_id]
+                    s += r[:MAX_LOG_COLUMNS]
+                    R += [s]
                 return R
         return None

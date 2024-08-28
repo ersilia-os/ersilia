@@ -7,7 +7,7 @@ model_request_file = ".github/ISSUE_TEMPLATE/model_request.yml"
 def update_model_request_template():
     # Read and sort the tags
     with open(tag_file, "r") as f:
-        tags = sorted([tag.strip() for tag in f.readlines() if tag.strip()])
+        tags = sorted([tag.strip() for tag in f.readlines() if tag.strip()], key=lambda s: s.lower())
 
     # Read the existing model request file
     with open(model_request_file, "r") as f:
