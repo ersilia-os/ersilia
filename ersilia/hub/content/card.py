@@ -7,7 +7,6 @@ from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 from ...db.hubdata.json_models_interface import JsonModelsInterface
 import validators
-from functools import lru_cache
 
 try:
     from validators import ValidationFailure
@@ -724,7 +723,6 @@ class LocalCard(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    @lru_cache(maxsize=32)
     def _load_data(self, model_id):
         """
         Loads the JSON data from the model's information file.
@@ -738,6 +736,8 @@ class LocalCard(ErsiliaBase):
         if os.path.exists(card_path):
             with open(card_path, "r") as f:
                 card = json.load(f)
+                if "card" in card:
+                    return card["card"]
             return card
         else:
             return None
@@ -750,7 +750,7 @@ class LocalCard(ErsiliaBase):
             card = self._load_data(model_id)
             return card
         else:
-            return 
+            return
 
 class LakeCard(ErsiliaBase):
     def __init__(self, config_json=None):
