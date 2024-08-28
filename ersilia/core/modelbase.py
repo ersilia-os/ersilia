@@ -23,7 +23,6 @@ class ModelBase(ErsiliaBase):
         if model_id_or_slug is not None:
             self.text = model_id_or_slug
             slugger = Slug()
-
             if slugger.is_slug(model_id_or_slug):
                 self.slug = model_id_or_slug
                 self.model_id = slugger.encode(self.slug)

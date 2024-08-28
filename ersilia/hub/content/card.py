@@ -1,7 +1,5 @@
 import os
 import json
-import sys
-import tempfile
 import requests
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
@@ -9,7 +7,6 @@ from ...auth.auth import Auth
 from ...db.hubdata.interfaces import AirtableInterface
 from ...db.hubdata.json_models_interface import JsonModelsInterface
 import validators
-from functools import lru_cache
 
 try:
     from validators import ValidationFailure
@@ -597,16 +594,19 @@ class MetadataCard(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    def get(self, model_id):
-        dest_dir = self._model_path(model_id=model_id)
-        self.logger.debug("Trying to get metadata from: {0}".format(dest_dir))
-        metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
-        if os.path.exists(metadata_json):
-            with open(metadata_json, "r") as f:
-                data = json.load(f)
-            return data
+    def get(self, model_id=None, slug=None):
+        if model_id is not None:
+            dest_dir = self._model_path(model_id=model_id)
+            self.logger.debug("Trying to get metadata from: {0}".format(dest_dir))
+            metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
+            if os.path.exists(metadata_json):
+                with open(metadata_json, "r") as f:
+                    data = json.load(f)
+                return data
+            else:
+                return None
         else:
-            return None
+            return
 
 
 class ReadmeCard(ErsiliaBase):
@@ -675,8 +675,11 @@ class ReadmeCard(ErsiliaBase):
         }
         return results
 
-    def get(self, model_id):
-        return self.parse(model_id)
+    def get(self, model_id=None, slug=None):
+        if model_id:
+            return self.parse(model_id)
+        else:
+            return None
 
 
 class AirtableCard(AirtableInterface):
@@ -702,11 +705,13 @@ class AirtableCard(AirtableInterface):
     def find_card_by_slug(self, slug):
         return self._find_card(slug, "Slug")
 
-    def find_card_by_mode(self, mode):
-        return self._find_card(mode, "Mode")
-
-    def get(self, model_id):
-        return self.find_card_by_model_id(model_id)
+    def get(self, model_id=None, slug=None):
+        if model_id is not None:
+            return self.find_card_by_model_id(model_id)
+        elif slug is not None:
+            return self.find_card_by_slug(slug)
+        else:
+            raise ValueError("Either model_id, slug or mode must be provided")
 
 
 class LocalCard(ErsiliaBase):
@@ -718,7 +723,6 @@ class LocalCard(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    @lru_cache(maxsize=32)
     def _load_data(self, model_id):
         """
         Loads the JSON data from the model's information file.
@@ -732,75 +736,96 @@ class LocalCard(ErsiliaBase):
         if os.path.exists(card_path):
             with open(card_path, "r") as f:
                 card = json.load(f)
+                if "card" in card:
+                    return card["card"]
             return card
         else:
             return None
 
-    def get(self, model_id):
+    def get(self, model_id=None, slug=None):
         """
         This method returns the card for a model. If the model does not exist, it returns None.
         """
-        card = self._load_data(model_id)
-        return card
-
+        if model_id:
+            card = self._load_data(model_id)
+            return card
+        else:
+            return
 
 class LakeCard(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    def get(self, model_id, as_json=False):
-        if Hdf5Explorer is None:
-            self.logger.debug("No lake found")
-            return None
-        card = Hdf5Explorer(model_id=model_id).info()
-        if as_json:
-            return json.dumps(card, indent=4)
+    def get(self, model_id=None, slug=None, as_json=False):
+        if model_id is not None:
+            if Hdf5Explorer is None:
+                self.logger.debug("No lake found")
+                return None
+            card = Hdf5Explorer(model_id=model_id).info()
+            if as_json:
+                return json.dumps(card, indent=4)
+            else:
+                return card
         else:
-            return card
+            return
 
 
 class S3JsonCard(JsonModelsInterface):
     def __init__(self, config_json=None):
         JsonModelsInterface.__init__(self, config_json=config_json)
 
-    def get(self, model_id):
+    def get_card_by_model_id(self, model_id):
         all_models = self.items_all()
         for model in all_models:
             if model["Identifier"] == model_id:
                 return model
-
+    
+    def get_card_by_slug(self, slug):
+        all_models = self.items_all()
+        for model in all_models:
+            if model["Slug"] == slug:
+                return model
+            
+    def get(self, model_id=None, slug=None):
+        if model_id is not None:
+            return self.get_card_by_model_id(model_id)
+        elif slug is not None:
+            return self.get_card_by_slug(slug)
+        else:
+            raise ValueError("Either model_id or slug must be provided")
 
 class ModelCard(object):
     def __init__(self, config_json=None):
+        self.config_json = config_json
 
-        self.lc = LocalCard(config_json=config_json)
-        self.mc = MetadataCard(config_json=config_json)
-        self.jc = S3JsonCard(config_json=config_json)
-        self.ac = AirtableCard(config_json=config_json)
-        self.rc = ReadmeCard(config_json=config_json)
+    def _get(self, model_id, slug):
+        lc = LocalCard(config_json=self.config_json)
+        card = lc.get(model_id, slug)
+        if card is not None:
+            return card
+        mc = MetadataCard(config_json=self.config_json)
+        card = mc.get(model_id, slug)
+        if card is not None:
+            return card
+        jc = S3JsonCard(config_json=self.config_json)
+        card = jc.get(model_id, slug)
+        if card is not None:
+            return card
+        ac = AirtableCard(config_json=self.config_json)
+        card = ac.get(model_id, slug)
+        if card is not None:
+            return card
+        rc = ReadmeCard(config_json=self.config_json)
+        card = rc.get(model_id, slug)
+        if card is not None:
+            return card
 
-    def _get(self, model_id):
-        card = self.lc.get(model_id)
-        if card is not None:
-            return card
-        card = self.mc.get(model_id)
-        if card is not None:
-            return card
-        card = self.jc.get(model_id)
-        if card is not None:
-            return card
-        card = self.ac.get(model_id)
-        if card is not None:
-            return card
-        card = self.rc.get(model_id)
-        if card is not None:
-            return card
-
-    def get(self, model_id, as_json=False):
-        card = self._get(model_id)
+    def get(self, model_id=None, slug=None, as_json=False):
+        card = self._get(model_id, slug)
         if card is None:
             return
         if as_json:
             return json.dumps(card, indent=4)
         else:
             return card
+    
