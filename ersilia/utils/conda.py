@@ -1,4 +1,4 @@
-import tempfile
+#TODO Implement conda python telemetry for resources during model execution 
 import os
 import json
 import hashlib

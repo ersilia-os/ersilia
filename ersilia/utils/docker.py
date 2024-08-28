@@ -329,7 +329,8 @@ class SimpleDockerfileParser(DockerfileParser):
 
 
 class ContainerMetricsSampler:
-    def __init__(self, model_id):
+    #TODO Perhaps this can be moved to a base Sampling class
+    def __init__(self, model_id, sampling_interval=0.01):
         self.client = docker.from_env()
         self.logger = logger
         self.container = self._get_container_for_model(model_id)
@@ -337,6 +338,7 @@ class ContainerMetricsSampler:
         self.memory_samples = []
         self.tracking_thread = None
         self.tracking = False
+        self.sampling_interval = sampling_interval # Sample every 10ms
 
     def _get_container_for_model(self, model_id=None):
         """
@@ -408,7 +410,7 @@ class ContainerMetricsSampler:
                 memory_usage = self._container_memory(stat)
                 self.cpu_samples.append(cpu_usage)
                 self.memory_samples.append(memory_usage)
-                time.sleep(0.01)  # Sample every 10ms
+                time.sleep(self.sampling_interval)  
         else:
             self.logger.debug("No container found for model")
 
