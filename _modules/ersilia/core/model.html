@@ -96,11 +96,12 @@
 <span class="kn">from</span> <span class="nn">..utils.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
 <span class="kn">from</span> <span class="nn">..utils.csvfile</span> <span class="kn">import</span> <span class="n">CsvDataLoader</span>
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
+<span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">ContainerMetricsSampler</span>
 <span class="kn">from</span> <span class="nn">..serve.autoservice</span> <span class="kn">import</span> <span class="n">AutoService</span>
 <span class="kn">from</span> <span class="nn">..io.output</span> <span class="kn">import</span> <span class="n">TabularOutputStacker</span>
 <span class="kn">from</span> <span class="nn">..serve.standard_api</span> <span class="kn">import</span> <span class="n">StandardCSVRunApi</span>
 <span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span><span class="p">,</span> <span class="n">BaseIOGetter</span>
-<span class="kn">from</span> <span class="nn">.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span><span class="p">,</span> <span class="n">create_persistent_file</span>
+<span class="kn">from</span> <span class="nn">.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span>
 <span class="kn">from</span> <span class="nn">..io.readers.file</span> <span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils.api_exceptions</span> <span class="kn">import</span> <span class="n">ApiSpecifiedOutputError</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">FETCHED_MODELS_FILENAME</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span> <span class="n">CARD_FILE</span><span class="p">,</span> <span class="n">EOS</span>
@@ -206,8 +207,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
                 <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
             <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span> <span class="o">=</span> <span class="n">ContainerMetricsSampler</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with initialization!&quot;</span><span class="p">)</span>
 
@@ -501,10 +504,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">scl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span>
         <span class="c1"># self.update_model_usage_time(self.model_id) TODO: Check and reactivate</span>
 
-        <span class="c1"># Start tracking to get the peak memory, memory usage and cpu time of the Model server(autoservice)</span>
+        <span class="c1"># Start tracking to get the peak memory, memory usage and cpu time of the Model server (autoservice)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">create_persistent_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
             <span class="n">memory_usage_serve</span><span class="p">,</span> <span class="n">cpu_time_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_memory_info</span><span class="p">()</span>
+            <span class="c1"># print(&quot;HERE&quot;, self._run_tracker.get_memory_info())</span>
             <span class="n">peak_memory_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
 
             <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -550,6 +553,13 @@
         <span class="n">track_run</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">try_standard</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="c1"># TODO this should be smart enough to init the container sampler</span>
+        <span class="c1"># or a python process sampler based on how the model was fetched</span>
+        <span class="c1"># Presently we only deal with containers</span>
+        
+        <span class="c1"># Init the container metrics sampler</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">start_tracking</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting runner&quot;</span><span class="p">)</span>
         <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">try_standard</span><span class="p">:</span>
@@ -573,9 +583,13 @@
                 <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">track_run</span><span class="o">=</span><span class="n">track_run</span>
             <span class="p">)</span>
         <span class="c1"># Start tracking model run if track flag is used in serve</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">stop_tracking</span><span class="p">()</span>
+            <span class="n">container_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">get_average_metrics</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
+                <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span> <span class="n">container_metrics</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">result</span></div>
 
     <span class="nd">@property</span>

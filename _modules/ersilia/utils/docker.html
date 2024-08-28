@@ -78,8 +78,10 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">docker</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
 
 <span class="kn">from</span> <span class="nn">.identifiers.long</span> <span class="kn">import</span> <span class="n">LongIdentifier</span>
 <span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
@@ -321,76 +323,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">exec_container</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function will get the Docker container running an ersilia model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
-            <span class="n">containers</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">containers</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No containers found&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">containers</span>
-
-        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Error: Docker API error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;KeyError: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> in stats for container.&quot;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;An unexpected error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-
-<div class="viewcode-block" id="SimpleDocker.container_memory"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.container_memory">[docs]</a>    <span class="k">def</span> <span class="nf">container_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function will get the total memory usage of the Docker container running an ersilia model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">containers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_container</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">containers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">container</span> <span class="ow">in</span> <span class="n">containers</span><span class="p">:</span>
-                <span class="n">stats</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="n">mem_usage</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;memory_stats&quot;</span><span class="p">][</span><span class="s2">&quot;usage&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Total memory consumed by container &#39;</span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">mem_usage</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">MiB&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">return</span></div>
-
-<div class="viewcode-block" id="SimpleDocker.container_cpu"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.container_cpu">[docs]</a>    <span class="k">def</span> <span class="nf">container_cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function will get the CPU time of the Docker container running Ersilia Models.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">containers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_container</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">containers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">container</span> <span class="ow">in</span> <span class="n">containers</span><span class="p">:</span>
-                <span class="n">stats</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="n">cpu_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;cpu_stats&quot;</span><span class="p">]</span>
-                <span class="n">total_cpu_time</span> <span class="o">=</span> <span class="n">cpu_stats</span><span class="p">[</span><span class="s2">&quot;cpu_usage&quot;</span><span class="p">][</span><span class="s2">&quot;total_usage&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e9</span>
-
-                <span class="n">minutes</span> <span class="o">=</span> <span class="n">total_cpu_time</span> <span class="o">//</span> <span class="mi">60</span>
-                <span class="n">seconds</span> <span class="o">=</span> <span class="n">total_cpu_time</span> <span class="o">%</span> <span class="mi">60</span>
-
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Total CPU time used by container &#39;</span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">minutes</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes </span><span class="si">{</span><span class="n">seconds</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
-
-<div class="viewcode-block" id="SimpleDocker.container_peak"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.container_peak">[docs]</a>    <span class="k">def</span> <span class="nf">container_peak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SimpleDocker.container_peak"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.container_peak">[docs]</a>    <span class="k">def</span> <span class="nf">container_peak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function will get the peak memory of the Docker container running Ersilia Models.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">containers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_container</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">containers</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">containers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">containers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-            <span class="k">for</span> <span class="n">container</span> <span class="ow">in</span> <span class="n">containers</span><span class="p">:</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">ctr</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">list</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">ctr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="n">container</span> <span class="o">=</span> <span class="n">ctr</span>
+                    <span class="k">break</span>
+            <span class="n">peak_memory</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">container</span><span class="p">:</span>
                 <span class="n">stats</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="n">peak_memory</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="s2">&quot;memory_stats&quot;</span> <span class="ow">in</span> <span class="n">stats</span> <span class="ow">and</span> <span class="s2">&quot;max_usage&quot;</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;memory_stats&quot;</span><span class="p">]:</span>
                     <span class="n">peak_memory</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;memory_stats&quot;</span><span class="p">][</span><span class="s2">&quot;max_usage&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">peak_memory</span>
@@ -409,26 +354,26 @@
                         <span class="nb">print</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;Could not find cgroup file for container &#39;</span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
                         <span class="p">)</span>
-                        <span class="k">continue</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cgroup_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
                             <span class="n">peak_memory</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cgroup file </span><span class="si">{</span><span class="n">cgroup_path</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
-                        <span class="k">continue</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;An error occurred while reading cgroup file </span><span class="si">{</span><span class="n">cgroup_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
                         <span class="p">)</span>
-                        <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">peak_memory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Peak memory Used by container &#39;</span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">peak_memory</span><span class="p">)</span><span class="si">}</span><span class="s2"> MiB&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">peak_memory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">peak_memory</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Could not compute container peak memory for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No container found for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
 
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Peak memory Used by container &#39;</span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">peak_memory</span><span class="p">)</span><span class="si">}</span><span class="s2"> MiB&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
         <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">NotFound</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Container </span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -458,6 +403,130 @@
                 <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&amp;&amp;&quot;</span><span class="p">):</span>
                     <span class="n">runs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
         <span class="k">return</span> <span class="n">runs</span></div></div>
+
+
+<div class="viewcode-block" id="ContainerMetricsSampler"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler">[docs]</a><span class="k">class</span> <span class="nc">ContainerMetricsSampler</span><span class="p">:</span>
+    <span class="c1">#TODO Perhaps this can be moved to a base Sampling class</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">sampling_interval</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">container</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_container_for_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu_samples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tracking_thread</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_interval</span> <span class="o">=</span> <span class="n">sampling_interval</span> <span class="c1"># Sample every 10ms</span>
+
+    <span class="k">def</span> <span class="nf">_get_container_for_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function will get the Docker container running an ersilia model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">model_id</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model ID is required&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+            <span class="n">containers</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">containers</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No containers found&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">container</span> <span class="ow">in</span> <span class="n">containers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">container</span>
+
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: Docker API error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;KeyError: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> in stats for container.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An unexpected error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_container_cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function will get the CPU percentage utilisation of the Docker container running Ersilia Models.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># Ref: https://stackoverflow.com/a/77924494/1887515</span>
+            <span class="n">cpu_usage</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;cpu_stats&quot;</span><span class="p">][</span><span class="s2">&quot;cpu_usage&quot;</span><span class="p">][</span><span class="s2">&quot;total_usage&quot;</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;precpu_stats&quot;</span><span class="p">][</span><span class="s2">&quot;cpu_usage&quot;</span><span class="p">][</span><span class="s2">&quot;total_usage&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">cpu_system</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;cpu_stats&quot;</span><span class="p">][</span><span class="s2">&quot;system_cpu_usage&quot;</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;precpu_stats&quot;</span><span class="p">][</span><span class="s2">&quot;system_cpu_usage&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">num_cpus</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;cpu_stats&quot;</span><span class="p">][</span><span class="s2">&quot;online_cpus&quot;</span><span class="p">]</span>
+            <span class="n">cpu_perc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">cpu_usage</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">cpu_system</span><span class="p">))</span> <span class="o">*</span> <span class="n">num_cpus</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CPU Percentage: </span><span class="si">{</span><span class="n">cpu_perc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cpu_perc</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;KeyError: &#39;cpu_stats&#39; or &#39;precpu_stats&#39; not found in stats for container.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_container_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function will get the total memory usage of the Docker container running an ersilia model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mem_usage_mb</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;memory_stats&quot;</span><span class="p">][</span><span class="s2">&quot;usage&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+            <span class="n">mem_available_mb</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;memory_stats&quot;</span><span class="p">][</span><span class="s2">&quot;limit&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+            <span class="n">mem_perc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">mem_usage_mb</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">mem_available_mb</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">mem_perc</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;KeyError: &#39;memory_stats&#39; not found in stats for container.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_collect_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="p">:</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span><span class="p">:</span>
+                <span class="n">stat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">cpu_usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_cpu</span><span class="p">(</span><span class="n">stat</span><span class="p">)</span>
+                <span class="n">memory_usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_memory</span><span class="p">(</span><span class="n">stat</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cpu_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cpu_usage</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">memory_usage</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_interval</span><span class="p">)</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No container found for model&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ContainerMetricsSampler.start_tracking"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler.start_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">start_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cpu_samples</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tracking_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_collect_metrics</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tracking_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ContainerMetricsSampler.stop_tracking"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler.stop_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">stop_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracking_thread</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tracking_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tracking_thread</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="ContainerMetricsSampler.get_average_metrics"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler.get_average_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">get_average_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;container_cpu_perc&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;container_memory_perc&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;peak_memory_perc&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;peak_cpu_perc&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu_samples</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">metrics</span>
+
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;container_cpu_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu_samples</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu_samples</span><span class="p">)</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;container_memory_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span>
+        <span class="p">)</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;peak_memory&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span><span class="p">)</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;peak_cpu_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu_samples</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average CPU Percentage: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;container_cpu_perc&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Average Memory Percentage: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;container_memory_perc&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">metrics</span></div></div>
 </pre></div>
 
            </div>

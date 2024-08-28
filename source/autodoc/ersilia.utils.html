@@ -591,6 +591,27 @@ one of the commands is not conda … or pip … or pip3 …</p>
 <section id="module-ersilia.utils.docker">
 <span id="ersilia-utils-docker-module"></span><h2>ersilia.utils.docker module<a class="headerlink" href="#module-ersilia.utils.docker" title="Permalink to this heading"></a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="ersilia.utils.docker.ContainerMetricsSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.docker.</span></span><span class="sig-name descname"><span class="pre">ContainerMetricsSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#ContainerMetricsSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.ContainerMetricsSampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.docker.ContainerMetricsSampler.get_average_metrics">
+<span class="sig-name descname"><span class="pre">get_average_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#ContainerMetricsSampler.get_average_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.ContainerMetricsSampler.get_average_metrics" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.docker.ContainerMetricsSampler.start_tracking">
+<span class="sig-name descname"><span class="pre">start_tracking</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#ContainerMetricsSampler.start_tracking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.ContainerMetricsSampler.start_tracking" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.docker.ContainerMetricsSampler.stop_tracking">
+<span class="sig-name descname"><span class="pre">stop_tracking</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#ContainerMetricsSampler.stop_tracking"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.ContainerMetricsSampler.stop_tracking" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.docker.</span></span><span class="sig-name descname"><span class="pre">SimpleDocker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_udocker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -600,20 +621,8 @@ one of the commands is not conda … or pip … or pip3 …</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.container_cpu">
-<span class="sig-name descname"><span class="pre">container_cpu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.container_cpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.container_cpu" title="Permalink to this definition"></a></dt>
-<dd><p>This function will get the CPU time of the Docker container running Ersilia Models.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.container_memory">
-<span class="sig-name descname"><span class="pre">container_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.container_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.container_memory" title="Permalink to this definition"></a></dt>
-<dd><p>This function will get the total memory usage of the Docker container running an ersilia model.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.container_peak">
-<span class="sig-name descname"><span class="pre">container_peak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.container_peak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.container_peak" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">container_peak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.container_peak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.container_peak" title="Permalink to this definition"></a></dt>
 <dd><p>This function will get the peak memory of the Docker container running Ersilia Models.</p>
 </dd></dl>
 
@@ -1191,6 +1200,11 @@ It is mainly used to make a base environment for the models.</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.get_session_uuid">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">get_session_uuid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#get_session_uuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.get_session_uuid" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.utils.session.remove_orphaned_sessions">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">remove_orphaned_sessions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#remove_orphaned_sessions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.remove_orphaned_sessions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -1257,6 +1271,9 @@ It is mainly used to make a base environment for the models.</p>
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.terminal.</span></span><span class="sig-name descname"><span class="pre">yes_no_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_answer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/terminal.html#yes_no_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.terminal.yes_no_input" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+</section>
+<section id="module-ersilia.utils.tracking">
+<span id="ersilia-utils-tracking-module"></span><h2>ersilia.utils.tracking module<a class="headerlink" href="#module-ersilia.utils.tracking" title="Permalink to this heading"></a></h2>
 </section>
 <section id="module-ersilia.utils.upload">
 <span id="ersilia-utils-upload-module"></span><h2>ersilia.utils.upload module<a class="headerlink" href="#module-ersilia.utils.upload" title="Permalink to this heading"></a></h2>

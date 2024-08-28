@@ -106,16 +106,28 @@
             <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="TabularResultLogger.tabulate"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output_logger.TabularResultLogger.tabulate">[docs]</a>    <span class="k">def</span> <span class="nf">tabulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<div class="viewcode-block" id="TabularResultLogger.tabulate"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output_logger.TabularResultLogger.tabulate">[docs]</a>    <span class="k">def</span> <span class="nf">tabulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_tabular_file</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># TODO include HDF5 compatibility</span>
             <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_delimiter</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span>
-                <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">h</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">identifier</span><span class="p">:</span>
+                    <span class="n">h</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;identifier&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">model_id</span><span class="p">:</span>
+                    <span class="n">h</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span>
+                <span class="n">h</span> <span class="o">+=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)[:</span><span class="n">MAX_LOG_COLUMNS</span><span class="p">]</span>
+                <span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-                    <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">[:</span><span class="n">MAX_LOG_COLUMNS</span><span class="p">]]</span>
+                    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">if</span> <span class="n">identifier</span><span class="p">:</span>
+                        <span class="n">s</span> <span class="o">+=</span> <span class="p">[</span><span class="n">identifier</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">model_id</span><span class="p">:</span>
+                        <span class="n">s</span> <span class="o">+=</span> <span class="p">[</span><span class="n">model_id</span><span class="p">]</span>
+                    <span class="n">s</span> <span class="o">+=</span> <span class="n">r</span><span class="p">[:</span><span class="n">MAX_LOG_COLUMNS</span><span class="p">]</span>
+                    <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
                 <span class="k">return</span> <span class="n">R</span>
         <span class="k">return</span> <span class="kc">None</span></div></div>
 </pre></div>
