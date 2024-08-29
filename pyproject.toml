@@ -52,14 +52,13 @@ boto3 = "^1.28.40"
 requests = "<=2.31.0"
 numpy = "<=1.26.4"
 scipy = "<=1.14.0"
-scikit-learn = "<=1.5.1"
 
 
 [tool.poetry.extras]
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 lake = ["isaura"]
 docs = ["sphinx", "jinja2"]
-test = ["pytest", "fuzzywuzzy", "scipy", "scikit-learn"]
+test = ["pytest", "fuzzywuzzy", "scipy"]
 #all = [lake, docs, test]
 
 [tool.poetry.scripts]
