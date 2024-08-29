@@ -26,7 +26,7 @@ class Slug(ErsiliaBase):
             return list(r)[0]
 
     def _remote_encode(self, slug):
-        res = self.mc.ac.find_card_by_slug(slug)
+        res = self.mc.get(slug=slug)
         if res is None:
             return None
         else:
@@ -49,7 +49,7 @@ class Slug(ErsiliaBase):
             return list(r)[0]
 
     def _remote_decode(self, model_id):
-        res = self.mc.ac.find_card_by_model_id(model_id)
+        res = self.mc.get(model_id=model_id)
         if res is None:
             return None
         else:
