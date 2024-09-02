@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
+      uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Ersilia
@@ -37,7 +37,7 @@ jobs:
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
+      uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Ersilia without pre-installing BentoML
@@ -171,7 +171,7 @@ jobs:
 
       - name: Set up Python
         if: steps.filter.outputs.tag-file == 'true'
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
