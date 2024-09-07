@@ -23,7 +23,7 @@ jobs:
 
       # parse the issue body from free form text to a structured JSON object
       - name: parse issue
-        uses: GrantBirki/issue-template-parser@v7.0.2
+        uses: GrantBirki/issue-template-parser@v7.0.3
         id: issue-parser
         with:
           body: ${{ github.event.client_payload.github.payload.issue.body }}
@@ -36,7 +36,7 @@ jobs:
 
       # setup python
       - name: setup python
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
         with:
           python-version: "3.10"
           # cache: 'pip' # caching pip dependencies
@@ -160,7 +160,7 @@ jobs:
 
       # comment on the issue comment with further instructions for the user
       - name: comment
-        uses: GrantBirki/comment@1e63d57e8ccc14dd83f5db2af382279aa12a0bbb # pin@v2.0.10
+        uses: GrantBirki/comment@f524ee31407667c05061bad41e1758b40298bd82 # pin@v2.1.0
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/new-model.md
@@ -171,7 +171,7 @@ jobs:
       # steps to run if the workflow fails for any reason
       - name: comment on failure
         if: failure()
-        uses: GrantBirki/comment@1e63d57e8ccc14dd83f5db2af382279aa12a0bbb # pin@v2.0.10
+        uses: GrantBirki/comment@f524ee31407667c05061bad41e1758b40298bd82 # pin@v2.1.0
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/approve-workflow-failed.md

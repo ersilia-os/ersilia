@@ -1,8 +1,10 @@
+
+# TODO Remove this file
 import os
 import boto3
 
 from .. import ErsiliaBase, EOS
-from ..core.session import ERSILIA_RUNS_FOLDER
+from ..default import ERSILIA_RUNS_FOLDER
 
 
 class S3Logger(ErsiliaBase):

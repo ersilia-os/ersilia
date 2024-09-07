@@ -1,0 +1,200 @@
+name: Ersilia tests, installation checks, and cleanup of model request template
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  install-ersilia:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Ersilia
+      run: |
+        python -m pip install git+https://github.com/ersilia-os/bentoml-ersilia.git
+        python -m pip install -e .
+    - name: Test help command
+      run: |
+        ersilia --help
+        ersilia --version
+
+  test-docker:
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Ersilia without pre-installing BentoML
+      run: |
+        python -m pip install -e .
+    - name: Test help command again
+      run: |
+        ersilia --help
+        ersilia --version
+    - name: Fetch molecular weight model from DockerHub
+      run: |
+        ersilia -v fetch molecular-weight --from_dockerhub
+
+  test-os:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
+
+      - name: Install dependencies
+        run: |
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+
+      - name: Install ersilia from source
+        run: |
+          python --version
+          python -m pip install -e .
+
+      - name: Ersilia help
+        run: |
+          ersilia --help
+
+  run-pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Source conda
+        run: source $CONDA/etc/profile.d/conda.sh
+        
+      - name: Set Python to 3.10.10
+        run:
+         conda install -y python=3.10.10  
+
+      - name: Install dependencies
+        run: |
+          source activate
+          conda init
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+
+      - name: Install ersilia
+        run: |
+          source activate
+          python --version
+          echo "After conda init"
+          conda init
+          python -m pip install -e .[test]
+
+      - name: Run pytest
+        run: |
+          source activate          
+          pip install pytest
+          pytest
+
+  test-colab-notebook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Source conda
+        run: source $CONDA/etc/profile.d/conda.sh
+
+      - name: Set Python to 3.10.10
+        run:
+         conda install -y python=3.10.10 
+
+      - name: Install dependencies
+        run: |
+          source activate
+          conda init
+          conda install google-colab -c conda-forge
+          jupyter --version
+          pip install --upgrade nbconvert nbformat jsonschema pandas
+
+      - name: Test Google Colab Notebook with CLI shell commands
+        run: |
+          jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-cli.ipynb --output=output-cli.ipynb --ExecutePreprocessor.timeout=-1
+
+      - name: Test Google Colab Notebook with Python API commands
+        run: |
+          echo "Skipping Python API notebook due to unresolved issue"
+          #jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-python-api.ipynb --output=output-python-api.ipynb --ExecutePreprocessor.timeout=-1
+
+      - name: Upload Output of the Google Colab Notebook CLI
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4.4.0
+        with:
+          name: output-cli.ipynb
+          path: notebooks/output-cli.ipynb
+          retention-days: 7
+
+  update-model-request_template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Path Filter
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            tag-file:
+              - 'ersilia/hub/content/metadata/tag.txt'
+
+      - name: Set up Python
+        if: steps.filter.outputs.tag-file == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        if: steps.filter.outputs.tag-file == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Run update_model_request_template.py
+        if: steps.filter.outputs.tag-file == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/update_model_request_template.py
+
+      - name: Commit and push changes
+        if: steps.filter.outputs.tag-file == 'true'
+        uses: actions-js/push@5a7cbd780d82c0c937b5977586e641b2fd94acc5 # pin@v1.5
+        with:
+          author_name: "ersilia-bot"
+          author_email: "ersilia-bot@users.noreply.github.com"
+          message: "Update model request template [skip ci]"
+          repository: "ersilia-os/ersilia"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
+          branch: "master"

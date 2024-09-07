@@ -6,7 +6,7 @@ import uuid
 import shutil
 from ..utils.session import get_session_dir
 
-from ..default import SESSIONS_DIR
+from ..default import SESSION_JSON
 from .base import ErsiliaBase
 
 
@@ -14,7 +14,7 @@ class Session(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         session_dir = get_session_dir()
-        self.session_file = os.path.join(session_dir, "session.json")
+        self.session_file = os.path.join(session_dir, SESSION_JSON)
 
     def current_model_id(self):
         data = self.get()
@@ -128,3 +128,4 @@ class Session(ErsiliaBase):
         self.logger.debug("Closing session {0}".format(self.session_file))
         if os.path.isfile(self.session_file):
             os.remove(self.session_file)
+        

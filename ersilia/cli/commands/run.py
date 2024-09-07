@@ -29,7 +29,6 @@ def run_cmd():
         help="Assume that the run is standard and, therefore, do not do so many checks.",
     )
     def run(input, output, batch_size, standard):
-        start_time = time.time()
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
@@ -66,11 +65,3 @@ def run_cmd():
                     echo("Something went wrong", fg="red")
         else:
             echo(result)
-
-        if track_runs:
-            """
-            Retrieve the time taken to run the model and update the total.
-            """
-            time_tracker = RunTracker(model_id=model_id, config_json=None)
-
-            time_tracker.update_total_time(model_id=model_id, start_time=start_time)
