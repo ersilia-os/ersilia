@@ -1,0 +1,34 @@
+FROM base-image AS build
+ARG MODEL=eos_identifier
+ENV MODEL=$MODEL
+WORKDIR /root
+COPY ./$MODEL /root/$MODEL
+RUN mkdir /root/bundles && ersilia_model_pack --repo_path $MODEL --bundles_repo_path /root/bundles
+RUN conda create --name baseclone --clone base
+RUN conda install -c conda-forge conda-pack
+RUN conda-pack -n baseclone -o /tmp/env.tar && \
+ mkdir /venv && cd /venv && tar -xf /tmp/env.tar && \
+ rm /tmp/env.tar
+ RUN /venv/bin/conda-unpack
+
+
+
+FROM debian:12.7-slim
+WORKDIR /root
+ARG MODEL=eos_identifier
+ENV MODEL=$MODEL
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+# We need this because the model's run.sh will look for Python in this path
+ENV PATH="/usr/bin/conda/bin/:$PATH"
+
+
+COPY --from=build /root/bundles /root/bundles
+COPY --from=build /root/docker-entrypoint.sh docker-entrypoint.sh
+COPY --from=build /venv /usr/bin/conda
+
+RUN chmod + docker-entrypoint.sh
+EXPOSE 80
+ENTRYPOINT [ "sh", "docker-entrypoint.sh"]
