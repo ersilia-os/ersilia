@@ -149,41 +149,33 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">is_test</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
+    
+    <span class="k">def</span> <span class="nf">_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+            <span class="n">card</span> <span class="o">=</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()]</span>
+        <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">()]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;Title&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;slug&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;slug&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;Slug&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;slug&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;status&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;Status&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;Status&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;Input&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;Input&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;output&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;Output&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;Output&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     
     <span class="k">def</span> <span class="nf">_get_model_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">model_source_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">)</span>
@@ -284,11 +276,11 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
                     <span class="k">continue</span>
                 <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-                <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_slug</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">])</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_title</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">])</span>
-                <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_status</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">])</span>
-                <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">])</span>
-                <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">])</span>
+                <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_slug</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_title</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_status</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+                <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
                 <span class="n">model_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="n">service_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_service_class</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
                 <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_source</span><span class="p">,</span> <span class="n">service_class</span><span class="p">]]</span>
