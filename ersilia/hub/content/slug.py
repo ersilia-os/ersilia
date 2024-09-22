@@ -53,6 +53,8 @@ class Slug(ErsiliaBase):
         if res is None:
             return None
         else:
+            if "card" in res:
+                res = res["card"]
             return res["Slug"].strip()
 
     def decode(self, model_id):
