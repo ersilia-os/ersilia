@@ -73,41 +73,33 @@ class ModelCatalog(ErsiliaBase):
             if not self.mi.is_test(s):
                 return True
         return False
+    
+    def _get_item(self, card, item):
+        if "card" in card:
+            card = card["card"]
+        if item.lower() in card:
+            return card[item.lower()]
+        elif item.capitalize() in card:
+            return card[item.capitalize()]
+        elif item.title() in card:
+            return card[item.title()]
+        else:
+            return None
 
     def _get_title(self, card):
-        if "title" in card:
-            return card["title"]
-        if "Title" in card:
-            return card["Title"]
-        return None
+        return self._get_item(card, "title")
 
     def _get_slug(self, card):
-        if "slug" in card:
-            return card["slug"]
-        if "Slug" in card:
-            return card["Slug"]
-        return None
+        return self._get_item(card, "slug")
 
     def _get_status(self, card):
-        if "status" in card:
-            return card["status"]
-        if "Status" in card:
-            return card["Status"]
-        return None
+        return self._get_item(card, "status")
 
     def _get_input(self, card):
-        if "input" in card:
-            return card["input"][0]
-        if "Input" in card:
-            return card["Input"][0]
-        return None
+        return self._get_item(card, "input")[0]
 
     def _get_output(self, card):
-        if "output" in card:
-            return card["output"][0]
-        if "Output" in card:
-            return card["Output"][0]
-        return None
+        return self._get_item(card, "output")[0]
     
     def _get_model_source(self, model_id):
         model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
@@ -208,11 +200,11 @@ class ModelCatalog(ErsiliaBase):
                 if not self._is_eos(model_id):
                     continue
                 card = mc.get(model_id)
-                slug = self._get_slug(card["card"])
-                title = self._get_title(card["card"])
-                status = self._get_status(card["card"])
-                inputs = self._get_input(card["card"])
-                output = self._get_output(card["card"])
+                slug = self._get_slug(card)
+                title = self._get_title(card)
+                status = self._get_status(card)
+                inputs = self._get_input(card)
+                output = self._get_output(card)
                 model_source = self._get_model_source(model_id)
                 service_class = self._get_service_class(card)
                 R += [[model_id, slug, title, status, inputs, output, model_source, service_class]]

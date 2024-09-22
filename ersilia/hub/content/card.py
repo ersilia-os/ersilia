@@ -736,8 +736,6 @@ class LocalCard(ErsiliaBase):
         if os.path.exists(card_path):
             with open(card_path, "r") as f:
                 card = json.load(f)
-                if "card" in card:
-                    return card["card"]
             return card
         else:
             return None
