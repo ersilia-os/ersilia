@@ -57,3 +57,35 @@ class ModelNotInStore(object):
                 )
         )
         sys.exit(0)
+        
+class PrecalculationsNotInStore(object):
+    def __init__(self, model_id):
+        self.model_id = model_id
+
+    def echo(self):
+        echo(
+            "Precalculations for model {0} could not be found in inference store".format(self.model_id),
+            fg="red",
+        )
+        echo(
+            "Please serve the model locally: ersilia serve {0} --output-source {1}".format(
+                self.model_id,
+                OutputSource.LOCAL_ONLY
+                )
+        )
+        sys.exit(0)
+
+class PrecalculationsInStore(object):
+    def __init__(self, model_id, output_url):
+        self.model_id = model_id
+        self.output_url = output_url
+
+    def echo(self):
+        echo(
+            "Precalculations for model {0} are now available for download via this link (expires in 60 minutes): {1}".format(
+                self.model_id,
+                self.output_url
+                ),
+            fg="green"
+        )
+        sys.exit(0)

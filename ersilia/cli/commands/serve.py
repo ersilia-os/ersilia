@@ -4,10 +4,7 @@ from .. import echo
 from . import ersilia_cli
 from ... import ErsiliaModel
 from ..messages import ModelNotFound, ModelNotInStore
-from ...core.tracking import write_persistent_file
-from ...store.api import InferenceStoreApi
 from ...store.utils import OutputSource, store_has_model
-from ..messages import ModelNotFound
 
 
 def serve_cmd():
@@ -43,7 +40,6 @@ def serve_cmd():
         default=False,
     )
     def serve(model, output_source, lake, docker, port, track):
-        start_time = time.time()
         if docker:
             service_class = "docker"
         else:

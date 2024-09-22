@@ -28,7 +28,7 @@ from ..io.input import ExampleGenerator, BaseIOGetter
 from .tracking import RunTracker
 from ..io.readers.file import FileTyper, TabularFileReader
 from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource, store_has_model
+from ..store.utils import OutputSource
 
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
@@ -371,12 +371,8 @@ class ErsiliaModel(ErsiliaBase):
         self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
     ):
         if OutputSource.is_cloud(self.output_source):
-            if store_has_model(model_id=self.model_id):
-                store = InferenceStoreApi(model_id=self.model_id)
-                result_from_store = store.get_precalculations(input)
-            else:
-                result_from_store = "No precalculations found in store."
-            return result_from_store
+            store = InferenceStoreApi(model_id=self.model_id)
+            return store.get_precalculations(input)
         elif self._do_cache_splits(input=input, output=output):
             splitted_inputs = self.tfr.split_in_cache()
             self.logger.debug("Split inputs:")

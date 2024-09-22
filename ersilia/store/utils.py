@@ -1,5 +1,6 @@
 from ersilia.default import INFERENCE_STORE_API_URL
-import requests
+import requests, os
+
 class OutputSource():
     LOCAL_ONLY = "local-only"
     CLOUD_ONLY = "cloud-only"
@@ -16,11 +17,6 @@ class OutputSource():
     def is_cloud(cls, option):
         return option == cls.CLOUD_ONLY
 
-from pydantic import BaseModel
-class InferenceStoreApiPayload(BaseModel):
-    model: str
-    inputs: list[str] = [] # validation error if inputs is None e.g. if inchi->smiles fails
-
 
 def store_has_model(model_id: str) -> bool:
     response = requests.get(
@@ -31,7 +27,16 @@ def store_has_model(model_id: str) -> bool:
         timeout=60
         )
     if response.status_code == 200:
-        print("Model found in inference store: ", response.json())
+        print(f"Model {model_id} found in inference store")
         return True
-    print("Model not found in inference store")
+    print(f"Model {model_id} not found in inference store")
     return False
+
+
+def delete_file_upon_upload(response_code: int, file_path: str):
+    if response_code == 200:
+        try:
+            os.remove(file_path)
+            print(f"File {file_path} deleted successfully.")
+        except Exception as e:
+            print(f"Failed to delete file {file_path}, please delete manually. Error: {e}")
