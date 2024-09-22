@@ -1,4 +1,5 @@
 import json
+import yaml
 import logging
 import os
 import time
@@ -13,7 +14,7 @@ class UpdateMetadata:
 
     def __init__(self):
         self.log = self.logger()
-        self.metadata_filename = "metadata.json"
+        self.metadata_filename = "metadata.yaml"
         self.retries = 9
         self.retry_delay = 3
         self.token = os.environ.get("GITHUB_TOKEN")
@@ -50,7 +51,7 @@ class UpdateMetadata:
     def read_metadata(self):
         """
         Read the metadata file from the repo
-        :note: this is the metadata.json file in the repo that was just created by the new model submission request...
+        :note: this is the metadata.yaml file in the repo that was just created by the new model submission request...
         ...and it should be empty (contain default values)
         """
         self.log.info(f"loading {self.metadata_filename} from {self.owner}/{self.repo}")
@@ -81,8 +82,8 @@ class UpdateMetadata:
                 )
                 time.sleep(self.retry_delay)
 
-        # Load the metadata.json from the repo and convert it to a dict
-        self.metadata = json.loads(contents.decoded_content.decode())
+        # Load the metadata.yaml from the repo and convert it to a dict
+        self.metadata = yaml.safe_load(contents.decoded_content.decode())
 
     def populate_metadata(self):
         """
@@ -140,8 +141,10 @@ class UpdateMetadata:
         repo = self.github.get_repo(f"{self.owner}/{self.repo}")
         contents = repo.get_contents(self.metadata_filename)
 
-        # Convert the metadata to a JSON formatted string
-        metadata_string = json.dumps(self.metadata, indent=4).encode("utf-8")
+        # Convert the metadata to a YAML string dump
+        metadata_string = yaml.dump(self.metadata, 
+                                    default_flow_style=False, 
+                                    sort_keys=False).encode("utf-8")
 
         # Write the metadata to the repo and commit
         repo.update_file(
