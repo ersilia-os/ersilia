@@ -3,8 +3,8 @@ import click
 from .. import echo
 from . import ersilia_cli
 from ... import ErsiliaModel
-from ..messages import ModelNotFound, ModelNotInStore
-from ...store.utils import OutputSource, store_has_model
+from ..messages import ModelNotFound
+from ...store.utils import OutputSource, ModelNotInStore, store_has_model
 
 
 def serve_cmd():

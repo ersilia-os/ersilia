@@ -1,5 +1,18 @@
+import os
+import sys
+
+import click
+import requests
+
 from ersilia.default import INFERENCE_STORE_API_URL
-import requests, os
+
+
+class InferenceStoreMessage(object):
+    def __init__(self, model_id):
+        self.model_id = model_id
+
+    def _echo(self, text, **styles):
+        return click.echo(click.style(text, **styles))
 
 class OutputSource():
     LOCAL_ONLY = "local-only"
@@ -16,6 +29,59 @@ class OutputSource():
     @classmethod
     def is_cloud(cls, option):
         return option == cls.CLOUD_ONLY
+
+class ModelNotInStore(InferenceStoreMessage):
+    def __init__(self, model_id):
+        super().__init__(model_id)
+        self.model_id = model_id
+
+    def echo(self):
+        super()._echo(
+            "Model {0} could not be found in inference store".format(self.model_id),
+            fg="red",
+        )
+        super()._echo(
+            "Please serve the model locally: ersilia serve {0} --output-source {1}".format(
+                self.model_id,
+                OutputSource.LOCAL_ONLY
+                )
+        )
+        sys.exit(0)
+
+
+class PrecalculationsNotInStore(InferenceStoreMessage):
+    def __init__(self, model_id):
+        super().__init__(model_id)
+        self.model_id = model_id
+
+    def echo(self):
+        super()._echo(
+            "Precalculations for model {0} could not be found in inference store".format(self.model_id),
+            fg="red",
+        )
+        super()._echo(
+            "Please serve the model locally: ersilia serve {0} --output-source {1}".format(
+                self.model_id,
+                OutputSource.LOCAL_ONLY
+                )
+        )
+        sys.exit(0)
+
+
+class PrecalculationsInStore(InferenceStoreMessage):
+    def __init__(self, model_id, output_url):
+        super().__init__(model_id)
+        self.output_url = output_url
+
+    def echo(self):
+        super()._echo(
+            "Precalculations for model {0} are now available for download via this link (expires in 60 minutes): {1}".format(
+                self.model_id,
+                self.output_url
+                ),
+            fg="green"
+        )
+        sys.exit(0)
 
 
 def store_has_model(model_id: str) -> bool:

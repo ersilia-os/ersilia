@@ -1,7 +1,6 @@
 from ersilia.core.base import ErsiliaBase
 from ersilia.io.input import GenericInputAdapter
-from ersilia.cli.messages import PrecalculationsNotInStore, PrecalculationsInStore
-from ersilia.store.utils import delete_file_upon_upload
+from ersilia.store.utils import PrecalculationsNotInStore, PrecalculationsInStore, delete_file_upon_upload
 from ersilia.default import INFERENCE_STORE_API_URL
 import requests
 import uuid
