@@ -14,7 +14,7 @@ class UpdateMetadata:
 
     def __init__(self):
         self.log = self.logger()
-        self.metadata_filename = "metadata.yaml"
+        self.metadata_filename = "metadata.yml"
         self.retries = 9
         self.retry_delay = 3
         self.token = os.environ.get("GITHUB_TOKEN")

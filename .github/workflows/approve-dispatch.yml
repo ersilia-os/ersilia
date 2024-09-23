@@ -74,8 +74,8 @@ jobs:
           gh repo create ${OWNER}/${REPO_NAME} --template $TEMPLATE $FLAGS
           echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
 
-      # commit updates to the metadata.json file
-      - name: commit metadata.json
+      # commit updates to the metadata.yaml file
+      - name: commit metadata.yaml
         id: update-metadata
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }} # PAT for the ersilia-bot GitHub account
