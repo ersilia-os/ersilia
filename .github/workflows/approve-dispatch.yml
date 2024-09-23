@@ -55,10 +55,10 @@ jobs:
           conda install gh -c conda-forge
 
       # add PyGithub to the conda environment
-      - name: add PyGithub to conda environment
+      - name: add PyGithub and Pyyaml to conda environment
         run: |
           source activate
-          conda install -c conda-forge pygithub
+          conda install -c conda-forge pygithub pyyaml
 
       # create the model repo from the template
       - name: create model repo
