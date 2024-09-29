@@ -16,15 +16,15 @@ PIP_VERSIONS = [
     "3.12-slim-bullseye"
 ]
 
-DOCKER_ENTRYPOINT = """
-#!/bin/bash
+# We serve the model at port 80 bec Ersilia port maps all containers to port 80
+DOCKER_ENTRYPOINT = """#!/bin/bash
 set -ex
 if [ -z "${MODEL}" ];
 then
     echo "Model name has not been specified"
     exit 1
 fi
-ersilia_model_serve --bundle_path /root/bundles/$MODEL --port 3000
+ersilia_model_serve --bundle_path /root/bundles/$MODEL --port 80
 echo "Serving model $MODEL..."
 """
 

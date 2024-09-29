@@ -92,6 +92,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         self._copy_from_image_to_local(model_id, STATUS_FILE)
                                        
     def copy_example_if_available(self, model_id):
+        # TODO This also needs to change to accomodate ersilia pack
         for pf in PREDEFINED_EXAMPLE_FILES:
             fr_file = "/root/eos/dest/{0}/{1}".format(model_id, pf)
             to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, "input.csv")

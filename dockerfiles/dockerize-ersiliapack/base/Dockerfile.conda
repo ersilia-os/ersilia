@@ -3,6 +3,7 @@ ARG VERSION=version
 ENV VERSION=$VERSION
 ENV PATH=$PATH:/usr/bin/conda/bin
 WORKDIR /root
+COPY . /ersilia-pack
 RUN set -x && \
     apt-get update && \
     apt-get install -y wget && \
@@ -27,17 +28,16 @@ RUN set -x && \
         echo "Unsupported architecture: $ARCH"; \
         echo "$ARCH" > arch.sh; \
     fi && \
-    apt-get install -y libxrender1 build-essential git && \
     mkdir -p /usr/bin/conda && \
     bash /root/miniconda.sh -b -u -p /usr/bin/conda && \
     rm /root/miniconda.sh && \
     . /usr/bin/conda/etc/profile.d/conda.sh && \
     conda init && \
     /usr/bin/conda/bin/conda clean -afy && \
-    /usr/bin/conda/bin/python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git
-
-COPY docker-entrypoint.sh /root/docker-entrypoint.sh
-COPY nginx.conf /etc/nginx/sites-available/default
-RUN chmod + /root/docker-entrypoint.sh
+    cd /ersilia-pack && \
+    /usr/bin/conda/bin/python -m pip install -e . && \
+    mv /ersilia-pack/docker-entrypoint.sh /root/docker-entrypoint.sh && \
+    chmod +x /root/docker-entrypoint.sh
+    
 EXPOSE 80
 ENTRYPOINT [ "sh", "/root/docker-entrypoint.sh"]
