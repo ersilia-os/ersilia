@@ -10,9 +10,23 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 from .. import logger
-from ..default import DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME
+from ..default import (DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME,
+                       DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG,
+                       PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI)
 from ..utils.system import SystemChecker
 from ..utils.logging import make_temp_dir
+
+def resolve_pack_method_docker(model_id):
+    client = docker.from_env()
+    model_image = client.images.get(
+        f"{DOCKERHUB_ORG}/{model_id}:{DOCKERHUB_LATEST_TAG}"
+    )
+    image_history = model_image.history()
+    for hist in image_history:
+        # Very hacky, but works bec we don't have nginx in ersilia-pack images
+        if "nginx" in hist["CreatedBy"]: 
+            return PACK_METHOD_BENTOML
+    return PACK_METHOD_FASTAPI
 
 
 def resolve_platform():

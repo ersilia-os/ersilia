@@ -1,8 +1,11 @@
 FROM python:version
 RUN apt-get update && \
-    apt-get install git -y && \
-    python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git
+    apt-get install git nginx -y && \
+    python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git && \
+    apt-get clean && apt-get autoremove -y && apt-get purge git -y && \
+    rm -rf /var/lib/apt/lists/*
 COPY docker-entrypoint.sh /root/docker-entrypoint.sh
+COPY nginx.conf /etc/nginx/sites-available/default
 RUN chmod + /root/docker-entrypoint.sh
 EXPOSE 80
 ENTRYPOINT [ "sh", "/root/docker-entrypoint.sh"]

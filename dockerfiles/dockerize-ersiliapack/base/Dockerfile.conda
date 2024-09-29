@@ -37,6 +37,7 @@ RUN set -x && \
     /usr/bin/conda/bin/python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git
 
 COPY docker-entrypoint.sh /root/docker-entrypoint.sh
+COPY nginx.conf /etc/nginx/sites-available/default
 RUN chmod + /root/docker-entrypoint.sh
 EXPOSE 80
 ENTRYPOINT [ "sh", "/root/docker-entrypoint.sh"]

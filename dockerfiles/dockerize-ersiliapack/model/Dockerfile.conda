@@ -26,9 +26,10 @@ ENV PATH="/usr/bin/conda/bin/:$PATH"
 
 
 COPY --from=build /root/bundles /root/bundles
-COPY --from=build /root/docker-entrypoint.sh docker-entrypoint.sh
+COPY --from=build /root/docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY --from=build /venv /usr/bin/conda
+COPY --from=build /etc/nginx/sites-available/default /etc/nginx/sites-available/default
 
-RUN chmod + docker-entrypoint.sh
+RUN apt-get install -y nginx && chmod + docker-entrypoint.sh
 EXPOSE 80
 ENTRYPOINT [ "sh", "docker-entrypoint.sh"]
