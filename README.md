@@ -105,8 +105,13 @@ After submitting your model request via an issue (suggested), a maintainer will 
 This repository is open-sourced under the [GPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it!
 
+### Authorship
+
+Please note that Ersilia distinguises between software contributors and software authors. The Ersilia Model Hub Authorship guidelines can be found in the [Authorship file](https://github.com/ersilia-os/ersilia/blob/master/AUTHORSHIP.md) and current authors can be found in the Citation file. We acknowledge past authors of the software below:
+- Carolina Caballero
+
 ## About Us
 
-The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.
+The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.
 
-[Help us](https://www.ersilia.io/donate) achieve our mission or [volunteer](https://www.ersilia.io/volunteer) with us!
+[Help us](https://www.ersilia.io/donate) achieve our mission!

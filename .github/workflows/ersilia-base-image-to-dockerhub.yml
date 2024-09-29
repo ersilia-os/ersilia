@@ -12,7 +12,7 @@ jobs:
   upload_ersilia_base_to_dockerhub:
     strategy:
       matrix:
-        build-version: ["v1", "v2"]
+        build-version: ["legacy-bentoml", "multistage-condapack"]
     runs-on: ubuntu-latest
     steps:
       # https://github.com/docker/setup-qemu-action
@@ -45,7 +45,7 @@ jobs:
 
       - name: Copy Dockerfile to base directory
         run: |
-          cp dockerfiles/model-deploy-${{ matrix.build-version }}/base/* .
+          cp dockerfiles/dockerize-${{ matrix.build-version }}/base/* .
             
       - name: Docker meta
         id: docker_meta
