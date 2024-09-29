@@ -9,7 +9,7 @@ RUN conda install -c conda-forge conda-pack
 RUN conda-pack -n baseclone -o /tmp/env.tar && \
  mkdir /venv && cd /venv && tar -xf /tmp/env.tar && \
  rm /tmp/env.tar
- RUN /venv/bin/conda-unpack
+RUN /venv/bin/conda-unpack
 
 
 
@@ -26,9 +26,12 @@ ENV PATH="/usr/bin/conda/bin/:$PATH"
 
 
 COPY --from=build /root/bundles /root/bundles
-COPY --from=build /root/docker-entrypoint.sh docker-entrypoint.sh
+COPY --from=build /root/docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY --from=build /venv /usr/bin/conda
 
-RUN chmod + docker-entrypoint.sh
+RUN cp /root/bundles/$MODEL/*/information.json /root/information.json && \
+    cp /root/bundles/$MODEL/*/api_schema.json /root/api_schema.json && \
+    cp /root/bundles/$MODEL/*/status.json /root/status.json && \
+    chmod + docker-entrypoint.sh
 EXPOSE 80
 ENTRYPOINT [ "sh", "docker-entrypoint.sh"]

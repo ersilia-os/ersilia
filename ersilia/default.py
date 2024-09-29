@@ -45,6 +45,7 @@ PREDEFINED_EXAMPLE_FILES = [
 ]
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
+METADATA_YAML_FILE = "metadata.yml"
 SERVICE_CLASS_FILE = "service_class.txt"
 MODEL_SOURCE_FILE = "model_source.txt"
 APIS_LIST_FILE = "apis_list.txt"

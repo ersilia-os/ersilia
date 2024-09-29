@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import yaml
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
@@ -49,6 +50,7 @@ from ...default import (
     CARD_FILE,
     METADATA_JSON_FILE,
     INFORMATION_FILE,
+    METADATA_YAML_FILE,
 )
 
 
@@ -425,7 +427,7 @@ class RepoMetadataFile(ErsiliaBase):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
-    def _github_url(self, org=None, branch=None):
+    def _github_json_url(self, org=None, branch=None):
         if org is None:
             org = "ersilia-os"
         if branch is None:
@@ -434,16 +436,30 @@ class RepoMetadataFile(ErsiliaBase):
             org, self.model_id, branch, METADATA_JSON_FILE
         )
 
-    def get_json_file(self, org=None, branch=None):
-        url = self._github_url(org=org, branch=branch)
-        self.logger.debug("Reading from {0}".format(url))
-        r = requests.get(url)
-        if r.status_code == 200:
-            text = r.content
-            data = json.loads(text)
-            return data
+    def _github_yaml_url(self, org=None, branch=None):
+        if org is None:
+            org = "ersilia-os"
+        if branch is None:
+            branch = "main"
+        return "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
+            org, self.model_id, branch, METADATA_YAML_FILE
+        )
+    
+    def _get_file_content_from_github(self, org, branch):
+        json_url = self._github_json_url(org, branch)
+        r = requests.get(json_url)
+        if r.status_code == 404:
+            yaml_url = self._github_yaml_url(org, branch)
+            r = requests.get(yaml_url)
+            if r.status_code == 404:
+                return None
+            else:
+                return yaml.safe_load(r.content)
         else:
-            return None
+            return json.loads(r.content)
+            
+    def get_json_or_yaml_file(self, org=None, branch=None):
+        return self._get_file_content_from_github(org, branch)
 
     def exists(self, org=None, branch=None):
         if self.get_json_file(org=org, branch=branch) is None:
@@ -451,12 +467,15 @@ class RepoMetadataFile(ErsiliaBase):
         else:
             return True
 
-    def read_information(self, org=None, branch=None, json_path=None):
-        if json_path is None:
-            data = self.get_json_file(org=org, branch=branch)
+    def read_information(self, org=None, branch=None, json_or_yaml_path=None):
+        if json_or_yaml_path is None:
+            data = self.get_json_or_yaml_file(org=org, branch=branch)
         else:
-            with open(json_path, "r") as f:
-                data = json.load(f)
+            with open(json_or_yaml_path, "r") as f:
+                if json_or_yaml_path.endswith(".json"):
+                    data = json.load(f)
+                else:
+                    data = yaml.safe_load(f)
         bi = BaseInformation(config_json=self.config_json)
         bi.from_dict(data)
         return bi

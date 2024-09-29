@@ -3,6 +3,7 @@ import os
 import collections
 from pathlib import Path
 from ersilia import logger
+from .docker import resolve_pack_method_docker
 from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 
 MODELS_DEVEL_DIRNAME = "models"
@@ -58,11 +59,19 @@ class Paths(object):
         else:
             return False
 
-
-def resolve_pack_method(model_path):
+def resolve_pack_method_source(model_path):
     if os.path.exists(os.path.join(model_path, "installs", "install.sh")):
         return PACK_METHOD_FASTAPI
     elif os.path.exists(os.path.join(model_path, "bentoml.yml")):
         return PACK_METHOD_BENTOML
     logger.warning("Could not resolve pack method")
     return None
+
+def resolve_pack_method(model_path):
+    with open(os.path.join(model_path, "service_class.txt"), "r") as f:
+        service_class = f.read().strip()
+    if service_class == "pulled_docker":
+        model_id = Paths().model_id_from_path(model_path)
+        return resolve_pack_method_docker(model_id)
+    else:
+        return resolve_pack_method_source(model_path)
