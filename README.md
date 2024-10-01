@@ -112,6 +112,11 @@ Please note that Ersilia distinguises between software contributors and software
 - Carolina Caballero
 
 ### Cited by
+The Ersilia Model Hub is used in a number of scientific projects. Read more about how we are implementing it in:
+- [Turon, Hlozek et al, Nat Commun, 2023](https://www.nature.com/articles/s41467-023-41512-2)
+- [Van Heerden et al, ACS Omega, 2023](https://pubs.acs.org/doi/10.1021/acsomega.3c05664)
+- [Offensperger et al, Science, 2024](https://www.science.org/doi/10.1126/science.adk5864)
+- [Turon et al, ACS Med Chem Lett, 2024](https://doi.org/10.1021/acsmedchemlett.4c00131)
 
 ## About Us
 
