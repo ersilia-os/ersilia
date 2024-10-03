@@ -2,7 +2,8 @@ import click
 
 from . import ersilia_cli
 from ...hub.content.catalog import ModelCatalog
-from ...hub.content.search import ModelSearcher
+
+# from ...hub.content.search import ModelSearcher remove unused class
 
 
 def catalog_cmd():
