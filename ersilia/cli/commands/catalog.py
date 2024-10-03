@@ -31,7 +31,23 @@ def catalog_cmd():
         default=False,
         help="Show more information than just the EOS identifier",
     )
-    def catalog(local=False, file_name=None, browser=False, more=False):
+    @click.option(
+        "--card",  # New --card option
+        type=click.STRING,
+        help="Display metadata for a specific model by providing its model ID",
+    )
+    def catalog(local=False, file_name=None, browser=False, more=False, card=None):
+        if card:
+            # Directly use the ModelCard class to fetch metadata
+            try:
+                mc = ModelCard()
+                model_metadata = mc.get(
+                    card, as_json=True
+                )  # Fetch metadata for the specified model ID
+                click.echo(model_metadata)
+            except Exception as e:
+                click.echo(f"Error fetching model metadata: {e}", fg="red")
+            return
         if local is True and browser is True:
             click.echo(
                 "You cannot show the local model catalog in the browser",
