@@ -2,6 +2,7 @@ import click
 
 from . import ersilia_cli
 from ...hub.content.catalog import ModelCatalog
+from ...hub.content.card import ModelCard  # Import ModelCard class
 
 # from ...hub.content.search import ModelSearcher remove unused class
 
