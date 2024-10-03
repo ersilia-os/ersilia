@@ -10,7 +10,7 @@ def create_ersilia_cli():
 
     cmd.api()
     cmd.auth()
-    cmd.card()
+    # cmd.card() # Remove card command
     cmd.catalog()
     cmd.clear()
     cmd.close()
