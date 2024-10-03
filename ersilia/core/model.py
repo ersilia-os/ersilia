@@ -27,6 +27,9 @@ from ..serve.standard_api import StandardCSVRunApi
 from ..io.input import ExampleGenerator, BaseIOGetter
 from .tracking import RunTracker
 from ..io.readers.file import FileTyper, TabularFileReader
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
+
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
 from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
@@ -42,6 +45,7 @@ class ErsiliaModel(ErsiliaBase):
     def __init__(
         self,
         model,
+        output_source=OutputSource.LOCAL_ONLY,
         save_to_lake=True,
         service_class=None,
         config_json=None,
@@ -93,6 +97,7 @@ class ErsiliaModel(ErsiliaBase):
         self.model_id = mdl.model_id
         self.slug = mdl.slug
         self.text = mdl.text
+        self.output_source = output_source
         self._is_available_locally = mdl.is_available_locally()
         if not self._is_available_locally and fetch_if_not_available:
             self.logger.info("Model is not available locally")
@@ -279,7 +284,7 @@ class ErsiliaModel(ErsiliaBase):
             )
             return None
         self.logger.debug("Starting standard runner")
-        result = scra.post(input=input, output=output)
+        result = scra.post(input=input, output=output, output_source=self.output_source)
         return result
 
     @staticmethod
@@ -365,7 +370,10 @@ class ErsiliaModel(ErsiliaBase):
     def api(
         self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
     ):
-        if self._do_cache_splits(input=input, output=output):
+        if OutputSource.is_cloud(self.output_source):
+            store = InferenceStoreApi(model_id=self.model_id)
+            return store.get_precalculations(input)
+        elif self._do_cache_splits(input=input, output=output):
             splitted_inputs = self.tfr.split_in_cache()
             self.logger.debug("Split inputs:")
             self.logger.debug(" ".join(splitted_inputs))
@@ -423,6 +431,7 @@ class ErsiliaModel(ErsiliaBase):
         self.session.open(model_id=self.model_id, track_runs=self.track_runs)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
+        self.session.register_output_source(self.output_source)
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
