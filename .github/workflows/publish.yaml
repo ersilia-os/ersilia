@@ -7,16 +7,15 @@ on:
   workflow_dispatch: # run manually
   schedule:
     - cron: '0 3 1 * *' # run at 3:00 AM on the first day of the month
-  
+
 jobs:
   version:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
-
       - name: Checkout persist credentials
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+        uses: actions/checkout@v3.5.3
         with:
           persist-credentials: false # ensures use of personal token instead of GITHUB_TOKEN
           fetch-depth: 0 # fetches all history for tagging
@@ -55,18 +54,19 @@ jobs:
               yaml.dump(citation, file, default_flow_style=False, sort_keys=False)
           "
 
-      - name: Update version in codemeta.json
+      - name: Update version in codemeta.json and URL
         id: update-codemeta
         env:
           VERSION: ${{ steps.version.outputs.VERSION }}
         run: |
           # Ensure jq is installed
           sudo apt-get install -y jq
-          # Update the version in codemeta.json
-          jq '.version = env.VERSION' codemeta.json > codemeta_tmp.json && mv codemeta_tmp.json codemeta.json
+          # Update the version and URL in codemeta.json
+          jq --arg VERSION "$VERSION" --arg URL "https://github.com/ersilia-os/ersilia/v$VERSION" \
+             '.version = $VERSION | .codeRepository = $URL' codemeta.json > codemeta_tmp.json && mv codemeta_tmp.json codemeta.json
 
       - name: Commit and push changes to CITATION.cff and codemeta.json
-        uses: actions-js/push@5a7cbd780d82c0c937b5977586e641b2fd94acc5 # pin@v1.5
+        uses: actions-js/push@v1.5
         with:
           author_name: "ersilia-bot"
           author_email: "ersilia-bot@users.noreply.github.com"
@@ -99,12 +99,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: version
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: actions/checkout@v3.5.3
         with:
           ref: master
 
       - name: Set up Python
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
+        uses: actions/setup-python@v5.2.0
         with:
           python-version: '3.8'
 
