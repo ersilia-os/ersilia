@@ -32,18 +32,36 @@ def catalog_cmd():
         help="Show more information than just the EOS identifier",
     )
     @click.option(
-        "--card",  # New --card option
-        type=click.STRING,
-        help="Display metadata for a specific model by providing its model ID",
+        "--card",
+        is_flag=True,
+        default=False,
+        help="Use this flag to display metadata for the provided model ID",
     )
-    def catalog(local=False, file_name=None, browser=False, more=False, card=None):
-        if card:
+    @click.argument(
+        "model",
+        type=click.STRING,
+        required=False,
+    )
+    def catalog(
+        local=False, file_name=None, browser=False, more=False, card=False, model=None
+    ):
+        if card and not model:
+            click.echo("Error: --card option requires a model ID", err=True)
+            return
+        if card and model:
             # Directly use the ModelCard class to fetch metadata
             try:
                 mc = ModelCard()
                 model_metadata = mc.get(
-                    card, as_json=True
+                    model, as_json=True
                 )  # Fetch metadata for the specified model ID
+
+                if not model_metadata:
+                    click.echo(
+                        f"Error: No metadata found for model ID '{model}'",
+                        err=True,
+                    )
+                    return
                 click.echo(model_metadata)
             except Exception as e:
                 click.echo(f"Error fetching model metadata: {e}", fg="red")
