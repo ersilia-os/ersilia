@@ -28,19 +28,24 @@ class CatalogTable(object):
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
+    
+    def as_table(self):
+        column_widths = [max(len(str(item)) for item in [col] + [row[i] for row in self.data]) for i, col in enumerate(self.columns)]
+        row_format = " | ".join(f"{{:<{width}}}" for width in column_widths)
+        
+        table = "┌" + "┬".join("─" * (width + 2) for width in column_widths) + "┐\n"  
+        table += "│ " + row_format.format(*self.columns) + " │\n" 
+        table += "├" + "┼".join("─" * (width + 2) for width in column_widths) + "┤\n" 
 
-    def as_list_of_dicts(self):
-        R = []
-        for r in self.data:
-            d = {}
-            for i, c in enumerate(self.columns):
-                d[c] = r[i]
-            R += [d]
-        return R
+        for index, row in enumerate(self.data):
+            table += "│ " + row_format.format(*row) + " │\n"
 
-    def as_json(self):
-        R = self.as_list_of_dicts()
-        return json.dumps(R, indent=4)
+            if index < len(self.data) - 1:
+                table += "├" + "┼".join("─" * (width + 2) for width in column_widths) + "┤\n"
+
+        table += "└" + "┴".join("─" * (width + 2) for width in column_widths) + "┘" 
+        return table  
+
 
     def write(self, file_name):
         with open(file_name, "w") as f:
@@ -56,7 +61,7 @@ class CatalogTable(object):
                 writer.writerow(r)
 
     def __str__(self):
-        return self.as_json()
+        return self.as_table()
 
     def __repr__(self):
         return self.__str__()

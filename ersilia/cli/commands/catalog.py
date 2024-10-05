@@ -53,7 +53,7 @@ def catalog_cmd():
             )
             return
         if file_name is None:
-            catalog = catalog_table.as_json()
+            catalog = catalog_table.as_table()
         else:
             catalog_table.write(file_name)
             catalog = None
