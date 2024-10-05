@@ -30,20 +30,25 @@ class CatalogTable(object):
         self.columns = columns
     
     def as_table(self):
-        column_widths = [max(len(str(item)) for item in [col] + [row[i] for row in self.data]) for i, col in enumerate(self.columns)]
+        column_widths = [
+            max(len(str(item)) if item is not None else 0 for item in [col] + [row[i] for row in self.data])
+            for i, col in enumerate(self.columns)
+        ]
         row_format = " | ".join(f"{{:<{width}}}" for width in column_widths)
-        
-        table = "┌" + "┬".join("─" * (width + 2) for width in column_widths) + "┐\n"  
-        table += "│ " + row_format.format(*self.columns) + " │\n" 
-        table += "├" + "┼".join("─" * (width + 2) for width in column_widths) + "┤\n" 
+
+        table = "┌" + "┬".join("─" * (width + 2) for width in column_widths) + "┐\n" 
+        table += "│ " + row_format.format(*self.columns) + " │\n"  
+        table += "├" + "┼".join("─" * (width + 2) for width in column_widths) + "┤\n"
 
         for index, row in enumerate(self.data):
+            row = [str(item) if item is not None else "" for item in row]
             table += "│ " + row_format.format(*row) + " │\n"
 
             if index < len(self.data) - 1:
                 table += "├" + "┼".join("─" * (width + 2) for width in column_widths) + "┤\n"
 
-        table += "└" + "┴".join("─" * (width + 2) for width in column_widths) + "┘" 
+        table += "└" + "┴".join("─" * (width + 2) for width in column_widths) + "┘"  
+
         return table  
 
 
