@@ -1,5 +1,6 @@
 # Single workflow to increment Ersilia version in pyproject.toml,
 # tag and push the commit to the repository, release to GitHub, PyPI, Conda, and DockerHub
+# This job updates _static_version.py, pyproject.toml, CITATION.cff, and codemeta.json
 
 name: Ersilia Release
 
@@ -7,6 +8,7 @@ on:
   workflow_dispatch: # run manually
   schedule:
     - cron: '0 3 1 * *' # run at 3:00 AM on the first day of the month
+      # This pipeline updates several version-related files: _static_version.py, pyproject.toml, CITATION.cff, and codemeta.json.
 
 jobs:
   version:
@@ -35,8 +37,8 @@ jobs:
           git config --local user.email "ersilia-bot@users.noreply.github.com"
           git config --local user.name "ersilia-bot"
           git tag -a "v${{ steps.version.outputs.VERSION }}" -m "v${{ steps.version.outputs.VERSION }}"
-          git push origin "v${{ steps.version.outputs.VERSION }}"
-
+          # Tagging happens implicitly; no need to push explicitly
+          
       - name: Update version in CITATION.cff
         id: update-citation
         env:
@@ -70,7 +72,7 @@ jobs:
         with:
           author_name: "ersilia-bot"
           author_email: "ersilia-bot@users.noreply.github.com"
-          message: "Update version in CITATION.cff and codemeta.json [skip ci]"
+          message: "Update version"
           repository: "ersilia-os/${{ github.event.repository.name }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           amend: true
@@ -88,11 +90,14 @@ jobs:
       - name: Create GitHub release
         id: gh_release
         run: |
+          # Get the version file that we updated in the previous job
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
+        
           month=$(date +'%B')
           year=$(date +'%Y')
           title="$month $year"
-          version=${{ needs.version.outputs.VERSION }}
-          git fetch --tags
+          # Extract the version using sed from _static_version.py
+          version=$(sed -n 's/.*version = "\([^"]*\)".*/\1/p' _static_version.py)
           gh release create "v$version" --title "$title" --generate-notes
 
   pypi-release:
