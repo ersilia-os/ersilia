@@ -16,6 +16,8 @@ except:
 
 
 class CompoundIdentifier(object):
+    UNPROCESSABLE_INPUT = "UNPROCESSABLE_INPUT"
+    
     def __init__(self, local=True):
         if local:
             self.Chem = Chem
@@ -122,25 +124,41 @@ class CompoundIdentifier(object):
 
     def encode(self, smiles):
         """Get InChIKey of compound based on SMILES string"""
+        if smiles is None or not smiles.strip():
+            return self.UNPROCESSABLE_INPUT
+        
         if self.Chem is None:
-            inchikey = self._pubchem_smiles_to_inchikey(smiles)
-            if inchikey is None:
-                inchikey = self._nci_smiles_to_inchikey(smiles)
+            inchikey = self._pubchem_smiles_to_inchikey(smiles) or self._nci_smiles_to_inchikey(smiles)
         else:
             try:
                 mol = self.Chem.MolFromSmiles(smiles)
                 if mol is None:
-                    raise Exception(
-                        "The SMILES string: %s is not valid or could not be converted to an InChIKey"
-                        % smiles
-                    )
+                    return self.UNPROCESSABLE_INPUT
                 inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
-                if inchi is None:
-                    raise Exception("Could not obtain InChI")
                 inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
             except:
-                inchikey = None
-        return inchikey
+                inchikey = self.UNPROCESSABLE_INPUT
+        
+        return inchikey or self.UNPROCESSABLE_INPUT
 
+    
+    def process_input(self, smiles_list):
+        """
+         UNPROCESSABLE_INPUT as both the input and key.
+        """
+        results = []
+        for smiles in smiles_list:
+            if not smiles or not self._is_smiles(smiles):
+                results.append({
+                    'input': self.UNPROCESSABLE_INPUT,
+                    'key': self.UNPROCESSABLE_INPUT
+                })
+            else:
+                inchikey = self.encode(smiles)
+                results.append({
+                    'input': smiles,
+                    'key': inchikey
+                })
+        return results
 
 Identifier = CompoundIdentifier
