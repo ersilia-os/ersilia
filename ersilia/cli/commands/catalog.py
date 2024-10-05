@@ -2,9 +2,7 @@ import click
 
 from . import ersilia_cli
 from ...hub.content.catalog import ModelCatalog
-from ...hub.content.card import ModelCard  # Import ModelCard class
-
-# from ...hub.content.search import ModelSearcher remove unused class
+from ...hub.content.card import ModelCard
 
 
 def catalog_cmd():
@@ -49,12 +47,9 @@ def catalog_cmd():
             click.echo("Error: --card option requires a model ID", err=True)
             return
         if card and model:
-            # Directly use the ModelCard class to fetch metadata
             try:
                 mc = ModelCard()
-                model_metadata = mc.get(
-                    model, as_json=True
-                )  # Fetch metadata for the specified model ID
+                model_metadata = mc.get(model, as_json=True)
 
                 if not model_metadata:
                     click.echo(
