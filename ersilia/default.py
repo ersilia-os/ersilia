@@ -104,6 +104,21 @@ if not os.path.exists(resolve_script):
         os.path.join(ROOT, "utils", "supp", _resolve_script), resolve_script
     )
 
+# Catalog table border constants
+TABLE_TOP_LEFT = "┌"
+TABLE_TOP_MIDDLE = "┬"
+TABLE_TOP_RIGHT = "┐"
+TABLE_HORIZONTAL = "─"
+TABLE_VERTICAL = "│"
+TABLE_MIDDLE_LEFT = "├"
+TABLE_MIDDLE_MIDDLE = "┼"
+TABLE_MIDDLE_RIGHT = "┤"
+TABLE_BOTTOM_LEFT = "└"
+TABLE_BOTTOM_MIDDLE = "┴"
+TABLE_BOTTOM_RIGHT = "┘"
+TABLE_CELL_PADDING = " "
+COLUMN_SEPARATOR = " | "
+
 snippet = (
     """
 # >>> ersilia >>>

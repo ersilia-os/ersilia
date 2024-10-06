@@ -10,7 +10,12 @@ from .card import ModelCard
 from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
 from ...auth.auth import Auth
-from ...default import GITHUB_ORG, BENTOML_PATH, MODEL_SOURCE_FILE
+from ...default import ( 
+    GITHUB_ORG, BENTOML_PATH, MODEL_SOURCE_FILE,
+    TABLE_TOP_LEFT, TABLE_TOP_MIDDLE, TABLE_TOP_RIGHT, TABLE_HORIZONTAL, TABLE_VERTICAL,
+    TABLE_MIDDLE_LEFT, TABLE_MIDDLE_MIDDLE, TABLE_MIDDLE_RIGHT, TABLE_BOTTOM_LEFT,
+    TABLE_BOTTOM_MIDDLE, TABLE_BOTTOM_RIGHT, TABLE_CELL_PADDING, COLUMN_SEPARATOR
+)
 from ... import logger
 
 try:
@@ -34,22 +39,22 @@ class CatalogTable(object):
             max(len(str(item)) if item is not None else 0 for item in [col] + [row[i] for row in self.data])
             for i, col in enumerate(self.columns)
         ]
-        row_format = " | ".join(f"{{:<{width}}}" for width in column_widths)
+        row_format = COLUMN_SEPARATOR.join(f"{{:<{width}}}" for width in column_widths)
 
-        table = "┌" + "┬".join("─" * (width + 2) for width in column_widths) + "┐\n" 
-        table += "│ " + row_format.format(*self.columns) + " │\n"  
-        table += "├" + "┼".join("─" * (width + 2) for width in column_widths) + "┤\n"
+        table = TABLE_TOP_LEFT + TABLE_TOP_MIDDLE.join(TABLE_HORIZONTAL * (width + 2) for width in column_widths) + TABLE_TOP_RIGHT + "\n"
+        table += TABLE_VERTICAL + TABLE_CELL_PADDING + row_format.format(*self.columns) + TABLE_CELL_PADDING + TABLE_VERTICAL + "\n"
+        table += TABLE_MIDDLE_LEFT + TABLE_MIDDLE_MIDDLE.join(TABLE_HORIZONTAL * (width + 2) for width in column_widths) + TABLE_MIDDLE_RIGHT + "\n"
 
         for index, row in enumerate(self.data):
             row = [str(item) if item is not None else "" for item in row]
-            table += "│ " + row_format.format(*row) + " │\n"
+            table += TABLE_VERTICAL + TABLE_CELL_PADDING + row_format.format(*row) + TABLE_CELL_PADDING + TABLE_VERTICAL + "\n"
 
             if index < len(self.data) - 1:
-                table += "├" + "┼".join("─" * (width + 2) for width in column_widths) + "┤\n"
+                table += TABLE_MIDDLE_LEFT + TABLE_MIDDLE_MIDDLE.join(TABLE_HORIZONTAL * (width + 2) for width in column_widths) + TABLE_MIDDLE_RIGHT + "\n"
 
-        table += "└" + "┴".join("─" * (width + 2) for width in column_widths) + "┘"  
-
-        return table  
+        table += TABLE_BOTTOM_LEFT + TABLE_BOTTOM_MIDDLE.join(TABLE_HORIZONTAL * (width + 2) for width in column_widths) + TABLE_BOTTOM_RIGHT
+        
+        return table 
 
 
     def write(self, file_name):
