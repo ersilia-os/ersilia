@@ -44,7 +44,10 @@ def catalog_cmd():
         local=False, file_name=None, browser=False, more=False, card=False, model=None
     ):
         if card and not model:
-            click.echo("Error: --card option requires a model ID", err=True)
+            click.echo(
+                click.style("Error: --card option requires a model ID", fg="red"),
+                err=True,
+            )
             return
         if card and model:
             try:
@@ -53,13 +56,15 @@ def catalog_cmd():
 
                 if not model_metadata:
                     click.echo(
-                        f"Error: No metadata found for model ID '{model}'",
+                        click.style(
+                            f"Error: No metadata found for model ID '{model}'", fg="red"
+                        ),
                         err=True,
                     )
                     return
                 click.echo(model_metadata)
             except Exception as e:
-                click.echo(f"Error fetching model metadata: {e}", fg="red")
+                click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
             return
         if local is True and browser is True:
             click.echo(
