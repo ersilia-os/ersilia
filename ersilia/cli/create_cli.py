@@ -12,7 +12,7 @@ def create_ersilia_cli():
     cmd.auth()
     cmd.card()
     cmd.catalog()
-    cmd.clear()
+    cmd.uninstall()
     cmd.close()
     cmd.current()
     cmd.delete()

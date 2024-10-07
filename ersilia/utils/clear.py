@@ -5,7 +5,7 @@ from .conda import SimpleConda
 from ..default import EOS, BENTOML_PATH
 
 
-class Clearer(object):
+class Uninstaller(object):
     def __init__(self):
         pass
 
@@ -24,6 +24,6 @@ class Clearer(object):
             if len(env.split("-")[0]) == 7:
                 sc.delete(env)
 
-    def clear(self):
+    def uninstall(self):
         self._conda()
         self._directories()
