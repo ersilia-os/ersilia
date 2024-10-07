@@ -148,13 +148,13 @@ class CompoundIdentifier(object):
         """
         results = []
         for smiles in smiles_list:
-            if not smiles or not self._is_smiles(smiles):
+            inchikey = self.encode(smiles)
+            if inchikey == self.UNPROCESSABLE_INPUT:
                 results.append({
                     'input': self.UNPROCESSABLE_INPUT,
                     'key': self.UNPROCESSABLE_INPUT
                 })
             else:
-                inchikey = self.encode(smiles)
                 results.append({
                     'input': smiles,
                     'key': inchikey
