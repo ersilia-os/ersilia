@@ -27,3 +27,4 @@ class Uninstaller(object):
     def uninstall(self):
         self._conda()
         self._directories()
+

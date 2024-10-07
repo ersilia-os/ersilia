@@ -1,5 +1,5 @@
 from . import ersilia_cli
-from ...utils.clear import Uninstaller
+from ...utils.uninstall import Uninstaller
 
 
 def uninstall_cmd():
