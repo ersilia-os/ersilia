@@ -3,7 +3,7 @@ import csv
 import json
 import requests
 import random
-
+from ersilia.utils.logging import logger
 from ersilia.utils.exceptions_utils.card_exceptions import InputBaseInformationError
 from .interfaces import AirtableInterface
 from .json_models_interface import JsonModelsInterface
@@ -53,7 +53,7 @@ class ModelSampler(ErsiliaBase):
         entities = random.sample(entities, min(len(entities), n_samples))
         if file_name is None:
             for e in entities:
-                print(e)  # TODO Change print to click?
+                logger.info(e)  # TODO Change print to click?
         else:
             with open(file_name, "w") as f:
                 writer = csv.writer(f)
@@ -148,7 +148,7 @@ class InputSampler(ErsiliaBase):
         entities = random.sample(entities, min(n_samples, len(entities)))
         if file_name is None:
             for e in entities:
-                print(e[1])  # TODO Change print to click?
+                logger.info(e[1])  # TODO Change print to click?
         else:
             with open(file_name, "w") as f:
                 writer = csv.writer(f)
