@@ -7,8 +7,8 @@ def uninstall_cmd():
 
     # Example usage: ersilia setup
     @ersilia_cli.command(
-        short_help="Uninstalls ersilia",
-        help="Uninstalls and removes all contents related to Ersilia available in the local computer.",
+        short_help="Uninstall ersilia",
+        help="Uninstalls all contents related to Ersilia available in the local computer.",
     )
     def uninstall():
         cl = Uninstaller()
