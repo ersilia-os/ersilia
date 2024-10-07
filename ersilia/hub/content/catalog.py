@@ -34,6 +34,9 @@ class CatalogTable(object):
         self.data = data
         self.columns = columns
     
+    def generate_separator_line(self, left, middle, right, horizontal, widths):
+        return left + middle.join(horizontal * (width + 2) for width in widths) + right
+
     def as_table(self):
         column_widths = [
             max(len(str(item)) if item is not None else 0 for item in [col] + [row[i] for row in self.data])
@@ -41,19 +44,20 @@ class CatalogTable(object):
         ]
         row_format = COLUMN_SEPARATOR.join(f"{{:<{width}}}" for width in column_widths)
 
-        table = TABLE_TOP_LEFT + TABLE_TOP_MIDDLE.join(TABLE_HORIZONTAL * (width + 2) for width in column_widths) + TABLE_TOP_RIGHT + "\n"
+        table = self.generate_separator_line(TABLE_TOP_LEFT, TABLE_TOP_MIDDLE, TABLE_TOP_RIGHT, TABLE_HORIZONTAL, column_widths) + "\n"
         table += TABLE_VERTICAL + TABLE_CELL_PADDING + row_format.format(*self.columns) + TABLE_CELL_PADDING + TABLE_VERTICAL + "\n"
-        table += TABLE_MIDDLE_LEFT + TABLE_MIDDLE_MIDDLE.join(TABLE_HORIZONTAL * (width + 2) for width in column_widths) + TABLE_MIDDLE_RIGHT + "\n"
+        table += self.generate_separator_line(TABLE_MIDDLE_LEFT, TABLE_MIDDLE_MIDDLE, TABLE_MIDDLE_RIGHT, TABLE_HORIZONTAL, column_widths) + "\n"
+
 
         for index, row in enumerate(self.data):
             row = [str(item) if item is not None else "" for item in row]
             table += TABLE_VERTICAL + TABLE_CELL_PADDING + row_format.format(*row) + TABLE_CELL_PADDING + TABLE_VERTICAL + "\n"
 
             if index < len(self.data) - 1:
-                table += TABLE_MIDDLE_LEFT + TABLE_MIDDLE_MIDDLE.join(TABLE_HORIZONTAL * (width + 2) for width in column_widths) + TABLE_MIDDLE_RIGHT + "\n"
+                table += self.generate_separator_line(TABLE_MIDDLE_LEFT, TABLE_MIDDLE_MIDDLE, TABLE_MIDDLE_RIGHT, TABLE_HORIZONTAL, column_widths) + "\n"
 
-        table += TABLE_BOTTOM_LEFT + TABLE_BOTTOM_MIDDLE.join(TABLE_HORIZONTAL * (width + 2) for width in column_widths) + TABLE_BOTTOM_RIGHT
-        
+        table += self.generate_separator_line(TABLE_BOTTOM_LEFT, TABLE_BOTTOM_MIDDLE, TABLE_BOTTOM_RIGHT, TABLE_HORIZONTAL, column_widths)
+    
         return table 
 
 
