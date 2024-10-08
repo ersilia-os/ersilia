@@ -5,9 +5,6 @@ class Command(object):
     def __init__(self):
         pass
 
-    def api(self):
-        m = importlib.import_module("ersilia.cli.commands.api")
-        m.api_cmd()
 
     def auth(self):
         m = importlib.import_module("ersilia.cli.commands.auth")
