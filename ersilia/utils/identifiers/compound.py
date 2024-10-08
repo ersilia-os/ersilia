@@ -127,18 +127,23 @@ class CompoundIdentifier(object):
         if smiles is None or not smiles.strip():
             return self.UNPROCESSABLE_INPUT
         
-        if self.Chem is None:
-            inchikey = self._pubchem_smiles_to_inchikey(smiles) or self._nci_smiles_to_inchikey(smiles)
-        else:
+        inchikey = None
+
+        if self.Chem is not None:
             try:
                 mol = self.Chem.MolFromSmiles(smiles)
-                if mol is None:
-                    return self.UNPROCESSABLE_INPUT
-                inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
-                inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
+                if mol is not None:
+                    inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
+                    inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
             except:
-                inchikey = self.UNPROCESSABLE_INPUT
-        
+                pass
+
+        if inchikey is None:
+            inchikey = self._pubchem_smiles_to_inchikey(smiles)
+
+        if inchikey is None:
+            inchikey = self._nci_smiles_to_inchikey(smiles)
+
         return inchikey or self.UNPROCESSABLE_INPUT
 
     
