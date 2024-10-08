@@ -33,7 +33,7 @@ def catalog_cmd():
         "--card",
         is_flag=True,
         default=False,
-        help="Use this flag to display metadata for the provided model ID",
+        help="Use this flag to display model card for a given model ID",
     )
     @click.argument(
         "model",
