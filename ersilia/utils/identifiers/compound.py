@@ -14,10 +14,9 @@ try:
 except:
     Chem = None
 
+from ...default import UNPROCESSABLE_INPUT
 
 class CompoundIdentifier(object):
-    UNPROCESSABLE_INPUT = "UNPROCESSABLE_INPUT"
-    
     def __init__(self, local=True):
         if local:
             self.Chem = Chem
@@ -69,13 +68,13 @@ class CompoundIdentifier(object):
         return True
 
     def guess_type(self, text):
-        if text is None:
-            return self.default_type
+        if not text or not isinstance(text, str) or not text.strip() or text == UNPROCESSABLE_INPUT:
+            return UNPROCESSABLE_INPUT
         if self._is_inchikey(text):
             return "inchikey"
         if self._is_smiles(text):
             return "smiles"
-        return "name"
+        return UNPROCESSABLE_INPUT
 
     def unichem_resolver(self, inchikey):
         if Chem is None or unichem is None:
@@ -124,46 +123,24 @@ class CompoundIdentifier(object):
 
     def encode(self, smiles):
         """Get InChIKey of compound based on SMILES string"""
-        if smiles is None or not smiles.strip():
-            return self.UNPROCESSABLE_INPUT
+        if not smiles or not isinstance(smiles, str) or not smiles.strip() or smiles == UNPROCESSABLE_INPUT:
+            return UNPROCESSABLE_INPUT
         
-        inchikey = None
-
-        if self.Chem is not None:
+        if self.Chem is None:
+            inchikey = self._pubchem_smiles_to_inchikey(smiles) or self._nci_smiles_to_inchikey(smiles)
+        else:
             try:
                 mol = self.Chem.MolFromSmiles(smiles)
-                if mol is not None:
-                    inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
-                    inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
+                if mol is None:
+                    return UNPROCESSABLE_INPUT
+                inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
+                if inchi is None:
+                    return UNPROCESSABLE_INPUT
+                inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
             except:
-                pass
+                inchikey = None
+        
+        return inchikey if inchikey is not None else UNPROCESSABLE_INPUT
 
-        if inchikey is None:
-            inchikey = self._pubchem_smiles_to_inchikey(smiles)
-
-        if inchikey is None:
-            inchikey = self._nci_smiles_to_inchikey(smiles)
-
-        return inchikey or self.UNPROCESSABLE_INPUT
-
-    
-    def process_input(self, smiles_list):
-        """
-         UNPROCESSABLE_INPUT as both the input and key.
-        """
-        results = []
-        for smiles in smiles_list:
-            inchikey = self.encode(smiles)
-            if inchikey == self.UNPROCESSABLE_INPUT:
-                results.append({
-                    'input': self.UNPROCESSABLE_INPUT,
-                    'key': self.UNPROCESSABLE_INPUT
-                })
-            else:
-                results.append({
-                    'input': smiles,
-                    'key': inchikey
-                })
-        return results
 
 Identifier = CompoundIdentifier

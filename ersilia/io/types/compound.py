@@ -1,7 +1,6 @@
 import os
 import csv
 import random
-import importlib
 
 from ...utils.identifiers.arbitrary import ArbitraryIdentifier
 from ...setup.requirements.compound import (
@@ -12,6 +11,7 @@ from ... import logger
 from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 from .examples import compound as test_examples
 from . import EXAMPLES_FOLDER
+from ersilia.utils.identifiers.compound import CompoundIdentifier
 
 
 EXAMPLES = "compound.tsv"
@@ -23,9 +23,7 @@ class IO(object):
         self.input_shape = input_shape
         self.example_file = os.path.join(EXAMPLES_FOLDER, EXAMPLES)
         self.setup()
-        self.identifier = importlib.import_module(
-            "ersilia.utils.identifiers.compound"
-        ).CompoundIdentifier()
+        self.identifier = CompoundIdentifier()
         self.arbitrary_identifier = ArbitraryIdentifier()
         if type(self.input_shape) is InputShapeSingle:
             self.logger.debug(
