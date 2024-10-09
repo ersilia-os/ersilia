@@ -20,6 +20,8 @@ The best place to start is by checking our issue tracker. Our issues have the fo
 | Enhancement      | Add a new feature                                               |
 | Documentation    | Issues related to the project's documentation                   |
 
+## How to Contribute
+
 If this is the first time contributing to an Open Source project, read a bit about [How to Contribute to An Open Source Project on Github](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github) and [Collaborating with pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests). If you land here during the Outreachy contribution period, please look for the appropriate guidelines in our [documentation](https://ersilia.gitbook.io/ersilia-book/contributors/internships).
 
 ## Create a new Issue 🚀
