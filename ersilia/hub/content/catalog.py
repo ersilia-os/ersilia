@@ -33,6 +33,19 @@ class CatalogTable(object):
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
+
+    def as_list_of_dicts(self):
+        R = []
+        for r in self.data:
+            d = {}
+            for i, c in enumerate(self.columns):
+                d[c] = r[i]
+            R += [d]
+        return R
+    
+    def as_json(self):
+        R = self.as_list_of_dicts()
+        return json.dumps(R, indent=4)
     
     def generate_separator_line(self, left, middle, right, horizontal, widths):
         return left + middle.join(horizontal * (width + 2) for width in widths) + right
@@ -75,7 +88,7 @@ class CatalogTable(object):
                 writer.writerow(r)
 
     def __str__(self):
-        return self.as_table()
+        return self.as_json()
 
     def __repr__(self):
         return self.__str__()
