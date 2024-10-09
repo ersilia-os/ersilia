@@ -120,6 +120,20 @@ class CompoundIdentifier(object):
         if req.status_code != 200:
             return None
         return req.text
+    @staticmethod
+    def chemical_identifier_resolver(identifier):
+        """Returns SMILES string of a given identifier, using NCI tool"""
+        if not identifier or not isinstance(identifier, str):
+            return UNPROCESSABLE_INPUT 
+        
+        identifier = urllib.parse.quote(identifier)
+        url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(
+            identifier
+        )
+        req = requests.get(url)
+        if req.status_code != 200:
+            return None
+        return req.text
 
     def encode(self, smiles):
         """Get InChIKey of compound based on SMILES string"""
