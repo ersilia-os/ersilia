@@ -12,7 +12,6 @@ def create_ersilia_cli():
     cmd.catalog()
     cmd.clear()
     cmd.close()
-    cmd.current()
     cmd.delete()
     cmd.example()
     cmd.fetch()
