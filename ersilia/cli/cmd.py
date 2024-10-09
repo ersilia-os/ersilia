@@ -10,10 +10,6 @@ class Command(object):
         m = importlib.import_module("ersilia.cli.commands.auth")
         m.auth_cmd()
 
-    def card(self):
-        m = importlib.import_module("ersilia.cli.commands.card")
-        m.card_cmd()
-
     def catalog(self):
         m = importlib.import_module("ersilia.cli.commands.catalog")
         m.catalog_cmd()
