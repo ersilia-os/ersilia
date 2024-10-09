@@ -145,7 +145,8 @@ jobs:
 
       - name: Get version
         run: |
-          echo "Using version ${{ needs.version.outputs.VERSION }}"
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
+          mv _static_version.py ersilia/.
 
       - name: Copy Dockerfile to base directory
         run: |
