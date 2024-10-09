@@ -52,12 +52,12 @@ jobs:
           command: |
               source activate ersilia
               ersilia serve molecular-weight
-              ersilia api -i "CCC" > output_one_0.json
-              ersilia api -i "CCC" -o output_one_1.json
-              ersilia api -i "CCC" -o output_one_3.csv
-              ersilia api -i test/inputs/compound_list.csv > output_list_0.json
-              ersilia api -i test/inputs/compound_list.csv -o output_list_1.json
-              ersilia api -i test/inputs/compound_list.csv -o output_list_2.csv
+              ersilia -i "CCC" > output_one_0.json
+              ersilia -i "CCC" -o output_one_1.json
+              ersilia -i "CCC" -o output_one_3.csv
+              ersilia -i test/inputs/compound_list.csv > output_list_0.json
+              ersilia -i test/inputs/compound_list.csv -o output_list_1.json
+              ersilia -i test/inputs/compound_list.csv -o output_list_2.csv
               rm output_*
       - run:
           name: Delete molecular-weight model
