@@ -5,10 +5,10 @@ on:
 
 jobs:
   approve-command-trigger:
+    if: contains(github.event.issue.labels.*.name, 'Model Request')
     runs-on: ubuntu-latest
     steps:
     - name: Approve Command Trigger
-      if: contains(github.event.issue.labels.*.name, 'Model Request')
       uses: peter-evans/slash-command-dispatch@13bc09769d122a64f75aa5037256f6f2d78be8c4 # pin@v4.0.0
       with:
         token: ${{ secrets.PAT }}
