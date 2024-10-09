@@ -4,8 +4,7 @@ import tempfile
 import json
 import os
 import re
-import asyncio
-import aiofiles
+
 from ... import ErsiliaBase
 from ...utils.terminal import yes_no_input, run_command
 from ... import throw_ersilia_exception
@@ -86,7 +85,7 @@ class ModelPuller(ErsiliaBase):
             return None
 
     @throw_ersilia_exception
-    async def pull(self):
+    def pull(self):
         if self.is_available_locally():
             if self.overwrite is None:
                 do_pull = yes_no_input(
@@ -117,61 +116,29 @@ class ModelPuller(ErsiliaBase):
                     make_temp_dir(prefix="ersilia-"), "docker_pull.log"
                 )
                 self.logger.debug("Keeping logs of pull in {0}".format(tmp_file))
-
-                # Construct the pull command
-                pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{DOCKERHUB_LATEST_TAG} > {tmp_file} 2>&1"
-
-                # Use asyncio to run the pull command asynchronously
-                process = await asyncio.create_subprocess_shell(
-                    pull_command,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                run_command(
+                    "docker pull {0}/{1}:{2} > {3} 2>&1".format(
+                        DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG, tmp_file
+                    )
                 )
-
-                # Wait for the command to complete
-                stdout, stderr = await process.communicate()
-
-                # Handle output
-                if process.returncode != 0:
-                    self.logger.error(f"Pull command failed: {stderr.decode()}")
-                    raise subprocess.CalledProcessError(process.returncode, pull_command)
-                
-                self.logger.debug(stdout.decode())
-
-                # Reading log asynchronously
-                async with aiofiles.open(tmp_file, 'r') as f:
-                    pull_log = await f.read()
+                with open(tmp_file, "r") as f:
+                    pull_log = f.read()
                     self.logger.debug(pull_log)
-
                 if re.search(r"no match.*manifest", pull_log):
                     self.logger.warning(
                         "No matching manifest for image {0}".format(self.model_id)
                     )
                     raise DockerConventionalPullError(model=self.model_id)
-
-                self.logger.debug("Image pulled successfully!")
-
+                self.logger.debug("Image pulled succesfully!")
             except DockerConventionalPullError:
                 self.logger.warning(
                     "Conventional pull did not work, Ersilia is now forcing linux/amd64 architecture"
                 )
-                # Force platform specification pull command
-                force_pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{DOCKERHUB_LATEST_TAG} --platform linux/amd64"
-
-                # Run forced pull asynchronously
-                process = await asyncio.create_subprocess_shell(
-                    force_pull_command,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                run_command(
+                    "docker pull {0}/{1}:{2} --platform linux/amd64".format(
+                        DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+                    )
                 )
-
-                stdout, stderr = await process.communicate()
-
-                if process.returncode != 0:
-                    self.logger.error(f"Forced pull command failed: {stderr.decode()}")
-                    raise subprocess.CalledProcessError(process.returncode, force_pull_command)
-
-                self.logger.debug(stdout.decode())
             size = self._get_size_of_local_docker_image_in_mb()
             if size:
                 self.logger.debug("Size of image {0} MB".format(size))
