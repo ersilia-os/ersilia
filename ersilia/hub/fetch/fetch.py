@@ -7,6 +7,7 @@ import importlib
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
+from ...db.hubdata.json_models_interface import JsonModelsInterface
 from ... import ErsiliaBase
 from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...utils.exceptions_utils.fetch_exceptions import (
@@ -15,9 +16,7 @@ from ...utils.exceptions_utils.fetch_exceptions import (
 )
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, EOS, MODEL_SOURCE_FILE
-
 from . import STATUS_FILE, DONE_TAG
-
 
 class ModelFetcher(ErsiliaBase):
     def __init__(
@@ -41,6 +40,7 @@ class ModelFetcher(ErsiliaBase):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
         )
+        self.ji = JsonModelsInterface(config_json=self.config_json)
         self.overwrite = overwrite
         self.mode = mode
         self.do_pip = pip
@@ -183,7 +183,7 @@ class ModelFetcher(ErsiliaBase):
         if not self.is_docker_active:
             self.logger.debug("Docker is not active in your local")
             return False
-        if not self.model_dockerhub_fetcher.is_available(model_id=model_id):
+        if not self.ji.identifier_exists(model_id=model_id):
             self.logger.debug("Docker image of this model doesn't seem to be available")
             return False
         return True
@@ -218,8 +218,9 @@ class ModelFetcher(ErsiliaBase):
     def _standard_csv_example(self, model_id):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
         ms.run()
-
+    
     def _fetch(self, model_id):
+        
         self.logger.debug("Starting fetching procedure")
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
