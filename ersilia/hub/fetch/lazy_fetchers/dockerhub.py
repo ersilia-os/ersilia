@@ -134,6 +134,8 @@ class ModelDockerHubFetcher(ErsiliaBase):
 
     @throw_ersilia_exception
     def fetch(self, model_id):
+        if not DockerRequirement().is_active():
+            raise DockerNotActiveError()
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         self.logger.debug("Pulling model image from DockerHub")
         mp.pull()

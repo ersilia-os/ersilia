@@ -6,6 +6,7 @@ import importlib
 
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
+from .register.standard_example import ModelStandardExample
 from ...db.hubdata.json_models_interface import JsonModelsInterface
 from ... import ErsiliaBase
 from ...hub.fetch.actions.template_resolver import TemplateResolver
@@ -213,6 +214,10 @@ class ModelFetcher(ErsiliaBase):
             return True
         else:
             return False
+
+    def _standard_csv_example(self, model_id):
+        ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
+        ms.run()
     
     def _fetch(self, model_id):
         
@@ -235,6 +240,7 @@ class ModelFetcher(ErsiliaBase):
 
     def fetch(self, model_id):
         self._fetch(model_id)
+        self._standard_csv_example(model_id)
         self.logger.debug("Writing model source to file")
         model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
         with open(model_source_file, "w") as f:
