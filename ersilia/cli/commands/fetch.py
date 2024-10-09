@@ -1,4 +1,5 @@
 import click
+import asyncio
 from . import ersilia_cli
 from .. import echo
 from ...hub.fetch.fetch import ModelFetcher
@@ -9,7 +10,7 @@ def fetch_cmd():
     """Create fetch commmand"""
 
     def _fetch(mf, model_id):
-        mf.fetch(model_id)
+       asyncio.run(mf.fetch(model_id))
 
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
