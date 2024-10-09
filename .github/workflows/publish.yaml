@@ -9,29 +9,30 @@ on:
     - cron: ' 0 3 1 * *' # run at 3:00 AM on the first day of the month
   
 jobs:
+  # Job to increment version and manage releases
   version:
     runs-on: ubuntu-latest
     outputs:
-      VERSION: ${{ steps.version.outputs.VERSION }}
+      VERSION: ${{ steps.version.outputs.VERSION }} # Output the version for use in subsequent jobs
     steps:
 
       - name: Checkout persist credentials
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+          fetch-depth: 0             # Fetch full history, otherwise, you will fail to push refs to dest repo
       
       - name: Increment package version
         id: version
         run: |
-          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/static_version_writer.py
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/static_version_writer.py 
           echo "VERSION=$(python static_version_writer.py)" >> "$GITHUB_OUTPUT"
           rm static_version_writer.py
       
       - name: Create a release tag
         id: tag
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use GitHub token for authentication
         run: |
           # git config http.sslVerify false
           # repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
@@ -43,7 +44,7 @@ jobs:
       - name: Update version in CITATION.cff
         id: update-citation
         env:
-          VERSION: ${{ steps.version.outputs.VERSION }}
+          VERSION: ${{ steps.version.outputs.VERSION }} # Pass the new version as an environment variable
         run: |
           pip install PyYAML
           python -c "
@@ -65,18 +66,19 @@ jobs:
           message: "update version [skip ci]"
           repository: "ersilia-os/${{ github.event.repository.name }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          amend: true
-          force: true
+          amend: true                # Amend the previous commit instead of creating a new one
+          force: true                # Force push changes to overwrite any existing commit if necessary
           branch: "master"
           tags: true
 
+
   gh-release:
-    runs-on: ubuntu-latest
-    needs: version
+    runs-on: ubuntu-latest          # Specify environment for GitHub release job
+    needs: version                  # This job depends on completion of the 'version' job
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4   # Checkout code from repository
       - name: Create GitHub release
         id: gh_release
         run: |
@@ -91,8 +93,8 @@ jobs:
           gh release create "v$version" --title "$title" --generate-notes
 
   pypi-release:
-    runs-on: ubuntu-latest
-    needs: version
+    runs-on: ubuntu-latest       # Specify environment for PyPI release job
+    needs: version               # This job depends on completion of the 'version' job
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
         with:
@@ -105,7 +107,7 @@ jobs:
           # cache: 'pip' # caching pip dependencies
 
       - name: Python Poetry Action
-        uses: abatilo/actions-poetry@v3.0.0
+        uses: abatilo/actions-poetry@v3.0.0     # Use Poetry action for dependency management
             
       - name: Build and publish
         env:
@@ -115,19 +117,20 @@ jobs:
           git pull origin master 
           poetry config -- http-basic.pypi $PYPI_USERNAME $PYPI_PASSWORD
           poetry --build publish 
+
   upload-ersilia-base-to-dockerhub:
-    runs-on: ubuntu-latest
-    needs: version # This ensures it runs after the version job completes.
+    runs-on: ubuntu-latest      # Specify environment for Docker Hub upload job
+    needs: version              # This job depends on completion of the 'version' job
     strategy:
       matrix:
-        build-version: ["legacy-bentoml", "multistage-condapack"]
+        build-version: ["legacy-bentoml", "multistage-condapack"]  # Build different versions using matrix strategy
     steps:
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v3  # Set up QEMU for multi-platform builds
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3    # Set up Docker Buildx for advanced building capabilities
 
       - name: Login to Docker Hub
         if: github.event_name != 'pull_request'
@@ -136,11 +139,44 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and push Docker image for Ersilia base image
+      - name: Checkout persist credentials
+        uses: actions/checkout@master
+        with:
+          persist-credentials: false  # Prevents persisting GITHUB_TOKEN; use personal token instead
+          fetch-depth: 0              # Fetch full history, otherwise, you will fail to push refs to dest repo
+
+      - name: Get version
+        run: |
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
+          mv _static_version.py ersilia/. 
+
+      - name: Copy Dockerfile to base directory
+        run: |
+          cp dockerfiles/dockerize-${{ matrix.build-version }}/base/* . || {echo 'Failed to copy Dockerfile'; exit 1;}
+          
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ersiliaos/base-${{ matrix.build-version }}
+          # Docker tags based on the following events/attributes
+          tags: |
+            type=raw,value=latest
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha 
+
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: dockerfiles/dockerize-${{ matrix.build-version }}/Dockerfile
-          push: true
-          tags: ersiliaos/base-${{ matrix.build-version }}:${{ github.sha }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
 
