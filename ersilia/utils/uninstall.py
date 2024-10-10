@@ -8,23 +8,9 @@ from ..default import EOS, BENTOML_PATH
 from .logging import logger
 
 
-
 class Uninstaller(object):
     def __init__(self):
         self.docker_cleaner = SimpleDocker()
-        self.ersilia_dir = os.path.expanduser("~/ersilia")  
-
-    def _remove_ersilia_directory(self):
-        """Remove the Ersilia installation directory if it exists."""
-        if os.path.exists(self.ersilia_dir):
-            logger.info(f"Removing Ersilia directory: {self.ersilia_dir}...")
-            try:
-                shutil.rmtree(self.ersilia_dir) 
-                logger.info("Ersilia directory removed successfully.")
-            except Exception as e:
-                logger.error(f"Failed to remove Ersilia directory: {e}")
-        else:
-            logger.warning("Ersilia directory not found; skipping removal.")
 
     def _uninstall_ersilia_package(self):
         """Uninstall the Ersilia package if installed via pip."""
@@ -50,15 +36,6 @@ class Uninstaller(object):
     def _conda(self):
         sc = SimpleConda()
 
-        env_name = "ersilia"
-
-        try:
-            logger.info(f"Removing Conda environment: {env_name}...")
-            sc.delete(env_name)
-            logger.info(f"Conda environment {env_name} removed successfully.")
-        except Exception as e:
-            logger.error(f"Failed to remove Conda environment {env_name}: {e}")
-
         for env in sc._env_list():
             if env.startswith("#"):
                 continue
@@ -72,14 +49,24 @@ class Uninstaller(object):
                 except Exception as e:
                     logger.error(f"Failed to remove conda environment {env}: {e}")
 
+        
+        env_name = "ersilia"
+
+        try:
+            logger.info(f"Removing Conda environment: {env_name}...")
+            sc.delete(env_name)
+            logger.info(f"Conda environment {env_name} removed successfully.")
+        except Exception as e:
+            logger.error(f"Failed to remove Conda environment {env_name}: {e}")
+
     def uninstall(self):
         """Main uninstallation method"""
 
         try:
             logger.info("Starting Ersillia uninstallation...")
 
-            self._remove_ersilia_directory()
             self.docker_cleaner.cleanup_ersilia_images()
+            self._uninstall_ersilia_package()
             self._conda()
             self._directories()
 
