@@ -2,7 +2,7 @@ import click
 
 from . import ersilia_cli
 from ...hub.content.catalog import ModelCatalog
-from ...hub.content.search import ModelSearcher
+from ...hub.content.card import ModelCard
 
 
 def catalog_cmd():
@@ -29,7 +29,43 @@ def catalog_cmd():
         default=False,
         help="Show more information than just the EOS identifier",
     )
-    def catalog(local=False, file_name=None, browser=False, more=False):
+    @click.option(
+        "--card",
+        is_flag=True,
+        default=False,
+        help="Use this flag to display model card for a given model ID",
+    )
+    @click.argument(
+        "model",
+        type=click.STRING,
+        required=False,
+    )
+    def catalog(
+        local=False, file_name=None, browser=False, more=False, card=False, model=None
+    ):
+        if card and not model:
+            click.echo(
+                click.style("Error: --card option requires a model ID", fg="red"),
+                err=True,
+            )
+            return
+        if card and model:
+            try:
+                mc = ModelCard()
+                model_metadata = mc.get(model, as_json=True)
+
+                if not model_metadata:
+                    click.echo(
+                        click.style(
+                            f"Error: No metadata found for model ID '{model}'", fg="red"
+                        ),
+                        err=True,
+                    )
+                    return
+                click.echo(model_metadata)
+            except Exception as e:
+                click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
+            return
         if local is True and browser is True:
             click.echo(
                 "You cannot show the local model catalog in the browser",

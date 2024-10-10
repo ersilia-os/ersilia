@@ -1,25 +1,26 @@
-# Single workflow to increment ersilia version in pyproject.toml,
+# Single workflow to increment Ersilia version in pyproject.toml,
 # tag and push the commit to the repository, release to GitHub, PyPI, Conda, and DockerHub
+# This job updates _static_version.py, pyproject.toml, CITATION.cff, and codemeta.json
 
 name: Ersilia Release
 
 on:
   workflow_dispatch: # run manually
   schedule:
-    - cron: ' 0 3 1 * *' # run at 3:00 AM on the first day of the month
-  
+    - cron: '0 3 1 * *' # run at 3:00 AM on the first day of the month
+      # This pipeline updates several version-related files: _static_version.py, pyproject.toml, CITATION.cff, and codemeta.json.
+
 jobs:
   version:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
-
       - name: Checkout persist credentials
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+        uses: actions/checkout@v3.5.3
         with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+          persist-credentials: false # ensures use of personal token instead of GITHUB_TOKEN
+          fetch-depth: 0 # fetches all history for tagging
       
       - name: Increment package version
         id: version
@@ -33,13 +34,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # git config http.sslVerify false
-          # repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git config --local user.email "ersilia-bot@users.noreply.github.com"
           git config --local user.name "ersilia-bot"
           git tag -a "v${{ steps.version.outputs.VERSION }}" -m "v${{ steps.version.outputs.VERSION }}"
-          # git push "${repo}" origin "v${{ steps.version.outputs.VERSION }}"
-
+          # Tagging happens implicitly; no need to push explicitly
+          
       - name: Update version in CITATION.cff
         id: update-citation
         env:
@@ -57,8 +56,19 @@ jobs:
               yaml.dump(citation, file, default_flow_style=False, sort_keys=False)
           "
 
-      - name: Commit and push changes done to the static version file and pyproject.toml
-        uses: actions-js/push@5a7cbd780d82c0c937b5977586e641b2fd94acc5 # pin@v1.5
+      - name: Update version in codemeta.json and URL
+        id: update-codemeta
+        env:
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          # Ensure jq is installed
+          sudo apt-get install -y jq
+          # Update the version and URL in codemeta.json
+          jq --arg VERSION "$VERSION" --arg URL "https://github.com/ersilia-os/ersilia/v$VERSION" \
+             '.version = $VERSION | .codeRepository = $URL' codemeta.json > codemeta_tmp.json && mv codemeta_tmp.json codemeta.json
+
+      - name: Commit and push changes to CITATION.cff and codemeta.json
+        uses: actions-js/push@v1.5
         with:
           author_name: "ersilia-bot"
           author_email: "ersilia-bot@users.noreply.github.com"
@@ -86,23 +96,22 @@ jobs:
           month=$(date +'%B')
           year=$(date +'%Y')
           title="$month $year"
-          version=`sed -n 's/.*version = "\([^"]*\)".*/\1/p' _static_version.py`
-          git fetch --tags
+          # Extract the version using sed from _static_version.py
+          version=$(sed -n 's/.*version = "\([^"]*\)".*/\1/p' _static_version.py)
           gh release create "v$version" --title "$title" --generate-notes
 
   pypi-release:
     runs-on: ubuntu-latest
     needs: version
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: actions/checkout@v3.5.3
         with:
           ref: master
 
       - name: Set up Python
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
+        uses: actions/setup-python@v5.2.0
         with:
           python-version: '3.8'
-          # cache: 'pip' # caching pip dependencies
 
       - name: Python Poetry Action
         uses: abatilo/actions-poetry@v3.0.0
@@ -114,6 +123,4 @@ jobs:
         run: |
           git pull origin master 
           poetry config -- http-basic.pypi $PYPI_USERNAME $PYPI_PASSWORD
-          poetry --build publish 
-
-
+          poetry --build publish
