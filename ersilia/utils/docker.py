@@ -329,6 +329,10 @@ class SimpleDocker(object):
 
         try:
             images_dict = self.images()
+
+            if not images_dict:
+                logger.info("No Docker images found")
+                return 
             
             for image_name, image_id in images_dict.items():
                 if DOCKERHUB_ORG in image_name:
