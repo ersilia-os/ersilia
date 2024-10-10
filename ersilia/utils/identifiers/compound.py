@@ -114,7 +114,6 @@ class CompoundIdentifier(object):
         """Returns SMILES string of a given identifier, using NCI tool"""
         if not identifier or not isinstance(identifier, str):
             return UNPROCESSABLE_INPUT 
-        
         identifier = urllib.parse.quote(identifier)
         url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(
             identifier
