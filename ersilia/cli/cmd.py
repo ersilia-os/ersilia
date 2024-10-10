@@ -14,9 +14,9 @@ class Command(object):
         m = importlib.import_module("ersilia.cli.commands.catalog")
         m.catalog_cmd()
 
-    def clear(self):
-        m = importlib.import_module("ersilia.cli.commands.clear")
-        m.clear_cmd()
+    def uninstall(self):
+        m = importlib.import_module("ersilia.cli.commands.uninstall")
+        m.uninstall_cmd()
 
     def close(self):
         m = importlib.import_module("ersilia.cli.commands.close")

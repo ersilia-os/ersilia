@@ -312,15 +312,38 @@ class SimpleDocker(object):
                 return
 
         except docker.errors.NotFound as e:
-            print(f"Container {container.name} not found: {e}")
+            logger.debug(f"Container {container.name} not found: {e}")
             return None
         except docker.errors.APIError as e:
-            print(f"Docker API error: {e}")
+            logger.debug(f"Docker API error: {e}")
             return None
         except Exception as e:
-            print(f"An error occurred: {e}")
+            logger.debug(f"An error occurred: {e}")
             return None
+        
+    def cleanup_ersilia_images(self):
+        """Remove all Ersilia-related Docker images"""
+        if self._with_udocker:
+            logger.warning("Docker cleanup not supported with udocker")
+            return
 
+        try:
+            images_dict = self.images()
+
+            if not images_dict:
+                logger.info("No Docker images found")
+                return 
+            
+            for image_name, image_id in images_dict.items():
+                if DOCKERHUB_ORG in image_name:
+                    try:
+                        logger.info(f"Removing Docker image: {image_name}")
+                        self.delete(*self._splitter(image_name))
+                    except Exception as e:
+                        logger.error(f"Failed to remove Docker image {image_name}: {e}")
+        
+        except Exception as e:
+            logger.error(f"Failed to cleanup Docker images: {e}")
 
 class SimpleDockerfileParser(DockerfileParser):
     def __init__(self, path):
