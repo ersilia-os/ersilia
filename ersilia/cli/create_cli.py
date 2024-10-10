@@ -8,13 +8,10 @@ def create_ersilia_cli():
 
     cmd = Command()
 
-    cmd.api()
     cmd.auth()
-    cmd.card()
     cmd.catalog()
     cmd.clear()
     cmd.close()
-    cmd.current()
     cmd.delete()
     cmd.example()
     cmd.fetch()
