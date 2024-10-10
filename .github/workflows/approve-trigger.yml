@@ -5,7 +5,7 @@ on:
 
 jobs:
   approve-command-trigger:
-    if: contains(github.event.issue.labels.*.name, 'Model Request')
+    if: contains(github.event.issue.labels.*.name, 'new-model')
     runs-on: ubuntu-latest
     steps:
     - name: Approve Command Trigger
