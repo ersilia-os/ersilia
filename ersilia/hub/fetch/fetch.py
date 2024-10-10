@@ -221,15 +221,15 @@ class ModelFetcher(ErsiliaBase):
 
     def _fetch(self, model_id):
         self.logger.debug("Starting fetching procedure")
-        do_hosted = self._decide_if_use_hosted(model_id=model_id)
-        if do_hosted:
-            self.logger.debug("Fetching from hosted")
-            self._fetch_from_hosted(model_id=model_id)
-            return
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
             self.logger.debug("Decided to fetch from DockerHub")
             self._fetch_from_dockerhub(model_id=model_id)
+            return
+        do_hosted = self._decide_if_use_hosted(model_id=model_id)
+        if do_hosted:
+            self.logger.debug("Fetching from hosted")
+            self._fetch_from_hosted(model_id=model_id)
             return
         if self.overwrite is None:
             self.logger.debug("Overwriting")
@@ -244,3 +244,4 @@ class ModelFetcher(ErsiliaBase):
         model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
         with open(model_source_file, "w") as f:
             f.write(self.model_source)
+
