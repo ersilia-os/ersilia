@@ -11,7 +11,8 @@ class RdkitRequirement(object):
             self.install()
 
     def install(self):
-        run_command("python -m pip install rdkit-pypi")
+        version = "2022.9.5"
+        run_command("python -m pip install rdkit==2023.9.1")
 
 
 class ChemblWebResourceClientRequirement(object):
