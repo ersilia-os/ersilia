@@ -119,8 +119,8 @@ jobs:
           poetry --build publish 
 
   upload-ersilia-base-to-dockerhub:
-    runs-on: ubuntu-latest      # Specify environment for Docker Hub upload job
-    needs: version              # This job depends on completion of the 'version' job
+    runs-on: ubuntu-latest
+    needs: version
     strategy:
       matrix:
         build-version: ["legacy-bentoml", "multistage-condapack"]  # Build different versions using matrix strategy
@@ -130,7 +130,7 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3    # Set up Docker Buildx for advanced building capabilities
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         if: github.event_name != 'pull_request'
