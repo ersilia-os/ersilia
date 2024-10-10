@@ -11,7 +11,7 @@ from ... import logger
 from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 from .examples import compound as test_examples
 from . import EXAMPLES_FOLDER
-from ersilia.utils.identifiers.compound import CompoundIdentifier
+from ...utils.identifiers.compound import CompoundIdentifier
 
 
 EXAMPLES = "compound.tsv"
