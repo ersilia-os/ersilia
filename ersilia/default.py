@@ -1,6 +1,7 @@
 from pathlib import Path
 import shutil
 import os
+from enum import Enum
 
 # EOS environmental variables
 EOS = os.path.join(str(Path.home()), "eos")
@@ -105,19 +106,20 @@ if not os.path.exists(resolve_script):
     )
 
 # Catalog table border constants
-TABLE_TOP_LEFT = "┌"
-TABLE_TOP_MIDDLE = "┬"
-TABLE_TOP_RIGHT = "┐"
-TABLE_HORIZONTAL = "─"
-TABLE_VERTICAL = "│"
-TABLE_MIDDLE_LEFT = "├"
-TABLE_MIDDLE_MIDDLE = "┼"
-TABLE_MIDDLE_RIGHT = "┤"
-TABLE_BOTTOM_LEFT = "└"
-TABLE_BOTTOM_MIDDLE = "┴"
-TABLE_BOTTOM_RIGHT = "┘"
-TABLE_CELL_PADDING = " "
-COLUMN_SEPARATOR = " | "
+class TableConstants(str, Enum):
+    TOP_LEFT = "┌"
+    TOP_MIDDLE = "┬"
+    TOP_RIGHT = "┐"
+    HORIZONTAL = "─"
+    VERTICAL = "│"
+    MIDDLE_LEFT = "├"
+    MIDDLE_MIDDLE = "┼"
+    MIDDLE_RIGHT = "┤"
+    BOTTOM_LEFT = "└"
+    BOTTOM_MIDDLE = "┴"
+    BOTTOM_RIGHT = "┘"
+    CELL_PADDING = " "
+    COLUMN_SEPARATOR = " | "
 
 snippet = (
     """

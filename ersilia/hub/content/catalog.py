@@ -10,12 +10,8 @@ from .card import ModelCard
 from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
 from ...auth.auth import Auth
-from ...default import ( 
-    GITHUB_ORG, BENTOML_PATH, MODEL_SOURCE_FILE,
-    TABLE_TOP_LEFT, TABLE_TOP_MIDDLE, TABLE_TOP_RIGHT, TABLE_HORIZONTAL, TABLE_VERTICAL,
-    TABLE_MIDDLE_LEFT, TABLE_MIDDLE_MIDDLE, TABLE_MIDDLE_RIGHT, TABLE_BOTTOM_LEFT,
-    TABLE_BOTTOM_MIDDLE, TABLE_BOTTOM_RIGHT, TABLE_CELL_PADDING, COLUMN_SEPARATOR
-)
+from ...default import GITHUB_ORG, BENTOML_PATH, MODEL_SOURCE_FILE
+from ...default import TableConstants
 from ... import logger
 
 try:
@@ -55,21 +51,24 @@ class CatalogTable(object):
             max(len(str(item)) if item is not None else 0 for item in [col] + [row[i] for row in self.data])
             for i, col in enumerate(self.columns)
         ]
-        row_format = COLUMN_SEPARATOR.join(f"{{:<{width}}}" for width in column_widths)
 
-        table = self.generate_separator_line(TABLE_TOP_LEFT, TABLE_TOP_MIDDLE, TABLE_TOP_RIGHT, TABLE_HORIZONTAL, column_widths) + "\n"
-        table += TABLE_VERTICAL + TABLE_CELL_PADDING + row_format.format(*self.columns) + TABLE_CELL_PADDING + TABLE_VERTICAL + "\n"
-        table += self.generate_separator_line(TABLE_MIDDLE_LEFT, TABLE_MIDDLE_MIDDLE, TABLE_MIDDLE_RIGHT, TABLE_HORIZONTAL, column_widths) + "\n"
+        table_constants = TableConstants
+
+        row_format = table_constants.COLUMN_SEPARATOR.join(f"{{:<{width}}}" for width in column_widths)
+
+        table = self.generate_separator_line(table_constants.TOP_LEFT, table_constants.TOP_MIDDLE, table_constants.TOP_RIGHT, table_constants.HORIZONTAL, column_widths) + "\n"
+        table += table_constants.VERTICAL + table_constants.CELL_PADDING + row_format.format(*self.columns) + table_constants.CELL_PADDING + table_constants.VERTICAL + "\n"
+        table += self.generate_separator_line(table_constants.MIDDLE_LEFT, table_constants.MIDDLE_MIDDLE, table_constants.MIDDLE_RIGHT, table_constants.HORIZONTAL, column_widths) + "\n"
 
 
         for index, row in enumerate(self.data):
             row = [str(item) if item is not None else "" for item in row]
-            table += TABLE_VERTICAL + TABLE_CELL_PADDING + row_format.format(*row) + TABLE_CELL_PADDING + TABLE_VERTICAL + "\n"
+            table += table_constants.VERTICAL + table_constants.CELL_PADDING + row_format.format(*row) + table_constants.CELL_PADDING + table_constants.VERTICAL + "\n"
 
             if index < len(self.data) - 1:
-                table += self.generate_separator_line(TABLE_MIDDLE_LEFT, TABLE_MIDDLE_MIDDLE, TABLE_MIDDLE_RIGHT, TABLE_HORIZONTAL, column_widths) + "\n"
+                table += self.generate_separator_line(table_constants.MIDDLE_LEFT, table_constants.MIDDLE_MIDDLE, table_constants.MIDDLE_RIGHT, table_constants.HORIZONTAL, column_widths) + "\n"
 
-        table += self.generate_separator_line(TABLE_BOTTOM_LEFT, TABLE_BOTTOM_MIDDLE, TABLE_BOTTOM_RIGHT, TABLE_HORIZONTAL, column_widths)
+        table += self.generate_separator_line(table_constants.BOTTOM_LEFT, table_constants.BOTTOM_MIDDLE, table_constants.BOTTOM_RIGHT, table_constants.HORIZONTAL, column_widths)
     
         return table 
 
