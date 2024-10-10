@@ -312,13 +312,13 @@ class SimpleDocker(object):
                 return
 
         except docker.errors.NotFound as e:
-            print(f"Container {container.name} not found: {e}")
+            logger.debug(f"Container {container.name} not found: {e}")
             return None
         except docker.errors.APIError as e:
-            print(f"Docker API error: {e}")
+            logger.debug(f"Docker API error: {e}")
             return None
         except Exception as e:
-            print(f"An error occurred: {e}")
+            logger.debug(f"An error occurred: {e}")
             return None
         
     def cleanup_ersilia_images(self):
