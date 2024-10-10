@@ -4,6 +4,16 @@ Thank you for contributing to Ersilia's mission and vision! ⭐
 
 Ersilia is an open project and everyone is welcome to contribute to it. Please read the following sections to make sure your contribution aligns with Ersilia's guidelines and is an enjoyable experience for all.
 
+## Table of Contents
+
+- [Code of Conduct](#code-of-conduct)
+- [Where to Start?](#where-to-start)
+- [How to Contribute](#how-to-contribute)
+- [Create a new Issue 🚀](#create-a-new-issue-)
+- [Contribution Workflow](#contribution-workflow)
+- [Other Contributing Suggestions](#other-contributing-suggestions)
+- [I still have questions](#i-still-have-questions)
+
 ## Code of Conduct
 
 We aspire to create a welcoming and safe environment for collaboration on this project and ask all contributors to do the same. Help us keep Ersilia open and inclusive. Please read and follow our [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/CODE_OF_CONDUCT.md).
@@ -12,11 +22,15 @@ We aspire to create a welcoming and safe environment for collaboration on this p
 
 The best place to start is by checking our issue tracker. Our issues have the following labels to guide contributors in their work:
 
-* good first issue: a small task suitable to start your contributions to the project
-* help wanted: an issue currently not assigned to anyone
-* bug: fix something that is not working
-* enhancement: add a new feature
-* documentation: issues related to the project's documentation
+| Label            | Description                                                     |
+|------------------|-----------------------------------------------------------------|
+| Good first issue | A small task suitable to start your contributions to the project|
+| Help wanted      | An issue currently not assigned to anyone                       |
+| Bug              | Fix something that is not working                               |
+| Enhancement      | Add a new feature                                               |
+| Documentation    | Issues related to the project's documentation                   |
+
+## How to Contribute
 
 If this is the first time contributing to an Open Source project, read a bit about [How to Contribute to An Open Source Project on Github](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github) and [Collaborating with pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests). If you land here during the Outreachy contribution period, please look for the appropriate guidelines in our [documentation](https://ersilia.gitbook.io/ersilia-book/contributors/internships).
 
