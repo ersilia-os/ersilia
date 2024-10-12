@@ -142,6 +142,6 @@ class CompoundIdentifier(object):
             except:
                 inchikey = None
         
-        return inchikey if inchikey is not None else UNPROCESSABLE_INPUT
+        return inchikey if inchikey else UNPROCESSABLE_INPUT
 
 Identifier = CompoundIdentifier
