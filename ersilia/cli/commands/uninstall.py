@@ -11,5 +11,5 @@ def uninstall_cmd():
         help="Uninstalls all Ersilia artifacts present locally on the user's system.",
     )
     def uninstall():
-        cl = Uninstaller()
-        cl.uninstall()
+        ui = Uninstaller()
+        ui.uninstall()
