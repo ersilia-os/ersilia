@@ -120,10 +120,19 @@ class UpdateMetadata:
         if self.metadata["License"] == "":
             self.metadata["License"] = self.json_input["license"]
         if self.metadata["Tag"] == []:
-            # split the tags into a list andremove any whitespace
-            # tags = [tag.strip() for tag in self.json_input["tag"].split(",")]
-            print(type(self.json_input["tag"]))
-            self.metadata["Tag"] = self.json_input["tag"]
+            # Check if the input is a string or list
+            if isinstance(self.json_input["tag"], str):
+                # Split the string by commas, remove whitespace, and cast to a list
+                tags = [tag.strip() for tag in self.json_input["tag"].split(",")]
+            elif isinstance(self.json_input["tag"], list):
+                # If it's already a list, assign it directly
+                tags = self.json_input["tag"]
+            else:
+                # Handle other possible cases or invalid input
+                tags = []
+                # Store the tags as a list in the metadata
+            self.metadata["Tag"] = tags
+            print(type(self.metadata["Tag"]))  # Verify that it's a list
         if self.metadata["Status"] == "":
             self.metadata["Status"] = "In progress"
 
