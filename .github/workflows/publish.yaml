@@ -9,30 +9,29 @@ on:
     - cron: ' 0 3 1 * *' # run at 3:00 AM on the first day of the month
   
 jobs:
-  # Job to increment version and manage releases
   version:
     runs-on: ubuntu-latest
     outputs:
-      VERSION: ${{ steps.version.outputs.VERSION }} # Output the version for use in subsequent jobs
+      VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
 
       - name: Checkout persist credentials
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0             # Fetch full history, otherwise, you will fail to push refs to dest repo
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
       
       - name: Increment package version
         id: version
         run: |
-          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/static_version_writer.py 
+          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/static_version_writer.py
           echo "VERSION=$(python static_version_writer.py)" >> "$GITHUB_OUTPUT"
           rm static_version_writer.py
       
       - name: Create a release tag
         id: tag
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Use GitHub token for authentication
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # git config http.sslVerify false
           # repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
@@ -44,7 +43,7 @@ jobs:
       - name: Update version in CITATION.cff
         id: update-citation
         env:
-          VERSION: ${{ steps.version.outputs.VERSION }} # Pass the new version as an environment variable
+          VERSION: ${{ steps.version.outputs.VERSION }}
         run: |
           pip install PyYAML
           python -c "
@@ -66,19 +65,18 @@ jobs:
           message: "update version [skip ci]"
           repository: "ersilia-os/${{ github.event.repository.name }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          amend: true                # Amend the previous commit instead of creating a new one
-          force: true                # Force push changes to overwrite any existing commit if necessary
+          amend: true
+          force: true
           branch: "master"
           tags: true
 
-
   gh-release:
-    runs-on: ubuntu-latest          # Specify environment for GitHub release job
-    needs: version                  # This job depends on completion of the 'version' job
+    runs-on: ubuntu-latest
+    needs: version
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4   # Checkout code from repository
+      - uses: actions/checkout@v4
       - name: Create GitHub release
         id: gh_release
         run: |
@@ -93,8 +91,8 @@ jobs:
           gh release create "v$version" --title "$title" --generate-notes
 
   pypi-release:
-    runs-on: ubuntu-latest       # Specify environment for PyPI release job
-    needs: version               # This job depends on completion of the 'version' job
+    runs-on: ubuntu-latest
+    needs: version
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
         with:
@@ -107,7 +105,7 @@ jobs:
           # cache: 'pip' # caching pip dependencies
 
       - name: Python Poetry Action
-        uses: abatilo/actions-poetry@v3.0.0     # Use Poetry action for dependency management
+        uses: abatilo/actions-poetry@v3.0.0
             
       - name: Build and publish
         env:
@@ -118,33 +116,39 @@ jobs:
           poetry config -- http-basic.pypi $PYPI_USERNAME $PYPI_PASSWORD
           poetry --build publish 
 
+  # Job to push Docker images to DockerHub.
   upload-ersilia-base-to-dockerhub:
     runs-on: ubuntu-latest
     needs: version
     strategy:
       matrix:
-        build-version: ["legacy-bentoml", "multistage-condapack"]  # Build different versions using matrix strategy
+        build-version: [ "legacy-bentoml", "multistage-condapack" ]  # Define multiple Docker build strategies.
     steps:
+      # Set up QEMU for building multi-platform Docker images.
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3  # Set up QEMU for multi-platform builds
 
+      # Set up Docker buildx for advanced build features.
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
 
+      # Log in to Docker Hub to push images.
       - name: Login to Docker Hub
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'     # Skip login during pull requests.
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      # Checkout the repository.
       - name: Checkout persist credentials
         uses: actions/checkout@master
         with:
           persist-credentials: false  # Prevents persisting GITHUB_TOKEN; use personal token instead
           fetch-depth: 0              # Fetch full history, otherwise, you will fail to push refs to dest repo
 
+      # Fetch the latest version number from the static version file.
       - name: Get version
         run: |
           wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/ersilia/_static_version.py
@@ -153,7 +157,8 @@ jobs:
       - name: Copy Dockerfile to base directory
         run: |
           cp dockerfiles/dockerize-${{ matrix.build-version }}/base/* . || {echo 'Failed to copy Dockerfile'; exit 1;}
-          
+
+      # Set Docker image metadata including tags.
       - name: Docker meta
         id: docker_meta
         uses: docker/metadata-action@v5
@@ -162,6 +167,10 @@ jobs:
           images: |
             ersiliaos/base-${{ matrix.build-version }}
           # Docker tags based on the following events/attributes
+          # In this section,
+          # semver = sementic versioning for tagging
+          # use major.minor for additional tagging
+          # Include the SHA of the commit.
           tags: |
             type=raw,value=latest
             type=schedule
@@ -171,12 +180,12 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha 
 
+      # Build and push the Docker image to DockerHub.
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
-
+          platforms: linux/amd64,linux/arm64        # Build for both AMD and ARM platforms.
+          push: ${{ github.event_name != 'pull_request' }}   # Push images if this is not a pull request.
+          tags: ${{ steps.docker_meta.outputs.tags }}        # Use the tags generated in the previous step.
+          labels: ${{ steps.docker_meta.outputs.labels }}    # Use the labels generated in the previous step.
