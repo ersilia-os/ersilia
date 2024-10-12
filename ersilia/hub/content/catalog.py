@@ -239,7 +239,7 @@ class ModelCatalog(ErsiliaBase):
             webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")
 
     def _get_all_github_public_repos(self):
-        url = "https://api.github.com/users/y{0}/repos".format(GITHUB_ORG)
+        url = "https://api.github.com/users/{0}/repos".format(GITHUB_ORG)
         while url:
             response = requests.get(url, params={"per_page": 100})
             response.raise_for_status()

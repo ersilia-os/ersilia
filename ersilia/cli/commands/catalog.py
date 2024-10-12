@@ -86,20 +86,6 @@ def catalog_cmd():
             mc.airtable()
             return
         catalog_table = mc.local() if local else mc.hub()
-        if local is True and browser is True:
-            click.echo(
-                "You cannot show the local model catalog in the browser",
-                fg="red",
-            )
-        if more:
-            only_identifier = False
-        else:
-            only_identifier = True
-        mc = ModelCatalog(only_identifier=only_identifier)
-        if browser:
-            mc.airtable()
-            return
-        catalog_table = mc.local() if local else mc.hub()
 
         if local and not catalog_table.data:
             click.echo(
@@ -109,13 +95,10 @@ def catalog_cmd():
                 )
             )
             return
-        if as_table:
-            catalog = catalog_table.as_table()
+        if file_name is None:
+            catalog = catalog_table.as_table() if as_table else catalog_table.as_json()
         else:
-            if file_name is None:
-                catalog = catalog_table.as_json()
-            else:
-                catalog_table.write(file_name)
-                catalog = None
+            catalog_table.write(file_name)
+            catalog = None
 
         click.echo(catalog)
