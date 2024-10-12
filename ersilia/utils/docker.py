@@ -60,6 +60,7 @@ def is_udocker_installed():
 class SimpleDocker(object):
     def __init__(self, use_udocker=None):
         self.identifier = LongIdentifier()
+        self.logger = logger
         if use_udocker is None:
             self._with_udocker = self._use_udocker()
         else:
@@ -303,28 +304,28 @@ class SimpleDocker(object):
                 if peak_memory is not None:
                     return peak_memory
                 else:
-                    logger.debug(
+                    self.logger.debug(
                         f"Could not compute container peak memory for model {model_id}"
                     )
                     return
             else:
-                logger.debug(f"No container found for model {model_id}")
+                self.logger.debug(f"No container found for model {model_id}")
                 return
 
         except docker.errors.NotFound as e:
-            logger.debug(f"Container {container.name} not found: {e}")
+            self.logger.debug(f"Container {container.name} not found: {e}")
             return None
         except docker.errors.APIError as e:
             logger.debug(f"Docker API error: {e}")
             return None
         except Exception as e:
-            logger.debug(f"An error occurred: {e}")
+            self.logger.debug(f"An error occurred: {e}")
             return None
         
     def cleanup_ersilia_images(self):
         """Remove all Ersilia-related Docker images"""
         if self._with_udocker:
-            logger.warning("Docker cleanup not supported with udocker")
+            self.logger.warning("Docker cleanup not supported with udocker")
             return
 
         try:
@@ -343,7 +344,7 @@ class SimpleDocker(object):
                         logger.error(f"Failed to remove Docker image {image_name}: {e}")
         
         except Exception as e:
-            logger.error(f"Failed to cleanup Docker images: {e}")
+            self.logger.error(f"Failed to cleanup Docker images: {e}")
 
 class SimpleDockerfileParser(DockerfileParser):
     def __init__(self, path):
