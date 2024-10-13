@@ -87,6 +87,7 @@
 <span class="kn">from</span> <span class="nn">...utils.identifiers.model</span> <span class="kn">import</span> <span class="n">ModelIdentifier</span>
 <span class="kn">from</span> <span class="nn">...auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="n">BENTOML_PATH</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">TableConstants</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -117,6 +118,122 @@
 <div class="viewcode-block" id="CatalogTable.as_json"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_json">[docs]</a>    <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_list_of_dicts</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CatalogTable.generate_separator_line"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.generate_separator_line">[docs]</a>    <span class="k">def</span> <span class="nf">generate_separator_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">middle</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">,</span> <span class="n">widths</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a separator line for the table based on the given borders and column widths.</span>
+
+<span class="sd">        The line starts with a &#39;left&#39; border, followed by repeated &#39;horizontal&#39; </span>
+<span class="sd">        sections for each column&#39;s width, joined by &#39;middle&#39; separators, and ends </span>
+<span class="sd">        with a &#39;right&#39; border.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            left (str): The character to use for the left border of the line.</span>
+<span class="sd">            middle (str): The character to use between columns (as separators).</span>
+<span class="sd">            right (str): The character to use for the right border of the line.</span>
+<span class="sd">            horizontal (str): The character used to draw the horizontal border.</span>
+<span class="sd">            widths (list[int]): A list of column widths to determine how much </span>
+<span class="sd">                                horizontal space each column takes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The formatted separator line as a string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">left</span> <span class="o">+</span> <span class="n">middle</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">horizontal</span> <span class="o">*</span> <span class="p">(</span><span class="n">width</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">width</span> <span class="ow">in</span> <span class="n">widths</span><span class="p">)</span> <span class="o">+</span> <span class="n">right</span></div>
+
+<div class="viewcode-block" id="CatalogTable.as_table"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_table">[docs]</a>    <span class="k">def</span> <span class="nf">as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the catalog data in table format. The method calculates the </span>
+<span class="sd">        column widths dynamically by determining the maximum width of each column, </span>
+<span class="sd">        based on the data and column headers.</span>
+
+<span class="sd">        A row format string is then constructed using the column widths, </span>
+<span class="sd">        specifying that each cell is left-aligned and padded with a column seperator sperating the rows.</span>
+
+<span class="sd">        The method starts by constructing the top border using the </span>
+<span class="sd">        &#39;generate_separator_line&#39; helper. It then adds the headers, </span>
+<span class="sd">        formatted to fit the column widths, followed by a separator line</span>
+<span class="sd">        also created by the helper function.</span>
+
+<span class="sd">        A &#39;for&#39; loop iterates over the data rows, adding each row to the </span>
+<span class="sd">        table with borders and padding. After each row, a separator line is inserted. </span>
+<span class="sd">        Finally, the bottom border is added using the helper function, completing the table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">column_widths</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">max</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">))</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">table_constants</span> <span class="o">=</span> <span class="n">TableConstants</span>
+
+        <span class="n">row_format</span> <span class="o">=</span> <span class="n">table_constants</span><span class="o">.</span><span class="n">COLUMN_SEPARATOR</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="s2">:&lt;</span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">width</span> <span class="ow">in</span> <span class="n">column_widths</span>
+        <span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_separator_line</span><span class="p">(</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">TOP_LEFT</span><span class="p">,</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">TOP_MIDDLE</span><span class="p">,</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">TOP_RIGHT</span><span class="p">,</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">,</span>
+                <span class="n">column_widths</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">table</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="n">table_constants</span><span class="o">.</span><span class="n">VERTICAL</span>
+            <span class="o">+</span> <span class="n">table_constants</span><span class="o">.</span><span class="n">CELL_PADDING</span>
+            <span class="o">+</span> <span class="n">row_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">table_constants</span><span class="o">.</span><span class="n">CELL_PADDING</span>
+            <span class="o">+</span> <span class="n">table_constants</span><span class="o">.</span><span class="n">VERTICAL</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">table</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_separator_line</span><span class="p">(</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">MIDDLE_LEFT</span><span class="p">,</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">MIDDLE_MIDDLE</span><span class="p">,</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">MIDDLE_RIGHT</span><span class="p">,</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">,</span>
+                <span class="n">column_widths</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
+            <span class="n">table</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="n">table_constants</span><span class="o">.</span><span class="n">VERTICAL</span>
+                <span class="o">+</span> <span class="n">table_constants</span><span class="o">.</span><span class="n">CELL_PADDING</span>
+                <span class="o">+</span> <span class="n">row_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">table_constants</span><span class="o">.</span><span class="n">CELL_PADDING</span>
+                <span class="o">+</span> <span class="n">table_constants</span><span class="o">.</span><span class="n">VERTICAL</span>
+                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">generate_separator_line</span><span class="p">(</span>
+                        <span class="n">table_constants</span><span class="o">.</span><span class="n">MIDDLE_LEFT</span><span class="p">,</span>
+                        <span class="n">table_constants</span><span class="o">.</span><span class="n">MIDDLE_MIDDLE</span><span class="p">,</span>
+                        <span class="n">table_constants</span><span class="o">.</span><span class="n">MIDDLE_RIGHT</span><span class="p">,</span>
+                        <span class="n">table_constants</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">,</span>
+                        <span class="n">column_widths</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_separator_line</span><span class="p">(</span>
+            <span class="n">table_constants</span><span class="o">.</span><span class="n">BOTTOM_LEFT</span><span class="p">,</span>
+            <span class="n">table_constants</span><span class="o">.</span><span class="n">BOTTOM_MIDDLE</span><span class="p">,</span>
+            <span class="n">table_constants</span><span class="o">.</span><span class="n">BOTTOM_RIGHT</span><span class="p">,</span>
+            <span class="n">table_constants</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">,</span>
+            <span class="n">column_widths</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span></div>
 
 <div class="viewcode-block" id="CatalogTable.write"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -149,7 +266,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">is_test</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
-    
+
     <span class="k">def</span> <span class="nf">_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
             <span class="n">card</span> <span class="o">=</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
@@ -176,7 +293,7 @@
 
     <span class="k">def</span> <span class="nf">_get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    
+
     <span class="k">def</span> <span class="nf">_get_model_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">model_source_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_source_file</span><span class="p">):</span>
@@ -184,7 +301,7 @@
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        
+
     <span class="k">def</span> <span class="nf">_get_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;service_class&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;service_class&quot;</span><span class="p">]</span>
@@ -283,7 +400,18 @@
                 <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
                 <span class="n">model_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
                 <span class="n">service_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_service_class</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_source</span><span class="p">,</span> <span class="n">service_class</span><span class="p">]]</span>
+                <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span>
+                    <span class="p">[</span>
+                        <span class="n">model_id</span><span class="p">,</span>
+                        <span class="n">slug</span><span class="p">,</span>
+                        <span class="n">title</span><span class="p">,</span>
+                        <span class="n">status</span><span class="p">,</span>
+                        <span class="n">inputs</span><span class="p">,</span>
+                        <span class="n">output</span><span class="p">,</span>
+                        <span class="n">model_source</span><span class="p">,</span>
+                        <span class="n">service_class</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">]</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="s2">&quot;Identifier&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;Slug&quot;</span><span class="p">,</span>

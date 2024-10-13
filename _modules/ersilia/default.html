@@ -77,6 +77,7 @@
 <span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
 <span class="c1"># EOS environmental variables</span>
 <span class="n">EOS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span> <span class="s2">&quot;eos&quot;</span><span class="p">)</span>
@@ -179,6 +180,22 @@
     <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span>
         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;utils&quot;</span><span class="p">,</span> <span class="s2">&quot;supp&quot;</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">),</span> <span class="n">resolve_script</span>
     <span class="p">)</span>
+
+<span class="c1"># Catalog table border constants</span>
+<div class="viewcode-block" id="TableConstants"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.TableConstants">[docs]</a><span class="k">class</span> <span class="nc">TableConstants</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">TOP_LEFT</span> <span class="o">=</span> <span class="s2">&quot;┌&quot;</span>
+    <span class="n">TOP_MIDDLE</span> <span class="o">=</span> <span class="s2">&quot;┬&quot;</span>
+    <span class="n">TOP_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┐&quot;</span>
+    <span class="n">HORIZONTAL</span> <span class="o">=</span> <span class="s2">&quot;─&quot;</span>
+    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="s2">&quot;│&quot;</span>
+    <span class="n">MIDDLE_LEFT</span> <span class="o">=</span> <span class="s2">&quot;├&quot;</span>
+    <span class="n">MIDDLE_MIDDLE</span> <span class="o">=</span> <span class="s2">&quot;┼&quot;</span>
+    <span class="n">MIDDLE_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┤&quot;</span>
+    <span class="n">BOTTOM_LEFT</span> <span class="o">=</span> <span class="s2">&quot;└&quot;</span>
+    <span class="n">BOTTOM_MIDDLE</span> <span class="o">=</span> <span class="s2">&quot;┴&quot;</span>
+    <span class="n">BOTTOM_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┘&quot;</span>
+    <span class="n">CELL_PADDING</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
+    <span class="n">COLUMN_SEPARATOR</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span></div>
 
 <span class="n">snippet</span> <span class="o">=</span> <span class="p">(</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>

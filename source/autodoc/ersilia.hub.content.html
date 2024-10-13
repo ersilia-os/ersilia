@@ -432,6 +432,50 @@ It retrieves and caches information about the models.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable.as_table">
+<span class="sig-name descname"><span class="pre">as_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.as_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.as_table" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the catalog data in table format. The method calculates the
+column widths dynamically by determining the maximum width of each column,
+based on the data and column headers.</p>
+<p>A row format string is then constructed using the column widths,
+specifying that each cell is left-aligned and padded with a column seperator sperating the rows.</p>
+<p>The method starts by constructing the top border using the
+‘generate_separator_line’ helper. It then adds the headers,
+formatted to fit the column widths, followed by a separator line
+also created by the helper function.</p>
+<p>A ‘for’ loop iterates over the data rows, adding each row to the
+table with borders and padding. After each row, a separator line is inserted.
+Finally, the bottom border is added using the helper function, completing the table.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable.generate_separator_line">
+<span class="sig-name descname"><span class="pre">generate_separator_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">middle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.generate_separator_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.generate_separator_line" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a separator line for the table based on the given borders and column widths.</p>
+<p>The line starts with a ‘left’ border, followed by repeated ‘horizontal’
+sections for each column’s width, joined by ‘middle’ separators, and ends
+with a ‘right’ border.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> (<em>str</em>) – The character to use for the left border of the line.</p></li>
+<li><p><strong>middle</strong> (<em>str</em>) – The character to use between columns (as separators).</p></li>
+<li><p><strong>right</strong> (<em>str</em>) – The character to use for the right border of the line.</p></li>
+<li><p><strong>horizontal</strong> (<em>str</em>) – The character used to draw the horizontal border.</p></li>
+<li><p><strong>widths</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – A list of column widths to determine how much
+horizontal space each column takes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted separator line as a string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable.write">
 <span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.write" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
