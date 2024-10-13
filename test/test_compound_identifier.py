@@ -3,7 +3,6 @@ from ersilia.utils.identifiers.compound import CompoundIdentifier
 
 @pytest.fixture
 def compound_identifier():
-    """Fixture to initialize a CompoundIdentifier instance."""
     return CompoundIdentifier()
 
 def test_is_input_header_positive(compound_identifier):
