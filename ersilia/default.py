@@ -1,6 +1,7 @@
 from pathlib import Path
 import shutil
 import os
+from enum import Enum
 
 # EOS environmental variables
 EOS = os.path.join(str(Path.home()), "eos")
@@ -29,6 +30,7 @@ DEFAULT_VENV = "env"
 DEFAULT_API_NAME = "run"
 PACKMODE_FILE = "pack_mode.txt"
 CARD_FILE = "card.json"
+UNPROCESSABLE_INPUT="UNPROCESSABLE_INPUT"
 DOTENV_FILE = ".env"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
@@ -103,6 +105,22 @@ if not os.path.exists(resolve_script):
     shutil.copyfile(
         os.path.join(ROOT, "utils", "supp", _resolve_script), resolve_script
     )
+
+# Catalog table border constants
+class TableConstants(str, Enum):
+    TOP_LEFT = "┌"
+    TOP_MIDDLE = "┬"
+    TOP_RIGHT = "┐"
+    HORIZONTAL = "─"
+    VERTICAL = "│"
+    MIDDLE_LEFT = "├"
+    MIDDLE_MIDDLE = "┼"
+    MIDDLE_RIGHT = "┤"
+    BOTTOM_LEFT = "└"
+    BOTTOM_MIDDLE = "┴"
+    BOTTOM_RIGHT = "┘"
+    CELL_PADDING = " "
+    COLUMN_SEPARATOR = " | "
 
 snippet = (
     """
