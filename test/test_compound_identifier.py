@@ -8,7 +8,6 @@ def compound_identifier():
 
 def test_is_input_header_positive(compound_identifier):
     """Test that valid input headers return True."""
-    assert compound_identifier.is_input_header("smiles") is True
-    assert compound_identifier.is_input_header("input") is True
-    assert compound_identifier.is_input_header("SMILES") is True
-    assert compound_identifier.is_input_header("INPUT") is True
+    valid_headers = ["smiles", "input", "SMILES", "INPUT"]
+    for header in valid_headers:
+        assert compound_identifier.is_input_header(header) is True
