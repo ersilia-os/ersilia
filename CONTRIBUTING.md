@@ -36,7 +36,12 @@ If this is the first time contributing to an Open Source project, read a bit abo
 
 ## Create a new Issue 🚀
 
-The issue tracking avoids duplications and prevents different contributors working on the same feature separately, so please make sure to create a new issue with the appropriate labels before jumping on coding!
+The issue tracking avoids duplications and prevents different contributors working on the same feature separately, so please make sure to create a new issue with the appropriate labels before jumping on coding! 
+
+You can create the following issue types:
+* **🦠 Model Request:** Request to add a new model to the hub
+* **🐛 Bug Report:** Report something that is not working as expected
+* **📑 Feature Request:** Suggest a new feature or enhancement
 
 ## Contribution Workflow
 
