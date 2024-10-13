@@ -154,7 +154,6 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.auth">ersilia.cli.commands.auth module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.catalog">ersilia.cli.commands.catalog module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.clear">ersilia.cli.commands.clear module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.close">ersilia.cli.commands.close module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.delete">ersilia.cli.commands.delete module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#ersilia-cli-commands-deploy-module">ersilia.cli.commands.deploy module</a></li>
@@ -168,6 +167,7 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.serve">ersilia.cli.commands.serve module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.setup">ersilia.cli.commands.setup module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.test">ersilia.cli.commands.test module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.uninstall">ersilia.cli.commands.uninstall module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands">Module contents</a></li>
 </ul>
 </li>
@@ -178,7 +178,6 @@
 <li class="toctree-l3"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command"><code class="docutils literal notranslate"><span class="pre">Command</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.auth"><code class="docutils literal notranslate"><span class="pre">Command.auth()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.catalog"><code class="docutils literal notranslate"><span class="pre">Command.catalog()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.clear"><code class="docutils literal notranslate"><span class="pre">Command.clear()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.close"><code class="docutils literal notranslate"><span class="pre">Command.close()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.delete"><code class="docutils literal notranslate"><span class="pre">Command.delete()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.example"><code class="docutils literal notranslate"><span class="pre">Command.example()</span></code></a></li>
@@ -191,6 +190,7 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.serve"><code class="docutils literal notranslate"><span class="pre">Command.serve()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.setup"><code class="docutils literal notranslate"><span class="pre">Command.setup()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.test"><code class="docutils literal notranslate"><span class="pre">Command.test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html#ersilia.cli.cmd.Command.uninstall"><code class="docutils literal notranslate"><span class="pre">Command.uninstall()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -916,13 +916,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.clear">ersilia.utils.clear module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.clear.Clearer"><code class="docutils literal notranslate"><span class="pre">Clearer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.clear.Clearer.clear"><code class="docutils literal notranslate"><span class="pre">Clearer.clear()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.cli_query">ersilia.utils.cli_query module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.cli_query.query_yes_no"><code class="docutils literal notranslate"><span class="pre">query_yes_no()</span></code></a></li>
 </ul>
@@ -1000,6 +993,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker"><code class="docutils literal notranslate"><span class="pre">SimpleDocker</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.build"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.build()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cleanup_ersilia_images"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.cleanup_ersilia_images()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.container_peak"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.container_peak()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.containers"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.containers()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cp_from_container"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.cp_from_container()</span></code></a></li>
@@ -1199,6 +1193,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.tracking">ersilia.utils.tracking module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.uninstall">ersilia.utils.uninstall module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.uninstall.Uninstaller"><code class="docutils literal notranslate"><span class="pre">Uninstaller</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.uninstall.Uninstaller.uninstall"><code class="docutils literal notranslate"><span class="pre">Uninstaller.uninstall()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.upload">ersilia.utils.upload module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.upload.OsfUploader"><code class="docutils literal notranslate"><span class="pre">OsfUploader</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.upload.OsfUploader.push"><code class="docutils literal notranslate"><span class="pre">OsfUploader.push()</span></code></a></li>

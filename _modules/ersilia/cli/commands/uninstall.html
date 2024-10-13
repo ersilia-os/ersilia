@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ersilia.cli.commands.clear &mdash; Ersilia  documentation</title>
+  <title>ersilia.cli.commands.uninstall &mdash; Ersilia  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
 
@@ -65,7 +65,7 @@
           <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../../ersilia.html">ersilia</a></li>
           <li class="breadcrumb-item"><a href="../commands.html">ersilia.cli.commands</a></li>
-      <li class="breadcrumb-item active">ersilia.cli.commands.clear</li>
+      <li class="breadcrumb-item active">ersilia.cli.commands.uninstall</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -74,22 +74,22 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for ersilia.cli.commands.clear</h1><div class="highlight"><pre>
+  <h1>Source code for ersilia.cli.commands.uninstall</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
-<span class="kn">from</span> <span class="nn">...utils.clear</span> <span class="kn">import</span> <span class="n">Clearer</span>
+<span class="kn">from</span> <span class="nn">...utils.uninstall</span> <span class="kn">import</span> <span class="n">Uninstaller</span>
 
 
-<div class="viewcode-block" id="clear_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.clear.clear_cmd">[docs]</a><span class="k">def</span> <span class="nf">clear_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clears all contents related to Ersilia available in the local computer&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="uninstall_cmd"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.uninstall.uninstall_cmd">[docs]</a><span class="k">def</span> <span class="nf">uninstall_cmd</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uninstalls all Ersilia artifacts present locally on the user&#39;s system&quot;&quot;&quot;</span>
 
     <span class="c1"># Example usage: ersilia setup</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Clear ersilia&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Clears all contents related to Ersilia available in the local computer.&quot;</span><span class="p">,</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Uninstall ersilia&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Uninstalls all Ersilia artifacts present locally on the user&#39;s system.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">():</span>
-        <span class="n">cl</span> <span class="o">=</span> <span class="n">Clearer</span><span class="p">()</span>
-        <span class="n">cl</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="nf">uninstall</span><span class="p">():</span>
+        <span class="n">ui</span> <span class="o">=</span> <span class="n">Uninstaller</span><span class="p">()</span>
+        <span class="n">ui</span><span class="o">.</span><span class="n">uninstall</span><span class="p">()</span></div>
 </pre></div>
 
            </div>
