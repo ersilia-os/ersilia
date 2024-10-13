@@ -91,6 +91,7 @@
 <span class="k">except</span><span class="p">:</span>
     <span class="n">Chem</span> <span class="o">=</span> <span class="kc">None</span>
 
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">UNPROCESSABLE_INPUT</span>
 
 <div class="viewcode-block" id="CompoundIdentifier"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier">[docs]</a><span class="k">class</span> <span class="nc">CompoundIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -144,13 +145,13 @@
         <span class="k">return</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="CompoundIdentifier.guess_type"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">[docs]</a>    <span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_type</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">text</span> <span class="o">==</span> <span class="n">UNPROCESSABLE_INPUT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
             <span class="k">return</span> <span class="s2">&quot;inchikey&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_smiles</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
             <span class="k">return</span> <span class="s2">&quot;smiles&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;name&quot;</span></div>
+        <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span></div>
 
 <div class="viewcode-block" id="CompoundIdentifier.unichem_resolver"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">[docs]</a>    <span class="k">def</span> <span class="nf">unichem_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inchikey</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">unichem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -188,6 +189,8 @@
 <div class="viewcode-block" id="CompoundIdentifier.chemical_identifier_resolver"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">chemical_identifier_resolver</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns SMILES string of a given identifier, using NCI tool&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">identifier</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span> 
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://cactus.nci.nih.gov/chemical/structure/</span><span class="si">{0}</span><span class="s2">/smiles&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">identifier</span>
@@ -199,26 +202,24 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.encode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get InChIKey of compound based on SMILES string&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">smiles</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">smiles</span> <span class="o">==</span> <span class="n">UNPROCESSABLE_INPUT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
+        
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">inchikey</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+            <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="s2">&quot;The SMILES string: </span><span class="si">%s</span><span class="s2"> is not valid or could not be converted to an InChIKey&quot;</span>
-                        <span class="o">%</span> <span class="n">smiles</span>
-                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
                 <span class="n">inchi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">rdinchi</span><span class="o">.</span><span class="n">MolToInchi</span><span class="p">(</span><span class="n">mol</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">inchi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not obtain InChI&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
                 <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">rdinchi</span><span class="o">.</span><span class="n">InchiToInchiKey</span><span class="p">(</span><span class="n">inchi</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">inchikey</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">inchikey</span></div></div>
-
+        
+        <span class="k">return</span> <span class="n">inchikey</span> <span class="k">if</span> <span class="n">inchikey</span> <span class="k">else</span> <span class="n">UNPROCESSABLE_INPUT</span></div></div>
 
 <span class="n">Identifier</span> <span class="o">=</span> <span class="n">CompoundIdentifier</span>
 </pre></div>
