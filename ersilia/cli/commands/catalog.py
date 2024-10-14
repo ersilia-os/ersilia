@@ -30,7 +30,7 @@ def catalog_cmd():
         help="Show more information than just the EOS identifier",
     )
     @click.option(
-        "--card",
+      "--card",
         is_flag=True,
         default=False,
         help="Use this flag to display model card for a given model ID",
@@ -40,9 +40,15 @@ def catalog_cmd():
         type=click.STRING,
         required=False,
     )
+    @click.option(
+        "--as-table",
+        is_flag=True,
+        default=False,
+        help="Show catalog in table format",
+    )
     def catalog(
-        local=False, file_name=None, browser=False, more=False, card=False, model=None
-    ):
+        local=False, file_name=None, browser=False, more=False, card=False, model=None, as_table=False
+        ):
         if card and not model:
             click.echo(
                 click.style("Error: --card option requires a model ID", fg="red"),
@@ -80,6 +86,7 @@ def catalog_cmd():
             mc.airtable()
             return
         catalog_table = mc.local() if local else mc.hub()
+
         if local and not catalog_table.data:
             click.echo(
                 click.style(
@@ -89,7 +96,7 @@ def catalog_cmd():
             )
             return
         if file_name is None:
-            catalog = catalog_table.as_json()
+            catalog = catalog_table.as_table() if as_table else catalog_table.as_json()
         else:
             catalog_table.write(file_name)
             catalog = None
