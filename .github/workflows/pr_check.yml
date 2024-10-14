@@ -17,15 +17,15 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
 
-      - name: Add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
+      - name: Install Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.10  
+      - name: Create and activate Conda environment
+        run: |
+          conda create --name ersilia-env python=3.10.10 -y
+          conda activate ersilia-env
 
-      - name: Set Python to 3.10.10
-        run:
-         conda install -y python=3.10.10 
-      
-      - name: Source conda
-        run: source $CONDA/etc/profile.d/conda.sh
 
       - name: Install dependencies
         run: |
@@ -79,4 +79,5 @@ jobs:
 
       - name: Local catalog
         run: |
+          conda activate ersilia-env
           ersilia catalog --local
