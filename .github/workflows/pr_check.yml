@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Install Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -24,20 +24,21 @@ jobs:
       - name: Create and activate Conda environment
         run: |
           conda create --name ersilia-env python=3.10.10 -y
-          source $CONDA/etc/profile.d/conda.sh
+          echo "source $CONDA/etc/profile.d/conda.sh" >> ~/.bashrc
+          source ~/.bashrc
           conda activate ersilia-env
-          
+
       - name: Install dependencies
         run: |
           source $CONDA/etc/profile.d/conda.sh
           conda activate ersilia-env
-          conda init  
-          conda install git-lfs gh -c conda-forge -y  # Install git-lfs and gh
-          git-lfs install 
+          conda install git-lfs gh -c conda-forge -y
+          git-lfs install
           python -m pip install -e .
 
       - name: Fetch model from GitHub
         run: |
+          set -euxo pipefail
           source $CONDA/etc/profile.d/conda.sh
           conda activate ersilia-env
           ersilia -v fetch molecular-weight --from_github
