@@ -78,6 +78,33 @@ Folders found in the `$HOME` directory includes:
 - sessions/: Tracks user session
 - tmp/: stores temporary file during model execution.
 
+## Creating a Pull Request
+To get started, please read and follow our [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/CODE_OF_CONDUCT.md)
+
+**1. Via GitHub Codespaces Environment**
+- In the codespace terminal, create a new branch
+```
+git checkout -b your-branch-name
+```
+- Make all necessary changes and commit them
+```
+git add .
+git commit -m "Description of changes made"
+```
+- Push changes to GitHub
+```
+git push origin your-branch-name
+```
+- Click on **Create pull request** in the prompt that will be shown
+
+**2. Via GitHub Desktop**
+- Fork the repository
+- Create a new branch and name it.
+- Commit your changes
+- Navigate the repository,Click on **Compare & pull request** 
+- Set the main branch to **master** since it's the ersilia repository main branch and set the compare branch to your-branch-name
+- Fill out the title section and give a brief description of any changes made
+- Click **Create Pull Request**
 
   
 
