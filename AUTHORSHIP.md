@@ -46,4 +46,4 @@ All contributors are being acknowledged as such with their contribution roles, a
 
 Decisions to acknowledge authorship are being made by the Ersilia Model Hub steering committee, which is composed of Ersilia’s employees and Board, every six months. Conflicts with regard to authorship should be reported to the legal owners of the software at <hello@ersilia.io>. They will be resolved by Ersilia’s Board. If a member of the Board is involved in the conflict, they will not participate in the process resolution.
 
-This authorship policy is based on the ReSA Software Authorship Guidelines.
+This authorship policy is based on the ReSA [Software Authorship](https://www.researchsoft.org/tf-authorship-contribution/) Guidelines.
