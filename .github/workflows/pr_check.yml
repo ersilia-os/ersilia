@@ -5,7 +5,6 @@ on:
     branches: [ master ]
   push:
     branches: [ master ]
-
   workflow_dispatch:
 
 permissions:
@@ -15,43 +14,33 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
-
+      - uses: actions/checkout@v3
+      
       - name: Install Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
-          python-version: 3.10  
+          python-version: 3.10
+
       - name: Create and activate Conda environment
         run: |
           conda create --name ersilia-env python=3.10.10 -y
+          source $CONDA/etc/profile.d/conda.sh
           conda activate ersilia-env
-
-
+          
       - name: Install dependencies
         run: |
-          source activate
-          conda init
-          conda install git-lfs -c conda-forge
-          git-lfs install
-          conda install gh -c conda-forge
-
-      - name: Install Ersilia
-        run: |
-          source activate
-          python --version
-          echo "After conda init"
-          conda init
-          python -m pip install -e .[test]
-
-      - name: Hub catalog
-        run: |
-          ersilia catalog
+          source $CONDA/etc/profile.d/conda.sh
+          conda activate ersilia-env
+          conda init  
+          conda install git-lfs gh -c conda-forge -y  # Install git-lfs and gh
+          git-lfs install 
+          python -m pip install -e .
 
       - name: Fetch model from GitHub
         run: |
-          source activate
+          source $CONDA/etc/profile.d/conda.sh
+          conda activate ersilia-env
           ersilia -v fetch molecular-weight --from_github
-          echo "Serving molecular-weight model."
           ersilia serve molecular-weight
           ersilia info
           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
@@ -59,9 +48,9 @@ jobs:
 
       - name: Fetch model from S3
         run: |
-          source activate
+          source $CONDA/etc/profile.d/conda.sh
+          conda activate ersilia-env
           ersilia -v fetch molecular-weight --from_s3
-          echo "Serving molecular-weight model."
           ersilia serve molecular-weight
           ersilia info
           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
@@ -69,9 +58,9 @@ jobs:
 
       - name: Fetch model from DockerHub
         run: |
-          source activate
+          source $CONDA/etc/profile.d/conda.sh
+          conda activate ersilia-env
           ersilia -v fetch molecular-weight --from_dockerhub
-          echo "Serving molecular-weight model."
           ersilia serve molecular-weight
           ersilia info
           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
@@ -79,5 +68,6 @@ jobs:
 
       - name: Local catalog
         run: |
+          source $CONDA/etc/profile.d/conda.sh
           conda activate ersilia-env
           ersilia catalog --local
