@@ -1,13 +1,11 @@
 # Development
-This file highlight the installation process of getting started with Ersilia, Ersilia Artifacts and Creating a PR.
+This file highlight the installation process of getting started with Ersilia, Ersilia Artifacts and Creating a Pull Request.
 
 ## Getting Started
-Ersilia can be run either on local computer or with the use of GitHub codespace. On your local computer, ersilia is designed to run specific environment
-namely: **Linux and Linux-like environment** (MacOS, WSL).
+Ersilia can be run either on local computer or with the use of GitHub codespaces. Ersilia is designed to run on **Linux or Linux-like environments** namely: MacOS, Windows Sub-system for Linux (WSL) and at present is not supported on Windows systems.
 
 - ### Installation of Ersilia on local computer
-To get started with Ersilia installation, there are few dependencies that needs to be installed before proceeding to installation of Ersilia. Please check the package requirement
-in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/installation)
+To get started with Ersilia installation, there are few dependencies that needs to be installed before proceeding to installation of Ersilia. Please, check the package requirement in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/installation)
 1. Once the required dependencies has been met, open a terminal and set up a Conda environment.
 
 ```
@@ -22,7 +20,7 @@ conda activate ersilia
 git clone https://github.com/ersilia-os/ersilia.git
 cd ersilia
 # install with pip (use -e for developer mode)
-pip install -e .
+pip install -e .[test]
 ```
 3. To test that the CLI works, explore this command
 ```
@@ -30,7 +28,7 @@ pip install -e .
 ersilia --help
 ```
 4. Once ersilia is recognized in the CLI, test any model of your choice.
-- First, you can check the list of available model in ersilia catalog
+- First, you can check the list of available model in ersilia's catalog
 ```
 #see ersilia's model catalog
 ersilia catalog
@@ -44,8 +42,8 @@ ersilia -v api run -i "CCCC" #run a model
 
 Note: The usage -v (verbose) flag is of utmost importance for developers as it provides detailed logs which helps to debug and troubleshoot issues.
 
-- ### Using GitHub Codespace
-If difficulties are encountered when setting up Ersilia locally, another cloud-based development environment which suppoort linux is a great alternative.
+- ### Using GitHub Codespaces
+If difficulties are encountered while setting up Ersilia locally, another cloud-based development environment which suppoort linux is a great alternative.
 GitHub codespaces allows you to run and develop Ersilia directly from your browser.
 
 To use Github Codespaces:
@@ -57,25 +55,20 @@ To use Github Codespaces:
  - Go to the forked repository, Click on the <> **Code**.
  - Click **Create codespace**.
    
-A pop up page "Setting up your codespace" is displayed on the screen. After a while, the codespace is created in a browser-based version using the built-in 
-Visual studio code interface 
+A pop up page "Setting up your codespace" is displayed on the screen. After a while, the codespace is created in a browser-based version using the built-in Visual studio code interface 
 
-**2. Setting Up Codespace Environment**
+**2. Setting Up GitHub Codespaces Environment**
 
-- Open the terminal in codespace. To ensure you are in the root directory
-`cd ersilia`
-- Run this command
-`pip install -e .`
+- Once you open the codespaces environment, ersilia has been installed and ready for usage. To double check, you can verify by running this command `ersilia --version`. This
+will display the version of ersilia installed.
 
 **3. Run Ersilia Model**
 - Directly from the code space terminal, you can fetch, serve and run Ersilia model.
 To run a model with verbose output:
 `ersilia -v run eos2ta5`
 
-
 ## Ersilia Artifacts
-After successful installation of ersilia, the system creates an EOS directory in your `$HOME` path. This directory stores
-ersilia artifacts that the local computer uses when doing any operation (model execution) in Ersilia.
+After successful installation of ersilia in the user's local computer, the system creates an EOS directory in the user's `$HOME` path. This directory stores ersilia artifacts that the local computer uses when doing any operation (model execution) in Ersilia.
 Folders found in the `$HOME` directory includes:
 
 **Folders**
