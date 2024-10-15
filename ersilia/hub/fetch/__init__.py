@@ -20,21 +20,28 @@ class ModelURLResolver(ErsiliaBase):
         self.model_id = model_id
         self.ai = AirtableInterface(config_json=self.config_json)
         self.ji = JsonModelsInterface(config_json=self.config_json)
+        self.models_cache = None
 
+    def _cache_models(self):
+        if self.models_cache is None:
+            models = self._read_json_file()
+            self.models_cache = {mdl["Identifier"]: mdl for mdl in models}
+    
     def _find_url_using_s3_models_json(self, model_id):
         self.logger.debug(
             "Trying to find an available URL where the model is hosted using S3 Models JSON"
         )
-        for mdl in self.ji.items():
-            if mdl[IDENTIFIER] == model_id:
-                if HOST_URL in mdl:
-                    url = mdl[HOST_URL]
-                    return url
-                else:
-                    self.logger.debug(
+        self._cache_models()
+        model = self.models_cache.get(model_id)
+
+        if model:
+            if "Host URL" in model:
+                return model["Host URL"]
+            else:
+                self.logger.debug(
                         "No hosted URL found for this model in S3 Models JSON"
                     )
-                    return None
+                return None
         self.logger.debug("Model was not found in S3 Models JSON")
 
     def _find_url_using_airtable(self, model_id):
@@ -65,7 +72,7 @@ class ModelURLResolver(ErsiliaBase):
         """
         url = self._find_url_using_s3_models_json(
             model_id
-        ) or self._find_url_using_airtable(model_id)
+        )
         if url:
             if validators.url(url):
                 self.logger.debug("This model has an associated URL: {0}".format(url))
