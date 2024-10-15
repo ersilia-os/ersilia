@@ -211,8 +211,6 @@
 
     <span class="nd">@throw_ersilia_exception</span>
     <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="n">DockerNotActiveError</span><span class="p">()</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pulling model image from DockerHub&quot;</span><span class="p">)</span>
         <span class="n">mp</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
