@@ -6,7 +6,7 @@ Ersilia can be run either on local computer or with the use of GitHub codespaces
 
 - ### Installation of Ersilia on local computer
 To get started with Ersilia installation, there are few dependencies that needs to be installed before proceeding to installation of Ersilia. Please, check the package requirement in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/installation)
-1. Once the required dependencies has been met, open a terminal and set up a Conda environment.
+1. Once the required dependencies has been installed, open a terminal and set up a Conda environment.
 
 ```
 # create a conda environment
@@ -22,6 +22,8 @@ cd ersilia
 # install with pip (use -e for developer mode)
 pip install -e .[test]
 ```
+**The -e (editable) for developer mode ensures that whenever a user change the code, they don't need to reinstall ersilia for those changes to take effect.**
+
 3. To test that the CLI works, explore this command
 ```
 # output to see command options for ersilia
@@ -79,7 +81,11 @@ Folders found in the `$HOME` directory includes:
 - tmp/: stores temporary file during model execution.
 
 ## Creating a Pull Request
-To get started, please read and follow our [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/CODE_OF_CONDUCT.md)
+To get started, please read and follow our [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/CODE_OF_CONDUCT.md).
+
+Before submitting a pull request, please ensure your code has been tested. After making any changes, **run the test suites** to test the code properly. 
+
+To do this, use this command to run the test with -v (verbose) output: `pytest -v`
 
 **1. Via GitHub Codespaces Environment**
 - In the codespace terminal, create a new branch
@@ -102,7 +108,7 @@ git push origin your-branch-name
 - Create a new branch and name it.
 - Commit your changes
 - Navigate the repository,Click on **Compare & pull request** 
-- Set the main branch to **master** since it's the ersilia repository main branch and set the compare branch to your-branch-name
+- Set the main branch to **master** (name of ersilia repository main branch) and set the compare branch to your-branch-name
 - Fill out the title section and give a brief description of any changes made
 - Click **Create Pull Request**
 
