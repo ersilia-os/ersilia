@@ -120,7 +120,7 @@ class ModelRegisterer(ErsiliaBase):
         with open(file_name, "w") as f:
             json.dump(data, f)
 
-    def register(self, is_from_dockerhub=False, is_from_hosted=False):
+    async def register(self, is_from_dockerhub=False, is_from_hosted=False):
         if is_from_dockerhub and is_from_hosted:
             raise Exception
         if is_from_dockerhub and not is_from_hosted:
