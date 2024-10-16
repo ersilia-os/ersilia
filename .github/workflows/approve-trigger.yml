@@ -2,8 +2,10 @@ name: Approve Command Trigger
 on:
   issue_comment:
     types: [created]
+
 jobs:
   approve-command-trigger:
+    if: contains(github.event.issue.labels.*.name, 'new-model')
     runs-on: ubuntu-latest
     steps:
       - name: Approve Command Trigger
