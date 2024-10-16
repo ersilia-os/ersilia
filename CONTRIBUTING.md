@@ -22,7 +22,7 @@ We aspire to create a welcoming and safe environment for collaboration on this p
 
 The best place to start is by checking our issue tracker. Our issues have the following labels to guide contributors in their work:
 
-| Label            | Description                                                     |
+| Issue Label      | Description                                                     |
 |------------------|-----------------------------------------------------------------|
 | Good first issue | A small task suitable to start your contributions to the project|
 | Help wanted      | An issue currently not assigned to anyone                       |
