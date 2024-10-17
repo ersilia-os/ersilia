@@ -14,5 +14,3 @@ def test_is_input_header_positive(compound_identifier, header):
 def test_is_input_header_negative(compound_identifier, header):
     """Test that invalid input headers return False."""
     assert compound_identifier.is_input_header(header) is False
-
-
