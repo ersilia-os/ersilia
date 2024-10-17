@@ -130,16 +130,16 @@ ersilia catalog
 The Ersilia Model Hub is growing continuously to fulfill the needs of the community. Please do not hesitate to [request new models](https://www.ersilia.io/request-model)!
 {% endhint %}
 
-#### Extra-requisite: The Isaura data lake
+#### \[DEPRECATED] Extra-requisite: The Isaura data lake
+
+{% hint style="danger" %}
+DEPRECATION NOTICE: Please note that Isaura is no longer an actively maintained project. While we are working on fixing that, current versions of Ersilia break if Isaura is installed in the same environment. We recommend not installing Isaura at this point of time.
+{% endhint %}
 
 We highly recommend installation of the [Isaura](https://github.com/ersilia-os/isaura) data lake. With Isaura, you will be able to cache your model predictions (i.e. store them in your local computer). Isaura is a relatively light Python package:
 
 ```
 #activate ersilia's conda environment
 conda activate ersilia
-python -m pip install isaura==0.1
+python -m pip install isaura==0.1 # Isaura has different functionalities, please make sure to install v0.1
 ```
-
-{% hint style="danger" %}
-Isaura has different functionalities, please make sure to install v0.1
-{% endhint %}
