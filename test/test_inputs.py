@@ -3,7 +3,7 @@ import sys
 from ersilia.io.input import GenericInputAdapter
 
 root = os.path.abspath(os.path.dirname(__file__))
-inputs_path = os.path.abspath(os.path.join(root, "inputs"))
+inputs_path = os.path.abspath(os.path.join(root, "inputs", "test_inputs"))
 sys.path.append(inputs_path)
 from compound_single import smiles as compound_single_input
 from compound_singles import smiles as compound_singles_input
