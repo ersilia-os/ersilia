@@ -171,6 +171,8 @@ class BaseInformation(ErsiliaBase):
 
     @input.setter
     def input(self, new_input):
+        if type(new_input) is str:
+            new_input = [new_input]
         if type(new_input) is not list:
             raise InputBaseInformationError
         for inp in new_input:
@@ -194,6 +196,8 @@ class BaseInformation(ErsiliaBase):
 
     @task.setter
     def task(self, new_task):
+        if type(new_task) is str:
+            new_task = [new_task]
         if type(new_task) is not list:
             raise TaskBaseInformationError
         for nt in new_task:
@@ -250,6 +254,8 @@ class BaseInformation(ErsiliaBase):
 
     @tag.setter
     def tag(self, new_tag):
+        if type(new_tag) is str:
+            new_tag = [new_tag]
         if type(new_tag) is not list:
             raise TagBaseInformationError
         default_tags = self._read_default_fields("Tag")
