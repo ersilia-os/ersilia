@@ -213,7 +213,7 @@ class ModelFetcher(ErsiliaBase):
             return True
         else:
             return False
-    
+
     def _fetch(self, model_id):
         
         self.logger.debug("Starting fetching procedure")
