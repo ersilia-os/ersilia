@@ -1,8 +1,19 @@
-# Inputs for testing
+# Inputs for Testing
 
-In this folder we outline different kinds of inputs for testing.
+This folder contains various input files used for testing different components of the Ersilia project. Each test may require specific inputs in different formats, and these are organized to maintain clarity and separation.
 
-## Input formats
+## Folder Structure
+
+- **Test-Specific Folders**: Each test has its own dedicated folder, named after the test. Inside these folders, you'll find input files specific to that test.
+  - For example, the folder `test_inputs/` contains inputs for the `test_inputs.py` test.
+
+## Adding New Test Inputs
+
+When adding new tests, create a folder named after the test and place all relevant input files inside. Make sure to follow the format conventions mentioned above.
+
+## Input Formats
+
+The input files are available in different formats to accommodate various needs during testing:
 
 * `.csv`: Input in tabular format.
 * `.json`: Input in JSON format.
@@ -10,7 +21,7 @@ In this folder we outline different kinds of inputs for testing.
 
 ## Chemistry
 
-The molecules (drugs) considered in this files are the following (in SMILES format):
+Some tests such as test_inputs require chemical structures of molecules (drugs), which are following (in SMILES format):
 
 ```
 CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O # artemisin
