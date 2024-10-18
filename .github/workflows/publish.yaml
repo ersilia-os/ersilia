@@ -39,19 +39,26 @@ jobs:
           git tag -a "v${{ steps.version.outputs.VERSION }}" -m "v${{ steps.version.outputs.VERSION }}"
           # Tagging happens implicitly; no need to push explicitly
           
-      - name: Update version in CITATION.cff
+      - name: Update version and release date in CITATION.cff
         id: update-citation
         env:
           VERSION: ${{ steps.version.outputs.VERSION }}
-        run: |
+          RELEASE_DATE: ${{ github.run_started_at }}   # This captures the timestamp when the workflow run was triggered/started
+
+        run: |  
           pip install PyYAML
           python -c "
           import os
           import yaml
+          
+          release_date = os.environ['RELEASE_DATE'].split('T')[0] 
+          
           with open('CITATION.cff', 'r') as file:
-              content = file.read()
-          citation = yaml.safe_load(content)
+              citation = yaml.safe_load(file)
+          
           citation['version'] = os.environ['VERSION']
+          citation['date-released'] = release_date
+          
           with open('CITATION.cff', 'w') as file:
               yaml.dump(citation, file, default_flow_style=False, sort_keys=False)
           "
@@ -72,7 +79,7 @@ jobs:
         with:
           author_name: "ersilia-bot"
           author_email: "ersilia-bot@users.noreply.github.com"
-          message: "update version [skip ci]"
+          message: "update version and release date [skip ci]"
           repository: "ersilia-os/${{ github.event.repository.name }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           amend: true
