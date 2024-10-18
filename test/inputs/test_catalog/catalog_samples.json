@@ -1,84 +1,158 @@
 {
     "catalog_samples": [
-      {
-        "Identifier": "eos0001",
-        "Slug": "bioactivity-predictions",
-        "Title": "DrugBank bioactivity predictions",
-        "Description": "Large-scale prediction of protein targets for the DrugBank dataset using ChemProp",
-        "Status": "ready",
-        "Task": ["Target Prediction"],
-        "Input": ["SMILES"],
-        "Output": ["Prediction"],
-        "Tag": ["DrugBank", "ChemProp", "Bioactivity"],
-        "Publication": "https://doi.org/10.1021/acs.jcim.9b00237",
-        "License": "MIT",
-        "Year": 2021,
-        "Dependencies": ["chemprop"],
-        "Contributors": ["miquelduranfrigola"]
-      },
-      {
-        "Identifier": "eos0002",
-        "Slug": "molgrad-retrosynthesis",
-        "Title": "MolGrad retrosynthetic pathway generator",
-        "Description": "Fast prediction of retrosynthetic pathways using deep learning",
-        "Status": "ready",
-        "Task": ["Retrosynthesis"],
-        "Input": ["SMILES"],
-        "Output": ["SMILES"],
-        "Tag": ["Synthesis", "Deep Learning"],
-        "Publication": null,
-        "License": "MIT",
-        "Year": 2021,
-        "Dependencies": ["rdkit", "pytorch"],
-        "Contributors": ["miquelduranfrigola"]
-      },
-      {
-        "Identifier": "eos0799",
-        "Slug": "dockstring-docking",
-        "Title": "DockString molecular docking",
-        "Description": "Fast molecular docking using DockString",
-        "Status": "ready",
-        "Task": ["Docking"],
-        "Input": ["SMILES", "PDB"],
-        "Output": ["Score"],
-        "Tag": ["Docking", "Binding", "Structure-based"],
-        "Publication": "https://doi.org/10.1101/2021.10.25.465668",
-        "License": "MIT",
-        "Year": 2022,
-        "Dependencies": ["dockstring"],
-        "Contributors": ["miquelduranfrigola"]
-      },
-      {
-        "Identifier": "eos3023",
-        "Slug": "deepsars-covid19",
-        "Title": "Deep-SarS COVID-19 predictions",
-        "Description": "Anti SARS-CoV-2 activity predictions",
-        "Status": "ready",
-        "Task": ["Activity Prediction"],
-        "Input": ["SMILES"],
-        "Output": ["Score"],
-        "Tag": ["COVID-19", "SARS-CoV-2", "Antiviral"],
-        "Publication": "https://doi.org/10.1021/acs.jcim.0c00501",
-        "License": "MIT",
-        "Year": 2021,
-        "Dependencies": ["pytorch", "rdkit"],
-        "Contributors": ["miquelduranfrigola", "dorealex"]
-      },
-      {
-        "Identifier": "eos4b5v",
-        "Slug": "cardiotoxicity",
-        "Title": "Cardiotoxicity predictor",
-        "Description": "Prediction of cardiotoxicity through hERG channel binding",
-        "Status": "ready",
-        "Task": ["Toxicity Prediction"],
-        "Input": ["SMILES"],
-        "Output": ["Classification"],
-        "Tag": ["Toxicity", "hERG", "Cardiotoxicity"],
-        "Publication": "https://doi.org/10.1021/acs.jcim.0c00201",
-        "License": "MIT",
-        "Year": 2021,
-        "Dependencies": ["rdkit", "tensorflow"],
-        "Contributors": ["DOrealex"]
-      }
+        {
+            "Identifier": "eos0001",
+            "Slug": "bioactivity-predictions",
+            "Title": "DrugBank bioactivity predictions",
+            "Description": "Large-scale prediction of protein targets for the DrugBank dataset using ChemProp",
+            "Status": "ready",
+            "Task": [
+                "Target Prediction"
+            ],
+            "Input": [
+                "SMILES"
+            ],
+            "Output": [
+                "Prediction"
+            ],
+            "Tag": [
+                "DrugBank",
+                "ChemProp",
+                "Bioactivity"
+            ],
+            "Publication": "https://doi.org/10.1021/acs.jcim.9b00237",
+            "License": "MIT",
+            "Year": 2021,
+            "Dependencies": [
+                "chemprop"
+            ],
+            "Contributors": [
+                "miquelduranfrigola"
+            ]
+        },
+        {
+            "Identifier": "eos0002",
+            "Slug": "molgrad-retrosynthesis",
+            "Title": "MolGrad retrosynthetic pathway generator",
+            "Description": "Fast prediction of retrosynthetic pathways using deep learning",
+            "Status": "ready",
+            "Task": [
+                "Retrosynthesis"
+            ],
+            "Input": [
+                "SMILES"
+            ],
+            "Output": [
+                "SMILES"
+            ],
+            "Tag": [
+                "Synthesis",
+                "Deep Learning"
+            ],
+            "Publication": null,
+            "License": "MIT",
+            "Year": 2021,
+            "Dependencies": [
+                "rdkit",
+                "pytorch"
+            ],
+            "Contributors": [
+                "miquelduranfrigola"
+            ]
+        },
+        {
+            "Identifier": "eos0799",
+            "Slug": "dockstring-docking",
+            "Title": "DockString molecular docking",
+            "Description": "Fast molecular docking using DockString",
+            "Status": "ready",
+            "Task": [
+                "Docking"
+            ],
+            "Input": [
+                "SMILES",
+                "PDB"
+            ],
+            "Output": [
+                "Score"
+            ],
+            "Tag": [
+                "Docking",
+                "Binding",
+                "Structure-based"
+            ],
+            "Publication": "https://doi.org/10.1101/2021.10.25.465668",
+            "License": "MIT",
+            "Year": 2022,
+            "Dependencies": [
+                "dockstring"
+            ],
+            "Contributors": [
+                "miquelduranfrigola"
+            ]
+        },
+        {
+            "Identifier": "eos3023",
+            "Slug": "deepsars-covid19",
+            "Title": "Deep-SarS COVID-19 predictions",
+            "Description": "Anti SARS-CoV-2 activity predictions",
+            "Status": "ready",
+            "Task": [
+                "Activity Prediction"
+            ],
+            "Input": [
+                "SMILES"
+            ],
+            "Output": [
+                "Score"
+            ],
+            "Tag": [
+                "COVID-19",
+                "SARS-CoV-2",
+                "Antiviral"
+            ],
+            "Publication": "https://doi.org/10.1021/acs.jcim.0c00501",
+            "License": "MIT",
+            "Year": 2021,
+            "Dependencies": [
+                "pytorch",
+                "rdkit"
+            ],
+            "Contributors": [
+                "miquelduranfrigola",
+                "dorealex"
+            ]
+        },
+        {
+            "Identifier": "eos4b5v",
+            "Slug": "cardiotoxicity",
+            "Title": "Cardiotoxicity predictor",
+            "Description": "Prediction of cardiotoxicity through hERG channel binding",
+            "Status": "ready",
+            "Task": [
+                "Toxicity Prediction"
+            ],
+            "Input": [
+                "SMILES"
+            ],
+            "Output": [
+                "Classification"
+            ],
+            "Tag": [
+                "Toxicity",
+                "hERG",
+                "Cardiotoxicity"
+            ],
+            "Publication": "https://doi.org/10.1021/acs.jcim.0c00201",
+            "License": "MIT",
+            "Year": 2021,
+            "Dependencies": [
+                "rdkit",
+                "tensorflow"
+            ],
+            "Contributors": [
+                "DOrealex"
+            ]
+        }
     ]
-  }
+}
