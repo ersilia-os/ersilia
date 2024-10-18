@@ -10,10 +10,11 @@ repository = "https://github.com/ersilia-os/ersilia"
 documentation = "https://ersilia.io/model-hub"
 keywords= ["drug-discovery", "machine-learning", "ersilia", "open-science", "global-health", "model-hub", "infectious-diseases"]
 classifiers=[
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -27,11 +28,10 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.7"
+python = ">=3.8"
 inputimeout = "^1.0.4"
 emoji = "^2.8.0"
 validators = [
-    {version="0.20.0", python="3.7.*"},
     {version="~0.21.0", python=">=3.8"},
 ]
 
@@ -46,6 +46,7 @@ docker = "^6.1.3"
 boto3 = "^1.28.40"
 requests = "<=2.31.0"
 numpy = "<=1.26.4"
+setuptools = "^65.0.0"  #  added to fix the issue with setuptools
 isaura = {version="0.1", optional=true}
 aiofiles = "<=24.1.0"
 aiohttp = "<=3.10.9"
@@ -53,9 +54,10 @@ pytest = {version = "^7.4.0", optional = true}
 pytest-asyncio = {version = "<=0.24.0", optional = true}
 pytest-benchmark = {version = "<=4.0.0", optional = true}
 fuzzywuzzy = {version = "^0.18.0", optional = true}
-sphinx = {version = ">=5.3.0", optional = true} # For compatibility with python 3.7.x
+sphinx = {version = ">=6.0.0", optional = true} # for minimum version and support for Python 3.10
 jinja2 = {version = "^3.1.2", optional = true}
 scipy = {version = "<=1.10.0", optional = true}
+
 
 [tool.poetry.extras]
 # Instead of using poetry dependency groups, we use extras to make it pip installable
