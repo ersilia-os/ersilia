@@ -261,23 +261,23 @@ class ModelInspector(ErsiliaBase):
     def check_comptuational_performance(self):
         """
         Measure computational performance by serving the model and running predictions.
-        Includes tracking metrics using the --track flag.
-
+        Uses --track flag to automatically upload performance metrics to S3.
+    
         Returns:
             Result: A namedtuple containing a boolean success status and details of the check.
         """
         details = ""
-
+    
         for n in (1, 10, 100):
             cmd = (
-                f"ersilia serve {self.model} && "
+                f"ersilia serve {self.model} --track && "  # Track flag enables automatic S3 upload of metrics
                 f"ersilia example -f my_input.csv -n {n} && "
-                "ersilia run -i my_input.csv --track && "  # Added --track flag
+                "ersilia run -i my_input.csv && "
                 "ersilia close"
             )
-
+    
             startTime = time.time()
-
+    
             process = subprocess.run(
                 cmd,
                 shell=True,
@@ -285,27 +285,14 @@ class ModelInspector(ErsiliaBase):
                 stderr=subprocess.PIPE,
                 text=True,
             )
-
+    
             if process.returncode != 0:
-                return Result(
-                    False, f"Error serving model: {process.stdout}, {process.stderr}"
-                )
-
+                return Result(False, f"Error serving model: {process.stdout}, {process.stderr}")
+    
             endTime = time.time()
-
             executionTime = endTime - startTime
             details += f"Execution time ({n} Prediction(s)): {executionTime} seconds. "
-
-            # Try to read and analyze tracking data
-            try:
-                tracking_file = sorted(self.root.joinpath('.ersilia/tracking').glob('*.json'))[-1]
-                with open(tracking_file) as f:
-                    tracking_data = json.load(f)
-                details += f"Memory usage ({n} predictions): {tracking_data.get('memory_percent', 'N/A')}%. "
-                details += f"CPU usage ({n} predictions): {tracking_data.get('cpu_percent', 'N/A')}%. "
-            except (IndexError, FileNotFoundError, json.JSONDecodeError) as e:
-                details += f"Warning: Could not read tracking data for {n} predictions. "
-
+    
         return Result(True, details)
 
     def check_no_extra_files(self):
