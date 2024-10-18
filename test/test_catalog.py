@@ -15,3 +15,8 @@ def catalog_samples():
         samples = json.load(f)
     return samples
 
+
+@pytest.fixture
+def catalog_columns():
+    """Fixture that provides coloumn names used in testing"""
+    return ['Identifier', 'Slug', 'Title']
