@@ -14,3 +14,14 @@ def test_is_input_header_positive(compound_identifier, header):
 def test_is_key_header_positive(compound_identifier, header):
     """Test that valid key headers return True."""
     assert compound_identifier.is_key_header(header) is True
+
+@pytest.mark.parametrize("inchikey", [
+    "BSYNRYMUTXBXSQUHFFFAOYSA",        
+    "BSYNRYMUTXBXSQ-UHFFFAOYSA-XY", 
+    "12345678901234-1234567890-X",
+    "BSYNRYMUTXBXSQ_UHFFFAOYSA-N",
+    "BSYNRYMUTXBXSQ-UHFFFAOYSA"
+])
+def test_is_inchikey_negative(compound_identifier, inchikey):
+    """Test that invalid InChIKeys return False."""
+    assert not compound_identifier._is_inchikey(inchikey)
