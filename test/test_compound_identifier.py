@@ -15,10 +15,21 @@ def test_is_key_header_positive(compound_identifier, header):
     """Test that valid key headers return True."""
     assert compound_identifier.is_key_header(header) is True
 
-@pytest.mark.parametrize("inchikey", [
-    ("BSYNRYMUTXBXSQ-UHFFFAOYSA-N"),  
-    ("ADJWIQJVAMXRAO-UHFFFAOYSA-N"),  
-])
-def test_is_inchikey_positive(compound_identifier, inchikey):
-    """Test that valid InChIKeys return True."""
-    assert compound_identifier._is_inchikey(inchikey) is True
+@patch('requests.get')
+def test_nci_smiles_to_inchikey_positive(mock_get, compound_identifier):
+    """Test _nci_smiles_to_inchikey with a mocked positive response."""
+    mock_response = mock_get.return_value
+    mock_response.status_code = 200
+    mock_response.text = "InChIKey=BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+
+    inchikey = compound_identifier._nci_smiles_to_inchikey("CCO")
+    assert inchikey == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+
+@patch('requests.get')
+def test_nci_smiles_to_inchikey_negative(mock_get, compound_identifier):
+    """Test _nci_smiles_to_inchikey with a mocked negative response."""
+    mock_response = mock_get.return_value
+    mock_response.status_code = 404  
+
+    inchikey = compound_identifier._nci_smiles_to_inchikey("invalid_smiles")
+    assert inchikey is None
