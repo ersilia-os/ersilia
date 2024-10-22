@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 from ersilia.utils.identifiers.compound import CompoundIdentifier
 
 @pytest.fixture
@@ -14,6 +15,14 @@ def test_is_input_header_positive(compound_identifier, header):
 def test_is_key_header_positive(compound_identifier, header):
     """Test that valid key headers return True."""
     assert compound_identifier.is_key_header(header) is True
+
+@pytest.mark.parametrize("inchikey", [
+    ("BSYNRYMUTXBXSQ-UHFFFAOYSA-N"),  
+    ("ADJWIQJVAMXRAO-UHFFFAOYSA-N"),  
+])
+def test_is_inchikey_positive(compound_identifier, inchikey):
+    """Test that valid InChIKeys return True."""
+    assert compound_identifier._is_inchikey(inchikey) is True
 
 @patch('requests.get')
 def test_nci_smiles_to_inchikey_positive(mock_get, compound_identifier):
