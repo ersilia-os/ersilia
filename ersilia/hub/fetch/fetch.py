@@ -237,6 +237,8 @@ class ModelFetcher(ErsiliaBase):
     async def fetch(self, model_id):
         await self._fetch(model_id)  
         self.logger.debug("Writing model source to file")
-        model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
+        path = self._model_path(model_id)
+        os.makedirs(path, exist_ok=True)
+        model_source_file = os.path.join(path, MODEL_SOURCE_FILE)
         with open(model_source_file, "w") as f:
             f.write(self.model_source)
