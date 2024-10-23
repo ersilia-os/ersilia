@@ -29,7 +29,7 @@ class Logger(object):
         self.logger.remove()
         self._console = None
         self._file = None
-        self.fmt = "{time:HH:mm:ss} | {level: <8} | {message}"
+        self.fmt = "<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | {message}"
         self._verbose_file = os.path.join(get_session_dir(), VERBOSE_FILE)
         self._log_to_console()
         self._log_to_file()
@@ -51,7 +51,8 @@ class Logger(object):
 
     def _log_to_console(self):
         if self._console is None:
-            self._console = self.logger.add(sys.stderr, format=self.fmt)
+            # Add colorization support for console logging
+            self._console = self.logger.add(sys.stderr, format=self.fmt, colorize=True)
 
     def _unlog_from_console(self):
         if self._console is not None:
