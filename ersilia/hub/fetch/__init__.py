@@ -47,16 +47,15 @@ class ModelURLResolver(ErsiliaBase):
     def _find_url_using_airtable(self, model_id):
         url_field = HOST_URL
         identifier_field = IDENTIFIER
-        for record in self.ai.items_all():
-            fields = record["fields"]
-            if fields[identifier_field] == model_id:
-                if url_field in fields:
-                    return fields[url_field]
-                else:
-                    self.logger.debug("No hosted URL found for this model in AirTable")
-                    return
-        self.logger.debug("Model was not found in AirTable")
 
+        records_cache = {record["fields"][identifier_field]: record["fields"] for record in self.aio.items_all()}
+
+        fields = records_cache.get(model_id)
+        if fields:
+            return fields.get(url_field, None)  
+        self.logger.debug("Model was not found in AirTable")
+        return None
+    
     def resolve_valid_hosted_model_url(self, model_id):
         """Resolves the URL of a hosted model
 
@@ -72,7 +71,7 @@ class ModelURLResolver(ErsiliaBase):
         """
         url = self._find_url_using_s3_models_json(
             model_id
-        )
+        ) or self._find_url_using_airtable(model_id)
         if url:
             if validators.url(url):
                 self.logger.debug("This model has an associated URL: {0}".format(url))
