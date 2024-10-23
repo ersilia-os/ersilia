@@ -43,6 +43,7 @@ PREDEFINED_EXAMPLE_FILES = [
     "model/framework/example.csv",
     "example.csv",
 ]
+UNPROCESSABLE_INPUT ="UNPROCESSABLE_INPUT"
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
 METADATA_YAML_FILE = "metadata.yml"
