@@ -31,7 +31,10 @@ from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
 from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
 from ..utils.logging import make_temp_dir
-
+from ..setup.requirements.compound import (
+    ChemblWebResourceClientRequirement,
+    RdkitRequirement,
+)
 try:
     import pandas as pd
 except ModuleNotFoundError:
@@ -209,6 +212,7 @@ class ErsiliaModel(ErsiliaBase):
         return api
 
     def _api_runner_iter(self, api, input, output, batch_size):
+        print(f"Input: {input}")
         for result in api.post(input=input, output=output, batch_size=batch_size):
             assert (
                 result is not None
@@ -273,7 +277,8 @@ class ErsiliaModel(ErsiliaBase):
                 "Standard CSV Api runner is not ready for this particular model"
             )
             return None
-        if not scra.is_amenable(input, output):
+        
+        if not scra.is_amenable(output):
             self.logger.debug(
                 "Standard CSV Api runner is not amenable for this model, input and output"
             )
@@ -349,6 +354,7 @@ class ErsiliaModel(ErsiliaBase):
 
     def _do_cache_splits(self, input, output):
         self.tfr = None
+        
         if self._evaluate_do_cache_splits(input, output):
             self.tfr = TabularFileReader(
                 path=input,
@@ -417,8 +423,14 @@ class ErsiliaModel(ErsiliaBase):
         with open(file_name, "w") as f:
             for key, values in models.items():
                 f.write(f"{key},{values}\n")
-
+    
+    def setup(self):
+        RdkitRequirement()
+        ChemblWebResourceClientRequirement()
+        
     def serve(self):
+        self.logger.debug("Checking rdkit and other requirements")
+        self.setup()
         self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track_runs)
         self.autoservice.serve()
@@ -487,8 +499,8 @@ class ErsiliaModel(ErsiliaBase):
         self.logger.info("Starting runner")
         standard_status_ok = False
         if try_standard:
-            self.logger.debug("Trying standard API")
             try:
+                self.logger.debug("Trying standard API")
                 result, standard_status_ok = self._standard_run(
                     input=input, output=output
                 )
@@ -513,7 +525,6 @@ class ErsiliaModel(ErsiliaBase):
             self._run_tracker.track(
                 input, result, self._model_info["metadata"], container_metrics
             )
-
         return result
 
     @property
