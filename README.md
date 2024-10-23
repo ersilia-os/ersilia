@@ -7,6 +7,7 @@
 [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Python 3.7](https://img.shields.io/pypi/pyversions/ersilia
 )](https://www.python.org/downloads/release/python-370/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=Python&logoColor=white)](https://github.com/psf/black)
 [![DOI](https://zenodo.org/badge/277068989.svg)](https://zenodo.org/badge/latestdoi/277068989) [![documentation](https://img.shields.io/badge/-Documentation-purple?logo=read-the-docs&logoColor=white)](https://ersilia.gitbook.io/ersilia-book/)
+[![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 ## Table of Contents
 
@@ -110,8 +111,17 @@ Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff)
 Please note that Ersilia distinguises between software contributors and software authors. The Ersilia Model Hub Authorship guidelines can be found in the [Authorship file](https://github.com/ersilia-os/ersilia/blob/master/AUTHORSHIP.md) and current authors can be found in the Citation file. We acknowledge past authors of the software below:
 - Carolina Caballero
 
+### Cited by
+The Ersilia Model Hub is used in a number of scientific projects. Read more about how we are implementing it in:
+- [Turon, Hlozek et al, Nat Commun, 2023](https://www.nature.com/articles/s41467-023-41512-2)
+- [Van Heerden et al, ACS Omega, 2023](https://pubs.acs.org/doi/10.1021/acsomega.3c05664)
+- [Offensperger et al, Science, 2024](https://www.science.org/doi/10.1126/science.adk5864)
+- [Turon et al, ACS Med Chem Lett, 2024](https://doi.org/10.1021/acsmedchemlett.4c00131)
+
 ## About Us
 
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.
-
 [Help us](https://www.ersilia.io/donate) achieve our mission!
+
+### Funding
+The Ersilia Model Hub is the flagship product of Ersilia. It has been funded thanks to a combination of funding sources. Full disclosure can be found in our [website](https://ersilia.io/supporters). Highlighted supporters include Splunk Pledge, the Mozilla Builders Accelerator and the AI2050 Program by Schmidt Futures. 

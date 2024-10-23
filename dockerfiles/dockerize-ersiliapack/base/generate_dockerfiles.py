@@ -1,4 +1,5 @@
 import os
+import sys
 
 CONDA_VERSIONS = [
     "py38_23.11.0-2",
@@ -16,15 +17,18 @@ PIP_VERSIONS = [
     "3.12-slim-bullseye"
 ]
 
-DOCKER_ENTRYPOINT = """
-#!/bin/bash
+# By default, we generate all versions
+version_to_build = sys.argv[1] if len(sys.argv) > 1 else "all"
+
+# We serve the model at port 80 bec Ersilia port maps all containers to port 80
+DOCKER_ENTRYPOINT = """#!/bin/bash
 set -ex
 if [ -z "${MODEL}" ];
 then
     echo "Model name has not been specified"
     exit 1
 fi
-ersilia_model_serve --bundle_path /root/bundles/$MODEL --port 3000
+ersilia_model_serve --bundle_path /root/bundles/$MODEL --port 80
 echo "Serving model $MODEL..."
 """
 
@@ -40,26 +44,31 @@ def write_entrypoint():
     with open("docker-entrypoint.sh", "w") as f:
         f.write(DOCKER_ENTRYPOINT)
 
-def generate_conda_dockerfile():
-    conda_versions = CONDA_VERSIONS
+def generate_conda_dockerfile(version):
     dockerfile = read_conda_base_dockerfile()    
-    for version in conda_versions:
-        version = version.strip()
-        with open(os.path.join("Dockerfile.conda" + version), "w") as f:
-            for line in dockerfile:
-                f.write(line.replace("version", version))
+    version = version.strip()
+    with open(os.path.join("Dockerfile.conda" + version), "w") as f:
+        for line in dockerfile:
+            f.write(line.replace("version", version))
 
-def generate_pip_dockerfile():
-    pip_versions = PIP_VERSIONS
+def generate_pip_dockerfile(version):
     dockerfile = read_python_base_dockerfile()
-    
-    for version in pip_versions:
-        version = version.strip()
-        with open(os.path.join("Dockerfile.pip" + version), "w") as f:
-            for line in dockerfile:
-                f.write(line.replace("version", version))
+    version = version.strip()
+    with open(os.path.join("Dockerfile.pip" + version), "w") as f:
+        for line in dockerfile:
+            f.write(line.replace("version", version))
 
 if __name__ == "__main__":
-    generate_conda_dockerfile()
-    generate_pip_dockerfile()
+    if version_to_build == "all":
+        for version in CONDA_VERSIONS:
+            generate_conda_dockerfile(version)
+        for version in PIP_VERSIONS:
+            generate_pip_dockerfile(version)
+    else:
+        if version_to_build in CONDA_VERSIONS:
+            generate_conda_dockerfile(version_to_build)
+        elif version_to_build in PIP_VERSIONS:
+            generate_pip_dockerfile(version_to_build)
+        else:
+            print("Invalid version specified. Please specify a valid version or 'all' to build all versions")
     write_entrypoint()

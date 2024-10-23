@@ -10,9 +10,23 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 from .. import logger
-from ..default import DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME
+from ..default import (DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME,
+                       DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG,
+                       PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI)
 from ..utils.system import SystemChecker
 from ..utils.logging import make_temp_dir
+
+def resolve_pack_method_docker(model_id):
+    client = docker.from_env()
+    model_image = client.images.get(
+        f"{DOCKERHUB_ORG}/{model_id}:{DOCKERHUB_LATEST_TAG}"
+    )
+    image_history = model_image.history()
+    for hist in image_history:
+        # Very hacky, but works bec we don't have nginx in ersilia-pack images
+        if "nginx" in hist["CreatedBy"]: 
+            return PACK_METHOD_BENTOML
+    return PACK_METHOD_FASTAPI
 
 
 def resolve_platform():
@@ -46,6 +60,7 @@ def is_udocker_installed():
 class SimpleDocker(object):
     def __init__(self, use_udocker=None):
         self.identifier = LongIdentifier()
+        self.logger = logger
         if use_udocker is None:
             self._with_udocker = self._use_udocker()
         else:
@@ -289,24 +304,47 @@ class SimpleDocker(object):
                 if peak_memory is not None:
                     return peak_memory
                 else:
-                    logger.debug(
+                    self.logger.debug(
                         f"Could not compute container peak memory for model {model_id}"
                     )
                     return
             else:
-                logger.debug(f"No container found for model {model_id}")
+                self.logger.debug(f"No container found for model {model_id}")
                 return
 
         except docker.errors.NotFound as e:
-            print(f"Container {container.name} not found: {e}")
+            self.logger.debug(f"Container {container.name} not found: {e}")
             return None
         except docker.errors.APIError as e:
-            print(f"Docker API error: {e}")
+            logger.debug(f"Docker API error: {e}")
             return None
         except Exception as e:
-            print(f"An error occurred: {e}")
+            self.logger.debug(f"An error occurred: {e}")
             return None
+        
+    def cleanup_ersilia_images(self):
+        """Remove all Ersilia-related Docker images"""
+        if self._with_udocker:
+            self.logger.warning("Docker cleanup not supported with udocker")
+            return
 
+        try:
+            images_dict = self.images()
+
+            if not images_dict:
+                logger.info("No Docker images found")
+                return 
+            
+            for image_name, image_id in images_dict.items():
+                if DOCKERHUB_ORG in image_name:
+                    try:
+                        logger.info(f"Removing Docker image: {image_name}")
+                        self.delete(*self._splitter(image_name))
+                    except Exception as e:
+                        logger.error(f"Failed to remove Docker image {image_name}: {e}")
+        
+        except Exception as e:
+            self.logger.error(f"Failed to cleanup Docker images: {e}")
 
 class SimpleDockerfileParser(DockerfileParser):
     def __init__(self, path):

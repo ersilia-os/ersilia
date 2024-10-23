@@ -22,7 +22,9 @@ Ersilia Pack dockerization is divided into two steps - building the base image t
 
 And an entrypoint script called `docker-entrypoint.sh`.
 
-4. Build the base docker image, eg for Python 3.12 conda image, as follows:
+4. Copy the desired Dockerfile and `docker-entrypoint.sh` file into ersilia-pack directory.
+
+5. This step assumes you are inside the ersilia-pack directory and you have completed Step 4. Build the base docker image, eg for Python 3.12 conda image, as follows:
 
 ```
 docker build -f Dockerfile3.12-slim-bullseye -t ersiliaos/ersiliapack-py312:latest .
