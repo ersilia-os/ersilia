@@ -24,12 +24,22 @@ def make_temp_dir(prefix):
 
 
 class Logger(object):
+    _instance = None 
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(Logger, cls).__new__(cls)
+        return cls._instance
+    
     def __init__(self):
         self.logger = logger
         self.logger.remove()
         self._console = None
         self._file = None
-        self.fmt = "{time:HH:mm:ss} | {level: <8} | {message}"
+        self.fmt = (
+                "<green>{time:HH:mm:ss}</green> | "
+                "<level>{level: <8}</level> | "
+                "<cyan>{message}</cyan>"
+        )
         self._verbose_file = os.path.join(get_session_dir(), VERBOSE_FILE)
         self._log_to_console()
         self._log_to_file()
