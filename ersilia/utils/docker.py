@@ -245,7 +245,7 @@ class SimpleDocker(object):
             cmd = "docker cp %s:%s %s" % (name, img_path, local_path)
             run_command(cmd)
 
-    def cp_from_image(self, img_path, local_path, org, img, tag):
+    async def cp_from_image(self, img_path, local_path, org, img, tag):
         name = self.run(org, img, tag, name=None)
         self.cp_from_container(name, img_path, local_path, org=org, img=img, tag=tag)
         self.remove(name)
