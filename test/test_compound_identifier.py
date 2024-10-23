@@ -20,4 +20,7 @@ def test_is_key_header_positive(compound_identifier, header):
 def test_is_smiles_positive_chem_none(mock_pubchem, compound_identifier):
     compound_identifier.Chem = None
     mock_pubchem.return_value = "InChIKey"
-    assert compound_identifier._is_smiles("valid_smiles")
+    
+# Test with a valid SMILES input
+    smiles_string = 'CCO' #Ethanol SMILES
+    assert compound_identifier._is_smiles(smiles_string) is True
