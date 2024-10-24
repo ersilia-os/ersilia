@@ -82,7 +82,7 @@ class CompoundIdentifier(object):
         try:
             ret = self.unichem.inchiFromKey(inchikey)
         except:
-            return None
+            return self.chemical_identifier_resolver(inchikey)
         inchi = ret[0]["standardinchi"]
         mol = self.Chem.inchi.MolFromInchi(inchi)
         return self.Chem.MolToSmiles(mol)
