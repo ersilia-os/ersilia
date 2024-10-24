@@ -1,4 +1,5 @@
 import click
+import asyncio
 from . import ersilia_cli
 from .. import echo
 from ...hub.fetch.fetch import ModelFetcher
@@ -9,8 +10,12 @@ def fetch_cmd():
     """Create fetch commmand"""
 
     def _fetch(mf, model_id):
-        mf.fetch(model_id)
-
+        loop = asyncio.get_event_loop()
+        if not loop.is_running():
+            loop.run_until_complete(mf.fetch(model_id))
+        else:
+            task = loop.create_task(mf.fetch(model_id))
+            loop.run_until_complete(task)
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
         short_help="Fetch model from Ersilia Model Hub",
