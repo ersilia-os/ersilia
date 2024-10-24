@@ -278,7 +278,8 @@ class StandardCSVRunApi(ErsiliaBase):
                 h = next(reader)
             if len(h) == 1:
                 self.logger.debug("One column found in input")
-                return asyncio.run(self.async_serialize_to_json_one_columns(input_data))
+                loop = asyncio.get_event_loop()
+                return loop.run_until_complete(self.async_serialize_to_json_one_columns(input_data))
             elif len(h) == 2:
                 self.logger.debug("Two columns found in input")
                 return self.serialize_to_json_two_columns(input_data=input_data)
