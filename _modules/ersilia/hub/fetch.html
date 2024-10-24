@@ -100,7 +100,7 @@
 
     <span class="k">def</span> <span class="nf">_cache_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">models_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
+            <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ji</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">models_cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">mdl</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]:</span> <span class="n">mdl</span> <span class="k">for</span> <span class="n">mdl</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>
     
     <span class="k">def</span> <span class="nf">_find_url_using_s3_models_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
@@ -148,7 +148,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_url_using_s3_models_json</span><span class="p">(</span>
             <span class="n">model_id</span>
-        <span class="p">)</span>
+        <span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_url_using_airtable</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This model has an associated URL: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
