@@ -11,6 +11,7 @@ from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
 from ...auth.auth import Auth
 from ...default import GITHUB_ORG, BENTOML_PATH, MODEL_SOURCE_FILE
+from ...default import TableConstants
 from ... import logger
 
 try:
@@ -41,6 +42,122 @@ class CatalogTable(object):
     def as_json(self):
         R = self.as_list_of_dicts()
         return json.dumps(R, indent=4)
+
+    def generate_separator_line(self, left, middle, right, horizontal, widths):
+        """
+        Generates a separator line for the table based on the given borders and column widths.
+
+        The line starts with a 'left' border, followed by repeated 'horizontal' 
+        sections for each column's width, joined by 'middle' separators, and ends 
+        with a 'right' border.
+
+        Args:
+            left (str): The character to use for the left border of the line.
+            middle (str): The character to use between columns (as separators).
+            right (str): The character to use for the right border of the line.
+            horizontal (str): The character used to draw the horizontal border.
+            widths (list[int]): A list of column widths to determine how much 
+                                horizontal space each column takes.
+
+        Returns:
+            str: The formatted separator line as a string.
+        """
+        return left + middle.join(horizontal * (width + 2) for width in widths) + right
+
+    def as_table(self):
+        """
+        Returns the catalog data in table format. The method calculates the 
+        column widths dynamically by determining the maximum width of each column, 
+        based on the data and column headers.
+
+        A row format string is then constructed using the column widths, 
+        specifying that each cell is left-aligned and padded with a column seperator sperating the rows.
+
+        The method starts by constructing the top border using the 
+        'generate_separator_line' helper. It then adds the headers, 
+        formatted to fit the column widths, followed by a separator line
+        also created by the helper function.
+
+        A 'for' loop iterates over the data rows, adding each row to the 
+        table with borders and padding. After each row, a separator line is inserted. 
+        Finally, the bottom border is added using the helper function, completing the table.
+
+        """
+        column_widths = [
+            max(
+                len(str(item)) if item is not None else 0
+                for item in [col] + [row[i] for row in self.data]
+            )
+            for i, col in enumerate(self.columns)
+        ]
+
+        table_constants = TableConstants
+
+        row_format = table_constants.COLUMN_SEPARATOR.join(
+            f"{{:<{width}}}" for width in column_widths
+        )
+
+        table = (
+            self.generate_separator_line(
+                table_constants.TOP_LEFT,
+                table_constants.TOP_MIDDLE,
+                table_constants.TOP_RIGHT,
+                table_constants.HORIZONTAL,
+                column_widths,
+            )
+            + "\n"
+        )
+        table += (
+            table_constants.VERTICAL
+            + table_constants.CELL_PADDING
+            + row_format.format(*self.columns)
+            + table_constants.CELL_PADDING
+            + table_constants.VERTICAL
+            + "\n"
+        )
+        table += (
+            self.generate_separator_line(
+                table_constants.MIDDLE_LEFT,
+                table_constants.MIDDLE_MIDDLE,
+                table_constants.MIDDLE_RIGHT,
+                table_constants.HORIZONTAL,
+                column_widths,
+            )
+            + "\n"
+        )
+
+        for index, row in enumerate(self.data):
+            row = [str(item) if item is not None else "" for item in row]
+            table += (
+                table_constants.VERTICAL
+                + table_constants.CELL_PADDING
+                + row_format.format(*row)
+                + table_constants.CELL_PADDING
+                + table_constants.VERTICAL
+                + "\n"
+            )
+
+            if index < len(self.data) - 1:
+                table += (
+                    self.generate_separator_line(
+                        table_constants.MIDDLE_LEFT,
+                        table_constants.MIDDLE_MIDDLE,
+                        table_constants.MIDDLE_RIGHT,
+                        table_constants.HORIZONTAL,
+                        column_widths,
+                    )
+                    + "\n"
+                )
+
+        table += self.generate_separator_line(
+            table_constants.BOTTOM_LEFT,
+            table_constants.BOTTOM_MIDDLE,
+            table_constants.BOTTOM_RIGHT,
+            table_constants.HORIZONTAL,
+            column_widths,
+        )
+
+        return table
 
     def write(self, file_name):
         with open(file_name, "w") as f:
@@ -73,7 +190,7 @@ class ModelCatalog(ErsiliaBase):
             if not self.mi.is_test(s):
                 return True
         return False
-    
+
     def _get_item(self, card, item):
         if "card" in card:
             card = card["card"]
@@ -100,7 +217,7 @@ class ModelCatalog(ErsiliaBase):
 
     def _get_output(self, card):
         return self._get_item(card, "output")[0]
-    
+
     def _get_model_source(self, model_id):
         model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
         if os.path.exists(model_source_file):
@@ -108,7 +225,7 @@ class ModelCatalog(ErsiliaBase):
                 return f.read().rstrip()
         else:
             return None
-        
+
     def _get_service_class(self, card):
         if "service_class" in card:
             return card["service_class"]
@@ -207,7 +324,18 @@ class ModelCatalog(ErsiliaBase):
                 output = self._get_output(card)
                 model_source = self._get_model_source(model_id)
                 service_class = self._get_service_class(card)
-                R += [[model_id, slug, title, status, inputs, output, model_source, service_class]]
+                R += [
+                    [
+                        model_id,
+                        slug,
+                        title,
+                        status,
+                        inputs,
+                        output,
+                        model_source,
+                        service_class,
+                    ]
+                ]
             columns = [
                 "Identifier",
                 "Slug",
