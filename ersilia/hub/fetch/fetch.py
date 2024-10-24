@@ -156,9 +156,10 @@ class ModelFetcher(ErsiliaBase):
         else:
             self.logger.debug("Model already exists in your local, skipping fetching")
 
-    def _fetch_from_dockerhub(self, model_id):
+
+    async def _fetch_from_dockerhub(self, model_id):
         self.logger.debug("Fetching from DockerHub")
-        self.model_dockerhub_fetcher.fetch(model_id=model_id)
+        await self.model_dockerhub_fetcher.fetch(model_id=model_id)
 
     def _fetch_from_hosted(self, model_id):
         self.logger.debug("Fetching from hosted")
@@ -213,8 +214,8 @@ class ModelFetcher(ErsiliaBase):
             return True
         else:
             return False
-    
-    def _fetch(self, model_id):
+
+    async def _fetch(self, model_id):
         
         self.logger.debug("Starting fetching procedure")
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
@@ -233,10 +234,11 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Fetching in your system, not from DockerHub")
         self._fetch_not_from_dockerhub(model_id=model_id)
 
-    def fetch(self, model_id):
-        self._fetch(model_id)
+    async def fetch(self, model_id):
+        await self._fetch(model_id)  
         self.logger.debug("Writing model source to file")
-        model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
+        path = self._model_path(model_id)
+        os.makedirs(path, exist_ok=True)
+        model_source_file = os.path.join(path, MODEL_SOURCE_FILE)
         with open(model_source_file, "w") as f:
             f.write(self.model_source)
-
