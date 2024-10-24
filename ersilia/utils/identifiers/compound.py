@@ -19,7 +19,6 @@ except:
 
 from ...default import UNPROCESSABLE_INPUT
 
-
 class CompoundIdentifier(object):
     def __init__(self, local=True, concurrency_limit=10, cache_maxsize=128):
         if local:
@@ -76,13 +75,13 @@ class CompoundIdentifier(object):
         return True
 
     def guess_type(self, text):
-        if text is None:
-            return self.default_type
+        if not isinstance(text, str) or not text.strip() or text == UNPROCESSABLE_INPUT:
+            return UNPROCESSABLE_INPUT
         if self._is_inchikey(text):
             return "inchikey"
         if self._is_smiles(text):
             return "smiles"
-        return "name"
+        return UNPROCESSABLE_INPUT
 
     def unichem_resolver(self, inchikey):
         if Chem is None or unichem is None:
@@ -90,27 +89,12 @@ class CompoundIdentifier(object):
         try:
             ret = self.unichem.inchiFromKey(inchikey)
         except:
-            return None
+            return self.chemical_identifier_resolver(inchikey)
         inchi = ret[0]["standardinchi"]
         mol = self.Chem.inchi.MolFromInchi(inchi)
         return self.Chem.MolToSmiles(mol)
 
     @staticmethod
-    def chemical_identifier_resolver(identifier):
-        """Returns SMILES string of a given identifier, using NCI tool"""
-        if not identifier or not isinstance(identifier, str):
-            return UNPROCESSABLE_INPUT
-        identifier = urllib.parse.quote(identifier)
-        url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(
-            identifier
-        )
-        req = requests.get(url)
-        if req.status_code != 200:
-            return None
-        return req.text
-
-    @staticmethod
-    @lru_cache()
     async def _pubchem_smiles_to_inchikey(session, smiles):
         """
         Fetch InChIKey for a single SMILES using PubChem API asynchronously.
@@ -126,25 +110,38 @@ class CompoundIdentifier(object):
                 return data["PropertyTable"]["Properties"][0]["InChIKey"]
         except Exception as e:
             return None
-
+        
     @staticmethod
-    @lru_cache()
-    def _nci_smiles_to_inchikey(smiles):
+    async def _nci_smiles_to_inchikey(session, smiles):
         """
-        Fetch InChIKey for a single SMILES using NCI.
+        Fetch InChIKey for a single SMILES using NCI asynchronously.
         The cache is used to store the results of the requests for unique SMILES.
         """
         identifier = urllib.parse.quote(smiles)
         url = f"https://cactus.nci.nih.gov/chemical/structure/{identifier}/stdinchikey"
         try:
-            req = requests.get(url)
-            if req.status_code != 200:
-                return None
-            return req.text.split("=")[1]
+            async with session.get(url) as response:
+                if response.status != 200:
+                    return None
+                text = await response.text()
+                return text.split("=")[1]
         except Exception as e:
+            logger.info(f"Failed to fetch InChIKey from NCI for {smiles}: {e}")
             return None
 
-    @lru_cache()
+    @staticmethod
+    def chemical_identifier_resolver(identifier):
+        """Returns SMILES string of a given identifier, using NCI tool"""
+        if not identifier or not isinstance(identifier, str):
+            return UNPROCESSABLE_INPUT 
+          
+        identifier = urllib.parse.quote(identifier)
+        url = f"https://cactus.nci.nih.gov/chemical/structure/{identifier}/smiles"
+        req = requests.get(url)
+        if req.status_code != 200:
+            return None
+        return req.text
+
     def convert_smiles_to_inchikey_with_rdkit(self, smiles):
         """
         Converts a SMILES string to an InChIKey using RDKit.
@@ -174,7 +171,7 @@ class CompoundIdentifier(object):
                     logger.info("Inchikey converted using PUBCHEM")
 
             if inchikey is None:
-                inchikey = self._nci_smiles_to_inchikey(smiles)
+                inchikey = await self._nci_smiles_to_inchikey(smiles)
                 if inchikey:
                     logger.info("Inchikey converted using NCI")
 
@@ -198,24 +195,36 @@ class CompoundIdentifier(object):
         return result_list
 
     def encode(self, smiles):
-        """Get InChIKey of compound based on SMILES string with fallback"""
+        """Get InChIKey of compound based on SMILES string"""
+        if not isinstance(smiles, str) or not smiles.strip() or smiles == UNPROCESSABLE_INPUT:
+            return UNPROCESSABLE_INPUT
+          
         if self.Chem is None:
-            inchikey = self._pubchem_smiles_to_inchikey(smiles)
-            if inchikey is None:
-                inchikey = self._nci_smiles_to_inchikey(smiles)
+            async def fetch_inchikeys():
+                async with aiohttp.ClientSession() as session:
+                    inchikey = await self._pubchem_smiles_to_inchikey(session, smiles)
+                    if inchikey:
+                        return inchikey
+                    inchikey = await self._nci_smiles_to_inchikey(session, smiles)
+                    return inchikey
+
+            inchikey = asyncio.run(fetch_inchikeys())
+
         else:
             try:
                 mol = self.Chem.MolFromSmiles(smiles)
                 if mol is None:
-                    raise Exception(f"Invalid SMILES: {smiles}")
+                    return UNPROCESSABLE_INPUT
                 inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
+                if inchi is None:
+                    return UNPROCESSABLE_INPUT
                 inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
-            except Exception as e:
-                logger.info(f"Failed to process SMILES with RDKit: {e}")
+            except:
                 inchikey = None
-        return inchikey
-    
+
+        return inchikey if inchikey else UNPROCESSABLE_INPUT
+
     def validate_smiles(self, smiles):
-            return smiles.strip() != "" and Chem.MolFromSmiles(smiles) is not None
+        return smiles.strip() != "" and Chem.MolFromSmiles(smiles) is not None
 
 Identifier = CompoundIdentifier

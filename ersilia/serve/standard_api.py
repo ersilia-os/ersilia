@@ -5,6 +5,8 @@ import importlib
 import requests
 import asyncio
 from .. import ErsiliaBase
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
 from ..default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
@@ -312,7 +314,8 @@ class StandardCSVRunApi(ErsiliaBase):
             is_list = False
         with open(output_data, "w") as f:
             writer = csv.writer(f)
-            writer.writerow(self.header)
+            if not os.path.exists(output_data):
+                writer.writerow(self.header)
             for i_d, r_d in zip(input_data, result):
                 v = r_d[k]
                 if not is_list:
@@ -322,8 +325,11 @@ class StandardCSVRunApi(ErsiliaBase):
                 writer.writerow(r)
         return output_data
 
-    def post(self, input, output):
+    def post(self, input, output, output_source=OutputSource.LOCAL_ONLY):
         input_data = self.serialize_to_json(input)
+        if OutputSource.is_cloud(output_source):
+            store = InferenceStoreApi(model_id=self.model_id)
+            return store.get_precalculations(input_data)
         url = "{0}/{1}".format(self.url, self.api_name)
         response = requests.post(url, json=input_data)
         self.logger.info(f"Status Code: {response.status_code}")
