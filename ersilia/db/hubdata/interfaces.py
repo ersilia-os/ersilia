@@ -1,6 +1,5 @@
 import requests
 import importlib
-import pyairtable
 from ... import ErsiliaBase
 from ...default import AIRTABLE_MODEL_HUB_BASE_ID, AIRTABLE_MODEL_HUB_TABLE_NAME
 from ...setup.requirements.pyairtable import PyAirtableRequirement
@@ -21,6 +20,11 @@ class AirtableInterface(ErsiliaBase):
         self.table = self._create_table(api_key=self._get_read_only_airtable_api_key())
 
     def _create_table(self, api_key):
+        pyairtable_req = PyAirtableRequirement()
+        if not pyairtable_req.is_installed():
+            self.logger.debug("Installing PyAirTable from pip")
+            pyairtable_req.install()
+        pyairtable = importlib.import_module("pyairtable")
         return pyairtable.Table(api_key, self.base_id, self.table_name)
 
     def _get_read_only_airtable_api_key(self):
