@@ -81,6 +81,8 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">..store.api</span> <span class="kn">import</span> <span class="n">InferenceStoreApi</span>
+<span class="kn">from</span> <span class="nn">..store.utils</span> <span class="kn">import</span> <span class="n">OutputSource</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span><span class="p">,</span>
     <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span><span class="p">,</span>
@@ -286,7 +288,8 @@
             <span class="n">is_list</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_data</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_data</span><span class="p">):</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i_d</span><span class="p">,</span> <span class="n">r_d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="n">r_d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_list</span><span class="p">:</span>
@@ -296,8 +299,11 @@
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output_data</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.post"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<div class="viewcode-block" id="StandardCSVRunApi.post"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">output_source</span><span class="o">=</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">):</span>
         <span class="n">input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_to_json</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">is_cloud</span><span class="p">(</span><span class="n">output_source</span><span class="p">):</span>
+            <span class="n">store</span> <span class="o">=</span> <span class="n">InferenceStoreApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">get_precalculations</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">input_data</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>

@@ -61,6 +61,7 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a></li>
 </ul>
@@ -265,9 +266,11 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.close"><code class="docutils literal notranslate"><span class="pre">Session.close()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.current_identifier"><code class="docutils literal notranslate"><span class="pre">Session.current_identifier()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.current_model_id"><code class="docutils literal notranslate"><span class="pre">Session.current_model_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.current_output_source"><code class="docutils literal notranslate"><span class="pre">Session.current_output_source()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.current_service_class"><code class="docutils literal notranslate"><span class="pre">Session.current_service_class()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.get"><code class="docutils literal notranslate"><span class="pre">Session.get()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.open"><code class="docutils literal notranslate"><span class="pre">Session.open()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.register_output_source"><code class="docutils literal notranslate"><span class="pre">Session.register_output_source()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.register_service_class"><code class="docutils literal notranslate"><span class="pre">Session.register_service_class()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.tracking_status"><code class="docutils literal notranslate"><span class="pre">Session.tracking_status()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.update_cpu_time"><code class="docutils literal notranslate"><span class="pre">Session.update_cpu_time()</span></code></a></li>
@@ -852,6 +855,44 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.setup.html#module-ersilia.setup">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.store.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.store.html#module-ersilia.store.api">ersilia.store.api module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html#ersilia.store.api.InferenceStoreApi"><code class="docutils literal notranslate"><span class="pre">InferenceStoreApi</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.api.InferenceStoreApi.get_precalculations"><code class="docutils literal notranslate"><span class="pre">InferenceStoreApi.get_precalculations()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.store.html#module-ersilia.store.utils">ersilia.store.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.InferenceStoreMessage"><code class="docutils literal notranslate"><span class="pre">InferenceStoreMessage</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.ModelNotInStore"><code class="docutils literal notranslate"><span class="pre">ModelNotInStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.ModelNotInStore.echo"><code class="docutils literal notranslate"><span class="pre">ModelNotInStore.echo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource"><code class="docutils literal notranslate"><span class="pre">OutputSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource.ALL"><code class="docutils literal notranslate"><span class="pre">OutputSource.ALL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource.CLOUD_ONLY"><code class="docutils literal notranslate"><span class="pre">OutputSource.CLOUD_ONLY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource.LOCAL_ONLY"><code class="docutils literal notranslate"><span class="pre">OutputSource.LOCAL_ONLY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource.is_cloud"><code class="docutils literal notranslate"><span class="pre">OutputSource.is_cloud()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource.is_local"><code class="docutils literal notranslate"><span class="pre">OutputSource.is_local()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.PrecalculationsInStore"><code class="docutils literal notranslate"><span class="pre">PrecalculationsInStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.PrecalculationsInStore.echo"><code class="docutils literal notranslate"><span class="pre">PrecalculationsInStore.echo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore"><code class="docutils literal notranslate"><span class="pre">PrecalculationsNotInStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore.echo"><code class="docutils literal notranslate"><span class="pre">PrecalculationsNotInStore.echo()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.delete_file_upon_upload"><code class="docutils literal notranslate"><span class="pre">delete_file_upon_upload()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.store_has_model"><code class="docutils literal notranslate"><span class="pre">store_has_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.store.html#module-ersilia.store">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><ul>
