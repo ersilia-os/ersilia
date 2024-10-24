@@ -5,6 +5,16 @@ from ersilia.utils.identifiers.compound import CompoundIdentifier
 def compound_identifier():
     return CompoundIdentifier()
 
+def test_is_smiles_with_chem():
+    identifier = CompoundIdentifier()
+    result = identifier._is_smiles("C(C(=O)O)c1ccccc1")
+    assert result == True
+    
+def test_is_smiles_without_chem():
+    identifier = CompoundIdentifier(local=False)
+    result = identifier._is_smiles("C(C(=O)O)c1ccccc1")
+    assert result == "WLJVXDMOQOGPHL-UHFFFAOYSA-N"
+
 @pytest.mark.parametrize("header", ["smiles", "input", "SMILES", "INPUT"])
 def test_is_input_header_positive(compound_identifier, header):
     """Test that valid input headers return True."""
