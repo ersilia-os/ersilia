@@ -89,7 +89,7 @@ class CompoundIdentifier(object):
         try:
             ret = self.unichem.inchiFromKey(inchikey)
         except:
-            return None
+            return self.chemical_identifier_resolver(inchikey)
         inchi = ret[0]["standardinchi"]
         mol = self.Chem.inchi.MolFromInchi(inchi)
         return self.Chem.MolToSmiles(mol)
@@ -133,7 +133,8 @@ class CompoundIdentifier(object):
     def chemical_identifier_resolver(identifier):
         """Returns SMILES string of a given identifier, using NCI tool"""
         if not identifier or not isinstance(identifier, str):
-            return UNPROCESSABLE_INPUT
+            return UNPROCESSABLE_INPUT 
+          
         identifier = urllib.parse.quote(identifier)
         url = f"https://cactus.nci.nih.gov/chemical/structure/{identifier}/smiles"
         req = requests.get(url)
@@ -197,7 +198,7 @@ class CompoundIdentifier(object):
         """Get InChIKey of compound based on SMILES string"""
         if not isinstance(smiles, str) or not smiles.strip() or smiles == UNPROCESSABLE_INPUT:
             return UNPROCESSABLE_INPUT
-
+          
         if self.Chem is None:
             async def fetch_inchikeys():
                 async with aiohttp.ClientSession() as session:
@@ -208,6 +209,7 @@ class CompoundIdentifier(object):
                     return inchikey
 
             inchikey = asyncio.run(fetch_inchikeys())
+
         else:
             try:
                 mol = self.Chem.MolFromSmiles(smiles)
