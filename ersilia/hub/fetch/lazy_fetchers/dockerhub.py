@@ -132,7 +132,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         self.logger.debug("Pulling model image from DockerHub")
         # Asynchronous pulling
-        await mp.async_pull()
+        await mp.pull()
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
         # Asynchronous and concurent execution
         await asyncio.gather(
