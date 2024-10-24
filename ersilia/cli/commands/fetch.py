@@ -10,7 +10,8 @@ def fetch_cmd():
     """Create fetch commmand"""
 
     def _fetch(mf, model_id):
-       asyncio.run(mf.fetch(model_id))
+       loop = asyncio.get_event_loop()
+       loop.run_until_complete(mf.fetch(model_id))
 
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
