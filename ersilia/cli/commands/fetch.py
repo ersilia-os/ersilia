@@ -10,12 +10,12 @@ def fetch_cmd():
     """Create fetch commmand"""
 
     def _fetch(mf, model_id):
-        try:
-            loop = asyncio.get_running_loop() 
+        loop = asyncio.get_event_loop()
+        if not loop.is_running():
             loop.run_until_complete(mf.fetch(model_id))
-        except RuntimeError:  # If there's no running loop, Start a new one
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(mf.fetch(model_id))
+        else:
+            task = loop.create_task(mf.fetch(model_id))
+            loop.run_until_complete(task)
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
         short_help="Fetch model from Ersilia Model Hub",
