@@ -54,7 +54,8 @@ class CompoundIdentifier(object):
 
     def _is_smiles(self, text):
         if self.Chem is None:
-            return asyncio.run(self._pubchem_smiles_to_inchikey_sync(text))
+            loop = asyncio.get_event_loop()
+            return loop.run_until_complete(self._pubchem_smiles_to_inchikey_sync(text))
         else:
             mol = self.Chem.MolFromSmiles(text)
             return mol is not None
@@ -213,8 +214,9 @@ class CompoundIdentifier(object):
                         return inchikey
                     inchikey = await self._nci_smiles_to_inchikey(session, smiles)
                     return inchikey
-
-            inchikey = asyncio.run(fetch_inchikeys())
+                    
+            loop = asyncio.get_event_loop()
+            inchikey = loop.run_until_complete(fetch_inchikeys())
 
         else:
             try:
