@@ -54,12 +54,13 @@ class CompoundIdentifier(object):
 
     def _is_smiles(self, text):
         if self.Chem is None:
-            try:
-                loop = asyncio.get_running_loop()  
-                return loop.run_until_complete(self._pubchem_smiles_to_inchikey_sync(text))
-            except RuntimeError:  # If there's no running loop, Start a new one
-                loop = asyncio.get_event_loop()
-                return loop.run_until_complete(self._pubchem_smiles_to_inchikey_sync(text))
+            loop = asyncio.get_event_loop()
+            if not loop.is_running():
+                result = loop.run_until_complete(self._pubchem_smiles_to_inchikey_sync(text))
+            else:
+                task = loop.create_task(self._pubchem_smiles_to_inchikey_sync(text))
+                result = loop.run_until_complete(task)
+            return result
         else:
             mol = self.Chem.MolFromSmiles(text)
             return mol is not None
@@ -218,12 +219,12 @@ class CompoundIdentifier(object):
                         return inchikey
                     inchikey = await self._nci_smiles_to_inchikey(session, smiles)
                     return inchikey
-            try:
-                loop = asyncio.get_running_loop() 
+            loop = asyncio.get_event_loop()
+            if not loop.is_running():
                 inchikey = loop.run_until_complete(fetch_inchikeys())
-            except RuntimeError:  # If there's no running loop, Start a new one
-                loop = asyncio.get_event_loop()
-                inchikey = loop.run_until_complete(fetch_inchikeys())
+            else:
+                task = loop.create_task(fetch_inchikeys())
+                inchikey = loop.run_until_complete(task)
         else:
             try:
                 mol = self.Chem.MolFromSmiles(smiles)
