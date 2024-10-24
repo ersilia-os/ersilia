@@ -54,10 +54,16 @@ class CompoundIdentifier(object):
 
     def _is_smiles(self, text):
         if self.Chem is None:
-            return self._pubchem_smiles_to_inchikey(text) is not None
+            return asyncio.run(self._pubchem_smiles_to_inchikey_sync(text))
         else:
             mol = self.Chem.MolFromSmiles(text)
             return mol is not None
+        
+    async def _pubchem_smiles_to_inchikey_sync(self, text):
+        semaphore = asyncio.Semaphore(self.concurrency_limit)
+        async with semaphore:
+            async with aiohttp.ClientSession() as session:
+                return await self._pubchem_smiles_to_inchikey(session, text)
 
     @staticmethod
     def _is_inchikey(text):
