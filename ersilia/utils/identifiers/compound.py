@@ -69,7 +69,7 @@ class CompoundIdentifier(object):
 
     def _is_smiles(self, text):
         if self.Chem is None:
-            return asynio.run(self._pubchem_smiles_to_inchikey_sync(text))
+            return asyncio.run(self._pubchem_smiles_to_inchikey_sync(text))
         else:
             mol = self.Chem.MolFromSmiles(text)
             return mol is not None
