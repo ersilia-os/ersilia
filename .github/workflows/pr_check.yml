@@ -45,20 +45,23 @@ jobs:
 
       - name: Hub catalog
         run: |
-          ersilia catalog
-
+         (
+           ersilia catalog
+         )
       - name: Fetch model from GitHub
         run: |
-          source activate
-          ersilia -v fetch molecular-weight --from_github
-          echo "Serving molecular-weight model."
-          ersilia serve molecular-weight
-          ersilia info
-          ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
-          ersilia close
-
+         (
+           source activate
+           ersilia -v fetch molecular-weight --from_github
+           echo "Serving molecular-weight model."
+           ersilia serve molecular-weight
+           ersilia info
+           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
+           ersilia close
+         )
       - name: Fetch model from S3
         run: |
+         (
           source activate
           ersilia -v fetch molecular-weight --from_s3
           echo "Serving molecular-weight model."
@@ -66,9 +69,10 @@ jobs:
           ersilia info
           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
           ersilia close
-
+          )
       - name: Fetch model from DockerHub
         run: |
+          (
           source activate
           ersilia -v fetch molecular-weight --from_dockerhub
           echo "Serving molecular-weight model."
@@ -76,7 +80,7 @@ jobs:
           ersilia info
           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
           ersilia close
-
+          )
       - name: Local catalog
         run: |
-          ersilia catalog --local
+          (ersilia catalog --local)
