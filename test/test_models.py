@@ -22,7 +22,7 @@ def test_model_1():
 def test_model_2():
     MODEL_ID = MODELS[1]
     INPUT = "CCCC"
-    mf = ModelFetcher(repo_path=os.path.join(os.getcwd(), "test/models", MODEL_ID))
+    mf = ModelFetcher(overwrite=True)
     asyncio.run(mf.fetch(
         MODEL_ID
     ))
