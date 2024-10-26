@@ -22,8 +22,8 @@ More versions of the logo can be found in [this folder](https://drive.google.com
 
 | Color name | HEX     | RGB           |
 | ---------- | ------- | ------------- |
-| Plum       | #BEE6B4 | (80,40,90)    |
-| Mint       | #50285A | (190,230,180) |
+| Plum       | #50285A | (80,40,90)    |
+| Mint       | #BEE6B4 | (190,230,180) |
 | White      | #FFFFFF | (255,255,255) |
 | Gray       | #D2D2D0 | (210,210,210) |
 | Yellow     | #FAD782 | (250,215,130) |
