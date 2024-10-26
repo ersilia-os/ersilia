@@ -6,8 +6,12 @@ import shutil
 BUILD_VERSIONS = ["ersiliapack", "legacy-bentoml", "multistage-condapack"]
 ENV_TYPES = ["conda", "pip"]
 model_id = sys.argv[1]
-build_version = sys.argv[2] if len(sys.argv) > 2 else "multistage-condapack" # This is the most stable right now.
-env_type = "."+sys.argv[3] if (len(sys.argv) > 3 and sys.argv[2] == "ersiliapack") else ""
+build_version = (
+    sys.argv[2] if len(sys.argv) > 2 else "multistage-condapack"
+)  # This is the most stable right now.
+env_type = (
+    "." + sys.argv[3] if (len(sys.argv) > 3 and sys.argv[2] == "ersiliapack") else ""
+)
 
 if os.path.exists("Dockerfile"):
     shutil.move("Dockerfile", "Dockerfile_legacy")
