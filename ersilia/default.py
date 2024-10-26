@@ -1,6 +1,7 @@
 from pathlib import Path
 import shutil
 import os
+from enum import Enum
 
 # EOS environmental variables
 EOS = os.path.join(str(Path.home()), "eos")
@@ -29,6 +30,7 @@ DEFAULT_VENV = "env"
 DEFAULT_API_NAME = "run"
 PACKMODE_FILE = "pack_mode.txt"
 CARD_FILE = "card.json"
+UNPROCESSABLE_INPUT="UNPROCESSABLE_INPUT"
 DOTENV_FILE = ".env"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
@@ -95,6 +97,7 @@ ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
 AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/shrNc3sTtTA3QeEZu"
 S3_BUCKET_URL = "https://ersilia-models.s3.eu-central-1.amazonaws.com"
 S3_BUCKET_URL_ZIP = "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com"
+INFERENCE_STORE_API_URL = "https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations"
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"
@@ -103,6 +106,22 @@ if not os.path.exists(resolve_script):
     shutil.copyfile(
         os.path.join(ROOT, "utils", "supp", _resolve_script), resolve_script
     )
+
+# Catalog table border constants
+class TableConstants(str, Enum):
+    TOP_LEFT = "┌"
+    TOP_MIDDLE = "┬"
+    TOP_RIGHT = "┐"
+    HORIZONTAL = "─"
+    VERTICAL = "│"
+    MIDDLE_LEFT = "├"
+    MIDDLE_MIDDLE = "┼"
+    MIDDLE_RIGHT = "┤"
+    BOTTOM_LEFT = "└"
+    BOTTOM_MIDDLE = "┴"
+    BOTTOM_RIGHT = "┘"
+    CELL_PADDING = " "
+    COLUMN_SEPARATOR = " | "
 
 snippet = (
     """

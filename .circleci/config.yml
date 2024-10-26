@@ -3,7 +3,7 @@ version: 2
 jobs:
   installation:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
@@ -18,7 +18,7 @@ jobs:
               ersilia --help
   test:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
@@ -52,12 +52,12 @@ jobs:
           command: |
               source activate ersilia
               ersilia serve molecular-weight
-              ersilia api -i "CCC" > output_one_0.json
-              ersilia api -i "CCC" -o output_one_1.json
-              ersilia api -i "CCC" -o output_one_3.csv
-              ersilia api -i test/inputs/compound_list.csv > output_list_0.json
-              ersilia api -i test/inputs/compound_list.csv -o output_list_1.json
-              ersilia api -i test/inputs/compound_list.csv -o output_list_2.csv
+              ersilia run -i "CCC" > output_one_0.json
+              ersilia run -i "CCC" -o output_one_1.json
+              ersilia run -i "CCC" -o output_one_3.csv
+              ersilia run -i test/inputs/compound_list.csv > output_list_0.json
+              ersilia run -i test/inputs/compound_list.csv -o output_list_1.json
+              ersilia run -i test/inputs/compound_list.csv -o output_list_2.csv
               rm output_*
       - run:
           name: Delete molecular-weight model
@@ -66,7 +66,7 @@ jobs:
               ersilia -v delete molecular-weight
   docs-build:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
