@@ -24,7 +24,7 @@ class ModelURLResolver(ErsiliaBase):
 
     def _cache_models(self):
         if self.models_cache is None:
-            models = self._read_json_file()
+            models = self.ji._read_json_file()
             self.models_cache = {mdl["Identifier"]: mdl for mdl in models}
     
     def _find_url_using_s3_models_json(self, model_id):
