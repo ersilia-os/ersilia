@@ -4,7 +4,7 @@ description: Brand guidelines for Ersilia digital assets
 
 # Brand guidelines
 
-Ersilia's brand guidelines were developed by [Forma.co](https://forma.co). You can find an explanation in [this blog post](https://medium.com/ersiliaio/ersilia-open-source-initiative-brand-guidelines-130fe53104f5).
+Ersilia's brand guidelines were developed by [Forma.co](https://forma.co). You can find an explanation in [this blog post](https://medium.com/ersiliaio/ersilia-open-source-initiative-brand-guidelines-130fe53104f5). The initial thinking on the brand design is summarized in [this presentation](https://drive.google.com/file/d/1EgNbwWsLH9YrZcr-lz1TC12Ns4vvQFUb/view?usp=sharing).
 
 ## Logo
 
