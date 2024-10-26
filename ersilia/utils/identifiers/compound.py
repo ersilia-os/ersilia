@@ -1,4 +1,5 @@
 import asyncio
+import nest_asyncio
 import aiohttp
 import urllib.parse
 import requests
@@ -19,6 +20,7 @@ except:
 
 from ...default import UNPROCESSABLE_INPUT
 
+nest_asyncio.apply()
 
 class CompoundIdentifier(object):
     def __init__(self, local=True, concurrency_limit=10, cache_maxsize=128):
@@ -55,11 +57,15 @@ class CompoundIdentifier(object):
 
     def _is_smiles(self, text):
         if self.Chem is None:
-            return self._pubchem_smiles_to_inchikey(text) is not None
+            return asyncio.run(self._process_pubchem_inchikey(text)) is not None
         else:
             mol = self.Chem.MolFromSmiles(text)
             return mol is not None
 
+    async def _process_pubchem_inchikey(self, text):
+        async with aiohttp.ClientSession() as session:
+            return await self._pubchem_smiles_to_inchikey(session, text)
+            
     @staticmethod
     def _is_inchikey(text):
         if len(text) != 27:
@@ -76,13 +82,13 @@ class CompoundIdentifier(object):
         return True
 
     def guess_type(self, text):
-        if text is None:
-            return self.default_type
+        if not isinstance(text, str) or not text.strip() or text == UNPROCESSABLE_INPUT:
+            return UNPROCESSABLE_INPUT
         if self._is_inchikey(text):
             return "inchikey"
         if self._is_smiles(text):
             return "smiles"
-        return "name"
+        return UNPROCESSABLE_INPUT
 
     def unichem_resolver(self, inchikey):
         if Chem is None or unichem is None:
@@ -110,7 +116,6 @@ class CompoundIdentifier(object):
         return req.text
 
     @staticmethod
-    @lru_cache()
     async def _pubchem_smiles_to_inchikey(session, smiles):
         """
         Fetch InChIKey for a single SMILES using PubChem API asynchronously.
@@ -127,24 +132,27 @@ class CompoundIdentifier(object):
         except Exception as e:
             return None
 
+        
     @staticmethod
-    @lru_cache()
-    def _nci_smiles_to_inchikey(smiles):
+    async def _nci_smiles_to_inchikey(session, smiles):
         """
-        Fetch InChIKey for a single SMILES using NCI.
+        Fetch InChIKey for a single SMILES using NCI asynchronously.
         The cache is used to store the results of the requests for unique SMILES.
         """
         identifier = urllib.parse.quote(smiles)
-        url = f"https://cactus.nci.nih.gov/chemical/structure/{identifier}/stdinchikey"
+        url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{0}/property/InChIKey/json".format(
+            identifier
+        )
         try:
-            req = requests.get(url)
-            if req.status_code != 200:
-                return None
-            return req.text.split("=")[1]
+            async with session.get(url) as response:
+                if response.status != 200:
+                    return None
+                text = await response.text()
+                return text.split("=")[1]
         except Exception as e:
+            logger.info(f"Failed to fetch InChIKey from NCI for {smiles}: {e}")
             return None
-
-    @lru_cache()
+    
     def convert_smiles_to_inchikey_with_rdkit(self, smiles):
         """
         Converts a SMILES string to an InChIKey using RDKit.
@@ -198,22 +206,32 @@ class CompoundIdentifier(object):
         return result_list
 
     def encode(self, smiles):
-        """Get InChIKey of compound based on SMILES string with fallback"""
-        if self.Chem is None:
-            inchikey = self._pubchem_smiles_to_inchikey(smiles)
-            if inchikey is None:
-                inchikey = self._nci_smiles_to_inchikey(smiles)
-        else:
-            try:
-                mol = self.Chem.MolFromSmiles(smiles)
-                if mol is None:
-                    raise Exception(f"Invalid SMILES: {smiles}")
-                inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
-                inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
-            except Exception as e:
-                logger.info(f"Failed to process SMILES with RDKit: {e}")
-                inchikey = None
-        return inchikey
+            """Get InChIKey of compound based on SMILES string"""
+            if not isinstance(smiles, str) or not smiles.strip() or smiles == UNPROCESSABLE_INPUT:
+                return UNPROCESSABLE_INPUT
+
+            if self.Chem is None:
+                async def fetch_inchikeys():
+                    async with aiohttp.ClientSession() as session:
+                        inchikey = await self._pubchem_smiles_to_inchikey(session, smiles)
+                        if inchikey:
+                            return inchikey
+                        inchikey = await self._nci_smiles_to_inchikey(session, smiles)
+                        return inchikey
+
+                inchikey = asyncio.run(fetch_inchikeys())
+            else:
+                try:
+                    mol = self.Chem.MolFromSmiles(smiles)
+                    if mol is None:
+                        return UNPROCESSABLE_INPUT
+                    inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
+                    if inchi is None:
+                        return UNPROCESSABLE_INPUT
+                    inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
+                except:
+                    inchikey = None
+            return inchikey if inchikey else UNPROCESSABLE_INPUT
     
     def validate_smiles(self, smiles):
             return smiles.strip() != "" and Chem.MolFromSmiles(smiles) is not None

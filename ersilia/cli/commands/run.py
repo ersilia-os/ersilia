@@ -37,6 +37,7 @@ def run_cmd():
         service_class = session.current_service_class()
         track_runs = session.tracking_status()
 
+        output_source = session.current_output_source()
         if model_id is None:
             echo(
                 "No model seems to be served. Please run 'ersilia serve ...' before.",
@@ -45,6 +46,7 @@ def run_cmd():
             return
         mdl = ErsiliaModel(
             model_id,
+            output_source=output_source,
             service_class=service_class,
             config_json=None,
             track_runs=track_runs,
