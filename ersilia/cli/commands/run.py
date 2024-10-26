@@ -25,7 +25,7 @@ def run_cmd():
     @click.option(
         "--standard",
         is_flag=True,
-        default=False,
+        default=True,
         help="Assume that the run is standard and, therefore, do not do so many checks.",
     )
     def run(input, output, batch_size, standard):
