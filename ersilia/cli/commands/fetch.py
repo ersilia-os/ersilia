@@ -1,3 +1,18 @@
+import subprocess
+import sys
+
+def install_package(package):
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
+
+try:
+    import nest_asyncio
+except ImportError:
+    print("nest_asyncio not found. Installing...")
+    install_package('nest_asyncio')
+    import nest_asyncio
+
+nest_asyncio.apply()
+
 import click
 import asyncio
 from . import ersilia_cli
@@ -10,12 +25,7 @@ def fetch_cmd():
     """Create fetch commmand"""
 
     def _fetch(mf, model_id):
-        loop = asyncio.get_event_loop()
-        if not loop.is_running():
-            loop.run_until_complete(mf.fetch(model_id))
-        else:
-            task = loop.create_task(mf.fetch(model_id))
-            loop.run_until_complete(task)
+        asyncio.run(mf.fetch(model_id))
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
         short_help="Fetch model from Ersilia Model Hub",
