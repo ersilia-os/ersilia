@@ -217,7 +217,6 @@ class ErsiliaModel(ErsiliaBase):
         return api
 
     def _api_runner_iter(self, api, input, output, batch_size):
-        print(f"Input: {input}")
         for result in api.post(input=input, output=output, batch_size=batch_size):
             assert (
                 result is not None
