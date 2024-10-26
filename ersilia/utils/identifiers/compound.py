@@ -1,5 +1,4 @@
 import asyncio
-import nest_asyncio
 import aiohttp
 import urllib.parse
 import requests
@@ -19,8 +18,6 @@ except:
     Chem = None
 
 from ...default import UNPROCESSABLE_INPUT
-
-nest_asyncio.apply()
 
 class CompoundIdentifier(object):
     def __init__(self, local=True, concurrency_limit=10, cache_maxsize=128):
