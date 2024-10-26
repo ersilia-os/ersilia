@@ -1,3 +1,18 @@
+import subprocess
+import sys
+
+def install_package(package):
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
+
+try:
+    import nest_asyncio
+except ImportError:
+    print("nest_asyncio not found. Installing...")
+    install_package('nest_asyncio')
+    import nest_asyncio
+
+nest_asyncio.apply()
+
 import asyncio
 import aiohttp
 import urllib.parse
@@ -54,13 +69,7 @@ class CompoundIdentifier(object):
 
     def _is_smiles(self, text):
         if self.Chem is None:
-            loop = asyncio.get_event_loop()
-            if not loop.is_running():
-                result = loop.run_until_complete(self._pubchem_smiles_to_inchikey_sync(text))
-            else:
-                task = loop.create_task(self._pubchem_smiles_to_inchikey_sync(text))
-                result = loop.run_until_complete(task)
-            return result
+            return asynio.run(self._pubchem_smiles_to_inchikey_sync(text))
         else:
             mol = self.Chem.MolFromSmiles(text)
             return mol is not None
@@ -219,12 +228,7 @@ class CompoundIdentifier(object):
                         return inchikey
                     inchikey = await self._nci_smiles_to_inchikey(session, smiles)
                     return inchikey
-            loop = asyncio.get_event_loop()
-            if not loop.is_running():
-                inchikey = loop.run_until_complete(fetch_inchikeys())
-            else:
-                task = loop.create_task(fetch_inchikeys())
-                inchikey = loop.run_until_complete(task)
+            inchikey = asyncio.run(fetch_inchikeys())
         else:
             try:
                 mol = self.Chem.MolFromSmiles(smiles)
