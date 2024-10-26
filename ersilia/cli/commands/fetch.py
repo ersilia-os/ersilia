@@ -1,15 +1,18 @@
 import click
+import asyncio
+import nest_asyncio
 from . import ersilia_cli
 from .. import echo
 from ...hub.fetch.fetch import ModelFetcher
 from ... import ModelBase
 
+nest_asyncio.apply()
 
 def fetch_cmd():
     """Create fetch commmand"""
 
     def _fetch(mf, model_id):
-        mf.fetch(model_id)
+        asyncio.run(mf.fetch(model_id))
 
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
@@ -101,6 +104,7 @@ def fetch_cmd():
             ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
             fg="blue",
         )
+        print("Fetching started")
         mf = ModelFetcher(
             repo_path=repo_path,
             mode=mode,

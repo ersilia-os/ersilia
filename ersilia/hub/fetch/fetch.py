@@ -1,5 +1,3 @@
-"""Fetch Model from the Ersilia Model Hub."""
-
 import os
 import json
 import importlib
@@ -13,6 +11,7 @@ from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithFastAPI,
     NotInstallableWithBentoML,
 )
+from .register.standard_example import ModelStandardExample
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, EOS, MODEL_SOURCE_FILE
 from . import STATUS_FILE, DONE_TAG
@@ -156,9 +155,13 @@ class ModelFetcher(ErsiliaBase):
         else:
             self.logger.debug("Model already exists in your local, skipping fetching")
 
-    def _fetch_from_dockerhub(self, model_id):
+    def _standard_csv_example(self, model_id):
+        ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
+        ms.run()
+        
+    async def _fetch_from_dockerhub(self, model_id):
         self.logger.debug("Fetching from DockerHub")
-        self.model_dockerhub_fetcher.fetch(model_id=model_id)
+        await self.model_dockerhub_fetcher.fetch(model_id=model_id)
 
     def _fetch_from_hosted(self, model_id):
         self.logger.debug("Fetching from hosted")
@@ -213,14 +216,14 @@ class ModelFetcher(ErsiliaBase):
             return True
         else:
             return False
-    
-    def _fetch(self, model_id):
+
+    async def _fetch(self, model_id):
         
         self.logger.debug("Starting fetching procedure")
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
             self.logger.debug("Decided to fetch from DockerHub")
-            self._fetch_from_dockerhub(model_id=model_id)
+            await self._fetch_from_dockerhub(model_id=model_id)
             return
         do_hosted = self._decide_if_use_hosted(model_id=model_id)
         if do_hosted:
@@ -233,10 +236,14 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Fetching in your system, not from DockerHub")
         self._fetch_not_from_dockerhub(model_id=model_id)
 
-    def fetch(self, model_id):
-        self._fetch(model_id)
+    async def fetch(self, model_id):
+        await self._fetch(model_id)  
+        self._standard_csv_example(model_id)
         self.logger.debug("Writing model source to file")
         model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
+        try:
+            os.makedirs(self._model_path(model_id), exist_ok=True)
+        except OSError as error:
+            print(f"Error during folder creation: {error}")
         with open(model_source_file, "w") as f:
             f.write(self.model_source)
-
