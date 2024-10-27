@@ -39,17 +39,13 @@ class CompoundIdentifier(object):
             return False
 
     def _is_smiles(self, text):
+        if not isinstance(text, str) or not text.strip():
+            return False  
         if self.Chem is None:
-            if self._pubchem_smiles_to_inchikey(text) is not None:
-                return True
-            else:
-                return False
+            return self._pubchem_smiles_to_inchikey(text) is not None
         else:
             mol = self.Chem.MolFromSmiles(text)
-            if mol is None:
-                return False
-            else:
-                return True
+            return mol is not None
 
     @staticmethod
     def _is_inchikey(text):
