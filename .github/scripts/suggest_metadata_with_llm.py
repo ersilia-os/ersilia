@@ -169,34 +169,17 @@ Process the following text:
 
 
 class MetadataDownloader(object):
-    def __init__(self, model_id=None, issue_number=None, url=None, file_path=None):
-        if (
-            model_id is None
-            and issue_number is None
-            and url is None
-            and file_path is None
-        ):
+    def __init__(
+        self,
+        model_id=None,
+        issue_number=None,
+    ):
+        if model_id is None and issue_number is None:
             raise Exception("At least one argument is necessary")
-        if model_id is not None:
-            if issue_number is not None or url is not None or file_path is not None:
-                raise Exception("Only one argument is accepted")
-        if issue_number is not None:
-            if model_id is not None or url is not None or file_path is not None:
-                raise Exception("Only one argument is accepted")
-        if url is not None:
-            if (
-                model_id is not None
-                or issue_number is not None
-                or file_path is not None
-            ):
-                raise Exception("Only one argument is accepted")
-        if file_path is not None:
-            if model_id is not None or issue_number is not None or url is not None:
-                raise Exception("Only one argument is accepted")
+        if model_id is not None and issue_number is not None:
+            model_id = None
         self.model_id = model_id
         self.issue_number = issue_number
-        self.url = url
-        self.file_path = file_path
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         self.output_file = os.path.join(self.tmp_folder, "metadata.txt")
 
@@ -209,7 +192,7 @@ class MetadataDownloader(object):
         metadata_yml = os.path.join(base_url, "metadata.yml")
         metadata_json = os.path.join(base_url, "metadata.json")
         try:
-            url = os.path.join(base_url, metadata_yml)
+            url = metadata_yml
             response = requests.get(url)
             if response.status_code == 200:
                 with open(self.output_file, "wb") as f:
@@ -218,7 +201,8 @@ class MetadataDownloader(object):
         except:
             pass
         try:
-            url = os.path.join(base_url, metadata_json)
+            url = metadata_json
+            response = requests.get(url)
             if response.status_code == 200:
                 with open(self.output_file, "wb") as f:
                     f.write(response.content)
@@ -230,48 +214,21 @@ class MetadataDownloader(object):
         # TODO extract metadata from the issue itself
         pass
 
-    def download_from_url(self):
-        response = requests.get(self.url)
-        if response.status_code == 200:
-            with open(self.output_file, "wb") as f:
-                f.write(response.content)
-            return self.output_file
-        else:
-            raise Exception(
-                f"Failed to download file from URL: {self.url}, status code: {response.status_code}"
-            )
-
-    def download_from_file_path(self):
-        shutil.copy(self.file_path, self.output_file)
-        return self.output_file
-
     def download(self):
         if self.model_id is not None:
             return self.download_by_model_id()
         if self.issue_number is not None:
             return self.download_by_issue_number()
-        if self.url is not None:
-            return self.download_from_url()
-        if self.file_path is not None():
-            return self.download_from_file_path()
         return None
 
 
 class PublicationSummaryDownloader(object):
-    def __init__(self, model_id=None, url=None, file_path=None):
-        if model_id is None and url is None and file_path is None:
+    def __init__(self, model_id=None, file_path=None):
+        if model_id is None and file_path is None:
             raise Exception("At least one argument is necessary")
-        if model_id is not None:
-            if url is not None or file_path is not None:
-                raise Exception("Only one argument is accepted")
-        if url is not None:
-            if model_id is not None or file_path is not None:
-                raise Exception("Only one argument is accepted")
-        if file_path is not None:
-            if model_id is not None or url is not None:
-                raise Exception("Only one argument is accepted")
+        if model_id is not None and file_path is not None:
+            model_id = None
         self.model_id = model_id
-        self.url = url
         self.file_path = file_path
         self.tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         self.output_file = os.path.join(self.tmp_folder, "input_file.txt")
@@ -287,17 +244,6 @@ class PublicationSummaryDownloader(object):
         except Exception as e:
             raise Exception(f"Failed to download file from S3: {str(e)}")
 
-    def download_from_url(self):
-        response = requests.get(self.url)
-        if response.status_code == 200:
-            with open(self.output_file, "wb") as f:
-                f.write(response.content)
-            return self.output_file
-        else:
-            raise Exception(
-                f"Failed to download file from URL: {self.url}, status code: {response.status_code}"
-            )
-
     def download_from_file_path(self):
         shutil.copy(self.file_path, self.output_file)
         return self.output_file
@@ -305,16 +251,14 @@ class PublicationSummaryDownloader(object):
     def download(self):
         if self.model_id is not None:
             return self.download_by_model_id()
-        if self.url is not None:
-            return self.download_from_url()
-        if self.file_path is not None():
+        if self.file_path is not None:
             return self.download_from_file_path()
         return None
 
 
 class MetadataSuggestor(object):
     def __init__(self, metadata_txt, publication_markdown, output_markdown):
-        self.model = MODEL_NAME
+        self.model_name = MODEL_NAME
         self.metadata_txt = metadata_txt
         self.publication_markdown = publication_markdown
         self.output_markdown = output_markdown
@@ -361,19 +305,20 @@ class MetadataSuggestor(object):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process arguments.")
     parser.add_argument(
-        "--model_id", type=str, default=None, help="Ersilia Model Hub identifier"
+        "-m", "--model_id", type=str, default=None, help="Ersilia Model Hub identifier"
     )
     parser.add_argument(
+        "-i",
         "--issue_number",
         type=int,
         default=None,
         help="GitHub issue number in the ersilia-os/ersilia repository",
     )
     parser.add_argument(
-        "--url", type=str, default=None, help="URL of the downloadable file"
+        "-s", "--summary_path", type=str, default=None, help="File path"
     )
-    parser.add_argument("--file_path", type=str, default=None, help="File path")
     parser.add_argument(
+        "-o",
         "--output_markdown",
         type=str,
         default=None,
@@ -383,12 +328,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     model_id = args.model_id
     issue_number = args.issue_number
-    url = args.url
-    file_path = args.file_path
+    summary_path = args.summary_path
     output_markdown = args.output_markdown
-    md = MetadataDownloader(model_id, issue_number, url, file_path)
+    md = MetadataDownloader(model_id, issue_number)
     metadata_txt = md.download()
-    pd = PublicationSummaryDownloader(model_id, url, file_path)
+    pd = PublicationSummaryDownloader(model_id, summary_path)
     publication_markdown = pd.download()
     ms = MetadataSuggestor(metadata_txt, publication_markdown, output_markdown)
     ms.run()
