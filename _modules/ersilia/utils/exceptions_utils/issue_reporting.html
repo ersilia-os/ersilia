@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.utils.exceptions_utils.issue_reporting &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -87,7 +84,9 @@
 <span class="n">AUTH_TOKEN</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="send_exception_issue"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.issue_reporting.send_exception_issue">[docs]</a><span class="k">def</span> <span class="nf">send_exception_issue</span><span class="p">(</span><span class="n">E</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">lastinput</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="send_exception_issue">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.issue_reporting.send_exception_issue">[docs]</a>
+<span class="k">def</span> <span class="nf">send_exception_issue</span><span class="p">(</span><span class="n">E</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">lastinput</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;gh&quot;</span><span class="p">,</span> <span class="s2">&quot;auth&quot;</span><span class="p">,</span> <span class="s2">&quot;login&quot;</span><span class="p">])</span>  <span class="c1"># user login</span>
     <span class="n">auth_out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="p">[</span><span class="s2">&quot;gh&quot;</span><span class="p">,</span> <span class="s2">&quot;auth&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;-t&quot;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span>
@@ -163,6 +162,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t create issue.&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Response:&quot;</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
+
 
 
 <span class="c1"># previous email reporting:</span>

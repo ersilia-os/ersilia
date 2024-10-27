@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.db.hubdata.localslugs &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -81,7 +78,9 @@
 <span class="n">SLUGDB_FILE</span> <span class="o">=</span> <span class="s2">&quot;.slug.db&quot;</span>
 
 
-<div class="viewcode-block" id="SlugDb"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb">[docs]</a><span class="k">class</span> <span class="nc">SlugDb</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="SlugDb">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb">[docs]</a>
+<span class="k">class</span> <span class="nc">SlugDb</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eos_dir</span><span class="p">,</span> <span class="n">SLUGDB_FILE</span><span class="p">)</span>
@@ -91,7 +90,9 @@
     <span class="k">def</span> <span class="nf">_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SlugDb.create_table"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.create_table">[docs]</a>    <span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SlugDb.create_table">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.create_table">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -109,7 +110,10 @@
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SlugDb.insert"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SlugDb.insert">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.insert">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -123,7 +127,10 @@
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SlugDb.delete_by_model_id"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete_by_model_id">[docs]</a>    <span class="k">def</span> <span class="nf">delete_by_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SlugDb.delete_by_model_id">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete_by_model_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_by_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -138,7 +145,10 @@
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SlugDb.delete_by_slug"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete_by_slug">[docs]</a>    <span class="k">def</span> <span class="nf">delete_by_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SlugDb.delete_by_slug">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete_by_slug">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_by_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -153,7 +163,10 @@
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SlugDb.delete"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SlugDb.delete">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -168,7 +181,10 @@
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SlugDb.models_of_slug"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.models_of_slug">[docs]</a>    <span class="k">def</span> <span class="nf">models_of_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SlugDb.models_of_slug">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.models_of_slug">[docs]</a>
+    <span class="k">def</span> <span class="nf">models_of_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        SELECT model_id FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE slug = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
@@ -182,7 +198,10 @@
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="SlugDb.slugs_of_model"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.slugs_of_model">[docs]</a>    <span class="k">def</span> <span class="nf">slugs_of_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SlugDb.slugs_of_model">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.slugs_of_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">slugs_of_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        SELECT slug FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE model_id = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
@@ -196,7 +215,10 @@
         <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="SlugDb.clean"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SlugDb.clean">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.clean">[docs]</a>
+    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -208,7 +230,9 @@
         <span class="n">c</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
         <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
+
 </pre></div>
 
            </div>

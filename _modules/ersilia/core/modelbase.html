@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.core.modelbase &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -86,7 +83,9 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 
 
-<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelBase">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class of a Model.&quot;&quot;&quot;</span>
 
     <span class="nd">@throw_ersilia_exception</span>
@@ -135,11 +134,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="ModelBase.is_valid"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_valid">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelBase.is_valid">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_valid">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span></div>
+
 
     <span class="k">def</span> <span class="nf">_is_available_locally_from_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">fetch_status_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
@@ -162,7 +164,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="ModelBase.is_available_locally"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_available_locally">[docs]</a>    <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelBase.is_available_locally">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_available_locally">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_status</span><span class="p">()</span>
         <span class="n">bd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_dockerhub</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">bs</span> <span class="ow">or</span> <span class="n">bd</span><span class="p">:</span>
@@ -170,7 +174,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="ModelBase.was_fetched_from_dockerhub"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub">[docs]</a>    <span class="k">def</span> <span class="nf">was_fetched_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelBase.was_fetched_from_dockerhub">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub">[docs]</a>
+    <span class="k">def</span> <span class="nf">was_fetched_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">from_dockerhub_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
         <span class="p">)</span>
@@ -178,7 +185,9 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">from_dockerhub_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">]</span></div></div>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">]</span></div>
+</div>
+
 </pre></div>
 
            </div>

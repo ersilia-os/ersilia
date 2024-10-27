@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.hub.fetch.pack.bentoml_pack.mode &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../../_static/jquery.js"></script>
-        <script src="../../../../../../_static/underscore.js"></script>
-        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../../../_static/doctools.js"></script>
-        <script src="../../../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../../search.html" /> 
@@ -90,7 +87,9 @@
 <span class="n">AVAILABLE_MODES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;venv&quot;</span><span class="p">,</span> <span class="s2">&quot;conda&quot;</span><span class="p">,</span> <span class="s2">&quot;docker&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="PackModeDecision"><a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision">[docs]</a><span class="k">class</span> <span class="nc">PackModeDecision</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="PackModeDecision">
+<a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision">[docs]</a>
+<span class="k">class</span> <span class="nc">PackModeDecision</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -113,7 +112,9 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">dockerfile</span>
 
-<div class="viewcode-block" id="PackModeDecision.decide_from_config_file_if_available"><a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision.decide_from_config_file_if_available">[docs]</a>    <span class="k">def</span> <span class="nf">decide_from_config_file_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackModeDecision.decide_from_config_file_if_available">
+<a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision.decide_from_config_file_if_available">[docs]</a>
+    <span class="k">def</span> <span class="nf">decide_from_config_file_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">MODEL_CONFIG_FILENAME</span><span class="p">)):</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -131,7 +132,10 @@
                 <span class="k">return</span> <span class="n">default_mode</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="PackModeDecision.decide"><a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision.decide">[docs]</a>    <span class="k">def</span> <span class="nf">decide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PackModeDecision.decide">
+<a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision.decide">[docs]</a>
+    <span class="k">def</span> <span class="nf">decide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="n">SystemChecker</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">is_github_action</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -186,7 +190,9 @@
             <span class="k">if</span> <span class="n">dockerreq</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
                 <span class="k">return</span> <span class="s2">&quot;docker&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;conda&quot;</span></div></div>
+                <span class="k">return</span> <span class="s2">&quot;conda&quot;</span></div>
+</div>
+
 </pre></div>
 
            </div>

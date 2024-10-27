@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.publish.inspect &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -87,12 +84,16 @@
 <span class="n">Result</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Result&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">])</span>
 
 
-<div class="viewcode-block" id="ModelInspector"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector">[docs]</a><span class="k">class</span> <span class="nc">ModelInspector</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelInspector">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelInspector</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
 
-<div class="viewcode-block" id="ModelInspector.check_repo_exists"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_repo_exists">[docs]</a>    <span class="k">def</span> <span class="nf">check_repo_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelInspector.check_repo_exists">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_repo_exists">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_repo_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Verify that the repository exists at a given link.</span>
 
@@ -109,7 +110,10 @@
                 <span class="sa">f</span><span class="s2">&quot;Connection invalid, no github repository found at https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that this repository exists in the ersilia-os database.&quot;</span><span class="p">,</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelInspector.check_complete_metadata"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">check_complete_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelInspector.check_complete_metadata">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_metadata">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_complete_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search for specific keys in metadata JSON file.</span>
 
@@ -213,7 +217,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelInspector.check_complete_folder_structure"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_folder_structure">[docs]</a>    <span class="k">def</span> <span class="nf">check_complete_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelInspector.check_complete_folder_structure">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_folder_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_complete_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate folder structure of the repository.</span>
 
@@ -263,7 +270,10 @@
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelInspector.check_dependencies_are_valid"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_dependencies_are_valid">[docs]</a>    <span class="k">def</span> <span class="nf">check_dependencies_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelInspector.check_dependencies_are_valid">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_dependencies_are_valid">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_dependencies_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check dependencies specified in the Dockerfile.</span>
 
@@ -334,7 +344,10 @@
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ModelInspector.check_comptuational_performance"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_comptuational_performance">[docs]</a>    <span class="k">def</span> <span class="nf">check_comptuational_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelInspector.check_comptuational_performance">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_comptuational_performance">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_comptuational_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Measure computational performance by serving the model and running predictions.</span>
 <span class="sd">        Uses --track flag to automatically upload performance metrics to S3.</span>
@@ -371,7 +384,10 @@
     
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelInspector.check_no_extra_files"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_no_extra_files">[docs]</a>    <span class="k">def</span> <span class="nf">check_no_extra_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelInspector.check_no_extra_files">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_no_extra_files">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_no_extra_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensure that there are no excess files in the root directory of the repository.</span>
 
@@ -412,7 +428,9 @@
 
         <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

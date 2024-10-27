@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.io.input &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -95,7 +92,9 @@
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span>
 
 
-<div class="viewcode-block" id="BaseIOGetter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter">[docs]</a><span class="k">class</span> <span class="nc">BaseIOGetter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseIOGetter">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseIOGetter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
@@ -123,8 +122,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input Shape: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_shape</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">InputShape</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
-<div class="viewcode-block" id="BaseIOGetter.shape"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter.shape">[docs]</a>    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseIOGetter.shape">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter.shape">[docs]</a>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_shape_from_card</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_get_from_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">input_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_input_from_card</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -147,11 +149,15 @@
             <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="BaseIOGetter.get"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseIOGetter.get">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.BaseIOGetter.get">[docs]</a>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_from_model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_from_specs</span><span class="p">(</span><span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_from_specs</span><span class="p">(</span><span class="n">input_type</span><span class="o">=</span><span class="n">input_type</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)</span></div>
+</div>
+
 
 
 <span class="k">class</span> <span class="nc">_GenericAdapter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -230,7 +236,9 @@
         <span class="k">return</span> <span class="n">data</span>
 
 
-<div class="viewcode-block" id="GenericInputAdapter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter">[docs]</a><span class="k">class</span> <span class="nc">GenericInputAdapter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="GenericInputAdapter">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter">[docs]</a>
+<span class="k">class</span> <span class="nc">GenericInputAdapter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
@@ -239,7 +247,9 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">_GenericAdapter</span><span class="p">(</span><span class="n">baseio</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GenericInputAdapter.batch_iter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.batch_iter">[docs]</a>    <span class="k">def</span> <span class="nf">batch_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<div class="viewcode-block" id="GenericInputAdapter.batch_iter">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.batch_iter">[docs]</a>
+    <span class="k">def</span> <span class="nf">batch_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
         <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">chunk</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">))</span>
@@ -247,18 +257,28 @@
                 <span class="k">break</span>
             <span class="k">yield</span> <span class="n">chunk</span></div>
 
-<div class="viewcode-block" id="GenericInputAdapter.adapt"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GenericInputAdapter.adapt">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.adapt">[docs]</a>
+    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_iter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">chunk</span></div>
 
-<div class="viewcode-block" id="GenericInputAdapter.adapt_one_by_one"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.adapt_one_by_one">[docs]</a>    <span class="k">def</span> <span class="nf">adapt_one_by_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GenericInputAdapter.adapt_one_by_one">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.adapt_one_by_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">adapt_one_by_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">d</span></div></div>
+            <span class="k">yield</span> <span class="n">d</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ExampleGenerator"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator">[docs]</a><span class="k">class</span> <span class="nc">ExampleGenerator</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ExampleGenerator">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator">[docs]</a>
+<span class="k">class</span> <span class="nc">ExampleGenerator</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">IO</span> <span class="o">=</span> <span class="n">BaseIOGetter</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -299,10 +319,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datum</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
         <span class="p">]</span>
 
-<div class="viewcode-block" id="ExampleGenerator.test"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ExampleGenerator.test">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.test">[docs]</a>
+    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">test</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ExampleGenerator.random_example"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.random_example">[docs]</a>    <span class="k">def</span> <span class="nf">random_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ExampleGenerator.random_example">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.random_example">[docs]</a>
+    <span class="k">def</span> <span class="nf">random_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_simple</span><span class="p">:</span>
             <span class="n">simple</span> <span class="o">=</span> <span class="n">simple</span>
         <span class="k">else</span><span class="p">:</span>
@@ -332,7 +357,10 @@
                         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
                             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]])</span></div>
 
-<div class="viewcode-block" id="ExampleGenerator.predefined_example"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.predefined_example">[docs]</a>    <span class="k">def</span> <span class="nf">predefined_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ExampleGenerator.predefined_example">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.predefined_example">[docs]</a>
+    <span class="k">def</span> <span class="nf">predefined_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="n">dest_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">pf</span> <span class="ow">in</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">:</span>
             <span class="n">example_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_folder</span><span class="p">,</span> <span class="n">pf</span><span class="p">)</span>
@@ -342,7 +370,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="ExampleGenerator.example"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.example">[docs]</a>    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">,</span> <span class="n">try_predefined</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ExampleGenerator.example">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.example">[docs]</a>
+    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">,</span> <span class="n">try_predefined</span><span class="p">):</span>
         <span class="n">predefined_available</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">try_predefined</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying with predefined input&quot;</span><span class="p">)</span>
@@ -352,7 +383,9 @@
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">predefined_available</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Randomly sampling input&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="n">simple</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="n">simple</span><span class="p">)</span></div>
+</div>
+
         
 </pre></div>
 

@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.utils.identifiers.compound &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -93,7 +90,9 @@
 
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">UNPROCESSABLE_INPUT</span>
 
-<div class="viewcode-block" id="CompoundIdentifier"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier">[docs]</a><span class="k">class</span> <span class="nc">CompoundIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="CompoundIdentifier">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier">[docs]</a>
+<span class="k">class</span> <span class="nc">CompoundIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="o">=</span> <span class="n">Chem</span>
@@ -104,17 +103,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;smiles&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;inchikey&quot;</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">])</span>
 
-<div class="viewcode-block" id="CompoundIdentifier.is_input_header"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header">[docs]</a>    <span class="k">def</span> <span class="nf">is_input_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+<div class="viewcode-block" id="CompoundIdentifier.is_input_header">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_input_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="CompoundIdentifier.is_key_header"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header">[docs]</a>    <span class="k">def</span> <span class="nf">is_key_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CompoundIdentifier.is_key_header">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_key_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
+
 
     <span class="k">def</span> <span class="nf">_is_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -144,7 +149,9 @@
                     <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="CompoundIdentifier.guess_type"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">[docs]</a>    <span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="CompoundIdentifier.guess_type">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">[docs]</a>
+    <span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">text</span> <span class="o">==</span> <span class="n">UNPROCESSABLE_INPUT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -153,7 +160,10 @@
             <span class="k">return</span> <span class="s2">&quot;smiles&quot;</span>
         <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span></div>
 
-<div class="viewcode-block" id="CompoundIdentifier.unichem_resolver"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">[docs]</a>    <span class="k">def</span> <span class="nf">unichem_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inchikey</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CompoundIdentifier.unichem_resolver">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">[docs]</a>
+    <span class="k">def</span> <span class="nf">unichem_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inchikey</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">unichem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
@@ -163,6 +173,7 @@
         <span class="n">inchi</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;standardinchi&quot;</span><span class="p">]</span>
         <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">inchi</span><span class="o">.</span><span class="n">MolFromInchi</span><span class="p">(</span><span class="n">inchi</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span></div>
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">smiles</span><span class="p">):</span>
@@ -186,7 +197,9 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">text</span><span class="p">)[</span><span class="s2">&quot;PropertyTable&quot;</span><span class="p">][</span><span class="s2">&quot;Properties&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;InChIKey&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="CompoundIdentifier.chemical_identifier_resolver"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="CompoundIdentifier.chemical_identifier_resolver">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">chemical_identifier_resolver</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns SMILES string of a given identifier, using NCI tool&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">identifier</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -200,7 +213,10 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span></div>
 
-<div class="viewcode-block" id="CompoundIdentifier.encode"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CompoundIdentifier.encode">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode">[docs]</a>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get InChIKey of compound based on SMILES string&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">smiles</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">smiles</span> <span class="o">==</span> <span class="n">UNPROCESSABLE_INPUT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
@@ -219,7 +235,9 @@
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">inchikey</span> <span class="o">=</span> <span class="kc">None</span>
         
-        <span class="k">return</span> <span class="n">inchikey</span> <span class="k">if</span> <span class="n">inchikey</span> <span class="k">else</span> <span class="n">UNPROCESSABLE_INPUT</span></div></div>
+        <span class="k">return</span> <span class="n">inchikey</span> <span class="k">if</span> <span class="n">inchikey</span> <span class="k">else</span> <span class="n">UNPROCESSABLE_INPUT</span></div>
+</div>
+
 
 <span class="n">Identifier</span> <span class="o">=</span> <span class="n">CompoundIdentifier</span>
 </pre></div>

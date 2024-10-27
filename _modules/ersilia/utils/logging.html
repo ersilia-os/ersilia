@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.utils.logging &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -88,7 +85,9 @@
 <span class="n">ROTATION</span> <span class="o">=</span> <span class="s2">&quot;10 MB&quot;</span>
 
 
-<div class="viewcode-block" id="make_temp_dir"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.make_temp_dir">[docs]</a><span class="k">def</span> <span class="nf">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="make_temp_dir">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.make_temp_dir">[docs]</a>
+<span class="k">def</span> <span class="nf">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
     <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
     <span class="n">tmp_dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
     <span class="n">logs_tmp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;logs&quot;</span><span class="p">,</span> <span class="s2">&quot;tmp&quot;</span><span class="p">)</span>
@@ -100,7 +99,10 @@
     <span class="k">return</span> <span class="n">tmp_dir</span></div>
 
 
-<div class="viewcode-block" id="Logger"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger">[docs]</a><span class="k">class</span> <span class="nc">Logger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Logger">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger">[docs]</a>
+<span class="k">class</span> <span class="nc">Logger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
@@ -146,7 +148,9 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Logger.set_verbosity"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.set_verbosity">[docs]</a>    <span class="k">def</span> <span class="nf">set_verbosity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+<div class="viewcode-block" id="Logger.set_verbosity">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.set_verbosity">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_verbosity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_to_console</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_terminal_commands_to_console</span><span class="p">()</span>
@@ -155,23 +159,43 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_unlog_terminal_commands_from_console</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbose</span></div>
 
-<div class="viewcode-block" id="Logger.debug"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.debug">[docs]</a>    <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Logger.debug">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.debug">[docs]</a>
+    <span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Logger.info"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Logger.info">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.info">[docs]</a>
+    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Logger.warning"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.warning">[docs]</a>    <span class="k">def</span> <span class="nf">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Logger.warning">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.warning">[docs]</a>
+    <span class="k">def</span> <span class="nf">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Logger.error"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Logger.error">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.error">[docs]</a>
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Logger.critical"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.critical">[docs]</a>    <span class="k">def</span> <span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Logger.critical">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.critical">[docs]</a>
+    <span class="k">def</span> <span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Logger.success"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.success">[docs]</a>    <span class="k">def</span> <span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="Logger.success">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger.success">[docs]</a>
+    <span class="k">def</span> <span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+</div>
+
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>

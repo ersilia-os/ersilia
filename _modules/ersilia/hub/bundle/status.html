@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.hub.bundle.status &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -85,11 +82,15 @@
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
 
 
-<div class="viewcode-block" id="ModelStatus"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus">[docs]</a><span class="k">class</span> <span class="nc">ModelStatus</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelStatus">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelStatus</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ModelStatus.is_downloaded"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_downloaded">[docs]</a>    <span class="k">def</span> <span class="nf">is_downloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelStatus.is_downloaded">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_downloaded">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_downloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">essentials</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;README.md&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">]</span>  <span class="c1">#  essential files</span>
         <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
@@ -100,7 +101,10 @@
                 <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="ModelStatus.is_docker"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_docker">[docs]</a>    <span class="k">def</span> <span class="nf">is_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelStatus.is_docker">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_docker">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
         <span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
@@ -111,7 +115,10 @@
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="ModelStatus.is_pulled_docker"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_pulled_docker">[docs]</a>    <span class="k">def</span> <span class="nf">is_pulled_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelStatus.is_pulled_docker">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_pulled_docker">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_pulled_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">))</span>
         <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">json_file</span><span class="p">):</span>
@@ -120,7 +127,10 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="ModelStatus.is_conda"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_conda">[docs]</a>    <span class="k">def</span> <span class="nf">is_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelStatus.is_conda">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_conda">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
         <span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
@@ -130,12 +140,16 @@
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="ModelStatus.is_pip"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_pip">[docs]</a>    <span class="k">def</span> <span class="nf">is_pip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelStatus.is_pip">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_pip">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_pip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
+
 
     <span class="k">def</span> <span class="nf">_is_bento_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_folder</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">model_folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -149,15 +163,23 @@
                 <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="ModelStatus.is_bundle"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_bundle">[docs]</a>    <span class="k">def</span> <span class="nf">is_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelStatus.is_bundle">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_bundle">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">model_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_bento_folder</span><span class="p">(</span><span class="n">model_folder</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelStatus.is_bentoml"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_bentoml">[docs]</a>    <span class="k">def</span> <span class="nf">is_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelStatus.is_bentoml">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_bentoml">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">model_folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bentoml_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_bento_folder</span><span class="p">(</span><span class="n">model_folder</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelStatus.status"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelStatus.status">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.status">[docs]</a>
+    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check installation and deployment status of the model&quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;download&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_downloaded</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
@@ -168,7 +190,9 @@
             <span class="s2">&quot;conda&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_conda</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="s2">&quot;pip&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pip</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="n">results</span></div></div>
+        <span class="k">return</span> <span class="n">results</span></div>
+</div>
+
 </pre></div>
 
            </div>

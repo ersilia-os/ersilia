@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.store.utils &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -83,14 +80,19 @@
 <span class="kn">from</span> <span class="nn">ersilia.default</span> <span class="kn">import</span> <span class="n">INFERENCE_STORE_API_URL</span>
 
 
-<div class="viewcode-block" id="InferenceStoreMessage"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.InferenceStoreMessage">[docs]</a><span class="k">class</span> <span class="nc">InferenceStoreMessage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="InferenceStoreMessage">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.InferenceStoreMessage">[docs]</a>
+<span class="k">class</span> <span class="nc">InferenceStoreMessage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
     <span class="k">def</span> <span class="nf">_echo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="OutputSource"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource">[docs]</a><span class="k">class</span> <span class="nc">OutputSource</span><span class="p">():</span>
+
+<div class="viewcode-block" id="OutputSource">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource">[docs]</a>
+<span class="k">class</span> <span class="nc">OutputSource</span><span class="p">():</span>
     <span class="n">LOCAL_ONLY</span> <span class="o">=</span> <span class="s2">&quot;local-only&quot;</span>
     <span class="n">CLOUD_ONLY</span> <span class="o">=</span> <span class="s2">&quot;cloud-only&quot;</span>
     <span class="n">ALL</span> <span class="o">=</span> <span class="p">[</span>
@@ -98,20 +100,31 @@
         <span class="n">CLOUD_ONLY</span><span class="p">,</span>
         <span class="p">]</span>
 
-<div class="viewcode-block" id="OutputSource.is_local"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_local">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="OutputSource.is_local">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_local">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">is_local</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">option</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOCAL_ONLY</span></div>
 
-<div class="viewcode-block" id="OutputSource.is_cloud"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_cloud">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">is_cloud</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">option</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CLOUD_ONLY</span></div></div>
 
-<div class="viewcode-block" id="ModelNotInStore"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ModelNotInStore">[docs]</a><span class="k">class</span> <span class="nc">ModelNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputSource.is_cloud">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_cloud">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">is_cloud</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">option</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CLOUD_ONLY</span></div>
+</div>
+
+
+<div class="viewcode-block" id="ModelNotInStore">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ModelNotInStore">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
-<div class="viewcode-block" id="ModelNotInStore.echo"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ModelNotInStore.echo">[docs]</a>    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelNotInStore.echo">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ModelNotInStore.echo">[docs]</a>
+    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span>
             <span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> could not be found in inference store&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
@@ -122,15 +135,21 @@
                 <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span>
                 <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="PrecalculationsNotInStore"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore">[docs]</a><span class="k">class</span> <span class="nc">PrecalculationsNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PrecalculationsNotInStore">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore">[docs]</a>
+<span class="k">class</span> <span class="nc">PrecalculationsNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
-<div class="viewcode-block" id="PrecalculationsNotInStore.echo"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore.echo">[docs]</a>    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecalculationsNotInStore.echo">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore.echo">[docs]</a>
+    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span>
             <span class="s2">&quot;Precalculations for model </span><span class="si">{0}</span><span class="s2"> could not be found in inference store&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
@@ -141,15 +160,21 @@
                 <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span>
                 <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="PrecalculationsInStore"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsInStore">[docs]</a><span class="k">class</span> <span class="nc">PrecalculationsInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PrecalculationsInStore">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsInStore">[docs]</a>
+<span class="k">class</span> <span class="nc">PrecalculationsInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">output_url</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_url</span> <span class="o">=</span> <span class="n">output_url</span>
 
-<div class="viewcode-block" id="PrecalculationsInStore.echo"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsInStore.echo">[docs]</a>    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecalculationsInStore.echo">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsInStore.echo">[docs]</a>
+    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span>
             <span class="s2">&quot;Precalculations for model </span><span class="si">{0}</span><span class="s2"> are now available for download via this link (expires in 60 minutes): </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
@@ -157,10 +182,14 @@
                 <span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
         <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="store_has_model"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.store_has_model">[docs]</a><span class="k">def</span> <span class="nf">store_has_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="store_has_model">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.store_has_model">[docs]</a>
+<span class="k">def</span> <span class="nf">store_has_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
         <span class="n">INFERENCE_STORE_API_URL</span> <span class="o">+</span> <span class="s2">&quot;/model&quot;</span><span class="p">,</span>
         <span class="n">params</span><span class="o">=</span><span class="p">{</span>
@@ -175,13 +204,17 @@
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="delete_file_upon_upload"><a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.delete_file_upon_upload">[docs]</a><span class="k">def</span> <span class="nf">delete_file_upon_upload</span><span class="p">(</span><span class="n">response_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+<div class="viewcode-block" id="delete_file_upon_upload">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.delete_file_upon_upload">[docs]</a>
+<span class="k">def</span> <span class="nf">delete_file_upon_upload</span><span class="p">(</span><span class="n">response_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">response_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> deleted successfully.&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to delete file </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">, please delete manually. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

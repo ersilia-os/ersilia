@@ -1,24 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Containers &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -89,19 +86,19 @@
            <div itemprop="articleBody">
              
   <section id="containers">
-<h1>Containers<a class="headerlink" href="#containers" title="Permalink to this heading"></a></h1>
+<h1>Containers<a class="headerlink" href="#containers" title="Link to this heading"></a></h1>
 <p>Ersilia relies on Docker containers.
 Ersilia stores containers at <a class="reference external" href="https://hub.docker.com/orgs/ersiliaos">Docker Hub</a>.</p>
 <section id="upload-image-to-the-ersilia-hub">
-<h2>Upload image to the Ersilia Hub<a class="headerlink" href="#upload-image-to-the-ersilia-hub" title="Permalink to this heading"></a></h2>
+<h2>Upload image to the Ersilia Hub<a class="headerlink" href="#upload-image-to-the-ersilia-hub" title="Link to this heading"></a></h2>
 <section id="prepare-machine">
-<h3>Prepare machine<a class="headerlink" href="#prepare-machine" title="Permalink to this heading"></a></h3>
+<h3>Prepare machine<a class="headerlink" href="#prepare-machine" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker login --username=$USER --password=$PWD
 </pre></div>
 </div>
 </section>
 <section id="write-dockerfile">
-<h3>Write dockerfile<a class="headerlink" href="#write-dockerfile" title="Permalink to this heading"></a></h3>
+<h3>Write dockerfile<a class="headerlink" href="#write-dockerfile" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FROM</span> <span class="n">ersilia</span><span class="o">/</span><span class="n">basic</span>
 
 <span class="n">WORKDIR</span> <span class="o">/</span><span class="n">app</span>
@@ -111,13 +108,13 @@ Ersilia stores containers at <a class="reference external" href="https://hub.doc
 </div>
 </section>
 <section id="build-image">
-<h3>Build image<a class="headerlink" href="#build-image" title="Permalink to this heading"></a></h3>
+<h3>Build image<a class="headerlink" href="#build-image" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker build -t $DOCKER_ACC/$DOCKER_REPO:$IMG_TAG .
 </pre></div>
 </div>
 </section>
 <section id="push-image">
-<h3>Push image<a class="headerlink" href="#push-image" title="Permalink to this heading"></a></h3>
+<h3>Push image<a class="headerlink" href="#push-image" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker push $DOCKER_ACC/$DOCKER_REPO:$IMG_TAG
 </pre></div>
 </div>

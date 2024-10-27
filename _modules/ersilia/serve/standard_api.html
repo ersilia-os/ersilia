@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.serve.standard_api &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -93,7 +90,9 @@
 <span class="n">MAX_INPUT_ROWS_STANDARD</span> <span class="o">=</span> <span class="mi">1000</span>
 
 
-<div class="viewcode-block" id="StandardCSVRunApi"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi">[docs]</a><span class="k">class</span> <span class="nc">StandardCSVRunApi</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="StandardCSVRunApi">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi">[docs]</a>
+<span class="k">class</span> <span class="nc">StandardCSVRunApi</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -121,14 +120,19 @@
             <span class="s2">&quot;This is the expected header (max 10): </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="StandardCSVRunApi.get_identifier_object_by_input_type"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.get_identifier_object_by_input_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_identifier_object_by_input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StandardCSVRunApi.get_identifier_object_by_input_type">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.get_identifier_object_by_input_type">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_identifier_object_by_input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">identifier_module_path</span> <span class="o">=</span> <span class="s2">&quot;ersilia.utils.identifiers.</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">input_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="p">)</span>
         <span class="n">identifier_object</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">identifier_module_path</span><span class="p">)</span><span class="o">.</span><span class="n">Identifier</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">identifier_object</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.is_ready"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_ready">[docs]</a>    <span class="k">def</span> <span class="nf">is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.is_ready">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_ready">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_input_type_standardizable</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_output_csv</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
@@ -137,6 +141,7 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span></div>
+
 
     <span class="k">def</span> <span class="nf">_is_input_file_too_long</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -149,7 +154,9 @@
                     <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="StandardCSVRunApi.is_input_standard_csv_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_input_standard_csv_file">[docs]</a>    <span class="k">def</span> <span class="nf">is_input_standard_csv_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
+<div class="viewcode-block" id="StandardCSVRunApi.is_input_standard_csv_file">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_input_standard_csv_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_input_standard_csv_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">input_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
@@ -186,17 +193,26 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.get_input_type"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.get_input_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.get_input_type">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.get_input_type">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">info</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;Input&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.is_input_type_standardizable"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_input_type_standardizable">[docs]</a>    <span class="k">def</span> <span class="nf">is_input_type_standardizable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.is_input_type_standardizable">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_input_type_standardizable">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_input_type_standardizable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_type</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.is_output_type_standardizable"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_output_type_standardizable">[docs]</a>    <span class="k">def</span> <span class="nf">is_output_type_standardizable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.is_output_type_standardizable">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_output_type_standardizable">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_output_type_standardizable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">api_schema</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="s2">&quot;api_schema&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">DEFAULT_API_NAME</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">api_schema</span><span class="p">:</span>
@@ -207,20 +223,29 @@
                 <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.is_output_csv_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_output_csv_file">[docs]</a>    <span class="k">def</span> <span class="nf">is_output_csv_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.is_output_csv_file">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_output_csv_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_output_csv_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output_data</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">output_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.get_expected_output_header"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.get_expected_output_header">[docs]</a>    <span class="k">def</span> <span class="nf">get_expected_output_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.get_expected_output_header">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.get_expected_output_header">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_expected_output_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_data</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">header</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_three_columns"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_three_columns">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_to_json_three_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_three_columns">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_three_columns">[docs]</a>
+    <span class="k">def</span> <span class="nf">serialize_to_json_three_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
         <span class="n">json_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -229,7 +254,10 @@
                 <span class="n">json_data</span> <span class="o">+=</span> <span class="p">[{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]}]</span>
         <span class="k">return</span> <span class="n">json_data</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_two_columns"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_two_columns">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_to_json_two_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_two_columns">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_two_columns">[docs]</a>
+    <span class="k">def</span> <span class="nf">serialize_to_json_two_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
         <span class="n">json_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -238,7 +266,10 @@
                 <span class="n">json_data</span> <span class="o">+=</span> <span class="p">[{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]}]</span>
         <span class="k">return</span> <span class="n">json_data</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_one_column"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_one_column">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_to_json_one_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_one_column">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_one_column">[docs]</a>
+    <span class="k">def</span> <span class="nf">serialize_to_json_one_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
         <span class="n">json_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -248,7 +279,10 @@
                 <span class="n">json_data</span> <span class="o">+=</span> <span class="p">[{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]}]</span>
         <span class="k">return</span> <span class="n">json_data</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">serialize_to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">h</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
@@ -267,7 +301,10 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.is_amenable"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_amenable">[docs]</a>    <span class="k">def</span> <span class="nf">is_amenable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.is_amenable">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_amenable">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_amenable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_input_type_standardizable</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_output_type_standardizable</span><span class="p">():</span>
@@ -279,7 +316,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;It seems amenable for standard run&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_csv"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_csv">[docs]</a>    <span class="k">def</span> <span class="nf">serialize_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_csv">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_csv">[docs]</a>
+    <span class="k">def</span> <span class="nf">serialize_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
         <span class="n">k</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
@@ -299,7 +339,10 @@
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output_data</span></div>
 
-<div class="viewcode-block" id="StandardCSVRunApi.post"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">output_source</span><span class="o">=</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardCSVRunApi.post">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.post">[docs]</a>
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">output_source</span><span class="o">=</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">):</span>
         <span class="n">input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_to_json</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">is_cloud</span><span class="p">(</span><span class="n">output_source</span><span class="p">):</span>
             <span class="n">store</span> <span class="o">=</span> <span class="n">InferenceStoreApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -311,13 +354,18 @@
             <span class="n">output_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_to_csv</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">output_data</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span></div></div>
+            <span class="k">return</span> <span class="kc">None</span></div>
+</div>
 
 
-<div class="viewcode-block" id="StandardQueryApi"><a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardQueryApi">[docs]</a><span class="k">class</span> <span class="nc">StandardQueryApi</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardQueryApi">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardQueryApi">[docs]</a>
+<span class="k">class</span> <span class="nc">StandardQueryApi</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
         <span class="c1"># TODO This class will be used to query directly the calculations lake.</span>
         <span class="k">pass</span></div>
+
 </pre></div>
 
            </div>

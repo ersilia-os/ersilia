@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.utils.dvc &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -90,7 +87,9 @@
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Secrets</span>
 
 
-<div class="viewcode-block" id="set_secrets_file"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.set_secrets_file">[docs]</a><span class="k">def</span> <span class="nf">set_secrets_file</span><span class="p">():</span>
+<div class="viewcode-block" id="set_secrets_file">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.set_secrets_file">[docs]</a>
+<span class="k">def</span> <span class="nf">set_secrets_file</span><span class="p">():</span>
     <span class="n">secrets</span> <span class="o">=</span> <span class="n">Secrets</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">gdrive_client_secrets_json</span><span class="p">):</span>
         <span class="n">secrets</span><span class="o">.</span><span class="n">fetch_gdrive_secrets_from_github</span><span class="p">()</span>
@@ -100,41 +99,62 @@
     <span class="k">return</span> <span class="n">GoogleAuth</span></div>
 
 
-<div class="viewcode-block" id="DVCFetcher"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher">[docs]</a><span class="k">class</span> <span class="nc">DVCFetcher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCFetcher">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher">[docs]</a>
+<span class="k">class</span> <span class="nc">DVCFetcher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_repo_path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">local_repo_path</span>
 
-<div class="viewcode-block" id="DVCFetcher.get_data"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DVCFetcher.get_data">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.get_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_dvc_exists</span><span class="p">():</span>
             <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;dvc --cd &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot; pull&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DVCFetcher.check_dvc_exists"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_dvc_exists">[docs]</a>    <span class="k">def</span> <span class="nf">check_dvc_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCFetcher.check_dvc_exists">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_dvc_exists">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_dvc_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_path</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.dvc&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="DVCFetcher.check_h5_exists"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_h5_exists">[docs]</a>    <span class="k">def</span> <span class="nf">check_h5_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCFetcher.check_h5_exists">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_h5_exists">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_h5_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_path</span><span class="p">()):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="DVCFetcher.has_data"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.has_data">[docs]</a>    <span class="k">def</span> <span class="nf">has_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCFetcher.has_data">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.has_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">has_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_h5_exists</span><span class="p">():</span>
             <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_path</span><span class="p">(),</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
+
     <span class="k">def</span> <span class="nf">_data_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">H5_DATA_FILE</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DVCBrancher"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCBrancher">[docs]</a><span class="k">class</span> <span class="nc">DVCBrancher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCBrancher">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCBrancher">[docs]</a>
+<span class="k">class</span> <span class="nc">DVCBrancher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="DVCSetup"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup">[docs]</a><span class="k">class</span> <span class="nc">DVCSetup</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCSetup">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup">[docs]</a>
+<span class="k">class</span> <span class="nc">DVCSetup</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_repo_path</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">local_repo_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -143,7 +163,9 @@
         <span class="n">gauth</span><span class="o">.</span><span class="n">LocalWebserverAuth</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drive</span> <span class="o">=</span> <span class="n">GoogleDrive</span><span class="p">(</span><span class="n">gauth</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DVCSetup.gdrive_setup"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_setup">[docs]</a>    <span class="k">def</span> <span class="nf">gdrive_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DVCSetup.gdrive_setup">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_setup">[docs]</a>
+    <span class="k">def</span> <span class="nf">gdrive_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">CreateFile</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
@@ -153,7 +175,10 @@
         <span class="p">)</span>
         <span class="n">folder</span><span class="o">.</span><span class="n">Upload</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DVCSetup.gdrive_folder_id"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_folder_id">[docs]</a>    <span class="k">def</span> <span class="nf">gdrive_folder_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCSetup.gdrive_folder_id">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_folder_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">gdrive_folder_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">fileList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">ListFile</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">ISAURA_GDRIVE</span> <span class="o">+</span> <span class="s2">&quot;&#39; in parents and trashed=false&quot;</span><span class="p">,</span>
@@ -168,7 +193,10 @@
             <span class="k">if</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">:</span>
                 <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="DVCSetup.set_dvc_gdrive"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.set_dvc_gdrive">[docs]</a>    <span class="k">def</span> <span class="nf">set_dvc_gdrive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCSetup.set_dvc_gdrive">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.set_dvc_gdrive">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_dvc_gdrive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;dvc --cd </span><span class="si">{0}</span><span class="s2"> add data.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">))</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
             <span class="s2">&quot;dvc --cd &quot;</span>
@@ -179,14 +207,19 @@
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;dvc --cd &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot; push&quot;</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DVCSetup.git_add_and_commit"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.git_add_and_commit">[docs]</a>    <span class="k">def</span> <span class="nf">git_add_and_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Set to public data repo&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DVCSetup.git_add_and_commit">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.git_add_and_commit">[docs]</a>
+    <span class="k">def</span> <span class="nf">git_add_and_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Set to public data repo&quot;</span><span class="p">):</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
             <span class="s2">&quot;git add data.h5.dvc&quot;</span>
         <span class="p">)</span>  <span class="c1"># TODO: Be more specific in the files/folders to be added</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;git commit -m &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span></div></div>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

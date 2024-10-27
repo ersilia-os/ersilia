@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.io.output_logger &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -82,7 +79,9 @@
 <span class="n">MAX_LOG_COLUMNS</span> <span class="o">=</span> <span class="mi">10</span>
 
 
-<div class="viewcode-block" id="TabularResultLogger"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output_logger.TabularResultLogger">[docs]</a><span class="k">class</span> <span class="nc">TabularResultLogger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TabularResultLogger">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output_logger.TabularResultLogger">[docs]</a>
+<span class="k">class</span> <span class="nc">TabularResultLogger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
@@ -106,7 +105,9 @@
             <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="TabularResultLogger.tabulate"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output_logger.TabularResultLogger.tabulate">[docs]</a>    <span class="k">def</span> <span class="nf">tabulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="TabularResultLogger.tabulate">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output_logger.TabularResultLogger.tabulate">[docs]</a>
+    <span class="k">def</span> <span class="nf">tabulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_tabular_file</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># TODO include HDF5 compatibility</span>
@@ -129,7 +130,9 @@
                     <span class="n">s</span> <span class="o">+=</span> <span class="n">r</span><span class="p">[:</span><span class="n">MAX_LOG_COLUMNS</span><span class="p">]</span>
                     <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
                 <span class="k">return</span> <span class="n">R</span>
-        <span class="k">return</span> <span class="kc">None</span></div></div>
+        <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
 </pre></div>
 
            </div>

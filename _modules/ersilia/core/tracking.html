@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.core.tracking &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -106,7 +103,9 @@
 <span class="n">AWS_REGION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_REGIOIN&quot;</span><span class="p">,</span> <span class="s2">&quot;eu-central-1&quot;</span><span class="p">)</span>
 <span class="n">TRACKING_BUCKET</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TRACKING_BUCKET&quot;</span><span class="p">,</span> <span class="s2">&quot;ersilia-models-runs&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="flatten_dict"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.flatten_dict">[docs]</a><span class="k">def</span> <span class="nf">flatten_dict</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="flatten_dict">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.flatten_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">flatten_dict</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This will flatten the nested dictionaries from the generator into a single-level dictionary,</span>
 <span class="sd">    where keys from all levels are merged into one dictionary.</span>
@@ -120,7 +119,10 @@
     <span class="k">return</span> <span class="n">flat_dict</span></div>
 
 
-<div class="viewcode-block" id="log_files_metrics"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.log_files_metrics">[docs]</a><span class="k">def</span> <span class="nf">log_files_metrics</span><span class="p">(</span><span class="n">file_log</span><span class="p">):</span>
+
+<div class="viewcode-block" id="log_files_metrics">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.log_files_metrics">[docs]</a>
+<span class="k">def</span> <span class="nf">log_files_metrics</span><span class="p">(</span><span class="n">file_log</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function will log the number of errors and warnings in the log files.</span>
 
@@ -199,7 +201,10 @@
         <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Unable to calculate metrics for log file: log file not found&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="serialize_session_json_to_csv"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_session_json_to_csv">[docs]</a><span class="k">def</span> <span class="nf">serialize_session_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
+
+<div class="viewcode-block" id="serialize_session_json_to_csv">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_session_json_to_csv">[docs]</a>
+<span class="k">def</span> <span class="nf">serialize_session_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
@@ -212,7 +217,10 @@
         <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="serialize_tracking_json_to_csv"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_tracking_json_to_csv">[docs]</a><span class="k">def</span> <span class="nf">serialize_tracking_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
+
+<div class="viewcode-block" id="serialize_tracking_json_to_csv">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_tracking_json_to_csv">[docs]</a>
+<span class="k">def</span> <span class="nf">serialize_tracking_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">2</span><span class="p">:]</span> <span class="c1"># Ignore model_id and runs</span>
@@ -227,7 +235,10 @@
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="upload_to_s3"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_s3">[docs]</a><span class="k">def</span> <span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="n">TRACKING_BUCKET</span><span class="p">):</span>
+
+<div class="viewcode-block" id="upload_to_s3">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_s3">[docs]</a>
+<span class="k">def</span> <span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="n">TRACKING_BUCKET</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a file to an S3 bucket    </span>
 
 <span class="sd">    :param json_dict: JSON object to upload</span>
@@ -284,7 +295,10 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="upload_to_cddvault"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_cddvault">[docs]</a><span class="k">def</span> <span class="nf">upload_to_cddvault</span><span class="p">(</span><span class="n">output_df</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
+
+<div class="viewcode-block" id="upload_to_cddvault">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_cddvault">[docs]</a>
+<span class="k">def</span> <span class="nf">upload_to_cddvault</span><span class="p">(</span><span class="n">output_df</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function takes in the output dataframe from the model run and uploads the data to CDD vault.</span>
 
@@ -347,7 +361,10 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="get_nan_counts"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.get_nan_counts">[docs]</a><span class="k">def</span> <span class="nf">get_nan_counts</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_nan_counts">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.get_nan_counts">[docs]</a>
+<span class="k">def</span> <span class="nf">get_nan_counts</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the number of None values in each key of a list of dictionaries.</span>
 
@@ -372,7 +389,10 @@
     <span class="k">return</span> <span class="n">nan_count_agg</span></div>
 
 
-<div class="viewcode-block" id="RunTracker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker">[docs]</a><span class="k">class</span> <span class="nc">RunTracker</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="RunTracker">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker">[docs]</a>
+<span class="k">class</span> <span class="nc">RunTracker</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class will be responsible for tracking model runs. It calculates the desired metadata based on a model&#39;s</span>
 <span class="sd">    inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested</span>
@@ -393,7 +413,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span> <span class="o">=</span> <span class="n">TabularResultLogger</span><span class="p">()</span>
 
-<div class="viewcode-block" id="RunTracker.get_file_sizes"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_file_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+<div class="viewcode-block" id="RunTracker.get_file_sizes">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_file_sizes">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_file_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the size of the input and output dataframes, as well as the average size of each row.</span>
 
@@ -415,7 +437,10 @@
             <span class="s2">&quot;avg_output_size&quot;</span><span class="p">:</span> <span class="n">output_avg_row_size</span><span class="p">,</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="RunTracker.check_types"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.check_types">[docs]</a>    <span class="k">def</span> <span class="nf">check_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+
+<div class="viewcode-block" id="RunTracker.check_types">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.check_types">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method is responsible for checking the types of the output file against the expected types.</span>
 <span class="sd">        This includes checking the shape of the output file (list vs single) and the types of each column.</span>
@@ -456,7 +481,10 @@
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;mismatched_types&quot;</span><span class="p">:</span> <span class="n">mismatched_types</span><span class="p">,</span> <span class="s2">&quot;correct_shape&quot;</span><span class="p">:</span> <span class="n">correct_shape</span><span class="p">}</span></div>
 
-<div class="viewcode-block" id="RunTracker.get_peak_memory"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_peak_memory">[docs]</a>    <span class="k">def</span> <span class="nf">get_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="RunTracker.get_peak_memory">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_peak_memory">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the peak memory usage of ersilia&#39;s Python instance during the run.</span>
 <span class="sd">        :return: The peak memory usage in Megabytes.</span>
@@ -467,7 +495,10 @@
         <span class="n">peak_memory</span> <span class="o">=</span> <span class="n">peak_memory_kb</span> <span class="o">/</span> <span class="mi">1024</span>
         <span class="k">return</span> <span class="n">peak_memory</span></div>
 
-<div class="viewcode-block" id="RunTracker.get_memory_info"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_memory_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_memory_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="RunTracker.get_memory_info">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_memory_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_memory_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves the memory information of the current process</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -495,7 +526,10 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RunTracker.log_result"><a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_result">[docs]</a>    <span class="k">def</span> <span class="nf">log_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+
+<div class="viewcode-block" id="RunTracker.log_result">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_result">[docs]</a>
+    <span class="k">def</span> <span class="nf">log_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">get_session_uuid</span><span class="p">()</span> 
         <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
         <span class="n">tabular_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -505,6 +539,7 @@
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">tabular_result</span><span class="p">:</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+
 
     <span class="nd">@throw_ersilia_exception</span>
     <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">container_metrics</span><span class="p">):</span>
@@ -590,6 +625,7 @@
         
         <span class="k">if</span> <span class="n">AWS_ACCESS_KEY_ID</span> <span class="ow">and</span> <span class="n">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span>
             <span class="n">upload_to_s3</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

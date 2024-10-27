@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.io.readers.file &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -92,61 +89,92 @@
 <span class="n">FILE_CHUNKSIZE</span> <span class="o">=</span> <span class="mi">10000</span>
 
 
-<div class="viewcode-block" id="FileTyper"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper">[docs]</a><span class="k">class</span> <span class="nc">FileTyper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="FileTyper">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper">[docs]</a>
+<span class="k">class</span> <span class="nc">FileTyper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FileTyper.is_valid_input_file"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_valid_input_file">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid_input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FileTyper.is_valid_input_file">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_valid_input_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_valid_input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_csv</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_tsv</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_json</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FileTyper.is_valid_output_file"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_valid_output_file">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid_output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FileTyper.is_valid_output_file">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_valid_output_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_valid_output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_csv</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_tsv</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_json</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_hdf5</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FileTyper.is_tabular"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_tabular">[docs]</a>    <span class="k">def</span> <span class="nf">is_tabular</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FileTyper.is_tabular">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_tabular">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_tabular</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_csv</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_tsv</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FileTyper.is_csv"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_csv">[docs]</a>    <span class="k">def</span> <span class="nf">is_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FileTyper.is_csv">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_csv">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FileTyper.is_tsv"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_tsv">[docs]</a>    <span class="k">def</span> <span class="nf">is_tsv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FileTyper.is_tsv">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_tsv">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_tsv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FileTyper.is_hdf5"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_hdf5">[docs]</a>    <span class="k">def</span> <span class="nf">is_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FileTyper.is_hdf5">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_hdf5">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FileTyper.is_json"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_json">[docs]</a>    <span class="k">def</span> <span class="nf">is_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FileTyper.is_json">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.is_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="FileTyper.get_extension"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.get_extension">[docs]</a>    <span class="k">def</span> <span class="nf">get_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="FileTyper.get_extension">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.FileTyper.get_extension">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+</div>
 
 
-<div class="viewcode-block" id="BatchCacher"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher">[docs]</a><span class="k">class</span> <span class="nc">BatchCacher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BatchCacher">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher">[docs]</a>
+<span class="k">class</span> <span class="nc">BatchCacher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BatchCacher.get_cached_files"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_cached_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="BatchCacher.get_cached_files">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_files">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_cached_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
         <span class="n">idx2fn</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
@@ -155,13 +183,22 @@
         <span class="n">idxs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">idx2fn</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">idx2fn</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="BatchCacher.get_cached_input_files"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_input_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_cached_input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BatchCacher.get_cached_input_files">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_input_files">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_cached_input_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cached_files</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;chunk-input-&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BatchCacher.get_cached_output_files"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_output_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_cached_output_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BatchCacher.get_cached_output_files">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.get_cached_output_files">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_cached_output_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cached_files</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;chunk-output-&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BatchCacher.name_cached_output_files"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.name_cached_output_files">[docs]</a>    <span class="k">def</span> <span class="nf">name_cached_output_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cached_inputs</span><span class="p">,</span> <span class="n">output_template</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BatchCacher.name_cached_output_files">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BatchCacher.name_cached_output_files">[docs]</a>
+    <span class="k">def</span> <span class="nf">name_cached_output_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cached_inputs</span><span class="p">,</span> <span class="n">output_template</span><span class="p">):</span>
         <span class="n">ft</span> <span class="o">=</span> <span class="n">FileTyper</span><span class="p">(</span><span class="n">output_template</span><span class="p">)</span>
         <span class="n">extension</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">get_extension</span><span class="p">()</span>
         <span class="n">cached_outputs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -171,10 +208,14 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;chunk-output-</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">extension</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="p">]</span>
-        <span class="k">return</span> <span class="n">cached_outputs</span></div></div>
+        <span class="k">return</span> <span class="n">cached_outputs</span></div>
+</div>
 
 
-<div class="viewcode-block" id="BaseTabularFile"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile">[docs]</a><span class="k">class</span> <span class="nc">BaseTabularFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseTabularFile">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseTabularFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">,</span>
@@ -205,7 +246,9 @@
             <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">DEFAULT_DELIMITER</span>
 
-<div class="viewcode-block" id="BaseTabularFile.get_delimiter"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.get_delimiter">[docs]</a>    <span class="k">def</span> <span class="nf">get_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseTabularFile.get_delimiter">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.get_delimiter">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">delimiters</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">default_extension</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_delimiter_by_extension</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -227,10 +270,16 @@
         <span class="p">]</span>
         <span class="k">return</span> <span class="n">delimiters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="BaseTabularFile.get_string_delimiter"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.get_string_delimiter">[docs]</a>    <span class="k">def</span> <span class="nf">get_string_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseTabularFile.get_string_delimiter">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.get_string_delimiter">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_string_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">string_delimiter</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="BaseTabularFile.is_key"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_key">[docs]</a>    <span class="k">def</span> <span class="nf">is_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="BaseTabularFile.is_key">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_key">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="p">)</span>
@@ -244,7 +293,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="BaseTabularFile.is_input"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_input">[docs]</a>    <span class="k">def</span> <span class="nf">is_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="BaseTabularFile.is_input">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_input">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="p">)</span>
@@ -258,7 +310,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="BaseTabularFile.resolve_columns"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.resolve_columns">[docs]</a>    <span class="k">def</span> <span class="nf">resolve_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseTabularFile.resolve_columns">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.resolve_columns">[docs]</a>
+    <span class="k">def</span> <span class="nf">resolve_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -344,7 +399,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">matching</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="nb">input</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matching</span></div>
 
-<div class="viewcode-block" id="BaseTabularFile.has_header"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.has_header">[docs]</a>    <span class="k">def</span> <span class="nf">has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseTabularFile.has_header">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.has_header">[docs]</a>
+    <span class="k">def</span> <span class="nf">has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Has header is not None&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span>
@@ -379,7 +437,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span></div>
 
-<div class="viewcode-block" id="BaseTabularFile.read_input_columns"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.read_input_columns">[docs]</a>    <span class="k">def</span> <span class="nf">read_input_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseTabularFile.read_input_columns">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.read_input_columns">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_input_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
         <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_header</span><span class="p">()</span>
@@ -407,7 +468,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">R</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
 
-<div class="viewcode-block" id="BaseTabularFile.is_single_input"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_single_input">[docs]</a>    <span class="k">def</span> <span class="nf">is_single_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseTabularFile.is_single_input">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_single_input">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_single_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_input_columns</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -433,7 +497,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="BaseTabularFile.is_flattened"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_flattened">[docs]</a>    <span class="k">def</span> <span class="nf">is_flattened</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseTabularFile.is_flattened">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.is_flattened">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_flattened</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_input_columns</span><span class="p">()</span>
         <span class="n">flat_evidence</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">total_evidence</span> <span class="o">=</span> <span class="mi">0</span>
@@ -445,10 +512,14 @@
         <span class="k">if</span> <span class="p">(</span><span class="n">flat_evidence</span> <span class="o">/</span> <span class="n">total_evidence</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">FLATTENED_EVIDENCE</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div></div>
+            <span class="k">return</span> <span class="kc">False</span></div>
+</div>
 
 
-<div class="viewcode-block" id="TabularFileShapeStandardizer"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileShapeStandardizer">[docs]</a><span class="k">class</span> <span class="nc">TabularFileShapeStandardizer</span><span class="p">(</span><span class="n">BaseTabularFile</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TabularFileShapeStandardizer">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileShapeStandardizer">[docs]</a>
+<span class="k">class</span> <span class="nc">TabularFileShapeStandardizer</span><span class="p">(</span><span class="n">BaseTabularFile</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_path</span><span class="p">,</span> <span class="n">dst_path</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">sniff_line_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">InputShape</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
@@ -546,16 +617,22 @@
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">R</span><span class="p">:</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TabularFileShapeStandardizer.standardize"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileShapeStandardizer.standardize">[docs]</a>    <span class="k">def</span> <span class="nf">standardize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TabularFileShapeStandardizer.standardize">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileShapeStandardizer.standardize">[docs]</a>
+    <span class="k">def</span> <span class="nf">standardize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeSingle</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_single</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_list</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_pair_of_lists</span><span class="p">()</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_pair_of_lists</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="StandardTabularFileReader"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader">[docs]</a><span class="k">class</span> <span class="nc">StandardTabularFileReader</span><span class="p">(</span><span class="n">BatchCacher</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardTabularFileReader">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader">[docs]</a>
+<span class="k">class</span> <span class="nc">StandardTabularFileReader</span><span class="p">(</span><span class="n">BatchCacher</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">BatchCacher</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -564,18 +641,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_column_delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_delimiter</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="StandardTabularFileReader.get_delimiter"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.get_delimiter">[docs]</a>    <span class="k">def</span> <span class="nf">get_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StandardTabularFileReader.get_delimiter">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.get_delimiter">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="s2">&quot;,&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;,&quot;</span></div>
 
-<div class="viewcode-block" id="StandardTabularFileReader.read_header"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.read_header">[docs]</a>    <span class="k">def</span> <span class="nf">read_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardTabularFileReader.read_header">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.read_header">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_delimiter</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StandardTabularFileReader.read"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardTabularFileReader.read">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.read">[docs]</a>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_delimiter</span><span class="p">)</span>
@@ -584,7 +669,10 @@
                 <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">R</span></div>
 
-<div class="viewcode-block" id="StandardTabularFileReader.is_worth_splitting"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.is_worth_splitting">[docs]</a>    <span class="k">def</span> <span class="nf">is_worth_splitting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardTabularFileReader.is_worth_splitting">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.is_worth_splitting">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_worth_splitting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
@@ -596,7 +684,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="StandardTabularFileReader.split_in_cache"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.split_in_cache">[docs]</a>    <span class="k">def</span> <span class="nf">split_in_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardTabularFileReader.split_in_cache">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.split_in_cache">[docs]</a>
+    <span class="k">def</span> <span class="nf">split_in_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">ft</span> <span class="o">=</span> <span class="n">FileTyper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
         <span class="n">extension</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">get_extension</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Splitting file in cache: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span><span class="p">))</span>
@@ -624,10 +715,14 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">g</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
                     <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cached_input_files</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cached_input_files</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="TabularFileReader"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader">[docs]</a><span class="k">class</span> <span class="nc">TabularFileReader</span><span class="p">(</span><span class="n">StandardTabularFileReader</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TabularFileReader">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader">[docs]</a>
+<span class="k">class</span> <span class="nc">TabularFileReader</span><span class="p">(</span><span class="n">StandardTabularFileReader</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">sniff_line_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
@@ -665,7 +760,9 @@
     <span class="k">def</span> <span class="nf">_datum_parser_pair_of_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="p">),</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="p">)]</span>
 
-<div class="viewcode-block" id="TabularFileReader.read"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TabularFileReader.read">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader.read">[docs]</a>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_standardize</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -674,10 +771,14 @@
             <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="n">R</span></div></div>
+        <span class="k">return</span> <span class="n">R</span></div>
+</div>
 
 
-<div class="viewcode-block" id="BaseJsonFile"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseJsonFile">[docs]</a><span class="k">class</span> <span class="nc">BaseJsonFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseJsonFile">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseJsonFile">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseJsonFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">entity_is_list</span><span class="p">,</span> <span class="n">expected_number</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -689,13 +790,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Entity is list: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_is_list</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="BaseJsonFile.read_input_json"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseJsonFile.read_input_json">[docs]</a>    <span class="k">def</span> <span class="nf">read_input_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseJsonFile.read_input_json">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseJsonFile.read_input_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_input_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span></div>
 
-<div class="viewcode-block" id="BaseJsonFile.is_single_input"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseJsonFile.is_single_input">[docs]</a>    <span class="k">def</span> <span class="nf">is_single_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseJsonFile.is_single_input">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseJsonFile.is_single_input">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_single_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_input_json</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -720,10 +826,14 @@
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">False</span></div></div>
+                <span class="k">return</span> <span class="kc">False</span></div>
+</div>
 
 
-<div class="viewcode-block" id="JsonFileShapeStandardizer"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileShapeStandardizer">[docs]</a><span class="k">class</span> <span class="nc">JsonFileShapeStandardizer</span><span class="p">(</span><span class="n">BaseJsonFile</span><span class="p">):</span>
+
+<div class="viewcode-block" id="JsonFileShapeStandardizer">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileShapeStandardizer">[docs]</a>
+<span class="k">class</span> <span class="nc">JsonFileShapeStandardizer</span><span class="p">(</span><span class="n">BaseJsonFile</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_path</span><span class="p">,</span> <span class="n">dst_path</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">IO</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">src_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_path</span><span class="p">)</span>
@@ -748,16 +858,22 @@
             <span class="n">expected_number</span><span class="o">=</span><span class="n">expected_number</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="JsonFileShapeStandardizer.standardize"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileShapeStandardizer.standardize">[docs]</a>    <span class="k">def</span> <span class="nf">standardize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="JsonFileShapeStandardizer.standardize">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileShapeStandardizer.standardize">[docs]</a>
+    <span class="k">def</span> <span class="nf">standardize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_single_input</span><span class="p">():</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">read_input_json</span><span class="p">()]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_input_json</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div></div>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="StandardJsonFileReader"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader">[docs]</a><span class="k">class</span> <span class="nc">StandardJsonFileReader</span><span class="p">(</span><span class="n">BatchCacher</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardJsonFileReader">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader">[docs]</a>
+<span class="k">class</span> <span class="nc">StandardJsonFileReader</span><span class="p">(</span><span class="n">BatchCacher</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">BatchCacher</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -769,11 +885,16 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">),</span> <span class="n">n</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span>
 
-<div class="viewcode-block" id="StandardJsonFileReader.read"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StandardJsonFileReader.read">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.read">[docs]</a>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StandardJsonFileReader.is_worth_splitting"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.is_worth_splitting">[docs]</a>    <span class="k">def</span> <span class="nf">is_worth_splitting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardJsonFileReader.is_worth_splitting">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.is_worth_splitting">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_worth_splitting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;File has </span><span class="si">{0}</span><span class="s2"> entris&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">FILE_CHUNKSIZE</span><span class="p">:</span>
@@ -782,7 +903,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="StandardJsonFileReader.split_in_cache"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.split_in_cache">[docs]</a>    <span class="k">def</span> <span class="nf">split_in_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StandardJsonFileReader.split_in_cache">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardJsonFileReader.split_in_cache">[docs]</a>
+    <span class="k">def</span> <span class="nf">split_in_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Splitting file in cache: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span><span class="p">))</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -790,10 +914,14 @@
             <span class="n">g</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;chunk-input-</span><span class="si">{0}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data_chunk</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cached_input_files</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cached_input_files</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="JsonFileReader"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileReader">[docs]</a><span class="k">class</span> <span class="nc">JsonFileReader</span><span class="p">(</span><span class="n">StandardJsonFileReader</span><span class="p">):</span>
+
+<div class="viewcode-block" id="JsonFileReader">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileReader">[docs]</a>
+<span class="k">class</span> <span class="nc">JsonFileReader</span><span class="p">(</span><span class="n">StandardJsonFileReader</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">IO</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
@@ -813,11 +941,15 @@
         <span class="p">)</span>
         <span class="n">jfss</span><span class="o">.</span><span class="n">standardize</span><span class="p">()</span>
 
-<div class="viewcode-block" id="JsonFileReader.read"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileReader.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="JsonFileReader.read">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.JsonFileReader.read">[docs]</a>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_standardize</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

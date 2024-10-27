@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.io.output &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -94,7 +91,9 @@
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 
 
-<div class="viewcode-block" id="DataFrame"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame">[docs]</a><span class="k">class</span> <span class="nc">DataFrame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFrame">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame">[docs]</a>
+<span class="k">class</span> <span class="nc">DataFrame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span>
@@ -115,14 +114,19 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;,&quot;</span>
 
-<div class="viewcode-block" id="DataFrame.decompose"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.decompose">[docs]</a>    <span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFrame.decompose">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.decompose">[docs]</a>
+    <span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;keys&quot;</span><span class="p">:</span> <span class="n">keys</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="n">inputs</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">values</span><span class="p">}</span></div>
 
-<div class="viewcode-block" id="DataFrame.write_hdf5"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_hdf5">[docs]</a>    <span class="k">def</span> <span class="nf">write_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DataFrame.write_hdf5">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_hdf5">[docs]</a>
+    <span class="k">def</span> <span class="nf">write_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
         <span class="n">hdf5</span> <span class="o">=</span> <span class="n">Hdf5Data</span><span class="p">(</span>
             <span class="n">values</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">],</span>
@@ -132,7 +136,10 @@
         <span class="p">)</span>
         <span class="n">hdf5</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataFrame.write_text"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_text">[docs]</a>    <span class="k">def</span> <span class="nf">write_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DataFrame.write_text">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_text">[docs]</a>
+    <span class="k">def</span> <span class="nf">write_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">delimiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_delimiter</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
@@ -141,14 +148,21 @@
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataFrame.write"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DataFrame.write">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_h5</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">write_hdf5</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ResponseRefactor"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.ResponseRefactor">[docs]</a><span class="k">class</span> <span class="nc">ResponseRefactor</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ResponseRefactor">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.ResponseRefactor">[docs]</a>
+<span class="k">class</span> <span class="nc">ResponseRefactor</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span> <span class="o">=</span> <span class="kc">None</span>
@@ -195,15 +209,21 @@
                     <span class="n">m</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">m</span>
 
-<div class="viewcode-block" id="ResponseRefactor.refactor_response"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.ResponseRefactor.refactor_response">[docs]</a>    <span class="k">def</span> <span class="nf">refactor_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<div class="viewcode-block" id="ResponseRefactor.refactor_response">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.ResponseRefactor.refactor_response">[docs]</a>
+    <span class="k">def</span> <span class="nf">refactor_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_meta</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nullify_meta</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="n">m</span>
-        <span class="k">return</span> <span class="n">r</span></div></div>
+        <span class="k">return</span> <span class="n">r</span></div>
+</div>
 
 
-<div class="viewcode-block" id="GenericOutputAdapter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter">[docs]</a><span class="k">class</span> <span class="nc">GenericOutputAdapter</span><span class="p">(</span><span class="n">ResponseRefactor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GenericOutputAdapter">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter">[docs]</a>
+<span class="k">class</span> <span class="nc">GenericOutputAdapter</span><span class="p">(</span><span class="n">ResponseRefactor</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ResponseRefactor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span> <span class="o">=</span> <span class="kc">None</span>
@@ -394,7 +414,9 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
-<div class="viewcode-block" id="GenericOutputAdapter.meta"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.meta">[docs]</a>    <span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GenericOutputAdapter.meta">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.meta">[docs]</a>
+    <span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;Meta not available, run some adapations first and it will be inferred atomatically&quot;</span>
@@ -402,7 +424,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span></div>
 
-<div class="viewcode-block" id="GenericOutputAdapter.merge"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subfiles</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GenericOutputAdapter.merge">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.merge">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subfiles</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Merging </span><span class="si">{0}</span><span class="s2"> files into </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subfiles</span><span class="p">),</span> <span class="n">output_file</span><span class="p">)</span>
         <span class="p">)</span>
@@ -425,6 +450,7 @@
                         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">fi</span><span class="p">:</span>
                             <span class="n">fo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
                     <span class="n">use_header</span> <span class="o">=</span> <span class="kc">False</span></div>
+
 
     <span class="k">def</span> <span class="nf">_adapt_generic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">api_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -499,21 +525,29 @@
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">result</span>
 
-<div class="viewcode-block" id="GenericOutputAdapter.adapt"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GenericOutputAdapter.adapt">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.adapt">[docs]</a>
+    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">adapted_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adapt_when_fastapi_was_used</span><span class="p">(</span>
             <span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">adapted_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">adapted_result</span></div></div>
+            <span class="k">return</span> <span class="n">adapted_result</span></div>
+</div>
 
 
-<div class="viewcode-block" id="DictlistDataframeConverter"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter">[docs]</a><span class="k">class</span> <span class="nc">DictlistDataframeConverter</span><span class="p">(</span><span class="n">GenericOutputAdapter</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DictlistDataframeConverter">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter">[docs]</a>
+<span class="k">class</span> <span class="nc">DictlistDataframeConverter</span><span class="p">(</span><span class="n">GenericOutputAdapter</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">GenericOutputAdapter</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DictlistDataframeConverter.dictlist2dataframe"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dictlist2dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">dictlist2dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+<div class="viewcode-block" id="DictlistDataframeConverter.dictlist2dataframe">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dictlist2dataframe">[docs]</a>
+    <span class="k">def</span> <span class="nf">dictlist2dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
         <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">df_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">dl</span><span class="p">,</span> <span class="n">df_file</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">)</span>
@@ -521,12 +555,15 @@
         <span class="n">df</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">df_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
+
     <span class="k">def</span> <span class="nf">__nan_to_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">x</span>
 
-<div class="viewcode-block" id="DictlistDataframeConverter.dataframe2dictlist"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dataframe2dictlist">[docs]</a>    <span class="k">def</span> <span class="nf">dataframe2dictlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+<div class="viewcode-block" id="DictlistDataframeConverter.dataframe2dictlist">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dataframe2dictlist">[docs]</a>
+    <span class="k">def</span> <span class="nf">dataframe2dictlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
         <span class="n">schema</span> <span class="o">=</span> <span class="n">ApiSchema</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
         <span class="p">)</span><span class="o">.</span><span class="n">get_output_by_api</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">)</span>
@@ -570,16 +607,22 @@
                 <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">result</span> <span class="o">+=</span> <span class="p">[</span><span class="n">res</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">result</span></div></div>
+        <span class="k">return</span> <span class="n">result</span></div>
+</div>
 
 
-<div class="viewcode-block" id="TabularOutputStacker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker">[docs]</a><span class="k">class</span> <span class="nc">TabularOutputStacker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TabularOutputStacker">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker">[docs]</a>
+<span class="k">class</span> <span class="nc">TabularOutputStacker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">):</span>
         <span class="n">ft</span> <span class="o">=</span> <span class="n">FileTyper</span><span class="p">(</span><span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_hdf5</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">is_hdf5</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_names</span> <span class="o">=</span> <span class="n">file_names</span>
 
-<div class="viewcode-block" id="TabularOutputStacker.stack_text"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack_text">[docs]</a>    <span class="k">def</span> <span class="nf">stack_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<div class="viewcode-block" id="TabularOutputStacker.stack_text">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack_text">[docs]</a>
+    <span class="k">def</span> <span class="nf">stack_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="n">has_header</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_names</span><span class="p">:</span>
@@ -591,15 +634,23 @@
                     <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f1</span><span class="p">:</span>
                         <span class="n">f0</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TabularOutputStacker.stack_hdf5"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack_hdf5">[docs]</a>    <span class="k">def</span> <span class="nf">stack_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TabularOutputStacker.stack_hdf5">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack_hdf5">[docs]</a>
+    <span class="k">def</span> <span class="nf">stack_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="n">stacker</span> <span class="o">=</span> <span class="n">Hdf5DataStacker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_names</span><span class="p">)</span>
         <span class="n">stacker</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TabularOutputStacker.stack"><a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack">[docs]</a>    <span class="k">def</span> <span class="nf">stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TabularOutputStacker.stack">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack">[docs]</a>
+    <span class="k">def</span> <span class="nf">stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_hdf5</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stack_hdf5</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stack_text</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stack_text</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

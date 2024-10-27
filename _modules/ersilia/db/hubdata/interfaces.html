@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.db.hubdata.interfaces &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -84,7 +81,9 @@
 <span class="n">AIRTABLE_PAGE_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
 
 
-<div class="viewcode-block" id="AirtableInterface"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface">[docs]</a><span class="k">class</span> <span class="nc">AirtableInterface</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="AirtableInterface">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface">[docs]</a>
+<span class="k">class</span> <span class="nc">AirtableInterface</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_id</span> <span class="o">=</span> <span class="n">AIRTABLE_MODEL_HUB_BASE_ID</span>
@@ -109,21 +108,31 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;AIRTABLE_READONLY_API_KEY&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="AirtableInterface.set_write_api_key"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface.set_write_api_key">[docs]</a>    <span class="k">def</span> <span class="nf">set_write_api_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_api_key</span><span class="p">):</span>
+<div class="viewcode-block" id="AirtableInterface.set_write_api_key">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface.set_write_api_key">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_write_api_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_api_key</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write_api_key</span> <span class="o">=</span> <span class="n">write_api_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">write_api_key</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AirtableInterface.items"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface.items">[docs]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AirtableInterface.items">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface.items">[docs]</a>
+    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">records</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span>
             <span class="n">page_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_size</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rows</span>
         <span class="p">):</span>
             <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">record</span></div>
 
-<div class="viewcode-block" id="AirtableInterface.items_all"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface.items_all">[docs]</a>    <span class="k">def</span> <span class="nf">items_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AirtableInterface.items_all">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.AirtableInterface.items_all">[docs]</a>
+    <span class="k">def</span> <span class="nf">items_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">records</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">record</span></div></div>
+            <span class="k">yield</span> <span class="n">record</span></div>
+</div>
+
 </pre></div>
 
            </div>

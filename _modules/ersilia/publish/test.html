@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.publish.test &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -112,7 +109,9 @@
 <span class="n">RESET</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
 
 
-<div class="viewcode-block" id="ModelTester"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester">[docs]</a><span class="k">class</span> <span class="nc">ModelTester</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelTester">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelTester</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -564,14 +563,19 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Test: Equal Inputs and Outputs, SUCCESS! ✅</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ModelTester.default_env"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.default_env">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ModelTester.default_env">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.default_env">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_env</span><span class="p">():</span>
         <span class="k">if</span> <span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">BASE</span></div>
 
-<div class="viewcode-block" id="ModelTester.conda_prefix"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.conda_prefix">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="ModelTester.conda_prefix">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.conda_prefix">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">conda_prefix</span><span class="p">(</span><span class="n">is_base</span><span class="p">):</span>
         <span class="n">o</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;which conda&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">o</span><span class="p">:</span>
@@ -584,7 +588,10 @@
             <span class="n">o</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;echo $CONDA_PREFIX_1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">o</span></div>
 
-<div class="viewcode-block" id="ModelTester.is_base"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.is_base">[docs]</a>    <span class="k">def</span> <span class="nf">is_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelTester.is_base">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.is_base">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">default_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_env</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">default_env</span> <span class="o">==</span> <span class="s2">&quot;base&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -592,12 +599,15 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
+
     <span class="k">def</span> <span class="nf">_compare_string_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">,</span> <span class="n">similarity_threshold</span><span class="p">):</span>
         <span class="n">similarity</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">ratio</span><span class="p">(</span><span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">similarity</span> <span class="o">&gt;=</span> <span class="n">similarity_threshold</span>
 
     
-<div class="viewcode-block" id="ModelTester.get_directory_size_without_symlinks"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.get_directory_size_without_symlinks">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ModelTester.get_directory_size_without_symlinks">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.get_directory_size_without_symlinks">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_directory_size_without_symlinks</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{}</span>
@@ -621,7 +631,10 @@
         <span class="k">return</span> <span class="n">total_size</span><span class="p">,</span> <span class="n">file_types</span><span class="p">,</span> <span class="n">file_sizes</span></div>
 
 
-<div class="viewcode-block" id="ModelTester.get_directory_size_with_symlinks"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.get_directory_size_with_symlinks">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="ModelTester.get_directory_size_with_symlinks">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.get_directory_size_with_symlinks">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_directory_size_with_symlinks</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{}</span>
@@ -641,6 +654,7 @@
                 <span class="n">file_types</span><span class="p">[</span><span class="n">file_extension</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">file_sizes</span><span class="p">[</span><span class="n">file_extension</span><span class="p">]</span> <span class="o">+=</span> <span class="n">size</span>
         <span class="k">return</span> <span class="n">total_size</span><span class="p">,</span> <span class="n">file_types</span><span class="p">,</span> <span class="n">file_sizes</span></div>
+
         
     <span class="c1"># Get location of conda environment</span>
     <span class="k">def</span> <span class="nf">_get_environment_location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -950,7 +964,9 @@
 <span class="sd">    - are the outputs consistent? True or False </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ModelTester.make_output"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.make_output">[docs]</a>    <span class="k">def</span> <span class="nf">make_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelTester.make_output">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.make_output">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
         <span class="n">size_kb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_size</span> <span class="o">/</span> <span class="mi">1024</span>
         <span class="n">size_mb</span> <span class="o">=</span> <span class="n">size_kb</span> <span class="o">/</span> <span class="mi">1024</span>
         <span class="n">size_gb</span> <span class="o">=</span> <span class="n">size_mb</span> <span class="o">/</span> <span class="mi">1024</span>
@@ -971,7 +987,10 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">json_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelTester.run"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelTester.run">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">MISSING_PACKAGES</span><span class="p">:</span>
           <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
                 <span class="s2">&quot;Missing packages required for testing, please install test extras as &#39;pip install ersilia[test]&#39;&quot;</span>
@@ -993,7 +1012,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">make_output</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">seconds_taken</span><span class="p">)</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📁 The output file is located at: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No output file specified! Skipping output file generation.&quot;</span><span class="p">)</span></div></div>
+            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No output file specified! Skipping output file generation.&quot;</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

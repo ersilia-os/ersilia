@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.publish.s3 &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -88,7 +85,9 @@
 <span class="n">AWS_ACCOUNT_REGION</span> <span class="o">=</span> <span class="s2">&quot;eu-central-1&quot;</span>
 
 
-<div class="viewcode-block" id="S3BucketRepoUploader"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader">[docs]</a><span class="k">class</span> <span class="nc">S3BucketRepoUploader</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="S3BucketRepoUploader">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader">[docs]</a>
+<span class="k">class</span> <span class="nc">S3BucketRepoUploader</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -99,9 +98,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">aws_secret_access_key</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;upload_model_to_s3.py&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="S3BucketRepoUploader.set_credentials"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader.set_credentials">[docs]</a>    <span class="k">def</span> <span class="nf">set_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aws_access_key_id</span><span class="p">,</span> <span class="n">aws_secret_access_key</span><span class="p">):</span>
+<div class="viewcode-block" id="S3BucketRepoUploader.set_credentials">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader.set_credentials">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aws_access_key_id</span><span class="p">,</span> <span class="n">aws_secret_access_key</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aws_access_key_id</span> <span class="o">=</span> <span class="n">aws_access_key_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aws_secret_access_key</span> <span class="o">=</span> <span class="n">aws_secret_access_key</span></div>
+
 
     <span class="k">def</span> <span class="nf">_clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cloning model </span><span class="si">{0}</span><span class="s2"> from ersilia-os&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
@@ -156,7 +158,9 @@
     <span class="k">def</span> <span class="nf">_delete_model_from_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="p">):</span>
         <span class="n">bucket</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Prefix</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
 
-<div class="viewcode-block" id="S3BucketRepoUploader.upload"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader.upload">[docs]</a>    <span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="S3BucketRepoUploader.upload">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader.upload">[docs]</a>
+    <span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Repo path is </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ungit</span><span class="p">(</span><span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">)</span>
@@ -169,7 +173,10 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_upload_files</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="S3BucketRepoUploader.zipdir"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader.zipdir">[docs]</a>    <span class="k">def</span> <span class="nf">zipdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">ziph</span><span class="p">):</span>
+
+<div class="viewcode-block" id="S3BucketRepoUploader.zipdir">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader.zipdir">[docs]</a>
+    <span class="k">def</span> <span class="nf">zipdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">ziph</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">repo_path</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span><span class="p">:</span>
@@ -181,6 +188,7 @@
                     <span class="p">),</span>
                 <span class="p">)</span></div>
 
+
     <span class="k">def</span> <span class="nf">_zip_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">):</span>
         <span class="n">repo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zip_model_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_zip_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span><span class="p">)</span>
@@ -188,7 +196,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">zipdir</span><span class="p">(</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">zipf</span><span class="p">)</span>
         <span class="n">zipf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<div class="viewcode-block" id="S3BucketRepoUploader.upload_zip"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader.upload_zip">[docs]</a>    <span class="k">def</span> <span class="nf">upload_zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="S3BucketRepoUploader.upload_zip">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.s3.S3BucketRepoUploader.upload_zip">[docs]</a>
+    <span class="k">def</span> <span class="nf">upload_zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Repo path is </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ungit</span><span class="p">(</span><span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">)</span>
@@ -216,7 +226,9 @@
             <span class="n">ERSILIA_MODELS_ZIP_S3_BUCKET</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span><span class="p">,</span>
             <span class="n">ExtraArgs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;ACL&quot;</span><span class="p">:</span> <span class="s2">&quot;public-read&quot;</span><span class="p">},</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

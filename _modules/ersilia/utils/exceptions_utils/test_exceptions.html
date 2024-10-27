@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.utils.exceptions_utils.test_exceptions &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -78,7 +75,9 @@
 <span></span><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ErsiliaError</span>
 
 
-<div class="viewcode-block" id="WrongCardIdentifierError"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.WrongCardIdentifierError">[docs]</a><span class="k">class</span> <span class="nc">WrongCardIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<div class="viewcode-block" id="WrongCardIdentifierError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.WrongCardIdentifierError">[docs]</a>
+<span class="k">class</span> <span class="nc">WrongCardIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;The model identifier in the model card is not correct: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -91,7 +90,10 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="InformationFileNotExist"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InformationFileNotExist">[docs]</a><span class="k">class</span> <span class="nc">InformationFileNotExist</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="InformationFileNotExist">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InformationFileNotExist">[docs]</a>
+<span class="k">class</span> <span class="nc">InformationFileNotExist</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The eos/dest/</span><span class="si">{0}</span><span class="s2">/information.json file does not exist.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">model_id</span>
@@ -100,21 +102,30 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="MissingOutputs"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.MissingOutputs">[docs]</a><span class="k">class</span> <span class="nc">MissingOutputs</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MissingOutputs">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.MissingOutputs">[docs]</a>
+<span class="k">class</span> <span class="nc">MissingOutputs</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;There are not as many outputs as there are inputs. They must be the same.</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Try checking whether or not the code for the model is skipping a header, or if any of the smiles used are not working correctly.&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="InconsistentOutputs"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InconsistentOutputs">[docs]</a><span class="k">class</span> <span class="nc">InconsistentOutputs</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="InconsistentOutputs">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InconsistentOutputs">[docs]</a>
+<span class="k">class</span> <span class="nc">InconsistentOutputs</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Model outputs are inconsistent, meaning the outputs do not fit the 5</span><span class="si">% s</span><span class="s2">imilarity threshold.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Observe the output comparisons for each smiles input above.&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="EmptyField"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.EmptyField">[docs]</a><span class="k">class</span> <span class="nc">EmptyField</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EmptyField">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.EmptyField">[docs]</a>
+<span class="k">class</span> <span class="nc">EmptyField</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">empty_field</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The </span><span class="si">{0}</span><span class="s2"> field in the model card is empty.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">empty_field</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
@@ -123,7 +134,10 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="InvalidEntry"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InvalidEntry">[docs]</a><span class="k">class</span> <span class="nc">InvalidEntry</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="InvalidEntry">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InvalidEntry">[docs]</a>
+<span class="k">class</span> <span class="nc">InvalidEntry</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">invalid_field</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;The </span><span class="si">{0}</span><span class="s2"> field of this model is not recognized as a valid format.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -136,11 +150,15 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="InconsistentOutputTypes"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InconsistentOutputTypes">[docs]</a><span class="k">class</span> <span class="nc">InconsistentOutputTypes</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+
+<div class="viewcode-block" id="InconsistentOutputTypes">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InconsistentOutputTypes">[docs]</a>
+<span class="k">class</span> <span class="nc">InconsistentOutputTypes</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Model output types are inconsistent.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Observe the output comparisons above for each input, and pay attention to the type of the output (string, float, list, etc.) because they do not match.&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.hub.pull.pull &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -96,7 +93,9 @@
 <span class="n">PULL_IMAGE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PULL_IMAGE&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="ModelPuller"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller">[docs]</a><span class="k">class</span> <span class="nc">ModelPuller</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelPuller">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelPuller</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
@@ -106,7 +105,9 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
 
-<div class="viewcode-block" id="ModelPuller.is_available_locally"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller.is_available_locally">[docs]</a>    <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelPuller.is_available_locally">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller.is_available_locally">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">is_available</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
             <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
         <span class="p">)</span>
@@ -119,7 +120,10 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="ModelPuller.is_available_in_dockerhub"><a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller.is_available_in_dockerhub">[docs]</a>    <span class="k">def</span> <span class="nf">is_available_in_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelPuller.is_available_in_dockerhub">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.pull.html#ersilia.hub.pull.pull.ModelPuller.is_available_in_dockerhub">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_available_in_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://hub.docker.com/v2/repositories/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/tags/</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
         <span class="p">)</span>
@@ -136,6 +140,7 @@
                 <span class="p">)</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span></div>
+
 
     <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -228,6 +233,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Image </span><span class="si">{0}</span><span class="s2"> is not available&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_name</span><span class="p">))</span>
             <span class="k">raise</span> <span class="n">DockerImageNotAvailableError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

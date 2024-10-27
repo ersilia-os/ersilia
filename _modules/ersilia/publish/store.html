@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.publish.store &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -88,7 +85,9 @@
 <span class="kn">from</span> <span class="nn">..utils.remove</span> <span class="kn">import</span> <span class="n">OsfRemover</span>
 
 
-<div class="viewcode-block" id="ModelStorager"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager">[docs]</a><span class="k">class</span> <span class="nc">ModelStorager</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelStorager">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelStorager</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -126,13 +125,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">osf_up</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">OSF_PROJECT</span><span class="p">,</span> <span class="n">zip_file</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zip_file</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ModelStorager.store"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager.store">[docs]</a>    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelStorager.store">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager.store">[docs]</a>
+    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Store model in the local data directory and in OSF.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_copy_to_local</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_upload_to_osf</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_upload_to_osf</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ModelRemover"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelRemover">[docs]</a><span class="k">class</span> <span class="nc">ModelRemover</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ModelRemover">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelRemover">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelRemover</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -141,9 +146,13 @@
             <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cred</span><span class="o">.</span><span class="n">OSF</span><span class="o">.</span><span class="n">USER</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cred</span><span class="o">.</span><span class="n">OSF</span><span class="o">.</span><span class="n">PWD</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="ModelRemover.remove"><a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelRemover.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelRemover.remove">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelRemover.remove">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">zip_file</span> <span class="o">=</span> <span class="s2">&quot;models/&quot;</span> <span class="o">+</span> <span class="n">model_id</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">osf_rm</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">OSF_PROJECT</span><span class="p">,</span> <span class="n">zip_file</span><span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">osf_rm</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">OSF_PROJECT</span><span class="p">,</span> <span class="n">zip_file</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

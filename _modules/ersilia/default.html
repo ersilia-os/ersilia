@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.default &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -184,7 +181,9 @@
     <span class="p">)</span>
 
 <span class="c1"># Catalog table border constants</span>
-<div class="viewcode-block" id="TableConstants"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.TableConstants">[docs]</a><span class="k">class</span> <span class="nc">TableConstants</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="TableConstants">
+<a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.TableConstants">[docs]</a>
+<span class="k">class</span> <span class="nc">TableConstants</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
     <span class="n">TOP_LEFT</span> <span class="o">=</span> <span class="s2">&quot;┌&quot;</span>
     <span class="n">TOP_MIDDLE</span> <span class="o">=</span> <span class="s2">&quot;┬&quot;</span>
     <span class="n">TOP_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┐&quot;</span>
@@ -198,6 +197,7 @@
     <span class="n">BOTTOM_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┘&quot;</span>
     <span class="n">CELL_PADDING</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
     <span class="n">COLUMN_SEPARATOR</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span></div>
+
 
 <span class="n">snippet</span> <span class="o">=</span> <span class="p">(</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -223,7 +223,9 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="bashrc_path"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_path">[docs]</a><span class="k">def</span> <span class="nf">bashrc_path</span><span class="p">():</span>
+<div class="viewcode-block" id="bashrc_path">
+<a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_path">[docs]</a>
+<span class="k">def</span> <span class="nf">bashrc_path</span><span class="p">():</span>
     <span class="n">home_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
     <span class="n">rc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">&quot;.bashrc&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
@@ -233,7 +235,10 @@
         <span class="k">return</span> <span class="n">pr</span></div>
 
 
-<div class="viewcode-block" id="has_profile_snippet"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.has_profile_snippet">[docs]</a><span class="k">def</span> <span class="nf">has_profile_snippet</span><span class="p">():</span>
+
+<div class="viewcode-block" id="has_profile_snippet">
+<a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.has_profile_snippet">[docs]</a>
+<span class="k">def</span> <span class="nf">has_profile_snippet</span><span class="p">():</span>
     <span class="n">fn</span> <span class="o">=</span> <span class="n">bashrc_path</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -245,7 +250,10 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="bashrc_cli_snippet"><a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_cli_snippet">[docs]</a><span class="k">def</span> <span class="nf">bashrc_cli_snippet</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="bashrc_cli_snippet">
+<a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_cli_snippet">[docs]</a>
+<span class="k">def</span> <span class="nf">bashrc_cli_snippet</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a conda snippet in the user profile.</span>
 
 <span class="sd">    This function writes on the user profile to create an executable to work</span>
@@ -270,6 +278,7 @@
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">snippet</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

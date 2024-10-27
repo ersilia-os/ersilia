@@ -1,23 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ersilia.utils.installers &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -93,7 +90,9 @@
 <span class="n">INSTALL_LOG_FILE</span> <span class="o">=</span> <span class="s2">&quot;.install.log&quot;</span>
 
 
-<div class="viewcode-block" id="BaseInstaller"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller">[docs]</a><span class="k">class</span> <span class="nc">BaseInstaller</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseInstaller">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseInstaller</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="p">,</span> <span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -109,26 +108,37 @@
         <span class="n">checker</span><span class="o">.</span><span class="n">_package_path</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">development_path</span> <span class="o">=</span> <span class="n">checker</span><span class="o">.</span><span class="n">development_path</span>
 
-<div class="viewcode-block" id="BaseInstaller.write_log"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.write_log">[docs]</a>    <span class="k">def</span> <span class="nf">write_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseInstaller.write_log">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.write_log">[docs]</a>
+    <span class="k">def</span> <span class="nf">write_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">):</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BaseInstaller.update_log"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.update_log">[docs]</a>    <span class="k">def</span> <span class="nf">update_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseInstaller.update_log">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.update_log">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="p">{</span><span class="n">task</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="n">task</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write_log</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="BaseInstaller.remove_from_log"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_from_log">[docs]</a>    <span class="k">def</span> <span class="nf">remove_from_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseInstaller.remove_from_log">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_from_log">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_from_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_log</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="BaseInstaller.read_log"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.read_log">[docs]</a>    <span class="k">def</span> <span class="nf">read_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseInstaller.read_log">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.read_log">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -137,9 +147,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">+=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BaseInstaller.remove_log"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_log">[docs]</a>    <span class="k">def</span> <span class="nf">remove_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseInstaller.remove_log">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.BaseInstaller.remove_log">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_is_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_install_log</span><span class="p">:</span>
@@ -159,7 +173,10 @@
         <span class="k">return</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="Installer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer">[docs]</a><span class="k">class</span> <span class="nc">Installer</span><span class="p">(</span><span class="n">BaseInstaller</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Installer">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer">[docs]</a>
+<span class="k">class</span> <span class="nc">Installer</span><span class="p">(</span><span class="n">BaseInstaller</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseInstaller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -168,7 +185,9 @@
             <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Installer.profile"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.profile">[docs]</a>    <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Installer.profile">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.profile">[docs]</a>
+    <span class="k">def</span> <span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;profile&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">bashrc_cli_snippet</span>
@@ -176,7 +195,10 @@
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&gt;&gt; Setting up &#39;ersilia&#39; CLI in user profile&quot;</span><span class="p">)</span>
         <span class="n">bashrc_cli_snippet</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Installer.conda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.conda">[docs]</a>    <span class="k">def</span> <span class="nf">conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Installer.conda">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.conda">[docs]</a>
+    <span class="k">def</span> <span class="nf">conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;conda&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_tool</span><span class="p">(</span><span class="s2">&quot;conda&quot;</span><span class="p">):</span>
@@ -184,7 +206,10 @@
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Conda needs to be installed&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Installer.git"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.git">[docs]</a>    <span class="k">def</span> <span class="nf">git</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Installer.git">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.git">[docs]</a>
+    <span class="k">def</span> <span class="nf">git</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;git&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_tool</span><span class="p">(</span><span class="s2">&quot;git&quot;</span><span class="p">):</span>
@@ -192,7 +217,10 @@
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Git needs to be installed&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Installer.rdkit"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.rdkit">[docs]</a>    <span class="k">def</span> <span class="nf">rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Installer.rdkit">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.rdkit">[docs]</a>
+    <span class="k">def</span> <span class="nf">rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;rdkit&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="k">try</span><span class="p">:</span>
@@ -206,7 +234,10 @@
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&gt;&gt; Installing RDKit from Conda&quot;</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;conda install -c conda-forge -y -q rdkit&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Installer.config"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.config">[docs]</a>    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Installer.config">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.config">[docs]</a>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">CONFIG_JSON</span><span class="p">)):</span>
@@ -214,6 +245,7 @@
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&gt;&gt; Setting up Config file&quot;</span><span class="p">)</span>
         <span class="n">checker</span> <span class="o">=</span> <span class="n">Checker</span><span class="p">()</span>
         <span class="n">checker</span><span class="o">.</span><span class="n">config</span><span class="p">()</span></div>
+
 
     <span class="k">def</span> <span class="nf">_clone_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">path_repo</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACKAGE</span><span class="p">)</span>
@@ -227,7 +259,9 @@
             <span class="n">gd</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">PACKAGE</span><span class="p">,</span> <span class="n">path_repo</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">path_repo</span>
 
-<div class="viewcode-block" id="Installer.base_conda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.base_conda">[docs]</a>    <span class="k">def</span> <span class="nf">base_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Installer.base_conda">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.base_conda">[docs]</a>
+    <span class="k">def</span> <span class="nf">base_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;base_conda&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="n">eos_base_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">base_conda_name</span><span class="p">()</span>
@@ -279,12 +313,18 @@
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&gt;&gt; Creating a Base Conda environment </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">eos_base_env</span><span class="p">))</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Installer.base_conda_slim"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.base_conda_slim">[docs]</a>    <span class="k">def</span> <span class="nf">base_conda_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Installer.base_conda_slim">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.base_conda_slim">[docs]</a>
+    <span class="k">def</span> <span class="nf">base_conda_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;base_conda_slim&quot;</span><span class="p">):</span>
             <span class="k">return</span></div>
+
         <span class="c1"># TODO</span>
 
-<div class="viewcode-block" id="Installer.server_docker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.server_docker">[docs]</a>    <span class="k">def</span> <span class="nf">server_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Installer.server_docker">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.server_docker">[docs]</a>
+    <span class="k">def</span> <span class="nf">server_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;server_docker&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="kn">import</span> <span class="nn">tempfile</span>
@@ -331,13 +371,20 @@
         <span class="p">)</span>
         <span class="n">docker</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">tmp_repo</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Installer.server_docker_slim"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.server_docker_slim">[docs]</a>    <span class="k">def</span> <span class="nf">server_docker_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Installer.server_docker_slim">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.server_docker_slim">[docs]</a>
+    <span class="k">def</span> <span class="nf">server_docker_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;server_docker_slim&quot;</span><span class="p">):</span>
-            <span class="k">return</span></div></div>
+            <span class="k">return</span></div>
+</div>
+
         <span class="c1"># TODO</span>
 
 
-<div class="viewcode-block" id="Uninstaller"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller">[docs]</a><span class="k">class</span> <span class="nc">Uninstaller</span><span class="p">(</span><span class="n">BaseInstaller</span><span class="p">):</span>
+<div class="viewcode-block" id="Uninstaller">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller">[docs]</a>
+<span class="k">class</span> <span class="nc">Uninstaller</span><span class="p">(</span><span class="n">BaseInstaller</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseInstaller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -346,27 +393,39 @@
             <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Uninstaller.rdkit"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.rdkit">[docs]</a>    <span class="k">def</span> <span class="nf">rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Uninstaller.rdkit">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.rdkit">[docs]</a>
+    <span class="k">def</span> <span class="nf">rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_from_log</span><span class="p">(</span><span class="s2">&quot;rdkit&quot;</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;conda uninstall </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;rdkit&quot;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Uninstaller.base_conda"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.base_conda">[docs]</a>    <span class="k">def</span> <span class="nf">base_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Uninstaller.base_conda">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.base_conda">[docs]</a>
+    <span class="k">def</span> <span class="nf">base_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_from_log</span><span class="p">(</span><span class="s2">&quot;base_conda&quot;</span><span class="p">)</span>
         <span class="n">eos_base_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">base_conda_name</span><span class="p">()</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
         <span class="n">sc</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">eos_base_env</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Uninstaller.server_docker"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.server_docker">[docs]</a>    <span class="k">def</span> <span class="nf">server_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Uninstaller.server_docker">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.server_docker">[docs]</a>
+    <span class="k">def</span> <span class="nf">server_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_from_log</span><span class="p">(</span><span class="s2">&quot;server_docker&quot;</span><span class="p">)</span>
         <span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
 
         <span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">server_docker_name</span><span class="p">(</span><span class="n">as_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-            <span class="n">docker</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div></div>
+            <span class="n">docker</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="base_installer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.base_installer">[docs]</a><span class="k">def</span> <span class="nf">base_installer</span><span class="p">(</span><span class="n">ignore_status</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="base_installer">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.base_installer">[docs]</a>
+<span class="k">def</span> <span class="nf">base_installer</span><span class="p">(</span><span class="n">ignore_status</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base installer does a bare minimum installation of dependencies.</span>
 <span class="sd">    It is mainly used to make a base environment for the models.&quot;&quot;&quot;</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">check_install_status</span><span class="p">()</span>
@@ -378,7 +437,10 @@
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="full_installer"><a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.full_installer">[docs]</a><span class="k">def</span> <span class="nf">full_installer</span><span class="p">(</span><span class="n">ignore_status</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="full_installer">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.full_installer">[docs]</a>
+<span class="k">def</span> <span class="nf">full_installer</span><span class="p">(</span><span class="n">ignore_status</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The full installer does all the installations necessary to run ersilia.&quot;&quot;&quot;</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">check_install_status</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;full&quot;</span> <span class="ow">or</span> <span class="n">ignore_status</span><span class="p">:</span>
@@ -392,6 +454,7 @@
         <span class="n">ins</span><span class="o">.</span><span class="n">server_docker</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">status</span><span class="p">[</span><span class="s2">&quot;install_status_file&quot;</span><span class="p">],</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;full&quot;</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
