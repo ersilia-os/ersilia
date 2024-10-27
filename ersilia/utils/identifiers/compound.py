@@ -14,6 +14,7 @@ try:
 except:
     Chem = None
 
+from ...default import UNPROCESSABLE_INPUT
 
 class CompoundIdentifier(object):
     def __init__(self, local=True):
@@ -63,13 +64,13 @@ class CompoundIdentifier(object):
         return True
 
     def guess_type(self, text):
-        if text is None:
-            return self.default_type
+        if not isinstance(text, str) or not text.strip() or text == UNPROCESSABLE_INPUT:
+            return UNPROCESSABLE_INPUT
         if self._is_inchikey(text):
             return "inchikey"
         if self._is_smiles(text):
             return "smiles"
-        return "name"
+        return UNPROCESSABLE_INPUT
 
     def unichem_resolver(self, inchikey):
         if Chem is None or unichem is None:
@@ -77,7 +78,7 @@ class CompoundIdentifier(object):
         try:
             ret = self.unichem.inchiFromKey(inchikey)
         except:
-            return None
+            return self.chemical_identifier_resolver(inchikey)
         inchi = ret[0]["standardinchi"]
         mol = self.Chem.inchi.MolFromInchi(inchi)
         return self.Chem.MolToSmiles(mol)
@@ -107,6 +108,8 @@ class CompoundIdentifier(object):
     @staticmethod
     def chemical_identifier_resolver(identifier):
         """Returns SMILES string of a given identifier, using NCI tool"""
+        if not identifier or not isinstance(identifier, str):
+            return UNPROCESSABLE_INPUT 
         identifier = urllib.parse.quote(identifier)
         url = "https://cactus.nci.nih.gov/chemical/structure/{0}/smiles".format(
             identifier
@@ -118,25 +121,23 @@ class CompoundIdentifier(object):
 
     def encode(self, smiles):
         """Get InChIKey of compound based on SMILES string"""
+        if not isinstance(smiles, str) or not smiles.strip() or smiles == UNPROCESSABLE_INPUT:
+            return UNPROCESSABLE_INPUT
+        
         if self.Chem is None:
-            inchikey = self._pubchem_smiles_to_inchikey(smiles)
-            if inchikey is None:
-                inchikey = self._nci_smiles_to_inchikey(smiles)
+            inchikey = self._pubchem_smiles_to_inchikey(smiles) or self._nci_smiles_to_inchikey(smiles)
         else:
             try:
                 mol = self.Chem.MolFromSmiles(smiles)
                 if mol is None:
-                    raise Exception(
-                        "The SMILES string: %s is not valid or could not be converted to an InChIKey"
-                        % smiles
-                    )
+                    return UNPROCESSABLE_INPUT
                 inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
                 if inchi is None:
-                    raise Exception("Could not obtain InChI")
+                    return UNPROCESSABLE_INPUT
                 inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
             except:
                 inchikey = None
-        return inchikey
-
+        
+        return inchikey if inchikey else UNPROCESSABLE_INPUT
 
 Identifier = CompoundIdentifier

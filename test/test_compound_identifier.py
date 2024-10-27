@@ -1,3 +1,4 @@
+
 from ersilia.default import UNPROCESSABLE_INPUT
 import pytest
 from ersilia.utils.identifiers.compound import CompoundIdentifier
@@ -107,4 +108,5 @@ def test_guess_type_non_character(compound_identifier, non_char_input, expected)
     """Ensure guess_type returns UNPROCESSABLE_INPUT for non-character input."""
     result = compound_identifier.guess_type(non_char_input)
     assert result == expected, f"Expected '{UNPROCESSABLE_INPUT}' for input '{non_char_input}'"
+
     
