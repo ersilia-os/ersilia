@@ -104,7 +104,6 @@ def fetch_cmd():
             ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
             fg="blue",
         )
-        print("Fetching started")
         mf = ModelFetcher(
             repo_path=repo_path,
             mode=mode,
