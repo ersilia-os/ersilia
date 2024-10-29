@@ -244,6 +244,6 @@ class ModelFetcher(ErsiliaBase):
         try:
             os.makedirs(self._model_path(model_id), exist_ok=True)
         except OSError as error:
-            print(f"Error during folder creation: {error}")
+            self.logger.error(f"Error during folder creation: {error}")
         with open(model_source_file, "w") as f:
             f.write(self.model_source)
