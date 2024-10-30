@@ -113,54 +113,6 @@ class StandardCSVRunApi(ErsiliaBase):
         else:
             return False
 
-    def _is_input_file_too_long(self, input_data):
-        with open(input_data, "r") as f:
-            reader = csv.reader(f)
-            next(reader)
-            c = 0
-            for _ in reader:
-                c += 1
-                if c > MAX_INPUT_ROWS_STANDARD:
-                    return True
-        return False
-
-    def is_input_standard_csv_file(self, input_data):
-        if type(input_data) != str:
-            return False
-        if not input_data.endswith(".csv"):
-            return False
-        if not os.path.exists(input_data):
-            return False
-        if self._is_input_file_too_long(input_data):
-            return False
-        with open(input_data, "r") as f:
-            reader = csv.reader(f)
-            header = next(reader)
-        if len(header) == 1:
-            h = header[0].lower()
-            if not self.encoder.is_input_header(h):
-                return False
-            else:
-                return True
-        elif len(header) == 2:
-            h0 = header[0].lower()
-            h1 = header[1].lower()
-            if not self.encoder.is_key_header(h0):
-                return False
-            if not self.encoder.is_input_header(h1):
-                return False
-            return True
-        elif len(header) == 3:
-            h0 = header[0].lower()
-            h1 = header[1].lower()
-            if not self.encoder.is_key_header(h0):
-                return False
-            if not self.encoder.is_input_header(h1):
-                return False
-            return True
-        else:
-            return False
-
     def get_input_type(self):
         try:
             with open(os.path.join(self.path, INFORMATION_FILE), "r") as f:
