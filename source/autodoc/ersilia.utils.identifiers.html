@@ -129,7 +129,7 @@
 <span id="ersilia-utils-identifiers-compound-module"></span><h2>ersilia.utils.identifiers.compound module<a class="headerlink" href="#module-ersilia.utils.identifiers.compound" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.compound.</span></span><span class="sig-name descname"><span class="pre">CompoundIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.compound.</span></span><span class="sig-name descname"><span class="pre">CompoundIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concurrency_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_maxsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">
@@ -138,10 +138,22 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit">
+<span class="sig-name descname"><span class="pre">convert_smiles_to_inchikey_with_rdkit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit" title="Link to this definition"></a></dt>
+<dd><p>Converts a SMILES string to an InChIKey using RDKit.
+The results are cached to improve performance.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.encode" title="Link to this definition"></a></dt>
 <dd><p>Get InChIKey of compound based on SMILES string</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.encode_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">
@@ -159,8 +171,18 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_smiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semaphore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.process_smiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">
 <span class="sig-name descname"><span class="pre">unichem_resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inchikey</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.unichem_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles">
+<span class="sig-name descname"><span class="pre">validate_smiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.validate_smiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
