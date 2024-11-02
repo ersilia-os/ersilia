@@ -1,6 +1,6 @@
 # 🤗 Welcome to Ersilia!
 
-The [**Ersilia Open Source Initiative**](https://ersilia.io) is a non-profit organisation incorporated with the Charity Commission for England and Wales ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-details/?regid=1192266\&subid=0)). We are a diverse and international community of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
+The [Ersilia Open Source Initiative](https://ersilia.io) is a non-profit organisation incorporated with the Charity Commission for England and Wales ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-details/?regid=1192266\&subid=0)). We are a diverse and international community of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
 
 Below you can read a bit more about the key organisational priorities and roadmap for the initiative:
 
