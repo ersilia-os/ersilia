@@ -1,6 +1,12 @@
+---
+description: >-
+  We equip laboratories in the Global South with data science tools for
+  infectious disease research
+---
+
 # 🤗 Welcome to Ersilia!
 
-The [Ersilia Open Source Initiative](https://ersilia.io) is a non-profit organisation incorporated with the Charity Commission for England and Wales ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-details/?regid=1192266\&subid=0)). We are a diverse and international community of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
+The [Ersilia Open Source Initiative](https://ersilia.io) is a tech non-profit organisation incorporated with the Charity Commission for England and Wales ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-details/?regid=1192266\&subid=0)). We are a diverse and international community of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
 
 Below you can read a bit more about the key organisational priorities and roadmap for the initiative:
 
@@ -63,10 +69,10 @@ As a Charitable Incorporated Organisation, EOSI is governed by the Board of Trus
 
 ## How to contact us
 
-* Visit our [website](https://ersilia.io)
-* Subscribe to our [newsletter](http://eepurl.com/hkX1sH)
-* Follow us on [Twitter](https://twitter.com/ersiliaio), [LinkedIn](https://linkedin.com/company/ersiliaio) and [Medium](https://medium.com/ersiliaio)
-* Browse our open source [tools](https://github.com/ersilia-os)
-* Volunteer with [us](https://www.ersilia.io/volunteer)
-* Write to us at [hello@ersilia.io](mailto:hello@ersilia.io)
+* Visit our [website](https://ersilia.io).
+* Subscribe to our [newsletter](http://eepurl.com/hkX1sH).
+* Follow us on [X](https://x.com/ersiliaio), [LinkedIn](https://linkedin.com/company/ersiliaio) and [Medium](https://medium.com/ersiliaio).
+* Browse our open source [tools](https://github.com/ersilia-os).
+* Volunteer with [us](https://www.ersilia.io/volunteer).
+* Write to us at [hello@ersilia.io](mailto:hello@ersilia.io).
 
