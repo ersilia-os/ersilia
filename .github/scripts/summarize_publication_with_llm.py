@@ -6,10 +6,12 @@ import openai
 import requests
 import boto3
 import shutil
+import json
+from typing import List
 from pydantic import BaseModel
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 # Authenticate into OpenAI
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -203,7 +205,7 @@ class Summary(BaseModel):
     overall_relevance: str
 
 
-class PublicationPDFDownloader(object):
+class PublicationPDFDownloader:
     def __init__(self, model_id=None, issue_number=None, url=None, file_path=None):
         if (
             model_id is None
@@ -276,13 +278,13 @@ class PublicationPDFDownloader(object):
             return self.download_from_file_path()
         return None
 
-
-class PublicationSummarizer(object):
-    def __init__(self, publication_pdf, output_markdown):
-        self.tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
+class PublicationSummarizer:
+    def __init__(self, publication_pdf, output_file, format="json"):
+        self.tmp_dir = tempfile.mkdtemp(prefix="ersilia-") # TODO Unused
         self.model_name = MODEL_NAME
         self.publication_pdf = publication_pdf
-        self.output_markdown = output_markdown
+        self.output_file = output_file
+        self.format = format
 
     def extract_text_from_pdf(self, pdf_path):
         with open(pdf_path, "rb") as file:
@@ -306,27 +308,55 @@ class PublicationSummarizer(object):
         )
         return response.choices[0].message.content
 
-    def postprocess_response(self, text_response, markdown_file):
+    def postprocess_response(self, text_response, output_file):
         system_prompt = POSTPROCESS_SYSTEM_PROMPT.strip()
         user_prompt = POSTPROCESS_USER_PROMPT.strip() + "\n" + text_response
-        response = openai.beta.chat.completions.parse(
-            model=self.model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.7,
-            response_format=Summary,
-        )
-        text_response = response.choices[0].message.content
-        with open(markdown_file, "w") as f:
-            f.write(text_response)
+        if self.format == "json":
+            response = openai.beta.chat.completions.parse(
+                model=self.model_name,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.7,
+                response_format=Summary,
+            )
+            with open(output_file, "w") as f:
+                json.dump(response.model_dump()['parsed'], f, indent=4)
+
+        elif self.format == "markdown":
+            response = openai.chat.completions.create(
+                model=self.model_name,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.7,
+            )
+            text_response = response.choices[0].message.content
+            with open(output_file, "w") as f:
+                f.write(text_response)
+        
+        else:
+            raise ValueError("Invalid format. Please choose either 'json' or 'markdown'.")
 
     def run(self):
         text = self.extract_text_from_pdf(self.publication_pdf)
         text_response = self.make_primary_request(text)
-        self.postprocess_response(text_response, self.output_markdown)
+        self.postprocess_response(text_response, self.output_file)
 
+
+def serialize_json_to_md(json_file, md_file):
+    with open(json_file, "r") as f:
+        data = json.load(f)
+    with open(md_file, "w") as f:
+        for key, value in data.items():
+            f.write(f"## {key}\n")
+            if isinstance(value, list):
+                for item in value:
+                    f.write(f"- {item}\n")
+            else:
+                f.write(value + "\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process arguments.")
@@ -352,19 +382,28 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-o",
-        "--output_markdown",
+        "--output_file",
         type=str,
         default=None,
         required=True,
-        help="Output file in Markdown format",
+        help="Output file path for the summary",
+    )
+    parser.add_argument(
+        "-F",
+        "--format",
+        type=str,
+        default="json",
+        required=False,
+        help="File format in which to save the summary, defaults to JSON"
     )
     args = parser.parse_args()
     model_id = args.model_id
     issue_number = args.issue_number
     url = args.url
     file_path = args.file_path
-    output_markdown = args.output_markdown
+    output_file = args.output_file
+    output_format = args.format
     ppd = PublicationPDFDownloader(model_id, issue_number, url, file_path)
     publication_pdf = ppd.download()
-    ps = PublicationSummarizer(publication_pdf, output_markdown)
+    ps = PublicationSummarizer(publication_pdf, output_file, output_format)
     ps.run()
