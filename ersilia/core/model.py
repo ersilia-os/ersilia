@@ -278,7 +278,7 @@ class ErsiliaModel(ErsiliaBase):
                 "Standard CSV Api runner is not ready for this particular model"
             )
             return None
-        if not scra.is_amenable(input, output):
+        if not scra.is_amenable(output):
             self.logger.debug(
                 "Standard CSV Api runner is not amenable for this model, input and output"
             )
