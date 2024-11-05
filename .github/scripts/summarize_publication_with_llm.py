@@ -6,6 +6,7 @@ import openai
 import requests
 import boto3
 import shutil
+from pydantic import BaseModel
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,7 +17,7 @@ openai.api_key = OPENAI_API_KEY
 MODEL_NAME = "gpt-4o"
 
 # Authenticate into AWS
-aws_access_key_id = os.getenv("AWS_ACCESS_KEY")
+aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
 aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 if aws_access_key_id and aws_secret_access_key:
@@ -184,6 +185,23 @@ POSTPROCESS_USER_PROMPT = """
 Reformat, if necessary, the following publication report:
 """
 
+class Summary(BaseModel):
+    title: str
+    authors: str
+    journal: str
+    year: int
+    suggested_slug: str
+    suggested_computational_title: str
+    tldr: str
+    summary: str
+    relevance_to_biomedical_research: str
+    computational_methods: str
+    biomedical_keywords: list[str]
+    computational_keywords: list[str]
+    strengths: str
+    limitations: str
+    overall_relevance: str
+
 
 class PublicationPDFDownloader(object):
     def __init__(self, model_id=None, issue_number=None, url=None, file_path=None):
@@ -291,13 +309,14 @@ class PublicationSummarizer(object):
     def postprocess_response(self, text_response, markdown_file):
         system_prompt = POSTPROCESS_SYSTEM_PROMPT.strip()
         user_prompt = POSTPROCESS_USER_PROMPT.strip() + "\n" + text_response
-        response = openai.chat.completions.create(
+        response = openai.beta.chat.completions.parse(
             model=self.model_name,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0.7,
+            response_format=Summary,
         )
         text_response = response.choices[0].message.content
         with open(markdown_file, "w") as f:
