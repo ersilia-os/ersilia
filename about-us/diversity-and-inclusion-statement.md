@@ -1,6 +1,10 @@
-# Diversity and Inclusion Statement
+---
+description: Diversity and inclusion are core principles of Ersilia.
+---
 
-The [Ersilia Open Source Initiative](https://ersilia.io) was founded with the goal to reduce health inequalities across the globe, so diverse and inclusive principles are woven into our organization from the start. We value and care for our employees, contributors and customers, and strive to make them feel part of our organization in every step of our joint effort to improve global health.
+# Diversity and inclusion statement
+
+The [Ersilia Open Source Initiative](https://ersilia.io) was founded with the goal to **reduce health inequalities across the globe**, so diverse and inclusive principles are woven into our organization from the start. We value and care for our employees, contributors and customers, and strive to make them feel part of our organisation in every step of our joint effort to improve global health.
 
 We believe that a diverse team is the only way to understand and answer the health needs of different part of the world, so we do not only not discriminate but welcome the contribution of each unique background in terms of education, color, race, gender identity and expression, sexual orientation, age, religion, national origin, citizenship or refugee status and disability. In order to proactively engage in such principles, we commit to the following strategy:
 

@@ -1,10 +1,14 @@
 ---
-description: This page describes Ersilia's Open Standards and Best Practices Principles
+description: This page describes Ersilia's open standards and best practices principles
 ---
 
-# Open Standards and Best Practices
+# Open standards and best practices
 
-## Open Standards
+{% hint style="info" %}
+Ersilia is [recognised as a Digital Public Good](https://medium.com/ersiliaio/ersilia-becomes-a-digital-public-good-64fb2e8bb72c) by the Digital Public Goods Alliance.
+{% endhint %}
+
+## Open standards
 
 We follow [DPG Alliance tips for Open Standards](https://github.com/DPGAlliance/publicgoods-candidates/blob/main/help-center/open-standards.md). Below is a summary and proof of adherence to these standards.
 
@@ -16,11 +20,9 @@ We follow [DPG Alliance tips for Open Standards](https://github.com/DPGAlliance/
 | Data Exchange and Configuration Formats                   | We primarily use YAML, JSON, CSV and TOML formats.                                                                                                                                                                                                                           | [Setup file](https://github.com/ersilia-os/ersilia/blob/master/pyproject.toml) in TOML format. [Metadata file](https://github.com/ersilia-os/eos3b5e/blob/main/metadata.json) in JSON. [Workflow file](https://github.com/ersilia-os/ersilia/blob/master/.github/workflows/pr\_check.yml) in YAML. [Data file](https://github.com/ersilia-os/pharmacogx-embeddings/blob/main/data/chemical\_descriptors/drug\_molecules.csv) in CSV. |
 | Standard Content Formats and Multimedia                   | Content and multimedia are not our main assets. Internally, we store documents and media files with standard formats.                                                                                                                                                        | An example of a one-pager in PDF format can be found [here](https://drive.google.com/file/d/1Xxgpjh3gCQdD\_MqEDxweJIPY\_1JGKSIN/view?usp=sharing). We store videos in MP4 format, and upload them to [Youtube](https://www.youtube.com/channel/UCeioZf4Qj4hWi3O5Ta2k-xQ).                                                                                                                                                            |
 
-## Best Practices and Principles
+## Best practices and principles
 
 We follow [DPG Alliance tips for Best Practices and Principles](https://github.com/DPGAlliance/publicgoods-candidates/blob/main/help-center/best-practices.md). Below is a summary and proof of adherence to these principles.
-
-
 
 | Concept                                                       | Comment                                                                                                                                   | Proof of Adherence                                                                                                                                                                                                                                                                                    |
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

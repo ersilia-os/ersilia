@@ -4,36 +4,34 @@ description: >-
   infectious disease research
 ---
 
-# 🤗 Welcome to Ersilia!
+# The Ersilia Open Source Initiative
 
-The [Ersilia Open Source Initiative](https://ersilia.io) is a tech non-profit organisation incorporated with the Charity Commission for England and Wales ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-details/?regid=1192266\&subid=0)). We are a diverse and international community of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
-
-Below you can read a bit more about the key organisational priorities and roadmap for the initiative:
+The [Ersilia Open Source Initiative](https://ersilia.io) is a tech non-profit organisation incorporated as a foundation in Spain. We are a **diverse and international community** of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
 
 ## The organisation
 
 ### History
 
-EOSI was founded in November 2020 by Edoardo, Miquel and Gemma. The three co-founders hold PhD degrees in biomedicine and a shared goal to use their knowledge to support research in neglected disease areas. EOSI was incorporated as a non-profit organisation, stating our commitment to always put at the forefront the needs of our beneficiaries. We work at the intersection between academia, pharma industry, start-ups and other non-profit ventures. EOSI is recognised by the Charity Commission for England and Wales.
+Ersilia was **founded in November 2020** by Edoardo Gaude, Miquel Duran-Frigola and Gemma Turon. The three co-founders hold PhD degrees in biomedicine and a shared goal to use their knowledge to **support research in neglected disease areas**. Ersilia was incorporated as a non-profit organisation (charity) in the Charity Commission of England and Wales. In 2022, Ersilia was established as a foundation in Spain. We work at the **intersection between academia, pharma industry, start-ups and other non-profit ventures**.
 
 ### Mission
 
-To equip laboratories in Low and Middle Income Countries with state of the art AI/ML tools for infectious and neglected disease research
+To equip laboratories in Low and Middle Income Countries with state of the art AI/ML tools for infectious and neglected disease research.
 
 ### Vision
 
-A world with egalitarian access to healthcare
+A world with egalitarian access to healthcare.
 
 ### Goals
 
-1. To democratise access to artificial intelligence and machine learning (AI/ML) models for biomedical research. We bridge the gap between data scientists and experimental researchers, making AI/ML expertise available to scientists worldwide.&#x20;
-2. To support research into infectious and neglected diseases in Low Income Countries. We focus on implementing our tools locally in institutions across the global south. We prioritise projects where the scientific leadership is within domestic institutions and local researchers.&#x20;
-3. To build capacity in data science and AI/ML. Together with our partners, we organise workshops and seminars for experimental scientists.&#x20;
-4. To advocate for open science. We firmly believe that an open science framework is the key to establishing sustainable collaborations. We strive to keep openness at all levels, including scientific findings, strategic decision-making, and funding.
+1. **To facilitate adoption of artificial intelligence and machine learning (AI/ML) models for biomedical research**. We bridge the gap between data scientists and experimental researchers, making AI/ML expertise available to scientists worldwide.&#x20;
+2. **To support research into infectious and neglected diseases in LMICs**. We focus on implementing our tools locally in institutions across the global south. We prioritise projects where the scientific leadership is within domestic institutions and local researchers.
+3. **To build capacity in data science and AI/ML**. Together with our partners, we organise workshops and seminars for experimental scientists.
+4. **To advocate for open science**. We firmly believe that an open science framework is the key to establishing sustainable collaborations. We strive to keep openness at all levels, including scientific findings, strategic decision-making, and funding.
 
 ## Roadmap
 
-EOSI’s main asset is the Ersilia Model Hub, a unified platform of ready-to-use AI/ML models for drug discovery. We have completed an MVP version (accessible through a command-line interface (CLI)) and are now focused on developing a first completed version of our product. To this end, we are working on:&#x20;
+Ersilia's main asset is the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia), a unified platform of ready-to-use AI/ML models for drug discovery and infectious disease research. We have completed an MVP version (accessible through a command-line interface (CLI)) and are now focused on developing a first completed version of our product. To this end, we are working on:&#x20;
 
 * Exhaustive search and incorporation of ML models already published in the literature (up to 500 models).&#x20;
 * Development of a template to facilitate model deposition by third parties. Following simple instructions, contributors will be able to upload their ML models and readily serve them to the scientific community.&#x20;
@@ -54,7 +52,8 @@ The development of the MVP of the Ersilia Model Hub, ZairaChem and the privacy-p
 Ersilia’s core team is comprised of:&#x20;
 
 * Executive Director (Gemma Turon, PhD). The Executive Director leads Ersilia’s roadmap and strategic planning, engages with our partners and ensures the operational sustainability of the organisation together with the Board of Trustees. This position is also covering project management and administration until EOSI can expand its staffing.&#x20;
-* Lead Scientist (Miquel Duran-Frigola, PhD). The Lead Scientist is responsible for guiding project development and aligning EOSI’s scientific agenda with the needs of our beneficiaries. This position is also covering the technology officer position until EOSI can expand its staffing.&#x20;
+* Lead Scientist (Miquel Duran-Frigola, PhD). The Lead Scientist is responsible for guiding project development and aligning EOSI’s scientific agenda with the needs of our beneficiaries. This position is also covering the technology officer position until EOSI can expand its staffing.
+* Chief Technical Officer (Dhanshree Arora, MSc).&#x20;
 
 In addition to the core team, we are supported by several volunteers, interns and contractors that work in different capacities with our core team to make Ersilia a reality.
 
