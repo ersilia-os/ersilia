@@ -4,7 +4,7 @@
 
 * [The Ersilia Open Source Initiative](README.md)
 * [Ten principles](welcome-to-ersilia/ten-principles.md)
-* [Types of repositories](welcome-to-ersilia/types-of-repositories.md)
+* [Getting started](welcome-to-ersilia/getting-started.md)
 
 ## 🚀 Ersilia Model Hub
 
@@ -21,6 +21,15 @@
   * [Versioning](ersilia-model-hub/more-for-contributors/versioning.md)
   * [BioModels Annotation](ersilia-model-hub/more-for-contributors/biomodels-annotation.md)
 
+## 💊 Chemistry tools
+
+* [Automated activity prediction models](chemistry-tools/automated-activity-prediction-models.md)
+  * [Light-weight AutoML with LazyQSAR](chemistry-tools/automated-activity-prediction-models/light-weight-automl-with-lazyqsar.md)
+  * [Accurate AutoML with ZairaChem](chemistry-tools/automated-activity-prediction-models/accurate-automl-with-zairachem.md)
+  * [Model distillation with Olinda](chemistry-tools/automated-activity-prediction-models/model-distillation-with-olinda.md)
+* [Sampling the chemical space](chemistry-tools/sampling-the-chemical-space.md)
+* [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
+
 ## 🙌 Contributors
 
 * [Communication channels](contributors/communication.md)
@@ -32,15 +41,6 @@
   * [Outreachy Summer 2023](contributors/internships/outreachy-summer-2023.md)
   * [Outreachy Winter 2022](contributors/internships/outreachy-winter-2022.md)
   * [Outreachy Summer 2022](contributors/internships/outreachy-summer-2022.md)
-
-## 💊 Chemistry tools
-
-* [Automated activity prediction models](chemistry-tools/automated-activity-prediction-models.md)
-  * [Light-weight AutoML with LazyQSAR](chemistry-tools/automated-activity-prediction-models/light-weight-automl-with-lazyqsar.md)
-  * [Accurate AutoML with ZairaChem](chemistry-tools/automated-activity-prediction-models/accurate-automl-with-zairachem.md)
-  * [Model distillation with Olinda](chemistry-tools/automated-activity-prediction-models/model-distillation-with-olinda.md)
-* [Sampling the chemical space](chemistry-tools/sampling-the-chemical-space.md)
-* [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
 
 ## 🎨 Styles
 
