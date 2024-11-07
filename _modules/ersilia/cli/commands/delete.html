@@ -75,6 +75,9 @@
 <span></span><span class="kn">import</span> <span class="nn">click</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 
+<span class="kn">from</span> <span class="nn">...hub.content.catalog</span> <span class="kn">import</span> <span class="n">ModelCatalog</span>
+
+
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span> <span class="nn">...hub.delete.delete</span> <span class="kn">import</span> <span class="n">ModelFullDeleter</span>
@@ -86,18 +89,7 @@
 <span class="k">def</span> <span class="nf">delete_cmd</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create delete command&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-
-    <span class="c1"># Example usage: ersilia delete {MODEL}</span>
-    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Delete model from local computer&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Delete model from local computer. The BentoML bundle is deleted, as well as the files stored in &quot;</span>
-        <span class="s2">&quot;the EOS directory and the Pip-installed package&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
+    <span class="k">def</span> <span class="nf">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
         <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">md</span><span class="o">.</span><span class="n">needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
             <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Deleting model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
@@ -112,7 +104,45 @@
                     <span class="n">model_id</span>
                 <span class="p">),</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_delete_all</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to delete all locally available models&quot;&quot;&quot;</span>
+        <span class="n">model_catalog</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">()</span>
+        <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">model_catalog</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+        <span class="n">local_models</span> <span class="o">=</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">catalog_table</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">local_models</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:person_tipping_hand: No models are available locally for deletion.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">deleted_count</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="k">for</span> <span class="n">model_row</span> <span class="ow">in</span> <span class="n">local_models</span><span class="p">:</span>
+            <span class="n">model_id</span> <span class="o">=</span> <span class="n">model_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                <span class="n">deleted_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:thumbs_up: Completed the deletion of all locally available models!&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+        
+
+    <span class="c1"># Example usage:</span>
+    <span class="c1"># 1. Delete a specific model: ersilia delete {MODEL}</span>
+    <span class="c1"># 2. Delete all models: ersilia delete --all</span>
+    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Delete model from local computer&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Delete model from local computer. The BentoML bundle is deleted, as well as the files stored in &quot;</span>
+        <span class="s2">&quot;the EOS directory and the Pip-installed package&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--all&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Delete all locally available models.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">all</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
+            <span class="n">_delete_all</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">model</span><span class="p">:</span>
+            <span class="n">model_id</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
+            <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:warning: Please specify a model to delete a model or use --all to delete all models.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 
