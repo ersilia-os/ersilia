@@ -6,13 +6,13 @@ description: >-
 
 # The Ersilia Open Source Initiative
 
-The [Ersilia Open Source Initiative](https://ersilia.io) is a tech non-profit organisation incorporated as a foundation in Spain. We are a **diverse and international community** of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
+The [Ersilia Open Source Initiative](https://ersilia.io) (Ersilia) is a tech non-profit organisation incorporated as a foundation in Spain. We are a **diverse and international community** of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
 
 ## The organisation
 
 ### History
 
-Ersilia was **founded in November 2020** by Edoardo Gaude, Miquel Duran-Frigola and Gemma Turon. The three co-founders hold PhD degrees in biomedicine and a shared goal to use their knowledge to **support research in neglected disease areas**. Ersilia was incorporated as a non-profit organisation (charity) in the Charity Commission of England and Wales. In 2022, Ersilia was established as a foundation in Spain. We work at the **intersection between academia, pharma industry, start-ups and other non-profit ventures**.
+Ersilia was **founded in November 2020** as a non-profit organisation (charity) with the Charity Commission of England and Wales. In 2023, Ersilia was established as a Foundation in Catalunya, Spain. Since 2024, the catalan Foundation continues the work of Ersilia and the UK-based branch of the organisation has been closed down.  We work at the **intersection between academia, pharma industry, start-ups and other non-profit ventures**.
 
 ### Mission
 
@@ -29,42 +29,22 @@ A world with egalitarian access to healthcare.
 3. **To build capacity in data science and AI/ML**. Together with our partners, we organise workshops and seminars for experimental scientists.
 4. **To advocate for open science**. We firmly believe that an open science framework is the key to establishing sustainable collaborations. We strive to keep openness at all levels, including scientific findings, strategic decision-making, and funding.
 
-## Roadmap
+## Governance
 
-Ersilia's main asset is the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia), a unified platform of ready-to-use AI/ML models for drug discovery and infectious disease research. We have completed an MVP version (accessible through a command-line interface (CLI)) and are now focused on developing a first completed version of our product. To this end, we are working on:&#x20;
+As a Foundation, Ersilia is governed by the Board of Trustees (_Patronat_), a body that serves voluntarily and oversees the alignment between Ersilia's work and its philanthropic mission. The board meets a minimum of four times a year to provide strategic decision making and support to EOSI’s core team. Our Trustees are:&#x20;
 
-* Exhaustive search and incorporation of ML models already published in the literature (up to 500 models).&#x20;
-* Development of a template to facilitate model deposition by third parties. Following simple instructions, contributors will be able to upload their ML models and readily serve them to the scientific community.&#x20;
-* No-code predictions. Improvements in ML model accessibility will be two-fold:&#x20;
-  * A graphical user interface (GUI) to browse the Ersilia Model Hub and download models from it.&#x20;
-  * Online deployment of models hosted by Ersilia. We are currently setting up a sustainable cloud infrastructure (AWS) to enable online ML model inference.&#x20;
-* Incorporation of an on-demand modelling option for users, coupling Ersilia’s in-house AutoML pipeline, ZairaChem, with the Ersilia Model Hub.&#x20;
-* Privacy-preserving options for IP-sensitive data. We are developing an encryption framework to allow users to securely post molecules for prediction without risks of information leakage.&#x20;
+* Miquel Duran-Frigola, PhD (President)
+* Edoardo Gaude, PhD (Secretary)
+* Anna Homs Riba, PhD (Vocal)
 
-In addition to product development, we are actively working on a number of projects together with our partners and collaborators; the Holistic Drug Discovery and Development Centre (H3D) at the University of Cape Town (UCT), the University of Buea in Cameroon, the Centre for Infectious Disease Research in Zambia (CIDRZ), and the Open Source Malaria (OSM) and Open Source Antibiotics (OSA) consortiums.
+In addition, Ersilia is supported by a Board of Advisors:
+
+* Alacia Armstrong, MSc&#x20;
+* Akash Rungta, MSc&#x20;
 
 ## How are we funded
 
-The development of the MVP of the Ersilia Model Hub, ZairaChem and the privacy-preserving framework has been supported by a Merck BioPharma Speed Grant. In addition, EOSI has completed two accelerator programs for tech nonprofits, the Digital Infrastructure Incubator by Code for Science & Society and the Fast Forward Accelerator. Moreover, the Software Sustainability Institute (SSI) performed a Research Software HealthCheck on the MVP prior to the pilot project. The Bill & Melinda Gates Foundation supports, as part of the Calestous Juma awards, the implementation of the Ersilia Model Hub at the University of Buea. Finally, the Rosetrees Foundation has funded the experimental testing of novel antimalarial molecules generated with EOSI’s ML tools, as part of the Open Source Malaria project. EOSI is also part of a GRADIENT award by GSK-Novartis to study pharmacogenomics of African ethnicities with H3D.
-
-## Staffing
-
-Ersilia’s core team is comprised of:&#x20;
-
-* Executive Director (Gemma Turon, PhD). The Executive Director leads Ersilia’s roadmap and strategic planning, engages with our partners and ensures the operational sustainability of the organisation together with the Board of Trustees. This position is also covering project management and administration until EOSI can expand its staffing.&#x20;
-* Lead Scientist (Miquel Duran-Frigola, PhD). The Lead Scientist is responsible for guiding project development and aligning EOSI’s scientific agenda with the needs of our beneficiaries. This position is also covering the technology officer position until EOSI can expand its staffing.
-* Chief Technical Officer (Dhanshree Arora, MSc).&#x20;
-
-In addition to the core team, we are supported by several volunteers, interns and contractors that work in different capacities with our core team to make Ersilia a reality.
-
-## Governance
-
-As a Charitable Incorporated Organisation, EOSI is governed by the Board of Trustees, a body that serves voluntarily and oversees the alignment between EOSI’s work and its philanthropic mission. The board meets a minimum of four times a year to provide strategic decision making and support to EOSI’s core team. Our Trustees are:&#x20;
-
-* Edoardo Gaude, PhD&#x20;
-* Alacia Armstrong, MSc&#x20;
-* Akash Rungta, MSc&#x20;
-* Miquel Duran-Frigola, PhD
+Ersilia is funded by a combination of research grants from public entities (including the Spanish Government, the NIH, and the European Union), private foundations (including Schmidt Futures, Mozilla Foundation and Bill and Melinda Gates Foundation) and donations from philantrophic bodies and corporate contributors (including Splunk, HPE, BlackRock and UPS). A full disclosure of our funding sources can be found in our [website](https://ersilia.io/supporters).
 
 ## How to contact us
 
