@@ -10,10 +10,6 @@ The [Ersilia Open Source Initiative](https://ersilia.io) (Ersilia) is a tech non
 
 ## The organisation
 
-### History
-
-Ersilia was **founded in November 2020** as a non-profit organisation (charity) with the Charity Commission of England and Wales. In 2023, Ersilia was established as a Foundation in Catalunya, Spain. Since 2024, the catalan Foundation continues the work of Ersilia and the UK-based branch of the organisation has been closed down.  We work at the **intersection between academia, pharma industry, start-ups and other non-profit ventures**.
-
 ### Mission
 
 To equip laboratories in Low and Middle Income Countries with state of the art AI/ML tools for infectious and neglected disease research.
@@ -29,18 +25,22 @@ A world with egalitarian access to healthcare.
 3. **To build capacity in data science and AI/ML**. Together with our partners, we organise workshops and seminars for experimental scientists.
 4. **To advocate for open science**. We firmly believe that an open science framework is the key to establishing sustainable collaborations. We strive to keep openness at all levels, including scientific findings, strategic decision-making, and funding.
 
+### History
+
+Ersilia was **founded in November 2020** as a non-profit organisation (charity) with the Charity Commission of England and Wales. In 2023, Ersilia was established as a Foundation in Catalunya, Spain. Since 2024, the catalan Foundation continues the work of Ersilia and the UK-based branch of the organisation has been closed down.  We work at the **intersection between academia, pharma industry, start-ups and other non-profit ventures**.
+
 ## Governance
 
-As a Foundation, Ersilia is governed by the Board of Trustees (_Patronat_), a body that serves voluntarily and oversees the alignment between Ersilia's work and its philanthropic mission. The board meets a minimum of four times a year to provide strategic decision making and support to EOSI’s core team. Our Trustees are:&#x20;
+As a Foundation, Ersilia is governed by the **Board of Trustees** (_Patronat_), a body that serves voluntarily and oversees the alignment between Ersilia's work and its philanthropic mission. The board meets a minimum of four times a year to provide strategic decision making and support to EOSI’s core team. Our Trustees are:&#x20;
 
-* Miquel Duran-Frigola, PhD (President)
-* Edoardo Gaude, PhD (Secretary)
-* Anna Homs Riba, PhD (Vocal)
+* [Miquel Duran-Frigola](https://www.linkedin.com/in/miquel-duran-frigola-06b00347/), PhD (President)
+* [Edoardo Gaude](https://www.linkedin.com/in/edo-gaude-02283945/), PhD (Secretary)
+* [Anna Homs Riba](https://www.linkedin.com/in/anna-homs-riba-79186190/), PhD (Vocal)
 
-In addition, Ersilia is supported by a Board of Advisors:
+In addition, Ersilia is supported by a **Board of Advisors**:
 
-* Alacia Armstrong, MSc&#x20;
-* Akash Rungta, MSc&#x20;
+* [Alacia Armstrong](https://www.linkedin.com/in/alacia-armstrong-she-her-0a215b3b/), MSc&#x20;
+* [Akash Rungta](https://www.linkedin.com/in/akash-rungta/), MSc&#x20;
 
 ## How are we funded
 
