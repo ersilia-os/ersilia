@@ -42,13 +42,6 @@
   * [Outreachy Winter 2022](contributors/internships/outreachy-winter-2022.md)
   * [Outreachy Summer 2022](contributors/internships/outreachy-summer-2022.md)
 
-## 🎨 Styles
-
-* [Brand guidelines](styles/brand-guidelines.md)
-* [Slide and document templates](styles/slide-and-document-templates.md)
-* [Scientific figures with Stylia](styles/scientific-figures.md)
-* [Coding style](styles/coding-style.md)
-
 ## 📑 Training materials
 
 * [AI2050 intro workshop](training-materials/ai-antimicrobial-dd.md)
@@ -56,6 +49,13 @@
 * [Introduction to ML for Drug Discovery](training-materials/ml-for-drug-discovery.md)
 * [Python 101](training-materials/python-101.md)
 * [External resources](training-materials/external-resources.md)
+
+## 🎨 Styles
+
+* [Brand guidelines](styles/brand-guidelines.md)
+* [Slide and document templates](styles/slide-and-document-templates.md)
+* [Scientific figures with Stylia](styles/scientific-figures.md)
+* [Coding style](styles/coding-style.md)
 
 ## 🌍 About Us
 

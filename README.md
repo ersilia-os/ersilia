@@ -6,9 +6,9 @@ description: >-
 
 # The Ersilia Open Source Initiative
 
-The [Ersilia Open Source Initiative](https://ersilia.io) (Ersilia) is a tech non-profit organisation incorporated as a foundation in Spain. We are a **diverse and international community** of employees, contractors, interns and volunteers. We strive to create a welcoming environment for everyone, and encourage active participation and communication.
-
 ## The organisation
+
+The [Ersilia Open Source Initiative](https://ersilia.io) (Ersilia) is a tech non-profit organisation incorporated as a foundation in Catalunya, Spain.
 
 ### Mission
 
@@ -24,10 +24,6 @@ A world with egalitarian access to healthcare.
 2. **To support research into infectious and neglected diseases in LMICs**. We focus on implementing our tools locally in institutions across the global south. We prioritise projects where the scientific leadership is within domestic institutions and local researchers.
 3. **To build capacity in data science and AI/ML**. Together with our partners, we organise workshops and seminars for experimental scientists.
 4. **To advocate for open science**. We firmly believe that an open science framework is the key to establishing sustainable collaborations. We strive to keep openness at all levels, including scientific findings, strategic decision-making, and funding.
-
-### History
-
-Ersilia was **founded in November 2020** as a non-profit organisation (charity) with the Charity Commission of England and Wales. In 2023, Ersilia was established as a Foundation in Catalunya, Spain. Since 2024, the catalan Foundation continues the work of Ersilia and the UK-based branch of the organisation has been closed down.  We work at the **intersection between academia, pharma industry, start-ups and other non-profit ventures**.
 
 ## Governance
 
