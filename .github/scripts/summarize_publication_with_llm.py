@@ -322,7 +322,7 @@ class PublicationSummarizer:
                 response_format=Summary,
             )
             with open(output_file, "w") as f:
-                json.dump(response.model_dump()['parsed'], f, indent=4)
+                json.dump(response.choices[0].message.parsed.model_dump(), f, indent=4)
 
         elif self.format == "markdown":
             response = openai.chat.completions.create(
@@ -351,12 +351,12 @@ def serialize_json_to_md(json_file, md_file):
         data = json.load(f)
     with open(md_file, "w") as f:
         for key, value in data.items():
-            f.write(f"## {key}\n")
+            f.write(f"## {str(key).title()}\n")
             if isinstance(value, list):
                 for item in value:
-                    f.write(f"- {item}\n")
+                    f.write(f"- {str(item)}\n")
             else:
-                f.write(value + "\n")
+                f.write(str(value) + "\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process arguments.")
