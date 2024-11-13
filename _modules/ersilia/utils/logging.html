@@ -103,12 +103,22 @@
 <div class="viewcode-block" id="Logger">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.logging.Logger">[docs]</a>
 <span class="k">class</span> <span class="nc">Logger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span> 
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Logger</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+    
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_console</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;{time:HH:mm:ss} | </span><span class="si">{level: &lt;8}</span><span class="s2"> | </span><span class="si">{message}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fmt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;&lt;green&gt;{time:HH:mm:ss}&lt;/green&gt; | &quot;</span>
+                <span class="s2">&quot;&lt;level&gt;</span><span class="si">{level: &lt;8}</span><span class="s2">&lt;/level&gt; | &quot;</span>
+                <span class="s2">&quot;&lt;cyan&gt;</span><span class="si">{message}</span><span class="s2">&lt;/cyan&gt;&quot;</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbose_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">VERBOSE_FILE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_to_console</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_to_file</span><span class="p">()</span>
