@@ -82,7 +82,7 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaModel</span>
 <span class="kn">from</span> <span class="nn">...core.session</span> <span class="kn">import</span> <span class="n">Session</span>
 <span class="kn">from</span> <span class="nn">...core.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span>
-
+<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">print_result_table</span>
 
 <div class="viewcode-block" id="run_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.run.run_cmd">[docs]</a>
@@ -104,7 +104,12 @@
         <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Assume that the run is standard and, therefore, do not do so many checks.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">standard</span><span class="p">):</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--table&quot;</span><span class="p">,</span> 
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">standard</span><span class="p">):</span>
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
@@ -135,12 +140,25 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">echo</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+                    <span class="n">formatted</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">table</span><span class="p">:</span>
+                        <span class="n">print_result_table</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">echo</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span> 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Something went wrong&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+            <span class="n">echo</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">table</span><span class="p">:</span>
+                <span class="n">print_result_table</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                 <span class="n">echo</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1">#</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">print_result_table</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 </pre></div>
 
