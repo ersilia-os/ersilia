@@ -8,11 +8,7 @@ from .. import echo
 from ... import ErsiliaModel
 from ...core.session import Session
 from ...core.tracking import RunTracker
-<<<<<<< Updated upstream
 from ...utils.terminal import print_result_table
-=======
-from ...utils.logging import logger
->>>>>>> Stashed changes
 
 def run_cmd():
     """Create run command"""
