@@ -11,6 +11,15 @@ REPO_DIR = Path("ersilia")
 
 @nox.session(venv_backend="conda")
 def test_cli(session):
+    session.install(
+        "pytest", 
+        "pytest-asyncio", 
+        "pytest-xdist", 
+        "psutil",
+        "PyYAML",
+        "rich"
+    )
+
     if config.get("use_existing_env", False):
         logger.info("Using existing environment, skipping setup and installation.")
         
@@ -42,7 +51,6 @@ def test_cli(session):
     
     session.chdir(REPO_DIR)
     session.install("-e", ".")
-    session.install("pytest")
     session.chdir(ORIGINAL_DIR)
 
     session.run(

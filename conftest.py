@@ -1,34 +1,42 @@
-import io
-from contextlib import redirect_stdout
 from test.playground.shared import results
-
+from rich.table import Table
+from rich.console import Console
+from rich.text import Text
+from rich import box
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
-    command_col_width = 50
-    description_col_width = 15
-    time_col_width = 15
-    memory_col_width = 15
-    status_col_width = 20
+    console = Console()
+    table = Table(title="Command Execution Summary", box=box.SQUARE)
 
-    border = (
-        f"+{'-' * command_col_width}+{'-' * description_col_width}+"
-        f"{'-' * time_col_width}+{'-' * memory_col_width}+{'-' * status_col_width}+"
-    )
-
-    terminalreporter.write("\n\nCommand Execution Summary:\n")
-    terminalreporter.write(f"{border}\n")
-    terminalreporter.write(
-        f"| {'Command':^{command_col_width}} | {'Description':^{description_col_width}} | "
-        f"{'Time Taken':^{time_col_width}} | {'Max Memory':^{memory_col_width}} | {'Status':^{status_col_width}} \n"
-    )
-    terminalreporter.write(f"{border}\n")
+    table.add_column("Command", width=50)
+    table.add_column("Description", width=15)
+    table.add_column("Time Taken", width=15)
+    table.add_column("Max Memory", width=15)
+    table.add_column("Status", width=20)
+    table.add_column("Checkups", width=30)
+    table.add_column("Docker Status", width=20)
+    table.add_column("Runner", width=20)
+    table.add_column("CLI Type", width=20)
 
     for result in results:
-        terminalreporter.write(
-            f"| {result['command']:<{command_col_width}} | {result['description']:<{description_col_width}} | "
-            f"{result['time_taken']:<{time_col_width}} | {result['max_memory']:<{memory_col_width}} | "
-            f"{result['status']:<{status_col_width}} |\n"
+        formatted_checkups = []
+        for check in result["checkups"]:
+            if check["status"]:
+                formatted_checkups.append(Text("✔", style="green") + f" {check['name']}")
+            else:
+                formatted_checkups.append(Text("✘", style="red") + f" {check['name']}")
+        checkups_text = "\n".join(str(checkup) for checkup in formatted_checkups)
+
+        table.add_row(
+            result["command"],
+            result["description"],
+            result["time_taken"],
+            result["max_memory"],
+            result["status"],
+            checkups_text,
+            Text("✔", style="green") if result["activate_docker"] else Text("✘", style="red"),
+            result["runner"],
+            result["cli_type"],
         )
 
-    terminalreporter.write(f"{border}\n")
-    terminalreporter.write("\n")
+    console.print(table)
