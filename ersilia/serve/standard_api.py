@@ -280,6 +280,8 @@ class StandardCSVRunApi(ErsiliaBase):
         return output_data
 
     def post(self, input, output, output_source=OutputSource.LOCAL_ONLY):
+        import time
+        st = time.time()
         input_data = self.serialize_to_json(input)
         if OutputSource.is_cloud(output_source):
             store = InferenceStoreApi(model_id=self.model_id)
@@ -288,6 +290,9 @@ class StandardCSVRunApi(ErsiliaBase):
         response = requests.post(url, json=input_data)
         if response.status_code == 200:
             result = response.json()
+            et = time.time()
+            self.logger.debug(f"Time takes: {et-st:.6f}")
+            self.logger.debug(f"Outputs: {result}")
             output_data = self.serialize_to_csv(input_data, result, output)
             return output_data
         else:

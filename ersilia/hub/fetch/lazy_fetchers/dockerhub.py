@@ -99,7 +99,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             fr_file = f"/root/eos/dest/{model_id}/{pf}"
             to_file = f"{EOS}/dest/{model_id}/input.csv"
             try:
-                self.simple_docker.cp_from_image(
+                await self.simple_docker.cp_from_image(
                     img_path=fr_file,
                     local_path=to_file,
                     org=DOCKERHUB_ORG,

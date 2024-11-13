@@ -28,6 +28,38 @@ from ..default import (
 DEFAULT_OUTPUT = None
 
 
+class ServiceFactory:
+    SERVICE_CLASSES = {
+        "system": SystemBundleService,
+        "venv": VenvEnvironmentService,
+        "conda": CondaEnvironmentService,
+        "docker": DockerImageService,
+        "pulled_docker": PulledDockerImageService,
+        "hosted": HostedService,
+        "dummy": DummyService,
+    }
+
+    @staticmethod
+    def create_service(
+        service_type, model_id, config_json, preferred_port=None, url=None
+    ):
+        service_class = ServiceFactory.SERVICE_CLASSES.get(service_type)
+        if (
+            service_class
+            and service_class(model_id, config_json, preferred_port, url).is_available()
+        ):
+            return service_class(model_id, config_json, preferred_port, url)
+        return None
+
+    @staticmethod
+    def auto_detect_service(model_id, config_json, preferred_port=None, url=None):
+        for service_type, service_class in ServiceFactory.SERVICE_CLASSES.items():
+            service_instance = service_class(model_id, config_json, preferred_port, url)
+            if service_instance.is_available():
+                return service_instance, service_type
+        return DummyService(model_id, config_json, preferred_port), "dummy"
+
+
 class AutoService(ErsiliaBase):
     def __init__(
         self,
@@ -37,151 +69,92 @@ class AutoService(ErsiliaBase):
         preferred_port=None,
         url=None,
     ):
-        ErsiliaBase.__init__(self, config_json=config_json)
-        self.logger.debug("Setting BentoML AutoService for {0}".format(model_id))
+        super().__init__(config_json=config_json)
+        self.logger.debug(f"Setting BentoML AutoService for {model_id}")
+
         self.config_json = config_json
         self.model_id = model_id
         self._meta = None
         self._preferred_port = preferred_port
         self._url = url
-        if service_class is None:
-            self.logger.debug("No service class provided, deciding automatically")
-            service_class_file = os.path.join(
-                self._get_bundle_location(model_id), SERVICE_CLASS_FILE
-            )
-            if os.path.exists(service_class_file):
-                self.logger.debug(
-                    "Service class file exists in folder {0}".format(service_class_file)
-                )
-                with open(service_class_file, "r") as f:
-                    s = f.read()
-                if not s:
-                    s = None
-            else:
-                s = None
-            if s is not None:
-                self.logger.debug("Service class: {0}".format(s))
-                if s == "system":
-                    self.service = SystemBundleService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    )
-                elif s == "venv":
-                    self.service = VenvEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    )
-                elif s == "conda":
-                    self.service = CondaEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    )
-                elif s == "docker":
-                    self.service = DockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    )
-                elif s == "pulled_docker":
-                    self.service = PulledDockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    )
-                elif s == "hosted":
-                    self.service = HostedService(
-                        model_id, config_json=config_json, url=url
-                    )
-                else:
-                    self.service = None
-                self._service_class = s
-            else:
-                self.logger.debug(
-                    "No service class file exists in {0}".format(service_class_file)
-                )
-                with open(service_class_file, "w") as f:
-                    if SystemBundleService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = SystemBundleService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        self.logger.debug("Service class: system")
-                        f.write("system")
-                        self._service_class = "system"
-                    elif VenvEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = VenvEnvironmentService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("venv")
-                        self.logger.debug("Service class: venv")
-                        self._service_class = "venv"
-                    elif CondaEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = CondaEnvironmentService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("conda")
-                        self.logger.debug("Service class: conda")
-                        self._service_class = "conda"
-                    elif DockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = DockerImageService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("docker")
-                        self.logger.debug("Service class: docker")
-                        self._service_class = "docker"
-                    elif PulledDockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = PulledDockerImageService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("pulled_docker")
-                        self.logger.debug("Service class: pulled_docker")
-                        self._service_class = "pulled_docker"
-                    elif HostedService(
-                        model_id, config_json=config_json, url=url
-                    ).is_available():
-                        self.service = HostedService(
-                            model_id, config_json=config_json, url=url
-                        )
-                        f.write("hosted")
-                        self.logger.debug("Service class: hosted")
-                        self._service_class = "hosted"
-                    else:
-                        self.logger.debug("Service class: dummy")
-                        self.service = DummyService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-        else:
+        self._service_class = None
+
+        if service_class:
             self.logger.info("Service class provided")
-            service_class = self._service_class_loader(service_class)
-            if service_class(
-                model_id,
-                config_json=config_json,
-                preferred_port=preferred_port,
-                url=url,
-            ).is_available():
-                self.service = service_class(
-                    model_id,
-                    config_json=config_json,
-                    preferred_port=preferred_port,
-                    url=url,
-                )
-            else:
-                self.service = None
+            loaded_service_class = self._service_class_loader(service_class)
+            self.service = self._instantiate_service(loaded_service_class)
+        else:
+            self.service, self._service_class = self._load_or_auto_detect_service(
+                model_id
+            )
+
         self._set_apis()
+
+    def _load_or_auto_detect_service(self, model_id):
+        service_class_file = os.path.join(
+            self._get_bundle_location(model_id), SERVICE_CLASS_FILE
+        )
+
+        if os.path.exists(service_class_file):
+            with open(service_class_file, "r") as f:
+                service_type = f.read().strip()
+                self.logger.debug(f"Service class found in file: {service_type}")
+                return (
+                    ServiceFactory.create_service(
+                        service_type,
+                        self.model_id,
+                        self.config_json,
+                        self._preferred_port,
+                        self._url,
+                    ),
+                    service_type,
+                )
+
+        service_instance, service_type = ServiceFactory.auto_detect_service(
+            self.model_id, self.config_json, self._preferred_port, self._url
+        )
+        self._write_service_class_file(service_type, service_class_file)
+        return service_instance, service_type
+
+    def _instantiate_service(self, service_class):
+        service_instance = service_class(
+            self.model_id, self.config_json, self._preferred_port, self._url
+        )
+        if service_instance.is_available():
+            return service_instance
+        return None
+
+    def _write_service_class_file(self, service_type, file_path):
+        with open(file_path, "w") as f:
+            f.write(service_type)
+            self.logger.debug(f"Service class {service_type} written to file")
+
+
+    def _service_class_loader(self, service_class):
+        service_mapping = {
+            SystemBundleService: ("system", SystemBundleService),
+            VenvEnvironmentService: ("venv", VenvEnvironmentService),
+            CondaEnvironmentService: ("conda", CondaEnvironmentService),
+            DockerImageService: ("docker", DockerImageService),
+            PulledDockerImageService: ("pulled_docker", PulledDockerImageService),
+            HostedService: ("hosted", HostedService),
+            "system": SystemBundleService,
+            "venv": VenvEnvironmentService,
+            "conda": CondaEnvironmentService,
+            "docker": DockerImageService,
+            "pulled_docker": PulledDockerImageService,
+            "hosted": HostedService,
+        }
+
+        if isinstance(service_class, type):
+            if service_class in service_mapping:
+                self._service_class = service_mapping[service_class][0]
+                return service_mapping[service_class][1]
+        elif isinstance(service_class, str) and service_class in service_mapping:
+            self._service_class = service_class
+            return service_mapping[service_class]
+
+        raise ValueError(f"Unknown service class: {service_class}")
 
     def _was_fetched_from_dockerhub(self):
         from_dockerhub_file = os.path.join(
@@ -226,41 +199,6 @@ class AutoService(ErsiliaBase):
                     self._set_api(api_name)
                     f.write(api_name + os.linesep)
         self.apis_list = apis_list
-
-    def _service_class_loader(self, service_class):
-        if type(service_class) is SystemBundleService:
-            self._service_class = "system"
-            return service_class
-        elif type(service_class) is VenvEnvironmentService:
-            self._service_class = "venv"
-            return service_class
-        elif type(service_class) is CondaEnvironmentService:
-            self._service_class = "conda"
-            return service_class
-        elif type(service_class) is DockerImageService:
-            self._service_class = "docker"
-            return service_class
-        elif type(service_class) is PulledDockerImageService:
-            self._service_class = "pulled_docker"
-            return service_class
-        elif type(service_class) is HostedService:
-            self._service_class = "hosted"
-            return service_class
-        else:
-            self._service_class = service_class
-            if service_class == "system":
-                return SystemBundleService
-            elif service_class == "venv":
-                return VenvEnvironmentService
-            elif service_class == "conda":
-                return CondaEnvironmentService
-            elif service_class == "docker":
-                return DockerImageService
-            elif service_class == "pulled_docker":
-                return PulledDockerImageService
-            elif service_class == "hosted":
-                return HostedService
-            raise Exception()
 
     def get_apis(self):
         apis = []

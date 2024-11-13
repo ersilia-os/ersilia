@@ -4,6 +4,7 @@ import json
 import time
 import types
 import tempfile
+import asyncio
 import importlib
 import collections
 import __main__ as main
@@ -88,6 +89,9 @@ class ErsiliaModel(ErsiliaBase):
             "pulled_docker",
             "hosted",
         ], "Wrong service class"
+        self.url = None
+        self.pid = None
+        self.scl = service_class
         self.service_class = service_class
         self.track_runs = track_runs
         mdl = ModelBase(model)
@@ -120,19 +124,22 @@ class ErsiliaModel(ErsiliaBase):
                 mf = fetch.ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
-                mf.fetch(self.model_id)
+                asyncio.run(mf.fetch(self.model_id))
             else:
                 return
+        self.logger.info(f"Creating the schema for: {self.model_id, config_json}")
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
         )
         self.preferred_port = preferred_port
+        self.logger.info(f"Creating the Autoservice for: {self.model_id, config_json, self.service_class, self.preferred_port}")
         self.autoservice = AutoService(
             model_id=self.model_id,
             service_class=self.service_class,
             config_json=self.config_json,
             preferred_port=preferred_port,
         )
+        self.logger.info("Set API started")
         self._set_apis()
         self.session = Session(config_json=self.config_json)
 
@@ -168,10 +175,12 @@ class ErsiliaModel(ErsiliaBase):
         setattr(self, api_name, _method)
 
     def _set_apis(self):
+        self.logger.debug(f"Joining started")
         apis_list = os.path.join(
             self._get_bundle_location(self.model_id), APIS_LIST_FILE
         )
         api_names = []
+        self.logger.debug(f"Reading started")
         if os.path.exists(apis_list):
             with open(apis_list, "r") as f:
                 for l in f:
@@ -479,13 +488,18 @@ class ErsiliaModel(ErsiliaBase):
         t0 = time.time()
         t1 = None
         status_ok = False
+        self.logger.info(f"API runner started")
         result = self._standard_api_runner(input=input, output=output)
+        self.logger.info(f"API runner result:{result}")
+
         if type(output) is str:
             if os.path.exists(output):
                 t1 = os.path.getctime(output)
         if t1 is not None:
             if t1 > t0:
                 status_ok = True
+        self.logger.info(f"Status Ok:{status_ok}")
+        
         return result, status_ok
 
     def run(
@@ -511,6 +525,8 @@ class ErsiliaModel(ErsiliaBase):
                 result, standard_status_ok = self._standard_run(
                     input=input, output=output
                 )
+                self.logger.debug(f"Status Okay:{standard_status_ok}")
+
             except Exception as e:
                 self.logger.warning(
                     "Standard run did not work with exception {0}".format(e)
