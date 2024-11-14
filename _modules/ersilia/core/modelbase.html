@@ -78,6 +78,7 @@
 <span class="kn">from</span> <span class="nn">..hub.content.slug</span> <span class="kn">import</span> <span class="n">Slug</span>
 <span class="kn">from</span> <span class="nn">..hub.fetch</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span><span class="p">,</span> <span class="n">DONE_TAG</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
+<span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
 
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils.exceptions</span> <span class="kn">import</span> <span class="n">InvalidModelIdentifierError</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
@@ -122,17 +123,15 @@
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">repo_path</span><span class="p">))</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_slug_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">):</span>
-        <span class="n">metadata_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repo_path</span><span class="p">,</span> <span class="s2">&quot;metadata.json&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">slug</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">slug</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">None</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">slug</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">slug</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">slug</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">slug</span>
 
 <div class="viewcode-block" id="ModelBase.is_valid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_valid">[docs]</a>

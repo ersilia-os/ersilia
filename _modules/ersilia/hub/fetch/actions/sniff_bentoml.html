@@ -90,13 +90,13 @@
 <span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">API_SCHEMA_FILE</span><span class="p">,</span>
     <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span>
-    <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
     <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">....utils.exceptions_utils.exceptions</span> <span class="kn">import</span> <span class="n">EmptyOutputError</span>
 <span class="kn">from</span> <span class="nn">....utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">OutputDataTypesNotConsistentError</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">....utils.paths</span> <span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
 
 
 <div class="viewcode-block" id="BuiltinExampleReader">
@@ -188,22 +188,20 @@
 
     <span class="k">def</span> <span class="nf">_get_output_ann_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">metadata_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">))</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">md</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Metadata file not available&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
         <span class="k">return</span> <span class="n">md</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># TODO Account for mixed types</span>
 
     <span class="k">def</span> <span class="nf">_get_output_ann_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">metadata_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">))</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">md</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Metadata file not available&quot;</span><span class="p">)</span>    
+            <span class="k">return</span>
         <span class="k">return</span> <span class="n">md</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>  <span class="c1"># TODO Account for mixed types</span>
 
     <span class="nd">@throw_ersilia_exception</span>
@@ -291,14 +289,12 @@
     <span class="k">def</span> <span class="nf">_get_schema_type_for_simple_run_api_case</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># read metadata</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">metadata_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_file</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Metadata file not available (yet)&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-        <span class="c1"># get output type from metadata.json</span>
+        <span class="c1"># get output type from metadata file</span>
         <span class="n">output_type</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output type is </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
@@ -313,7 +309,7 @@
         <span class="k">if</span> <span class="n">output_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="c1"># get output shape from metadata.json</span>
+        <span class="c1"># get output shape from metadata file</span>
         <span class="n">output_shape</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">output_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Single&quot;</span><span class="p">,</span> <span class="s2">&quot;List&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="kc">None</span>

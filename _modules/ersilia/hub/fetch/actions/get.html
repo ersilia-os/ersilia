@@ -93,6 +93,7 @@
 <span class="kn">from</span> <span class="nn">.template_resolver</span> <span class="kn">import</span> <span class="n">TemplateResolver</span>
 
 <span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">S3_BUCKET_URL_ZIP</span><span class="p">,</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span>
+<span class="kn">from</span> <span class="nn">....utils.paths</span> <span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
 <span class="kn">from</span> <span class="nn">....utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 
 <span class="n">MODEL_DIR</span> <span class="o">=</span> <span class="s2">&quot;model&quot;</span>
@@ -134,10 +135,16 @@
         <span class="n">src_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">src_dir</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">src_dir</span><span class="p">)</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="n">read_file_from_path</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;inner_template&quot;</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;service.py&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">output_type</span> <span class="o">=</span> <span class="n">read_metadata_section</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;service.py&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">)</span>
+            <span class="n">output_type</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+            <span class="n">output_type</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">outcome_line_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">splited</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">splited</span><span class="p">):</span>
@@ -150,7 +157,9 @@
                 <span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span>
             <span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splited</span><span class="p">)</span>
-        <span class="n">write_content</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;src/service.py&quot;</span><span class="p">)</span></div>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;service.py&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
 </div>
 
 
@@ -169,10 +178,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Creating Dockerfile for internal usage from a config.yml file&quot;</span>
         <span class="p">)</span>
-        <span class="n">read_metadata_section</span>
-        <span class="n">docker_file</span> <span class="o">=</span> <span class="n">read_file_from_path</span><span class="p">(</span><span class="s2">&quot;Dockerfile&quot;</span><span class="p">)</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;Dockerfile&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">docker_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
         <span class="n">updated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_append_commands_to_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="n">docker_file</span><span class="p">)</span>
-        <span class="n">write_content</span><span class="p">(</span><span class="s2">&quot;Docker&quot;</span><span class="p">,</span> <span class="n">updated</span><span class="p">)</span></div>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">updated</span><span class="p">)</span></div>
 
 
     <span class="k">def</span> <span class="nf">_append_commands_to_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">,</span> <span class="n">dockerfile_content</span><span class="p">):</span>
@@ -248,51 +260,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_dockerfile</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_service</span><span class="p">()</span></div>
 </div>
-
-
-
-<div class="viewcode-block" id="read_metadata_section">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.read_metadata_section">[docs]</a>
-<span class="k">def</span> <span class="nf">read_metadata_section</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-    <span class="n">metadata_file</span> <span class="o">=</span> <span class="s2">&quot;metadata.json&quot;</span>
-    <span class="c1">##TODO. Ask when where to locate the metadata.</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">BaseException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> does not exist in the metadata&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
-
-
-
-<div class="viewcode-block" id="read_config_yaml_section">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.read_config_yaml_section">[docs]</a>
-<span class="k">def</span> <span class="nf">read_config_yaml_section</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-    <span class="c1"># TODO. Ask where to located the config.yml</span>
-    <span class="n">yaml_file</span> <span class="o">=</span> <span class="s2">&quot;config.yaml&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">BaseException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is not in the metadata &quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
-
-
-
-<span class="c1">##TODO - Ask where to put the files. Do we create a class for them?</span>
-<div class="viewcode-block" id="read_file_from_path">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.read_file_from_path">[docs]</a>
-<span class="k">def</span> <span class="nf">read_file_from_path</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="n">file_path</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">content</span></div>
-
-
-
-<div class="viewcode-block" id="write_content">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.write_content">[docs]</a>
-<span class="k">def</span> <span class="nf">write_content</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">file</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="ModelRepositoryGetter">

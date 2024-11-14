@@ -75,10 +75,9 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
-<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
 <span class="kn">from</span> <span class="nn">..hub.content.card</span> <span class="kn">import</span> <span class="n">RepoMetadataFile</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">METADATA_JSON_FILE</span>
 
 <span class="c1"># a namedtuple for the results</span>
 <span class="n">Result</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Result&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">])</span>
@@ -413,7 +412,7 @@
             <span class="s2">&quot;Dockerfile&quot;</span><span class="p">,</span>
             <span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span>
             <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;metadata.json&quot;</span><span class="p">,</span>
+            <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
             <span class="s2">&quot;pack.py&quot;</span><span class="p">,</span>
             <span class="s2">&quot;.gitattributes&quot;</span><span class="p">,</span>
         <span class="p">]</span>

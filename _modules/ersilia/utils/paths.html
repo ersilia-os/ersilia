@@ -72,13 +72,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.utils.paths</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">asdict</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">ersilia</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">resolve_pack_method_docker</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span>
 
 <span class="n">MODELS_DEVEL_DIRNAME</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>
 
@@ -151,6 +154,73 @@
 </div>
 
 
+<div class="viewcode-block" id="Metadata">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Metadata">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Metadata</span><span class="p">:</span>
+    <span class="n">Identifier</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">Slug</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">Title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">Description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">Mode</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">Input</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">InputShape</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">Task</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">Output</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">OutputType</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">OutputShape</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">Interpretation</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">Tag</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">Publication</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">SourceCode</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">License</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">DockerHub</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">DockerArchitecture</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">S3</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">Status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">Contributor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Dataclasses do not implicitly perform type checks</span>
+        <span class="c1"># This is a workaround to ensure that the fields are of the correct type</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_def</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">field_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">field_def</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="p">[</span><span class="n">field_value</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Field </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> has the wrong type&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ErsiliaMetadataLoader">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.ErsiliaMetadataLoader">[docs]</a>
+<span class="k">class</span> <span class="nc">ErsiliaMetadataLoader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    YAML loader for Ersilia metadata</span>
+<span class="sd">    Mainly this is needed so we don&#39;t directly modify the SafeLoader class,</span>
+<span class="sd">    which would break the YAML parsing for other parts of the code</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="metadata_constructor">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.metadata_constructor">[docs]</a>
+<span class="k">def</span> <span class="nf">metadata_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="n">_fields</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_fields</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">key_split</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key_split</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">fields</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_split</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_fields</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fields</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_fields</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">Metadata</span><span class="p">(</span><span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+<span class="n">ErsiliaMetadataLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span>
+    <span class="n">yaml</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">BaseResolver</span><span class="o">.</span><span class="n">DEFAULT_MAPPING_TAG</span><span class="p">,</span> <span class="n">metadata_constructor</span>
+<span class="p">)</span>
+
 <div class="viewcode-block" id="resolve_pack_method_source">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.resolve_pack_method_source">[docs]</a>
 <span class="k">def</span> <span class="nf">resolve_pack_method_source</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
@@ -172,6 +242,24 @@
         <span class="k">return</span> <span class="n">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">resolve_pack_method_source</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="get_metadata_from_base_dir">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.get_metadata_from_base_dir">[docs]</a>
+<span class="k">def</span> <span class="nf">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span><span class="p">)):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">ErsiliaMetadataLoader</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">return</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Metadata file not found&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metadata</span></div>
+
 
 </pre></div>
 

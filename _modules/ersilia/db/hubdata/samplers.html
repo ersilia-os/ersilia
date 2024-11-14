@@ -83,7 +83,7 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 
 
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">METADATA_JSON_FILE</span>
+<span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
 
 <span class="n">_MODEL_STATUS_READY</span> <span class="o">=</span> <span class="s2">&quot;Ready&quot;</span>
 <span class="n">_STATUS_FIELD</span> <span class="o">=</span> <span class="s2">&quot;Status&quot;</span>
@@ -166,11 +166,10 @@
 
     <span class="k">def</span> <span class="nf">_get_input_type_and_shape_from_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dest_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">metadata_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_path</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">input_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">_INPUT_TYPE_FIELD</span><span class="p">]</span>
         <span class="n">input_shape</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">_INPUT_SHAPE_FIELD</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">input_type</span><span class="p">,</span> <span class="n">input_shape</span>
