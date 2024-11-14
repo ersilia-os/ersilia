@@ -22,7 +22,7 @@ class ModelFetcher(ErsiliaBase):
         config_json=None,
         credentials_json=None,
         overwrite=None,
-        repo_path=None,
+        from_dir=None,
         mode=None,
         pip=False,
         dockerize=False,
@@ -42,7 +42,7 @@ class ModelFetcher(ErsiliaBase):
         self.overwrite = overwrite
         self.mode = mode
         self.do_pip = pip
-        self.repo_path = repo_path
+        self.repo_path = from_dir
         if self.mode == "docker":
             self.logger.debug("When packing mode is docker, dockerization is mandatory")
             dockerize = True
