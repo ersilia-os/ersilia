@@ -105,7 +105,7 @@ def fetch_cmd():
             fg="blue",
         )
         mf = ModelFetcher(
-            repo_path=repo_path,
+            from_dir=repo_path or from_dir,
             mode=mode,
             dockerize=dockerize,
             overwrite=overwrite,
