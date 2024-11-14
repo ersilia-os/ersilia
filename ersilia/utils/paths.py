@@ -1,6 +1,8 @@
+from dataclasses import dataclass, asdict
 import re
 import os
 import json
+from typing import List, Optional
 import yaml
 from pathlib import Path
 from ersilia import logger
@@ -60,6 +62,64 @@ class Paths(object):
         else:
             return False
 
+@dataclass(init=True)
+class Metadata:
+    Identifier: str
+    Slug: str
+    Title: str
+    Description: str
+    Mode: str
+    Input: List[str]
+    InputShape: str
+    Task: List[str]
+    Output: List[str]
+    OutputType: List[str]
+    OutputShape: str
+    Interpretation: str
+    Tag: List[str]
+    Publication: str
+    SourceCode: str
+    License: str
+    DockerHub: Optional[str] = None
+    DockerArchitecture: Optional[List[str]] = None
+    S3: Optional[str] = None
+    Status: Optional[str] = None
+    Contributor: Optional[str] = None
+
+    def __post_init__(self):
+        # Dataclasses do not implicitly perform type checks
+        # This is a workaround to ensure that the fields are of the correct type
+        for field_name, field_def in self.__dataclass_fields__.items():
+            field_value = getattr(self, field_name)
+            if field_def.type == List[str] and not isinstance(field_value, list):
+                try:
+                    setattr(self, field_name, [field_value])
+                except TypeError:
+                    raise TypeError(f"Field {field_name} has the wrong type")
+
+class ErsiliaMetadataLoader(yaml.SafeLoader):
+    """
+    YAML loader for Ersilia metadata
+    Mainly this is needed so we don't directly modify the SafeLoader class,
+    which would break the YAML parsing for other parts of the code
+    """
+    pass
+
+def metadata_constructor(loader, node):
+    _fields = loader.construct_mapping(node)
+    fields = {}
+    for key in _fields.keys():
+        key_split = key.split()
+        if len(key_split) > 1:
+            fields["".join(key_split)] = _fields[key]
+        else:
+            fields[key] = _fields[key]
+    return Metadata(**fields)
+
+ErsiliaMetadataLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, metadata_constructor
+)
+
 def resolve_pack_method_source(model_path):
     if os.path.exists(os.path.join(model_path, "installs", "install.sh")):
         return PACK_METHOD_FASTAPI
@@ -77,14 +137,16 @@ def resolve_pack_method(model_path):
     else:
         return resolve_pack_method_source(model_path)
     
-
 def get_metadata_from_base_dir(path):
     if os.path.exists(os.path.join(path, METADATA_JSON_FILE)):
         with open(os.path.join(path, METADATA_JSON_FILE), "r") as f:
             metadata = json.load(f)
     elif os.path.exists(os.path.join(path, METADATA_YAML_FILE)):
         with open(os.path.join(path, METADATA_YAML_FILE), "r") as f:
-            metadata = yaml.safe_load(f)
+            try:
+                metadata = asdict(yaml.load(f, Loader=ErsiliaMetadataLoader))
+            except TypeError:
+                return 
     else:
         raise FileNotFoundError("Metadata file not found")
     return metadata
