@@ -1,10 +1,11 @@
 import re
 import os
-import collections
+import json
+import yaml
 from pathlib import Path
 from ersilia import logger
 from .docker import resolve_pack_method_docker
-from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
+from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, METADATA_JSON_FILE, METADATA_YAML_FILE
 
 MODELS_DEVEL_DIRNAME = "models"
 
@@ -75,3 +76,16 @@ def resolve_pack_method(model_path):
         return resolve_pack_method_docker(model_id)
     else:
         return resolve_pack_method_source(model_path)
+    
+
+def get_metadata_from_base_dir(path):
+    if os.path.exists(os.path.join(path, METADATA_JSON_FILE)):
+        with open(os.path.join(path, METADATA_JSON_FILE), "r") as f:
+            metadata = json.load(f)
+    elif os.path.exists(os.path.join(path, METADATA_YAML_FILE)):
+        with open(os.path.join(path, METADATA_YAML_FILE), "r") as f:
+            metadata = yaml.safe_load(f)
+    else:
+        raise FileNotFoundError("Metadata file not found")
+    return metadata
+
