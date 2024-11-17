@@ -116,12 +116,12 @@ jobs:
         run: |
           source activate          
           pip install pytest pytest-benchmark pytest-asyncio
-          pytest
-          
+          pytest  --ignore=test/playground
+
       - name: Run CLI Test
         run: |
           source activate          
-          pip install pytest pytest-benchmark pytest-asyncio nox
+          pip install pytest pytest-benchmark pytest-asyncio nox rich
           nox -f test/playground/noxfile.py
 
   test-colab-notebook:
