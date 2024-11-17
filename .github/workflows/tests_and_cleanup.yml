@@ -117,6 +117,12 @@ jobs:
           source activate          
           pip install pytest pytest-benchmark pytest-asyncio
           pytest
+          
+      - name: Run CLI Test
+        run: |
+          source activate          
+          pip install pytest pytest-benchmark pytest-asyncio nox
+          nox -f test/playground/noxfile.py
 
   test-colab-notebook:
     runs-on: ubuntu-22.04

@@ -2,15 +2,28 @@ import pytest
 import subprocess
 import time
 import psutil
+import re
+import json
 import yaml
+from rich.text import Text
 from pathlib import Path
 from .shared import results
+from .rules import get_rule
+from .utils import (
+    create_input_csv, 
+    get_command_names,
+    get_commands,
+    handle_error_logging,
+    save_as_json
+)
 
 config = yaml.safe_load(Path("config.yml").read_text())
 delete_model = config.get("delete_model", False)
 activate_docker = config.get("activate_docker", False)
 runner = config.get("runner", "single")
 cli_type = config.get("cli_type", "all")
+output_file = config.get("output_file") 
+redirect = config.get("output_redirection", False)
 
 if runner == "single":
     model_ids = [config["model_id"]]
@@ -18,46 +31,22 @@ else:
     model_ids = config["model_ids"]
 base_path = Path.home() / "eos"
 
-
-def get_commands(model_id):
-    return {
-        "fetch": ["ersilia", "-v", "fetch", model_id]
-        + ([config["fetch_flags"]] if config.get("fetch_flags") else []),
-        "serve": ["ersilia", "-v", "serve", model_id]
-        + ([config["serve_flags"]] if config.get("serve_flags") else []),
-        "run": ["ersilia", "run", "-i", config["input_file"]]
-        + (["-o", config["output_file"]] if config.get("output_file") else [])
-        + ([config["run_flags"]] if config.get("run_flags") else []),
-        "close": ["ersilia", "close"],
-    }
-
-
-def get_command_names(model_id):
-    commands = get_commands(model_id)
-    return list(commands.keys()) if cli_type == "all" else [cli_type]
-
-
 max_runtime_minutes = config.get("max_runtime_minutes", None)
 from_github = "--from_github" in config.get("fetch_flags", "")
 from_dockerhub = "--from_dockerhub" in config.get("fetch_flags", "")
 
 
-def check_folder_exists_and_not_empty(path):
-    return path.exists() and any(path.iterdir())
-
-
-def check_dockerhub_status(expected_status, dest_path):
-    dockerhub_file = dest_path / "from_dockerhub.json"
-    if dockerhub_file.exists():
-        with open(dockerhub_file, "r") as f:
-            content = f.read()
-        return f'"docker_hub": {str(expected_status).lower()}' in content
-    return False
-
-
-def execute_command(command, description="", dest_path=None, repo_path=None):
+def execute_command(
+    command, 
+    description="", 
+    dest_path=None, 
+    repo_path=None
+):
+    # generating input eg.
+    create_input_csv(config.get("input_file"))
+    # docker sys control
     docker_activated = False
-    if activate_docker:
+    if config and config.get("activate_docker"):
         docker_status = subprocess.run(
             ["systemctl", "is-active", "--quiet", "docker"]
         )
@@ -65,114 +54,169 @@ def execute_command(command, description="", dest_path=None, repo_path=None):
             subprocess.run(["systemctl", "start", "docker"], check=True)
         docker_activated = True
     else:
-        subprocess.run(["systemctl", "start", "docker"], check=True)
+        subprocess.run(["systemctl", "stop", "docker"], check=True)
 
+    start_time, max_memory, success, result, checkups, = time.time(), 0, False, "", [] 
 
-    start_time = time.time()
-    proc = psutil.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    max_memory = 0
-    success = False
-    result = ""
-    checkups = []
+    proc = psutil.Popen(
+        command, 
+        stdout=subprocess.PIPE, 
+        stderr=subprocess.PIPE
+    )
 
     try:
         while proc.poll() is None:
-            max_memory = max(
-                max_memory, proc.memory_info().rss / (1024 * 1024)
-            )  # MB
-            time.sleep(0.1)  # Poll every 100 ms
+            max_memory = max(max_memory, proc.memory_info().rss / (1024 * 1024))
+            time.sleep(0.1)
+
+        success = proc.returncode == 0
+        stdout, stderr = proc.communicate()
+
+        if success:
+            result = stdout.decode()
+        else:
+            result = stderr.decode()
+
     except Exception as e:
         proc.kill()
+        result = str(e)
+
+        if config.get("log_error", False):
+            handle_error_logging(
+                command,
+                description,
+                result,
+                config
+            )
+
         pytest.fail(
-            f"{description} '{' '.join(command)}' failed with error: {e}"
+            f"{description} '{' '.join(command)}' failed with error: {result}"
         )
 
-    time_taken = (time.time() - start_time) / 60
-    success = proc.returncode == 0
-    result = (
-        proc.communicate()[0].decode()
-        if success
-        else proc.stderr.read().decode()
+    if description == "run" and success and config.get("output_redirection"):
+        save_as_json(result, output_file)
+
+    checkups = apply_rules(
+        command, 
+        description, 
+        dest_path, 
+        repo_path,
+        config
     )
 
-    if description == "fetch":
-        if from_github:
-            checkups.append(
-                {
-                    "name": "Repo folder and files Exists",
-                    "status": check_folder_exists_and_not_empty(repo_path),
-                }
-            )
-            checkups.append(
-                {
-                    "name": "Pulled from docker",
-                    "status": check_dockerhub_status(False, dest_path),
-                }
-            )
-        if from_dockerhub:
-            checkups.append(
-                {
-                    "name": "Dest folder exists",
-                    "status": check_folder_exists_and_not_empty(dest_path),
-                }
-            )
-            checkups.append(
-                {
-                    "name": "Pulled from docker",
-                    "status": check_dockerhub_status(True, dest_path),
-                }
-            )
-    elif description == "run":
-        output_file = Path(config["output_file"])
-        checkups.append(
-            {
-                "name": "Output File Not Nulls",
-                "status": output_file.exists()
-                and "null" not in output_file.read_text(),
-            }
+    rules_success = all(check["status"] for check in checkups)
+    overall_success = success and rules_success
+
+    if not overall_success and config.get("log_error", False):
+        handle_error_logging(
+            command,
+            description,
+            result,
+            config,
+            checkups
         )
-    elif description == "serve":
-        if from_github:
-            checkups.append(
-                {
-                    "name": "Pulled from docker",
-                    "status": check_dockerhub_status(False, dest_path),
-                }
-            )
-        if from_dockerhub:
-            checkups.append(
-                {
-                    "name": "Pulled from docker",
-                    "status": check_dockerhub_status(True, dest_path),
-                }
-            )
 
-    checkups.append({"name": "Docker Activated", "status": docker_activated})
-
-    time_color = (
-        "\033[91m"
-        if (description == "run" and time_taken > max_runtime_minutes)
-        else ""
-    )
-    error_message = (
-        result if not success else "\033[92mExecuted normally\033[0m"
-    )
+    status_text = (Text("PASSED", style="green") if overall_success else Text("FAILED", style="red"))
 
     results.append(
         {
             "command": " ".join(command),
             "description": description,
-            "time_taken": f"{time_taken:.2f} min",
+            "time_taken": f"{(time.time() - start_time) / 60:.2f} min",
             "max_memory": f"{max_memory:.2f} MB",
-            "status": result if not success else "Executed normally",
+            "status": status_text,
             "checkups": checkups,
-            "activate_docker": activate_docker,
-            "runner": runner,
-            "cli_type": cli_type,
+            "activate_docker": docker_activated,
+            "runner": config.get("runner"),
+            "cli_type": config.get("cli_type"),
         }
     )
 
-    return success, time_taken
+    return overall_success, (time.time() - start_time) / 60
+
+def apply_rules(
+        command, 
+        description, 
+        dest_path, 
+        repo_path, 
+        config
+    ):
+    checkups = []
+    try:
+        if description == "fetch":
+            if from_github:
+                checkups.append(
+                    get_rule(
+                        "folder_exists",
+                        folder_path=repo_path,
+                        expected_status=True,
+                    )
+                )
+                checkups.append(
+                    get_rule(
+                        "dockerhub_status",
+                        dest_path=dest_path,
+                        expected_status=False,
+                    )
+                )
+            if from_dockerhub:
+                checkups.append(
+                    get_rule(
+                        "folder_exists",
+                        folder_path=dest_path,
+                        expected_status=True,
+                    )
+                )
+                checkups.append(
+                    get_rule(
+                        "dockerhub_status",
+                        dest_path=dest_path,
+                        expected_status=True,
+                    )
+                )
+        elif description == "run":
+            checkups.append(
+                get_rule(
+                    "file_exists",
+                    file_path=output_file,
+                    expected_status=True,
+                )
+            )
+            checkups.append(
+                get_rule(
+                    "file_content_check",
+                    file_path=output_file,
+                    expected_status="not null",
+                )
+            )
+        elif description == "serve":
+            if from_github:
+                checkups.append(
+                    get_rule(
+                        "dockerhub_status",
+                        dest_path=dest_path,
+                        expected_status=False,
+                    )
+                )
+            if from_dockerhub:
+                checkups.append(
+                    get_rule(
+                        "dockerhub_status",
+                        dest_path=dest_path,
+                        expected_status=True,
+                    )
+                )
+    except Exception as rule_error:
+        handle_error_logging(
+            command,
+            description,
+            rule_error,
+            config,
+            checkups
+        )
+        pytest.fail(f"Rule exception occurred: {rule_error}")
+
+    return checkups
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -196,11 +240,12 @@ def delete_model_command():
 
 
 @pytest.mark.parametrize(
-    "model_id", model_ids if runner == "multiple" else [config.get("model_id")]
+    "model_id", 
+    model_ids if runner == "multiple" else [config.get("model_id")]
 )
-@pytest.mark.parametrize("command_name", get_command_names(model_ids[0]))
+@pytest.mark.parametrize("command_name", get_command_names(model_ids[0], cli_type, config))
 def test_command(model_id, command_name):
-    commands = get_commands(model_id)
+    commands = get_commands(model_id, config)
     command = commands[command_name]
     dest_path = base_path / "dest" / model_id
     repo_path = base_path / "repository" / model_id

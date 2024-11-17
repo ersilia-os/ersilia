@@ -3,20 +3,29 @@ from rich.table import Table
 from rich.console import Console
 from rich.text import Text
 from rich import box
+from rich.panel import Panel
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
     console = Console()
-    table = Table(title="Command Execution Summary", box=box.SQUARE)
+    
+    docker_status = Text("✔", style="green") if any(result["activate_docker"] for result in results) else Text("✘", style="red")
+    runner = results[0]["runner"] if results else "N/A"
+    cli_type = results[0]["cli_type"] if results else "N/A"
+    
+    header_panel = Panel.fit(
+        f"Docker Status: {docker_status}\nRunner: {runner}\nCLI Type: {cli_type}",
+        title="Execution Summary",
+        border_style="bold",
+    )
+    console.print(header_panel)
 
+    table = Table(title="Command Execution Summary", box=box.SQUARE)
     table.add_column("Command", width=50)
     table.add_column("Description", width=15)
     table.add_column("Time Taken", width=15)
     table.add_column("Max Memory", width=15)
     table.add_column("Status", width=20)
     table.add_column("Checkups", width=30)
-    table.add_column("Docker Status", width=20)
-    table.add_column("Runner", width=20)
-    table.add_column("CLI Type", width=20)
 
     for result in results:
         formatted_checkups = []
@@ -34,9 +43,6 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
             result["max_memory"],
             result["status"],
             checkups_text,
-            Text("✔", style="green") if result["activate_docker"] else Text("✘", style="red"),
-            result["runner"],
-            result["cli_type"],
         )
 
     console.print(table)
