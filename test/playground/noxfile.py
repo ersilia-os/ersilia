@@ -127,7 +127,7 @@ def test_fetch_multiple_models(session):
 def test_serve_multiple_models(session):
     install_dependencies(session)
     update_yaml_values(
-        {"runner": "multiple", "cli_type": "serve"}
+        {"runner": "multiple", "cli_type": "serve", "delete_model": False}
     )
     logger.info(
         f"Fetching and Serving Multiple Models: Serving"
