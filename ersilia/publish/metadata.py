@@ -1,13 +1,10 @@
 import os
-import tempfile
 
 from ..hub.content.card import ReadmeMetadata, AirtableMetadata, RepoMetadataFile
 from ..utils.terminal import run_command
 from ..utils.logging import make_temp_dir
 from .. import ErsiliaBase
-
-from ..default import GITHUB_ORG
-
+from ..default import GITHUB_ORG, METADATA_JSON_FILE
 
 class ReadmeUpdater(ErsiliaBase):
     def __init__(self, model_id=None, repo_path=None, commit=True, config_json=None):
@@ -91,7 +88,7 @@ class JsonUpdater(ErsiliaBase):
         self._git_clone()
         ai = AirtableMetadata(model_id=self.model_id)
         data = ai.read_information()
-        tmp_file = os.path.join(self.tmp_folder, self.model_id, "metadata.json")
+        tmp_file = os.path.join(self.tmp_folder, self.model_id, METADATA_JSON_FILE)
         rm = RepoMetadataFile(model_id=self.model_id)
         rm.write_information(data, tmp_file)
         self._git_push()
