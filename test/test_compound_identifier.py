@@ -10,20 +10,35 @@ def compound_identifier():
 def test_is_input_header_positive(compound_identifier, header):
     """Test that valid input headers return True."""
     assert compound_identifier.is_input_header(header) is True
+    
+
 @pytest.mark.parametrize("header", ["output", "invalid", "InChI", "inchikey"])
 def test_is_input_header_negative(compound_identifier, header):
     """Test that invalid input headers return False."""
     assert compound_identifier.is_input_header(header) is False
+
     
 @pytest.mark.parametrize("header", ["key", "inchiKey", "KEY", "INCHIKEY"])
 def test_is_key_header_positive(compound_identifier, header):
     """Test that valid key headers return True."""
     assert compound_identifier.is_key_header(header) is True
     
+    
 @pytest.mark.parametrize("header", ["id","smiles","inchi","input", "some_header", "random", "header", ""])
 def test_is_key_header_negative(compound_identifier, header):
     assert not compound_identifier.is_key_header(header)
+    
+    
+@pytest.mark.parametrize("inchikey", [
+    "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+    "BQJCRHHNABKAKU-KBQPJGBKSA-N",
+    "ZJPODVODJYKFHM-UHFFFAOYSA-N"
+])
+def test_is_inchikey_positive(compound_identifier, inchikey):
+    """Test that valid InChIKeys return True."""
+    assert compound_identifier._is_inchikey(inchikey) is True
 
+    
 @patch('ersilia.utils.identifiers.compound.CompoundIdentifier._pubchem_smiles_to_inchikey')
 def test_is_smiles_positive_chem_none(mock_pubchem, compound_identifier):
     compound_identifier.Chem = None
@@ -32,4 +47,4 @@ def test_is_smiles_positive_chem_none(mock_pubchem, compound_identifier):
 # Test with a valid SMILES input
     smiles_string = 'CCO' #Ethanol SMILES
     assert compound_identifier._is_smiles(smiles_string) is True
-
+    
