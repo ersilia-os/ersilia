@@ -5,9 +5,16 @@ from pathlib import Path
 from ersilia.utils.logging import logger
 
 ORIGINAL_DIR = Path.cwd()  
-config = yaml.safe_load(Path("config.yml").read_text())
+config_path = Path("config.yml")
+config = yaml.safe_load(config_path.read_text())
 REPO_URL = "https://github.com/ersilia-os/ersilia.git"
 REPO_DIR = Path("ersilia")
+
+def update_yaml_values(new_values: dict):
+    config = yaml.safe_load(config_path.read_text())
+    config.update(new_values)
+    config_path.write_text(yaml.dump(config))
+    logger.info(f"Updated config.yml with: {new_values}")
 
 @nox.session(venv_backend="conda")
 def test_cli(session):
@@ -58,7 +65,75 @@ def test_cli(session):
         "--help", 
         external=True
     )
+    # default run --from_github
+    logger.info(f"CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}")
+    session.run(
+        "pytest", 
+        "commands.py", 
+        "-v", 
+        silent=False
+    )
+    # default run --from_dockerhub
+    update_yaml_values({
+        "fetch_flags": "--from_dockerhub"
+    })
 
+    logger.info(f"CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}")
+    session.run(
+        "pytest", 
+        "commands.py", 
+        "-v", 
+        silent=False
+    )
+    # CLI test run for auto fetcher decider
+    update_yaml_values({
+        "fetch_flags": ""
+    })
+    
+    logger.info(f"CLI test for model: {config.get("model_id")} and auto fetcher decider")
+    session.run(
+        "pytest", 
+        "commands.py", 
+        "-v", 
+        silent=False
+    )
+
+    logger.info(f"Fetching and Serving Multiple Models: Fetching")
+    update_yaml_values({
+        "runner": "multiple",
+        "cli_type": "fetch",
+        "fetch_flags": "--from_dockerhub"
+    })
+    
+    session.run(
+        "pytest", 
+        "commands.py", 
+        "-v", 
+        silent=False
+    )
+
+    logger.info(f"Fetching and Serving Multiple Models: Serving")
+    update_yaml_values({
+        "runner": "multiple",
+        "cli_type": "serve"
+    })
+    
+    session.run(
+        "pytest", 
+        "commands.py", 
+        "-v", 
+        silent=False
+    )
+
+    logger.info(f"Standard and Conventional Run: Conventional")
+    update_yaml_values({
+        "runner": "single",
+        "cli_type": "all",
+        "fetch_flags": "--from_dockerhub",
+        "output_file": "files/output_eos9gg2_0.json",
+        "output_redirection": "true"
+    })
+    
     session.run(
         "pytest", 
         "commands.py", 
