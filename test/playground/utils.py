@@ -3,6 +3,7 @@ import json
 import re
 from datetime import datetime
 
+
 def create_compound_input_csv(csv_path):
     input_data = [
         "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1",
@@ -18,69 +19,87 @@ def create_compound_input_csv(csv_path):
 
     with open(csv_path, mode="w", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow(["Input"]) 
+        writer.writerow(["Input"])
         for line in input_data:
             writer.writerow([line])
 
-def save_as_json(result, output_file):
+
+def save_as_json(result, output_file, remove_list=None):
     try:
-        raw_objects = re.split(r'\}\s*\{', result.strip())
-        formatted_objects = []
-        for i, obj in enumerate(raw_objects):
+        if remove_list:
+            for item in remove_list:
+                result = result.replace(item, "")
+
+        stripped, formatted = re.split(r"\}\s*\{", result.strip()), []
+
+        for i, line in enumerate(stripped):
             if i == 0:
-                obj = obj + "}" 
-            elif i == len(raw_objects) - 1:
-                obj = "{" + obj  
+                line = line + "}"
+            elif i == len(stripped) - 1:
+                line = "{" + line
             else:
-                obj = "{" + obj + "}"
-            formatted_objects.append(obj)
+                line = "{" + line + "}"
+            formatted.append(line)
 
-        json_objects = [json.loads(obj) for obj in formatted_objects]
+        _data = []
+        for obj in formatted:
+            try:
+                _data.append(json.loads(obj))
+            except json.JSONDecodeError as e:
+                print(f"Skipping invalid JSON object: {obj}. Error: {e}")
+                continue
 
-        with open(output_file, 'w') as json_file:
-            json.dump(json_objects, json_file, indent=4)
+        with open(output_file, "w") as f:
+            json.dump(_data, f, indent=4)
 
-    except json.JSONDecodeError as e:
-        raise ValueError(
-            f"Invalid JSON content: {e}"
-        )
+    except Exception as e:
+        raise ValueError(f"Error processing result: {e}")
 
-def get_commands(
-        model_id, 
-        config
-    ):
+
+def get_commands(model_id, config):
     return {
         "fetch": ["ersilia", "-v", "fetch", model_id]
-        + (config.get("fetch_flags", "").split() if config.get("fetch_flags") else []),
+        + (
+            config.get("fetch_flags", "").split()
+            if config.get("fetch_flags")
+            else []
+        ),
         "serve": ["ersilia", "-v", "serve", model_id]
-        + (config.get("serve_flags", "").split() if config.get("serve_flags") else []),
+        + (
+            config.get("serve_flags", "").split()
+            if config.get("serve_flags")
+            else []
+        ),
         "run": [
             "ersilia",
             "run",
             "-i",
             config["input_file"],
         ]
-        + (["-o", config["output_file"]] if config.get("output_file") and not config.get("output_redirection") else [])
-        + (config.get("run_flags", "").split() if config.get("run_flags") else []),
+        + (
+            ["-o", config["output_file"]]
+            if config.get("output_file")
+            and not config.get("output_redirection")
+            else []
+        )
+        + (
+            config.get("run_flags", "").split()
+            if config.get("run_flags")
+            else []
+        ),
         "close": ["ersilia", "close"],
     }
 
 
-def get_command_names(
-        model_id, 
-        cli_type,
-        config
-    ):
-    return list(get_commands(model_id, config).keys()) if cli_type == "all" else [cli_type]
+def get_command_names(model_id, cli_type, config):
+    return (
+        list(get_commands(model_id, config).keys())
+        if cli_type == "all"
+        else [cli_type]
+    )
 
 
-def handle_error_logging(
-        command, 
-        description, 
-        result, 
-        config, 
-        checkups=None
-    ):
+def handle_error_logging(command, description, result, config, checkups=None):
     if config.get("log_error", False):
         log_path = f"{config.get('log_path')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
         with open(log_path, "w") as file:

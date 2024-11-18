@@ -23,14 +23,15 @@ activate_docker = config.get("activate_docker", False)
 runner = config.get("runner", "single")
 cli_type = config.get("cli_type", "all")
 output_file = config.get("output_file") 
+input_file = config.get("input_file") 
 redirect = config.get("output_redirection", False)
 
 if runner == "single":
     model_ids = [config["model_id"]]
 else:
     model_ids = config["model_ids"]
-base_path = Path.home() / "eos"
 
+base_path = Path.home() / "eos"
 max_runtime_minutes = config.get("max_runtime_minutes", None)
 from_github = "--from_github" in config.get("fetch_flags", "")
 from_dockerhub = "--from_dockerhub" in config.get("fetch_flags", "")
@@ -94,7 +95,11 @@ def execute_command(
         )
 
     if description == "run" and success and config.get("output_redirection"):
-        save_as_json(result, output_file)
+        save_as_json(
+            result, 
+            output_file, 
+            remove_list=[input_file]
+        )
 
     checkups = apply_rules(
         command, 
