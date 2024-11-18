@@ -1,18 +1,22 @@
-python_version: "3.10.10"
-model_id: "eos3b5e"
-model_ids: ["eos3b5e", "eos4e40", "eos7d58", "eos9gg2"]
-input_file: "files/input.csv"
-output_file: "files/result.csv"              # "files/result.csv" & "files/output_eos9gg2_0.json"  # Leave blank if you don’t need output
-output_redirection: false                                # Enable redirection of command output to a file
-max_runtime_minutes: 10                            # applied for the run command only
-fetch_flags: "--from_github"                   # Add any optional flags here; leave empty if not needed. eg --from_dockerhub
-serve_flags: ""
-run_flags: ""
-overwrite_ersilia_repo: false                     # Set to true to overwrite if repo exists
-use_existing_env: true
-delete_model: true
 activate_docker: true
-runner: "single"                                  # multiple for multiple
-cli_type: "all"                                   # cli type: fetch, serve, run, close, delete
+cli_type: all
+delete_model: true
+fetch_flags: --from_dockerhub
+input_file: files/input.csv
 log_error: true
-log_path: "files/error_log"                       # current dir for instance: no extention(.txt)
+log_path: files/error_log
+max_runtime_minutes: 10
+model_id: eos3b5e
+model_ids:
+- eos3b5e
+- eos4e40
+- eos7d58
+- eos9gg2
+output_file: files/result.csv
+output_redirection: false
+overwrite_ersilia_repo: false
+python_version: 3.10.10
+run_flags: ''
+runner: single
+serve_flags: ''
+use_existing_env: true
