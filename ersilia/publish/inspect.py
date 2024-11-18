@@ -2,10 +2,9 @@ from .. import ErsiliaBase
 import requests
 import subprocess
 import time
-import json
 from collections import namedtuple
-from urllib.request import urlopen
 from ..hub.content.card import RepoMetadataFile
+from ..default import METADATA_JSON_FILE
 
 # a namedtuple for the results
 Result = namedtuple("Result", ["success", "details"])
@@ -257,26 +256,27 @@ class ModelInspector(ErsiliaBase):
             return Result(True, "Check passed.")
         return Result(False, details)
 
+
     def check_comptuational_performance(self):
         """
         Measure computational performance by serving the model and running predictions.
-
-         Returns:
+        Uses --track flag to automatically upload performance metrics to S3.
+    
+        Returns:
             Result: A namedtuple containing a boolean success status and details of the check.
         """
         details = ""
-
+    
         for n in (1, 10, 100):
-
             cmd = (
-                f"ersilia serve {self.model} && "
+                f"ersilia serve {self.model} --track && "  # Track flag enables automatic S3 upload of metrics
                 f"ersilia example -f my_input.csv -n {n} && "
                 "ersilia run -i my_input.csv && "
                 "ersilia close"
             )
-
+    
             startTime = time.time()
-
+    
             process = subprocess.run(
                 cmd,
                 shell=True,
@@ -284,17 +284,14 @@ class ModelInspector(ErsiliaBase):
                 stderr=subprocess.PIPE,
                 text=True,
             )
-
+    
             if process.returncode != 0:
-                return Result(
-                    False, f"Error serving model: {process.stdout}, {process.stderr}"
-                )
-
+                return Result(False, f"Error serving model: {process.stdout}, {process.stderr}")
+    
             endTime = time.time()
-
             executionTime = endTime - startTime
             details += f"Execution time ({n} Prediction(s)): {executionTime} seconds. "
-
+    
         return Result(True, details)
 
     def check_no_extra_files(self):
@@ -323,7 +320,7 @@ class ModelInspector(ErsiliaBase):
             "Dockerfile",
             "LICENSE",
             "README.md",
-            "metadata.json",
+            METADATA_JSON_FILE,
             "pack.py",
             ".gitattributes",
         ]

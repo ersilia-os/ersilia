@@ -2,7 +2,7 @@ import json
 import os
 import numpy as np
 from .. import ErsiliaBase
-from ..default import METADATA_JSON_FILE
+from ..utils.paths import get_metadata_from_base_dir
 
 
 class PureDataTyper(ErsiliaBase):
@@ -78,11 +78,10 @@ class PureDataTyper(ErsiliaBase):
         if self.model_id is None:
             return
         dest = self._model_path(self.model_id)
-        meta_file = os.path.join(dest, METADATA_JSON_FILE)
-        if not os.path.exists(meta_file):
+        try:
+            meta = get_metadata_from_base_dir(dest)
+        except FileNotFoundError:
             return
-        with open(meta_file, "r") as f:
-            meta = json.load(f)
         output_type = meta["Output Type"]
         output_shape = meta["Output Shape"]
         if len(output_type) > 1:
