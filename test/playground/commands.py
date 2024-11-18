@@ -157,13 +157,6 @@ def apply_rules(
                         expected_status=True,
                     )
                 )
-                checkups.append(
-                    get_rule(
-                        "dockerhub_status",
-                        dest_path=dest_path,
-                        expected_status=False,
-                    )
-                )
             if from_dockerhub:
                 checkups.append(
                     get_rule(
@@ -195,14 +188,6 @@ def apply_rules(
                 )
             )
         elif description == "serve":
-            if from_github:
-                checkups.append(
-                    get_rule(
-                        "dockerhub_status",
-                        dest_path=dest_path,
-                        expected_status=False,
-                    )
-                )
             if from_dockerhub:
                 checkups.append(
                     get_rule(

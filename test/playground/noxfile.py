@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from ersilia.utils.logging import logger
 
-ORIGINAL_DIR = Path.cwd()  
+ORIGINAL_DIR = Path.cwd()
 config_path = Path("config.yml")
 config = yaml.safe_load(config_path.read_text())
 REPO_URL = "https://github.com/ersilia-os/ersilia.git"
@@ -14,33 +14,36 @@ def update_yaml_values(new_values: dict):
     config = yaml.safe_load(config_path.read_text())
     config.update(new_values)
     config_path.write_text(yaml.dump(config))
-    logger.info(f"Updated config.yml with: {new_values}")
 
-@nox.session(venv_backend="conda")
+def get_python_version():
+    return config.get("python_version", "3.10.10")
+
+@nox.session(venv_backend="conda", python=get_python_version())
 def test_cli(session):
+    """Test CLI with initial and updated configurations."""
     session.install(
-        "pytest", 
-        "pytest-asyncio", 
-        "pytest-xdist", 
+        "pytest",
+        "pytest-asyncio",
+        "pytest-xdist",
         "psutil",
         "PyYAML",
-        "rich"
+        "rich",
     )
 
     if config.get("use_existing_env", False):
         logger.info("Using existing environment, skipping setup and installation.")
-        
+
         session.run("ersilia", "--help", external=True)
         session.run(
-            "pytest", 
-            "commands.py", 
-            "-v", 
+            "pytest",
+            "commands.py",
+            "-v",
             silent=False,
-            external=True
+            external=True,
         )
         return
 
-    session.conda_install(f"python={config.get('python_version', '3.10')}")
+    session.conda_install(f"python={get_python_version()}")
 
     if REPO_DIR.exists() and config.get("overwrite_ersilia_repo", False):
         logger.info(f"Overwriting existing repository directory: {REPO_DIR}")
@@ -48,31 +51,33 @@ def test_cli(session):
 
     if not REPO_DIR.exists():
         session.run(
-            "git", 
-            "clone", 
-            REPO_URL, 
-            external=True
+            "git",
+            "clone",
+            REPO_URL,
+            external=True,
         )
     else:
         logger.info(f"Using existing repository directory: {REPO_DIR}")
-    
+
     session.chdir(REPO_DIR)
     session.install("-e", ".")
     session.chdir(ORIGINAL_DIR)
 
     session.run(
-        "ersilia", 
-        "--help", 
-        external=True
+        "ersilia",
+        "--help",
+        external=True,
     )
+
     # default run --from_github
     logger.info(f'CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}')
     session.run(
-        "pytest", 
-        "commands.py", 
-        "-v", 
-        silent=False
+        "pytest",
+        "commands.py",
+        "-v",
+        silent=False,
     )
+    
     # default run --from_dockerhub
     update_yaml_values({
         "fetch_flags": "--from_dockerhub"
