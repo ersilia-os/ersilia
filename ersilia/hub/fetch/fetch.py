@@ -22,7 +22,7 @@ class ModelFetcher(ErsiliaBase):
         config_json=None,
         credentials_json=None,
         overwrite=None,
-        repo_path = None,
+        repo_path=None,
         mode=None,
         pip=False,
         dockerize=False,
