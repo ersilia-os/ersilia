@@ -148,6 +148,7 @@ def test_conventional_run(session):
             "fetch_flags": "--from_dockerhub",
             "output_file": "files/output_eos9gg2_0.json",
             "output_redirection": "true",
+            "delete_model": True
         }
     )
     logger.info(
