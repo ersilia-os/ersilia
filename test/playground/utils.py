@@ -3,7 +3,7 @@ import json
 import re
 from datetime import datetime
 
-def create_input_csv(csv_path):
+def create_compound_input_csv(csv_path):
     input_data = [
         "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1",
         "O=C(O)c1ccccc1NC(=O)N1CCC(c2ccccc2C(F)(F)F)CC1",

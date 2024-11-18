@@ -10,7 +10,7 @@ from pathlib import Path
 from .shared import results
 from .rules import get_rule
 from .utils import (
-    create_input_csv, 
+    create_compound_input_csv, 
     get_command_names,
     get_commands,
     handle_error_logging,
@@ -43,7 +43,7 @@ def execute_command(
     repo_path=None
 ):
     # generating input eg.
-    create_input_csv(config.get("input_file"))
+    create_compound_input_csv(config.get("input_file"))
     # docker sys control
     docker_activated = False
     if config and config.get("activate_docker"):
@@ -74,6 +74,8 @@ def execute_command(
 
         if success:
             result = stdout.decode()
+            if description == "run" and config.get("output_redirection"):
+                save_as_json(result, output_file)
         else:
             result = stderr.decode()
 
@@ -93,8 +95,7 @@ def execute_command(
             f"{description} '{' '.join(command)}' failed with error: {result}"
         )
 
-    if description == "run" and success and config.get("output_redirection"):
-        save_as_json(result, output_file)
+
 
     checkups = apply_rules(
         command, 
