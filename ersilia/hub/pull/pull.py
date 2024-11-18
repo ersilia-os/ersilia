@@ -4,7 +4,8 @@ import tempfile
 import json
 import os
 import re
-
+import asyncio
+import aiofiles
 from ... import ErsiliaBase
 from ...utils.terminal import yes_no_input, run_command
 from ... import throw_ersilia_exception
@@ -84,6 +85,107 @@ class ModelPuller(ErsiliaBase):
             self.logger.warning("Image not found locally")
             return None
 
+    @throw_ersilia_exception
+    async def async_pull(self):
+        if self.is_available_locally():
+            if self.overwrite is None:
+                do_pull = yes_no_input(
+                    "Requested image {0} is available locally. Do you still want to fetch it? [Y/n]".format(
+                        self.model_id
+                    ),
+                    default_answer=PULL_IMAGE,
+                )
+            elif self.overwrite:
+                do_pull = True
+            else:
+                do_pull = False
+            if not do_pull:
+                self.logger.info("Skipping pulling the image")
+                return
+            self._delete()
+        else:
+            self.logger.debug("Docker image of the model is not available locally")
+        if self.is_available_in_dockerhub():
+            self.logger.debug(
+                "Pulling image {0} from DockerHub...".format(self.image_name)
+            )
+            try:
+                self.logger.debug(
+                    "Trying to pull image {0}/{1}".format(DOCKERHUB_ORG, self.model_id)
+                )
+                tmp_file = os.path.join(
+                    make_temp_dir(prefix="ersilia-"), "docker_pull.log"
+                )
+                self.logger.debug("Keeping logs of pull in {0}".format(tmp_file))
+
+                # Construct the pull command
+                pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{DOCKERHUB_LATEST_TAG} > {tmp_file} 2>&1"
+
+                # Use asyncio to run the pull command asynchronously
+                process = await asyncio.create_subprocess_shell(
+                    pull_command,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
+
+                # Wait for the command to complete
+                stdout, stderr = await process.communicate()
+
+                # Handle output
+                if process.returncode != 0:
+                    self.logger.error(f"Pull command failed: {stderr.decode()}")
+                    raise subprocess.CalledProcessError(process.returncode, pull_command)
+                
+                self.logger.debug(stdout.decode())
+
+                # Reading log asynchronously
+                async with aiofiles.open(tmp_file, 'r') as f:
+                    pull_log = await f.read()
+                    self.logger.debug(pull_log)
+
+                if re.search(r"no match.*manifest", pull_log):
+                    self.logger.warning(
+                        "No matching manifest for image {0}".format(self.model_id)
+                    )
+                    raise DockerConventionalPullError(model=self.model_id)
+
+                self.logger.debug("Image pulled successfully!")
+
+            except DockerConventionalPullError:
+                self.logger.warning(
+                    "Conventional pull did not work, Ersilia is now forcing linux/amd64 architecture"
+                )
+                # Force platform specification pull command
+                force_pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{DOCKERHUB_LATEST_TAG} --platform linux/amd64"
+
+                # Run forced pull asynchronously
+                process = await asyncio.create_subprocess_shell(
+                    force_pull_command,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
+
+                stdout, stderr = await process.communicate()
+
+                if process.returncode != 0:
+                    self.logger.error(f"Forced pull command failed: {stderr.decode()}")
+                    raise subprocess.CalledProcessError(process.returncode, force_pull_command)
+
+                self.logger.debug(stdout.decode())
+            size = self._get_size_of_local_docker_image_in_mb()
+            if size:
+                self.logger.debug("Size of image {0} MB".format(size))
+                # path = os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE)
+                # with open(path, "w") as f:
+                #     json.dump({"size": size, "units": "MB"}, f, indent=4)
+                # self.logger.debug("Size written to {}".format(path))
+            else:
+                self.logger.warning("Could not obtain size of image")
+            return size
+        else:
+            self.logger.info("Image {0} is not available".format(self.image_name))
+            raise DockerImageNotAvailableError(model=self.model_id)
+        
     @throw_ersilia_exception
     def pull(self):
         if self.is_available_locally():

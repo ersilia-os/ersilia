@@ -3,12 +3,13 @@ version: 2
 jobs:
   installation:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
           name: Install with pip and git without developer mode
           command: |
+              conda create -n ersilia python=3.10
               source activate ersilia
               pip install git+https://github.com/ersilia-os/ersilia.git
       - run:
@@ -18,12 +19,13 @@ jobs:
               ersilia --help
   test:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
           name: Install ersilia package in developer mode
           command: |
+              conda create -n ersilia python=3.10
               source activate ersilia
               pip install -U pip setuptools
               python -m pip install -e .
@@ -66,13 +68,14 @@ jobs:
               ersilia -v delete molecular-weight
   docs-build:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
               apt-get update
+              conda create -n ersilia python=3.10
               source activate ersilia
               pip install -U pip setuptools
               pip install -e .[docs]

@@ -34,6 +34,10 @@ from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
 from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
 from ..utils.logging import make_temp_dir
+from ..setup.requirements.compound import (
+    ChemblWebResourceClientRequirement,
+    RdkitRequirement,
+)
 
 try:
     import pandas as pd
@@ -278,7 +282,7 @@ class ErsiliaModel(ErsiliaBase):
                 "Standard CSV Api runner is not ready for this particular model"
             )
             return None
-        if not scra.is_amenable(input, output):
+        if not scra.is_amenable(output):
             self.logger.debug(
                 "Standard CSV Api runner is not amenable for this model, input and output"
             )
@@ -426,7 +430,13 @@ class ErsiliaModel(ErsiliaBase):
             for key, values in models.items():
                 f.write(f"{key},{values}\n")
 
+    def setup(self):
+        RdkitRequirement()
+        ChemblWebResourceClientRequirement()
+
     def serve(self):
+        self.logger.debug("Checking rdkit and other requirements")
+        self.setup()
         self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track_runs)
         self.autoservice.serve()

@@ -1,5 +1,6 @@
 import os
 import json
+import asyncio
 from ..register.register import ModelRegisterer
 
 from .... import ErsiliaBase, throw_ersilia_exception
@@ -16,13 +17,11 @@ from ...pull.pull import ModelPuller
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
 from ....utils.docker import SimpleDocker, resolve_pack_method_docker, PACK_METHOD_BENTOML
-from ....utils.exceptions_utils.fetch_exceptions import DockerNotActiveError
 from .. import STATUS_FILE
-
 
 class ModelDockerHubFetcher(ErsiliaBase):
     def __init__(self, overwrite=None, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        super().__init__(config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.overwrite = overwrite
 
@@ -42,7 +41,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             return True
         return False
 
-    def write_apis(self, model_id):
+    async def write_apis(self, model_id):
         self.logger.debug("Writing APIs")
         di = PulledDockerImageService(
             model_id=model_id, config_json=self.config_json, preferred_port=None
@@ -50,10 +49,24 @@ class ModelDockerHubFetcher(ErsiliaBase):
         di.serve()
         di.close()
 
-    def _copy_from_bentoml_image(self, model_id, file):
-        fr_file = "/root/eos/dest/{0}/{1}".format(model_id, file)
-        to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, file)
-        self.simple_docker.cp_from_image(
+    async def _copy_from_bentoml_image(self, model_id, file):
+        fr_file = f"/root/eos/dest/{model_id}/{file}"
+        to_file = f"{EOS}/dest/{model_id}/{file}"
+        try:
+            await self.simple_docker.cp_from_image(
+                img_path=fr_file,
+                local_path=to_file,
+                org=DOCKERHUB_ORG,
+                img=model_id,
+                tag=DOCKERHUB_LATEST_TAG,
+            )
+        except Exception as e:
+            self.logger.error(f"Exception when copying: {e}")
+
+    async def _copy_from_ersiliapack_image(self, model_id, file):
+        fr_file = f"/root/{file}"
+        to_file = f"{EOS}/dest/{model_id}/{file}"
+        await self.simple_docker.cp_from_image(
             img_path=fr_file,
             local_path=to_file,
             org=DOCKERHUB_ORG,
@@ -61,41 +74,30 @@ class ModelDockerHubFetcher(ErsiliaBase):
             tag=DOCKERHUB_LATEST_TAG,
         )
 
-    def _copy_from_ersiliapack_image(self, model_id, file):
-        fr_file = "/root/{0}".format(file)
-        to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, file)
-        self.simple_docker.cp_from_image(
-            img_path=fr_file,
-            local_path=to_file,
-            org=DOCKERHUB_ORG,
-            img=model_id,
-            tag=DOCKERHUB_LATEST_TAG,
-        )
-
-    def _copy_from_image_to_local(self, model_id, file):
+    async def _copy_from_image_to_local(self, model_id, file):
         pack_method = resolve_pack_method_docker(model_id)
         if pack_method == PACK_METHOD_BENTOML:
-            self._copy_from_bentoml_image(model_id, file)
+            await self._copy_from_bentoml_image(model_id, file)
         else:
-            self._copy_from_ersiliapack_image(model_id, file)
+            await self._copy_from_ersiliapack_image(model_id, file)
 
-    def copy_information(self, model_id):
+    async def copy_information(self, model_id):
         self.logger.debug("Copying information file from model container")
-        self._copy_from_image_to_local(model_id, INFORMATION_FILE)
+        await self._copy_from_image_to_local(model_id, INFORMATION_FILE)
 
-    def copy_metadata(self, model_id):
+    async def copy_metadata(self, model_id):
         self.logger.debug("Copying api_schema_file file from model container")
-        self._copy_from_image_to_local(model_id, API_SCHEMA_FILE)
+        await self._copy_from_image_to_local(model_id, API_SCHEMA_FILE)
 
-    def copy_status(self, model_id):
+    async def copy_status(self, model_id):
         self.logger.debug("Copying status file from model container")
-        self._copy_from_image_to_local(model_id, STATUS_FILE)
-                                       
-    def copy_example_if_available(self, model_id):
-        # TODO This also needs to change to accomodate ersilia pack
+        await self._copy_from_image_to_local(model_id, STATUS_FILE)
+
+    async def copy_example_if_available(self, model_id):
+        # This needs to accommodate ersilia pack
         for pf in PREDEFINED_EXAMPLE_FILES:
-            fr_file = "/root/eos/dest/{0}/{1}".format(model_id, pf)
-            to_file = "{0}/dest/{1}/{2}".format(EOS, model_id, "input.csv")
+            fr_file = f"/root/eos/dest/{model_id}/{pf}"
+            to_file = f"{EOS}/dest/{model_id}/input.csv"
             try:
                 self.simple_docker.cp_from_image(
                     img_path=fr_file,
@@ -108,7 +110,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             except:
                 self.logger.debug("Could not find example file in docker image")
 
-    def modify_information(self, model_id):
+    async def modify_information(self, model_id):
         """
         Modify the information file being copied from docker container to the host machine.
         :param file: The model information file being copied.
@@ -124,7 +126,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             self.logger.error("Information file not found, not modifying anything")
             return None
 
-        # Using this literal here to prevent a file read 
+        # Using this literal here to prevent a file read         
         # from service class file for a model fetched through DockerHub
         # since we already know the service class.
         data["service_class"] = "pulled_docker"
@@ -133,15 +135,20 @@ class ModelDockerHubFetcher(ErsiliaBase):
             json.dump(data, outfile, indent=4)
 
     @throw_ersilia_exception
-    def fetch(self, model_id):
+    async def fetch(self, model_id):
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         self.logger.debug("Pulling model image from DockerHub")
-        mp.pull()
+        # Asynchronous pulling
+        await mp.async_pull()
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
-        mr.register(is_from_dockerhub=True)
-        self.write_apis(model_id)
-        self.copy_information(model_id)
-        self.modify_information(model_id)
-        self.copy_metadata(model_id)
-        self.copy_status(model_id)
-        self.copy_example_if_available(model_id)
+        # Asynchronous and concurent execution
+        self.logger.debug("Asynchronous and concurrent execution started!")
+        await asyncio.gather(
+            mr.register(is_from_dockerhub=True),
+            self.write_apis(model_id),
+            self.copy_information(model_id),
+            self.modify_information(model_id),
+            self.copy_metadata(model_id),
+            self.copy_status(model_id),
+            self.copy_example_if_available(model_id)
+        )
