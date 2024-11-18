@@ -74,8 +74,6 @@ def execute_command(
 
         if success:
             result = stdout.decode()
-            if description == "run" and config.get("output_redirection"):
-                save_as_json(result, output_file)
         else:
             result = stderr.decode()
 
@@ -95,7 +93,8 @@ def execute_command(
             f"{description} '{' '.join(command)}' failed with error: {result}"
         )
 
-
+    if description == "run" and success and config.get("output_redirection"):
+        save_as_json(result, output_file)
 
     checkups = apply_rules(
         command, 
