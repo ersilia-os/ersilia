@@ -5,33 +5,22 @@ class Command(object):
     def __init__(self):
         pass
 
-    def api(self):
-        m = importlib.import_module("ersilia.cli.commands.api")
-        m.api_cmd()
 
     def auth(self):
         m = importlib.import_module("ersilia.cli.commands.auth")
         m.auth_cmd()
 
-    def card(self):
-        m = importlib.import_module("ersilia.cli.commands.card")
-        m.card_cmd()
-
     def catalog(self):
         m = importlib.import_module("ersilia.cli.commands.catalog")
         m.catalog_cmd()
 
-    def clear(self):
-        m = importlib.import_module("ersilia.cli.commands.clear")
-        m.clear_cmd()
+    def uninstall(self):
+        m = importlib.import_module("ersilia.cli.commands.uninstall")
+        m.uninstall_cmd()
 
     def close(self):
         m = importlib.import_module("ersilia.cli.commands.close")
         m.close_cmd()
-
-    def current(self):
-        m = importlib.import_module("ersilia.cli.commands.current")
-        m.current_cmd()
 
     def delete(self):
         m = importlib.import_module("ersilia.cli.commands.delete")

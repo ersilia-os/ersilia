@@ -3,12 +3,13 @@ version: 2
 jobs:
   installation:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
           name: Install with pip and git without developer mode
           command: |
+              conda create -n ersilia python=3.10
               source activate ersilia
               pip install git+https://github.com/ersilia-os/ersilia.git
       - run:
@@ -18,14 +19,15 @@ jobs:
               ersilia --help
   test:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
           name: Install ersilia package in developer mode
           command: |
+              conda create -n ersilia python=3.10
               source activate ersilia
-              pip install -U pip setuptools
+              pip install -U pip setuptools packaging
               python -m pip install -e .
       - run:
           name: Test CLI
@@ -52,12 +54,12 @@ jobs:
           command: |
               source activate ersilia
               ersilia serve molecular-weight
-              ersilia api -i "CCC" > output_one_0.json
-              ersilia api -i "CCC" -o output_one_1.json
-              ersilia api -i "CCC" -o output_one_3.csv
-              ersilia api -i test/inputs/compound_list.csv > output_list_0.json
-              ersilia api -i test/inputs/compound_list.csv -o output_list_1.json
-              ersilia api -i test/inputs/compound_list.csv -o output_list_2.csv
+              ersilia run -i "CCC" > output_one_0.json
+              ersilia run -i "CCC" -o output_one_1.json
+              ersilia run -i "CCC" -o output_one_3.csv
+              ersilia run -i test/inputs/compound_list.csv > output_list_0.json
+              ersilia run -i test/inputs/compound_list.csv -o output_list_1.json
+              ersilia run -i test/inputs/compound_list.csv -o output_list_2.csv
               rm output_*
       - run:
           name: Delete molecular-weight model
@@ -66,13 +68,14 @@ jobs:
               ersilia -v delete molecular-weight
   docs-build:
     docker:
-      - image: ersiliaos/conda:3.7
+      - image: continuumio/miniconda3:24.1.2-0
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
               apt-get update
+              conda create -n ersilia python=3.10
               source activate ersilia
               pip install -U pip setuptools
               pip install -e .[docs]

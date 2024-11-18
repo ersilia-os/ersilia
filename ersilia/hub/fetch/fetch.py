@@ -1,23 +1,20 @@
-"""Fetch Model from the Ersilia Model Hub."""
-
 import os
 import json
 import importlib
 
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
-from .register.standard_example import ModelStandardExample
+from ...db.hubdata.json_models_interface import JsonModelsInterface
 from ... import ErsiliaBase
 from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithFastAPI,
     NotInstallableWithBentoML,
 )
+from .register.standard_example import ModelStandardExample
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, EOS, MODEL_SOURCE_FILE
-
 from . import STATUS_FILE, DONE_TAG
-
 
 class ModelFetcher(ErsiliaBase):
     def __init__(
@@ -41,6 +38,7 @@ class ModelFetcher(ErsiliaBase):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
         )
+        self.ji = JsonModelsInterface(config_json=self.config_json)
         self.overwrite = overwrite
         self.mode = mode
         self.do_pip = pip
@@ -157,9 +155,13 @@ class ModelFetcher(ErsiliaBase):
         else:
             self.logger.debug("Model already exists in your local, skipping fetching")
 
-    def _fetch_from_dockerhub(self, model_id):
+    def _standard_csv_example(self, model_id):
+        ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
+        ms.run()
+        
+    async def _fetch_from_dockerhub(self, model_id):
         self.logger.debug("Fetching from DockerHub")
-        self.model_dockerhub_fetcher.fetch(model_id=model_id)
+        await self.model_dockerhub_fetcher.fetch(model_id=model_id)
 
     def _fetch_from_hosted(self, model_id):
         self.logger.debug("Fetching from hosted")
@@ -183,7 +185,7 @@ class ModelFetcher(ErsiliaBase):
         if not self.is_docker_active:
             self.logger.debug("Docker is not active in your local")
             return False
-        if not self.model_dockerhub_fetcher.is_available(model_id=model_id):
+        if not self.ji.identifier_exists(model_id=model_id):
             self.logger.debug("Docker image of this model doesn't seem to be available")
             return False
         return True
@@ -215,21 +217,18 @@ class ModelFetcher(ErsiliaBase):
         else:
             return False
 
-    def _standard_csv_example(self, model_id):
-        ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
-        ms.run()
-
-    def _fetch(self, model_id):
+    async def _fetch(self, model_id):
+        
         self.logger.debug("Starting fetching procedure")
+        do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
+        if do_dockerhub:
+            self.logger.debug("Decided to fetch from DockerHub")
+            await self._fetch_from_dockerhub(model_id=model_id)
+            return
         do_hosted = self._decide_if_use_hosted(model_id=model_id)
         if do_hosted:
             self.logger.debug("Fetching from hosted")
             self._fetch_from_hosted(model_id=model_id)
-            return
-        do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
-        if do_dockerhub:
-            self.logger.debug("Decided to fetch from DockerHub")
-            self._fetch_from_dockerhub(model_id=model_id)
             return
         if self.overwrite is None:
             self.logger.debug("Overwriting")
@@ -237,10 +236,14 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Fetching in your system, not from DockerHub")
         self._fetch_not_from_dockerhub(model_id=model_id)
 
-    def fetch(self, model_id):
-        self._fetch(model_id)
+    async def fetch(self, model_id):
+        await self._fetch(model_id)  
         self._standard_csv_example(model_id)
         self.logger.debug("Writing model source to file")
         model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
+        try:
+            os.makedirs(self._model_path(model_id), exist_ok=True)
+        except OSError as error:
+            self.logger.error(f"Error during folder creation: {error}")
         with open(model_source_file, "w") as f:
             f.write(self.model_source)

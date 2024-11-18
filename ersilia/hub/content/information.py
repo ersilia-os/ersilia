@@ -12,12 +12,12 @@ from ...default import (
     PACKMODE_FILE,
     API_SCHEMA_FILE,
     MODEL_SIZE_FILE,
-    METADATA_JSON_FILE,
     CARD_FILE,
     SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
     MODEL_SOURCE_FILE,
 )
+from ...utils.paths import get_metadata_from_base_dir
 
 
 class Information(ErsiliaBase):
@@ -70,12 +70,11 @@ class Information(ErsiliaBase):
             return None
 
     def _get_metadata(self):
-        metadata_file = os.path.join(self.dest_folder, METADATA_JSON_FILE)
-        if os.path.exists(metadata_file):
-            with open(metadata_file, "r") as f:
-                return json.load(f)
-        else:
+        try:
+            data = get_metadata_from_base_dir(self.dest_folder)
+        except FileNotFoundError:
             return None
+        return data
 
     def _get_card(self):
         card_file = os.path.join(self.dest_folder, CARD_FILE)

@@ -52,6 +52,7 @@ from ...default import (
     INFORMATION_FILE,
     METADATA_YAML_FILE,
 )
+from ...utils.paths import get_metadata_from_base_dir
 
 
 class BaseInformation(ErsiliaBase):
@@ -66,7 +67,6 @@ class BaseInformation(ErsiliaBase):
         self._mode = None
         self._task = None
         self._input = None
-
         self._input_shape = None
         self._output = None
         self._output_type = None
@@ -171,6 +171,8 @@ class BaseInformation(ErsiliaBase):
 
     @input.setter
     def input(self, new_input):
+        if type(new_input) is str:
+            new_input = [new_input]
         if type(new_input) is not list:
             raise InputBaseInformationError
         for inp in new_input:
@@ -194,6 +196,8 @@ class BaseInformation(ErsiliaBase):
 
     @task.setter
     def task(self, new_task):
+        if type(new_task) is str:
+            new_task = [new_task]
         if type(new_task) is not list:
             raise TaskBaseInformationError
         for nt in new_task:
@@ -207,6 +211,8 @@ class BaseInformation(ErsiliaBase):
 
     @output.setter
     def output(self, new_output):
+        if type(new_output) is str:
+            new_output = [new_output]
         default_output = self._read_default_fields("Output")
         for no in new_output:
             if no not in default_output:
@@ -219,6 +225,8 @@ class BaseInformation(ErsiliaBase):
 
     @output_type.setter
     def output_type(self, new_output_type):
+        if type(new_output_type) is str:
+            new_output_type = [new_output_type]
         default_output_type = self._read_default_fields("Output Type")
         for no in new_output_type:
             if no not in default_output_type:
@@ -250,6 +258,8 @@ class BaseInformation(ErsiliaBase):
 
     @tag.setter
     def tag(self, new_tag):
+        if type(new_tag) is str:
+            new_tag = [new_tag]
         if type(new_tag) is not list:
             raise TagBaseInformationError
         default_tags = self._read_default_fields("Tag")
@@ -328,6 +338,8 @@ class BaseInformation(ErsiliaBase):
 
     @docker_architecture.setter
     def docker_architecture(self, new_docker_architecture):
+        if type(new_docker_architecture) is str:
+            new_docker_architecture = [new_docker_architecture]
         for d in new_docker_architecture:
             if d not in self._read_default_fields("Docker Architecture"):
                 raise DockerArchitectureInformationError
@@ -617,13 +629,11 @@ class MetadataCard(ErsiliaBase):
         if model_id is not None:
             dest_dir = self._model_path(model_id=model_id)
             self.logger.debug("Trying to get metadata from: {0}".format(dest_dir))
-            metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
-            if os.path.exists(metadata_json):
-                with open(metadata_json, "r") as f:
-                    data = json.load(f)
-                return data
-            else:
+            try:
+                data = get_metadata_from_base_dir(dest_dir)
+            except FileNotFoundError:
                 return None
+            return data
         else:
             return
 
