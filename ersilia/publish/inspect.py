@@ -2,10 +2,9 @@ from .. import ErsiliaBase
 import requests
 import subprocess
 import time
-import json
 from collections import namedtuple
-from urllib.request import urlopen
 from ..hub.content.card import RepoMetadataFile
+from ..default import METADATA_JSON_FILE
 
 # a namedtuple for the results
 Result = namedtuple("Result", ["success", "details"])
@@ -321,7 +320,7 @@ class ModelInspector(ErsiliaBase):
             "Dockerfile",
             "LICENSE",
             "README.md",
-            "metadata.json",
+            METADATA_JSON_FILE,
             "pack.py",
             ".gitattributes",
         ]

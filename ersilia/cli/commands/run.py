@@ -8,7 +8,7 @@ from .. import echo
 from ... import ErsiliaModel
 from ...core.session import Session
 from ...core.tracking import RunTracker
-
+from ...utils.terminal import print_result_table
 
 def run_cmd():
     """Create run command"""
@@ -25,15 +25,21 @@ def run_cmd():
     @click.option(
         "--standard",
         is_flag=True,
-        default=False,
+        default=True,
         help="Assume that the run is standard and, therefore, do not do so many checks.",
     )
-    def run(input, output, batch_size, standard):
+    @click.option(
+        "--table", 
+        is_flag=True, 
+        default=False
+    )
+    def run(input, output, batch_size, table, standard):
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         track_runs = session.tracking_status()
 
+        output_source = session.current_output_source()
         if model_id is None:
             echo(
                 "No model seems to be served. Please run 'ersilia serve ...' before.",
@@ -43,6 +49,7 @@ def run_cmd():
 
         mdl = ErsiliaModel(
             model_id,
+            output_source=output_source,
             service_class=service_class,
             config_json=None,
             track_runs=track_runs,
@@ -57,9 +64,22 @@ def run_cmd():
 
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
+                print(input)
                 if result is not None:
                     echo(json.dumps(result, indent=4))
+                    formatted = json.dumps(result, indent=4)
+                    if table:
+                        print_result_table(formatted)
+                    else:
+                        echo(formatted) 
                 else:
                     echo("Something went wrong", fg="red")
         else:
             echo(result)
+            if table:
+                print_result_table(result)
+            else:
+                try:
+                 echo(result) #
+                except:
+                    print_result_table(result)
