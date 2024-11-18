@@ -29,7 +29,7 @@ class SimpleVenv(ErsiliaBase):
         else:
             return False
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def create(self, environment):
         path = self._get_path(environment)
         if self.exists(path):
@@ -44,7 +44,7 @@ class SimpleVenv(ErsiliaBase):
             return
         shutil.rmtree(path)
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def run_commandlines(self, environment, commandlines):
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))

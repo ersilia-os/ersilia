@@ -430,7 +430,7 @@ class RunTracker(ErsiliaBase):
             for r in tabular_result:
                 writer.writerow(r)
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def track(self, input, result, meta, container_metrics):
         """
         Tracks the results of a model run.

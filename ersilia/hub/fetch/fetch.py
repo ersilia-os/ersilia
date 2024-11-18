@@ -7,12 +7,15 @@ from .lazy_fetchers.hosted import ModelHostedFetcher
 from ...db.hubdata.json_models_interface import JsonModelsInterface
 from ... import ErsiliaBase
 from ...hub.fetch.actions.template_resolver import TemplateResolver
+from ...hub.delete.delete import ModelFullDeleter
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithFastAPI,
     NotInstallableWithBentoML,
+    StandardModelExampleError
 )
 from .register.standard_example import ModelStandardExample
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from ...utils.terminal import yes_no_input
 from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, EOS, MODEL_SOURCE_FILE
 from . import STATUS_FILE, DONE_TAG
 
@@ -81,7 +84,7 @@ class ModelFetcher(ErsiliaBase):
         )
         self.logger.debug("Model getting fetched from {0}".format(self.model_source))
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _decide_fetcher(self, model_id):
         tr = TemplateResolver(model_id=model_id, repo_path=self.repo_path)
         if tr.is_bentoml():
@@ -91,7 +94,7 @@ class ModelFetcher(ErsiliaBase):
         else:
             raise Exception("No fetcher available")
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _fetch_from_fastapi(self):
         self.logger.debug("Fetching using Ersilia Pack (FastAPI)")
         fetch = importlib.import_module("ersilia.hub.fetch.fetch_fastapi")
@@ -110,7 +113,7 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("Not installable with FastAPI")
             raise NotInstallableWithFastAPI(model_id=self.model_id)
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _fetch_from_bentoml(self):
         self.logger.debug("Fetching using BentoML")
         fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
@@ -131,7 +134,7 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("Not installable with BentoML")
             raise NotInstallableWithBentoML(model_id=self.model_id)
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _fetch_not_from_dockerhub(self, model_id):
         self.model_id = model_id
         is_fetched = False
@@ -237,13 +240,23 @@ class ModelFetcher(ErsiliaBase):
         self._fetch_not_from_dockerhub(model_id=model_id)
 
     async def fetch(self, model_id):
-        await self._fetch(model_id)  
-        self._standard_csv_example(model_id)
-        self.logger.debug("Writing model source to file")
-        model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
-        try:
-            os.makedirs(self._model_path(model_id), exist_ok=True)
-        except OSError as error:
-            self.logger.error(f"Error during folder creation: {error}")
-        with open(model_source_file, "w") as f:
-            f.write(self.model_source)
+        await self._fetch(model_id)
+        try:  
+            self._standard_csv_example(model_id)
+        except StandardModelExampleError:
+            self.logger.debug("Standard model example failed, deleting artifacts")
+            do_delete = yes_no_input(
+                "Do you want to delete the model artifacts? [Y/n]", 
+                default_answer="Y")
+            if do_delete:
+                md = ModelFullDeleter(overwrite=False)
+                md.delete(model_id)
+        else:
+            self.logger.debug("Writing model source to file")
+            model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
+            try:
+                os.makedirs(self._model_path(model_id), exist_ok=True)
+            except OSError as error:
+                self.logger.error(f"Error during folder creation: {error}")
+            with open(model_source_file, "w") as f:
+                f.write(self.model_source)

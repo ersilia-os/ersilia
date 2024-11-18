@@ -39,7 +39,7 @@ RUN_DATA_STUB = {  # This should not be used as is, always create a deep copy.
     "error_count": 0
 }
 
-@throw_ersilia_exception
+@throw_ersilia_exception()
 def init_tracking_summary(model_id):
     file_path = os.path.join(get_session_dir(), f"{get_session_uuid()}.json")
     try:
@@ -51,7 +51,7 @@ def init_tracking_summary(model_id):
         raise FileNotFoundError("Could not create tracking summary file, check if session directory exists")
 
 
-@throw_ersilia_exception
+@throw_ersilia_exception()
 def update_tracking_summary(model_id, incoming_data):
     try:
         file_path = os.path.join(get_session_dir(), f"{get_session_uuid()}.json")

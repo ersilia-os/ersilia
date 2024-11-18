@@ -7,7 +7,7 @@ class PingRequirement(object):
     def __init__(self):
         pass
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def is_connected(self):
         url = "http://www.google.com/"
         try:
