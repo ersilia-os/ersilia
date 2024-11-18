@@ -240,6 +240,18 @@ class ModelFetcher(ErsiliaBase):
         self._fetch_not_from_dockerhub(model_id=model_id)
 
     async def fetch(self, model_id):
+        """Fetches a model with the given eos identifier
+
+        Parameters
+        ----------
+        model_id : str
+            The eos identifier of the model
+
+        Returns
+        -------
+        bool
+            True if the model was fetched successfully, False otherwise
+        """
         await self._fetch(model_id)
         try:  
             self._standard_csv_example(model_id)
@@ -251,6 +263,7 @@ class ModelFetcher(ErsiliaBase):
             if do_delete:
                 md = ModelFullDeleter(overwrite=False)
                 md.delete(model_id)
+            return False
         else:
             self.logger.debug("Writing model source to file")
             model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
@@ -260,3 +273,4 @@ class ModelFetcher(ErsiliaBase):
                 self.logger.error(f"Error during folder creation: {error}")
             with open(model_source_file, "w") as f:
                 f.write(self.model_source)
+            return True
