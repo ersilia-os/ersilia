@@ -76,7 +76,6 @@ def fetch_cmd():
     )
     def fetch(
         model,
-        repo_path,
         mode,
         dockerize,
         overwrite,
@@ -91,11 +90,9 @@ def fetch_cmd():
     ):
         if with_bentoml and with_fastapi:
             raise Exception("Cannot use both BentoML and FastAPI")
-        if repo_path is not None:
-            mdl = ModelBase(repo_path=repo_path)
-        elif from_dir is not None:
+
+        if from_dir is not None:
             mdl = ModelBase(repo_path=from_dir)
-            repo_path = from_dir
         else:
             mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id
