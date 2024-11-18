@@ -22,7 +22,6 @@ def fetch_cmd():
         "an EOS folder, then packed to a BentoML bundle",
     )
     @click.argument("model", type=click.STRING)
-    @click.option("--repo_path", "-r", default=None, type=click.STRING)
     @click.option("--mode", "-m", default=None, type=click.STRING)
     @click.option("--dockerize/--not-dockerize", default=False)
     @click.option(
@@ -105,7 +104,7 @@ def fetch_cmd():
             fg="blue",
         )
         mf = ModelFetcher(
-            from_dir=repo_path or from_dir,
+            repo_path=from_dir,
             mode=mode,
             dockerize=dockerize,
             overwrite=overwrite,
