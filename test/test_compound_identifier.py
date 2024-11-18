@@ -2,6 +2,7 @@
 from ersilia.default import UNPROCESSABLE_INPUT
 import pytest
 from ersilia.utils.identifiers.compound import CompoundIdentifier
+from unittest.mock import patch
 
 @pytest.fixture
 def compound_identifier():
@@ -20,7 +21,7 @@ def test_is_input_header_negative(compound_identifier, header):
 def test_is_key_header_positive(compound_identifier, header):
     """Test that valid key headers return True."""
     assert compound_identifier.is_key_header(header) is True
-
+    
 @pytest.mark.parametrize("header", ["id","smiles","inchi","input", "some_header", "random", "header", ""])
 def test_is_key_header_negative(compound_identifier, header):
     assert not compound_identifier.is_key_header(header)
@@ -108,5 +109,8 @@ def test_guess_type_non_character(compound_identifier, non_char_input, expected)
     """Ensure guess_type returns UNPROCESSABLE_INPUT for non-character input."""
     result = compound_identifier.guess_type(non_char_input)
     assert result == expected, f"Expected '{UNPROCESSABLE_INPUT}' for input '{non_char_input}'"
-
     
+# Test with a valid SMILES input
+    smiles_string = 'CCO' #Ethanol SMILES
+    assert compound_identifier._is_smiles(smiles_string) is True
+
