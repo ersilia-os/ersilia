@@ -27,7 +27,7 @@ jobs:
           command: |
               conda create -n ersilia python=3.10
               source activate ersilia
-              pip install -U pip setuptools
+              pip install -U pip setuptools packaging
               python -m pip install -e .
       - run:
           name: Test CLI

@@ -122,11 +122,11 @@ class ModelRegisterer(ErsiliaBase):
 
     async def register(self, is_from_dockerhub=False, is_from_hosted=False):
         if is_from_dockerhub and is_from_hosted:
-            raise Exception
-        if is_from_dockerhub and not is_from_hosted:
+            raise ValueError("Model cannot be from both DockerHub and hosted")
+        elif is_from_dockerhub and not is_from_hosted:
             self.register_from_dockerhub()
             self.register_not_from_hosted()
-        if not is_from_dockerhub and is_from_hosted:
+        elif not is_from_dockerhub and is_from_hosted:
             self.register_from_hosted()
             self.register_not_from_dockerhub()
         else:

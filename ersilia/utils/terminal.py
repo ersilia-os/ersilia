@@ -3,6 +3,9 @@ import subprocess
 import json
 import tempfile
 import shutil
+import csv
+from .logging import logger
+import io
 
 try:
     from inputimeout import inputimeout, TimeoutOccurred
@@ -89,3 +92,52 @@ def yes_no_input(prompt, default_answer, timeout=5):
         return False
     else:
         return True
+    
+
+def print_result_table(data):
+    HEADER_COLOR = "\033[95m"
+    ROW_COLOR = "\033[94m"
+    RESET_COLOR = "\033[0m"
+    if isinstance(data, str) and os.path.isfile(data):
+        with open(data, mode="r") as file:
+            reader = csv.DictReader(file)
+            data = [dict(row) for row in reader]
+    if isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
+        headers = list(data[0].keys())
+        column_widths = {
+            header: max(len(header), max(len(str(row[header])) for row in data)) + 5
+            for header in headers
+        }
+        def format_row(row_data, is_header=False):
+            if is_header:
+                return (
+                    HEADER_COLOR
+                    + " | ".join(
+                        f"{header.ljust(column_widths[header])}" for header in headers
+                    )
+                    + RESET_COLOR
+                )
+            else:
+                return (
+                    ROW_COLOR
+                    + " | ".join(
+                        f"{str(row_data[header]).ljust(column_widths[header])}"
+                        for header in headers
+                    )
+                    + RESET_COLOR
+                )
+        separator = "-" * (sum(column_widths.values()) + (3 * len(headers) - 1))
+        print(separator)
+        print(format_row(headers, is_header=True))
+        print(separator)
+        for row in data:
+            print(format_row(row))
+        print(separator)
+    else:
+        logger.debug(
+            "Invalid input data format. Please provide either a CSV file path or JSON-like data."
+        )
+def read_csv_from_string(csv_string):
+    f = io.StringIO(csv_string)
+    reader = csv.DictReader(f)
+    return [dict(row) for row in reader]
