@@ -27,6 +27,11 @@ def test_is_key_header_positive(compound_identifier, header):
 @pytest.mark.parametrize("header", ["id","smiles","inchi","input", "some_header", "random", "header", ""])
 def test_is_key_header_negative(compound_identifier, header):
     assert not compound_identifier.is_key_header(header)
+
+def test_guess_type_with_inchikey(compound_identifier):
+    inchikey = "LFQSCWFLJHTTHZ-UHFFFAOYSA-N"
+    result = compound_identifier.guess_type(inchikey)
+    assert result == "inchikey"
     
     
 @pytest.mark.parametrize("inchikey", [
