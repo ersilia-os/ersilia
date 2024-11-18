@@ -12,19 +12,33 @@ def compound_identifier():
 def test_is_input_header_positive(compound_identifier, header):
     """Test that valid input headers return True."""
     assert compound_identifier.is_input_header(header) is True
+    
+
 @pytest.mark.parametrize("header", ["output", "invalid", "InChI", "inchikey"])
 def test_is_input_header_negative(compound_identifier, header):
     """Test that invalid input headers return False."""
     assert compound_identifier.is_input_header(header) is False
+
     
 @pytest.mark.parametrize("header", ["key", "inchiKey", "KEY", "INCHIKEY"])
 def test_is_key_header_positive(compound_identifier, header):
     """Test that valid key headers return True."""
     assert compound_identifier.is_key_header(header) is True
     
+    
 @pytest.mark.parametrize("header", ["id","smiles","inchi","input", "some_header", "random", "header", ""])
 def test_is_key_header_negative(compound_identifier, header):
     assert not compound_identifier.is_key_header(header)
+    
+    
+@pytest.mark.parametrize("inchikey", [
+    "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+    "BQJCRHHNABKAKU-KBQPJGBKSA-N",
+    "ZJPODVODJYKFHM-UHFFFAOYSA-N"
+])
+def test_is_inchikey_positive(compound_identifier, inchikey):
+    """Test that valid InChIKeys return True."""
+    assert compound_identifier._is_inchikey(inchikey) is True
 
 @pytest.fixture(params=[True, False], ids=["Chem_None", "Chem_Not_None"])
 def compound_identifier(request):
@@ -113,4 +127,4 @@ def test_guess_type_non_character(compound_identifier, non_char_input, expected)
 # Test with a valid SMILES input
     smiles_string = 'CCO' #Ethanol SMILES
     assert compound_identifier._is_smiles(smiles_string) is True
-
+    
