@@ -127,4 +127,24 @@ def test_guess_type_non_character(compound_identifier, non_char_input, expected)
 # Test with a valid SMILES input
     smiles_string = 'CCO' #Ethanol SMILES
     assert compound_identifier._is_smiles(smiles_string) is True
+   
     
+@patch('requests.get')
+async def test_nci_smiles_to_inchikey_positive(mock_get, compound_identifier):
+    """Test _nci_smiles_to_inchikey with a mocked positive response."""
+    mock_response = mock_get.return_value
+    mock_response.status_code = 200
+    mock_response.text = "InChIKey=BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+
+    inchikey = await compound_identifier._nci_smiles_to_inchikey(session=None, smiles="CCO")
+    assert inchikey == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+
+  
+@patch('requests.get')
+async def test_nci_smiles_to_inchikey_negative(mock_get, compound_identifier):
+    """Test _nci_smiles_to_inchikey with a mocked negative response."""
+    mock_response = mock_get.return_value
+    mock_response.status_code = 404  
+
+    inchikey = await compound_identifier._nci_smiles_to_inchikey(session=None, smiles="invalid_smiles")
+    assert inchikey is None
