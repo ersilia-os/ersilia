@@ -68,21 +68,21 @@ def test_is_smiles_positive_chem_none(mock_pubchem, compound_identifier):
    
     
 @patch('requests.get')
-def test_nci_smiles_to_inchikey_positive(mock_get, compound_identifier):
+async def test_nci_smiles_to_inchikey_positive(mock_get, compound_identifier):
     """Test _nci_smiles_to_inchikey with a mocked positive response."""
     mock_response = mock_get.return_value
     mock_response.status_code = 200
     mock_response.text = "InChIKey=BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
 
-    inchikey = compound_identifier._nci_smiles_to_inchikey(session=None, smiles="CCO")
+    inchikey = await compound_identifier._nci_smiles_to_inchikey(session=None, smiles="CCO")
     assert inchikey == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
 
   
 @patch('requests.get')
-def test_nci_smiles_to_inchikey_negative(mock_get, compound_identifier):
+async def test_nci_smiles_to_inchikey_negative(mock_get, compound_identifier):
     """Test _nci_smiles_to_inchikey with a mocked negative response."""
     mock_response = mock_get.return_value
     mock_response.status_code = 404  
 
-    inchikey = compound_identifier._nci_smiles_to_inchikey(session=None, smiles="invalid_smiles")
+    inchikey = await compound_identifier._nci_smiles_to_inchikey(session=None, smiles="invalid_smiles")
     assert inchikey is None
