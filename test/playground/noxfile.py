@@ -66,7 +66,7 @@ def test_cli(session):
         external=True
     )
     # default run --from_github
-    logger.info(f"CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}")
+    logger.info(f'CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}')
     session.run(
         "pytest", 
         "commands.py", 
@@ -78,7 +78,7 @@ def test_cli(session):
         "fetch_flags": "--from_dockerhub"
     })
 
-    logger.info(f"CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}")
+    logger.info(f'CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}')
     session.run(
         "pytest", 
         "commands.py", 
@@ -90,7 +90,7 @@ def test_cli(session):
         "fetch_flags": ""
     })
     
-    logger.info(f"CLI test for model: {config.get("model_id")} and auto fetcher decider")
+    logger.info(f'CLI test for model: {config.get("model_id")} and auto fetcher decider')
     session.run(
         "pytest", 
         "commands.py", 
