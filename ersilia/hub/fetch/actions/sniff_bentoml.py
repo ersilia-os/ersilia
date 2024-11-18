@@ -15,13 +15,13 @@ from ....io.annotated import AnnotatedDataTyper
 from ....default import (
     API_SCHEMA_FILE,
     MODEL_SIZE_FILE,
-    METADATA_JSON_FILE,
     PREDEFINED_EXAMPLE_FILES,
 )
 from ....utils.exceptions_utils.exceptions import EmptyOutputError
 from ....utils.exceptions_utils.fetch_exceptions import (
     OutputDataTypesNotConsistentError,
 )
+from ....utils.paths import get_metadata_from_base_dir
 
 
 class BuiltinExampleReader(ErsiliaBase):
@@ -102,22 +102,20 @@ class ModelSniffer(BaseAction):
 
     def _get_output_ann_type(self):
         dest_dir = self._model_path(self.model_id)
-        metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
-        if not os.path.exists(metadata_json):
-            self.logger.debug("{0} does not exist".format(metadata_json))
-            return None
-        with open(metadata_json, "r") as f:
-            md = json.load(f)
+        try:
+            md = get_metadata_from_base_dir(dest_dir)
+        except FileNotFoundError:
+            self.logger.debug("Metadata file not available")
+            return
         return md["Output Type"][0]  # TODO Account for mixed types
 
     def _get_output_ann_shape(self):
         dest_dir = self._model_path(self.model_id)
-        metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
-        if not os.path.exists(metadata_json):
-            self.logger.debug("{0} does not exist".format(metadata_json))
-            return None
-        with open(metadata_json, "r") as f:
-            md = json.load(f)
+        try:
+            md = get_metadata_from_base_dir(dest_dir)
+        except FileNotFoundError:
+            self.logger.debug("Metadata file not available")    
+            return
         return md["Output Shape"]  # TODO Account for mixed types
 
     @throw_ersilia_exception
@@ -205,14 +203,12 @@ class ModelSniffer(BaseAction):
     def _get_schema_type_for_simple_run_api_case(self):
         # read metadata
         dest_dir = self._model_path(self.model_id)
-        metadata_file = os.path.join(dest_dir, METADATA_JSON_FILE)
-        if not os.path.exists(metadata_file):
+        try:
+            metadata = get_metadata_from_base_dir(dest_dir)
+        except FileNotFoundError:
             self.logger.debug("Metadata file not available (yet)")
-            return None
-        with open(metadata_file, "r") as f:
-            metadata = json.load(f)
 
-        # get output type from metadata.json
+        # get output type from metadata file
         output_type = metadata["Output Type"]
         if len(output_type) == 1:
             self.logger.debug("Output type is {0}".format(output_type[0]))
@@ -227,7 +223,7 @@ class ModelSniffer(BaseAction):
         if output_type not in ["Float", "String"]:
             return None
 
-        # get output shape from metadata.json
+        # get output shape from metadata file
         output_shape = metadata["Output Shape"]
         if output_shape not in ["Single", "List"]:
             return None
