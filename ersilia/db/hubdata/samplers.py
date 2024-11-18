@@ -10,7 +10,7 @@ from .json_models_interface import JsonModelsInterface
 from ... import ErsiliaBase
 
 
-from ...default import METADATA_JSON_FILE
+from ...utils.paths import get_metadata_from_base_dir
 
 _MODEL_STATUS_READY = "Ready"
 _STATUS_FIELD = "Status"
@@ -85,11 +85,10 @@ class InputSampler(ErsiliaBase):
 
     def _get_input_type_and_shape_from_metadata(self):
         dest_path = self._model_path(self.model_id)
-        metadata_json = os.path.join(dest_path, METADATA_JSON_FILE)
-        if not os.path.exists(metadata_json):
+        try:
+            data = get_metadata_from_base_dir(dest_path)
+        except FileNotFoundError:
             return None
-        with open(metadata_json, "r") as f:
-            data = json.load(f)
         input_type = data[_INPUT_TYPE_FIELD]
         input_shape = data[_INPUT_SHAPE_FIELD]
         return input_type, input_shape
