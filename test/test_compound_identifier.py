@@ -74,7 +74,7 @@ def test_nci_smiles_to_inchikey_positive(mock_get, compound_identifier):
     mock_response.status_code = 200
     mock_response.text = "InChIKey=BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
 
-    inchikey = compound_identifier._nci_smiles_to_inchikey(smiles="CCO")
+    inchikey = compound_identifier._nci_smiles_to_inchikey(session=None, smiles="CCO")
     assert inchikey == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
 
   
@@ -84,5 +84,5 @@ def test_nci_smiles_to_inchikey_negative(mock_get, compound_identifier):
     mock_response = mock_get.return_value
     mock_response.status_code = 404  
 
-    inchikey = compound_identifier._nci_smiles_to_inchikey(smiles="invalid_smiles")
+    inchikey = compound_identifier._nci_smiles_to_inchikey(session=None, smiles="invalid_smiles")
     assert inchikey is None
