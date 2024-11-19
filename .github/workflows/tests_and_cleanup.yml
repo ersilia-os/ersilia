@@ -126,16 +126,6 @@ jobs:
           pip install pytest pytest-benchmark pytest-asyncio nox rich
           pytest
 
-      - name: Run CLI Test Default
-        run: |
-          source activate            
-          nox -f test/playground/noxfile.py -s ${{ matrix.session }}
-          
-      - name: Run CLI Test Multiple
-        run: |
-          source activate            
-          nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
-
   run-cli-test-single:
     runs-on: ubuntu-22.04
     strategy:
@@ -174,6 +164,11 @@ jobs:
           echo "After conda init"
           conda init
           python -m pip install -e .[test]
+
+      - name: Run CLI Test Default
+        run: |
+          source activate            
+          nox -f test/playground/noxfile.py -s ${{ matrix.session }}
 
   run-cli-test-multiple:
     runs-on: ubuntu-22.04
