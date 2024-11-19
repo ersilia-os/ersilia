@@ -87,17 +87,17 @@ jobs:
       matrix:
         group:
           - name: group0
-            sessions: [setup]
+            sessions: ["setup"]
           - name: group1
-            sessions: [test_from_github]
+            sessions: ["test_from_github"]
           - name: group2
-            sessions: [test_from_dockerhub]
+            sessions: ["test_from_dockerhub"]
           - name: group3
-            sessions: [test_auto_fetcher_decider]
+            sessions: ["test_auto_fetcher_decider"]
           - name: group4
-            sessions: [test_fetch_multiple_models, test_serve_multiple_models]
+            sessions: ["test_fetch_multiple_models", "test_serve_multiple_models"]
           - name: group5
-            sessions: [test_conventional_run]
+            sessions: ["test_conventional_run"]
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
 
