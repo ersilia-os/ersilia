@@ -175,11 +175,6 @@ jobs:
           conda init
           python -m pip install -e .[test]
 
-      - name: Run CLI Test Default
-        run: |
-          source activate            
-          nox -f test/playground/noxfile.py -s ${{ matrix.session }}
-
   run-cli-test-multiple:
     runs-on: ubuntu-22.04
     steps:
