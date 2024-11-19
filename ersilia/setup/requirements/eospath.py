@@ -8,7 +8,7 @@ class EosHomePathRequirement(object):
     def __init__(self):
         pass
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def eos_home_path_exists(self):
         if os.path.exists(EOS):
             return True

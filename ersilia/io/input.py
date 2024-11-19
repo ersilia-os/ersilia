@@ -198,7 +198,7 @@ class ExampleGenerator(ErsiliaBase):
         if type(self.input_shape) is InputShapePairOfLists:
             self._flatten = self._flatten_pair_of_lists
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def check_model_id(self, model_id):
         if model_id is None:
             raise NullModelIdentifierError(model=model_id)

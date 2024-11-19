@@ -534,7 +534,7 @@ class DockerImageService(BaseServing):
                 return env
         return None
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _is_docker_active(self):
         dr = DockerRequirement()
         if not dr.is_active():
@@ -673,7 +673,7 @@ class PulledDockerImageService(BaseServing):
     def __exit__(self, exception_type, exception_value, traceback):
         self.close()
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _is_docker_active(self):
         dr = DockerRequirement()
         if not dr.is_active():
@@ -732,7 +732,7 @@ class PulledDockerImageService(BaseServing):
                 container.remove()
                 self.logger.debug("Container removed")
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _get_apis(self):
         file_name = os.path.join(
             self._get_bundle_location(self.model_id), APIS_LIST_FILE

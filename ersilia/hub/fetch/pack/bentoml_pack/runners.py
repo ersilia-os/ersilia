@@ -149,7 +149,7 @@ class CondaPack(BasePack):
         self.logger.debug("Now trying to establish symlinks")
         self._symlinks()
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def run(self):
         self.logger.debug("Packing model with Conda")
         self._write_model_install_commands()
