@@ -10,7 +10,7 @@ class GithubCliRequirement(object):
     def __ini__(self):
         self.name = "gh"
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def is_installed(self, raise_exception=False, install_if_necessary=False):
         check = run_command_check_output("gh")
         if "GitHub" in check:
@@ -32,7 +32,7 @@ class GitLfsRequirement(object):
     def __init__(self):
         self.name = "git-lfs"
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def is_installed(self, install_if_necessary=True):
         check = run_command_check_output("git-lfs")
         if check.startswith("git-lfs"):

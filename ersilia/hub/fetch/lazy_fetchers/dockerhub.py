@@ -134,7 +134,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         with open(information_file, "w") as outfile:
             json.dump(data, outfile, indent=4)
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     async def fetch(self, model_id):
         mp = ModelPuller(model_id=model_id, config_json=self.config_json)
         self.logger.debug("Pulling model image from DockerHub")
