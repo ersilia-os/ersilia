@@ -388,7 +388,7 @@ class SimpleConda(CondaUtils):
             f.write(bash_script)
         return file_name
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def run_commandlines(self, environment, commandlines):
         """
         Run commands in a given conda environment.

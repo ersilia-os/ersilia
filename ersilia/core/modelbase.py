@@ -14,7 +14,7 @@ from .. import throw_ersilia_exception
 class ModelBase(ErsiliaBase):
     """Base class of a Model."""
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def __init__(self, model_id_or_slug=None, repo_path=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         if model_id_or_slug is None and repo_path is None:

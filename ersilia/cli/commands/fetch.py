@@ -12,7 +12,8 @@ def fetch_cmd():
     """Create fetch commmand"""
 
     def _fetch(mf, model_id):
-        asyncio.run(mf.fetch(model_id))
+        res = asyncio.run(mf.fetch(model_id))
+        return res
 
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
@@ -118,5 +119,9 @@ def fetch_cmd():
             hosted_url=from_url,
             local_dir=from_dir,
         )
-        _fetch(mf, model_id)
-        echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
+        is_fetched = _fetch(mf, model_id)
+
+        if is_fetched:
+            echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
+        else:
+            echo(":thumbs_down: Model {0} failed to fetch!".format(model_id), fg="red")

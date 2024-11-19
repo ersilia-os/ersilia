@@ -118,7 +118,7 @@ class ModelSniffer(BaseAction):
             return
         return md["Output Shape"]  # TODO Account for mixed types
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _get_schema(self, results):
         input_schema = collections.defaultdict(list)
         output_schema = collections.defaultdict(list)
@@ -199,7 +199,7 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Done with the schema!")
         return schema
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def _get_schema_type_for_simple_run_api_case(self):
         # read metadata
         dest_dir = self._model_path(self.model_id)
@@ -249,7 +249,7 @@ class ModelSniffer(BaseAction):
                 return shape
         return None
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def sniff(self):
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")

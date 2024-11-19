@@ -85,7 +85,7 @@ class ModelPuller(ErsiliaBase):
             self.logger.warning("Image not found locally")
             return None
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     async def async_pull(self):
         if self.is_available_locally():
             if self.overwrite is None:
@@ -186,7 +186,7 @@ class ModelPuller(ErsiliaBase):
             self.logger.info("Image {0} is not available".format(self.image_name))
             raise DockerImageNotAvailableError(model=self.model_id)
         
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def pull(self):
         if self.is_available_locally():
             if self.overwrite is None:

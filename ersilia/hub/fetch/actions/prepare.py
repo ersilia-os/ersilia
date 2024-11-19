@@ -17,7 +17,7 @@ class ModelPreparer(BaseAction):
             config_json=self.config_json, overwrite=self.overwrite
         )
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def prepare(self):
         try:
             self.deleter.delete(self.model_id)
