@@ -136,6 +136,86 @@ jobs:
           source activate            
           nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
 
+  run-cli-test-single:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        session:  
+          - setup
+          - test_from_github
+          - test_from_dockerhub
+          - test_auto_fetcher_decider
+          - test_conventional_run
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Source conda
+        run: source $CONDA/etc/profile.d/conda.sh
+        
+      - name: Set Python to 3.10.10
+        run:
+         conda install -y python=3.10.10  
+
+      - name: Install dependencies
+        run: |
+          source activate
+          conda init
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+
+      - name: Install ersilia
+        run: |
+          source activate
+          python --version
+          echo "After conda init"
+          conda init
+          python -m pip install -e .[test]
+
+      - name: Run CLI Test Default
+        run: |
+          source activate            
+          nox -f test/playground/noxfile.py -s ${{ matrix.session }}
+
+  run-cli-test-multiple:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Source conda
+        run: source $CONDA/etc/profile.d/conda.sh
+        
+      - name: Set Python to 3.10.10
+        run:
+         conda install -y python=3.10.10  
+
+      - name: Install dependencies
+        run: |
+          source activate
+          conda init
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+
+      - name: Install ersilia
+        run: |
+          source activate
+          python --version
+          echo "After conda init"
+          conda init
+          python -m pip install -e .[test]
+          
+      - name: Run CLI Test Multiple
+        run: |
+          source activate            
+          nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
+
   test-colab-notebook:
     runs-on: ubuntu-22.04
     steps:
