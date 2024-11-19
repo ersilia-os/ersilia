@@ -69,8 +69,6 @@ Ideally, in the chemistry models, the input molecules are specified as **SMILES*
 
 ```bash
 # Halicin
-ersilia api run -i "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]"
-# also works with the run command directly
 ersilia run -i "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]"
 ```
 
@@ -82,7 +80,7 @@ You can make **multiple predictions** in batch mode. This is typically much fast
 
 ```bash
 # Halicin and Ibuprofen
-ersilia api run -i "['C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]','CC(C)CC1=CC=C(C=C1)C(C)C(=O)O']"
+ersilia run -i "['C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]','CC(C)CC1=CC=C(C=C1)C(C)C(=O)O']"
 ```
 
 This can become impractical and perhaps you prefer to provide an **input file** instead. Let's name this file `input.csv`.
@@ -98,14 +96,14 @@ The terminal command now becomes much cleaner:
 
 ```bash
 # predict using an input file
-ersilia api run -i input.csv
+ersilia run -i input.csv
 ```
 
 By default, predictions are returned in the standard **output** of the terminal. We favour the widely used **JSON format** because it offers great flexibility and interoperability. However, many of the model APIs return an output that can be naturally expressed in tabular format, for example, in a **CSV file**. If this is what you want, simply specify an output file with the `.csv` extension.
 
 ```bash
 # save output in a CSV file
-ersilia api run -i input.csv -o output.csv
+ersilia run -i input.csv -o output.csv
 ```
 
 {% hint style="info" %}
