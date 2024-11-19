@@ -1,7 +1,6 @@
+import os
 from .exceptions import ErsiliaError
 from ...default import AIRTABLE_MODEL_HUB_VIEW_URL
-
-import os
 
 
 def _read_default_fields(field):
@@ -168,6 +167,15 @@ class DockerArchitectureInformationError(ErsiliaError):
         self.message = "Wrong Docker architecture"
         self.hints = "Listed Docker architectures are: {}. If you are considering a Docker architecture that is not in this list, please open a PR on the 'docker_architecture.txt' file in the Ersilia repository".format(
             ", ".join(_read_default_fields("Docker Architecture"))
+        )
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class SecretsInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong Secret"
+        self.hints = "Listed Secrets are: {}. If you are considering a Secret that is not in this list, please open a PR on the 'secrets.txt' file in the Ersilia repository".format(
+            ", ".join(_read_default_fields("Secrets"))
         )
         ErsiliaError.__init__(self, self.message, self.hints)
 

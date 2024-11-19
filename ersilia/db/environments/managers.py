@@ -12,7 +12,7 @@ from ...utils.system import is_inside_docker
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
 from .localdb import EnvironmentDb
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, EOS, DOTENV_FILE
 from ...utils.session import get_session_dir
 from ...utils.logging import make_temp_dir
 
@@ -408,9 +408,40 @@ class DockerManager(ErsiliaBase):
             self.delete_image(img)
 
 
-class CondaManager(object):
-    def __init__(self):
-        pass
+class DotenvManager(ErsiliaBase):
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        self.dotenv_file = os.path.join(EOS, ".env")
+        
+    def _read_dotenv(self):
+        if not os.path.exists(self.dotenv_file):
+            return {}
+        env_dict = {}
+        with open(self.dotenv_file, "r") as f:
+            for l in f:
+                k, v = l.rstrip().split("=")
+                env_dict[k] = v[1:-1]
+        return env_dict
 
-    def environments(self):
-        pass
+    def _write_dotenv(self, env_dict):
+        with open(self.dotenv_file, "w") as f:
+            for k, v in env_dict.items():
+                f.write('{0}="{1}"\n'.format(k, v))
+
+    def insert(self, key, value):
+        env_dict = self._read_dotenv()
+        env_dict[key] = value
+        self._write_dotenv(env_dict)
+
+    def delete(self, key):
+        env_dict = self._read_dotenv()
+        if key in env_dict:
+            del env_dict[key]
+        self._write_dotenv(env_dict)
+
+    def get(self, key):
+        env_dict = self._read_dotenv()
+        if key in env_dict:
+            return env_dict[key]
+        else:
+            return None

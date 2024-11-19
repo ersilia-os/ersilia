@@ -3,15 +3,26 @@
 import os
 import shutil
 import subprocess
-#from dotenv import load_dotenv
-from ...default import DOTENV_FILE
+from ...db.environments.managers import DotenvManager
 from ... import ErsiliaBase
+from ...default import DOTENV_FILE
 
 
-class GetEnvironmentVariable(ErsiliaBase):
-    def __init__(self, config_json=None):
+class GetEnvironmentVariables(ErsiliaBase):
+    def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.model_id = model_id
         self.logger.debug("Environmental variable getter created")
+
+    @staticmethod
+    def _parse_dotenv(dotenv_file):
+        with open(dotenv_file, "r") as f:
+            lines = f.readlines()
+        env_dict = {}
+        for line in lines:
+            key, value = line.split("=")
+            env_dict[key] = value
+        return env_dict
 
     def _get_from_python(self, env):
         return os.environ.get(env)
@@ -20,38 +31,38 @@ class GetEnvironmentVariable(ErsiliaBase):
         return os.system(f"echo ${env}")
     
     def _get_from_dotenv_in_cwd(self, env):
-        #load_dotenv()
-        return os.environ.get(env)
+        dotenv_file = os.path.join(os.getcwd(), DOTENV_FILE)
+        if os.path.exists(dotenv_file):
+            env_dict = self.parse_dotenv(dotenv_file)
+            if env in env_dict:
+                return env_dict[env]
+            else:
+                return None
+        else:
+            return None
     
     def _get_from_dotenv_in_eos(self, env):
-
-        return os.environ.get(env)
+        return DotenvManager().get(env)
     
-    def _get_from_github_secrets(self, env):
-        return
-    
-    def _get_from_bashrc(self, env):
-        pass
-
-    def get(self, env: str):
+    def get_one_variable(self, env):
+        self.logger.debug("Getting environmental variable: {0}".format(env))
         value = self._get_from_python(env)
         if value is not None:
             return value
         value = self._get_from_terminal(env)
         if value is not None:
             return value
-        value = self._get_from_dotenv(env)
+        value = self._get_from_dotenv_in_cwd(env)
         if value is not None:
             return value
-        value = self._get_from_github_secrets(env)
+        value = self._get_from_github_in_eos(env)
         if value is not None:
             return value
-        value = self._get_from_bashrc(env)
-        if value is not None:
-            return value
-    
+        return None
 
-class PutEnvironmentVariable(ErsiliaBase):
+
+# TODO: It is not clear this is what we need or want. We need to discuss this further since, in the case of Docker containers, we will have a risk of exposing secrets.
+class PutEnvironmentVariables(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id

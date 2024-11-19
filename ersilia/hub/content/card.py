@@ -14,6 +14,12 @@ try:
 except ImportError:
     from validators import ValidationError as ValidationFailure
 
+from ... import ErsiliaBase
+from ...utils.terminal import run_command
+from ...auth.auth import Auth
+from ...db.hubdata.interfaces import AirtableInterface
+from ...db.hubdata.json_models_interface import JsonModelsInterface
+
 from ...utils.exceptions_utils.card_exceptions import (
     SlugBaseInformationError,
     IdentifierBaseInformationError,
@@ -37,6 +43,7 @@ from ...utils.exceptions_utils.card_exceptions import (
     S3BaseInformationError,
     BothIdentifiersBaseInformationError,
     MemoryGbBaseInformationError,
+    SecretsInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
 from ...utils.logging import make_temp_dir
@@ -81,6 +88,7 @@ class BaseInformation(ErsiliaBase):
         self._docker_architecture = None
         self._s3 = None
         self._memory_gb = None
+        self._secrets = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -358,6 +366,17 @@ class BaseInformation(ErsiliaBase):
         self._s3 = new_s3_url
 
     @property
+    def secrets(self):
+        return self._secrets
+    
+    @secrets.setter
+    def secrets(self, new_secrets):
+        for d in new_secrets:
+            if d not in self._read_default_fields("Secrets"):
+                raise SecretsInformationError
+        self._docker_architecture = new_secrets
+
+    @property
     def both_identifiers(self):
         model_id = self.identifier
         slug = self.slug
@@ -399,6 +418,7 @@ class BaseInformation(ErsiliaBase):
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
+            "Secrets": self.secrets,
             "Memory Gb": self.memory_gb,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
@@ -430,6 +450,8 @@ class BaseInformation(ErsiliaBase):
             self.docker_architecture = data["Docker Architecture"]
         if "S3" in data:
             self.s3 = data["S3"]
+        if "Secrets" in data:
+            self.secrets = data["Secrets"]
         if "Memory Gb" in data:
             self.memory_gb = data["Memory Gb"]
 
@@ -601,6 +623,11 @@ class ReadmeMetadata(ErsiliaBase):
             text += "* [DockerHub]({0}) ({1})\n".format(
                 d["DockerHub"], ", ".join(d["Docker Architecture"])
             )
+        if "Secrets" in d:
+            text += "## Secrets\n"
+            text += "This model expects the following credentials:\n"
+            for s in d["Secrets"]:
+                text += "* {0}\n".format(s)
         text += "\n"
         text += "## Citation\n\n"
         text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).\n\n".format(

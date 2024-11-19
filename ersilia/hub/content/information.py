@@ -173,10 +173,25 @@ class InformationDisplayer(ErsiliaBase):
         except:
             self.logger.warning("No metadata for Docker slots")
 
+    def _secrets_info(self):
+        try:
+            color = "green"
+            card = self.info_data["card"]
+            secrets = card["Secrets"]
+            text = ":face_without_mouth: Secrets"
+            self._echo(text, fg=color, bold=True)
+            text = "{0}".format(",".join(secrets))
+            self._echo(text, fg=color)
+            text = ""
+            self._echo(text)
+        except:
+            self.logger.warning("No metadata for Docker slots")        
+
     def echo(self):
         self._description_info()
         self._identifiers_info()
         self._code_info()
         self._docker_info()
+        self._secrets_info()
         text = "For more information, please visit https://ersilia.io/model-hub"
         self._echo(text, fg="black")
