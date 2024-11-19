@@ -57,9 +57,4 @@ As part of our mission we provide training in AI and Data Science to researchers
 
 ## Paper-associated analyses and apps
 
-
-
-*
-* sars-cov-2-chemical-space
-* osm...
-* ligand-discovery...
+In addition to our tech stack, we have a number of repositories related to scientific research projects. Those repositories typically contain the necessary data and code to reproduce an analysis reported in a research paper. For a full overview of our research projects and publications please have a look at our [website](https://ersilia.io/publications).&#x20;

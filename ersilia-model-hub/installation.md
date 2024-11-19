@@ -1,5 +1,5 @@
 ---
-description: Ersilia Model Hub installation instructions
+description: Ersilia Model Hub installation instructions for local inference
 ---
 
 # Installation
@@ -38,7 +38,7 @@ sudo apt install build-essential
 
 #### Pre-requisite 2: Python and Conda
 
-We have tested our tools on **Python 3.7** and above. Please make sure you have the right Python installation on your computer. Visit the [official Python site](https://www.python.org) to learn more.
+We have tested our tools on **Python 3.8** and above. Please make sure you have the right Python installation on your computer. Visit the [official Python site](https://www.python.org) to learn more.
 
 Although _not_ strictly necessary, we encourage the use of **Conda environments**. If Conda is available in the local device, the Ersilia tool will try to use it in order to handle dependencies safely and efficiently. Conda can be installed following [these instructions](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html). Many people choose to use [Anaconda](https://docs.anaconda.com/anaconda/install/index.html) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) installers.
 
@@ -101,7 +101,7 @@ Open a terminal and set up a [Conda](https://docs.conda.io/projects/conda/en/lat
 
 ```bash
 # create a conda environment
-conda create -n ersilia python=3.10
+conda create -n ersilia python=3.12
 # activate the environment
 conda activate ersilia
 ```
