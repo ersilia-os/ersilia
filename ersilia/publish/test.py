@@ -289,7 +289,7 @@ class ModelTester(ErsiliaBase):
     - Checks that the model output, output type, output shape is valid
     """
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def check_information(self, output):
 
 
@@ -322,7 +322,7 @@ class ModelTester(ErsiliaBase):
     Runs the model on a single smiles string and prints to the user if no output is specified.
     """
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def check_single_input(self, output):
         session = Session(config_json=None)
         service_class = session.current_service_class()
@@ -343,7 +343,7 @@ class ModelTester(ErsiliaBase):
     to the consol if no output file is specified by the user.
     """
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def check_example_input(self, output):
         session = Session(config_json=None)
         service_class = session.current_service_class()
@@ -375,7 +375,7 @@ class ModelTester(ErsiliaBase):
     
     
     
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def check_consistent_output(self):
         def compute_rmse(y_true, y_pred):
             squared_errors = [(yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)]
@@ -575,7 +575,7 @@ class ModelTester(ErsiliaBase):
         return env_dir
     
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def get_directories_sizes(self):
         self.logger.debug(BOLD + "Calculating model size... " + RESET)
         def log_file_analysis(size, file_types, file_sizes, label):
@@ -620,7 +620,7 @@ class ModelTester(ErsiliaBase):
     }
     
     
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def run_bash(self):
         def updated_read_csv(self, file_path, ersilia_flag = False):
             data = []

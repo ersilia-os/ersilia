@@ -74,7 +74,7 @@ class ModelRegisterer(ErsiliaBase):
         else:
             return None
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def register_from_hosted(self, url=None):
         if url is None:
             url = self._resolve_url()
