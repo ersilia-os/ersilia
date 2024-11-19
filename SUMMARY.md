@@ -4,10 +4,15 @@
 
 * [The Ersilia Open Source Initiative](README.md)
 * [Ten principles](welcome-to-ersilia/ten-principles.md)
-* [Getting started](welcome-to-ersilia/getting-started.md)
+* [Welcome](welcome-to-ersilia/welcome.md)
 
 ## 🚀 Ersilia Model Hub
 
+* [Getting started](ersilia-model-hub/getting-started.md)
+* [Online inference](ersilia-model-hub/online-inference.md)
+* [Local inference](ersilia-model-hub/local-inference.md)
+* [Model Contribution](ersilia-model-hub/model-contribution.md)
+* [Developer Docs](ersilia-model-hub/developer-docs.md)
 * [What is the Ersilia Model Hub?](ersilia-model-hub/introduction.md)
 * [Installation](ersilia-model-hub/installation.md)
 * [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
