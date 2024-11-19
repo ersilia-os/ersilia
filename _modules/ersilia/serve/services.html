@@ -660,7 +660,7 @@
                 <span class="k">return</span> <span class="n">env</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dr</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dr</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
@@ -844,7 +844,7 @@
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dr</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dr</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
@@ -906,7 +906,7 @@
                 <span class="n">container</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Container removed&quot;</span><span class="p">)</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">APIS_LIST_FILE</span>

@@ -204,7 +204,7 @@
             <span class="k">return</span>
         <span class="k">return</span> <span class="n">md</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>  <span class="c1"># TODO Account for mixed types</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_get_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
         <span class="n">input_schema</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="n">output_schema</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -285,7 +285,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done with the schema!&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">schema</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_get_schema_type_for_simple_run_api_case</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># read metadata</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -335,7 +335,7 @@
                 <span class="k">return</span> <span class="n">shape</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">sniff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sniffing model&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting model size&quot;</span><span class="p">)</span>

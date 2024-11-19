@@ -89,7 +89,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ai</span> <span class="o">=</span> <span class="n">AirtableInterface</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">HOSTED_URL_FIELD</span> <span class="o">=</span> <span class="s2">&quot;Host URL&quot;</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_hosted_urls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ai</span><span class="o">.</span><span class="n">items_all</span><span class="p">():</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>

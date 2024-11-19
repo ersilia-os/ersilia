@@ -364,7 +364,7 @@
 <span class="sd">    - Checks that the model output, output type, output shape is valid</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
 
 
@@ -397,7 +397,7 @@
 <span class="sd">    Runs the model on a single smiles string and prints to the user if no output is specified.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_single_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
@@ -418,7 +418,7 @@
 <span class="sd">    to the consol if no output file is specified by the user.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_example_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
@@ -450,7 +450,7 @@
     
     
     
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_consistent_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">compute_rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
             <span class="n">squared_errors</span> <span class="o">=</span> <span class="p">[(</span><span class="n">yt</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)]</span>
@@ -665,7 +665,7 @@
         <span class="k">return</span> <span class="n">env_dir</span>
     
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get_directories_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;Calculating model size... &quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">log_file_analysis</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">file_types</span><span class="p">,</span> <span class="n">file_sizes</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
@@ -710,7 +710,7 @@
     <span class="p">}</span>
     
     
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">run_bash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">updated_read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">ersilia_flag</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>

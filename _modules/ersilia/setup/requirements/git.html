@@ -86,7 +86,7 @@
     <span class="k">def</span> <span class="nf">__ini__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;gh&quot;</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">install_if_necessary</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">check</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;gh&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;GitHub&quot;</span> <span class="ow">in</span> <span class="n">check</span><span class="p">:</span>
@@ -114,7 +114,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;git-lfs&quot;</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">install_if_necessary</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">check</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;git-lfs&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">check</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git-lfs&quot;</span><span class="p">):</span>

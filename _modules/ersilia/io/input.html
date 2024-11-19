@@ -294,7 +294,7 @@
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_flatten</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_pair_of_lists</span>
 
-    <span class="nd">@throw_ersilia_exception</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NullModelIdentifierError</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
