@@ -18,14 +18,14 @@ Please ensure you understand the output of each model before using it. For examp
 
 The molecules must be displayed in SMILES notation. You can use [PubChem](https://pubchem.ncbi.nlm.nih.gov/) to find the SMILES notation of a given compound, simply look for the compound name on the search bar (for example, aspirin), select the best result and scroll to the SMILES section under Name and Identifier (in this case; CC(=O)OC1=CC=CC=C1C(=O)O). If your starting input data is an `.sdf` file, use your preferred visualiser, like ChemDraw, to open the molecule and obtain its SMILES representation. You can also use free software like [Marvin.js](https://marvinjs-demo.chemaxon.com/latest/demo.html) to draw a molecule and then simply click on save 💾 it as a SMILES.
 
-Collect your list of SMILES in a .csv or .txt file.
+Collect your list of SMILES in a `.csv` or `.txt` file.
 
 ## 3. Run predictions & download results
 
 Go to our [online inference app](https://ersilia-self-service.streamlit.app/) and select your model of choice from the drop down list. Copy the list of SMILES (maximum allowed 100 molecules) and click on Run Predictions. Wait a few minutes to download your results!
 
 {% hint style="info" %}
-If you wish to run larger annotations, for example running several models against a database of >1k molecules, please contact Ersilia directly to obtain a customised solution: [hello@ersilia.io](mailto:hello@ersilia.io)
+If you wish to run larger annotations, for example running several models against a database of >1k molecules, please contact Ersilia directly to obtain a customised solution: hello@ersilia.io
 {% endhint %}
 
 ## 4. Check your predictions
