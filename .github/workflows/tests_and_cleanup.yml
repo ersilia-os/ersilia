@@ -86,11 +86,12 @@ jobs:
     strategy:
       matrix:
         session:  
-          - group1: [setup, test_from_github]
-          - group2: [setup, test_from_dockerhub]
-          - group3: [setup, test_auto_fetcher_decider]
-          - group4: [setup, test_fetch_multiple_models, test_serve_multiple_models]
-          - group5: [setup, test_conventional_run]
+          - group0: [setup]
+          - group1: [test_from_github]
+          - group2: [test_from_dockerhub]
+          - group3: [test_auto_fetcher_decider]
+          - group4: [test_fetch_multiple_models, test_serve_multiple_models]
+          - group5: [test_conventional_run]
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
 
