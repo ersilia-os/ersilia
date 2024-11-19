@@ -85,19 +85,12 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        group:
-          - name: group0
-            sessions: ["setup"]
-          - name: group1
-            sessions: ["test_from_github"]
-          - name: group2
-            sessions: ["test_from_dockerhub"]
-          - name: group3
-            sessions: ["test_auto_fetcher_decider"]
-          - name: group4
-            sessions: ["test_fetch_multiple_models", "test_serve_multiple_models"]
-          - name: group5
-            sessions: ["test_conventional_run"]
+        session:  
+          - setup
+          - test_from_github
+          - test_from_dockerhub
+          - test_auto_fetcher_decider
+          - test_conventional_run
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
 
@@ -135,11 +128,9 @@ jobs:
 
       - name: Run CLI Test
         run: |
-          source activate
-          for session in ${{ toJson(matrix.group.sessions) }}; do
-              echo "Running session: $session"
-              nox -s $session
-            done
+          source activate            
+          nox -f test/playground/noxfile.py -s ${{ matrix.session }}
+          nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
 
   test-colab-notebook:
     runs-on: ubuntu-22.04
