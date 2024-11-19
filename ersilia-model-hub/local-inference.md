@@ -65,72 +65,38 @@ Each model is identified by:
 * Slug: 1-3 word reference for the model
 * Title: brief description of the model
 
-In this case example, we show how to run predictions based on the AI/ML model developed in the paper _Retrosynthetic accessibility score (RAscore) – rapid machine learned synthesizability classification from AI driven retrosynthetic planning_ by [Thakkar et al, 2021](http://dx.doi.org/10.1039/D0SC05401A). The RA score is particularly useful to pre-screen large libraries of compounds, for example those produced by generative models.
+Throughout this documentation, we will use the model eos2r5a (retrosynthetic-accessibility) as an example. This model has been incorporated from the paper _Retrosynthetic accessibility score (RAscore) – rapid machine learned synthesizability classification from AI driven retrosynthetic planning_ by [Thakkar et al, 2021](http://dx.doi.org/10.1039/D0SC05401A). The RA score is particularly useful to pre-screen large libraries of compounds, for example those produced by generative models.
 
-## Use model through CLI
+To use a model, there are a few basic commands:
 
-### Fetch model and install it locally
-
-The first step is to download the model to your local device and install it along with its dependencies. By default, a `~/eos` directory (for Ersilia Open Source) will be created in your `HOME`. This folder will contain all fetched models along with additional files to manage the AI/ML content available locally.
-
-To download and install the RA Score prediction model, simply use the `fetch` command. In the Ersilia Model Hub, the RA Score prediction model has the **identifier** `eos2r5a`  and the **slug** `retrosynthetic-accessibility`. You can use either one to refer to this model all of the commands below
-
-```bash
-# fetch model from remote repository using slug ...
-ersilia fetch retrosynthetic-accessibility
-# ... or using ersilia identifier
+```
 ersilia fetch eos2r5a
+ersilia serve eos2r5a
+ersilia run -i input.csv -o output.csv
+ersilia close
 ```
 
-### Get model information
+The fetch command will download the model from DockerHub. Please make sure to have docker active in your system before fetching a model. The serve command will bring it alve anytime you want to use it, and with the run command you can pass the desired input and output files. Finally, close the model.
 
-Once the model is downloaded, you can get more information through the model card:
+### Input and output
 
-```bash
-# display model card using slug...
-ersilia card retrosynthetic-accessibility
-# ... or using ersilia identifier
-ersilia card eos2r5a
-```
+The Ersilia Model Hub takes **chemical structures** as input, which should be specified as SMILES strings. To obtain the SMILES string of your compounds, you can use resources like PubChem. Ersilia also accepts InChIKey as molecular identifiers instead of SMILES.
 
-{% hint style="info" %}
-We do our best to keep the user away from the [dependency hell](https://en.wikipedia.org/wiki/Dependency\_hell). Models are **automatically** installed with the necessary degree of isolation from the system. All models are available through GitHub and also as Docker Images
-{% endhint %}
-
-### Serve model
-
-Once the model has been fetched, it should be ready to be used. A model in the Ersilia Model Hub can be thought of as a set of APIs. You can serve the model like this:
-
-```bash
-# serve model
-ersilia serve retrosynthetic-accessibility
-```
-
-A URL will be prompted as well as a process id (PID). These can be relevant if you are an advanced user and want to have low-level control of the tool. The most important is, however, the list of **available APIs**. By default, all models use the `run` API.
-
-### Make predictions
-
-The RA Score prediction model takes **chemical structures** as input and provides a score (ranging from 0 to 1). The higher the score, the more synthetically accessible the molecule is predicted to be.
-
-Ideally, in the chemistry models, the input molecules are specified as **SMILES** strings. SMILES strings can be easily found online. For instance, we can find an antibiotic, Halicin, in [PubChem](https://pubchem.ncbi.nlm.nih.gov/compound/Halicin#section=Canonical-SMILES), and then predict its retrosynthetic accessibility as follows:
+The SMILES can be passed directly to the CLI:
 
 ```bash
 # Halicin
 ersilia run -i "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]"
 ```
 
-{% hint style="warning" %}
-It is also possible to use [InChIKey](https://pubchem.ncbi.nlm.nih.gov/compound/Halicin#section=InChI-Key) or even molecule name (through the [Chemical Identifier Resolver](https://cactus.nci.nih.gov/chemical/structure)) instead of SMILES. Ersilia will take care of this automatically. However, please take into account that this requires an internet connection and will slow down the process, as requests to external tools are necessary.
-{% endhint %}
-
-You can make **multiple predictions** in batch mode. This is typically much faster than running predictions one by one in a loop. For instance, we can predict the RA Score of Halicin and [Ibuprofen](https://pubchem.ncbi.nlm.nih.gov/compound/Ibuprofen#section=Canonical-SMILES).
+You can make **multiple predictions** in batch mode. This is typically much faster than running predictions one by one in a loop:
 
 ```bash
 # Halicin and Ibuprofen
 ersilia run -i "['C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]','CC(C)CC1=CC=C(C=C1)C(C)C(=O)O']"
 ```
 
-This can become impractical and perhaps you prefer to provide an **input file** instead. Let's name this file `input.csv`.
+The easiest, though, is to provide an input file instead. A simple .csv file with one column is sufficient.
 
 {% code title="input.csv" %}
 ```bash
@@ -138,8 +104,6 @@ C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]
 CC(C)CC1=CC=C(C=C1)C(C)C(=O)O
 ```
 {% endcode %}
-
-The terminal command now becomes much cleaner:
 
 ```bash
 # predict using an input file
@@ -153,17 +117,15 @@ By default, predictions are returned in the standard **output** of the terminal.
 ersilia run -i input.csv -o output.csv
 ```
 
-{% hint style="info" %}
-At the moment, the available formats are JSON (`.json`), CSV (`.csv`), TSV (`.tsv`) and HDF5 (`.h5`). The latter is appropriate for large-scale numerical data and is relevant for the lake of pre-computed predictions available in the [Isaura](https://github.com/ersilia-os/isaura) resource.
-{% endhint %}
+### Other interesting commands
 
-### Close model
-
-Once you are done with predictions, it is advised to stop the model server:
+You can also get more information through the model card:
 
 ```bash
-# close model
-ersilia close
+# display model card using slug...
+ersilia catalog --card retrosynthetic-accessibility
+# ... or using ersilia identifier
+ersilia catalog --card eos2r5a
 ```
 
 ### Delete model
