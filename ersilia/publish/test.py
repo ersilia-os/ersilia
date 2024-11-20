@@ -1,6 +1,5 @@
-from .test_services import IOService, CheckService, RunnerService
+from test_services import IOService, CheckService, RunnerService
 from .. import ErsiliaBase
-from ..utils.logging import logger
 
 
 class ModelTester(ErsiliaBase):
