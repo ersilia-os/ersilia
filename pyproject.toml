@@ -62,12 +62,13 @@ fuzzywuzzy = { version = "^0.18.0", optional = true }
 sphinx = { version = ">=6.0.0", optional = true }           # for minimum version and support for Python 3.10
 jinja2 = { version = "^3.1.2", optional = true }
 scipy = { version = "<=1.10.0", optional = true }
+rich = { version = "*", optional = true }
 
 [tool.poetry.extras]
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 lake = ["isaura"]
 docs = ["sphinx", "jinja2"]
-test = ["pytest", "pytest-asyncio", "pytest-benchmark", "fuzzywuzzy", "scipy"]
+test = ["pytest", "pytest-asyncio", "pytest-benchmark", "fuzzywuzzy", "scipy", "nox"]
 #all = [lake, docs, test]
 
 [tool.poetry.scripts]

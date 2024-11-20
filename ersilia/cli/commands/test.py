@@ -1,23 +1,9 @@
-import os
 import click
-import json
-import tempfile
-
 from ...cli import echo
 from . import ersilia_cli
-from ersilia.cli.commands.run import run_cmd
-from ersilia.core.base import ErsiliaBase
 from ...publish.test import ModelTester
 
-from ersilia.utils.exceptions_utils import throw_ersilia_exception
-
-from ersilia.utils.exceptions_utils.test_exceptions import WrongCardIdentifierError
-
-from ersilia.default import INFORMATION_FILE
-
-
 def test_cmd():
-    """Test a model"""
 
     # Example usage: ersilia test {MODEL}
     @ersilia_cli.command(
@@ -26,19 +12,58 @@ def test_cmd():
     )
     @click.argument("model", type=click.STRING)
     @click.option(
-        "-o", "--output", "output", required=False, default=None, type=click.STRING
+        "-e", 
+        "--env", 
+        "env", 
+        required=False, 
+        default=None, 
+        type=click.STRING
     )
-    def test(model, output):
-        mdl = ModelTester(model)
-        model_id = mdl.model_id
-
-        if model_id is None:
-            echo(
-                "No model seems to be served. Please run 'ersilia serve ...' before.",
-                fg="red",
-            )
-            return
-
-        mt = ModelTester(model_id=model_id)
-        # click.echo("Checking model information")
-        mt.run(output)  # pass in the output here
+    @click.option(
+        "-t", 
+        "--type", 
+        "type", 
+        required=False, 
+        default=None, 
+        type=click.STRING
+    )
+    @click.option(
+        "-l", 
+        "--level", 
+        "level", 
+        required=False, 
+        default=None, 
+        type=click.STRING
+    )
+    @click.option(
+        "-d", 
+        "--dir", 
+        "dir", 
+        required=False, 
+        default=None, 
+        type=click.STRING
+    )
+    @click.option(
+        "-o", 
+        "--output", 
+        "output", 
+        required=False, 
+        default=None, 
+        type=click.STRING
+    )
+    def test(
+        model, 
+        env, 
+        type, 
+        level,
+        dir, 
+        output
+      ):
+        mt = ModelTester(
+            model_id=model,
+            env=env, 
+            type=type, 
+            level=level, 
+            dir=dir
+        )
+        mt.run(output)  
