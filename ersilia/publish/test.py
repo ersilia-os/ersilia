@@ -1,4 +1,13 @@
-from test_services import IOService, CheckService, RunnerService
+import importlib
+
+def get_service_class(class_name):
+    module = importlib.import_module('ersilia.publish.test_services')
+    return getattr(module, class_name)
+
+IOService = get_service_class('IOService')
+CheckService = get_service_class('CheckService')
+RunnerService = get_service_class('RunnerService')
+
 from .. import ErsiliaBase
 
 

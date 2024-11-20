@@ -850,7 +850,7 @@ class RunnerService:
         return similarity >= threshold
 
 
-    def make_output(self, time, model_size):
+    def make_output(self, time):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.information_check = self.checkup_service.information_check
         self.single_input = self.checkup_service.single_input
@@ -858,7 +858,6 @@ class RunnerService:
         self.consistent_output = self.checkup_service.consistent_output
         data = [
             ("Date and Time Run", timestamp),
-            ("Model Size (MB)", model_size),
             ("Time to Run Tests (seconds)", time),
             ("Basic Checks Passed", self.information_check),
             ("Single Input Run Without Error", self.single_input),
@@ -925,7 +924,7 @@ class RunnerService:
                 self.run_bash()
             et = time.time()
             elapsed = et - st
-            self.make_output(elapsed, model_size)
+            self.make_output(elapsed)
 
         except Exception as e:
             click.echo(f"❌ An error occurred: {e}")
