@@ -83,14 +83,6 @@ jobs:
 
   run-pytest:
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        session:  
-          - setup
-          - test_from_github
-          - test_from_dockerhub
-          - test_auto_fetcher_decider
-          - test_conventional_run
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
 
