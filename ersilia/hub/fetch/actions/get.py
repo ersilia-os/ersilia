@@ -259,7 +259,7 @@ class ModelRepositoryGetter(BaseAction):
             else:
                 self.logger.debug("Example file {0} does not exist".format(file_name))
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
         folder = self._model_path(self.model_id)
@@ -308,7 +308,7 @@ class ModelParametersGetter(BaseAction):
         model_path = self._model_path(self.model_id)
         return os.path.join(model_path, MODEL_DIR)
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def get(self):
         """Create a ./model folder in the model repository"""
         model_path = self._model_path(self.model_id)
@@ -350,7 +350,7 @@ class ModelGetter(BaseAction):
     def _get_model_parameters(self):
         self.mpg.get()
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def get(self):
         self.logger.debug("Getting repository")
         self._get_repository()

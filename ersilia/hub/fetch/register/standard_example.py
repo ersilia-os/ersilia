@@ -18,7 +18,7 @@ class ModelStandardExample(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception(exit=False)
     def _check_file_exists(self, output_csv):
         if not os.path.exists(output_csv):
             raise StandardModelExampleError(

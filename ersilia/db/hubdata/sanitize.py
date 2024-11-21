@@ -14,7 +14,7 @@ class AirtableSanitizer(ErsiliaBase):
         self.ai = AirtableInterface(config_json=self.config_json)
         self.HOSTED_URL_FIELD = "Host URL"
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def check_hosted_urls(self):
         for record in self.ai.items_all():
             fields = record["fields"]
