@@ -184,7 +184,7 @@ class CompoundIdentifier(object):
                     logger.info("Inchikey converted using PUBCHEM")
 
             if inchikey is None:
-                inchikey = self._nci_smiles_to_inchikey(smiles)
+                inchikey = self._nci_smiles_to_inchikey(session, smiles)
                 if inchikey:
                     logger.info("Inchikey converted using NCI")
 
