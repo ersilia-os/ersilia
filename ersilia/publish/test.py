@@ -12,7 +12,7 @@ from collections import defaultdict
 from datetime import datetime
 
 from ersilia.utils.conda import SimpleConda
-from .. import ErsiliaModel, throw_ersilia_exception, ErsiliaBase
+from .. import ErsiliaModel, ErsiliaBase, throw_ersilia_exception
 from ..hub.fetch.fetch import ModelFetcher
 from ..cli import echo
 from ..core.session import Session
@@ -21,7 +21,6 @@ from ..io.input import ExampleGenerator
 from ..utils.exceptions_utils import test_exceptions as texc
 from ..utils.terminal import run_command_check_output
 
-# Check if we have the required imports in the environment
 MISSING_PACKAGES = False
 try:
     from scipy.stats import spearmanr
@@ -32,12 +31,11 @@ try:
 except ImportError:
     MISSING_PACKAGES = True
 
-RUN_FILE = "run.sh"
-DATA_FILE = "data.csv"
+RUN_FILE    = "run.sh"
+DATA_FILE   = "data.csv"
 NUM_SAMPLES = 5
-BOLD = "\033[1m"
-RESET = "\033[0m"
-BASE = "base"
+BOLD        = "\033[1m"
+BASE        = "base"
 
 TEST_MESSAGES = {
         "pkg_err": "Missing packages required for testing. \
@@ -179,19 +177,19 @@ class IOService:
 
     @throw_ersilia_exception()
     def get_directories_sizes(self):
-        self.logger.debug(BOLD + "Calculating model size... " + RESET)
+        self.logger.debug("Calculating model size")
 
-        def format_size(size_in_bytes):
-            if size_in_bytes < 1024:
-                return f"{size_in_bytes}B"  # Bytes
-            size_kb = size_in_bytes / 1024
-            if size_kb < 1024:
-                return f"{size_kb:.2f}KB"   # Kilobytes
-            size_mb = size_kb / 1024
-            if size_mb < 1024:
-                return f"{size_mb:.2f}MB"   # Megabytes
-            size_gb = size_mb / 1024
-            return f"{size_gb:.2f}GB"       # Gigabytes
+        def format_size(szb):
+            if szb < 1024:
+                return f"{szb}B"         # Bytes
+            szkb = szb / 1024
+            if szkb < 1024:
+                return f"{szkb:.2f}KB"   # Kilobytes
+            szmb = szkb / 1024
+            if szmb < 1024:
+                return f"{szmb:.2f}MB"   # Megabytes
+            szgb = szmb / 1024
+            return f"{szgb:.2f}GB"       # Gigabytes
 
         def get_directory_size(directory, include_symlinks=True):
             if not directory or not os.path.exists(directory):
@@ -222,28 +220,23 @@ class IOService:
             "env_dir": (self._get_environment_location(), True),
         }
 
-        total_size = 0
-        directory_sizes = {}
+        total, directory_sizes = 0, {}
 
         for label, (directory, include_symlinks) in directories.items():
-            size, file_types, _ = get_directory_size(
+            size, _ , _ = get_directory_size(
                 directory=directory, 
                 include_symlinks=include_symlinks
             )
-            formatted_size = format_size(size)
-            directory_sizes[label] = formatted_size
-            total_size += size
+            size = format_size(size)
+            directory_sizes[label] = size
+            total += size
 
-        total_size_formatted = format_size(total_size)
+        formatted = format_size(total)
 
-        self.logger.debug(BOLD + "Model Size Breakdown:" + RESET)
-        self.logger.debug(f"Total: {total_size_formatted}")
-
-        self.logger.debug("Sizes of directories:")
         for label, size in directory_sizes.items():
             self.logger.debug(f"{label}: {size}")
 
-        self.model_size = total_size_formatted
+        self.model_size = formatted
         return directory_sizes
 
 
@@ -364,13 +357,13 @@ class CheckService:
 
 
     def _check_model_input(self, data):
-        self.logger.debug("Checking model input...")
+        self.logger.debug("Checking model input")
         valid_inputs = [{"Compound"}, {"Protein"}, {"Text"}]
         if set(data["card"]["Input"]) not in valid_inputs:
             raise texc.InvalidEntry("Input")
 
     def _check_model_input_shape(self, data):
-        self.logger.debug("Checking model input shape...")
+        self.logger.debug("Checking model input shape")
         valid_input_shapes = {
             "Single", 
             "Pair", 
@@ -462,10 +455,7 @@ class CheckService:
 
     @throw_ersilia_exception()
     def check_information(self, output):
-        self.logger.debug("Checking that model information is correct")
-        self.logger.debug(
-            BOLD + f"Beginning checks for {self.model_id} model information:" + RESET
-        )
+        self.logger.debug(f"Beginning checks for {self.model_id} model information")
         file = os.path.join(
             self._dest_dir, 
             self.model_id, 
@@ -492,7 +482,7 @@ class CheckService:
 
         input_smiles = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
 
-        self.logger.debug(BOLD + "Testing model on single smiles input...\n" + RESET)
+        self.logger.debug("Testing model on single smiles input")
         fetch_and_serve()
         result = run_model(
             input=input_smiles, 
@@ -514,10 +504,7 @@ class CheckService:
             try_predefined=False
         )
 
-        self.logger.debug(
-            BOLD + "\nTesting model on input of 5 smiles given by 'example' command...\n" + RESET
-        )
-        self.logger.debug(f"This is the input: {input_samples}")
+        self.logger.debug("Testing model on input of 5 smiles given by 'example' command")
 
         result = run_model(
             input=input_samples, 
@@ -585,9 +572,7 @@ class CheckService:
             except (ValueError, TypeError):
                 return False
             
-
-
-        self.logger.debug(BOLD + "\nConfirming model produces consistent output..." + RESET)
+        self.logger.debug("Confirming model produces consistent output...")
 
         input_samples = run_example(
             n_samples=NUM_SAMPLES, 
@@ -868,7 +853,11 @@ class RunnerService:
         
         headers = ["Check Type", "Status"]
         
-        self.ios_service._generate_table("Test Run Summary", headers, data)
+        self.ios_service._generate_table(
+            "Test Run Summary", 
+            headers, 
+            data
+        )
 
     def run(self, output_file=None):
         if MISSING_PACKAGES:
@@ -876,7 +865,8 @@ class RunnerService:
 
         if not output_file:
             output_file = os.path.join(
-                self._model_path(self.model_id), "result.csv"
+                self._model_path(self.model_id), 
+                "result.csv"
             )
 
         st = time.time()
@@ -909,7 +899,11 @@ class RunnerService:
                 self.ios_service._generate_table(
                     title="Runner Checkup Status",
                     headers=["Runner", "Status"],
-                    rows=[["Fetch", "[green]✔[/green]"], ["Serve", "[green]✔[/green]"], ["Run", "[green]✔[/green]"]]
+                    rows=[
+                        ["Fetch", "[green]✔[/green]"], 
+                        ["Serve", "[green]✔[/green]"], 
+                        ["Run", "[green]✔[/green]"]
+                    ]
                 )
                 self.checkup_service.check_example_input(
                     output_file, 
@@ -920,7 +914,6 @@ class RunnerService:
                     self.run_exampe,
                     self.run_model
                 )
-                model_size = self.ios_service.model_size
                 self.run_bash()
             et = time.time()
             elapsed = et - st
