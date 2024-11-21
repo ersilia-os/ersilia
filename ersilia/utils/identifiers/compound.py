@@ -56,6 +56,8 @@ class CompoundIdentifier(object):
         return h.lower() in self.key_header_synonyms
 
     def _is_smiles(self, text):
+        if not isinstance(text, str) or not text.strip():
+            return False  
         if self.Chem is None:
             return asyncio.run(self._process_pubchem_inchikey(text)) is not None
         else:
