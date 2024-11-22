@@ -18,6 +18,7 @@ from ....utils.exceptions_utils.fetch_exceptions import (
 from .template_resolver import TemplateResolver
 
 from ....default import S3_BUCKET_URL_ZIP, PREDEFINED_EXAMPLE_FILES
+from ....utils.paths import get_metadata_from_base_dir
 from ....utils.logging import make_temp_dir
 
 MODEL_DIR = "model"
@@ -49,10 +50,16 @@ class ServiceCreator(ErsiliaBase):
         src_dir = os.path.join(self.dest_dir, "src")
         if not os.path.exists(src_dir):
             os.mkdir(src_dir)
-        content = read_file_from_path(
-            os.path.join(ROOT, "..", "inner_template", "src", "service.py")
-        )
-        output_type = read_metadata_section("Output Type")
+        
+        with open(os.path.join(self.dest_dir, "src", "service.py"), "r") as f:
+            content = f.read()
+        
+        
+        try:
+            metadata = get_metadata_from_base_dir(self.dest_dir)
+            output_type = metadata["Output Type"]
+        except (FileNotFoundError, KeyError):
+            output_type = None
         outcome_line_index = -1
         splited = content.splitlines()
         for i, line in enumerate(splited):
@@ -65,7 +72,9 @@ class ServiceCreator(ErsiliaBase):
                 "Float", "String"
             )
         output = "\n".join(splited)
-        write_content(output, "src/service.py")
+        file_path = os.path.join(self.dest_dir, "src", "service.py")
+        with open(file_path, "w") as f:
+            f.write(output)
 
 
 class DockerfileCreator(ErsiliaBase):
@@ -78,10 +87,13 @@ class DockerfileCreator(ErsiliaBase):
         self.logger.debug(
             "Creating Dockerfile for internal usage from a config.yml file"
         )
-        read_metadata_section
-        docker_file = read_file_from_path("Dockerfile")
+        file_path = os.path.join(self.dest_dir, "Dockerfile")
+        with open(file_path, "r") as f:
+            docker_file = f.read()
+
         updated = self._append_commands_to_dockerfile(self.commands, docker_file)
-        write_content("Docker", updated)
+        with open(file_path, "w") as f:
+            f.write(updated)
 
     def _append_commands_to_dockerfile(self, commands, dockerfile_content):
         run_section_end_line = -1
@@ -150,39 +162,6 @@ class TemplatePreparer(BaseAction):
         self._create_pack()
         self._create_dockerfile()
         self._create_service()
-
-
-def read_metadata_section(key):
-    metadata_file = "metadata.json"
-    ##TODO. Ask when where to locate the metadata.
-    with open(metadata_file, "r") as file:
-        data = json.load(file)
-    if key not in data:
-        raise BaseException(f"The key {key} does not exist in the metadata")
-    return data[key]
-
-
-def read_config_yaml_section(key):
-    # TODO. Ask where to located the config.yml
-    yaml_file = "config.yaml"
-    with open(yaml_file, "r") as file:
-        data = yaml.safe_load(file)
-    if key not in data:
-        raise BaseException(f"The key {key} is not in the metadata ")
-    return data[key]
-
-
-##TODO - Ask where to put the files. Do we create a class for them?
-def read_file_from_path(file_path):
-    with open(os.path.join(ROOT, file_path), "r") as file:
-        content = file.read()
-    return content
-
-
-def write_content(file_path, content):
-    with open(os.path.abspath(file_path), "w") as file:
-        file.writelines(content)
-
 
 class ModelRepositoryGetter(BaseAction):
     def __init__(
@@ -280,7 +259,7 @@ class ModelRepositoryGetter(BaseAction):
             else:
                 self.logger.debug("Example file {0} does not exist".format(file_name))
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def get(self):
         """Copy model repository from local or download from S3 or GitHub"""
         folder = self._model_path(self.model_id)
@@ -329,7 +308,7 @@ class ModelParametersGetter(BaseAction):
         model_path = self._model_path(self.model_id)
         return os.path.join(model_path, MODEL_DIR)
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def get(self):
         """Create a ./model folder in the model repository"""
         model_path = self._model_path(self.model_id)
@@ -371,7 +350,7 @@ class ModelGetter(BaseAction):
     def _get_model_parameters(self):
         self.mpg.get()
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def get(self):
         self.logger.debug("Getting repository")
         self._get_repository()

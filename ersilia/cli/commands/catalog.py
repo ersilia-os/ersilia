@@ -74,9 +74,12 @@ def catalog_cmd():
             return
         if local is True and browser is True:
             click.echo(
-                "You cannot show the local model catalog in the browser",
-                fg="red",
+                click.style(
+                    "You cannot show the local model catalog in the browser",
+                    fg="red",
+                )
             )
+            return
         if more:
             only_identifier = False
         else:

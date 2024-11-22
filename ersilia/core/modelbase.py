@@ -5,6 +5,7 @@ from .. import ErsiliaBase
 from ..hub.content.slug import Slug
 from ..hub.fetch import STATUS_FILE, DONE_TAG
 from ..default import IS_FETCHED_FROM_DOCKERHUB_FILE
+from ..utils.paths import get_metadata_from_base_dir
 
 from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
 from .. import throw_ersilia_exception
@@ -13,7 +14,7 @@ from .. import throw_ersilia_exception
 class ModelBase(ErsiliaBase):
     """Base class of a Model."""
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def __init__(self, model_id_or_slug=None, repo_path=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         if model_id_or_slug is None and repo_path is None:
@@ -47,17 +48,15 @@ class ModelBase(ErsiliaBase):
         return os.path.basename(os.path.abspath(repo_path)).rstrip("/")
 
     def _get_slug_if_available(self, repo_path):
-        metadata_json = os.path.join(repo_path, "metadata.json")
-        if os.path.exists(metadata_json):
-            with open(metadata_json, "r") as f:
-                data = json.load(f)
-            slug = data["Slug"]
-            if slug == "":
-                return None
-            else:
-                return slug
-        else:
+        try:
+            data = get_metadata_from_base_dir(repo_path)
+        except FileNotFoundError:
             return None
+        slug = data["Slug"]
+        if slug == "":
+            return None
+        else:
+            return slug
 
     def is_valid(self):
         if self.model_id is None or self.slug is None:

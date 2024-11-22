@@ -74,7 +74,7 @@ class ModelSniffer(BaseAction):
         mbytes = size / (1024**2)
         return mbytes
 
-    @throw_ersilia_exception
+    @throw_ersilia_exception()
     def sniff(self):
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")

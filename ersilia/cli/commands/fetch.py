@@ -12,7 +12,8 @@ def fetch_cmd():
     """Create fetch commmand"""
 
     def _fetch(mf, model_id):
-        asyncio.run(mf.fetch(model_id))
+        res = asyncio.run(mf.fetch(model_id))
+        return res
 
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
@@ -22,7 +23,6 @@ def fetch_cmd():
         "an EOS folder, then packed to a BentoML bundle",
     )
     @click.argument("model", type=click.STRING)
-    @click.option("--repo_path", "-r", default=None, type=click.STRING)
     @click.option("--mode", "-m", default=None, type=click.STRING)
     @click.option("--dockerize/--not-dockerize", default=False)
     @click.option(
@@ -77,7 +77,6 @@ def fetch_cmd():
     )
     def fetch(
         model,
-        repo_path,
         mode,
         dockerize,
         overwrite,
@@ -92,11 +91,9 @@ def fetch_cmd():
     ):
         if with_bentoml and with_fastapi:
             raise Exception("Cannot use both BentoML and FastAPI")
-        if repo_path is not None:
-            mdl = ModelBase(repo_path=repo_path)
-        elif from_dir is not None:
+
+        if from_dir is not None:
             mdl = ModelBase(repo_path=from_dir)
-            repo_path = from_dir
         else:
             mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id
@@ -105,7 +102,7 @@ def fetch_cmd():
             fg="blue",
         )
         mf = ModelFetcher(
-            repo_path=repo_path,
+            repo_path=from_dir,
             mode=mode,
             dockerize=dockerize,
             overwrite=overwrite,
@@ -118,5 +115,9 @@ def fetch_cmd():
             hosted_url=from_url,
             local_dir=from_dir,
         )
-        _fetch(mf, model_id)
-        echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
+        is_fetched = _fetch(mf, model_id)
+
+        if is_fetched:
+            echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
+        else:
+            echo(":thumbs_down: Model {0} failed to fetch!".format(model_id), fg="red")

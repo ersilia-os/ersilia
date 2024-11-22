@@ -52,6 +52,7 @@ from ...default import (
     INFORMATION_FILE,
     METADATA_YAML_FILE,
 )
+from ...utils.paths import get_metadata_from_base_dir
 
 
 class BaseInformation(ErsiliaBase):
@@ -628,13 +629,11 @@ class MetadataCard(ErsiliaBase):
         if model_id is not None:
             dest_dir = self._model_path(model_id=model_id)
             self.logger.debug("Trying to get metadata from: {0}".format(dest_dir))
-            metadata_json = os.path.join(dest_dir, METADATA_JSON_FILE)
-            if os.path.exists(metadata_json):
-                with open(metadata_json, "r") as f:
-                    data = json.load(f)
-                return data
-            else:
+            try:
+                data = get_metadata_from_base_dir(dest_dir)
+            except FileNotFoundError:
                 return None
+            return data
         else:
             return
 

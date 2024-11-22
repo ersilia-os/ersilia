@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3
       with:
@@ -35,7 +35,7 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3
       with:
@@ -60,7 +60,7 @@ jobs:
       run:
         shell: bash -el {0}
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -84,7 +84,7 @@ jobs:
   run-pytest:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
 
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
@@ -201,7 +201,7 @@ jobs:
   test-colab-notebook:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
 
@@ -230,7 +230,7 @@ jobs:
           #jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-python-api.ipynb --output=output-python-api.ipynb --ExecutePreprocessor.timeout=-1
 
       - name: Upload Output of the Google Colab Notebook CLI
-        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # pin@v4.4.0
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
         with:
           name: output-cli.ipynb
           path: notebooks/output-cli.ipynb
@@ -239,7 +239,7 @@ jobs:
   update-model-request_template:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       
       - name: Path Filter
         id: filter
