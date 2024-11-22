@@ -71,7 +71,7 @@ In the Spreadsheet, you will find two sheets:
 
 You should **start by the Raw List sheet**. You are always free to add models there (relevant to the [Topic of the Week](outreachy-summer-2022.md#follow-the-topic-of-the-week) or not). **@Miquel** is responsible for curating this list and approving the models, he will use the Slack `#internships` channel to ask questions or discuss the relevance of the model before approving them.
 
-Start by adding your model in the Raw List sheet and wait for approval. As soon as the model has been approved, you are ready to move forward. **Please tick the **_**Selected**_** column** so that nobody else picks your model of interest.
+Start by adding your model in the Raw List sheet and wait for approval. As soon as the model has been approved, you are ready to move forward. **Please tick the&#x20;**_**Selected**_**&#x20;column** so that nobody else picks your model of interest.
 
 Now you are ready to start **filling the Hub sheet**. Fill in as much information as possible, and if something is missing make sure you provide relevant links and enough information for others to understand what the model is about.
 

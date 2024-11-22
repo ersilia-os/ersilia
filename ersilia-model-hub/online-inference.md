@@ -10,8 +10,8 @@ To ensure users from all backgrounds are able to benefit from our tools, we prov
 
 We offer a broad range of models, from bioactivity prediction against several pathogens (malaria, tuberculosis, schistosomiasis, ESKAPE pathogens...) to ADME endpoints and toxicity predictions. Use our [dynamic interface](https://ersilia.io/model-hub) to browse models according to your needs and take note of the model identifier you wish to use!
 
-{% hint style="warning" %}
-Please ensure you understand the output of each model before using it. For example, a classifier will output the probability of Active for a particular assay, i.e probability that a molecule kills the malaria parasite in an _in vitro_ assay, and a regressor might output the predicted IC50 value at which the molecule inhibits the growth of the parasite.&#x20;
+{% hint style="success" %}
+Please ensure you understand the output of each model before using it. _For example, a classifier will output the probability of Active for a particular assay, i.e probability that a molecule kills the malaria parasite in an in vitro assay, and a regressor might output the predicted IC50 value at which the molecule inhibits the growth of the parasite._&#x20;
 {% endhint %}
 
 ## 2. Prepare your input data
@@ -25,12 +25,12 @@ Collect your list of SMILES in a `.csv` or `.txt` file.
 Go to our [online inference app](https://ersilia-self-service.streamlit.app/) and select your model of choice from the drop down list. Copy the list of SMILES (maximum allowed 100 molecules) and click on Run Predictions. Wait a few minutes to download your results!
 
 {% hint style="info" %}
-If you wish to run larger annotations, for example running several models against a database of >1k molecules, please contact Ersilia directly to obtain a customised solution: hello@ersilia.io
+If you wish to run larger annotations, for example running several predictions against a database of >1k molecules, please contact Ersilia directly to obtain a customised solution: hello@ersilia.io
 {% endhint %}
 
 ## 4. Check your predictions
 
-By default, Ersilia will return a .csv file containing the following columns:
+By default, Ersilia will return a `.csv` file containing the following columns:
 
 * SMILES: the input SMILES (note that these might have been standardised if they were not provided in the standard format)
 * InChIKey: 27-character unique identifier of a molecule based on the International Chemical Identifier

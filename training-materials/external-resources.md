@@ -43,7 +43,7 @@ Colab's free plan allows for 12 hours of runtime and 16GB of storage. These feat
 
 #### **How to access Colab**
 
-The only requisite to access Colab is to have a Google Account. If you don’t have an account in Google, you can [sign up](https://accounts.google.com/) to create one. Next, head to [Colab](https://colab.research.google.com/) and install the extension for your google account (free and only required the first time that Colab is used). Colab notebooks are stored on your Google Drive. To create a new notebook, go to the desired folder in your Drive, right click and select More > Colab**.**
+The only requisite to access Colab is to have a Google Account. If you don’t have an account in Google, you can [sign up](https://accounts.google.com/) to create one. Next, head to [Colab](https://colab.research.google.com/) and install the extension for your google account (free and only required the first time that Colab is used). Colab notebooks are stored on your Google Drive. To create a new notebook, go to the desired folder in your Drive, right click and select More > Cola&#x62;**.**
 
 #### **Colab Sessions**&#x20;
 

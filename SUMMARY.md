@@ -4,7 +4,7 @@
 
 * [The Ersilia Open Source Initiative](README.md)
 * [Ten principles](welcome-to-ersilia/ten-principles.md)
-* [Welcome](welcome-to-ersilia/welcome.md)
+* [Ersilia's Ecosystem](welcome-to-ersilia/ersilias-ecosystem.md)
 
 ## 🚀 Ersilia Model Hub
 
