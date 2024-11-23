@@ -179,7 +179,7 @@ def test_standard_api_string(
     input_arg = INPUT      
     output_arg = RESULT_CSV
     result = runner.invoke(
-        run_cmd(), ["-i", input_arg, "-o", output_arg]
+        run_cmd(), ["-i", input_arg, "-o", str(output_arg)]
     )
     assert result.exit_code == 0
     assert mock_get_url.called
