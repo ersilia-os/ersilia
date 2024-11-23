@@ -483,20 +483,12 @@ class ErsiliaModel(ErsiliaBase):
         t1 = None
         status_ok = False
         result = self._standard_api_runner(input=input, output=output)
-        self.logger.debug(f"Output: {output}")
-
         if type(output) is str:
-            self.logger.debug(f"Output is a file: {output is str}")
             if os.path.exists(output):
                 t1 = os.path.getctime(output)
-                self.logger.debug(f"path exists t1: {t1}")
-
         if t1 is not None:
             if t1 > t0:
-
                 status_ok = True
-        self.logger.debug(f"t1 > t0: {t1}>{t0}")
-        
         return result, status_ok
 
     def run(
@@ -522,8 +514,6 @@ class ErsiliaModel(ErsiliaBase):
                 result, standard_status_ok = self._standard_run(
                     input=input, output=output
                 )
-                self.logger.debug(f"Status ok: {standard_status_ok}")
-                self.logger.debug(f"Result: {result}")
             except Exception as e:
                 self.logger.warning(
                     "Standard run did not work with exception {0}".format(e)
