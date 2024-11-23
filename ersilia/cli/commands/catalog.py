@@ -105,3 +105,4 @@ def catalog_cmd():
             catalog = None
 
         click.echo(catalog)
+    return catalog

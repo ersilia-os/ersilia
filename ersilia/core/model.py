@@ -4,6 +4,7 @@ import json
 import time
 import types
 import tempfile
+import asyncio
 import importlib
 import collections
 import __main__ as main
@@ -88,6 +89,8 @@ class ErsiliaModel(ErsiliaBase):
             "pulled_docker",
             "hosted",
         ], "Wrong service class"
+        self.url = None
+        self.pid = None
         self.service_class = service_class
         self.track_runs = track_runs
         mdl = ModelBase(model)
@@ -120,7 +123,7 @@ class ErsiliaModel(ErsiliaBase):
                 mf = fetch.ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
-                mf.fetch(self.model_id)
+                asyncio.run(mf.fetch(self.model_id))
             else:
                 return
         self.api_schema = ApiSchema(

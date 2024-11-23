@@ -1,9 +1,12 @@
 import os
 import click
+<<<<<<< Updated upstream
 import json
 import tempfile
 
 from ...cli import echo
+=======
+>>>>>>> Stashed changes
 from . import ersilia_cli
 from ersilia.cli.commands.run import run_cmd
 from ersilia.core.base import ErsiliaBase
@@ -19,7 +22,6 @@ from ersilia.default import INFORMATION_FILE
 def test_cmd():
     """Test a model"""
 
-    # Example usage: ersilia test {MODEL}
     @ersilia_cli.command(
         short_help="Test a model",
         help="Test a model and obtain performance metrics",

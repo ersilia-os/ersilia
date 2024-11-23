@@ -10,6 +10,7 @@ from ...core.session import Session
 from ...core.tracking import RunTracker
 from ...utils.terminal import print_result_table
 
+
 def run_cmd():
     """Create run command"""
 
@@ -83,3 +84,4 @@ def run_cmd():
                  echo(result) #
                 except:
                     print_result_table(result)
+    return run
