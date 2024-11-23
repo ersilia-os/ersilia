@@ -1,7 +1,6 @@
 import pytest
 import random
 import time
-import os
 from unittest.mock import patch, Mock, AsyncMock, PropertyMock
 from click.testing import CliRunner
 from ersilia.cli.commands.run import run_cmd
@@ -9,6 +8,7 @@ from ersilia.serve.standard_api import StandardCSVRunApi
 from ersilia.core.session import Session
 from ersilia.core.model import ErsiliaModel
 from ersilia.utils.logging import logger
+from ersilia.hub.fetch.fetch import ModelFetcher
 from .utils import create_compound_input_csv
 
 URL = "http://localhost"
@@ -105,7 +105,7 @@ def compound_csv():
     yield INPUT_CSV
 
 @pytest.fixture
-def mock_std_api_post(compound_csv):
+def mock_std_api_post():
     def mock_post_side_effect(input, output, output_source):
         api_instance = StandardCSVRunApi(
             model_id=MODEL_ID, 
@@ -122,20 +122,13 @@ def mock_std_api_post(compound_csv):
         ]
 
         try:
+            time.sleep(0.5) 
             csv_result = api_instance.serialize_to_csv(
                 input_data, 
                 return_value, 
                 output
             )
             logger.info(f"CSV Result: {csv_result}")
-
-            ct = time.time() # make the file look like it was created 2 seconds ago
-            os.utime(
-                output, 
-                (ct - 5,
-                 ct - 5
-                )
-            )
             
             return csv_result
         except Exception as e:
@@ -149,7 +142,7 @@ def mock_std_api_post(compound_csv):
 
 
 @pytest.fixture
-def mock_session():
+def mock_session(compound_csv):
     with patch.object(
         Session, 
         "current_model_id", 
@@ -173,6 +166,7 @@ def mock_session():
 
 # For Standard API
 def test_standard_api_string(
+    mock_std_api_post,
     mock_fetcher,
     mock_set_apis,
     mock_get_input,
@@ -180,8 +174,7 @@ def test_standard_api_string(
     mock_std_header,
     mock_is_amenable,
     mock_get_url,
-    mock_session,
-    mock_std_api_post
+    mock_session
 ):
     runner = CliRunner()
 
@@ -197,12 +190,12 @@ def test_standard_api_string(
     assert mock_is_ready.called
     assert mock_is_amenable.called
     assert mock_std_api_post.called
+
     assert mock_set_apis.called
     assert RESULT_CSV in result.output
 
 
 def test_standard_api_csv(
-    mock_std_api_post,
     mock_fetcher,
     mock_set_apis,
     mock_get_input,
@@ -225,7 +218,6 @@ def test_standard_api_csv(
     assert mock_std_header.called
     assert mock_is_ready.called
     assert mock_is_amenable.called
-    assert mock_std_api_post.called
     assert mock_set_apis.called
     assert RESULT_CSV in result.output
 
