@@ -196,6 +196,7 @@ def test_standard_api_string(
 
 
 def test_standard_api_csv(
+    mock_std_api_post,
     mock_fetcher,
     mock_set_apis,
     mock_get_input,
