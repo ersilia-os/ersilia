@@ -1,15 +1,14 @@
 import pytest
 import random
+import time
+import os
 from unittest.mock import patch, Mock, AsyncMock, PropertyMock
 from click.testing import CliRunner
 from ersilia.cli.commands.run import run_cmd
 from ersilia.serve.standard_api import StandardCSVRunApi
-from ersilia.serve.autoservice import AutoService
-from ersilia.serve.services import DockerImageService
 from ersilia.core.session import Session
 from ersilia.core.model import ErsiliaModel
 from ersilia.utils.logging import logger
-from ersilia.hub.fetch.fetch import ModelFetcher
 from .utils import create_compound_input_csv
 
 URL = "http://localhost"
@@ -125,9 +124,19 @@ def mock_std_api_post(compound_csv):
         try:
             csv_result = api_instance.serialize_to_csv(
                 input_data, 
-                return_value, output
+                return_value, 
+                output
             )
             logger.info(f"CSV Result: {csv_result}")
+
+            ct = time.time() # make the file look like it was created 2 seconds ago
+            os.utime(
+                output, 
+                (ct - 2,
+                 ct - 2
+                )
+            )
+            
             return csv_result
         except Exception as e:
             logger.error(f"Exception in serialize_to_csv: {e}")
@@ -164,7 +173,6 @@ def mock_session():
 
 # For Standard API
 def test_standard_api_string(
-    mock_std_api_post,
     mock_fetcher,
     mock_set_apis,
     mock_get_input,
@@ -173,6 +181,7 @@ def test_standard_api_string(
     mock_is_amenable,
     mock_get_url,
     mock_session,
+    mock_std_api_post
 ):
     runner = CliRunner()
 
