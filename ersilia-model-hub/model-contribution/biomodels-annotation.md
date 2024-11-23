@@ -1,7 +1,7 @@
 ---
 description: >-
-  This page describes how to annotate Ersilia models in the BioModels Tool to
-  make them more FAIR
+  This page describes how to annotate Ersilia models in the BioModels Tool
+  contributing towards FAIRness.
 ---
 
 # BioModels Annotation
@@ -135,7 +135,7 @@ There are models that are built by fine-tuning other large models with different
 
 For the purpose of example, we're working with an [**antimalarial model**](https://jcheminf.biomedcentral.com/articles/10.1186/s13321-021-00487-2) with the tag [**eos4zfy**](https://github.com/ersilia-os/eos4zfy) from the Ersilia Model. In this case, this is a collaborative project between the EMBL-EBI and other big pharma and institutes. Here, an individual QSAR model to identify novel molecules that may have antimalarial properties built on private dataset was merged together to develop MAIP. A free web platform available for mass prediction of potential malaria inhibiting compounds.&#x20;
 
-### &#x20;2. Assign the Metadata Entity
+### 2. Assign the Metadata Entity
 
 The metadata entity is the source of the metadata. It’s more of the Metadata Data which is its Model. Adding the metadata entity makes the table looks like this;
 
@@ -175,34 +175,16 @@ Some models were validated after building experimentally. This validation is don
 
 This is the main process of annotation, and it’s associating a metadata to the right ontology. Ontology can be identified through the [**Ontology Lookup Service**](https://www.ebi.ac.uk/ols4). The Ontology Lookup Service (OLS) is a repository for biomedical ontologies that aims to provide a single point of access to the latest ontology versions.&#x20;
 
-To ensure standardization and interoperability, it's crucial to identify relevant ontologies through the Ontology Lookup Service (OLS). These ontologies will help in annotating the model components accurately.
+To ensure standardization and interoperability, it's crucial to identify relevant ontologies through the Ontology Lookup Service (OLS). These ontologies will help in annotating the model components accurately.  Search for your terms, for example, Machine Learning, in the search bar, and select the right term in the preferred ontology. If not found in the preferred ontology, look through other available options with the right meaning.
 
-Here, you search for the respective metadata in the OLS website and identify the Ontology that best suits it. The terms are searched for in the preferred ontology. There are terms that are best described by ontologies not in the preferred one, and such ontologies can be used.&#x20;
-
-<figure><img src="../../.gitbook/assets/Screenshot 2024-06-09 at 17.11.42.png" alt="This is a visual description of using the OLS service"><figcaption><p>A visual step of using OLS</p></figcaption></figure>
-
-#### A brief description of the Image above.
-
-Step 1 - Input the metadata in the search space and search
-
-Step 2 - Look for the term in the preferred ontology
-
-Step 3 - If not found in the preferred ontology, look through other available options with the right meaning.
-
-_**\*\* P.S: Sometimes, the exact term isn't found in the OLS, and in this case, the closest term can be used to replace the metadata.**_&#x20;
+{% hint style="info" %}
+Sometimes, the exact term isn't found in the OLS, and in this case, the closest term can be used to replace the metadata.&#x20;
+{% endhint %}
 
 In choosing the right ontology for a metadata, there are important things to consider.&#x20;
 
 1. The ontology with the best metadata meaning&#x20;
 2. &#x20;Inclusive of a preferred ontology for better indexing
-
-<figure><img src="../../.gitbook/assets/Screenshot 2024-06-09 at 16.58.21.png" alt=""><figcaption><p>A search result of Machine learning on OLS</p></figcaption></figure>
-
-Using the image above as an example, we have the **metadata** **Machine Learning** belonging to different ontology with three above as the most preferred.&#x20;
-
-Looking at the important things to consider,&#x20;
-
-* There are two preferred ontologies here with **EDAM** having the best meaning. **EDAM** then is preferred for the Metadata ‘**Machine Learning**’
 
 After mapping the metadata to the right ontology, we have a table like this;
 
@@ -212,23 +194,17 @@ After mapping the metadata to the right ontology, we have a table like this;
 | Model  | <ol start="8"><li>STATO: the statistical methods ontology</li><li>STATO: the statistical methods ontology</li><li>STATO: the statistical methods ontology</li><li>Ontology for Biomedical Investigations OBI</li><li>Chemical information ontology (cheminf)</li><li>NCI Thesaurus OBO Edition NCIT</li></ol> | <ol start="8"><li>Classification models</li><li>Naïve Bayesian model</li><li>AUC–ROC</li><li>5-fold cross validation</li><li>Smiles descriptors</li><li>malaria dataset</li></ol>      |
 | Model  | **Special cases**                                                                                                                                                                                                                                                                                             | <ol start="14"><li>MAIP web platform - Source code</li><li>Ersilia Incorporation URL</li><li>PubMed URL</li></ol>                                                                      |
 
-There are Metadata that doesn’t have ontology, and these are descriptive Metadatas. Their ontology are what describes them, In the **special case**, we’d have;
 
 
-
-<table data-view="cards"><thead><tr><th></th></tr></thead><tbody><tr><td><ol><li>MAIP web platform - Source code</li><li>Ersilia Incorporation URL</li><li>PubMed URL</li></ol></td></tr><tr><td><ol><li>Online Web server</li><li>Ersilia Model Hub</li><li>PubMed Identification Number PMID</li></ol></td></tr></tbody></table>
+{% hint style="info" %}
+Note that the descriptive Medatada, like the PubMed URL of the model, or the specific Ersilia GitHub repository where the model is hosted, do not have an ontology (special cases).&#x20;
+{% endhint %}
 
 ### 5. Link the Ontology to their values
 
 Values enhance accessibility and integrate metadata with other data resources in the form of a URL (Uniform Resource Locator).
 
-Each ontology has its **accession identifier** and a value is formed using the ontology identifier with a **compact identifier**.
-
-For example; Value = Compact identifier + accession identifier
-
-<figure><img src="../../.gitbook/assets/Screenshot 2024-06-09 at 17.45.51.png" alt=""><figcaption><p>Accession ID mapped</p></figcaption></figure>
-
-The compact identifier is a resolution service that provides consistent access in form of [https://identifiers.org/](https://identifiers.org/)
+Each ontology has its **accession identifier** and a value is formed using the ontology identifier with a **compact identifier**. The compact identifier is a resolution service that provides consistent access in form of [https://identifiers.org/](https://identifiers.org/)
 
 1. Value = [https://identifiers.org/](https://identifiers.org/) + NCIT:C176231
 2. Value = [https://identifiers.org/NCIT:C176231](https://identifiers.org/NCIT:C176231)&#x20;
@@ -264,9 +240,7 @@ Adding DOME to the table shows this;&#x20;
 | <p>classification models</p><p>naïve Bayesian model</p><p>AUC–ROC</p><p>5-fold cross validation</p>                                                                         | <p>Optimization-Algorithm</p><p>Optimization-Algorithm</p><p>Evaluation-Performance Measure</p><p>Evaluation-Method</p>        |
 | <p>MAIP web platform - Source code</p><p>Ersilia Incorporation URL</p><p>Smiles descriptors</p><p>malaria dataset</p><p>predictions of potential Antimalarial compounds</p> | <p>Model-Executable form</p><p>Model-Executable form</p><p>Data-Input</p><p>Data-Source</p><p>Model-Output; Classification</p> |
 
-**The process above is how to completely annotate a model to meet the FAIR Standard.**&#x20;
-
-### Resources & References
+## &#x20;Resources & References
 
 1. [The Use Case Published Annotation](https://www.ebi.ac.uk/biomodels/MODEL2405210002#Files)
 2. [BioModels Annotation SOP](https://drive.google.com/file/d/1JqjcH0T0UTWMuBj-scIMwsyt2z38A0vp/view)

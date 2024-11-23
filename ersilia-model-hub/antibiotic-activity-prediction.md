@@ -2,6 +2,7 @@
 description: >-
   This section shows how to download models and run predictions using the
   Ersilia Model Hub
+hidden: true
 ---
 
 # Model usage
@@ -47,7 +48,7 @@ ersilia card eos2r5a
 ```
 
 {% hint style="info" %}
-We do our best to keep the user away from the [dependency hell](https://en.wikipedia.org/wiki/Dependency\_hell). Models are **automatically** installed with the necessary degree of isolation from the system. All models are available through GitHub and also as Docker Images
+We do our best to keep the user away from the [dependency hell](https://en.wikipedia.org/wiki/Dependency_hell). Models are **automatically** installed with the necessary degree of isolation from the system. All models are available through GitHub and also as Docker Images
 {% endhint %}
 
 ### Serve model

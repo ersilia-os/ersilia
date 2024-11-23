@@ -49,7 +49,7 @@ The first week is focused on getting to know the Ersilia community, our mission 
 
 **Slack:** we use Slack as our main communication platform, both for the contribution period and afterwards to work with the selected interns. If you have never used this tool, don't worry, is quite intuitive!
 
-1. [Sign up](https://join.slack.com/t/ersilia-outreachy/shared\_invite/zt-1h2u8vbxh-fkyxlOJE20Bx538hQvpC\~A) using your preferred email and name.
+1. [Sign up](https://join.slack.com/t/ersilia-outreachy/shared_invite/zt-1h2u8vbxh-fkyxlOJE20Bx538hQvpC~A) using your preferred email and name.
 2. Introduce yourself in the #general channel. The general channel is for random questions, interactions with other fellow contributors, writing tips and suggestions...
 3. Use the dedicated channels for questions about specific topics.
 4. Contribute to your peers questions, this is about helping each other and we really value interns who work with the community.
@@ -181,7 +181,7 @@ A good task here will detail each and every one of the steps taken to successful
 
 #### Task 3: run predictions
 
-Run predictions for the [Essential Medicines List](https://raw.githubusercontent.com/ersilia-os/ersilia/master/notebooks/eml\_canonical.csv) provided in our repository, post the result of these predictions (using the original source code) in the GitHub thread and explain what they mean.
+Run predictions for the [Essential Medicines List](https://raw.githubusercontent.com/ersilia-os/ersilia/master/notebooks/eml_canonical.csv) provided in our repository, post the result of these predictions (using the original source code) in the GitHub thread and explain what they mean.
 
 {% hint style="info" %}
 Showing that you are not only able to run code but actually understand the outputs of the ML models is critical for the internship
@@ -203,7 +203,7 @@ A big part of what we do at Ersilia is to screen the scientific literature in se
 
 In this week, focus on diving into the scientific literature, trying to find studies of interest to our community. To that end, we suggest using websites like PubMed, Google Scholar, BioRxiv and Papers with Code.
 
-To get inspired, check the [Contribute models](../incorporate-models.md) section, look at [existing models](https://www.ersilia.io/model-hub) in the Hub and our list of [pending models](https://airtable.com/shrTpe45mLKqaHXsc) to incorporate.
+To get inspired, check the [Contribute models](../../ersilia-model-hub/incorporate-models.md) section, look at [existing models](https://www.ersilia.io/model-hub) in the Hub and our list of [pending models](https://airtable.com/shrTpe45mLKqaHXsc) to incorporate.
 
 #### Task 1: a first model suggestion
 
@@ -223,7 +223,7 @@ Continue your model search and suggest up to three studies/models/publications o
 
 Focus the last week ONLY in writing your final application to Outreachy. Mentors will not revise any contribution for the last week, only final applications, to ensure we can provide feedback on them.
 
-We provide [this template](https://docs.google.com/document/d/1-ubLY\_LlSApClrjYzmoaR0M-3LTykRi71xBEi4wvO8Q/edit) of a former 8-week internship at Ersilia as an example. Use it and adapt it to your internship plans (reminder: Outreachy lasts 12 weeks).
+We provide [this template](https://docs.google.com/document/d/1-ubLY_LlSApClrjYzmoaR0M-3LTykRi71xBEi4wvO8Q/edit) of a former 8-week internship at Ersilia as an example. Use it and adapt it to your internship plans (reminder: Outreachy lasts 12 weeks).
 
 {% hint style="warning" %}
 Final applications must be submitted through the Outreachy website on time. We will not be able to provide help or support for last minute internet connection problems, late submissions and other issues. Please make sure you fill it in with time.

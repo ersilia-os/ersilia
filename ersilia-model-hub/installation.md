@@ -1,5 +1,6 @@
 ---
 description: Ersilia Model Hub installation instructions for local inference
+hidden: true
 ---
 
 # Installation

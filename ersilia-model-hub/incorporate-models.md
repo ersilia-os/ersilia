@@ -1,10 +1,11 @@
 ---
 description: This tutorial explains how to incorporate models in the Ersilia Model Hub
+hidden: true
 ---
 
 # Contribute models
 
-This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](../ersilia-model-hub/introduction.md), models can be of three types, namely:
+This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](introduction.md), models can be of three types, namely:
 
 1. Models developed by third parties.
 2. Models developed by Ersilia based on publicly available data.
@@ -28,7 +29,7 @@ To start contributing:
 5. Select a model of interest from the approved backlog and open a Model Request issue in the Ersilia [repository](https://github.com/ersilia-os/ersilia/issues/new/choose).
 6. Wait for the issue to be approved. This will trigger an automatic Action that will create a new repository for the model.
 7. Fork the repository.
-8. Start coding! Head to the [Model Incorporation Guidelines](../ersilia-model-hub/contribute-models/model-template.md) for more information.
+8. Start coding! Head to the [Model Incorporation Guidelines](model-contribution/model-template.md) for more information.
 
 ### Know where to find models and get inspiration
 

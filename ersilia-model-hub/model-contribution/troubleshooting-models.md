@@ -6,10 +6,6 @@ description: >-
 
 # Troubleshooting models
 
-{% hint style="info" %}
-This information is orientative. Each model will have its own specific requirements. If it is your first time contributing to the Ersilia Model Hub, please get acquainted with its structure before tackling these issues.
-{% endhint %}
-
 {% hint style="warning" %}
 This documentation refers only to technical issues, package dependencies and the similar. We are not focusing on whether a model predicts more or less accurate predictions for a specific use case.
 {% endhint %}
@@ -63,26 +59,23 @@ If you encounter serious problems, please open a Bug Report issue in the Ersilia
 
 #### 1. Create the conda environment
 
-Since the fetch has failed, we do not have the necessary conda environment created. Depending on the step at which fetch is failing, you might have a conda environment with the model name, but it won't be complete. We recommend deleting it and starting anew, following the Dockerfile instructions.
+Since the fetch has failed, we do not have the necessary conda environment created. Depending on the step at which fetch is failing, you might have a conda environment with the model name, but it won't be complete. We recommend deleting it and starting anew, following the `install.yml` instructions.
 
-In our example case, the Dockerfile looks like:
+In our example case, the `install.yml` looks like:
 
-```docker
-FROM bentoml/model-server:0.11.0-py37
-MAINTAINER ersilia
+```yaml
+python: "3.10"
 
-RUN conda install -c conda-forge rdkit=2021.03.4
-
-WORKDIR /repo
-COPY . /repo
+commands:
+  - ["pip", "rdkit", "2023.3.1"]
 ```
 
-It seems the model runs on python 3.7 and it only requires the RDKIT package to work. If there is more than one package install required, please install them one by one to identify any possible package dependencies or deprecated packages.
+It seems the model runs on python 3.10 and it only requires the RDKIT package to work. If there is more than one package install required, please install them one by one to identify any possible package dependencies or deprecated packages.
 
 ```bash
-conda create -n eos9ei3 python=3.7
+conda create -n eos9ei3 python=3.10
 conda activate eos9ei3
-pip install rdkit
+pip install rdkit==2023.3.1
 ```
 
 #### 2. Run the model from run.sh
@@ -108,8 +101,8 @@ ersilia -v fetch eos9ei3 --repo_path eos9ei3 > out.log 2>&1
 
 ## 3. Update the model
 
-* Remove any temporal edits, like `print` statements
-* Ensure the packages listed in the `Dockerfile` are updated to the version that is working
-* Revise the `.gitattributes` file
+* Remove any temporal edits, like `print` statements.
+* Ensure the packages listed in the `install.yml` are updated to the version that is working.
+* Revise the `.gitattributes` file.
 
-You are ready to push the changes to your fork of the model, and then open a PR to the main branch. As in the Model Incorporation, a series of [automated tests](example-of-the-model-incorporation-workflow.md#open-a-pull-request) will be triggered. Please check their result before moving on.
+Whenou are ready to push the changes to your fork of the model, open a PR to the main branch. As in the Model Incorporation, a series of [automated tests](example-of-the-model-incorporation-workflow.md#open-a-pull-request) will be triggered. Please check their result before moving on.

@@ -1,3 +1,7 @@
+---
+hidden: true
+---
+
 # Strategic Plan 2021-2023
 
 ### Background

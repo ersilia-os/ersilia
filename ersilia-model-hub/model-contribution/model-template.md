@@ -4,11 +4,7 @@ description: >-
   new model incorporation.
 ---
 
-# Model Template
-
-{% hint style="info" %}
-Model Incorporation has evolved at Ersilia, and while this workflow is largely based on its predecessor, there are some key differences in the legacy version and the workflow listed here. The instructions below lay out the steps from the current workflow for incorporating a model in the Ersilia Model Hub, with the last section pointing out the differences between the two versions.
-{% endhint %}
+# Model template
 
 ## Anatomy of the Ersilia Model Template
 
@@ -18,7 +14,7 @@ Each model in the Ersilia Model Hub is contained within an individual GitHub rep
 When you have finished the model incorporation, please delete the fork from your own GitHub user. This will prevent abuses of the Git-LFS quota and outdated versions of the models.
 {% endhint %}
 
-Below, we describe the main files you will find in the newly created model repository. Note that some of them are automatically updated and you do not have to modify them, like the `README.MD.`
+Below, we describe the main files you will find in the newly created model repository. Note that some of them are automatically updated and you do not have to modify them, like the `README.md`.
 
 ### The `eos` identifier
 
@@ -40,39 +36,39 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 
 ### The `metadata.yml` file
 
-The `metadata.yml` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable Model Hub and the README file will automatically be updated from the `metadata.yml` upon merge of the Pull Request.&#x20;
+The `metadata.yml` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable [interface](https://ersilia.io/model-hub) of the Ersilia Model Hub and the `README.md` file will automatically be updated from the `metadata.yml` upon merge of the Pull Request.&#x20;
 
-The YAML fields are constrained by certain parameters. If they do not adhere to the minimal quality standards, the Pull Request will be rejected and an explanatory message will be available on the GitHub Action. Below we try to provide a comprehensive overview of the metadata accepted:
+YAML fields are constrained by certain parameters. The Pull request triggers a GitHub action that checks the quality of the submitted metadata. If it fails, an explanatory message will be shown on the Action run. Please double check and make amendments if necessary,
 
-**Identifier:** the `eos` identifier described above. It will be automatically filled in. _Do not modify._
+**Identifier:** the `eos` identifier described above. It will be automatically filled in. _<mark style="color:red;">Do not modify</mark>._
 
-**Slug:** a one-word or multi-word (linked by a hypen) human-readable identifier, stored as a string, to be used as an alternative to the EOS ID. It will be filled in from the Model Request issue. it can be modified afterwards.
+**Slug:** a one-word or multi-word (linked by a hypen) human-readable identifier, stored as a string, to be used as an alternative to the EOS ID. It will be filled in from the Model Request issue. It can be modified afterwards if necessary
 
 **Title:** a self-descriptive model title (less than 70 characters)
 
-**Description**: minimum information about model type, results and the training dataset. We require that all models have a description of minimum 200 characters.
+**Description**: minimum information about model type, results and the training dataset. (minimum 200 characters).
 
 {% hint style="info" %}
-Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based **TL;DR** short description of many indexed papers.&#x20;
+Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based TL;DR short description of many indexed papers.&#x20;
 {% endhint %}
 
 **Task**: the ML task performed by the model. This field is typically a list, with one ore more than one entries. The only accepted [tasks](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/task.txt) are: `Regression`, `Classification`, `Generative`, `Representation`, `Similarity`, `Clustering` and `Dimensionality reduction`.
 
 **Mode**: [mode](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/mode.txt) of training of the models: `Pretrained` (the checkpoints were downloaded directly from a third party), `Retrained` (the model was trained again using the same or a new dataset), `In-house` (if the model has been developed from scratch by Ersilia's contributors) or `Online` (if the model sends queries to an external server). This field is a string.
 
-**Input:** data format required by the model. Most chemistry related models, for example, will require compounds as input. Currently, the only accepted [inputs](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input.txt) by Ersilia are `Compound`, `Protein` or `Text`. This field is a list containing one or more entries. At present Ersilia only works with models with Compound inputs.
+**Input:** data format required by the model. Most chemistry related models, for example, will require compounds as input. Currently, the only accepted [input](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input.txt) by Ersilia is `Compound`.
 
-**Input Shape:** [format](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input\_shape.txt) of the input data. It can be `Single` (one compound), `Pair` (for example, two compounds), a `List`, a `Pair of Lists` or a `List of Lists`. Please note this refers to the _minimum_ shape for the model to work. If a model predicts, for example, the antimalarial potential of a small molecule, the input shape is `Single`, regardless of the fact that you can pass several compounds in a list.
+**Input Shape:** [format](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/input_shape.txt) of the input data. It can be `Single` (one compound), `Pair` (two compounds), a `List`, a `Pair of Lists` or a `List of Lists`. Please note this refers to the _minimum_ shape for the model to work. If a model predicts, for example, the antimalarial potential of a small molecule, the input shape is `Single`, regardless of the fact that you can pass several compounds in a list.
 
 **Output:** description of the model [result](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output.txt). It is important to choose the right description. Is the model providing a probability? Is it a score? Is it a new compound? The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`. This field is a list with one or more acceptable values.
 
-**Output Type:** the only accepted output [types](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_type.txt) are `String`, `Float` or `Integer`. More than one type can be added as a list if necessary. This field is typically a list with one or more acceptable values.
+**Output Type:** the only accepted output [types](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output_type.txt) are `String`, `Float` or `Integer`. More than one type can be added as a list if necessary. This field is a list with one or more acceptable values.
 
-**Output Shape:** similar to the input shape, in what format is the endpoint returned? The only accepted output [shapes](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output\_shape.txt) are: `Single`, `List`, `Flexible List`, `Matrix` or `Serializable Object`. This field is a string with only a single accepted value.
+**Output Shape:** similar to the input shape, in what format is the endpoint returned? The only accepted output [shapes](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/output_shape.txt) are: `Single`, `List`, `Flexible List`, `Matrix` or `Serializable Object`. This field is a string with only a single accepted value.
 
 **Interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification.
 
-**Tag:** labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.falciparum_ as tag. This field is a list with one or more accepted values since models can have more than one tag. Select between one and five relevant from the following categories:
+**Tag:** labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.falciparum_ as tag. This field is a list with one or more accepted values since models can have more than one [tag](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/tag.txt). Select between one and five relevant from the following categories:
 
 * Disease: `AIDS`, `Alzheimer`, `Cancer`, `Cardiotoxicity`, `Cytotoxicity`, `COVID19`, `Dengue`, `Malaria`, `Neglected tropical disease`, `Schistosomiasis`, `Tuberculosis`.
 * Organism: `A.baumannii`, `E.coli`, `E.faecium`, `HBV`, `HIV`, `Human`, `K.pneumoniae`, `Mouse`, `M.tuberculosis`, `P.aeruginosa`, `P.falciparum`, `Rat`, `Sars-CoV-2`,  `S.aureus`, `ESKAPE`.
@@ -82,11 +78,11 @@ Some contributors may find it difficult to come up with a good description for t
 * Dataset: `ChEMBL`, `DrugBank`, `MoleculeNet`, `Tox21`, `ToxCast`, `ZINC`, `TDCommons`.
 * Chemoinformatics: `Chemical graph model`, `Chemical language model`, `Chemical notation`, `Chemical synthesis`, `Compound generation`, `Descriptor`, `Drug-likeness`, `Embedding`, `Fingerprint`, `Similarity`.
 
-**Publication:** link to the original publication. Please refer to the journal page whenever possible, instead of Pubmed, Researchgate or other secondary webs. This field is a string with only one accepted value.
+**Publication:** link to the original publication. Please refer to the journal page whenever possible, instead of PubMed, ResearchGate or other secondary webs. If the model is not published in a scientific journal, please contact Ersilia's maintaners. This field is a string with only one accepted value.
 
-**Source Code:** link to the original code repository of the model. If this is an in-house model, please add here the link of the ML package used to train the model. This field is a string with only one accepted value.
+**Source Code:** link to the original code repository of the model. If the model is a de-novo incorporation without another source code, please link the ML package used to train the model. This field is a string with only one accepted value.
 
-**License:** the License of the original code. We have included the following OS licences: `MIT`, `GPL-3.0`, `LGPL-3.0`, `AGPL-3.0`, `Apache-2.0`, `BSD-2.0`, `BSD-3.0`, `Mozilla`, `CC`. You can also select `Proprietary or` `Non-commercial` if the authors have included their own license notice (for example restricting commercial usage). If the code was released without a license, please add `None` in this field. Make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code (such as adding the license file together with the original code). This field is a string with only one accepted value.
+**License:** License of the original code. We have included the following OS licences: `MIT`, `GPL-3.0`, `LGPL-3.0`, `AGPL-3.0`, `Apache-2.0`, `BSD-2.0`, `BSD-3.0`, `Mozilla`, `CC`. You can also select `Proprietary or` `Non-commercial` if the authors have included their own license notice (for example restricting commercial usage). If the code was released without a license, please add `None` in this field. Make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code (such as adding the license file together with the original code). This field is a string with only one accepted value.
 
 {% hint style="info" %}
 If the predetermined fields are not sufficient for your use case, you can open a pull request to include new ones to our [repository](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). Please do so only if strictly necessary (for example, if a disease is not already in the Tag field).
@@ -112,7 +108,7 @@ However, the license notices for code developed by **third parties** must be kep
 
 ### The [`install.yml`](https://github.com/ersilia-os/eos-template/blob/main/install.yml) file
 
-Ersilia uses an `install.yml` file to specify installation instructions. The YAML syntax is used because it is easy to read and maintain. This file specifies which Python version to use to build a conda environment, or a Docker image for the model.&#x20;
+Ersilia uses an `install.yml` file to specify installation instructions. The YAML syntax is easy to read and maintain. This file specifies which Python version to use to build a conda environment, or a Docker image for the model.&#x20;
 
 This dependency configuration file has two top level keys, namely, `python`, and `commands.` They dependencies are to be specified in the following manner:
 
@@ -135,12 +131,12 @@ commands:
 
 In this case, when running the model from source, a Conda environment will be used to isolate the model. Additionally, a conda environment will also be used inside the Docker image of the mode. This example demonstrates an installation instructions for an environment using Python 3.10.
 
-In this example, the `rdkit-pypi==2022.3.1b1` will be installed using `pip`, while `pandas=1.3.5` will be installed using `conda` through the default package channel on conda.
+In this example, the `rdkit-pypi==2022.3.1b1` will be installed using `pip`, while `pandas==1.3.5` will be installed using `conda` through the default package channel on conda.
 
-The `install.yml` file can contain as many commands as necessary. Please limit the packages to the bare minimum required, sometimes models have additional packages for extra functionalities that are not required to run the model. It is good practice to trim to the minimum the package dependencies to avoid conflicts. Always pin the version of the package to make sure it is always reproducible.
+The `install.yml` file can contain as many commands as necessary. Please limit the packages to the bare minimum required, sometimes models have additional packages for extra functionalities that are not required to actually run the model. It is good practice to trim to the minimum the package dependencies to avoid conflicts. Always pin the version of the package for model persistency.
 
 {% hint style="warning" %}
-The `install.yml file` contains the installation instructions of the model. Therefore, the content of this file can be very variable, since each model will have its own dependencies.
+The `install.yml` file contains the installation instructions of the model. Therefore, the content of this file can be very variable, since each model will have its own dependencies.
 {% endhint %}
 
 ### The [`model`](https://github.com/ersilia-os/eos-template/tree/main/model) folder
@@ -155,7 +151,7 @@ The `model` folder **should not** contain anything other than the `framework` an
 {% endhint %}
 
 {% hint style="info" %}
-Often, the separation between `framework` and `checkpoints` is not easy to determine. Sometimes, models obtained from third parties have model data embedded within the code or as part of the repository. In these cases, it is perfectly fine to keep model data in the `framework` subfolder, and leave the `checkpoints` subfolder empty.
+Often, the separation between `framework` and `checkpoints` is not easy to determine. Sometimes, models obtained from third parties have model data embedded within the code or as part of the repository. If those are impossible to separate, keep the data in the `framework` subfolder, and leave the `checkpoints` subfolder empty.
 {% endhint %}
 
 The `framework` subfolder contains at least one Bash file, named `run.sh`. This file will run as follows:
@@ -230,7 +226,7 @@ The important steps of the script are:
 3. Run predictions using the input file and the model parameters.
 4. Write the output.
 
-Most of the work of the model contributor will be to work on this or similar scripts. In the template, we provide a dummy model (i.e. add a fixed value to the molecular weight). This dummy model can can be already defined within the script (`my_model`). However, in real world cases, the model will most likely be loaded from a third party Python library, or from a (cloned) repository placed in the same directory.
+Most of the work of the model contributor will be to work on this or similar scripts. In the template, we provide a dummy model (i.e. add a fixed value to the molecular weight). This dummy model can can be already defined within the script (`my_model`). However, in real world cases, the model will most likely be loaded from a third party Python library, or from a script placed in the same directory.
 
 To summarize, in the template, we provide a structure that follows this logic:
 
@@ -245,7 +241,7 @@ To summarize, in the template, we provide a structure that follows this logic:
 {% hint style="info" %}
 In the template, the example provided is very simple. Depending on the model being incorporated, the logic may be different. For example, many third party models already contain a command-line option, with a specific syntax. In these cases, you may want to write scripts to adapt the input and the output, and then execute the model as-is.
 
-Each script will be one `main.py` file, we can create as many as necessary and rename them appropriately (see below for examples)
+Each script will be one `.py` file, we can create as many as necessary and rename them appropriately (see below for examples).
 {% endhint %}
 
 ### The `.gitattributes` file

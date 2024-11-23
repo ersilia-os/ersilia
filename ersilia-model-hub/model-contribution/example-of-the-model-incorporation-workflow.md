@@ -1,3 +1,7 @@
+---
+description: Example of an end-to-end model incorporation workflow
+---
+
 # Model incorporation workflow
 
 ## Overview
@@ -65,7 +69,7 @@ Now that we have an idea of the contents of the [Ersilia Model Template](https:/
 
 ### 1. Open a Model Request Issue
 
-Please fill in the[ issue](https://github.com/ersilia-os/ersilia/issues/new?assignees=\&labels=new-model\&template=model\_request.yml\&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) fields as accurately as possible and wait for review and approval by one of the Ersilia maintainers.
+Please fill in the[ issue](https://github.com/ersilia-os/ersilia/issues/new?assignees=\&labels=new-model\&template=model_request.yml\&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) fields as accurately as possible and wait for review and approval by one of the Ersilia maintainers.
 
 #### Read the publication
 
@@ -73,7 +77,7 @@ It is important that you read the original publication in order to understand th
 
 #### Find model code and parameters
 
-Code to calculate the SA score does not seem to be available from the publication. Fortunately, though, the RDKit library, in its contributions module, contains an implementation of the SA score. The code can be found [here](https://github.com/rdkit/rdkit/tree/master/Contrib/SA\_Score). This RDKit-based implementation was developed in 2013 by Peter Ertl and Greg Laundrum.
+Code to calculate the SA score does not seem to be available from the publication. Fortunately, though, the RDKit library, in its contributions module, contains an implementation of the SA score. The code can be found [here](https://github.com/rdkit/rdkit/tree/master/Contrib/SA_Score). This RDKit-based implementation was developed in 2013 by Peter Ertl and Greg Laundrum.
 
 {% hint style="success" %}
 Both the link to the code and to the original publication are accessible from the Ersilia Model Hub AirTable database.
@@ -81,7 +85,7 @@ Both the link to the code and to the original publication are accessible from th
 
 ### 2. Run the code outside Ersilia
 
-Before incorporating the `sa-score` model to the Ersilia Model Hub, we need to make sure that we can actually run the code provided by the third party. [In this case](https://github.com/rdkit/rdkit/tree/master/Contrib/SA\_Score), upon quick inspection, two elements seem to be central in the repository:
+Before incorporating the `sa-score` model to the Ersilia Model Hub, we need to make sure that we can actually run the code provided by the third party. [In this case](https://github.com/rdkit/rdkit/tree/master/Contrib/SA_Score), upon quick inspection, two elements seem to be central in the repository:
 
 * The `sascorer.py` script, containing the main code. We can consider this file to be the **model code**.
 * The `fpscores.pkl.gz` compressed file, containing pre-calculated fragment scores. In this simple case, we can consider this file to be the **model parameters**.
@@ -435,14 +439,6 @@ sa_score
 ```
 {% endcode %}
 
-#### Edit the `service.py` file, if necessary
-
-The `service.py` file provided by default in the template manages chemistry inputs and expects tabular outputs. Therefore, in principle, you do not have to modify this file.
-
-{% hint style="info" %}
-Modifying the `service.py` file is intended for advanced users only. Please use the Slack `#internships` channel if you think your model of interest requires modification of this file.
-{% endhint %}
-
 #### Edit the `install.yml` file
 
 The `install.yml` file should include all the installation steps that you run after creating the working Conda environment. In the case of `sa-scorer`, we only installed RDKit:
@@ -458,9 +454,7 @@ commands:
 
 #### Write the `metadata.yml` file
 
-Don't forget to document the model. Read [the instructions to write the `metadata` file page](model-template.md#the-metadata.yml-file). Feel free to ask for help in the Slack `#internships` channel.
-
-The metadata.yml for this model should read like:&#x20;
+Don't forget to document the model. Read [the instructions to write the `metadata` file page](model-template.md#the-metadata.yml-file). The `metadata.yml` for this model should read like:&#x20;
 
 ```yaml
 Identifier: eos9ei3
@@ -565,7 +559,7 @@ We are ready to test the model in the context of the Ersilia CLI. To run the mod
 ```bash
 ersilia fetch eos9ei3
 ersilia serve eos9ei3
-ersilia api -i "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
+ersilia run -i "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
 ```
 
 The input output should look like this:
@@ -586,32 +580,11 @@ The input output should look like this:
 ```
 
 {% hint style="danger" %}
-Debugging the `fetch` and the `api` commands of Ersilia can be very complicated. Please reach out to **@Miquel** directly if you find problems at this step.
+Debugging the `fetch` and the `api` commands of Ersilia can be very complicated. Read the Troubleshooting models page and, if you are still stuck, please open an issue in the model repository if you are stuck at this stage.
 {% endhint %}
 
-As mentioned, the workflow will also trigger a request for model testing to members of the Ersilia community via a GitHub issue in the same repository. The original model contributor should make sure the modle is working for different users and answer any questions or issues that might arise during model testing. If amends must be made, the original model contributor should work on those
+As mentioned, the workflow will also trigger a request for model testing to members of the Ersilia community via a GitHub issue in the same repository. The original model contributor should make sure the model is working for different users and answer any questions or issues that might arise during model testing. If amends must be made, the original model contributor should work on those.
 
 #### 8. Clean up
 
 Please, help us keep a healthy environment and avoid duplication of files and consuming of our Git LFS quota. Delete the repository fork after the model has been successfully incorporated.
-
-## TL;DR
-
-In summary, the steps to incorporate a model to the Ersilia Model Hub are the following. We are assuming that the model can be installed in a Conda environment.
-
-* Download the model from a third party repository to your local machine.
-* Install the model in a dedicated Conda environment and make sure you can run it.
-* Open a Model Request issue in the Ersilia Model Hub code repository. Wait for approval to automatically obtain a new model repository from the `eos-template`
-* Fork the new repository.
-* Place model code in `model/framework` and model parameters in `model/checkpoints`.
-* Write the necessary code to obtain a `run.sh` that simply takes one input file and produces one output file. Be sure to use absolute paths throughout.
-* Edit the `service.py` file, if necessary.
-* Edit the `Dockerfile` file to reflect the installation steps followed in 2.
-* Update the `metadata.json` following the guidelines
-* Make sure that `.gitattributes` tracks your model parameters.
-* Open a PR to the the model repository, and check that all tests are passed. If not, try to identify the bug to solve it.
-* Once the PR passes all the tests and is merged, activate the Ersilia CLI and fetch the model.
-* Serve the model and run the default API.
-* Check that the model can be run from DockerHub.
-* Check other users can also run the model.
-* Delete your fork.

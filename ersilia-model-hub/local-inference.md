@@ -8,7 +8,7 @@ The Ersilia Model Hub is conveniently offered as a python package through PyPi a
 
 ## Installation in Linux/MacOS
 
-Ersilia is only maintained for Linux and Mac Operating Systems. If you work in Windows please use a [Windows Subsystem Linux ](https://learn.microsoft.com/en-us/windows/wsl/install)and follow the same instructions.
+Ersilia is only maintained for Linux and Mac Operating Systems. If you work in Windows please use a [Windows Subsystem Linux](https://learn.microsoft.com/en-us/windows/wsl/install).
 
 #### Prerequisites
 
@@ -76,11 +76,11 @@ ersilia run -i input.csv -o output.csv
 ersilia close
 ```
 
-The fetch command will download the model from DockerHub. Please make sure to have docker active in your system before fetching a model. The serve command will bring it alve anytime you want to use it, and with the run command you can pass the desired input and output files. Finally, close the model.
+The fetch command will download the model from DockerHub. Please make sure to have Docker active in your system before fetching a model. The serve command will bring it alive anytime you want to use it, and with the run command you can pass the desired input and output files. Finally, close the model.
 
 ### Input and output
 
-The Ersilia Model Hub takes **chemical structures** as input, which should be specified as SMILES strings. To obtain the SMILES string of your compounds, you can use resources like PubChem. Ersilia also accepts InChIKey as molecular identifiers instead of SMILES.
+The Ersilia Model Hub takes **chemical structures** as input, which should be specified as SMILES strings. To obtain the SMILES string of your compounds, you can use resources like [PubChem](https://pubchem.ncbi.nlm.nih.gov/). Ersilia also accepts InChIKey as molecular identifiers instead of SMILES.
 
 The SMILES can be passed directly to the CLI:
 
@@ -96,7 +96,7 @@ You can make **multiple predictions** in batch mode. This is typically much fast
 ersilia run -i "['C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]','CC(C)CC1=CC=C(C=C1)C(C)C(=O)O']"
 ```
 
-The easiest, though, is to provide an input file instead. A simple .csv file with one column is sufficient.
+The easiest, though, is to provide an input file instead. A simple `.csv` file with one column is sufficient.
 
 {% code title="input.csv" %}
 ```bash
