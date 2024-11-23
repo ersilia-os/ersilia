@@ -132,8 +132,8 @@ def mock_std_api_post(compound_csv):
             ct = time.time() # make the file look like it was created 2 seconds ago
             os.utime(
                 output, 
-                (ct - 2,
-                 ct - 2
+                (ct - 5,
+                 ct - 5
                 )
             )
             

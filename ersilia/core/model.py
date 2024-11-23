@@ -493,9 +493,10 @@ class ErsiliaModel(ErsiliaBase):
 
         if t1 is not None:
             if t1 > t0:
-                self.logger.debug(f"t1 > t0: {t1>t0}")
 
                 status_ok = True
+        self.logger.debug(f"t1 > t0: {t1}>{t0}")
+        
         return result, status_ok
 
     def run(
