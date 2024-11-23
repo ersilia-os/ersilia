@@ -483,6 +483,8 @@ class ErsiliaModel(ErsiliaBase):
         t1 = None
         status_ok = False
         result = self._standard_api_runner(input=input, output=output)
+        self.logger.debug(f"Output: {output}")
+
         if type(output) is str:
             self.logger.debug(f"Output is a file: {output is str}")
             if os.path.exists(output):
