@@ -515,6 +515,7 @@ class ErsiliaModel(ErsiliaBase):
                     input=input, output=output
                 )
                 self.logger.debug(f"Status ok: {standard_status_ok}")
+                self.logger.debug(f"Result: {result}")
             except Exception as e:
                 self.logger.warning(
                     "Standard run did not work with exception {0}".format(e)
