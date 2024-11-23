@@ -178,12 +178,11 @@ def test_standard_api_string(
 
     input_arg = INPUT      
     output_arg = RESULT_CSV
-    batch_size = 10
     result = runner.invoke(
-        run_cmd(), ["-i", input_arg, "-o", output_arg, "-b", str(batch_size)]
+        run_cmd(), ["-i", input_arg, "-o", output_arg]
     )
-    assert mock_get_url.called
     assert result.exit_code == 0
+    assert mock_get_url.called
     assert mock_get_input.called
     assert mock_std_header.called
     assert mock_is_ready.called
@@ -207,9 +206,8 @@ def test_standard_api_csv(
     runner = CliRunner()
     input_arg = INPUT_CSV
     output_arg = RESULT_CSV
-    batch_size = 10
     result = runner.invoke(
-        run_cmd(), ["-i", input_arg, "-o", output_arg, "-b", str(batch_size)]
+        run_cmd(), ["-i", input_arg, "-o", output_arg]
     )
 
     assert result.exit_code == 0
@@ -257,7 +255,7 @@ def test_conv_api_string(
     output_arg = RESULT_CSV
     batch_size = 10
     result = runner.invoke(
-        run_cmd(), ["-i", input_arg, "-o", output_arg, "-b", str(batch_size), "--standard"]
+        run_cmd(), ["-i", input_arg, "-b", str(batch_size)]
     )
 
     assert result.exit_code == 0
@@ -276,7 +274,7 @@ def test_conv_api_csv(
     output_arg = RESULT_CSV
     batch_size = 10
     result = runner.invoke(
-        run_cmd(), ["-i", input_arg, "-o", output_arg, "-b", str(batch_size), "--standard"]
+        run_cmd(), ["-i", input_arg, "-b", str(batch_size)]
     )
     logger.info(result.output)
     assert result.exit_code == 0
