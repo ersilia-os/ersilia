@@ -484,10 +484,15 @@ class ErsiliaModel(ErsiliaBase):
         status_ok = False
         result = self._standard_api_runner(input=input, output=output)
         if type(output) is str:
+            self.logger.debug(f"Output is a file: {output is str}")
             if os.path.exists(output):
                 t1 = os.path.getctime(output)
+                self.logger.debug(f"path exists t1: {t1}")
+
         if t1 is not None:
             if t1 > t0:
+                self.logger.debug(f"t1 > t0: {t1>t0}")
+
                 status_ok = True
         return result, status_ok
 
