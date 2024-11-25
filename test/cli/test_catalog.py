@@ -8,7 +8,6 @@ def runner():
     return CliRunner()
 
 @patch("ersilia.hub.content.catalog.ModelCatalog.airtable", return_value=None)
-@patch("ersilia.hub.content.catalog.ModelCatalog.local")
 @patch("ersilia.hub.content.catalog.ModelCatalog.hub")
 @patch("ersilia.hub.content.card.ModelCard.get", return_value={"model": "metadata"})
 @pytest.mark.parametrize(
@@ -18,12 +17,12 @@ def runner():
         (["--hub"], None),  
         (["eos3b5e", "--card"]), 
         (["--card"], None),
+        (["--hub", "--local"], None),
     ]
 )
 def test_catalog_command(
     mock_model_card_get,
     mock_model_catalog_hub,
-    mock_model_catalog_local,
     mock_model_catalog_airtable,
     runner,
     options,
@@ -45,14 +44,12 @@ def test_catalog_command(
         mock_model_card_get.assert_not_called()
     elif "--card" in options and model: 
         mock_model_card_get.assert_called_once()
-    elif "--hub" in options:
-        mock_model_catalog_hub.assert_called_once()
     elif "--browser" in options:
         mock_model_catalog_airtable.assert_called_once()
+    elif "--hub" and "--local" in options:
+        mock_model_catalog_hub.assert_not_called()
     elif "--hub" in options:
         mock_model_catalog_hub.assert_called_once()
-    elif "--local" in options:
-        mock_model_catalog_local.assert_called_once()
 
 if __name__ == "__main__":
     runner = CliRunner()
