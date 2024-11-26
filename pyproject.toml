@@ -63,6 +63,8 @@ sphinx = { version = ">=6.0.0", optional = true }           # for minimum versio
 jinja2 = { version = "^3.1.2", optional = true }
 scipy = { version = "<=1.10.0", optional = true }
 
+bentoml = { git = "https://github.com/ersilia-os/bentoml-ersilia.git" }
+
 [tool.poetry.extras]
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 lake = ["isaura"]
@@ -72,7 +74,6 @@ test = ["pytest", "pytest-asyncio", "pytest-benchmark", "fuzzywuzzy", "scipy"]
 
 [tool.poetry.scripts]
 ersilia = "ersilia.cli:cli"
-bentoml = "ersilia.setup.requirements:check_bentoml"
 
 [build-system]
 requires = ["poetry-core"]
