@@ -55,6 +55,7 @@ isaura = { version = "0.1", optional = true }
 aiofiles = "<=24.1.0"
 aiohttp = ">=3.10.11"
 nest_asyncio = "<=1.6.0"
+bentoml = { git = "https://github.com/ersilia-os/bentoml-ersilia.git" }
 pytest = { version = "^7.4.0", optional = true }
 pytest-asyncio = { version = "<=0.24.0", optional = true }
 pytest-benchmark = { version = "<=4.0.0", optional = true }
@@ -72,7 +73,6 @@ test = ["pytest", "pytest-asyncio", "pytest-benchmark", "fuzzywuzzy", "scipy"]
 
 [tool.poetry.scripts]
 ersilia = "ersilia.cli:cli"
-bentoml = "ersilia.setup.requirements:check_bentoml"
 
 [build-system]
 requires = ["poetry-core"]
