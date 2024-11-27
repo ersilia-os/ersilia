@@ -1,10 +1,8 @@
 import subprocess
 import sys
-import tempfile
 import os
-import shutil
 
-from ...utils.logging import make_temp_dir
+from ...default import EOS
 
 class BentoMLRequirement(object):
     def __init__(self):
@@ -22,11 +20,13 @@ class BentoMLRequirement(object):
         if not self.is_installed():
             return False
 
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "version.txt")
-        cmd = "bentoml --version > {0}".format(tmp_file)
-        subprocess.Popen(cmd, shell=True).wait()
-        with open(tmp_file, "r") as f:
+        version_file = os.path.join(EOS, "bentomlversion.txt")
+        
+        if not os.path.exists(version_file):
+            cmd = "bentoml --version > {0}".format(version_file)
+            subprocess.Popen(cmd, shell=True).wait()
+
+        with open(version_file, "r") as f:
             text = f.read()
         if "0.11.0" in text:
             return True
