@@ -16,7 +16,7 @@ layout:
     visible: true
 ---
 
-# Testing Playground for Ersilia Model Pipeline
+# Testing Playground
 
 ### **Overview of the playground**
 
