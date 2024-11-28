@@ -137,12 +137,9 @@
             <span class="n">track_run</span><span class="o">=</span><span class="n">track_runs</span><span class="p">,</span>
             <span class="n">try_standard</span><span class="o">=</span><span class="n">standard</span><span class="p">,</span>
         <span class="p">)</span>
-
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
                     <span class="n">formatted</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">table</span><span class="p">:</span>
                         <span class="n">print_result_table</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span>
@@ -151,12 +148,11 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Something went wrong&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">table</span><span class="p">:</span>
                 <span class="n">print_result_table</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                 <span class="n">echo</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1">#</span>
+                 <span class="n">echo</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
                 <span class="k">except</span><span class="p">:</span>
                     <span class="n">print_result_table</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 

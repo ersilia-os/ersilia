@@ -537,12 +537,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">pid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span>
-        <span class="c1"># self.update_model_usage_time(self.model_id) TODO: Check and reactivate</span>
 
-        <span class="c1"># Start tracking to get the peak memory, memory usage and cpu time of the Model server (autoservice)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">memory_usage_serve</span><span class="p">,</span> <span class="n">cpu_time_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_memory_info</span><span class="p">()</span>
-            <span class="c1"># print(&quot;HERE&quot;, self._run_tracker.get_memory_info())</span>
             <span class="n">peak_memory_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
 
             <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -630,8 +627,15 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">stop_tracking</span><span class="p">()</span>
             <span class="n">container_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">get_average_metrics</span><span class="p">()</span>
+            <span class="n">model_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s1">&#39;metadata&#39;</span> <span class="ow">in</span> <span class="n">model_info</span><span class="p">:</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="s1">&#39;card&#39;</span> <span class="ow">in</span> <span class="n">model_info</span><span class="p">:</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;card&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
-                <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_info</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span> <span class="n">container_metrics</span>
+                <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">container_metrics</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result</span></div>
@@ -686,11 +690,7 @@
         <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
-
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_model_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">()</span></div>
+</div>
 
 </pre></div>
 
