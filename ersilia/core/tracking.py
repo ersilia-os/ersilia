@@ -329,8 +329,13 @@ class RunTracker(ErsiliaBase):
         input_size = sys.getsizeof(input_file) / 1024
         output_size = sys.getsizeof(output_file) / 1024
 
-        input_avg_row_size = input_size / len(input_file)
-        output_avg_row_size = output_size / len(output_file)
+        try:
+            input_avg_row_size = input_size / len(input_file)
+            output_avg_row_size = output_size / len(output_file)
+        except ZeroDivisionError:
+            self.logger.warning("Encountered a ZeroDivisionError. No data in input or output file")
+            input_avg_row_size = -1
+            output_avg_row_size = -1
 
         return {
             "input_size": input_size,
