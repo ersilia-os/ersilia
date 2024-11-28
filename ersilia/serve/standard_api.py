@@ -210,7 +210,7 @@ class StandardCSVRunApi(ErsiliaBase):
                     json_data += [{"key": key, "input": row[0], "text": row[0]}]
         return json_data
 
-    async def async_serialize_to_json_one_columns(self, input_data):
+    async def async_serialize_to_json_one_column(self, input_data):
         smiles_list = self.get_list_from_csv(input_data)
         smiles_list = [smiles for smiles in smiles_list if self.validate_smiles(smiles)]
         json_data = await self.encoder.encode_batch(smiles_list)
@@ -220,8 +220,10 @@ class StandardCSVRunApi(ErsiliaBase):
         smiles_list = []
         with open(input_data, mode='r') as file:
             reader = csv.DictReader(file)
+            header = reader.fieldnames
+            key = header[0] if len(header) == 1 else header[1]
             for row in reader:
-                smiles = row.get('input')
+                smiles = row.get(key)
                 if smiles and smiles not in smiles_list and self.validate_smiles(smiles):
                     smiles_list.append(smiles)
         return smiles_list
@@ -233,7 +235,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 h = next(reader)
             if len(h) == 1:
                 self.logger.debug("One column found in input")
-                return asyncio.run(self.async_serialize_to_json_one_columns(input_data))
+                return asyncio.run(self.async_serialize_to_json_one_column(input_data))
             elif len(h) == 2:
                 self.logger.debug("Two columns found in input")
                 return self.serialize_to_json_two_columns(input_data=input_data)
