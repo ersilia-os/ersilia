@@ -427,8 +427,13 @@
         <span class="n">input_size</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span>
         <span class="n">output_size</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span>
 
-        <span class="n">input_avg_row_size</span> <span class="o">=</span> <span class="n">input_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
-        <span class="n">output_avg_row_size</span> <span class="o">=</span> <span class="n">output_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">input_avg_row_size</span> <span class="o">=</span> <span class="n">input_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+            <span class="n">output_avg_row_size</span> <span class="o">=</span> <span class="n">output_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Encountered a ZeroDivisionError. No data in input or output file&quot;</span><span class="p">)</span>
+            <span class="n">input_avg_row_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">output_avg_row_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;input_size&quot;</span><span class="p">:</span> <span class="n">input_size</span><span class="p">,</span>
