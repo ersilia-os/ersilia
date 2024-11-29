@@ -210,7 +210,7 @@ class StandardCSVRunApi(ErsiliaBase):
                     json_data += [{"key": key, "input": row[0], "text": row[0]}]
         return json_data
 
-    async def async_serialize_to_json_one_columns(self, input_data):
+    async def async_serialize_to_json_one_column(self, input_data):
         smiles_list = self.get_list_from_csv(input_data)
         smiles_list = [smiles for smiles in smiles_list if self.validate_smiles(smiles)]
         json_data = await self.encoder.encode_batch(smiles_list)
@@ -220,8 +220,10 @@ class StandardCSVRunApi(ErsiliaBase):
         smiles_list = []
         with open(input_data, mode='r') as file:
             reader = csv.DictReader(file)
+            header = reader.fieldnames
+            key = header[0] if len(header) == 1 else header[1]
             for row in reader:
-                smiles = row.get('input')
+                smiles = row.get(key)
                 if smiles and smiles not in smiles_list and self.validate_smiles(smiles):
                     smiles_list.append(smiles)
         return smiles_list
@@ -233,7 +235,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 h = next(reader)
             if len(h) == 1:
                 self.logger.debug("One column found in input")
-                return asyncio.run(self.async_serialize_to_json_one_columns(input_data))
+                return asyncio.run(self.async_serialize_to_json_one_column(input_data))
             elif len(h) == 2:
                 self.logger.debug("Two columns found in input")
                 return self.serialize_to_json_two_columns(input_data=input_data)
@@ -261,21 +263,17 @@ class StandardCSVRunApi(ErsiliaBase):
         return True
     
     def serialize_to_csv(self, input_data, result, output_data):
-        k = list(result[0].keys())[0]
-        v = result[0][k]
-        if type(v) is list:
-            is_list = True
-        else:
-            is_list = False
         with open(output_data, "w") as f:
             writer = csv.writer(f)
             writer.writerow(self.header)
             for i_d, r_d in zip(input_data, result):
-                v = r_d[k]
-                if not is_list:
-                    r = [i_d["key"], i_d["input"]] + [v]
-                else:
-                    r = [i_d["key"], i_d["input"]] + v
+                r = [i_d["key"], i_d["input"]]
+                for k in self.header[2:]:
+                    v = r_d[k]
+                    if isinstance(v, list):
+                        r+=v
+                    else:
+                        r+=[v]
                 writer.writerow(r)
         return output_data
 
