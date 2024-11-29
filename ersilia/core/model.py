@@ -445,12 +445,9 @@ class ErsiliaModel(ErsiliaBase):
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
-        # self.update_model_usage_time(self.model_id) TODO: Check and reactivate
 
-        # Start tracking to get the peak memory, memory usage and cpu time of the Model server (autoservice)
         if self._run_tracker is not None:
             memory_usage_serve, cpu_time_serve = self._run_tracker.get_memory_info()
-            # print("HERE", self._run_tracker.get_memory_info())
             peak_memory_serve = self._run_tracker.get_peak_memory()
 
             session = Session(config_json=None)
@@ -529,8 +526,15 @@ class ErsiliaModel(ErsiliaBase):
         if self._run_tracker and track_run:
             self.ct_tracker.stop_tracking()
             container_metrics = self.ct_tracker.get_average_metrics()
+            model_info = self.info()
+            if 'metadata' in model_info:
+                metadata = model_info['metadata']
+            elif 'card' in model_info:
+                metadata = model_info['card']
+            else:
+                metadata = {}
             self._run_tracker.track(
-                input, result, self._model_info["metadata"], container_metrics
+                input, result, metadata, container_metrics
             )
 
         return result
@@ -579,7 +583,3 @@ class ErsiliaModel(ErsiliaBase):
         )
         with open(information_file, "r") as f:
             return json.load(f)
-
-    @property
-    def _model_info(self):
-        return self.info()
