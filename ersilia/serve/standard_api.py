@@ -263,21 +263,17 @@ class StandardCSVRunApi(ErsiliaBase):
         return True
     
     def serialize_to_csv(self, input_data, result, output_data):
-        k = list(result[0].keys())[0]
-        v = result[0][k]
-        if type(v) is list:
-            is_list = True
-        else:
-            is_list = False
         with open(output_data, "w") as f:
             writer = csv.writer(f)
             writer.writerow(self.header)
             for i_d, r_d in zip(input_data, result):
-                v = r_d[k]
-                if not is_list:
-                    r = [i_d["key"], i_d["input"]] + [v]
-                else:
-                    r = [i_d["key"], i_d["input"]] + v
+                r = [i_d["key"], i_d["input"]]
+                for k in self.header[2:]:
+                    v = r_d[k]
+                    if isinstance(v, list):
+                        r+=v
+                    else:
+                        r+=[v]
                 writer.writerow(r)
         return output_data
 
