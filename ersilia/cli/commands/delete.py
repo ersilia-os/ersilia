@@ -67,3 +67,4 @@ def delete_cmd():
             _delete_model_by_id(model_id)
         else:
             echo(":warning: Please specify a model to delete a model or use --all to delete all models.", fg="red")
+    return delete
