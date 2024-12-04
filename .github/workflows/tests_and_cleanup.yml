@@ -118,7 +118,8 @@ jobs:
           pytest
       - name: Run Model Tester
         run: |
-          source activate          
+          source activate
+          ersilia -v delete eos3b5e          
           ersilia -v test eos3b5e -d eos3b5e --inspect --remote -l deep
 
   run-cli-test-single:
