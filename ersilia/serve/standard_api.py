@@ -12,8 +12,7 @@ from ..default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
 )
-from ..default import INFORMATION_FILE, API_SCHEMA_FILE
-from ..default import DEFAULT_API_NAME
+from ..default import INFORMATION_FILE, API_SCHEMA_FILE, DEFAULT_API_NAME, PREDEFINED_EXAMPLE_FILES
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -43,7 +42,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.debug("This is the input type: {0}".format(self.input_type))
         self.encoder = self.get_identifier_object_by_input_type()
         self.validate_smiles = self.get_identifier_object_by_input_type().validate_smiles
-        self.header = self.get_expected_output_header(self.standard_output_csv)
+        self.header = self.get_expected_output_header()
         self.logger.debug(
             "This is the expected header (max 10): {0}".format(self.header[:10])
         )
@@ -161,10 +160,22 @@ class StandardCSVRunApi(ErsiliaBase):
             return False
         return True
     
-    def get_expected_output_header(self, output_data):
-        with open(output_data, "r") as f:
+    def get_expected_output_header(self):
+        file = None
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            if os.path.exists(os.path.join(self.path, pf)):
+                file = os.path.join(self.path, pf)
+                self.logger.debug(f"Determining header from predefined example file: {pf}")
+                break
+        if not file and os.path.exists(self.standard_output_csv):
+            file = self.standard_output_csv
+            self.logger.debug(f"Determining header from standard output file: {self.standard_output_csv}")
+        
+        with open(file, "r") as f:
             reader = csv.reader(f)
             header = next(reader)
+        if header[0:2] != ["key", "input"]: # Slicing doesn't raise an error even if the list does not have 2 elements
+            header = ["key", "input"] + header
         return header
      
 
