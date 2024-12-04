@@ -12,6 +12,7 @@ from enum import Enum
 from dataclasses import dataclass
 from typing import List
 from datetime import datetime
+from pathlib import Path
 
 from ..utils.conda import SimpleConda
 from .. import ErsiliaBase, throw_ersilia_exception
@@ -797,6 +798,31 @@ class CheckService:
             output=output2_path, 
             batch=100
         )
+        def create_csv(file_path, data):
+    # Ensure the file path's directory exists
+            Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+            
+            # Write data to the CSV file
+            with open(file_path, mode='w', newline='') as csv_file:
+                writer = csv.DictWriter(csv_file, fieldnames=data[0].keys())
+                writer.writeheader()
+                writer.writerows(data)
+
+            # Check if the file exists after creation
+            if os.path.exists(file_path):
+                print(f"File successfully created: {file_path}")
+            else:
+                print(f"File creation failed: {file_path}")
+
+        # Example usage
+        file_path = "output/example.csv"
+        data = [
+            {"name": "Alice", "age": 25},
+            {"name": "Bob", "age": 30},
+            {"name": "Charlie", "age": 35}
+        ]
+
+        create_csv(file_path, data)
         self.logger.debug(f"Output1: {out1}")
         self.logger.debug(f"Output2: {out2}")
         data1 = read_csv(output1_path)
