@@ -224,7 +224,6 @@ class ModelInspector:
 
     def check_complete_folder_structure(self):
         invalid_items = self.validate_repo_structure(
-            "tree" # for remote
         )
         if invalid_items:
             return Result(
