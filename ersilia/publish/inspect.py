@@ -19,24 +19,37 @@ from ..default import (
 )
 Result = namedtuple("Result", ["success", "details"])
 # Base URL for the Ersilia OS Github
-BASE_URL         = "https://github.com/ersilia-os/"
-RAW_CONTENT_URL     = "https://raw.githubusercontent.com/ersilia-os/{model}/main/"
-REPO_API_URL     = "https://api.github.com/repos/ersilia-os/{model}/contents"
+BASE_URL = "https://github.com/ersilia-os/"
+RAW_CONTENT_URL = "https://raw.githubusercontent.com/ersilia-os/{model}/main/"
+REPO_API_URL = "https://api.github.com/repos/ersilia-os/{model}/contents"
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 
 class ModelInspector:
 
     RUN_FILE = f"model/framework/{RUN_FILE}"
+    
     COMMON_FILES = [
         RUN_FILE,
         "README.md",
         "LICENSE",
     ]
-
+    BENTOML_FOLDERS = [
+        "model",
+        "src",
+        ".github"
+    ]
     BENTOML_FILES = [
         DOCKERFILE_FILE,
         METADATA_JSON_FILE,
         "src/service.py",
         "pack.py",
+        ".gitignore",
+        "input.csv",
+    ]
+    
+    ERSILIAPACK_FOLDERS = [
+        "model",
+        ".github"
     ]
 
     ERSILIAPACK_FILES = [
@@ -44,6 +57,9 @@ class ModelInspector:
         METADATA_YAML_FILE,
         PREDEFINED_EXAMPLE_FILES[0],
         PREDEFINED_EXAMPLE_FILES[1],
+        ".dockerignore",
+        ".gitignore",
+        ".gitattributes",
     ]
 
     BENTOML_FILES     = COMMON_FILES + BENTOML_FILES
@@ -231,9 +247,9 @@ class ModelInspector:
 
     def check_no_extra_files(self):
         if self.pack_type == PACK_METHOD_BENTOML:
-            expected_items = self.BENTOML_FILES
+            expected_items = self.BENTOML_FILES + self.BENTOML_FOLDERS
         elif self.pack_type == PACK_METHOD_FASTAPI:
-            expected_items = self.ERSILIAPACK_FILES
+            expected_items = self.ERSILIAPACK_FILES + self.ERSILIAPACK_FOLDERS
         else:
             return Result(False, f"Unsupported pack type: {self.pack_type}")
 
@@ -290,7 +306,11 @@ class ModelInspector:
 
     def _url_exists(self, url):
         try:
-            response = requests.head(url)
+            headers = {
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "User-Agent":USER_AGENT 
+            }
+            response = requests.head(url, headers=headers)
             logger.debug(f"URl: {url} | status code: {response.status_code}")
             return response.status_code == 200
         except requests.RequestException:
@@ -324,7 +344,6 @@ class ModelInspector:
     def _validate_repo_structure(
             self, 
             required_items,
-            content_type
         ):
         missing_items = []
         
@@ -343,7 +362,7 @@ class ModelInspector:
         
         return missing_items
     
-    def validate_repo_structure(self, content_type):
+    def validate_repo_structure(self):
         logger.debug(f"Pack Type: {self.pack_type}")
         if self.pack_type == PACK_METHOD_BENTOML:
             required_items = self.BENTOML_FILES
@@ -352,7 +371,7 @@ class ModelInspector:
         else:
             raise ValueError(f"Unsupported pack type: {self.pack_type}")
         
-        return self._validate_repo_structure(required_items, content_type)
+        return self._validate_repo_structure(required_items)
     
     def _validate_dockerfile(self, dockerfile_content):
         lines, errors = dockerfile_content.splitlines(), []
