@@ -25,6 +25,7 @@ class StandardCSVRunApi(ErsiliaBase):
             "You are running the app with a standard runner. Beware that this runner does not do as many checks on the input as the conventional runner: use it at your own risk."
         )
         self.model_id = model_id
+        # TODO WHY? Why can't we init with a cleaner url?
         if url[-1] == "/":
             self.url = url[:-1]
         else:
@@ -38,14 +39,41 @@ class StandardCSVRunApi(ErsiliaBase):
         self.standard_output_csv = os.path.join(
             self.path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME
         )
-        self.input_type = self.get_input_type()
+        metadata = self._read_information_file()
+        self.input_type = self._read_field_from_metadata(metadata, "Input")
+        self.input_shape = self._read_field_from_metadata(metadata, "Input Shape")
         self.logger.debug("This is the input type: {0}".format(self.input_type))
         self.encoder = self.get_identifier_object_by_input_type()
-        self.validate_smiles = self.get_identifier_object_by_input_type().validate_smiles
+        # TODO This whole validate_smiles thing can go away since we already handle this in the encoder
+        self.validate_smiles = self.get_identifier_object_by_input_type().validate_smiles #TODO this can just be self.encoder.validate_smiles
         self.header = self.get_expected_output_header()
         self.logger.debug(
             "This is the expected header (max 10): {0}".format(self.header[:10])
         )
+
+    def _read_information_file(self):
+        try:
+            with open(os.path.join(self.path, INFORMATION_FILE), "r") as f:
+                info = json.load(f)
+                return info
+        
+        except FileNotFoundError:
+            self.logger.debug(f"Error: File '{INFORMATION_FILE}' not found in the path '{self.path}'")
+        except json.JSONDecodeError:
+            self.logger.debug(f"Error: Failed to parse JSON in file '{INFORMATION_FILE}'")
+        except Exception as e:
+             self.logger.debug(f"An unexpected error occurred: {e}")
+
+    def _read_field_from_metadata(self, meta, field):
+        if not meta:
+            self.logger.error(f"No metadata given")
+            return None
+        if "metadata" in meta and field in meta["metadata"]:
+            return meta["metadata"][field]
+        elif "card" in meta and field in meta["card"]:
+            return meta["card"][field]
+        else:
+            self.logger.error(f"Neither 'metadata' nor 'card' contains '{field}' key.")
 
     def get_identifier_object_by_input_type(self):
         identifier_module_path = "ersilia.utils.identifiers.{0}".format(
@@ -53,16 +81,6 @@ class StandardCSVRunApi(ErsiliaBase):
         )
         identifier_object = importlib.import_module(identifier_module_path).Identifier()
         return identifier_object
-
-    def is_ready(self):
-        if not self.is_input_type_standardizable():
-            return False
-        if not os.path.exists(self.standard_output_csv) or not os.path.exists(
-            self.standard_input_csv
-        ):
-            return False
-        else:
-            return True
 
     def _is_input_file_too_long(self, input_data):
         with open(input_data, "r") as f:
@@ -75,7 +93,7 @@ class StandardCSVRunApi(ErsiliaBase):
                     return True
         return False
 
-    def is_input_standard_csv_file(self, input_data):
+    def is_input_standard_csv_file(self, input_data): #TODO Not really used anywhere.
         if type(input_data) != str:
             return False
         if not input_data.endswith(".csv"):
@@ -112,31 +130,11 @@ class StandardCSVRunApi(ErsiliaBase):
         else:
             return False
 
-    def get_input_type(self):
-        try:
-            with open(os.path.join(self.path, INFORMATION_FILE), "r") as f:
-                info = json.load(f)
-                if "metadata" in info and "Input" in info["metadata"]:
-                    return info["metadata"]["Input"]
-                elif "card" in info and "Input" in info["card"]:
-                    return info["card"]["Input"]
-                else:
-                    raise KeyError("Neither 'metadata' nor 'card' contains 'Input' key.")
-        
-        except FileNotFoundError:
-            self.logger.debug(f"Error: File '{INFORMATION_FILE}' not found in the path '{self.path}'")
-        except json.JSONDecodeError:
-            self.logger.debug(f"Error: Failed to parse JSON in file '{INFORMATION_FILE}'")
-        except KeyError as e:
-             self.logger.debug(f"Error: {e}")
-        except Exception as e:
-             self.logger.debug(f"An unexpected error occurred: {e}")
-
-
     def is_input_type_standardizable(self):
-        if len(self.input_type) != 1:
-            return False
-        return True
+        if self.input_type and self.input_shape:
+            if self.input_type[0] == "Compound" and self.input_shape[0] == "Single":
+                return True
+        return False
 
     def is_output_type_standardizable(self):
         api_schema_file_path = os.path.join(self.path, API_SCHEMA_FILE)
@@ -161,6 +159,13 @@ class StandardCSVRunApi(ErsiliaBase):
         return True
     
     def get_expected_output_header(self):
+        """Calculate the expected output header from the predefined example files or the standard output file.
+
+        Returns
+        -------
+        List | None
+           Returns the header which is a list of column names, or None if the header could not be determined.
+        """
         file = None
         for pf in PREDEFINED_EXAMPLE_FILES:
             if os.path.exists(os.path.join(self.path, pf)):
@@ -171,13 +176,15 @@ class StandardCSVRunApi(ErsiliaBase):
             file = self.standard_output_csv
             self.logger.debug(f"Determining header from standard output file: {self.standard_output_csv}")
         
-        with open(file, "r") as f:
-            reader = csv.reader(f)
-            header = next(reader)
-        if header[0:2] != ["key", "input"]: # Slicing doesn't raise an error even if the list does not have 2 elements
-            header = ["key", "input"] + header
-        return header
-     
+        try:
+            with open(file, "r") as f:
+                reader = csv.reader(f)
+                header = next(reader)
+                if header[0:2] != ["key", "input"]: # Slicing doesn't raise an error even if the list does not have 2 elements
+                    header = ["key", "input"] + header
+            return header
+        except (FileNotFoundError, StopIteration):
+            self.logger.error(f"Could not determine header from file {file}")
 
     def parse_smiles_list(self, input_data):
         if not input_data or all(not s.strip() for s in input_data):
@@ -264,6 +271,8 @@ class StandardCSVRunApi(ErsiliaBase):
             raise ValueError("Input must be either a file path (string), a SMILES string, or a list of SMILES strings.")
     
     def is_amenable(self, output_data):
+        if not self.header:
+            return False
         if not self.is_input_type_standardizable():
             return False
         if not self.is_output_type_standardizable():
