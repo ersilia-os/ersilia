@@ -196,7 +196,6 @@ class BaseTabularFile(object):
                             self.matching
                         )
                     )
-                    return self.matching
                 if i > self.sniff_line_limit:
                     self.logger.debug("Stopping sniffer for resolving column types")
                     break
@@ -266,7 +265,6 @@ class BaseTabularFile(object):
         if key is not None and input is not None:
             assert len(key) == len(input)
         self.matching = {"input": input, "key": key}
-        return self.matching
 
     def has_header(self):
         if self._has_header is not None:

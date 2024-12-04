@@ -64,7 +64,7 @@ def mock_get_url():
 def mock_get_input():
     with patch.object(
         StandardCSVRunApi, 
-        "get_input_type",
+        "_read_field_from_metadata",
           return_value=["Compound"]
     ) as mock_input_type:
         yield mock_input_type
@@ -78,17 +78,6 @@ def mock_std_header():
         return_value=HEADER
     ) as mock_method:
         yield mock_method
-
-
-@pytest.fixture
-def mock_is_ready():
-    with patch.object(
-        StandardCSVRunApi, 
-        "is_ready", 
-        return_value=True
-    ) as mock_is_ready:
-        yield mock_is_ready
-
 
 @pytest.fixture
 def mock_is_amenable():
@@ -170,7 +159,6 @@ def test_standard_api_string(
     mock_fetcher,
     mock_set_apis,
     mock_get_input,
-    mock_is_ready,
     mock_std_header,
     mock_is_amenable,
     mock_get_url,
@@ -187,7 +175,6 @@ def test_standard_api_string(
     assert mock_get_url.called
     assert mock_get_input.called
     assert mock_std_header.called
-    assert mock_is_ready.called
     assert mock_is_amenable.called
     assert mock_std_api_post.called
 
@@ -200,7 +187,6 @@ def test_standard_api_csv(
     mock_fetcher,
     mock_set_apis,
     mock_get_input,
-    mock_is_ready,
     mock_std_header,
     mock_is_amenable,
     mock_get_url,
@@ -217,7 +203,6 @@ def test_standard_api_csv(
     assert mock_get_input.called
     assert mock_get_url.called
     assert mock_std_header.called
-    assert mock_is_ready.called
     assert mock_is_amenable.called
     assert mock_set_apis.called
     assert RESULT_CSV in result.output
