@@ -36,7 +36,7 @@ class Session(ErsiliaBase):
             return None
         else:
             return data["service_class"]
-    
+
     def current_output_source(self):
         data = self.get()
         if data is None:
@@ -49,7 +49,7 @@ class Session(ErsiliaBase):
         data["service_class"] = service_class
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
-    
+
     def register_output_source(self, output_source):
         data = self.get()
         data["output_source"] = output_source
@@ -128,4 +128,3 @@ class Session(ErsiliaBase):
         self.logger.debug("Closing session {0}".format(self.session_file))
         if os.path.isfile(self.session_file):
             os.remove(self.session_file)
-        

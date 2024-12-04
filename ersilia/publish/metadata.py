@@ -6,6 +6,7 @@ from ..utils.logging import make_temp_dir
 from .. import ErsiliaBase
 from ..default import GITHUB_ORG, METADATA_JSON_FILE
 
+
 class ReadmeUpdater(ErsiliaBase):
     def __init__(self, model_id=None, repo_path=None, commit=True, config_json=None):
         self.model_id = model_id

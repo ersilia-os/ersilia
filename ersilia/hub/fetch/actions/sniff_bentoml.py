@@ -114,7 +114,7 @@ class ModelSniffer(BaseAction):
         try:
             md = get_metadata_from_base_dir(dest_dir)
         except FileNotFoundError:
-            self.logger.debug("Metadata file not available")    
+            self.logger.debug("Metadata file not available")
             return
         return md["Output Shape"]  # TODO Account for mixed types
 

@@ -30,7 +30,7 @@ def catalog_cmd():
         help="Show more information than just the EOS identifier",
     )
     @click.option(
-      "--card",
+        "--card",
         is_flag=True,
         default=False,
         help="Use this flag to display model card for a given model ID",
@@ -47,8 +47,14 @@ def catalog_cmd():
         help="Show catalog in table format",
     )
     def catalog(
-        local=False, file_name=None, browser=False, more=False, card=False, model=None, as_table=False
-        ):
+        local=False,
+        file_name=None,
+        browser=False,
+        more=False,
+        card=False,
+        model=None,
+        as_table=False,
+    ):
         if card and not model:
             click.echo(
                 click.style("Error: --card option requires a model ID", fg="red"),
@@ -105,4 +111,5 @@ def catalog_cmd():
             catalog = None
 
         click.echo(catalog)
+
     return catalog

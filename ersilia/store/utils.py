@@ -14,13 +14,14 @@ class InferenceStoreMessage(object):
     def _echo(self, text, **styles):
         return click.echo(click.style(text, **styles))
 
-class OutputSource():
+
+class OutputSource:
     LOCAL_ONLY = "local-only"
     CLOUD_ONLY = "cloud-only"
     ALL = [
         LOCAL_ONLY,
         CLOUD_ONLY,
-        ]
+    ]
 
     @classmethod
     def is_local(cls, option):
@@ -29,6 +30,7 @@ class OutputSource():
     @classmethod
     def is_cloud(cls, option):
         return option == cls.CLOUD_ONLY
+
 
 class ModelNotInStore(InferenceStoreMessage):
     def __init__(self, model_id):
@@ -42,9 +44,8 @@ class ModelNotInStore(InferenceStoreMessage):
         )
         super()._echo(
             "Please serve the model locally: ersilia serve {0} --output-source {1}".format(
-                self.model_id,
-                OutputSource.LOCAL_ONLY
-                )
+                self.model_id, OutputSource.LOCAL_ONLY
+            )
         )
         sys.exit(0)
 
@@ -56,14 +57,15 @@ class PrecalculationsNotInStore(InferenceStoreMessage):
 
     def echo(self):
         super()._echo(
-            "Precalculations for model {0} could not be found in inference store".format(self.model_id),
+            "Precalculations for model {0} could not be found in inference store".format(
+                self.model_id
+            ),
             fg="red",
         )
         super()._echo(
             "Please serve the model locally: ersilia serve {0} --output-source {1}".format(
-                self.model_id,
-                OutputSource.LOCAL_ONLY
-                )
+                self.model_id, OutputSource.LOCAL_ONLY
+            )
         )
         sys.exit(0)
 
@@ -76,22 +78,17 @@ class PrecalculationsInStore(InferenceStoreMessage):
     def echo(self):
         super()._echo(
             "Precalculations for model {0} are now available for download via this link (expires in 60 minutes): {1}".format(
-                self.model_id,
-                self.output_url
-                ),
-            fg="green"
+                self.model_id, self.output_url
+            ),
+            fg="green",
         )
         sys.exit(0)
 
 
 def store_has_model(model_id: str) -> bool:
     response = requests.get(
-        INFERENCE_STORE_API_URL + "/model",
-        params={
-            "modelid": model_id
-        },
-        timeout=60
-        )
+        INFERENCE_STORE_API_URL + "/model", params={"modelid": model_id}, timeout=60
+    )
     if response.status_code == 200:
         print(f"Model {model_id} found in inference store")
         return True
@@ -105,4 +102,6 @@ def delete_file_upon_upload(response_code: int, file_path: str):
             os.remove(file_path)
             print(f"File {file_path} deleted successfully.")
         except Exception as e:
-            print(f"Failed to delete file {file_path}, please delete manually. Error: {e}")
+            print(
+                f"Failed to delete file {file_path}, please delete manually. Error: {e}"
+            )

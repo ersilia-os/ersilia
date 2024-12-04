@@ -15,7 +15,9 @@ def convert_airtable_to_json(
     airtable_api_key, aws_access_key_id, aws_secret_access_key
 ):
     headers = {"Authorization": f"Bearer {airtable_api_key}"}
-    url = f"https://api.airtable.com/v0/{AIRTABLE_MODEL_HUB_BASE_ID}/{AIRTABLE_TABLE_ID}"
+    url = (
+        f"https://api.airtable.com/v0/{AIRTABLE_MODEL_HUB_BASE_ID}/{AIRTABLE_TABLE_ID}"
+    )
     offset = None
     model_records = []
     while True:
@@ -30,7 +32,7 @@ def convert_airtable_to_json(
         model_records.extend([record["fields"] for record in data["records"]])
         if not offset:
             break
-    
+
     print(f"Number of records: {len(model_records)}")
     models_json = json.dumps(model_records, indent=4)
 

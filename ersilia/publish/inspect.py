@@ -71,7 +71,6 @@ class ModelInspector(ErsiliaBase):
                     and file["S3"]
                     and file["DockerHub"]
                 ):  # Parse through json object and ensure
-
                     pub_url_works = (
                         requests.head(file["Publication"]).status_code != 404
                     )
@@ -256,17 +255,16 @@ class ModelInspector(ErsiliaBase):
             return Result(True, "Check passed.")
         return Result(False, details)
 
-
     def check_comptuational_performance(self):
         """
         Measure computational performance by serving the model and running predictions.
         Uses --track flag to automatically upload performance metrics to S3.
-    
+
         Returns:
             Result: A namedtuple containing a boolean success status and details of the check.
         """
         details = ""
-    
+
         for n in (1, 10, 100):
             cmd = (
                 f"ersilia serve {self.model} --track && "  # Track flag enables automatic S3 upload of metrics
@@ -274,9 +272,9 @@ class ModelInspector(ErsiliaBase):
                 "ersilia run -i my_input.csv && "
                 "ersilia close"
             )
-    
+
             startTime = time.time()
-    
+
             process = subprocess.run(
                 cmd,
                 shell=True,
@@ -284,14 +282,16 @@ class ModelInspector(ErsiliaBase):
                 stderr=subprocess.PIPE,
                 text=True,
             )
-    
+
             if process.returncode != 0:
-                return Result(False, f"Error serving model: {process.stdout}, {process.stderr}")
-    
+                return Result(
+                    False, f"Error serving model: {process.stdout}, {process.stderr}"
+                )
+
             endTime = time.time()
             executionTime = endTime - startTime
             details += f"Execution time ({n} Prediction(s)): {executionTime} seconds. "
-    
+
         return Result(True, details)
 
     def check_no_extra_files(self):

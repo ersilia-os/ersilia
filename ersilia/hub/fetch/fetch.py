@@ -11,13 +11,14 @@ from ...hub.delete.delete import ModelFullDeleter
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithFastAPI,
     NotInstallableWithBentoML,
-    StandardModelExampleError
+    StandardModelExampleError,
 )
 from .register.standard_example import ModelStandardExample
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...utils.terminal import yes_no_input
 from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, EOS, MODEL_SOURCE_FILE
 from . import STATUS_FILE, DONE_TAG
+
 
 class ModelFetcher(ErsiliaBase):
     def __init__(
@@ -161,7 +162,7 @@ class ModelFetcher(ErsiliaBase):
     def _standard_csv_example(self, model_id):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
         ms.run()
-        
+
     async def _fetch_from_dockerhub(self, model_id):
         self.logger.debug("Fetching from DockerHub")
         await self.model_dockerhub_fetcher.fetch(model_id=model_id)
@@ -221,7 +222,6 @@ class ModelFetcher(ErsiliaBase):
             return False
 
     async def _fetch(self, model_id):
-        
         self.logger.debug("Starting fetching procedure")
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
@@ -253,20 +253,22 @@ class ModelFetcher(ErsiliaBase):
             True if the model was fetched successfully, False otherwise
         """
         await self._fetch(model_id)
-        try:  
+        try:
             self._standard_csv_example(model_id)
         except StandardModelExampleError:
             self.logger.debug("Standard model example failed, deleting artifacts")
             do_delete = yes_no_input(
-                "Do you want to delete the model artifacts? [Y/n]", 
-                default_answer="Y")
+                "Do you want to delete the model artifacts? [Y/n]", default_answer="Y"
+            )
             if do_delete:
                 md = ModelFullDeleter(overwrite=False)
                 md.delete(model_id)
             return False
         else:
             self.logger.debug("Writing model source to file")
-            model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
+            model_source_file = os.path.join(
+                self._model_path(model_id), MODEL_SOURCE_FILE
+            )
             try:
                 os.makedirs(self._model_path(model_id), exist_ok=True)
             except OSError as error:

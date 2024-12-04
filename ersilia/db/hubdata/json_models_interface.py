@@ -10,7 +10,7 @@ import requests
 class JsonModelsInterface(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
-        # self.cache_dir = 
+        # self.cache_dir =
         self.json_file_name = MODELS_JSON
         self.url = f"https://{ERSILIA_MODEL_HUB_S3_BUCKET}.s3.eu-central-1.amazonaws.com/{MODELS_JSON}"
 
@@ -27,7 +27,7 @@ class JsonModelsInterface(ErsiliaBase):
     def items_all(self):
         models = self._read_json_file()
         return models
-    
+
     def identifier_exists(self, model_id):
         data = self._read_json_file()
         return any(item["Identifier"] == model_id for item in data)

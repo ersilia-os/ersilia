@@ -16,6 +16,7 @@ from .. import logger
 from ..default import S3_BUCKET_URL, S3_BUCKET_URL_ZIP
 from ..utils.logging import make_temp_dir
 
+
 class PseudoDownloader(object):
     def __init__(self, overwrite):
         self.overwrite = overwrite
@@ -132,9 +133,7 @@ class GitHubDownloader(object):
         GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/{1}/{2}.git
         mv {2} {3}
         rm {0}
-        """.format(
-            tmp_folder, org, repo, destination
-        )
+        """.format(tmp_folder, org, repo, destination)
         run_file = os.path.join(
             os.path.abspath(make_temp_dir(prefix="ersilia")), "run.sh"
         )

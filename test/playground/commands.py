@@ -10,11 +10,11 @@ from pathlib import Path
 from .shared import results
 from .rules import get_rule
 from .utils import (
-    create_compound_input_csv, 
+    create_compound_input_csv,
     get_command_names,
     get_commands,
     handle_error_logging,
-    save_as_json
+    save_as_json,
 )
 
 config = yaml.safe_load(Path("config.yml").read_text())
@@ -22,8 +22,8 @@ delete_model = config.get("delete_model", False)
 activate_docker = config.get("activate_docker", False)
 runner = config.get("runner", "single")
 cli_type = config.get("cli_type", "all")
-output_file = config.get("output_file") 
-input_file = config.get("input_file") 
+output_file = config.get("output_file")
+input_file = config.get("input_file")
 redirect = config.get("output_redirection", False)
 
 if runner == "single":
@@ -37,33 +37,28 @@ from_github = "--from_github" in config.get("fetch_flags", "")
 from_dockerhub = "--from_dockerhub" in config.get("fetch_flags", "")
 
 
-def execute_command(
-    command, 
-    description="", 
-    dest_path=None, 
-    repo_path=None
-):
+def execute_command(command, description="", dest_path=None, repo_path=None):
     # generating input eg.
     create_compound_input_csv(config.get("input_file"))
     # docker sys control
     docker_activated = False
     if config and config.get("activate_docker"):
-        docker_status = subprocess.run(
-            ["systemctl", "is-active", "--quiet", "docker"]
-        )
+        docker_status = subprocess.run(["systemctl", "is-active", "--quiet", "docker"])
         if docker_status.returncode != 0:
             subprocess.run(["systemctl", "start", "docker"], check=True)
         docker_activated = True
     else:
         subprocess.run(["systemctl", "stop", "docker"], check=True)
 
-    start_time, max_memory, success, result, checkups, = time.time(), 0, False, "", [] 
+    (
+        start_time,
+        max_memory,
+        success,
+        result,
+        checkups,
+    ) = time.time(), 0, False, "", []
 
-    proc = psutil.Popen(
-        command, 
-        stdout=subprocess.PIPE, 
-        stderr=subprocess.PIPE
-    )
+    proc = psutil.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     try:
         while proc.poll() is None:
@@ -83,45 +78,26 @@ def execute_command(
         result = str(e)
 
         if config.get("log_error", False):
-            handle_error_logging(
-                command,
-                description,
-                result,
-                config
-            )
+            handle_error_logging(command, description, result, config)
 
-        pytest.fail(
-            f"{description} '{' '.join(command)}' failed with error: {result}"
-        )
+        pytest.fail(f"{description} '{' '.join(command)}' failed with error: {result}")
 
     if description == "run" and success and config.get("output_redirection"):
-        save_as_json(
-            result, 
-            output_file, 
-            remove_list=[input_file]
-        )
+        save_as_json(result, output_file, remove_list=[input_file])
 
-    checkups = apply_rules(
-        command, 
-        description, 
-        dest_path, 
-        repo_path,
-        config
-    )
+    checkups = apply_rules(command, description, dest_path, repo_path, config)
 
     rules_success = all(check["status"] for check in checkups)
     overall_success = success and rules_success
 
     if not overall_success and config.get("log_error", False):
-        handle_error_logging(
-            command,
-            description,
-            result,
-            config,
-            checkups
-        )
+        handle_error_logging(command, description, result, config, checkups)
 
-    status_text = (Text("PASSED", style="green") if overall_success else Text("FAILED", style="red"))
+    status_text = (
+        Text("PASSED", style="green")
+        if overall_success
+        else Text("FAILED", style="red")
+    )
 
     results.append(
         {
@@ -139,13 +115,8 @@ def execute_command(
 
     return overall_success, (time.time() - start_time) / 60
 
-def apply_rules(
-        command, 
-        description, 
-        dest_path, 
-        repo_path, 
-        config
-    ):
+
+def apply_rules(command, description, dest_path, repo_path, config):
     checkups = []
     try:
         if description == "fetch":
@@ -197,13 +168,7 @@ def apply_rules(
                     )
                 )
     except Exception as rule_error:
-        handle_error_logging(
-            command,
-            description,
-            rule_error,
-            config,
-            checkups
-        )
+        handle_error_logging(command, description, rule_error, config, checkups)
         pytest.fail(f"Rule exception occurred: {rule_error}")
 
     return checkups
@@ -230,10 +195,11 @@ def delete_model_command():
 
 
 @pytest.mark.parametrize(
-    "model_id", 
-    model_ids if runner == "multiple" else [config.get("model_id")]
+    "model_id", model_ids if runner == "multiple" else [config.get("model_id")]
 )
-@pytest.mark.parametrize("command_name", get_command_names(model_ids[0], cli_type, config))
+@pytest.mark.parametrize(
+    "command_name", get_command_names(model_ids[0], cli_type, config)
+)
 def test_command(model_id, command_name):
     commands = get_commands(model_id, config)
     command = commands[command_name]
