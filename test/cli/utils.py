@@ -1,5 +1,6 @@
 import csv
 
+
 def create_compound_input_csv(csv_path):
     input_data = [
         "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1",
@@ -18,4 +19,3 @@ def create_compound_input_csv(csv_path):
         writer.writerow(["input"])
         for line in input_data:
             writer.writerow([line])
-

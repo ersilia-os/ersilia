@@ -655,7 +655,9 @@ class PulledDockerImageService(BaseServing):
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
         self.logger.debug("Starting Docker Daemon service")
-        self.container_tmp_logs = os.path.join(get_session_dir(), CONTAINER_LOGS_TMP_DIR)
+        self.container_tmp_logs = os.path.join(
+            get_session_dir(), CONTAINER_LOGS_TMP_DIR
+        )
         self.logger.debug(
             "Creating container tmp logs folder {0} and mounting as volume in container".format(
                 self.container_tmp_logs

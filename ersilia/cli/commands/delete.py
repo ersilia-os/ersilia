@@ -39,15 +39,20 @@ def delete_cmd():
         catalog_table = model_catalog.local()
         local_models = catalog_table.data if catalog_table else None
         if not local_models:
-            echo(":person_tipping_hand: No models are available locally for deletion.", fg="yellow")
+            echo(
+                ":person_tipping_hand: No models are available locally for deletion.",
+                fg="yellow",
+            )
             return
-        deleted_count = 0 
+        deleted_count = 0
         for model_row in local_models:
             model_id = model_row[0]
             if _delete_model_by_id(model_id):
                 deleted_count += 1
-        echo(":thumbs_up: Completed the deletion of all locally available models!", fg="green")
-        
+        echo(
+            ":thumbs_up: Completed the deletion of all locally available models!",
+            fg="green",
+        )
 
     # Example usage:
     # 1. Delete a specific model: ersilia delete {MODEL}
@@ -66,5 +71,9 @@ def delete_cmd():
             model_id = ModelBase(model).model_id
             _delete_model_by_id(model_id)
         else:
-            echo(":warning: Please specify a model to delete a model or use --all to delete all models.", fg="red")
+            echo(
+                ":warning: Please specify a model to delete a model or use --all to delete all models.",
+                fg="red",
+            )
+
     return delete

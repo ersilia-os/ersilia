@@ -4,6 +4,7 @@ import os
 
 from ...default import EOS
 
+
 class BentoMLRequirement(object):
     def __init__(self):
         pass
@@ -21,7 +22,7 @@ class BentoMLRequirement(object):
             return False
 
         version_file = os.path.join(EOS, "bentomlversion.txt")
-        
+
         if not os.path.exists(version_file):
             cmd = "bentoml --version > {0}".format(version_file)
             subprocess.Popen(cmd, shell=True).wait()

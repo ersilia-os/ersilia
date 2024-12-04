@@ -18,7 +18,11 @@ from .base import ErsiliaBase
 from ..utils.docker import SimpleDocker
 from ..utils.session import get_session_dir, get_session_uuid
 from ..utils.csvfile import CsvDataLoader
-from ..utils.tracking import init_tracking_summary, update_tracking_summary, RUN_DATA_STUB
+from ..utils.tracking import (
+    init_tracking_summary,
+    update_tracking_summary,
+    RUN_DATA_STUB,
+)
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..default import SESSION_JSON
 from ..io.output_logger import TabularResultLogger
@@ -29,6 +33,7 @@ AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = os.environ.get("AWS_REGIOIN", "eu-central-1")
 TRACKING_BUCKET = os.environ.get("TRACKING_BUCKET", "ersilia-models-runs")
+
 
 def flatten_dict(data):
     """
@@ -113,7 +118,7 @@ def log_files_metrics(file_log):
         res_dict = {}
         res_dict["error_count"] = error_count
 
-        if len(errors) > 0: # TODO We are not consuming this right now
+        if len(errors) > 0:  # TODO We are not consuming this right now
             res_dict["error_details"] = {}
             for err in errors:
                 res_dict["error_details"][err] = errors[err]
@@ -128,7 +133,7 @@ def serialize_session_json_to_csv(json_file, csv_file):
         data = json.load(f)
         header = []
         values = []
-        for k,v in data.items():
+        for k, v in data.items():
             header += [k]
             values += [v]
     with open(csv_file, "w") as f:
@@ -136,14 +141,15 @@ def serialize_session_json_to_csv(json_file, csv_file):
         writer.writerow(header)
         writer.writerow(values)
 
+
 def serialize_tracking_json_to_csv(json_file, csv_file):
     with open(json_file, "r") as f:
         data = json.load(f)
-        header = ["model_id"] + list(data.keys())[2:] # Ignore model_id and runs
-        num_rows = data['runs']
+        header = ["model_id"] + list(data.keys())[2:]  # Ignore model_id and runs
+        num_rows = data["runs"]
         rows = []
         for i in range(num_rows):
-            row = [data['model_id']]+[data[k][i] for k in header[1:]]
+            row = [data["model_id"]] + [data[k][i] for k in header[1:]]
             rows.append(row)
     with open(csv_file, "w") as f:
         writer = csv.writer(f)
@@ -151,8 +157,9 @@ def serialize_tracking_json_to_csv(json_file, csv_file):
         for row in rows:
             writer.writerow(row)
 
+
 def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
-    """Upload a file to an S3 bucket    
+    """Upload a file to an S3 bucket
 
     :param json_dict: JSON object to upload
     :param bucket: Bucket to upload to
@@ -179,29 +186,27 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
         # Upload run output to S3
         sid = get_session_uuid()
         output_file_path = os.path.join(get_session_dir(), "lake", f"output_{sid}.csv")
-        s3_client.upload_file(
-            output_file_path, bucket, f"output/output_{sid}.csv"
-        )
+        s3_client.upload_file(output_file_path, bucket, f"output/output_{sid}.csv")
 
         # Upload session info to S3
         session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
-        session_csv_path = session_json_path.split('.json')[0]+'.csv'
+        session_csv_path = session_json_path.split(".json")[0] + ".csv"
         serialize_session_json_to_csv(session_json_path, session_csv_path)
         s3_client.upload_file(session_csv_path, bucket, f"summary/session_{sid}.csv")
         os.remove(session_csv_path)
-        
+
         # Upload tracking summary to S3
-        tracking_json_path = os.path.join(get_session_dir(), f"{get_session_uuid()}.json")
+        tracking_json_path = os.path.join(
+            get_session_dir(), f"{get_session_uuid()}.json"
+        )
         s3_client.upload_file(tracking_json_path, bucket, f"tracking_raw/{sid}.json")
-        tracking_csv_path = tracking_json_path.split('.json')[0]+'.csv'
+        tracking_csv_path = tracking_json_path.split(".json")[0] + ".csv"
         serialize_tracking_json_to_csv(tracking_json_path, tracking_csv_path)
         s3_client.upload_file(tracking_csv_path, bucket, f"tracking/{sid}.csv")
         os.remove(tracking_csv_path)
 
     except NoCredentialsError:
-        logging.error(
-            "Unable to upload tracking data to AWS: Credentials not found"
-        )
+        logging.error("Unable to upload tracking data to AWS: Credentials not found")
     except ClientError as e:
         logging.error(e)
         return False
@@ -333,7 +338,9 @@ class RunTracker(ErsiliaBase):
             input_avg_row_size = input_size / len(input_file)
             output_avg_row_size = output_size / len(output_file)
         except ZeroDivisionError:
-            self.logger.warning("Encountered a ZeroDivisionError. No data in input or output file")
+            self.logger.warning(
+                "Encountered a ZeroDivisionError. No data in input or output file"
+            )
             input_avg_row_size = -1
             output_avg_row_size = -1
 
@@ -425,9 +432,11 @@ class RunTracker(ErsiliaBase):
             return str(e)
 
     def log_result(self, result):
-        identifier = get_session_uuid() 
+        identifier = get_session_uuid()
         output_file = os.path.join(self.lake_folder, f"output_{identifier}.csv")
-        tabular_result = self.tabular_result_logger.tabulate(result, identifier=identifier, model_id=self.model_id)
+        tabular_result = self.tabular_result_logger.tabulate(
+            result, identifier=identifier, model_id=self.model_id
+        )
         if tabular_result is None:
             return
         with open(output_file, "a+") as f:
@@ -455,7 +464,7 @@ class RunTracker(ErsiliaBase):
             input_data = self.data.read(input)
         else:
             input_data = [{"input": input}]
-           
+
         # Create a temporary file to store the result if it is a generator
         if isinstance(result, types.GeneratorType):
             tmp_dir = os.path.join(get_session_dir(), "tmp")
@@ -480,7 +489,6 @@ class RunTracker(ErsiliaBase):
         else:
             result_data = self.data.read(result)
 
-
         # Collect relevant data for the run
         nan_count = get_nan_counts(result_data)
         type_and_shape_info = self.check_types(result_data, meta)
@@ -491,10 +499,18 @@ class RunTracker(ErsiliaBase):
         console_log_file_path = os.path.join(get_session_dir(), "console.log")
         error_and_warning_info_current_log = log_files_metrics(current_log_file_path)
         error_and_warning_info_console_log = log_files_metrics(console_log_file_path)
-        run_data["input_size"] = size_info["input_size"] if size_info["input_size"] else -1
-        run_data["output_size"] = size_info["output_size"] if size_info["output_size"] else -1
-        run_data["avg_input_size"] = size_info["avg_input_size"] if size_info["avg_input_size"] else -1
-        run_data["avg_output_size"] = size_info["avg_output_size"] if size_info["avg_output_size"] else -1
+        run_data["input_size"] = (
+            size_info["input_size"] if size_info["input_size"] else -1
+        )
+        run_data["output_size"] = (
+            size_info["output_size"] if size_info["output_size"] else -1
+        )
+        run_data["avg_input_size"] = (
+            size_info["avg_input_size"] if size_info["avg_input_size"] else -1
+        )
+        run_data["avg_output_size"] = (
+            size_info["avg_output_size"] if size_info["avg_output_size"] else -1
+        )
         run_data["container_cpu_perc"] = container_metrics["container_cpu_perc"]
         run_data["peak_container_cpu_perc"] = container_metrics["peak_cpu_perc"]
         run_data["container_memory_perc"] = container_metrics["container_memory_perc"]
@@ -502,9 +518,15 @@ class RunTracker(ErsiliaBase):
         run_data["nan_count_agg"] = nan_count if nan_count else -1
         run_data["mismatched_type_count"] = type_and_shape_info["mismatched_types"]
         run_data["correct_shape"] = type_and_shape_info["correct_shape"]
-        run_data["error_count"] = error_and_warning_info_current_log["error_count"] + error_and_warning_info_console_log["error_count"]
-        run_data["warning_count"] = error_and_warning_info_current_log["warning_count"] + error_and_warning_info_console_log["warning_count"]
-        
+        run_data["error_count"] = (
+            error_and_warning_info_current_log["error_count"]
+            + error_and_warning_info_console_log["error_count"]
+        )
+        run_data["warning_count"] = (
+            error_and_warning_info_current_log["warning_count"]
+            + error_and_warning_info_console_log["warning_count"]
+        )
+
         update_tracking_summary(model_id, run_data)
 
         # Get the memory stats of the run processs
@@ -516,6 +538,6 @@ class RunTracker(ErsiliaBase):
         session.update_total_memory(total_memory)
         session.update_cpu_time(cpu_time)
         self.log_result(result)
-        
+
         if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
             upload_to_s3(model_id=self.model_id, metadata=meta)

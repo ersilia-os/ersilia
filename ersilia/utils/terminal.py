@@ -92,7 +92,7 @@ def yes_no_input(prompt, default_answer, timeout=5):
         return False
     else:
         return True
-    
+
 
 def print_result_table(data):
     HEADER_COLOR = "\033[95m"
@@ -108,6 +108,7 @@ def print_result_table(data):
             header: max(len(header), max(len(str(row[header])) for row in data)) + 5
             for header in headers
         }
+
         def format_row(row_data, is_header=False):
             if is_header:
                 return (
@@ -126,6 +127,7 @@ def print_result_table(data):
                     )
                     + RESET_COLOR
                 )
+
         separator = "-" * (sum(column_widths.values()) + (3 * len(headers) - 1))
         print(separator)
         print(format_row(headers, is_header=True))
@@ -137,6 +139,8 @@ def print_result_table(data):
         logger.debug(
             "Invalid input data format. Please provide either a CSV file path or JSON-like data."
         )
+
+
 def read_csv_from_string(csv_string):
     f = io.StringIO(csv_string)
     reader = csv.DictReader(f)

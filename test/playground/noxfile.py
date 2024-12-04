@@ -12,9 +12,7 @@ REPO_DIR = Path("ersilia")
 
 
 def update_yaml_values(new_values: dict):
-    existing_config = yaml.safe_load(
-        config_path.read_text()
-    )
+    existing_config = yaml.safe_load(config_path.read_text())
     existing_config.update(new_values)
     config_path.write_text(yaml.dump(existing_config))
 
@@ -35,12 +33,8 @@ def install_dependencies(session):
 
 
 def setup_ersilia(session):
-    if REPO_DIR.exists() and config.get(
-        "overwrite_ersilia_repo", False
-    ):
-        logger.info(
-            f"Overwriting existing repository directory: {REPO_DIR}"
-        )
+    if REPO_DIR.exists() and config.get("overwrite_ersilia_repo", False):
+        logger.info(f"Overwriting existing repository directory: {REPO_DIR}")
         shutil.rmtree(REPO_DIR)
 
     if not REPO_DIR.exists():
@@ -51,26 +45,20 @@ def setup_ersilia(session):
             external=True,
         )
     else:
-        logger.info(
-            f"Using existing repository directory: {REPO_DIR}"
-        )
+        logger.info(f"Using existing repository directory: {REPO_DIR}")
 
     session.chdir(REPO_DIR)
     session.install("-e", ".")
     session.chdir(ORIGINAL_DIR)
 
 
-@nox.session(
-    venv_backend="conda", python=get_python_version()
-)
+@nox.session(venv_backend="conda", python=get_python_version())
 def setup(session):
     install_dependencies(session)
     setup_ersilia(session)
 
 
-@nox.session(
-    venv_backend="conda", python=get_python_version()
-)
+@nox.session(venv_backend="conda", python=get_python_version())
 def test_from_github(session):
     install_dependencies(session)
     logger.info(
@@ -79,9 +67,7 @@ def test_from_github(session):
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
-@nox.session(
-    venv_backend="conda", python=get_python_version()
-)
+@nox.session(venv_backend="conda", python=get_python_version())
 def test_from_dockerhub(session):
     install_dependencies(session)
     update_yaml_values({"fetch_flags": "--from_dockerhub"})
@@ -91,9 +77,7 @@ def test_from_dockerhub(session):
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
-@nox.session(
-    venv_backend="conda", python=get_python_version()
-)
+@nox.session(venv_backend="conda", python=get_python_version())
 def test_auto_fetcher_decider(session):
     install_dependencies(session)
     update_yaml_values({"fetch_flags": ""})
@@ -103,9 +87,7 @@ def test_auto_fetcher_decider(session):
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
-@nox.session(
-    venv_backend="conda", python=get_python_version()
-)
+@nox.session(venv_backend="conda", python=get_python_version())
 def test_fetch_multiple_models(session):
     install_dependencies(session)
     update_yaml_values(
@@ -115,29 +97,21 @@ def test_fetch_multiple_models(session):
             "fetch_flags": "--from_dockerhub",
         }
     )
-    logger.info(
-        f"Fetching and Serving Multiple Models: Fetching"
-    )
+    logger.info(f"Fetching and Serving Multiple Models: Fetching")
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
-@nox.session(
-    venv_backend="conda", python=get_python_version()
-)
+@nox.session(venv_backend="conda", python=get_python_version())
 def test_serve_multiple_models(session):
     install_dependencies(session)
     update_yaml_values(
         {"runner": "multiple", "cli_type": "serve", "delete_model": False}
     )
-    logger.info(
-        f"Fetching and Serving Multiple Models: Serving"
-    )
+    logger.info(f"Fetching and Serving Multiple Models: Serving")
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
-@nox.session(
-    venv_backend="conda", python=get_python_version()
-)
+@nox.session(venv_backend="conda", python=get_python_version())
 def test_conventional_run(session):
     """Run pytest for standard and conventional run."""
     install_dependencies(session)
@@ -148,10 +122,8 @@ def test_conventional_run(session):
             "fetch_flags": "--from_dockerhub",
             "output_file": "files/output_eos9gg2_0.json",
             "output_redirection": "true",
-            "delete_model": True
+            "delete_model": True,
         }
     )
-    logger.info(
-        f"Standard and Conventional Run: Conventional"
-    )
+    logger.info(f"Standard and Conventional Run: Conventional")
     session.run("pytest", "commands.py", "-v", silent=False)

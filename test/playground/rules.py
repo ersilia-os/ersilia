@@ -7,9 +7,7 @@ RULE_REGISTRY = {}
 
 class CommandRule:
     def check(self, *args, **kwargs):
-        raise NotImplementedError(
-            "Each rule must implement a check method."
-        )
+        raise NotImplementedError("Each rule must implement a check method.")
 
 
 def register_rule(name):
@@ -26,9 +24,7 @@ class FolderExistsRule(CommandRule):
         pass
 
     def check(self, folder_path, expected_status):
-        actual_status = Path(folder_path).exists() and any(
-            Path(folder_path).iterdir()
-        )
+        actual_status = Path(folder_path).exists() and any(Path(folder_path).iterdir())
         if actual_status != expected_status:
             raise AssertionError(
                 f"Expectation failed for FolderExistsRule: "
@@ -70,10 +66,7 @@ class DockerHubStatusRule(CommandRule):
         if dockerhub_file.exists():
             with open(dockerhub_file, "r") as f:
                 content = f.read()
-            actual_status = (
-                f'"docker_hub": {str(expected_status).lower()}'
-                in content
-            )
+            actual_status = f'"docker_hub": {str(expected_status).lower()}' in content
         else:
             actual_status = False
 
@@ -95,9 +88,7 @@ class FileContentCheckRule(CommandRule):
 
     def check(self, file_path, expected_status):
         if not Path(file_path).exists():
-            raise FileNotFoundError(
-                f"File {file_path} does not exist."
-            )
+            raise FileNotFoundError(f"File {file_path} does not exist.")
 
         file_extension = Path(file_path).suffix.lower()
         if file_extension not in [".json", ".csv"]:
@@ -133,9 +124,7 @@ class FileContentCheckRule(CommandRule):
                 content = json.load(f)
                 return "not null" if content else "null"
             except json.JSONDecodeError as e:
-                raise ValueError(
-                    f"Invalid JSON content in file {file_path}: {e}"
-                )
+                raise ValueError(f"Invalid JSON content in file {file_path}: {e}")
 
     def _check_csv_content(self, file_path):
         """Checks the content of a CSV file."""
@@ -145,9 +134,7 @@ class FileContentCheckRule(CommandRule):
                 rows = list(reader)
                 return "not null" if len(rows) > 1 else "null"
             except csv.Error as e:
-                raise ValueError(
-                    f"Invalid CSV content in file {file_path}: {e}"
-                )
+                raise ValueError(f"Invalid CSV content in file {file_path}: {e}")
 
 
 def get_rule(rule_name, *args, **kwargs):

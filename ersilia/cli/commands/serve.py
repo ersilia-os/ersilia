@@ -19,7 +19,7 @@ def serve_cmd():
         default=OutputSource.LOCAL_ONLY,
         required=False,
         help=f"Get outputs from locally hosted model only ({OutputSource.LOCAL_ONLY}), \
-            from cloud precalculation store only ({OutputSource.CLOUD_ONLY})"
+            from cloud precalculation store only ({OutputSource.CLOUD_ONLY})",
     )
     @click.option("--lake/--no-lake", is_flag=True, default=True)
     @click.option("--docker/--no-docker", is_flag=True, default=False)
@@ -51,7 +51,8 @@ def serve_cmd():
                 ModelNotInStore(model).echo()
         mdl = ErsiliaModel(
             model,
-            output_source=output_source, save_to_lake=lake,
+            output_source=output_source,
+            save_to_lake=lake,
             service_class=service_class,
             preferred_port=port,
             track_runs=track,
@@ -84,4 +85,5 @@ def serve_cmd():
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
+
     return serve

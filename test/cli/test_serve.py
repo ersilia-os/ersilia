@@ -12,32 +12,19 @@ MODEL_ID = "eos3b5e"
 
 @pytest.fixture
 def mock_set_apis():
-    with patch.object(
-        ErsiliaModel, 
-        "_set_apis", 
-        return_value=None
-        ) as mock_set_apis:
+    with patch.object(ErsiliaModel, "_set_apis", return_value=None) as mock_set_apis:
         yield mock_set_apis
+
 
 @pytest.fixture
 def mock_serve():
-    with patch.object(
-        ErsiliaModel, 
-        "serve", 
-        return_value=None
-        ) as mock_serve_:
+    with patch.object(ErsiliaModel, "serve", return_value=None) as mock_serve_:
         yield mock_serve_
-
 
 
 @patch("ersilia.core.model.ErsiliaModel")
 @patch("ersilia.store.utils.store_has_model", return_value=False)
-def test_serve_cmd(
-    mock_store_has_model, 
-    mock_ersilia_model,
-    mock_set_apis,
-    mock_serve
-):
+def test_serve_cmd(mock_store_has_model, mock_ersilia_model, mock_set_apis, mock_serve):
     runner = CliRunner()
     mock_mdl_instance = MagicMock()
     mock_mdl_instance.is_valid.return_value = True

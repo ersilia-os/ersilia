@@ -3,9 +3,11 @@ from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
 from ersilia.cli.commands.catalog import catalog_cmd
 
+
 @pytest.fixture
 def runner():
     return CliRunner()
+
 
 @patch("ersilia.hub.content.catalog.ModelCatalog.airtable", return_value=None)
 @patch("ersilia.hub.content.catalog.ModelCatalog.hub")
@@ -14,11 +16,11 @@ def runner():
     "options, model",
     [
         (["--local"], None),
-        (["--hub"], None),  
-        (["eos3b5e", "--card"]), 
+        (["--hub"], None),
+        (["eos3b5e", "--card"]),
         (["--card"], None),
         (["--hub", "--local"], None),
-    ]
+    ],
 )
 def test_catalog_command(
     mock_model_card_get,
@@ -28,7 +30,6 @@ def test_catalog_command(
     options,
     model,
 ):
-
     mock_model_card_instance = MagicMock()
 
     if model:
@@ -38,11 +39,13 @@ def test_catalog_command(
         )
 
     result = runner.invoke(catalog_cmd(), options)
-    assert result.exit_code == 0, f"Unexpected exit code: {result.exit_code}. Output: {result.output}"
+    assert (
+        result.exit_code == 0
+    ), f"Unexpected exit code: {result.exit_code}. Output: {result.output}"
 
-    if "--card" in options and len(options) == 1: 
+    if "--card" in options and len(options) == 1:
         mock_model_card_get.assert_not_called()
-    elif "--card" in options and model: 
+    elif "--card" in options and model:
         mock_model_card_get.assert_called_once()
     elif "--browser" in options:
         mock_model_catalog_airtable.assert_called_once()
@@ -50,6 +53,7 @@ def test_catalog_command(
         mock_model_catalog_hub.assert_not_called()
     elif "--hub" in options:
         mock_model_catalog_hub.assert_called_once()
+
 
 if __name__ == "__main__":
     runner = CliRunner()

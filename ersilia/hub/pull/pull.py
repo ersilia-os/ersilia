@@ -119,7 +119,7 @@ class ModelPuller(ErsiliaBase):
                 process = await asyncio.create_subprocess_shell(
                     pull_command,
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
 
                 async def log_stream(stream, log_method):
@@ -128,14 +128,18 @@ class ModelPuller(ErsiliaBase):
 
                 await asyncio.gather(
                     log_stream(process.stdout, self.logger.info),
-                    log_stream(process.stderr, self.logger.error)
+                    log_stream(process.stderr, self.logger.error),
                 )
 
                 await process.wait()
 
                 if process.returncode != 0:
-                    self.logger.error(f"Pull command failed with return code {process.returncode}")
-                    raise subprocess.CalledProcessError(process.returncode, pull_command)
+                    self.logger.error(
+                        f"Pull command failed with return code {process.returncode}"
+                    )
+                    raise subprocess.CalledProcessError(
+                        process.returncode, pull_command
+                    )
 
                 self.logger.debug("Image pulled successfully!")
 
@@ -148,19 +152,23 @@ class ModelPuller(ErsiliaBase):
                 process = await asyncio.create_subprocess_shell(
                     force_pull_command,
                     stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE
+                    stderr=asyncio.subprocess.PIPE,
                 )
 
                 await asyncio.gather(
                     log_stream(process.stdout, self.logger.info),
-                    log_stream(process.stderr, self.logger.error)
+                    log_stream(process.stderr, self.logger.error),
                 )
 
                 await process.wait()
 
                 if process.returncode != 0:
-                    self.logger.error(f"Forced pull command failed with return code {process.returncode}")
-                    raise subprocess.CalledProcessError(process.returncode, force_pull_command)
+                    self.logger.error(
+                        f"Forced pull command failed with return code {process.returncode}"
+                    )
+                    raise subprocess.CalledProcessError(
+                        process.returncode, force_pull_command
+                    )
 
                 self.logger.debug("Forced pull completed successfully!")
 
@@ -174,7 +182,6 @@ class ModelPuller(ErsiliaBase):
             self.logger.info("Image {0} is not available".format(self.image_name))
             raise DockerImageNotAvailableError(model=self.model_id)
 
-        
     @throw_ersilia_exception()
     def pull(self):
         if self.is_available_locally():

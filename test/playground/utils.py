@@ -59,17 +59,9 @@ def save_as_json(result, output_file, remove_list=None):
 def get_commands(model_id, config):
     return {
         "fetch": ["ersilia", "-v", "fetch", model_id]
-        + (
-            config.get("fetch_flags", "").split()
-            if config.get("fetch_flags")
-            else []
-        ),
+        + (config.get("fetch_flags", "").split() if config.get("fetch_flags") else []),
         "serve": ["ersilia", "-v", "serve", model_id]
-        + (
-            config.get("serve_flags", "").split()
-            if config.get("serve_flags")
-            else []
-        ),
+        + (config.get("serve_flags", "").split() if config.get("serve_flags") else []),
         "run": [
             "ersilia",
             "run",
@@ -78,30 +70,25 @@ def get_commands(model_id, config):
         ]
         + (
             ["-o", config["output_file"]]
-            if config.get("output_file")
-            and not config.get("output_redirection")
+            if config.get("output_file") and not config.get("output_redirection")
             else []
         )
-        + (
-            config.get("run_flags", "").split()
-            if config.get("run_flags")
-            else []
-        ),
+        + (config.get("run_flags", "").split() if config.get("run_flags") else []),
         "close": ["ersilia", "close"],
     }
 
 
 def get_command_names(model_id, cli_type, config):
     return (
-        list(get_commands(model_id, config).keys())
-        if cli_type == "all"
-        else [cli_type]
+        list(get_commands(model_id, config).keys()) if cli_type == "all" else [cli_type]
     )
 
 
 def handle_error_logging(command, description, result, config, checkups=None):
     if config.get("log_error", False):
-        log_path = f"{config.get('log_path')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        log_path = (
+            f"{config.get('log_path')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        )
         with open(log_path, "w") as file:
             file.write(f"Command: {' '.join(command)}\n")
             file.write(f"Description: {description}\n")
