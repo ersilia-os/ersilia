@@ -488,7 +488,6 @@ class ErsiliaModel(ErsiliaBase):
         output=None,
         batch_size=DEFAULT_BATCH_SIZE,
         track_run=False,
-        try_standard=True, # TODO This should go away
     ):
         # TODO this should be smart enough to init the container sampler
         # or a python process sampler based on how the model was fetched
@@ -501,19 +500,18 @@ class ErsiliaModel(ErsiliaBase):
 
         # TODO The logic should be in a try except else finally block
         standard_status_ok = False
-        if try_standard: # TODO This should go away
-            self.logger.debug("Trying standard API")
-            try:
-                result, standard_status_ok = self._standard_run(
-                    input=input, output=output
-                )
-            except Exception as e:
-                self.logger.warning(
-                    "Standard run did not work with exception {0}".format(e)
-                )
-                result = None
-                standard_status_ok = False
-                self.logger.debug("We will try conventional run.")
+        self.logger.debug("Trying standard API")
+        try:
+            result, standard_status_ok = self._standard_run(
+                input=input, output=output
+            )
+        except Exception as e:
+            self.logger.warning(
+                "Standard run did not work with exception {0}".format(e)
+            )
+            result = None
+            standard_status_ok = False
+            self.logger.debug("We will try conventional run.")
         if standard_status_ok: # TODO This should be an else block
             return result
         else:
