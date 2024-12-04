@@ -3,7 +3,7 @@ import csv
 import json
 import time
 import types
-import tempfile
+import asyncio
 import importlib
 import collections
 import __main__ as main
@@ -11,7 +11,6 @@ import __main__ as main
 from .. import logger
 from ..serve.api import Api
 from .session import Session
-from datetime import datetime
 from .base import ErsiliaBase
 from ..lake.base import LakeBase
 from ..utils import tmp_pid_file
@@ -88,6 +87,8 @@ class ErsiliaModel(ErsiliaBase):
             "pulled_docker",
             "hosted",
         ], "Wrong service class"
+        self.url = None
+        self.pid = None
         self.service_class = service_class
         self.track_runs = track_runs
         mdl = ModelBase(model)
@@ -120,7 +121,7 @@ class ErsiliaModel(ErsiliaBase):
                 mf = fetch.ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
-                mf.fetch(self.model_id)
+                asyncio.run(mf.fetch(self.model_id))
             else:
                 return
         self.api_schema = ApiSchema(
@@ -277,11 +278,6 @@ class ErsiliaModel(ErsiliaBase):
 
     def _standard_api_runner(self, input, output):
         scra = StandardCSVRunApi(model_id=self.model_id, url=self._get_url())
-        if not scra.is_ready():
-            self.logger.debug(
-                "Standard CSV Api runner is not ready for this particular model"
-            )
-            return None
         if not scra.is_amenable(output):
             self.logger.debug(
                 "Standard CSV Api runner is not amenable for this model, input and output"
@@ -323,6 +319,7 @@ class ErsiliaModel(ErsiliaBase):
             return True
         return False
 
+    # TODO should use the throw_ersilia_exception decorator
     def _get_api_runner(self, output):
         if output is None:
             use_iter = True
@@ -477,13 +474,13 @@ class ErsiliaModel(ErsiliaBase):
         t1 = None
         status_ok = False
         result = self._standard_api_runner(input=input, output=output)
-        if type(output) is str:
+        if type(output) is str: # TODO Redundant, should be removed
             if os.path.exists(output):
                 t1 = os.path.getctime(output)
         if t1 is not None:
-            if t1 > t0:
+            if t1 > t0: # TODO Why would this be less?
                 status_ok = True
-        return result, status_ok
+        return result, status_ok # TODO This doesn't actually check whether the result exists and isn't null
 
     def run(
         self,
@@ -491,7 +488,6 @@ class ErsiliaModel(ErsiliaBase):
         output=None,
         batch_size=DEFAULT_BATCH_SIZE,
         track_run=False,
-        try_standard=True,
     ):
         # TODO this should be smart enough to init the container sampler
         # or a python process sampler based on how the model was fetched
@@ -501,21 +497,22 @@ class ErsiliaModel(ErsiliaBase):
         if self.ct_tracker and track_run:
             self.ct_tracker.start_tracking()
         self.logger.info("Starting runner")
+
+        # TODO The logic should be in a try except else finally block
         standard_status_ok = False
-        if try_standard:
-            self.logger.debug("Trying standard API")
-            try:
-                result, standard_status_ok = self._standard_run(
-                    input=input, output=output
-                )
-            except Exception as e:
-                self.logger.warning(
-                    "Standard run did not work with exception {0}".format(e)
-                )
-                result = None
-                standard_status_ok = False
-                self.logger.debug("We will try conventional run.")
-        if standard_status_ok:
+        self.logger.debug("Trying standard API")
+        try:
+            result, standard_status_ok = self._standard_run(
+                input=input, output=output
+            )
+        except Exception as e:
+            self.logger.warning(
+                "Standard run did not work with exception {0}".format(e)
+            )
+            result = None
+            standard_status_ok = False
+            self.logger.debug("We will try conventional run.")
+        if standard_status_ok: # TODO This should be an else block
             return result
         else:
             self.logger.debug("Trying conventional run")

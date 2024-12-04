@@ -10,6 +10,7 @@ from ...core.session import Session
 from ...core.tracking import RunTracker
 from ...utils.terminal import print_result_table
 
+
 def run_cmd():
     """Create run command"""
 
@@ -23,17 +24,11 @@ def run_cmd():
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
     @click.option(
-        "--standard",
-        is_flag=True,
-        default=True,
-        help="Assume that the run is standard and, therefore, do not do so many checks.",
-    )
-    @click.option(
         "--table", 
         is_flag=True, 
         default=False
     )
-    def run(input, output, batch_size, table, standard):
+    def run(input, output, batch_size, table):
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
@@ -59,7 +54,6 @@ def run_cmd():
             output=output,
             batch_size=batch_size,
             track_run=track_runs,
-            try_standard=standard,
         )
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
@@ -79,3 +73,4 @@ def run_cmd():
                  echo(result)
                 except:
                     print_result_table(result)
+    return run
