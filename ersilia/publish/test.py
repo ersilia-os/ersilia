@@ -47,6 +47,8 @@ class Options(Enum):
     NUM_SAMPLES = 5
     BASE = "base"
     OUTPUT_CSV = "result.csv"
+    OUTPUT1_CSV = "output1.csv"
+    OUTPUT2_CSV = "output2.csv"
     LEVEL_DEEP = "deep"
 
 class TableType(Enum):
@@ -773,16 +775,6 @@ class CheckService:
                     reader = csv.DictReader(csv_file)
                     return [row for row in reader]
                 
-        def is_json(data):
-            try:
-                if isinstance(data, str):
-                    json.loads(data)
-                elif isinstance(data, list):
-                    json.dumps(data) 
-                return True
-            except (ValueError, TypeError):
-                return False
-            
         self.logger.debug("Confirming model produces consistent output...")
 
         input_samples = run_example(
@@ -791,22 +783,19 @@ class CheckService:
             simple=True, 
             try_predefined=False
         )
-        result1 = run_model(
+        run_model(
             input=input_samples, 
-            output="output1.csv", 
+            output=Options.OUTPUT1_CSV.value, 
             batch=100
         )
-        result2 = run_model(
+        run_model(
             input=input_samples, 
-            output="output2.csv", 
+            output=Options.OUTPUT2_CSV.value, 
             batch=100
         )
 
-        if is_json(result1) and is_json(result2):
-            data1, data2 = result1, result2
-        else:
-            data1 = read_csv("output1.csv")
-            data2 = read_csv("output2.csv")
+        data1 = read_csv(Options.OUTPUT1_CSV.value)
+        data2 = read_csv(Options.OUTPUT2_CSV.value)
 
         for res1, res2 in zip(data1, data2):
             for key in res1:
