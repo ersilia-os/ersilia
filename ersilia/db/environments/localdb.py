@@ -74,9 +74,7 @@ class EnvironmentDb(ErsiliaBase):
             env text,
             PRIMARY KEY (model_id, env)
         );
-        """.format(
-            self._table
-        )
+        """.format(self._table)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -108,9 +106,7 @@ class EnvironmentDb(ErsiliaBase):
             return
         sql = """
         INSERT OR IGNORE INTO {0} (model_id, env) VALUES ('{1}', '{2}')
-        """.format(
-            self._table, model_id, env
-        )
+        """.format(self._table, model_id, env)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -133,9 +129,7 @@ class EnvironmentDb(ErsiliaBase):
         sql = """
         DELETE FROM {0}
             WHERE model_id = '{1}' AND env = '{2}'
-        """.format(
-            self._table, model_id, env
-        )
+        """.format(self._table, model_id, env)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -161,9 +155,7 @@ class EnvironmentDb(ErsiliaBase):
         sql = """
         SELECT env FROM {0}
             WHERE model_id = '{1}'
-        """.format(
-            self._table, model_id
-        )
+        """.format(self._table, model_id)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -190,9 +182,7 @@ class EnvironmentDb(ErsiliaBase):
         sql = """
         SELECT model_id FROM {0}
             WHERE env = '{1}'
-        """.format(
-            self._table, env
-        )
+        """.format(self._table, env)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -219,9 +209,7 @@ class EnvironmentDb(ErsiliaBase):
         sql = """
         SELECT model_id FROM {0}
             WHERE env IN (SELECT env FROM {0} WHERE model_id = '{1}')
-        """.format(
-            self._table, model_id
-        )
+        """.format(self._table, model_id)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -248,9 +236,7 @@ class EnvironmentDb(ErsiliaBase):
         sql = """
         SELECT env FROM {0}
             WHERE model_id IN (SELECT model_id FROM {0} WHERE env = '{1}')
-        """.format(
-            self._table, env
-        )
+        """.format(self._table, env)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -271,9 +257,7 @@ class EnvironmentDb(ErsiliaBase):
             return
         sql = """
         SELECT * FROM {0}
-        """.format(
-            self._table
-        )
+        """.format(self._table)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -289,9 +273,7 @@ class EnvironmentDb(ErsiliaBase):
             return
         sql = """
         DELETE FROM {0}
-        """.format(
-            self._table
-        )
+        """.format(self._table)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)

@@ -208,9 +208,7 @@ class GitHubDownloader(object):
         GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/{1}/{2}.git
         mv {2} {3}
         rm {0}
-        """.format(
-            tmp_folder, org, repo, destination
-        )
+        """.format(tmp_folder, org, repo, destination)
         run_file = os.path.join(
             os.path.abspath(make_temp_dir(prefix="ersilia")), "run.sh"
         )
