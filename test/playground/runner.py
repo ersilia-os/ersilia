@@ -8,23 +8,22 @@ class NoxSession:
     def __init__(self, name):
         self.name = name
 
-    def execute(self, base_dir, nox_command="nox"):
+    def execute(self, noxfile):
         try:
             subprocess.run(
-                [nox_command,"-f", "noxfile.py", "-s", self.name],
+                ["nox","-f", noxfile, "-s", self.name],
                 check=True,
-                cwd=base_dir,
-                shell=True,
             )
             print(f"Session '{self.name}' executed successfully.")
         except subprocess.CalledProcessError as e:
             print(f"Error executing session '{self.name}': {e}")
 
 
-class NoxAPI:
-    def __init__(self, config_path="config.yml"):
+class NoxRunner:
+    def __init__(self, config_path="config.yml", noxfile="noxfile.py"):
         self.original_dir = Path.cwd()
         self.config_path = Path(config_path)
+        self.noxfile = noxfile
         self.config = yaml.safe_load(self.config_path.read_text())
         self.nox_command = "nox"
         self.queue = []
@@ -43,7 +42,7 @@ class NoxAPI:
     def execute_all(self):
        
         for session in self.queue:
-            session.execute(self.original_dir, self.nox_command)
+            session.execute(self.noxfile)
         self.queue.clear() 
 
     def clear_queue(self):
@@ -69,3 +68,4 @@ class NoxAPI:
 
     def test_conventional_run(self):
         self.add_session("test_conventional_run")
+
