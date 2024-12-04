@@ -770,8 +770,8 @@ class CheckService:
                 
         def read_csv(file_path):
             absolute_path = os.path.abspath(file_path)
-            # if not os.path.exists(absolute_path):
-            #     raise FileNotFoundError(f"File not found: {absolute_path}")
+            if not os.path.exists(absolute_path):
+                raise FileNotFoundError(f"File not found: {absolute_path}")
             with open(absolute_path, mode='r') as csv_file:
                 reader = csv.DictReader(csv_file)
                 return [row for row in reader]
@@ -787,20 +787,22 @@ class CheckService:
             simple=True, 
             try_predefined=False
         )
-        run_model(
+        out1 = run_model(
             input=input_samples, 
             output=output1_path, 
             batch=100
         )
-        run_model(
+        out2 = run_model(
             input=input_samples, 
             output=output2_path, 
             batch=100
         )
-
+        self.logger.debug(f"Output1: {out1}")
+        self.logger.debug(f"Output2: {out2}")
         data1 = read_csv(output1_path)
-        data2 = read_csv(outpu21_path)
-
+        self.logger.info(f"Data1: {data1}")
+        data2 = read_csv(output1_path)
+        self.logger.info(f"Data2: {data2}")
         for res1, res2 in zip(data1, data2):
             for key in res1:
                 if key in res2:
