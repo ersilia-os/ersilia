@@ -1,23 +1,24 @@
-apt-get update
-apt-get install -y wget
+#!/bin/bash
+set -e
+
+# Determine architecture
 ARCH=$(uname -m)
-if [ "$ARCH" = "x86_64" ]; then
-    echo "AMD64 architecture detected" &&
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    echo "$ARCH" > arch.sh
-elif [ "$ARCH" = "amd64" ]; then
-    echo "AMD64 architecture detected" &&
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    echo "$ARCH" > arch.sh
-elif [ "$ARCH" = "arm64" ]; then
-    echo "ARM64 architecture detected" &&
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O miniconda.sh;
-    echo "$ARCH" > arch.sh
-elif [ "$ARCH" = "aarch64" ]; then
-    echo "AARCH64 architecture detected" &&
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O miniconda.sh;
-    echo "$ARCH" > arch.sh
-else
-    echo "Unsupported architecture: $ARCH";
-    echo "$ARCH" > arch.sh
-fi;
+
+case "$ARCH" in
+    x86_64 | amd64)
+        echo "AMD64 architecture detected"
+        URL="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh"
+        ;;
+    arm64 | aarch64)
+        echo "ARM64 architecture detected"
+        URL="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh"
+        ;;
+    *)
+        echo "Unsupported architecture: $ARCH"
+        exit 1
+        ;;
+esac
+
+# Download Miniforge installer
+wget "$URL" -O miniconda.sh
+echo "$ARCH" > arch.sh

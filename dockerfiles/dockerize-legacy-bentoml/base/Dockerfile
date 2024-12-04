@@ -16,6 +16,7 @@ RUN bash /root/download-miniconda.sh && \
     rm /root/miniconda.sh && \
     git clone https://github.com/ersilia-os/ersilia.git && \
     cd /root/ersilia && pip install -e .
+
 COPY docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY nginx.conf /etc/nginx/sites-available/default
 RUN chmod + /root/docker-entrypoint.sh
