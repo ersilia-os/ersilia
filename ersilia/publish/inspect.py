@@ -1,338 +1,429 @@
-from .. import ErsiliaBase
 import requests
 import subprocess
+import os
 import time
+import yaml
 from collections import namedtuple
 from ..hub.content.card import RepoMetadataFile
-from ..default import METADATA_JSON_FILE
-
-# a namedtuple for the results
+from ..hub.fetch.actions.template_resolver import TemplateResolver
+from ..utils.logging import logger
+from ..default import (
+    INSTALL_YAML_FILE, 
+    DOCKERFILE_FILE,
+    PACK_METHOD_FASTAPI,
+    PACK_METHOD_BENTOML,
+    METADATA_JSON_FILE,
+    METADATA_YAML_FILE,
+    RUN_FILE,
+    PREDEFINED_EXAMPLE_FILES
+)
 Result = namedtuple("Result", ["success", "details"])
+# Base URL for the Ersilia OS Github
+BASE_URL         = "https://github.com/ersilia-os/"
+RAW_CONTENT_URL     = "https://raw.githubusercontent.com/ersilia-os/{model}/main/"
+REPO_API_URL     = "https://api.github.com/repos/ersilia-os/{model}/contents"
 
+class ModelInspector:
 
-class ModelInspector(ErsiliaBase):
-    def __init__(self, model, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+    RUN_FILE = f"model/framework/{RUN_FILE}"
+    COMMON_FILES = [
+        RUN_FILE,
+        "README.md",
+        "LICENSE",
+    ]
+
+    BENTOML_FILES = [
+        DOCKERFILE_FILE,
+        METADATA_JSON_FILE,
+        "src/service.py",
+        "pack.py",
+    ]
+
+    ERSILIAPACK_FILES = [
+        INSTALL_YAML_FILE,
+        METADATA_YAML_FILE,
+        PREDEFINED_EXAMPLE_FILES[0],
+        PREDEFINED_EXAMPLE_FILES[1],
+    ]
+
+    BENTOML_FILES     = COMMON_FILES + BENTOML_FILES
+    ERSILIAPACK_FILES = COMMON_FILES + ERSILIAPACK_FILES
+
+    REQUIRED_FIELDS = [
+        "Publication",
+        "Source Code", 
+        "S3", 
+        "DockerHub"
+    ]
+    def __init__(self, model, dir, config_json=None):
         self.model = model
-
-    def check_repo_exists(self):
-        """
-        Verify that the repository exists at a given link.
-
-        Returns:
-            Result: A namedtuple containing a boolean success status and details of the check.
-        """
-        url = f"https://github.com/ersilia-os/{self.model}"
-        response = requests.head(url)
-        if response.status_code == 200:
-            return Result(True, "Check passed.")
+        self.dir = dir
+        self.repo_url = f"{BASE_URL}{model}"
+        self.content_url = RAW_CONTENT_URL.format(model=model)
+        self.config_json = config_json
+        self.pack_type = self.get_pack_type()
+     
+    def get_pack_type(self):
+        if self.dir is None:
+            resolver = TemplateResolver(
+                model_id=self.model
+              )
+            if resolver.is_bentoml():
+                return PACK_METHOD_BENTOML
+            elif resolver.is_fastapi():
+                return PACK_METHOD_FASTAPI
+            else:
+                return None
         else:
-            return Result(
-                False,
-                f"Connection invalid, no github repository found at https://github.com/ersilia-os/{self.model}. Please check that this repository exists in the ersilia-os database.",
+            resolver = TemplateResolver(
+                model_id=self.model,
+                repo_path=self.dir
             )
+            if resolver.is_bentoml():
+                return PACK_METHOD_BENTOML
+            elif resolver.is_fastapi():
+                return PACK_METHOD_FASTAPI
+            else:
+                return None
+            
+    def check_repo_exists(self):
+        if self._url_exists(self.repo_url):
+            return Result(
+                True, 
+                "Repository exists."
+            )
+        return Result(
+            False, 
+            f"Repository not found at {self.repo_url}."
+        )
 
     def check_complete_metadata(self):
-        """
-        Search for specific keys in metadata JSON file.
-
-        Returns:
-            Result: A namedtuple containing a boolean success status and details of the check.
-        """
-        url = f"https://raw.githubusercontent.com/ersilia-os/{self.model}/main/metadata.json"  # Get raw file from GitHub
-        if requests.head(url).status_code != 200:  # Make sure repo exists
+        url = f"{self.content_url}{METADATA_JSON_FILE}" if self.pack_type == "bentoml" \
+            else f"{self.content_url}{METADATA_YAML_FILE}"
+        if not self._url_exists(url):
             return Result(
-                False,
-                f"Metadata file could not be loated for model {self.model}. Please check that the link https://raw.githubusercontent.com/ersilia-os/{self.model}/main/metadata.json is valid.",
+                False, 
+                f"Metadata file missing at {url}."
             )
 
-        response = requests.get(url)
-        file = response.json()  # Save as json object
+        metadata = self._fetch_json(url)
+        if metadata is None:
+            return Result(
+                False, 
+                "Failed to fetch or parse metadata."
+            )
 
-        check_passed = True
-        details = ""
+        missing_fields = [
+            field 
+            for field 
+            in self.REQUIRED_FIELDS 
+            if field not in metadata
+        ]
+        invalid_urls = [
+            (field, metadata[field]) 
+            for field in self.REQUIRED_FIELDS 
+            if field in metadata 
+            and not self._url_exists(metadata[field])
+        ]
 
-        test = RepoMetadataFile(self.model)
+        details = []
+        if missing_fields:
+            details.append(
+                f"Missing fields: {', '.join(missing_fields)}. \
+                  Required: {', '.join(self.REQUIRED_FIELDS)}."
+            )
+        if invalid_urls:
+            details.extend(
+                f"Invalid URL in '{field}': {url}" 
+                for field, url 
+                in invalid_urls
+            )
 
         try:
-            RepoMetadataFile.read_information(test)
-
+            RepoMetadataFile.read_information(RepoMetadataFile(self.model))
         except Exception as e:
-            details = (
-                details + f"Error encountered when parsing through metadata file: {e} "
+            details.append(f"Error encountered when parsing metadata file: {e}")
+
+        if details:
+            return Result(False, " ".join(details))
+        
+        return Result(True, "Metadata is complete.")
+    
+    def check_dependencies_are_valid(self):
+        if self.pack_type not in [
+            PACK_METHOD_BENTOML, 
+            PACK_METHOD_FASTAPI
+            ]:
+            return Result(
+                False, 
+                f"Unsupported pack type: {self.pack_type}"
             )
-            check_passed = False
 
-        if file is not None:
+        file = (
+            DOCKERFILE_FILE 
+            if self.pack_type == PACK_METHOD_BENTOML 
+            else INSTALL_YAML_FILE
+        )
+        method = (
+            self._validate_dockerfile 
+            if self.pack_type == PACK_METHOD_BENTOML 
+            else self._validate_yml
+        )
+
+        content, error = self._get_file_content(file)
+        if content is None:
+            return Result(False, error)
+
+        errors = method(content)
+        if errors:
+            return Result(False, " ".join(errors))
+        
+        return Result(True, f"{file} dependencies are valid.")
+
+    def _get_file_content(self, file):
+
+        if self.dir is not None:  
+            path = os.path.join(self.dir, file)
+            if not os.path.isfile(path):
+                return None, f"{file} not found at {path}"
             try:
-                if (
-                    file["Publication"]
-                    and file["Source Code"]
-                    and file["S3"]
-                    and file["DockerHub"]
-                ):  # Parse through json object and ensure
-
-                    pub_url_works = (
-                        requests.head(file["Publication"]).status_code != 404
-                    )
-                    if not pub_url_works:
-                        details = (
-                            details
-                            + f"The URL ({file['Publication']}) listed in the publication field of the metadata was not found (Error code {requests.head(file['Publication']).status_code}). Please verify that this link is accurate. "
-                        )
-                        check_passed = False
-
-                    source_url_works = (
-                        requests.head(file["Source Code"]).status_code != 404
-                    )
-                    if not source_url_works:
-                        details = (
-                            details
-                            + f"The URL ({file['Source Code']}) listed in the source code field of the metadata was not able to be accessed (Error code {requests.head(file['Source Code']).status_code}). Please verify that this link is accurate. "
-                        )
-                        check_passed = False
-
-                    s3_url_works = requests.head(file["S3"]).status_code != 404
-                    if not s3_url_works:
-                        details = (
-                            details
-                            + f"The URL ({file['S3']}) listed in the S3 field of the metadata was not able to be accessed (Error code {requests.head(file['S3']).status_code}). Please verify that this link is accurate. "
-                        )
-                        check_passed = False
-
-                    docker_url_works = (
-                        requests.head(file["DockerHub"]).status_code != 404
-                    )
-                    if not docker_url_works:
-                        details = (
-                            details
-                            + f"The URL ({file['DockerHub']}) listed in the DockerHub field of the metadata was not able to be accessed (Error code {requests.head(file['DockerHub']).status_code}). Please verify that this link is accurate. "
-                        )
-                        check_passed = False
-
-                else:
-                    details = (
-                        details
-                        + "A field in the metadata is empty. Please check that there are values listed for Publication, Source Code, S3, and DockerHub listed in the metadata. "
-                    )
-                    check_passed = False
-
-            except KeyError:  # If a given key not present in json file return false
-                check_passed = False
-                details = (
-                    details
-                    + "Not all required fields were found in the metadata. Please check that Publication, Source Code, S3, and DockerHub are all present in the metadata. "
+                with open(path, "r") as file:
+                    return file.read(), None
+            except Exception as e:
+                return (
+                    None, 
+                    f"Failed to read {file} content: {str(e)}"
                 )
-
-            except requests.exceptions.ConnectionError:
-                check_passed = False
-                details = (
-                    details
-                    + "Connection failed when trying to access a URL listed in the metadata. Please check that URLs are all accurate and accessible. "
+        else:  
+            url = f"{self.content_url}{file}"
+            if not self._url_exists(url):
+                return None, f"{file} not found at {url}"
+            content = self._fetch_text(url)
+            if content is None:
+                return (
+                    None, 
+                    f"Failed to fetch {file} content."
                 )
-
-        if check_passed:
-            return Result(True, "Check passed.")
-        else:
-            return Result(False, details)
+            return content, None
 
     def check_complete_folder_structure(self):
-        """
-        Validate folder structure of the repository.
-
-        Returns:
-            Result: A namedtuple containing a boolean success status and details of the check.
-        """
-        check_passed = True
-        details = ""
-        url = f"https://github.com/ersilia-os/{self.model}"
-        if requests.head(url).status_code != 200:  # Make sure repo exists
+        invalid_items = self.validate_repo_structure(
+            "tree" # for remote
+        )
+        if invalid_items:
             return Result(
-                False,
-                f"Repository could not be loated for model {self.model}. Please check that the link https://github.com/ersilia-os/{self.model} is valid.",
+                False, 
+                f"Missing folders: {', '.join(invalid_items)}"
             )
+        return Result(
+            True, 
+            "Folder structure is complete."
+        )
 
-        folders = [
-            ".github/workflows",
-            "model",
-            "src",
-            "model/checkpoints",
-            "model/framework",
-        ]
-        for name in folders:
-            response = requests.get(
-                url + "/tree/main/" + name
-            )  # Check if the folders are present in a given repository
-            if response.status_code != 200:
-                details = (
-                    details
-                    + f"No {name} folder could be found. please check that the link {url}/blob/main/{name} is valid. "
-                )
-                check_passed = False  # If the folder URL is not valid return false
-
-        files = ["LICENSE", "Dockerfile"]
-        for name in files:
-            response = requests.get(
-                url + "/blob/main/" + name
-            )  # Check if the files are present in a given repository
-            if response.status_code != 200:
-                details = (
-                    details
-                    + f"No {name} file could be found. please check that the link {url}/blob/main/{name} is valid. "
-                )
-                check_passed = False  # If the folder URL is not valid return false
-
-        if check_passed:
-            return Result(True, "Check passed.")
-        return Result(False, details)
-
-    def check_dependencies_are_valid(self):
-        """
-        Check dependencies specified in the Dockerfile.
-
-        Returns:
-            Result: A namedtuple containing a boolean success status and details of the check.
-        """
-        check_passed = True
-        details = ""
-        url = f"https://raw.githubusercontent.com/ersilia-os/{self.model}/main/Dockerfile"  # Get raw file from GitHub
-        if requests.head(url).status_code != 200:  # Make sure repo exists
-            return Result(
-                False,
-                f"Dockerfile could not be loated for model {self.model}. Please check that the link https://raw.githubusercontent.com/ersilia-os/{self.model}/main/Dockerfile is valid.",
-            )
-
-        response = requests.get(url)
-        file = response.text
-        lines = file.split("\n")
-        lines = [s for s in lines if s]
-
-        for line in lines:
-            if line.startswith("RUN pip install"):
-                info = line.split("==")
-                install = line.split("RUN ")
-                result = subprocess.run(
-                    install,
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-                if result.returncode != 0:
-                    return Result(False, f"Error running {install}, {result.stderr}")
-
-                if len(info) < 2:
-                    details = (
-                        details
-                        + f"No version specification found for the line {info[0]} in the Docker file. "
-                    )
-                    check_passed = False
-                else:
-                    specification = info[1]
-                    if specification.strip() == "":
-                        details = (
-                            details
-                            + f"No version specification found for the line {info[0]} in the Docker file. "
-                        )
-                        check_passed = False
-
-        if "WORKDIR /repo" not in lines[len(lines) - 2]:
-            details = (
-                details + f"Dockerfile is missing 'WORKDIR /repo' in the right place. "
-            )
-            check_passed = False
-
-        if (
-            "COPY . /repo" not in lines[len(lines) - 1]
-            and "COPY ./repo" not in lines[len(lines) - 1]
-        ):
-            details = (
-                details
-                + f"Dockerfile is missing 'COPY . /repo' in the right place or has incorrect syntax. "
-            )
-            check_passed = False
-
-        if check_passed:
-            return Result(True, "Check passed.")
-        return Result(False, details)
-
-
-    def check_comptuational_performance(self):
-        """
-        Measure computational performance by serving the model and running predictions.
-        Uses --track flag to automatically upload performance metrics to S3.
-    
-        Returns:
-            Result: A namedtuple containing a boolean success status and details of the check.
-        """
-        details = ""
-    
+    def check_computational_performance(self):
+        details = []
         for n in (1, 10, 100):
-            cmd = (
-                f"ersilia serve {self.model} --track && "  # Track flag enables automatic S3 upload of metrics
-                f"ersilia example -f my_input.csv -n {n} && "
-                "ersilia run -i my_input.csv && "
-                "ersilia close"
-            )
-    
-            startTime = time.time()
-    
-            process = subprocess.run(
-                cmd,
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-            )
-    
-            if process.returncode != 0:
-                return Result(False, f"Error serving model: {process.stdout}, {process.stderr}")
-    
-            endTime = time.time()
-            executionTime = endTime - startTime
-            details += f"Execution time ({n} Prediction(s)): {executionTime} seconds. "
-    
-        return Result(True, details)
+            result = self._run_performance_check(n)
+            if not result.success:
+                return result
+            details.append(result.details)
+        return Result(True, " ".join(details))
 
     def check_no_extra_files(self):
-        """
-        Ensure that there are no excess files in the root directory of the repository.
+        if self.pack_type == PACK_METHOD_BENTOML:
+            expected_items = self.BENTOML_FILES
+        elif self.pack_type == PACK_METHOD_FASTAPI:
+            expected_items = self.ERSILIAPACK_FILES
+        else:
+            return Result(False, f"Unsupported pack type: {self.pack_type}")
 
-        Returns:
-            Result: A namedtuple containing a boolean success status and details of the check.
-        """
-        check_passed = True
-        details = ""
-        url = f"https://api.github.com/repos/ersilia-os/{self.model}/contents"
-        if requests.head(url).status_code != 200:  # Make sure repo exists
-            return Result(
-                False,
-                f"Repository could not be loated for model {self.model}. Please check that the link https://api.github.com/repos/ersilia-os/{self.model}/contents is valid.",
-            )
-        headers = {"Accept": "application/vnd.github.v3+json"}
-        response = requests.get(url)
-
-        folders = [
-            ".github",
-            "model",
-            "src",
-            ".gitignore",
-            "Dockerfile",
-            "LICENSE",
-            "README.md",
-            METADATA_JSON_FILE,
-            "pack.py",
-            ".gitattributes",
-        ]
-        for item in response.json():
-            name = item["name"]
-            if name not in folders:
-                details = (
-                    details
-                    + f"Unexpected folder/file {name} found in root directory. Please check that {name} is a valid folder/file. "
+        if self.dir is not None:
+            unexpected_items = []
+            for root, dirs, files in os.walk(self.dir):
+                relative_path = os.path.relpath(root, self.dir)
+                items_in_dir = [
+                    os.path.join(relative_path, item) 
+                    for item 
+                    in files + dirs
+                ]
+                unexpected_items.extend(
+                    item 
+                    for item 
+                    in items_in_dir 
+                    if item 
+                    not in expected_items
                 )
-                check_passed = False  # If the folder URL is not valid return false
 
-        if check_passed:
-            return Result(True, "Check passed.")
-        return Result(False, details)
+            if unexpected_items:
+                return Result(
+                    False, f"Unexpected items found: {', '.join(unexpected_items)}"
+                )
+            return Result(True, "No extra files found locally.")
+
+        url = REPO_API_URL.format(model=self.model)
+        if not self._url_exists(url):
+            return Result(
+                False, 
+                f"Failed to access repository contents at: {url}"
+            )
+        headers = {
+            "Accept": "application/vnd.github.v3+json",
+        }
+
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            return Result(False, "Failed to fetch repository contents.")
+        unexpected_items = [
+            item["name"]
+            for item in response.json()
+            if item["name"] not in expected_items
+        ]
+
+        if unexpected_items:
+            return Result(
+                False, 
+                f"Unexpected items found: {', '.join(unexpected_items)}"
+            )
+
+        return Result(True, "No extra files found.")
+
+
+    def _url_exists(self, url):
+        try:
+            response = requests.head(url)
+            logger.debug(f"URl: {url} | status code: {response.status_code}")
+            return response.status_code == 200
+        except requests.RequestException:
+            return False
+
+    def _fetch_json(self, url):
+        try:
+            response = requests.get(url)
+            return response.json()
+        except (
+                requests.RequestException, 
+                ValueError
+            ):
+            return None
+
+    def _fetch_text(self, url):
+        try:
+            response = requests.get(url)
+            return response.text
+        except requests.RequestException:
+            return None
+
+    def _validate_urls(self, metadata, fields):
+        invalid_urls = []
+        for field in fields:
+            url = metadata.get(field)
+            if url and not self._url_exists(url):
+                invalid_urls.append((field, url, 404))
+        return invalid_urls
+
+    def _validate_repo_structure(
+            self, 
+            required_items,
+            content_type
+        ):
+        missing_items = []
+        
+        if self.dir is not None:  
+            for item in required_items:
+                item_path = os.path.join(self.dir, item)
+                if not os.path.isfile(item_path):
+                    missing_items.append(item)
+        else:  
+            for item in required_items:
+                url = f"{RAW_CONTENT_URL.format(model=self.model)}{item}"
+                response = requests.head(url)
+                if response.status_code != 200:
+                    logger.debug(f"URL: {url} | STatus Code: {response.status_code}")
+                    missing_items.append(item)
+        
+        return missing_items
+    
+    def validate_repo_structure(self, content_type):
+        logger.debug(f"Pack Type: {self.pack_type}")
+        if self.pack_type == PACK_METHOD_BENTOML:
+            required_items = self.BENTOML_FILES
+        elif self.pack_type == PACK_METHOD_FASTAPI:
+            required_items = self.ERSILIAPACK_FILES
+        else:
+            raise ValueError(f"Unsupported pack type: {self.pack_type}")
+        
+        return self._validate_repo_structure(required_items, content_type)
+    
+    def _validate_dockerfile(self, dockerfile_content):
+        lines, errors = dockerfile_content.splitlines(), []
+        for line in lines:
+            if line.startswith("RUN pip install"):
+                cmd = line.split("RUN ")[-1]
+                result = subprocess.run(
+                    cmd, 
+                    shell=True, 
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE, 
+                    text=True
+                )
+                if result.returncode != 0:
+                    errors.append(
+                        f"Failed to run {cmd}: {result.stderr.strip()}"
+                    )
+
+        if "WORKDIR /repo" not in dockerfile_content:
+            errors.append("Missing 'WORKDIR /repo'.")
+        if "COPY . /repo" not in dockerfile_content:
+            errors.append("Missing 'COPY . /repo'.")
+        return errors
+    
+    def _validate_yml(self, yml_content):
+        errors = []
+        try:
+            yml_data = yaml.safe_load(yml_content)
+        except yaml.YAMLError as e:
+            return [f"YAML parsing error: {str(e)}"]
+        
+        python_version = yml_data.get("python")
+        if not python_version:
+            errors.append("Missing Python version in install.yml.")
+        
+        commands = yml_data.get("commands", [])
+        for command in commands:
+            if not isinstance(command, list) or command[0] != "pip":
+                errors.append(f"Invalid command format: {command}")
+                continue
+            # package: name & version
+            name = command[1] if len(command) > 1 else None
+            version = command[2] if len(command) > 2 else None
+            if not name:
+                errors.append(f"Missing package name in command: {command}")
+            if name and version:
+                pass
+        return errors
+
+
+    def _run_performance_check(self, n):
+        cmd = (
+            f"ersilia serve {self.model}&& "
+            f"ersilia example -f my_input.csv -n {n} && "
+             "ersilia run -i my_input.csv && ersilia close"
+        )
+        start_time = time.time()
+        process = subprocess.run(
+            cmd, 
+            shell=True, 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        if process.returncode != 0:
+            return Result(
+                False, 
+                f"Error serving model: {process.stderr.strip()}"
+            )
+        execution_time = time.time() - start_time
+        return Result(
+            True, 
+            f"{n} predictions executed in {execution_time:.2f} seconds."
+        )

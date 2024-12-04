@@ -5,28 +5,12 @@ from ...publish.test import ModelTester
 
 def test_cmd():
 
-    # Example usage: ersilia test {MODEL}
+# Example usage: ersilia test {MODEL} -d local_dir -l deep --remote
     @ersilia_cli.command(
         short_help="Test a model",
         help="Test a model and obtain performance metrics",
     )
     @click.argument("model", type=click.STRING)
-    @click.option(
-        "-e", 
-        "--env", 
-        "env", 
-        required=False, 
-        default=None, 
-        type=click.STRING
-    )
-    @click.option(
-        "-t", 
-        "--type", 
-        "type", 
-        required=False, 
-        default=None, 
-        type=click.STRING
-    )
     @click.option(
         "-l", 
         "--level", 
@@ -44,26 +28,37 @@ def test_cmd():
         type=click.STRING
     )
     @click.option(
-        "-o", 
-        "--output", 
-        "output", 
-        required=False, 
-        default=None, 
-        type=click.STRING
+        "--inspect", 
+         is_flag=True, 
+        default=False
+    )
+    @click.option(
+        "--remote", 
+        is_flag=True, 
+        default=False
+    )
+    @click.option(
+        "--remove", 
+        is_flag=True, 
+        default=False
     )
     def test(
         model, 
-        env, 
-        type, 
         level,
         dir, 
-        output
+        inspect,
+        remote,
+        remove
       ):
         mt = ModelTester(
             model_id=model,
-            env=env, 
-            type=type, 
             level=level, 
-            dir=dir
+            dir=dir,
+            inspect=inspect,
+            remote=remote,
+            remove=remove
         )
-        mt.run(output)  
+        echo("Setting up model tester...")
+        mt.setup()
+        echo("Testing model...")
+        mt.run(output_file=None)  

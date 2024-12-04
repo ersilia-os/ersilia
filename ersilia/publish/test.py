@@ -4,62 +4,259 @@ import os
 import csv
 import subprocess
 import tempfile
-import asyncio
 import time
 import click
 import types
-from collections import defaultdict
+import sys
+from enum import Enum
+from dataclasses import dataclass
+from typing import List
 from datetime import datetime
 
-from ersilia.utils.conda import SimpleConda
-from .. import ErsiliaModel, ErsiliaBase, throw_ersilia_exception
-from ..hub.fetch.fetch import ModelFetcher
-from ..cli import echo
-from ..core.session import Session
-from ..default import EOS, INFORMATION_FILE
+from ..utils.conda import SimpleConda
+from .. import ErsiliaBase, throw_ersilia_exception
 from ..io.input import ExampleGenerator
 from ..utils.exceptions_utils import test_exceptions as texc
 from ..utils.terminal import run_command_check_output
-
+from ..hub.fetch.actions.template_resolver import TemplateResolver
+from ..default import (
+    INFORMATION_FILE, 
+    INSTALL_YAML_FILE, 
+    DOCKERFILE_FILE,
+    PYTHON_VERSION,
+    PACK_METHOD_FASTAPI,
+    PACK_METHOD_BENTOML,
+    METADATA_JSON_FILE,
+    METADATA_YAML_FILE,
+    RUN_FILE,
+    PREDEFINED_EXAMPLE_FILES
+)
 MISSING_PACKAGES = False
+
 try:
     from scipy.stats import spearmanr
     from fuzzywuzzy import fuzz
     from rich.console import Console
     from rich.table import Table
-    from rich.box import SIMPLE
+    from rich.text import Text
 except ImportError:
     MISSING_PACKAGES = True
 
-RUN_FILE    = "run.sh"
-DATA_FILE   = "data.csv"
-NUM_SAMPLES = 5
-BOLD        = "\033[1m"
-BASE        = "base"
 
-TEST_MESSAGES = {
-        "pkg_err": "Missing packages required for testing. \
-        Please install test extras with 'pip install ersilia[test]'."
+class Options(Enum):
+    NUM_SAMPLES = 5
+    BASE = "base"
+    OUTPUT_CSV = "result.csv"
+    LEVEL_DEEP = "deep"
+
+class TableType(Enum):
+    MODEL_INFORMATION_CHECKS = "Model Information Checks"
+    MODEL_FILE_CHECKS = "Model File Checks"
+    MODEL_DIRECTORY_SIZES = "Model Directory Sizes"
+    RUNNER_CHECKUP_STATUS = "Runner Checkup Status"
+    FINAL_RUN_SUMMARY = "Test Run Summary"
+    INSPECT_SUMMARY = "Test Run Summary"
+
+@dataclass
+class TableConfig:
+    title: str
+    headers: List[str]
+
+TABLE_CONFIGS = {
+    TableType.MODEL_INFORMATION_CHECKS: TableConfig(
+        title="Model Information Checks",
+        headers=["Check", "Status"]
+    ),
+    TableType.MODEL_FILE_CHECKS: TableConfig(
+        title="Model File Checks",
+        headers=["Check", "Status"]
+    ),
+    TableType.MODEL_DIRECTORY_SIZES: TableConfig(
+        title="Model Directory Sizes",
+        headers=["Dest dir", "Env Dir"]
+    ),
+    TableType.RUNNER_CHECKUP_STATUS: TableConfig(
+        title="Runner Checkup Status",
+        headers=["Runner", "Status"],
+    ),
+     TableType.FINAL_RUN_SUMMARY: TableConfig(
+        title="Test Run Summary",
+        headers=["Check", "Status"]
+    ),
+     TableType.INSPECT_SUMMARY: TableConfig(
+        title="Inspect Summary",
+        headers=["Check", "Status"]
+    ),
 }
 
-class IOService:
+class STATUS_CONFIGS(Enum):
+    PASSED  = ("PASSED", "green", "✔")
+    FAILED  = ("FAILED", "red", "✘")
+    WARNING = ("WARNING", "yellow", "⚠")
+    SUCCESS = ("SUCCESS", "green", "★")
+    NA = ("N/A", "dim", "~")
+
+    def __init__(self, label, color, icon):
+        self.label = label
+        self.color = color
+        self.icon = icon
+
+    def __str__(self):
+        return f"[{self.color}]{self.icon} {self.label}[/{self.color}]"
+
+class SetupService:
+
+    BASE_URL = "https://github.com/ersilia-os/"
+
     def __init__(
-        self, logger,
+        self, model_id, 
+        dir, 
+        logger,
+        remote
+        ):
+        self.model_id = model_id
+        self.dir = dir
+        self.logger = logger
+        self.remote = remote
+        self.repo_url = f"{self.BASE_URL}{self.model_id}"
+        self.conda = SimpleConda()
+
+    @staticmethod
+    def run_command(command, logger, capture_output=False, shell=True
+        ):
+        try:
+            if capture_output:
+                result = subprocess.run(
+                    command,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    check=True,
+                    shell=shell
+                )
+                return result.stdout
+            else:
+                process = subprocess.Popen(
+                    command,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    shell=shell
+                )
+                
+                stdout_lines, stderr_lines = [], []
+
+                for line in iter(process.stdout.readline, ''):
+                    if line.strip():
+                        stdout_lines.append(line.strip())
+                        logger.info(line.strip())
+
+                for line in iter(process.stderr.readline, ''):
+                    if line.strip():
+                        stderr_lines.append(line.strip())
+                        logger.error(line.strip())
+
+                process.wait()
+                if process.returncode != 0:
+                    raise subprocess.CalledProcessError(
+                        returncode=process.returncode,
+                        cmd=command,
+                        output="\n".join(stdout_lines),
+                        stderr="\n".join(stderr_lines),
+                    )
+
+                return process.stdout
+
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Error executing command: {e}")
+            if e.output:
+                logger.debug(f"Output: {e.output.strip()}")
+            if e.stderr:
+                logger.debug(f"Error: {e.stderr.strip()}")
+            sys.exit(1)
+        except Exception as e:
+            logger.debug(f"Unexpected error: {e}")
+            sys.exit(1)
+
+    def fetch_repo(self):
+        if self.remote and not os.path.exists(self.dir):
+            out = SetupService.run_command(
+                f"git clone {self.repo_url}",
+                self.logger,
+            )
+            self.logger.info(out)
+
+    def check_conda_env(self):
+        if self.conda.exists(self.model_id):
+            self.logger.debug(
+                f"Conda environment '{self.model_id}' already exists."
+            )
+        else:
+            raise Exception(
+                f"Conda virtual environment not found for {self.model_id}"
+            )
+    
+    @staticmethod
+    def get_conda_env_location(model_id, logger):
+        try:
+            result = SetupService.run_command(
+                "conda env list",
+                logger=logger,
+                capture_output=True
+            )
+            for line in result.splitlines():
+                if line.startswith("#") or not line.strip():
+                    continue 
+                parts = line.split()
+                if parts[0] == model_id:
+                    return parts[-1]
+        except subprocess.CalledProcessError as e:
+            print(f"Error running conda command: {e.stderr}")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+        
+        return None
+
+class IOService:
+
+    # Required files
+    RUN_FILE = f"model/framework/{RUN_FILE}"
+    BENTOML_FILES = [
+        DOCKERFILE_FILE,
+        METADATA_JSON_FILE,
+        RUN_FILE,
+        "src/service.py",
+        "pack.py",
+        "README.md",
+        "LICENSE"
+    ]
+
+    ERSILIAPACK_FILES = [
+        INSTALL_YAML_FILE,
+        METADATA_YAML_FILE,
+        PREDEFINED_EXAMPLE_FILES[0],
+        PREDEFINED_EXAMPLE_FILES[1],
+        RUN_FILE,
+        "README.md",
+        "LICENSE",
+    ]
+
+    def __init__(
+        self, 
+        logger,
         dest_dir,
         model_path, 
         bundle_path, 
         bentoml_path, 
         model_id,
-        env,
-        type
+        dir
     ):
         self.logger = logger
         self.model_id = model_id
-        self.env = env if env is not None else BASE
+        self.dir = dir
         self.model_size = 0
         self.console = Console()
         self.check_results = []
-        self.type = type
         self._model_path = model_path
         self._bundle_path = bundle_path
         self._bentoml_path = bentoml_path
@@ -79,81 +276,119 @@ class IOService:
                 check_function(additional_info)
             else:
                 check_function(data)
-            self.check_results.append((check_name, "[green]✔[/green]"))
+            self.check_results.append((
+                check_name, 
+                str(STATUS_CONFIGS.PASSED)
+            ))
             return True
         except Exception as e:
-            self.logger.error(f"Check '{check_name,additional_info}' failed: {e}")
-            self.check_results.append((check_name, "[red]✖[/red]"))
-            return False
-        
-    def _generate_table(self, title, headers, rows):
-        table = Table(
-            title=title, 
-            border_style="#FFC0CB"
-        )
-        for header in headers:
-            table.add_column(
-                header, 
-                justify="center", 
-                no_wrap=True,
-                width=20
+            self.logger.error(
+                f"Check '{check_name}' failed: {e}"
             )
+            self.check_results.append((
+                check_name, 
+                str(STATUS_CONFIGS.FAILED)
+            ))
+            return False
 
+
+    def _generate_table(
+            self,
+            title,
+            headers,
+            rows,
+            large_table=False,
+            merge=False 
+        ):
+        f_col_width = 30 if large_table else 30    
+        l_col_width = 50 if large_table else 10     
+        d_col_width = 30 if not large_table else 20 
+
+        table = Table(
+            title=Text(
+                title,
+                style="bold light_green" 
+            ),
+            border_style="light_green",   
+            show_lines=True,
+        )
+
+        table.add_column(
+            headers[0],
+            justify="left",
+            width=f_col_width,
+            style="bold" 
+        )
+        for header in headers[1:-1]:
+            table.add_column(
+                header,
+                justify="center",
+                width=d_col_width,
+                style="bold" 
+            )
+        table.add_column(
+            headers[-1],
+            justify="right",
+            width=l_col_width,
+            style="bold" 
+        )
+
+        prev_value = None 
         for row in rows:
-            table.add_row(*[str(cell) for cell in row])
-        # render
+            first_col = str(row[0])
+            if merge and first_col == prev_value:
+                first_col = ""  
+            else:
+                prev_value = first_col
+
+            styled_row = [
+                Text(first_col, style="bold"),
+                *[str(cell) for cell in row[1:-1]],
+                row[-1]
+            ]
+            table.add_row(*styled_row)
+
         self.console.print(table)
 
-    def _get_file_requirements(self):
-
-        if self.type.lower() == "bentoml":
-            return [
-                "src/service.py",
-                "pack.py",
-                "Dockerfile",
-                "metadata.json",
-                "README.md",
-                "model/framework/run.sh",
-                "LICENSE",
-            ]
-        elif self.type.lower() == "ersilia":
-            return [
-                "install.yml",
-                "metadata.json",
-                "metadata.yml",
-                "model/framework/example/input.csv",
-                "model/framework/example/output.csv",
-                "README.md",
-                "model/framework/run.sh",
-                "LICENSE",
-            ]
+    @staticmethod
+    def get_model_type(model_id, repo_path):
+        resolver = TemplateResolver(
+            model_id=model_id, 
+            repo_path=repo_path
+        )
+        if resolver.is_bentoml():
+            return PACK_METHOD_BENTOML
+        elif resolver.is_fastapi():
+            return PACK_METHOD_FASTAPI
         else:
-            raise ValueError(f"Unsupported model type: {self.type}")
+            return None
 
+    def get_file_requirements(self):
+        type = IOService.get_model_type(
+            model_id=self.model_id, 
+            repo_path=self.dir
+        )
+        if type == PACK_METHOD_BENTOML:
+            return self.BENTOML_FILES
+        elif type == PACK_METHOD_FASTAPI:
+            return self.ERSILIAPACK_FILES
+        else:
+            raise ValueError(
+                f"Unsupported model type: {type}"
+            )
 
-    def _get_environment_location(self):
-        conda = SimpleConda()
-        python_path = conda.get_python_path_env(environment=self.env)
-        return os.path.dirname(os.path.dirname(python_path))
-    
     def read_information(self):
         file = os.path.join(
             self._dest_dir, 
             self.model_id, 
             INFORMATION_FILE
         )
-        self.logger.info(f"Dest: {self._dest_dir}")
         if not os.path.exists(file):
-            raise FileNotFoundError(f"Information file does not exist for model {self.model_id}")
+            raise FileNotFoundError(
+                f"Information file does not exist for model {self.model_id}"
+        )
         with open(file, "r") as f:
             return json.load(f)
-
-    def set_model_size(self, directory):
-        return sum(
-            os.path.getsize(os.path.join(dirpath, filename))
-            for dirpath, _, filenames in os.walk(directory)
-            for filename in filenames
-        )
 
     def print_output(self, result, output):
         def write_output(data):
@@ -161,103 +396,109 @@ class IOService:
                 with open(output.name, "w") as file:
                     json.dump(data, file)
             else:
-                print(json.dumps(data, indent=4))
+                self.logger.debug(json.dumps(data, indent=4))
 
         if isinstance(result, types.GeneratorType):
             for r in result:
                 write_output(r if r is not None else "Something went wrong")
         else:
-            print(result)
+            self.logger.debug(result)
 
-    def _get_environment_location(self):
-        conda = SimpleConda()
-        python_path = conda.get_python_path_env(environment=BASE)
-        return os.path.dirname(os.path.dirname(python_path))
+    def get_conda_env_size(self):
+        try:
+            loc = SetupService.get_conda_env_location(
+                self.model_id, 
+                self.logger
+            )
+            return self.calculate_directory_size(loc)
+        except Exception as e:
+            self.logger.error(
+                f"Error calculating size of Conda environment '{self.model_id}': {e}"
+            )
+            return 0
 
-
+    def calculate_directory_size(self, path):
+        try:
+            size_output = SetupService.run_command(
+                ["du", "-sm", path], 
+                logger=self.logger,
+                capture_output=True,
+                shell=False
+            )
+            size = int(size_output.split()[0])
+            return size
+        except Exception as e:
+            self.logger.error(
+                f"Error calculating directory size for {path}: {e}"
+            )
+            return 0
+        
     @throw_ersilia_exception()
     def get_directories_sizes(self):
-        self.logger.debug("Calculating model size")
-
-        def format_size(szb):
-            if szb < 1024:
-                return f"{szb}B"         # Bytes
-            szkb = szb / 1024
-            if szkb < 1024:
-                return f"{szkb:.2f}KB"   # Kilobytes
-            szmb = szkb / 1024
-            if szmb < 1024:
-                return f"{szmb:.2f}MB"   # Megabytes
-            szgb = szmb / 1024
-            return f"{szgb:.2f}GB"       # Gigabytes
-
-        def get_directory_size(directory, include_symlinks=True):
-            if not directory or not os.path.exists(directory):
-                return 0, defaultdict(int), defaultdict(int)
-
-            _types, _sizes, total_sz = defaultdict(int), defaultdict(int), 0
-
-            for dirpath, _, filenames in os.walk(directory):
-                for filename in filenames:
-                    filepath = os.path.join(dirpath, filename)
-
-                    if include_symlinks or not os.path.islink(filepath):
-                        try:
-                            size = os.path.getsize(filepath)
-                            total_sz += size
-                            file_extension = os.path.splitext(filename)[1]
-                            _types[file_extension] += 1
-                            _sizes[file_extension] += size
-                        except OSError as e:
-                            self.logger.warning(f"Failed to access file {filepath}: {e}")
-
-            return total_sz, _types, _sizes
-
-        directories = {
-            "dest_dir": (self._model_path(model_id=self.model_id), False),
-            "bundle_dir": (self._bundle_path(model_id=self.model_id), False),
-            "bentoml_dir": (self._bentoml_path(model_id=self.model_id), False),
-            "env_dir": (self._get_environment_location(), True),
-        }
-
-        total, directory_sizes = 0, {}
-
-        for label, (directory, include_symlinks) in directories.items():
-            size, _ , _ = get_directory_size(
-                directory=directory, 
-                include_symlinks=include_symlinks
-            )
-            size = format_size(size)
-            directory_sizes[label] = size
-            total += size
-
-        formatted = format_size(total)
-
-        for label, size in directory_sizes.items():
-            self.logger.debug(f"{label}: {size}")
-
-        self.model_size = formatted
-        return directory_sizes
+        dir_size = self.calculate_directory_size(self.dir)
+        env_size = self.get_conda_env_size()
+        return dir_size, env_size
 
 
 class CheckService:
+
+    # model specs
+    MODEL_TASKS = {
+        "Classification",
+        "Regression",
+        "Generative",
+        "Representation",
+        "Similarity",
+        "Clustering",
+        "Dimensionality reduction",
+    }
+
+    MODEL_OUTPUT = {
+        "Boolean",
+        "Compound",
+        "Descriptor",
+        "Distance",
+        "Experimental value",
+        "Image",
+        "Other value",
+        "Probability",
+        "Protein",
+        "Score",
+        "Text",
+    }
+
+    INPUT_SHAPE = {
+        "Single", 
+        "Pair", 
+        "List", 
+        "Pair of Lists", 
+        "List of Lists"
+    }
+
+    OUTPUT_SHAPE = {
+        "Single", 
+        "List", 
+        "Flexible List", 
+        "Matrix", 
+        "Serializable Object"
+    }
+
     def __init__(
         self, 
         logger, 
         model_id, 
         dest_dir, 
         dir, 
-        ios,
-        type
+        ios
         ):
         self.logger = logger
         self.model_id = model_id
         self._dest_dir = dest_dir
         self.dir = dir
-        self.type = type
         self._run_check = ios._run_check
         self._generate_table = ios._generate_table
-        self._get_file_requirements = ios._get_file_requirements
+        self._print_output = ios.print_output
+        self.get_file_requirements = ios.get_file_requirements
         self.console = ios.console
         self.check_results = ios.check_results
         self.information_check = False
@@ -265,29 +506,21 @@ class CheckService:
         self.example_input = False
         self.consistent_output = False
 
-    def _check_file_existence(self, file_path):
-    
-        if file_path == "metadata.json" and "ersilia" in self.type.lower():
-            json_exists = os.path.exists(os.path.join(self.dir, "metadata.json"))
-            yaml_exists = os.path.exists(os.path.join(self.dir, "metadata.yml"))
-            if not (json_exists or yaml_exists):
-                raise FileNotFoundError(f"Neither 'metadata.json' nor 'metadata.yml' found.")
-        else:
-            if not os.path.exists(os.path.join(self.dir, file_path)):
-                raise FileNotFoundError(f"File '{file_path}' does not exist.")
+    def _check_file_existence(self, path):
+        if not os.path.exists(os.path.join(self.dir, path)):
+            raise FileNotFoundError(
+                f"File '{path}' does not exist."
+        )
 
     def check_files(self):
-     
-        self.logger.debug(f"Checking file requirements for {self.type} model.")
-        fr = self._get_file_requirements()
-
-        for fp in fr:
-            self.logger.debug(f"Checking file: {fp}")
+        requirements = self.get_file_requirements()
+        for file in requirements:
+            self.logger.debug(f"Checking file: {file}")
             self._run_check(
                 self._check_file_existence, 
                 None,
-                f"File: {fp}", 
-                fp
+                f"File: {file}", 
+                file
             )
 
     def _check_model_id(self, data):
@@ -309,16 +542,6 @@ class CheckService:
 
     def _check_model_task(self, data):
         self.logger.debug("Checking model task...")
-        valid_tasks = {
-            "Classification",
-            "Regression",
-            "Generative",
-            "Representation",
-            "Similarity",
-            "Clustering",
-            "Dimensionality reduction",
-        }
-
         raw_tasks = data.get("card", {}).get("Task", "")
         if isinstance(raw_tasks, str):
             tasks = [
@@ -346,7 +569,7 @@ class CheckService:
                 message="Task field is missing or empty."
             )
 
-        invalid_tasks = [task for task in tasks if task not in valid_tasks]
+        invalid_tasks = [task for task in tasks if task not in self.MODEL_TASKS]
         if invalid_tasks:
             raise texc.InvalidEntry(
                 "Task", message=f"Invalid tasks: {', '.join(invalid_tasks)}"
@@ -354,44 +577,9 @@ class CheckService:
 
         self.logger.debug("All tasks are valid.")
 
-
-
-    def _check_model_input(self, data):
-        self.logger.debug("Checking model input")
-        valid_inputs = [{"Compound"}, {"Protein"}, {"Text"}]
-        if set(data["card"]["Input"]) not in valid_inputs:
-            raise texc.InvalidEntry("Input")
-
-    def _check_model_input_shape(self, data):
-        self.logger.debug("Checking model input shape")
-        valid_input_shapes = {
-            "Single", 
-            "Pair", 
-            "List", 
-            "Pair of Lists", 
-            "List of Lists"
-        }
-        if data["card"]["Input Shape"] not in valid_input_shapes:
-            raise texc.InvalidEntry("Input Shape")
-
-
     def _check_model_output(self, data):
         self.logger.debug("Checking model output...")
-        valid_outputs = {
-            "Boolean",
-            "Compound",
-            "Descriptor",
-            "Distance",
-            "Experimental value",
-            "Image",
-            "Other value",
-            "Probability",
-            "Protein",
-            "Score",
-            "Text",
-        }
-
-        raw_outputs = data.get("card", {}).get("Output", "")
+        raw_outputs = data.get("card", {}).get("Output", "") or data.get("metadata", {}).get("Output", "")
         if isinstance(raw_outputs, str):
             outputs = [
                 output.strip() 
@@ -422,7 +610,7 @@ class CheckService:
             output 
             for output 
             in outputs 
-            if output not in valid_outputs
+            if output not in self.MODEL_OUTPUT
         ]
         if invalid_outputs:
             raise texc.InvalidEntry(
@@ -432,27 +620,47 @@ class CheckService:
 
         self.logger.debug("All outputs are valid.")
 
+    def _check_model_input(self, data):
+        self.logger.debug("Checking model input")
+        valid_inputs = [{"Compound"}, {"Protein"}, {"Text"}]
+        
+        model_input = data.get("card", {}).get("Input") or data.get("metadata", {}).get("Input")
+        
+        if not model_input or set(model_input) not in valid_inputs:
+            raise texc.InvalidEntry("Input")
+
+    def _check_model_input_shape(self, data):
+        self.logger.debug("Checking model input shape")
+        model_input_shape = (
+            data.get("card", {}).get("Input Shape") or 
+            data.get("metadata", {}).get("InputShape")
+        )
+        
+        if model_input_shape not in self.INPUT_SHAPE:
+            raise texc.InvalidEntry("Input Shape")
 
     def _check_model_output_type(self, data):
         self.logger.debug("Checking model output type...")
         valid_output_types = [{"String"}, {"Float"}, {"Integer"}]
-        if set(data["card"]["Output Type"]) not in valid_output_types:
+        
+        model_output_type = (
+            data.get("card", {}).get("Output Type") or 
+            data.get("metadata", {}).get("OutputType")
+        )
+        
+        if not model_output_type or set(model_output_type) not in valid_output_types:
             raise texc.InvalidEntry("Output Type")
 
     def _check_model_output_shape(self, data):
         self.logger.debug("Checking model output shape...")
-        valid_output_shapes = {
-            "Single", 
-            "List", 
-            "Flexible List", 
-            "Matrix", 
-            "Serializable Object"
-        }
-        if data["card"]["Output Shape"] not in valid_output_shapes:
+        model_output_shape = (
+            data.get("card", {}).get("Output Shape") or 
+            data.get("metadata", {}).get("OutputShape")
+        )
+        
+        if model_output_shape not in self.OUTPUT_SHAPE:
             raise texc.InvalidEntry("Output Shape")
-
-
-
+    
     @throw_ersilia_exception()
     def check_information(self, output):
         self.logger.debug(f"Beginning checks for {self.model_id} model information")
@@ -478,14 +686,17 @@ class CheckService:
             self.information_check = True
 
     @throw_ersilia_exception()
-    def check_single_input(self, output, fetch_and_serve, run_model):
+    def check_single_input(self, output, run_model, run_example):
 
-        input_smiles = "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1"
-
-        self.logger.debug("Testing model on single smiles input")
-        fetch_and_serve()
+        input = run_example(
+            n_samples=Options.NUM_SAMPLES.value, 
+            file_name=None, 
+            simple=True, 
+            try_predefined=False
+        )
+        self.logger.debug(f"Output: {output}")
         result = run_model(
-            input=input_smiles, 
+            input=input, 
             output=output, 
             batch=100
         )
@@ -498,7 +709,7 @@ class CheckService:
     @throw_ersilia_exception()
     def check_example_input(self, output, run_model, run_example):
         input_samples = run_example(
-            n_samples=NUM_SAMPLES, 
+            n_samples=Options.NUM_SAMPLES.value, 
             file_name=None, 
             simple=True, 
             try_predefined=False
@@ -575,7 +786,7 @@ class CheckService:
         self.logger.debug("Confirming model produces consistent output...")
 
         input_samples = run_example(
-            n_samples=NUM_SAMPLES, 
+            n_samples=Options.NUM_SAMPLES.value, 
             file_name=None, 
             simple=True, 
             try_predefined=False
@@ -613,49 +824,70 @@ class RunnerService:
         logger, 
         ios_service, 
         checkup_service, 
+        setup_service,
         model_path, 
-        env,
-        type,
         level,
-        dir
+        dir,
+        remote,
+        inspect,
+        remove
     ):
         self.model_id = model_id
         self.logger = logger
+        self.setup_service = setup_service
         self.ios_service = ios_service
         self.console = ios_service.console
         self.checkup_service = checkup_service
         self._model_path = model_path
-        self.env = env
-        self.type = type
         self.level = level
         self.dir = dir
-        self._output_type = self.ios_service.read_information()["card"]["Output Type"]
-        session = Session(config_json=None)
-        service_class = session.current_service_class()
-        self.model = ErsiliaModel(
-                self.model_id, 
-                service_class=service_class
+        self.remote = remote
+        self.inspect = inspect
+        self.remove = remove
+        self.example = ExampleGenerator(
+            model_id=self.model_id
         )
-        self.example = ExampleGenerator(model_id=self.model_id)
-        self.fetcher = ModelFetcher(repo_path=self.dir)
         self.run_using_bash = False
 
     def run_model(self, input, output, batch):
-        return self.model.run(
-            input=input,
-            output=output,
-            batch_size=batch
-    )
-    def fetch_and_serve(self):
-        asyncio.run(self.fetcher.fetch(self.model_id
-        ))
-        self.model.serve()
-    def serve_model(self, input, output, batch):
-        return self.model.run(
-            input=input,
-            output=output,
-            batch_size=batch
-    )
+        self.serve_model()
+        if isinstance(input, list):
+            input = input[0]
+        self.logger.info("Running model")
+        out = SetupService.run_command(
+            ["ersilia", 
+             "-v", 
+             "run", 
+             "-i", input[0], 
+             "-o", output, 
+             "-b", str(batch)
+            ],
+            logger=self.logger,
+            capture_output=True
+        )
+        return out
+
+    def fetch(self):
+        SetupService.run_command(
+            " ".join(["ersilia", 
+            "-v", 
+            "fetch", self.model_id, 
+            "--from_dir", self.dir
+            ]),
+            logger=self.logger,
+        )
+
+    def serve_model(self):
+        self.logger.info("Serving the model")
+        SetupService.run_command(
+            ["ersilia", 
+            "-v", 
+            "serve", self.model_id
+            ],
+            logger=self.logger,
+            capture_output=True
+        )
+
     def run_exampe(
             self, 
             n_samples, 
@@ -689,7 +921,11 @@ class RunnerService:
                     if rmse > 0.1:
                         raise texc.InconsistentOutputs(self.model_id)
                 elif all(isinstance(val, str) for val in bv + ev):
-                    if not all(self._compare_string_similarity(a, b, 95) for a, b in zip(bv, ev)):
+                    if not all(
+                        self._compare_string_similarity(a, b, 95) 
+                        for a, b 
+                        in zip(bv, ev)
+                    ):
                         raise texc.InconsistentOutputs(self.model_id)
                     
         def read_csv(path, flag=False):
@@ -706,23 +942,31 @@ class RunnerService:
                     headers = headers[2:]
 
                 data = []
+
                 for line in lines[1:]:
                     self.logger.debug(f"Processing line: {line.strip()}")
                     values = line.strip().split(",")
                     values = values[2:] if flag else values
 
-                    try:
-                        if self._output_type == ["Float"]:
-                            _values = [float(x) for x in values]
-                        elif self._output_type == ["Integer"]:
-                            _values = [int(x) for x in values]
-                    except ValueError as e:
-                        self.logger.warning(f"Value conversion error: {e}")
+                    def infer_type(value):
+                        try:
+                            return int(value)
+                        except ValueError:
+                            try:
+                                return float(value)
+                            except ValueError:
+                                return value  
+
+                    _values = [infer_type(x) for x in values]
+
                     data.append(dict(zip(headers, _values)))
-                
+
                 return data
             except Exception as e:
-                raise RuntimeError(f"Failed to read CSV from {path}.") from e
+                raise RuntimeError(
+                    f"Failed to read CSV from {path}."
+                ) from e
+
 
         def run_subprocess(command, env_vars=None):
             try:
@@ -731,12 +975,16 @@ class RunnerService:
                     capture_output=True, 
                     text=True, 
                     check=True, 
-                    env=env_vars
+                    env=env_vars,
                 )
-                self.logger.debug(f"Subprocess output: {result.stdout}")
+                self.logger.debug(
+                    f"Subprocess output: {result.stdout}"
+                )
                 return result.stdout
             except subprocess.CalledProcessError as e:
-                raise RuntimeError("Subprocess execution failed.") from e
+                raise RuntimeError(
+                    "Subprocess execution failed."
+                ) from e
 
         with tempfile.TemporaryDirectory() as temp_dir:
 
@@ -748,7 +996,7 @@ class RunnerService:
             error_log_path   = os.path.join(temp_dir, "error.txt")
 
             input = self.run_exampe(
-                n_samples=NUM_SAMPLES, 
+                n_samples=Options.NUM_SAMPLES.value, 
                 file_name=None,
                 simple=True, 
                 try_predefined=False
@@ -756,26 +1004,28 @@ class RunnerService:
 
             ex_file = os.path.join(temp_dir, "example_file.csv")
 
-            with open(ex_file, "w") as example_file:
-                example_file.write("smiles\n" + "\n".join(map(str, input)))
+            with open(ex_file, "w") as f:
+                f.write("smiles\n" + "\n".join(map(str, input)))
 
             run_sh_path = os.path.join(
                 model_path, 
                 "model", 
                 "framework", 
-                "run.sh"
+                RUN_FILE
             )
             if not os.path.exists(run_sh_path):
-                self.logger.warning(f"run.sh not found at {run_sh_path}. Skipping bash run.")
+                self.logger.warning(
+                    f"{RUN_FILE} not found at {run_sh_path}. Skipping bash run."
+                )
                 return
 
             bash_script = f"""
                 source {self.conda_prefix(self.is_base())}/etc/profile.d/conda.sh
-                conda activate {BASE}
+                conda activate {self.model_id}
                 cd {os.path.dirname(run_sh_path)}
                 bash run.sh . {ex_file} {bash_output_path} > {output_log_path} 2> {error_log_path}
                 conda deactivate
-            """
+                """
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
@@ -784,12 +1034,24 @@ class RunnerService:
             run_subprocess(["bash", temp_script_path])
 
             bsh_data = read_csv(bash_output_path)
-   
-            self.run_model(
-                ex_file, 
-                output_path, 
-                100
+            self.logger.info(f"Bash Data:{bsh_data}")
+            self.logger.debug(f"Serving the model after run.sh")
+            run_subprocess(
+                ["ersilia", "-v", 
+                 "serve", self.model_id, 
+                ]
             )
+            self.logger.debug(f"Running model for bash data consistency checking")
+            out = run_subprocess(
+                ["ersilia", "-v", 
+                 "run", 
+                 "-i", ex_file,
+                 "-o", output_path
+                ]
+            )
+            self.logger.info(f"Json result: {out}")
+            self.logger.info(f"Temp Result exists: {os.path.exists(output_path)}")
+       
             data = read_csv(output_path, flag=True)
 
             compare_outputs(bsh_data, data)
@@ -801,7 +1063,7 @@ class RunnerService:
         if "CONDA_DEFAULT_ENV" in os.environ:
             return os.environ["CONDA_DEFAULT_ENV"]
         else:
-            return BASE
+            return Options.BASE.value
 
     @staticmethod
     def conda_prefix(is_base):
@@ -835,104 +1097,162 @@ class RunnerService:
         return similarity >= threshold
 
 
-    def make_output(self, time):
+    def make_output(self, elapsed_time):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.information_check = self.checkup_service.information_check
-        self.single_input = self.checkup_service.single_input
-        self.example_input = self.checkup_service.example_input
-        self.consistent_output = self.checkup_service.consistent_output
-        data = [
-            ("Date and Time Run", timestamp),
-            ("Time to Run Tests (seconds)", time),
-            ("Basic Checks Passed", self.information_check),
-            ("Single Input Run Without Error", self.single_input),
-            ("Example Input Run Without Error", self.example_input),
-            ("Outputs Consistent", self.consistent_output),
-            ("Bash Run Without Error", self.run_using_bash),
-        ]
-        
-        headers = ["Check Type", "Status"]
-        
+        test_results = {
+            "Date and Time Run": timestamp,
+            "Time to Run Tests (seconds)": elapsed_time,
+            "Basic Checks Passed": self.checkup_service.information_check,
+            "Single Input Run Without Error": self.checkup_service.single_input,
+            "Example Input Run Without Error": self.checkup_service.example_input,
+            "Outputs Consistent": self.checkup_service.consistent_output,
+            "Bash Run Without Error": self.run_using_bash,
+        }
+
+        data = [(key, str(value)) for key, value in test_results.items()]
         self.ios_service._generate_table(
-            "Test Run Summary", 
-            headers, 
-            data
+            **TABLE_CONFIGS[TableType.FINAL_RUN_SUMMARY].__dict__,
+            rows=data
         )
 
     def run(self, output_file=None):
         if MISSING_PACKAGES:
-            raise ImportError(TEST_MESSAGES["pkg_err"])
+            raise ImportError(
+                "Missing packages required for testing. "
+                "Please install test extras with 'pip install ersilia[test]'."
+            )
 
         if not output_file:
             output_file = os.path.join(
                 self._model_path(self.model_id), 
-                "result.csv"
+                Options.OUTPUT_CSV.value
             )
 
-        st = time.time()
+        start_time = time.time()
+
         try:
-            self.checkup_service.check_information(output_file)
-            self.ios_service._generate_table(
-                title="Model Information Checks",
-                headers=["Check", "Status"],
-                rows=self.ios_service.check_results
-            )
-            self.ios_service.check_results.clear()
-            self.checkup_service.check_files()
-            self.ios_service._generate_table(
-                title="Model Information Checks",
-                headers=["Check", "Status"],
-                rows=self.ios_service.check_results
-            )
-            ds = self.ios_service.get_directories_sizes()
-            self.ios_service._generate_table(
-                title="Model Directory Sizes",
-                headers=["Dest dir", "Env Dir"],
-                rows=[(ds["dest_dir"], ds["env_dir"])]
-            )
-            if self.level == "deep":
-                self.checkup_service.check_single_input(
-                    output_file, 
-                    self.fetch_and_serve,
-                    self.run_model
-                )
-                self.ios_service._generate_table(
-                    title="Runner Checkup Status",
-                    headers=["Runner", "Status"],
-                    rows=[
-                        ["Fetch", "[green]✔[/green]"], 
-                        ["Serve", "[green]✔[/green]"], 
-                        ["Run", "[green]✔[/green]"]
-                    ]
-                )
-                self.checkup_service.check_example_input(
-                    output_file, 
-                    self.run_model, 
-                    self.run_exampe
-                )
-                self.checkup_service.check_consistent_output(
-                    self.run_exampe,
-                    self.run_model
-                )
-                self.run_bash()
-            et = time.time()
-            elapsed = et - st
-            self.make_output(elapsed)
+            self._perform_checks(output_file)
+            self._log_directory_sizes()
+            self._perform_inspect()
+            if self.level == Options.LEVEL_DEEP.value:
+                self._perform_deep_checks(output_file)
+            
+            elapsed_time = time.time() - start_time
+            self.make_output(elapsed_time)
+            self._clear_folders()
 
         except Exception as e:
-            click.echo(f"❌ An error occurred: {e}")
+            click.echo(
+                f"An error occurred: {e}"
+            )
         finally:
-            click.echo("🏁 Run process finished.")
+            click.echo(
+                "Run process finished successfully."
+            )
+
+    def transform_key(self, value):
+        if value is True:
+            return str(STATUS_CONFIGS.PASSED)
+        elif value is False:
+            return str(STATUS_CONFIGS.FAILED)
+        return value
+    
+    def _perform_inspect(self):
+        command, out = f"ersilia -v inspect {self.model_id}", None
+        if self.remote and self.inspect:
+            out = SetupService.run_command(
+                command=command,
+                logger=self.logger,
+                capture_output=True,
+                shell=True
+            )
+        elif not self.remote and self.inspect:
+            out = SetupService.run_command(
+                f"{command} -d {self.dir}",
+                logger=self.logger,
+                shell=True
+            )
+        if out is not None:
+            out = json.loads(out)
+            out = {" ".join(word.capitalize() for word in k.split("_")): self.transform_key(v) for k, v in out.items()}
+            data = [(key, value) for key, value in out.items()]
+
+            self.ios_service._generate_table(
+             **TABLE_CONFIGS[TableType.INSPECT_SUMMARY].__dict__,
+                rows=data,
+                large_table=True,
+                merge=True
+            )
+    
+    def _perform_checks(self, output_file):
+        self.checkup_service.check_information(output_file)
+        self._generate_table(
+            **TABLE_CONFIGS[TableType.MODEL_INFORMATION_CHECKS].__dict__,
+            rows=self.ios_service.check_results
+        )
+        self.ios_service.check_results.clear()
+
+        self.checkup_service.check_files()
+        self._generate_table(
+            **TABLE_CONFIGS[TableType.MODEL_FILE_CHECKS].__dict__,
+            rows=self.ios_service.check_results
+        )
+
+    def _log_directory_sizes(self):
+        dir_size, env_size = self.ios_service.get_directories_sizes()
+        self._generate_table(
+            **TABLE_CONFIGS[TableType.MODEL_DIRECTORY_SIZES].__dict__,
+            rows=[(f"{dir_size:.2f}MB", f"{env_size:.2f}MB")]
+        )
+
+    def _perform_deep_checks(self, output_file):
+        self.checkup_service.check_single_input(
+            output_file, 
+            self.run_model, 
+            self.run_exampe
+        )
+        self._generate_table(
+            **TABLE_CONFIGS[TableType.RUNNER_CHECKUP_STATUS].__dict__,
+            rows = [
+            ["Fetch", str(STATUS_CONFIGS.PASSED)],
+            ["Serve", str(STATUS_CONFIGS.PASSED)],
+            ["Run",   str(STATUS_CONFIGS.PASSED)]
+         ]
+        )
+        self.checkup_service.check_example_input(
+            output_file, 
+            self.run_model, 
+            self.run_exampe
+        )
+        self.checkup_service.check_consistent_output(
+            self.run_exampe, 
+            self.run_model
+        )
+        self.run_bash()
+
+    def _generate_table(self, title, headers, rows):
+        self.ios_service._generate_table(
+            title=title,
+            headers=headers,
+            rows=rows
+        )
+    def _clear_folders(self):
+        if self.remove:
+            SetupService.run_command(
+                f"rm -rf {self.dir}",
+                logger=self.logger,
+            )
 
 
 class ModelTester(ErsiliaBase):
     def __init__(
             self, 
             model_id, 
-            env, 
-            type, 
             level, 
-            dir
+            dir,
+            inspect,
+            remote,
+            remove
         ):
         ErsiliaBase.__init__(
             self, 
@@ -940,10 +1260,17 @@ class ModelTester(ErsiliaBase):
             credentials_json=None
         )
         self.model_id = model_id
-        self.env = env
-        self.type = type
         self.level = level
-        self.dir = dir
+        self.dir = dir or self.model_id
+        self.inspect = inspect
+        self.remote = remote
+        self.remove = remove
+        self.setup_service = SetupService(
+            self.model_id, 
+            self.dir, 
+            self.logger,
+            self.remote
+        )
         self.ios = IOService(
             self.logger, 
             self._dest_dir,
@@ -951,8 +1278,7 @@ class ModelTester(ErsiliaBase):
             self._get_bundle_location, 
             self._get_bentoml_location, 
             self.model_id,
-            self.env,
-            self.type
+            self.dir
         )
         self.checks = CheckService(
             self.logger, 
@@ -960,19 +1286,26 @@ class ModelTester(ErsiliaBase):
             self._dest_dir,
             self.dir,
             self.ios,
-            self.type
         )
         self.runner = RunnerService(
             self.model_id,
             self.logger, 
             self.ios, 
             self.checks, 
+            self.setup_service,
             self._model_path,
-            self.env,
-            self.type,
             self.level,
-            self.dir
+            self.dir,
+            self.remote,
+            self.inspect,
+            self.remove
         )
+    def setup(self):
+        self.logger.debug(f"Running conda setup for {self.model_id}")
+        self.setup_service.fetch_repo() # for remote option
+        self.logger.debug(f"Fetching model {self.model_id} from local dir")
+        self.runner.fetch()
+        self.setup_service.check_conda_env()
 
     def run(self, output_file=None):
         self.runner.run(output_file)
