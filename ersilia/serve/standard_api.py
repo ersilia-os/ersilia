@@ -96,7 +96,7 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def is_input_type_standardizable(self):
         if self.input_type and self.input_shape:
-            if self.input_type[0] == "Compound" and self.input_shape[0] == "Single":
+            if self.input_type[0]=="Compound" and self.input_shape=="Single":
                 return True
         return False
 
@@ -236,24 +236,38 @@ class StandardCSVRunApi(ErsiliaBase):
     
     def is_amenable(self, output_data):
         if not self.header:
+            self.logger.debug("Not amenable for standard run: header not found")
             return False
         if not self.is_input_type_standardizable():
+            self.logger.debug("Not amenable for standard run: input type not standardizable")
             return False
         if not self.is_output_type_standardizable():
+            self.logger.debug("Not amenable for standard run: output type not standardizable")
             return False
         if not self.is_output_csv_file(output_data):
+            self.logger.debug("Not amenable for standard run: output data not CSV file")
             return False
         self.logger.debug("It seems amenable for standard run")
         return True
     
     def serialize_to_csv(self, input_data, result, output_data):
+        if isinstance(result, dict) and not list(result.keys()) == self.header:
+            result = result[list(result.keys())[0]]
+            if isinstance(result[0], dict) and not list(result[0].keys()) == self.header:
+                    for idx, item in enumerate(result):
+                        result[idx] = item[list(item.keys())[0]]
+
+        assert len(input_data) == len(result)
         with open(output_data, "w") as f:
             writer = csv.writer(f)
             writer.writerow(self.header)
             for i_d, r_d in zip(input_data, result):
                 r = [i_d["key"], i_d["input"]]
                 for k in self.header[2:]:
-                    v = r_d[k]
+                    if isinstance(r_d, dict):
+                        v = r_d[k]
+                    else:
+                        v = r_d
                     if isinstance(v, list):
                         r+=v
                     else:

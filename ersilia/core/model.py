@@ -354,7 +354,7 @@ class ErsiliaModel(ErsiliaBase):
         return True
 
     def _do_cache_splits(self, input, output):
-        self.tfr = None # TODO Set in __init__
+        self.tfr = None
         if self._evaluate_do_cache_splits(input, output):
             self.tfr = TabularFileReader(
                 path=input,
