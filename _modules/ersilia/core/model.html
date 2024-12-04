@@ -76,7 +76,6 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">collections</span>
@@ -85,7 +84,6 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">..serve.api</span> <span class="kn">import</span> <span class="n">Api</span>
 <span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..lake.base</span> <span class="kn">import</span> <span class="n">LakeBase</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
@@ -358,11 +356,6 @@
 
     <span class="k">def</span> <span class="nf">_standard_api_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="n">scra</span> <span class="o">=</span> <span class="n">StandardCSVRunApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">())</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">scra</span><span class="o">.</span><span class="n">is_ready</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Standard CSV Api runner is not ready for this particular model&quot;</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">scra</span><span class="o">.</span><span class="n">is_amenable</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Standard CSV Api runner is not amenable for this model, input and output&quot;</span>
@@ -404,6 +397,7 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
+    <span class="c1"># TODO should use the throw_ersilia_exception decorator</span>
     <span class="k">def</span> <span class="nf">_get_api_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">use_iter</span> <span class="o">=</span> <span class="kc">True</span>
@@ -579,13 +573,13 @@
         <span class="n">t1</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">status_ok</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_api_runner</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span> <span class="c1"># TODO Redundant, should be removed</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
                 <span class="n">t1</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getctime</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">t1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">t1</span> <span class="o">&gt;</span> <span class="n">t0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t1</span> <span class="o">&gt;</span> <span class="n">t0</span><span class="p">:</span> <span class="c1"># TODO Why would this be less?</span>
                 <span class="n">status_ok</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_ok</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status_ok</span> <span class="c1"># TODO This doesn&#39;t actually check whether the result exists and isn&#39;t null</span>
 
 <div class="viewcode-block" id="ErsiliaModel.run">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.run">[docs]</a>
@@ -595,7 +589,6 @@
         <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
         <span class="n">track_run</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">try_standard</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># TODO this should be smart enough to init the container sampler</span>
         <span class="c1"># or a python process sampler based on how the model was fetched</span>
@@ -605,21 +598,22 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">start_tracking</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting runner&quot;</span><span class="p">)</span>
+
+        <span class="c1"># TODO The logic should be in a try except else finally block</span>
         <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">try_standard</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying standard API&quot;</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">result</span><span class="p">,</span> <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_run</span><span class="p">(</span>
-                    <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span>
-                <span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Standard run did not work with exception </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="p">)</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;We will try conventional run.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">standard_status_ok</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying standard API&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">,</span> <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_run</span><span class="p">(</span>
+                <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Standard run did not work with exception </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;We will try conventional run.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">standard_status_ok</span><span class="p">:</span> <span class="c1"># TODO This should be an else block</span>
             <span class="k">return</span> <span class="n">result</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying conventional run&quot;</span><span class="p">)</span>
