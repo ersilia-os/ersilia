@@ -93,42 +93,6 @@ class StandardCSVRunApi(ErsiliaBase):
                     return True
         return False
 
-    def is_input_standard_csv_file(self, input_data): #TODO Not really used anywhere.
-        if type(input_data) != str:
-            return False
-        if not input_data.endswith(".csv"):
-            return False
-        if not os.path.exists(input_data):
-            return False
-        if self._is_input_file_too_long(input_data):
-            return False
-        with open(input_data, "r") as f:
-            reader = csv.reader(f)
-            header = next(reader)
-        if len(header) == 1:
-            h = header[0].lower()
-            if not self.encoder.is_input_header(h):
-                return False
-            else:
-                return True
-        elif len(header) == 2:
-            h0 = header[0].lower()
-            h1 = header[1].lower()
-            if not self.encoder.is_key_header(h0):
-                return False
-            if not self.encoder.is_input_header(h1):
-                return False
-            return True
-        elif len(header) == 3:
-            h0 = header[0].lower()
-            h1 = header[1].lower()
-            if not self.encoder.is_key_header(h0):
-                return False
-            if not self.encoder.is_input_header(h1):
-                return False
-            return True
-        else:
-            return False
 
     def is_input_type_standardizable(self):
         if self.input_type and self.input_shape:
@@ -310,8 +274,3 @@ class StandardCSVRunApi(ErsiliaBase):
             return output_data
         else:
             return None
-
-class StandardQueryApi(object):
-    def __init__(self, model_id, url):
-        # TODO This class will be used to query directly the calculations lake.
-        pass
