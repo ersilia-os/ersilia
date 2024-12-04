@@ -769,11 +769,15 @@ class CheckService:
                     raise texc.InconsistentOutputs(self.model_id)
                 
         def read_csv(file_path):
-                if not os.path.exists(file_path):
-                    raise FileNotFoundError(f"File not found: {file_path}")
-                with open(file_path, mode='r') as csv_file:
-                    reader = csv.DictReader(csv_file)
-                    return [row for row in reader]
+            absolute_path = os.path.abspath(file_path)
+            if not os.path.exists(absolute_path):
+                raise FileNotFoundError(f"File not found: {absolute_path}")
+            with open(absolute_path, mode='r') as csv_file:
+                reader = csv.DictReader(csv_file)
+                return [row for row in reader]
+
+        output1_path = os.path.abspath(Options.OUTPUT1_CSV.value)
+        output2_path = os.path.abspath(Options.OUTPUT2_CSV.value)
                 
         self.logger.debug("Confirming model produces consistent output...")
 
@@ -785,17 +789,17 @@ class CheckService:
         )
         run_model(
             input=input_samples, 
-            output=Options.OUTPUT1_CSV.value, 
+            output=output1_path, 
             batch=100
         )
         run_model(
             input=input_samples, 
-            output=Options.OUTPUT2_CSV.value, 
+            output=output1_path, 
             batch=100
         )
 
-        data1 = read_csv(Options.OUTPUT1_CSV.value)
-        data2 = read_csv(Options.OUTPUT2_CSV.value)
+        data1 = read_csv(output1_path)
+        data2 = read_csv(output1_path)
 
         for res1, res2 in zip(data1, data2):
             for key in res1:
