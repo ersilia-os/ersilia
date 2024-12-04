@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ersilia"
-version = "0.1.38"
+version = "0.1.39"
 description = "A hub of AI/ML models for open source drug discovery and global health"
 license = "GPLv3"
 authors = ["Ersilia Open Source Initiative <hello@ersilia.io>"]
@@ -38,7 +38,6 @@ python = ">=3.8"
 inputimeout = "^1.0.4"
 emoji = "^2.8.0"
 validators = [{ version = "~0.21.0", python = ">=3.8" }]
-
 psutil = ">=5.9.0"
 h5py = "^3.7.0"                                             # For compatibility with isaura
 loguru = "^0.6.0"                                           # For compatibility with isaura
@@ -50,11 +49,10 @@ docker = "^7.1.0"
 boto3 = "^1.28.40"
 requests = "^2.31.0"
 numpy = "<=1.26.4"
-setuptools = "^70.0.0"                                      #  added to fix the issue with setuptools
-isaura = { version = "0.1", optional = true }
 aiofiles = "<=24.1.0"
 aiohttp = ">=3.10.11"
 nest_asyncio = "<=1.6.0"
+isaura = { version = "0.1.39", optional = true }
 pytest = { version = "^7.4.0", optional = true }
 pytest-asyncio = { version = "<=0.24.0", optional = true }
 pytest-benchmark = { version = "<=4.0.0", optional = true }
@@ -62,12 +60,15 @@ fuzzywuzzy = { version = "^0.18.0", optional = true }
 sphinx = { version = ">=6.0.0", optional = true }           # for minimum version and support for Python 3.10
 jinja2 = { version = "^3.1.2", optional = true }
 scipy = { version = "<=1.10.0", optional = true }
+rdkit-pypi = { version = "*", optional = true }
+nox = { version = "*", optional = true }
+rich = { version = "*", optional = true }
 
 [tool.poetry.extras]
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 lake = ["isaura"]
 docs = ["sphinx", "jinja2"]
-test = ["pytest", "pytest-asyncio", "pytest-benchmark", "fuzzywuzzy", "scipy"]
+test = ["pytest", "pytest-asyncio", "pytest-benchmark", "nox", "rich", "fuzzywuzzy", "scipy", "rdkit-pypi"]
 #all = [lake, docs, test]
 
 [tool.poetry.scripts]

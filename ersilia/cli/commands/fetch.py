@@ -121,3 +121,4 @@ def fetch_cmd():
             echo(":thumbs_up: Model {0} fetched successfully!".format(model_id), fg="green")
         else:
             echo(":thumbs_down: Model {0} failed to fetch!".format(model_id), fg="red")
+    return fetch
