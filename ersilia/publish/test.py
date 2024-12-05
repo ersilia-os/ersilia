@@ -872,7 +872,6 @@ class RunnerService:
         self.run_using_bash = False
 
     def run_model(self, input, output, batch):
-        self.serve_model()
         if isinstance(input, list):
             input = input[0]
         self.logger.info("Running model")
@@ -889,13 +888,6 @@ class RunnerService:
             "fetch", self.model_id, 
             "--from_dir", self.dir
             ]),
-            logger=self.logger,
-        )
-
-    def serve_model(self):
-        self.logger.info("Serving the model")
-        SetupService.run_command(
-            f"ersilia -v serve {self.model_id}",
             logger=self.logger,
         )
 
