@@ -5,7 +5,7 @@ import requests
 import random
 
 from ersilia.utils.exceptions_utils.card_exceptions import InputBaseInformationError
-from .json_models_interface import JsonModelsInterface
+from .interfaces import JsonModelsInterface
 from ... import ErsiliaBase
 
 

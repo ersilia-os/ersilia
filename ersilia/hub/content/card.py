@@ -5,8 +5,7 @@ import yaml
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
-from ...db.hubdata.interfaces import AirtableInterface
-from ...db.hubdata.json_models_interface import JsonModelsInterface
+from ...db.hubdata.interfaces import AirtableInterface, JsonModelsInterface
 import validators
 
 try:

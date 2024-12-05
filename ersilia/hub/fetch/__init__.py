@@ -1,5 +1,5 @@
 import validators
-from ...db.hubdata.json_models_interface import JsonModelsInterface
+from ...db.hubdata.interfaces import JsonModelsInterface
 from ... import ErsiliaBase
 
 MODEL_INSTALL_COMMANDS_FILE = "model_install_commands.sh"

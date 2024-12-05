@@ -1,8 +1,17 @@
-import requests
 import importlib
+import json
+
+import boto3
+import requests
+
 from ... import ErsiliaBase
-from ...default import AIRTABLE_MODEL_HUB_BASE_ID, AIRTABLE_MODEL_HUB_TABLE_NAME
+from ...default import AIRTABLE_MODEL_HUB_BASE_ID, AIRTABLE_MODEL_HUB_TABLE_NAME, ERSILIA_MODEL_HUB_S3_BUCKET, MODELS_JSON
 from ...setup.requirements.pyairtable import PyAirtableRequirement
+
+
+
+
+
 
 AIRTABLE_MAX_ROWS = 100000
 AIRTABLE_PAGE_SIZE = 100
@@ -48,3 +57,29 @@ class AirtableInterface(ErsiliaBase):
         records = self.table.all()
         for record in records:
             yield record
+
+
+class JsonModelsInterface(ErsiliaBase):
+    def __init__(self, config_json):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        # self.cache_dir =
+        self.json_file_name = MODELS_JSON
+        self.url = f"https://{ERSILIA_MODEL_HUB_S3_BUCKET}.s3.eu-central-1.amazonaws.com/{MODELS_JSON}"
+
+    def _read_json_file(self):
+        response = requests.get(self.url)
+        models_list = response.json()
+        return models_list
+
+    def items(self):
+        models = self._read_json_file()
+        for mdl in models:
+            yield mdl
+
+    def items_all(self):
+        models = self._read_json_file()
+        return models
+
+    def identifier_exists(self, model_id):
+        data = self._read_json_file()
+        return any(item["Identifier"] == model_id for item in data)

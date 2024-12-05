@@ -11,7 +11,7 @@ from .pure import PureDataTyper
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
-from ..db.hubdata.json_models_interface import JsonModelsInterface
+from ..db.hubdata.interfaces import JsonModelsInterface
 from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
 from ..utils.paths import resolve_pack_method
 from ..utils.logging import make_temp_dir
