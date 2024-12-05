@@ -32,6 +32,7 @@ from ..default import (
     RUN_FILE,
     PREDEFINED_EXAMPLE_FILES
 )
+
 MISSING_PACKAGES = False
 
 try:
@@ -1105,7 +1106,6 @@ class RunnerService:
         else:
             return False
 
-
     def _compare_string_similarity(
             self, 
             str1,
@@ -1146,7 +1146,7 @@ class RunnerService:
                 self._model_path(self.model_id), 
                 Options.OUTPUT_CSV.value
             )
-
+            
         start_time = time.time()
 
         try:
