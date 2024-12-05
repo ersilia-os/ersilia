@@ -50,11 +50,10 @@ class ServiceCreator(ErsiliaBase):
         src_dir = os.path.join(self.dest_dir, "src")
         if not os.path.exists(src_dir):
             os.mkdir(src_dir)
-        
+
         with open(os.path.join(self.dest_dir, "src", "service.py"), "r") as f:
             content = f.read()
-        
-        
+
         try:
             metadata = get_metadata_from_base_dir(self.dest_dir)
             output_type = metadata["Output Type"]
@@ -162,6 +161,7 @@ class TemplatePreparer(BaseAction):
         self._create_pack()
         self._create_dockerfile()
         self._create_service()
+
 
 class ModelRepositoryGetter(BaseAction):
     def __init__(

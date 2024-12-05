@@ -10,11 +10,17 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 from .. import logger
-from ..default import (DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME,
-                       DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG,
-                       PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI)
+from ..default import (
+    DEFAULT_DOCKER_PLATFORM,
+    DEFAULT_UDOCKER_USERNAME,
+    DOCKERHUB_ORG,
+    DOCKERHUB_LATEST_TAG,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+)
 from ..utils.system import SystemChecker
 from ..utils.logging import make_temp_dir
+
 
 def resolve_pack_method_docker(model_id):
     client = docker.from_env()
@@ -24,7 +30,7 @@ def resolve_pack_method_docker(model_id):
     image_history = model_image.history()
     for hist in image_history:
         # Very hacky, but works bec we don't have nginx in ersilia-pack images
-        if "nginx" in hist["CreatedBy"]: 
+        if "nginx" in hist["CreatedBy"]:
             return PACK_METHOD_BENTOML
     return PACK_METHOD_FASTAPI
 
@@ -321,7 +327,7 @@ class SimpleDocker(object):
         except Exception as e:
             self.logger.debug(f"An error occurred: {e}")
             return None
-        
+
     def cleanup_ersilia_images(self):
         """Remove all Ersilia-related Docker images"""
         if self._with_udocker:
@@ -333,8 +339,8 @@ class SimpleDocker(object):
 
             if not images_dict:
                 logger.info("No Docker images found")
-                return 
-            
+                return
+
             for image_name, image_id in images_dict.items():
                 if DOCKERHUB_ORG in image_name:
                     try:
@@ -342,9 +348,10 @@ class SimpleDocker(object):
                         self.delete(*self._splitter(image_name))
                     except Exception as e:
                         logger.error(f"Failed to remove Docker image {image_name}: {e}")
-        
+
         except Exception as e:
             self.logger.error(f"Failed to cleanup Docker images: {e}")
+
 
 class SimpleDockerfileParser(DockerfileParser):
     def __init__(self, path):
@@ -367,7 +374,7 @@ class SimpleDockerfileParser(DockerfileParser):
 
 
 class ContainerMetricsSampler:
-    #TODO Perhaps this can be moved to a base Sampling class
+    # TODO Perhaps this can be moved to a base Sampling class
     def __init__(self, model_id, sampling_interval=0.01):
         self.client = docker.from_env()
         self.logger = logger
@@ -376,7 +383,7 @@ class ContainerMetricsSampler:
         self.memory_samples = []
         self.tracking_thread = None
         self.tracking = False
-        self.sampling_interval = sampling_interval # Sample every 10ms
+        self.sampling_interval = sampling_interval  # Sample every 10ms
 
     def _get_container_for_model(self, model_id=None):
         """
@@ -448,7 +455,7 @@ class ContainerMetricsSampler:
                 memory_usage = self._container_memory(stat)
                 self.cpu_samples.append(cpu_usage)
                 self.memory_samples.append(memory_usage)
-                time.sleep(self.sampling_interval)  
+                time.sleep(self.sampling_interval)
         else:
             self.logger.debug("No container found for model")
 

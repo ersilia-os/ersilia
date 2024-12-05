@@ -49,7 +49,6 @@ class Uninstaller(object):
                 except Exception as e:
                     logger.error(f"Failed to remove conda environment {env}: {e}")
 
-        
         env_name = "ersilia"
 
         try:

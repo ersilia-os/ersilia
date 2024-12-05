@@ -456,7 +456,7 @@ class RepoMetadataFile(ErsiliaBase):
         return "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
             org, self.model_id, branch, METADATA_YAML_FILE
         )
-    
+
     def _get_file_content_from_github(self, org, branch):
         json_url = self._github_json_url(org, branch)
         r = requests.get(json_url)
@@ -469,7 +469,7 @@ class RepoMetadataFile(ErsiliaBase):
                 return yaml.safe_load(r.content)
         else:
             return json.loads(r.content)
-            
+
     def get_json_or_yaml_file(self, org=None, branch=None):
         return self._get_file_content_from_github(org, branch)
 
@@ -779,6 +779,7 @@ class LocalCard(ErsiliaBase):
         else:
             return
 
+
 class LakeCard(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -806,13 +807,13 @@ class S3JsonCard(JsonModelsInterface):
         for model in all_models:
             if model["Identifier"] == model_id:
                 return model
-    
+
     def get_card_by_slug(self, slug):
         all_models = self.items_all()
         for model in all_models:
             if model["Slug"] == slug:
                 return model
-            
+
     def get(self, model_id=None, slug=None):
         if model_id is not None:
             return self.get_card_by_model_id(model_id)
@@ -820,6 +821,7 @@ class S3JsonCard(JsonModelsInterface):
             return self.get_card_by_slug(slug)
         else:
             raise ValueError("Either model_id or slug must be provided")
+
 
 class ModelCard(object):
     def __init__(self, config_json=None):
@@ -855,4 +857,3 @@ class ModelCard(object):
             return json.dumps(card, indent=4)
         else:
             return card
-    

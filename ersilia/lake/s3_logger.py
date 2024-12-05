@@ -1,4 +1,3 @@
-
 # TODO Remove this file
 import os
 import boto3

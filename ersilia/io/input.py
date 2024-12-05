@@ -276,5 +276,6 @@ class ExampleGenerator(ErsiliaBase):
                 return f.read()
         if not predefined_available:
             self.logger.debug("Randomly sampling input")
-            return self.random_example(n_samples=n_samples, file_name=file_name, simple=simple)
-        
+            return self.random_example(
+                n_samples=n_samples, file_name=file_name, simple=simple
+            )

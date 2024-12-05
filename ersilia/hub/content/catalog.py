@@ -47,8 +47,8 @@ class CatalogTable(object):
         """
         Generates a separator line for the table based on the given borders and column widths.
 
-        The line starts with a 'left' border, followed by repeated 'horizontal' 
-        sections for each column's width, joined by 'middle' separators, and ends 
+        The line starts with a 'left' border, followed by repeated 'horizontal'
+        sections for each column's width, joined by 'middle' separators, and ends
         with a 'right' border.
 
         Args:
@@ -56,7 +56,7 @@ class CatalogTable(object):
             middle (str): The character to use between columns (as separators).
             right (str): The character to use for the right border of the line.
             horizontal (str): The character used to draw the horizontal border.
-            widths (list[int]): A list of column widths to determine how much 
+            widths (list[int]): A list of column widths to determine how much
                                 horizontal space each column takes.
 
         Returns:
@@ -66,20 +66,20 @@ class CatalogTable(object):
 
     def as_table(self):
         """
-        Returns the catalog data in table format. The method calculates the 
-        column widths dynamically by determining the maximum width of each column, 
+        Returns the catalog data in table format. The method calculates the
+        column widths dynamically by determining the maximum width of each column,
         based on the data and column headers.
 
-        A row format string is then constructed using the column widths, 
+        A row format string is then constructed using the column widths,
         specifying that each cell is left-aligned and padded with a column seperator sperating the rows.
 
-        The method starts by constructing the top border using the 
-        'generate_separator_line' helper. It then adds the headers, 
+        The method starts by constructing the top border using the
+        'generate_separator_line' helper. It then adds the headers,
         formatted to fit the column widths, followed by a separator line
         also created by the helper function.
 
-        A 'for' loop iterates over the data rows, adding each row to the 
-        table with borders and padding. After each row, a separator line is inserted. 
+        A 'for' loop iterates over the data rows, adding each row to the
+        table with borders and padding. After each row, a separator line is inserted.
         Finally, the bottom border is added using the helper function, completing the table.
 
         """

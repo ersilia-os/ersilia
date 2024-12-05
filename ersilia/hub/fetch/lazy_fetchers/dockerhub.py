@@ -16,8 +16,13 @@ from ....default import (
 from ...pull.pull import ModelPuller
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
-from ....utils.docker import SimpleDocker, resolve_pack_method_docker, PACK_METHOD_BENTOML
+from ....utils.docker import (
+    SimpleDocker,
+    resolve_pack_method_docker,
+    PACK_METHOD_BENTOML,
+)
 from .. import STATUS_FILE
+
 
 class ModelDockerHubFetcher(ErsiliaBase):
     def __init__(self, overwrite=None, config_json=None):
@@ -126,11 +131,13 @@ class ModelDockerHubFetcher(ErsiliaBase):
             self.logger.error("Information file not found, not modifying anything")
             return None
 
-        # Using this literal here to prevent a file read         
+        # Using this literal here to prevent a file read
         # from service class file for a model fetched through DockerHub
         # since we already know the service class.
         data["service_class"] = "pulled_docker"
-        data["size"] = mp._get_size_of_local_docker_image_in_mb()  # TODO this should probably be a util function 
+        data["size"] = (
+            mp._get_size_of_local_docker_image_in_mb()
+        )  # TODO this should probably be a util function
         with open(information_file, "w") as outfile:
             json.dump(data, outfile, indent=4)
 
@@ -150,5 +157,5 @@ class ModelDockerHubFetcher(ErsiliaBase):
             self.modify_information(model_id),
             self.copy_metadata(model_id),
             self.copy_status(model_id),
-            self.copy_example_if_available(model_id)
+            self.copy_example_if_available(model_id),
         )

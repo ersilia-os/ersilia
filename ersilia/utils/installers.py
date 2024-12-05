@@ -166,16 +166,12 @@ class Installer(BaseInstaller):
             bash_script = """
             source {0}/etc/profile.d/conda.sh
             conda deactivate
-            """.format(
-                sc.conda_prefix(False)
-            )
+            """.format(sc.conda_prefix(False))
         else:
             bash_script = ""
         bash_script += """
         source {0}/etc/profile.d/conda.sh
-        """.format(
-            sc.conda_prefix(True)
-        )
+        """.format(sc.conda_prefix(True))
         bc = SetupBaseConda()
         python_version = self.versions.python_version()
         python_version = bc.find_closest_python_version(python_version)
@@ -186,9 +182,7 @@ class Installer(BaseInstaller):
         pip install -e .
         python {3}
         conda deactivate
-        """.format(
-            tmp_repo, eos_base_env, python_version, tmp_python_script
-        )
+        """.format(tmp_repo, eos_base_env, python_version, tmp_python_script)
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         python_script = """

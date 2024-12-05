@@ -5,6 +5,7 @@ ji = JsonModelsInterface(config_json=None)
 
 import pytest
 
+
 class OriginalModelFinder:
     def __init__(self):
         pass
@@ -55,9 +56,11 @@ class OptimizedModelFinder:
 def original_finder():
     return OriginalModelFinder()
 
+
 @pytest.fixture
 def actual_url():
     return "https://eos9ei3-tkreo.ondigitalocean.app/"
+
 
 @pytest.fixture
 def optimized_finder():

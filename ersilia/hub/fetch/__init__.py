@@ -26,7 +26,7 @@ class ModelURLResolver(ErsiliaBase):
         if self.models_cache is None:
             models = self.ji._read_json_file()
             self.models_cache = {mdl["Identifier"]: mdl for mdl in models}
-    
+
     def _find_url_using_s3_models_json(self, model_id):
         self.logger.debug(
             "Trying to find an available URL where the model is hosted using S3 Models JSON"
@@ -39,8 +39,8 @@ class ModelURLResolver(ErsiliaBase):
                 return model["Host URL"]
             else:
                 self.logger.debug(
-                        "No hosted URL found for this model in S3 Models JSON"
-                    )
+                    "No hosted URL found for this model in S3 Models JSON"
+                )
                 return None
         self.logger.debug("Model was not found in S3 Models JSON")
 
