@@ -64,7 +64,6 @@ class StandardCSVRunApi(ErsiliaBase):
             with open(os.path.join(self.path, INFORMATION_FILE), "r") as f:
                 info = json.load(f)
                 return info
-
         except FileNotFoundError:
             self.logger.debug(
                 f"Error: File '{INFORMATION_FILE}' not found in the path '{self.path}'"
