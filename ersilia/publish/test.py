@@ -877,13 +877,7 @@ class RunnerService:
             input = input[0]
         self.logger.info("Running model")
         out = SetupService.run_command(
-            ["ersilia", 
-             "-v", 
-             "run", 
-             "-i", input[0], 
-             "-o", output, 
-             "-b", str(batch)
-            ],
+            f"ersilia -v serve {self.model_id} && ersilia  -v run -i {input[0]} -o {output} -b {str(batch)}",
             logger=self.logger,
         )
         return out
@@ -901,12 +895,8 @@ class RunnerService:
     def serve_model(self):
         self.logger.info("Serving the model")
         SetupService.run_command(
-            ["ersilia", 
-            "-v", 
-            "serve", self.model_id
-            ],
+            f"ersilia -v serve {self.model_id}",
             logger=self.logger,
-            capture_output=True
         )
 
     def run_exampe(
