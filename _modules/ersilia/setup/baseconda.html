@@ -143,9 +143,7 @@
         <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        source </span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">        conda search python &gt; </span><span class="si">{1}</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="n">is_base</span><span class="p">),</span> <span class="n">tmp_file</span>
-        <span class="p">)</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="n">is_base</span><span class="p">),</span> <span class="n">tmp_file</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">))</span>
@@ -188,16 +186,12 @@
             <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            source </span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">            conda deactivate</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-            <span class="p">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        source </span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">)</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">))</span>
         <span class="n">python_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_closest_python_version</span><span class="p">(</span><span class="n">ptag</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        cd </span><span class="si">{0}</span>
@@ -205,9 +199,7 @@
 <span class="s2">        conda activate </span><span class="si">{1}</span>
 <span class="s2">        </span><span class="si">{3}</span>
 <span class="s2">        conda deactivate</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">python_version</span><span class="p">,</span> <span class="n">cmd</span>
-        <span class="p">)</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_repo</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">python_version</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">))</span></div>

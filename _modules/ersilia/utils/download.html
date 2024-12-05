@@ -90,6 +90,7 @@
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">S3_BUCKET_URL</span><span class="p">,</span> <span class="n">S3_BUCKET_URL_ZIP</span>
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 
+
 <div class="viewcode-block" id="PseudoDownloader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.PseudoDownloader">[docs]</a>
 <span class="k">class</span> <span class="nc">PseudoDownloader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -235,9 +236,7 @@
 <span class="s2">        GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">.git</span>
 <span class="s2">        mv </span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span>
 <span class="s2">        rm </span><span class="si">{0}</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">tmp_folder</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span>
-        <span class="p">)</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
         <span class="n">run_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia&quot;</span><span class="p">)),</span> <span class="s2">&quot;run.sh&quot;</span>
         <span class="p">)</span>

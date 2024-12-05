@@ -826,7 +826,9 @@
             <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting Docker Daemon service&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">container_tmp_logs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">CONTAINER_LOGS_TMP_DIR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">container_tmp_logs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">CONTAINER_LOGS_TMP_DIR</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Creating container tmp logs folder </span><span class="si">{0}</span><span class="s2"> and mounting as volume in container&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">container_tmp_logs</span>

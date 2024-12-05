@@ -115,15 +115,20 @@
         <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">model_catalog</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
         <span class="n">local_models</span> <span class="o">=</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">catalog_table</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">local_models</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:person_tipping_hand: No models are available locally for deletion.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">&quot;:person_tipping_hand: No models are available locally for deletion.&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="k">return</span>
-        <span class="n">deleted_count</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="n">deleted_count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">model_row</span> <span class="ow">in</span> <span class="n">local_models</span><span class="p">:</span>
             <span class="n">model_id</span> <span class="o">=</span> <span class="n">model_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
                 <span class="n">deleted_count</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:thumbs_up: Completed the deletion of all locally available models!&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
-        
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">&quot;:thumbs_up: Completed the deletion of all locally available models!&quot;</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="c1"># Example usage:</span>
     <span class="c1"># 1. Delete a specific model: ersilia delete {MODEL}</span>
@@ -142,7 +147,11 @@
             <span class="n">model_id</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
             <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:warning: Please specify a model to delete a model or use --all to delete all models.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">&quot;:warning: Please specify a model to delete a model or use --all to delete all models.&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">delete</span></div>
 
 </pre></div>

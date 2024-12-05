@@ -79,10 +79,12 @@
 
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">LOGS_DIR</span><span class="p">,</span> <span class="n">CONTAINER_LOGS_TMP_DIR</span><span class="p">,</span> <span class="n">SESSION_JSON</span>
 
+
 <div class="viewcode-block" id="get_current_pid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_current_pid">[docs]</a>
 <span class="k">def</span> <span class="nf">get_current_pid</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span></div>
+
 
 
 <div class="viewcode-block" id="get_parent_pid">
@@ -90,6 +92,7 @@
 <span class="k">def</span> <span class="nf">get_parent_pid</span><span class="p">():</span>
     <span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getppid</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">pid</span></div>
+
 
 
 <div class="viewcode-block" id="get_session_uuid">
@@ -101,6 +104,7 @@
         <span class="k">return</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;identifier&quot;</span><span class="p">]</span></div>
 
 
+
 <div class="viewcode-block" id="create_session_files">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.create_session_files">[docs]</a>
 <span class="k">def</span> <span class="nf">create_session_files</span><span class="p">(</span><span class="n">session_name</span><span class="p">):</span>
@@ -108,6 +112,7 @@
     <span class="n">session_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">session_name</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">LOGS_DIR</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">CONTAINER_LOGS_TMP_DIR</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="create_session_dir">
@@ -120,10 +125,12 @@
     <span class="n">create_session_files</span><span class="p">(</span><span class="n">session_name</span><span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="get_session_dir">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_session_dir">[docs]</a>
 <span class="k">def</span> <span class="nf">get_session_dir</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">get_session_id</span><span class="p">())</span></div>
+
 
 
 <div class="viewcode-block" id="remove_session_dir">
@@ -133,18 +140,22 @@
     <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">session_dir</span><span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="determine_orphaned_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.determine_orphaned_session">[docs]</a>
 <span class="k">def</span> <span class="nf">determine_orphaned_session</span><span class="p">():</span>
     <span class="c1"># TODO maybe this is slow, look out for performance</span>
     <span class="n">_sessions</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">sessions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;session_&quot;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">)))</span>
+    <span class="n">sessions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;session_&quot;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">))</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="n">sessions</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">sessions</span><span class="p">:</span>
             <span class="n">session_pid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">psutil</span><span class="o">.</span><span class="n">pid_exists</span><span class="p">(</span><span class="n">session_pid</span><span class="p">):</span>
                 <span class="n">_sessions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_sessions</span></div>
+
 
 
 <div class="viewcode-block" id="remove_orphaned_sessions">
@@ -154,15 +165,15 @@
     <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">orphaned_sessions</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">remove_session_dir</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>  <span class="c1">#TODO Is there a better way to handle this?</span>
+        <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>  <span class="c1"># TODO Is there a better way to handle this?</span>
             <span class="k">pass</span>  <span class="c1"># TODO we should at least log this somehow</span></div>
+
 
 
 <div class="viewcode-block" id="get_session_id">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_session_id">[docs]</a>
 <span class="k">def</span> <span class="nf">get_session_id</span><span class="p">():</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;session_</span><span class="si">{</span><span class="n">get_parent_pid</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
-
 
 </pre></div>
 

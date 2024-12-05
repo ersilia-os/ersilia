@@ -85,13 +85,14 @@
 <span class="kn">from</span> <span class="nn">...utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">NotInstallableWithFastAPI</span><span class="p">,</span>
     <span class="n">NotInstallableWithBentoML</span><span class="p">,</span>
-    <span class="n">StandardModelExampleError</span>
+    <span class="n">StandardModelExampleError</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.register.standard_example</span> <span class="kn">import</span> <span class="n">ModelStandardExample</span>
 <span class="kn">from</span> <span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span><span class="p">,</span> <span class="n">DONE_TAG</span>
+
 
 <div class="viewcode-block" id="ModelFetcher">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher">[docs]</a>
@@ -237,7 +238,7 @@
     <span class="k">def</span> <span class="nf">_standard_csv_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStandardExample</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">ms</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-        
+
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching from DockerHub&quot;</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
@@ -300,7 +301,6 @@
 
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting fetching procedure&quot;</span><span class="p">)</span>
         <span class="n">do_dockerhub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decide_if_use_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">do_dockerhub</span><span class="p">:</span>
@@ -334,20 +334,22 @@
 <span class="sd">            True if the model was fetched successfully, False otherwise</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>  
+        <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_standard_csv_example</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">StandardModelExampleError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Standard model example failed, deleting artifacts&quot;</span><span class="p">)</span>
             <span class="n">do_delete</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
-                <span class="s2">&quot;Do you want to delete the model artifacts? [Y/n]&quot;</span><span class="p">,</span> 
-                <span class="n">default_answer</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+                <span class="s2">&quot;Do you want to delete the model artifacts? [Y/n]&quot;</span><span class="p">,</span> <span class="n">default_answer</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="n">do_delete</span><span class="p">:</span>
                 <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing model source to file&quot;</span><span class="p">)</span>
-            <span class="n">model_source_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">)</span>
+            <span class="n">model_source_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SOURCE_FILE</span>
+            <span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>

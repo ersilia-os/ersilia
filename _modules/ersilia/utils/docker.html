@@ -84,11 +84,17 @@
 <span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DEFAULT_DOCKER_PLATFORM</span><span class="p">,</span> <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span>
-                       <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
-                       <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_DOCKER_PLATFORM</span><span class="p">,</span>
+    <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span>
+    <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
+    <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..utils.system</span> <span class="kn">import</span> <span class="n">SystemChecker</span>
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+
 
 <div class="viewcode-block" id="resolve_pack_method_docker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.resolve_pack_method_docker">[docs]</a>
@@ -100,7 +106,7 @@
     <span class="n">image_history</span> <span class="o">=</span> <span class="n">model_image</span><span class="o">.</span><span class="n">history</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">hist</span> <span class="ow">in</span> <span class="n">image_history</span><span class="p">:</span>
         <span class="c1"># Very hacky, but works bec we don&#39;t have nginx in ersilia-pack images</span>
-        <span class="k">if</span> <span class="s2">&quot;nginx&quot;</span> <span class="ow">in</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;CreatedBy&quot;</span><span class="p">]:</span> 
+        <span class="k">if</span> <span class="s2">&quot;nginx&quot;</span> <span class="ow">in</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;CreatedBy&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
     <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span></div>
 
@@ -448,7 +454,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span></div>
 
-        
+
 <div class="viewcode-block" id="SimpleDocker.cleanup_ersilia_images">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cleanup_ersilia_images">[docs]</a>
     <span class="k">def</span> <span class="nf">cleanup_ersilia_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -462,8 +468,8 @@
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">images_dict</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No Docker images found&quot;</span><span class="p">)</span>
-                <span class="k">return</span> 
-            
+                <span class="k">return</span>
+
             <span class="k">for</span> <span class="n">image_name</span><span class="p">,</span> <span class="n">image_id</span> <span class="ow">in</span> <span class="n">images_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">DOCKERHUB_ORG</span> <span class="ow">in</span> <span class="n">image_name</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
@@ -471,10 +477,11 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_splitter</span><span class="p">(</span><span class="n">image_name</span><span class="p">))</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to remove Docker image </span><span class="si">{</span><span class="n">image_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        
+
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to cleanup Docker images: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </div>
+
 
 
 <div class="viewcode-block" id="SimpleDockerfileParser">
@@ -509,7 +516,7 @@
 <div class="viewcode-block" id="ContainerMetricsSampler">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler">[docs]</a>
 <span class="k">class</span> <span class="nc">ContainerMetricsSampler</span><span class="p">:</span>
-    <span class="c1">#TODO Perhaps this can be moved to a base Sampling class</span>
+    <span class="c1"># TODO Perhaps this can be moved to a base Sampling class</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">sampling_interval</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
@@ -518,7 +525,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tracking_thread</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_interval</span> <span class="o">=</span> <span class="n">sampling_interval</span> <span class="c1"># Sample every 10ms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_interval</span> <span class="o">=</span> <span class="n">sampling_interval</span>  <span class="c1"># Sample every 10ms</span>
 
     <span class="k">def</span> <span class="nf">_get_container_for_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -590,7 +597,7 @@
                 <span class="n">memory_usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container_memory</span><span class="p">(</span><span class="n">stat</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cpu_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cpu_usage</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">memory_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">memory_usage</span><span class="p">)</span>
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_interval</span><span class="p">)</span>  
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_interval</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No container found for model&quot;</span><span class="p">)</span>
 

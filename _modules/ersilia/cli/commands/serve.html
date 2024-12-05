@@ -95,7 +95,7 @@
         <span class="n">default</span><span class="o">=</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Get outputs from locally hosted model only (</span><span class="si">{</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="si">}</span><span class="s2">), </span><span class="se">\</span>
-<span class="s2">            from cloud precalculation store only (</span><span class="si">{</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">CLOUD_ONLY</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="s2">            from cloud precalculation store only (</span><span class="si">{</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">CLOUD_ONLY</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--lake/--no-lake&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--docker/--no-docker&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -127,7 +127,8 @@
                 <span class="n">ModelNotInStore</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span>
-            <span class="n">output_source</span><span class="o">=</span><span class="n">output_source</span><span class="p">,</span> <span class="n">save_to_lake</span><span class="o">=</span><span class="n">lake</span><span class="p">,</span>
+            <span class="n">output_source</span><span class="o">=</span><span class="n">output_source</span><span class="p">,</span>
+            <span class="n">save_to_lake</span><span class="o">=</span><span class="n">lake</span><span class="p">,</span>
             <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span>
             <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
             <span class="n">track_runs</span><span class="o">=</span><span class="n">track</span><span class="p">,</span>
@@ -160,6 +161,7 @@
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:person_tipping_hand: Information:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - info&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">serve</span></div>
 
 </pre></div>

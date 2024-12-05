@@ -101,7 +101,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">models_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ji</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">models_cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">mdl</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]:</span> <span class="n">mdl</span> <span class="k">for</span> <span class="n">mdl</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>
-    
+
     <span class="k">def</span> <span class="nf">_find_url_using_s3_models_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Trying to find an available URL where the model is hosted using S3 Models JSON&quot;</span>
@@ -114,8 +114,8 @@
                 <span class="k">return</span> <span class="n">model</span><span class="p">[</span><span class="s2">&quot;Host URL&quot;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="s2">&quot;No hosted URL found for this model in S3 Models JSON&quot;</span>
-                    <span class="p">)</span>
+                    <span class="s2">&quot;No hosted URL found for this model in S3 Models JSON&quot;</span>
+                <span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model was not found in S3 Models JSON&quot;</span><span class="p">)</span>
 

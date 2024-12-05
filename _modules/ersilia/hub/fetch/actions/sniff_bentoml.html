@@ -200,7 +200,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">md</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Metadata file not available&quot;</span><span class="p">)</span>    
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Metadata file not available&quot;</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="k">return</span> <span class="n">md</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>  <span class="c1"># TODO Account for mixed types</span>
 

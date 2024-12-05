@@ -91,7 +91,11 @@
 <span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
 <span class="kn">from</span> <span class="nn">..utils.session</span> <span class="kn">import</span> <span class="n">get_session_dir</span><span class="p">,</span> <span class="n">get_session_uuid</span>
 <span class="kn">from</span> <span class="nn">..utils.csvfile</span> <span class="kn">import</span> <span class="n">CsvDataLoader</span>
-<span class="kn">from</span> <span class="nn">..utils.tracking</span> <span class="kn">import</span> <span class="n">init_tracking_summary</span><span class="p">,</span> <span class="n">update_tracking_summary</span><span class="p">,</span> <span class="n">RUN_DATA_STUB</span>
+<span class="kn">from</span> <span class="nn">..utils.tracking</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">init_tracking_summary</span><span class="p">,</span>
+    <span class="n">update_tracking_summary</span><span class="p">,</span>
+    <span class="n">RUN_DATA_STUB</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils.throw_ersilia_exception</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">SESSION_JSON</span>
 <span class="kn">from</span> <span class="nn">..io.output_logger</span> <span class="kn">import</span> <span class="n">TabularResultLogger</span>
@@ -102,6 +106,7 @@
 <span class="n">AWS_SECRET_ACCESS_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_SECRET_ACCESS_KEY&quot;</span><span class="p">)</span>
 <span class="n">AWS_REGION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_REGIOIN&quot;</span><span class="p">,</span> <span class="s2">&quot;eu-central-1&quot;</span><span class="p">)</span>
 <span class="n">TRACKING_BUCKET</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TRACKING_BUCKET&quot;</span><span class="p">,</span> <span class="s2">&quot;ersilia-models-runs&quot;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="flatten_dict">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.flatten_dict">[docs]</a>
@@ -191,7 +196,7 @@
         <span class="n">res_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_count</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># TODO We are not consuming this right now</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># TODO We are not consuming this right now</span>
             <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;error_details&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
                 <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;error_details&quot;</span><span class="p">][</span><span class="n">err</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">err</span><span class="p">]</span>
@@ -209,7 +214,7 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">header</span> <span class="o">+=</span> <span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="n">values</span> <span class="o">+=</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -218,16 +223,17 @@
         <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="serialize_tracking_json_to_csv">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_tracking_json_to_csv">[docs]</a>
 <span class="k">def</span> <span class="nf">serialize_tracking_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">2</span><span class="p">:]</span> <span class="c1"># Ignore model_id and runs</span>
-        <span class="n">num_rows</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;runs&#39;</span><span class="p">]</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">2</span><span class="p">:]</span>  <span class="c1"># Ignore model_id and runs</span>
+        <span class="n">num_rows</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;runs&quot;</span><span class="p">]</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">):</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_id&#39;</span><span class="p">]]</span><span class="o">+</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
             <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -236,10 +242,11 @@
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="upload_to_s3">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_s3">[docs]</a>
 <span class="k">def</span> <span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="n">TRACKING_BUCKET</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a file to an S3 bucket    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a file to an S3 bucket</span>
 
 <span class="sd">    :param json_dict: JSON object to upload</span>
 <span class="sd">    :param bucket: Bucket to upload to</span>
@@ -266,29 +273,27 @@
         <span class="c1"># Upload run output to S3</span>
         <span class="n">sid</span> <span class="o">=</span> <span class="n">get_session_uuid</span><span class="p">()</span>
         <span class="n">output_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;lake&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
-        <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span>
-            <span class="n">output_file_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output/output_</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span>
-        <span class="p">)</span>
+        <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output/output_</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
 
         <span class="c1"># Upload session info to S3</span>
         <span class="n">session_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SESSION_JSON</span><span class="p">)</span>
-        <span class="n">session_csv_path</span> <span class="o">=</span> <span class="n">session_json_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span>
+        <span class="n">session_csv_path</span> <span class="o">=</span> <span class="n">session_json_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
         <span class="n">serialize_session_json_to_csv</span><span class="p">(</span><span class="n">session_json_path</span><span class="p">,</span> <span class="n">session_csv_path</span><span class="p">)</span>
         <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">session_csv_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;summary/session_</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">session_csv_path</span><span class="p">)</span>
-        
+
         <span class="c1"># Upload tracking summary to S3</span>
-        <span class="n">tracking_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_session_uuid</span><span class="p">()</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+        <span class="n">tracking_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">get_session_dir</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_session_uuid</span><span class="p">()</span><span class="si">}</span><span class="s2">.json&quot;</span>
+        <span class="p">)</span>
         <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">tracking_json_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;tracking_raw/</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
-        <span class="n">tracking_csv_path</span> <span class="o">=</span> <span class="n">tracking_json_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span>
+        <span class="n">tracking_csv_path</span> <span class="o">=</span> <span class="n">tracking_json_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
         <span class="n">serialize_tracking_json_to_csv</span><span class="p">(</span><span class="n">tracking_json_path</span><span class="p">,</span> <span class="n">tracking_csv_path</span><span class="p">)</span>
         <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">tracking_csv_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;tracking/</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tracking_csv_path</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="n">NoCredentialsError</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="s2">&quot;Unable to upload tracking data to AWS: Credentials not found&quot;</span>
-        <span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unable to upload tracking data to AWS: Credentials not found&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -431,7 +436,9 @@
             <span class="n">input_avg_row_size</span> <span class="o">=</span> <span class="n">input_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
             <span class="n">output_avg_row_size</span> <span class="o">=</span> <span class="n">output_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Encountered a ZeroDivisionError. No data in input or output file&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Encountered a ZeroDivisionError. No data in input or output file&quot;</span>
+            <span class="p">)</span>
             <span class="n">input_avg_row_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
             <span class="n">output_avg_row_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
@@ -535,9 +542,11 @@
 <div class="viewcode-block" id="RunTracker.log_result">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_result">[docs]</a>
     <span class="k">def</span> <span class="nf">log_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
-        <span class="n">identifier</span> <span class="o">=</span> <span class="n">get_session_uuid</span><span class="p">()</span> 
+        <span class="n">identifier</span> <span class="o">=</span> <span class="n">get_session_uuid</span><span class="p">()</span>
         <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
-        <span class="n">tabular_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">tabular_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span>
+            <span class="n">result</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">tabular_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -566,7 +575,7 @@
             <span class="n">input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">input_data</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="nb">input</span><span class="p">}]</span>
-           
+
         <span class="c1"># Create a temporary file to store the result if it is a generator</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span>
             <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;tmp&quot;</span><span class="p">)</span>
@@ -591,7 +600,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">result_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
-
         <span class="c1"># Collect relevant data for the run</span>
         <span class="n">nan_count</span> <span class="o">=</span> <span class="n">get_nan_counts</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
         <span class="n">type_and_shape_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_types</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
@@ -602,10 +610,18 @@
         <span class="n">console_log_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;console.log&quot;</span><span class="p">)</span>
         <span class="n">error_and_warning_info_current_log</span> <span class="o">=</span> <span class="n">log_files_metrics</span><span class="p">(</span><span class="n">current_log_file_path</span><span class="p">)</span>
         <span class="n">error_and_warning_info_console_log</span> <span class="o">=</span> <span class="n">log_files_metrics</span><span class="p">(</span><span class="n">console_log_file_path</span><span class="p">)</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span>
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;container_cpu_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">container_metrics</span><span class="p">[</span><span class="s2">&quot;container_cpu_perc&quot;</span><span class="p">]</span>
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;peak_container_cpu_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">container_metrics</span><span class="p">[</span><span class="s2">&quot;peak_cpu_perc&quot;</span><span class="p">]</span>
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;container_memory_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">container_metrics</span><span class="p">[</span><span class="s2">&quot;container_memory_perc&quot;</span><span class="p">]</span>
@@ -613,9 +629,15 @@
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;nan_count_agg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan_count</span> <span class="k">if</span> <span class="n">nan_count</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;mismatched_type_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_and_shape_info</span><span class="p">[</span><span class="s2">&quot;mismatched_types&quot;</span><span class="p">]</span>
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;correct_shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_and_shape_info</span><span class="p">[</span><span class="s2">&quot;correct_shape&quot;</span><span class="p">]</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_and_warning_info_current_log</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">error_and_warning_info_console_log</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_and_warning_info_current_log</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">error_and_warning_info_console_log</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span>
-        
+        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">error_and_warning_info_current_log</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="n">error_and_warning_info_console_log</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">error_and_warning_info_current_log</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="n">error_and_warning_info_console_log</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
         <span class="n">update_tracking_summary</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">run_data</span><span class="p">)</span>
 
         <span class="c1"># Get the memory stats of the run processs</span>
@@ -627,7 +649,7 @@
         <span class="n">session</span><span class="o">.</span><span class="n">update_total_memory</span><span class="p">(</span><span class="n">total_memory</span><span class="p">)</span>
         <span class="n">session</span><span class="o">.</span><span class="n">update_cpu_time</span><span class="p">(</span><span class="n">cpu_time</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="n">AWS_ACCESS_KEY_ID</span> <span class="ow">and</span> <span class="n">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span>
             <span class="n">upload_to_s3</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span></div>
 

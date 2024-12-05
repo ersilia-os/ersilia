@@ -90,8 +90,13 @@
 <span class="kn">from</span> <span class="nn">...pull.pull</span> <span class="kn">import</span> <span class="n">ModelPuller</span>
 <span class="kn">from</span> <span class="nn">....serve.services</span> <span class="kn">import</span> <span class="n">PulledDockerImageService</span>
 <span class="kn">from</span> <span class="nn">....setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
-<span class="kn">from</span> <span class="nn">....utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">resolve_pack_method_docker</span><span class="p">,</span> <span class="n">PACK_METHOD_BENTOML</span>
+<span class="kn">from</span> <span class="nn">....utils.docker</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleDocker</span><span class="p">,</span>
+    <span class="n">resolve_pack_method_docker</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span>
+
 
 <div class="viewcode-block" id="ModelDockerHubFetcher">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher">[docs]</a>
@@ -228,11 +233,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Information file not found, not modifying anything&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="c1"># Using this literal here to prevent a file read         </span>
+        <span class="c1"># Using this literal here to prevent a file read</span>
         <span class="c1"># from service class file for a model fetched through DockerHub</span>
         <span class="c1"># since we already know the service class.</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;service_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pulled_docker&quot;</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">_get_size_of_local_docker_image_in_mb</span><span class="p">()</span>  <span class="c1"># TODO this should probably be a util function </span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">_get_size_of_local_docker_image_in_mb</span><span class="p">()</span>
+        <span class="p">)</span>  <span class="c1"># TODO this should probably be a util function</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
@@ -253,7 +260,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">modify_information</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">copy_metadata</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">copy_status</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">copy_example_if_available</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">copy_example_if_available</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
         <span class="p">)</span></div>
 
 </pre></div>

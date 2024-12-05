@@ -181,7 +181,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-    
+
 
 <div class="viewcode-block" id="print_result_table">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.print_result_table">[docs]</a>
@@ -199,6 +199,7 @@
             <span class="n">header</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">header</span><span class="p">]))</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">))</span> <span class="o">+</span> <span class="mi">5</span>
             <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">headers</span>
         <span class="p">}</span>
+
         <span class="k">def</span> <span class="nf">format_row</span><span class="p">(</span><span class="n">row_data</span><span class="p">,</span> <span class="n">is_header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">is_header</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">(</span>
@@ -217,6 +218,7 @@
                     <span class="p">)</span>
                     <span class="o">+</span> <span class="n">RESET_COLOR</span>
                 <span class="p">)</span>
+
         <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">column_widths</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">format_row</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">is_header</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
@@ -228,6 +230,8 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Invalid input data format. Please provide either a CSV file path or JSON-like data.&quot;</span>
         <span class="p">)</span></div>
+
+
 
 <div class="viewcode-block" id="read_csv_from_string">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.read_csv_from_string">[docs]</a>

@@ -103,7 +103,7 @@
 <span class="n">DEFAULT_API_NAME</span> <span class="o">=</span> <span class="s2">&quot;run&quot;</span>
 <span class="n">PACKMODE_FILE</span> <span class="o">=</span> <span class="s2">&quot;pack_mode.txt&quot;</span>
 <span class="n">CARD_FILE</span> <span class="o">=</span> <span class="s2">&quot;card.json&quot;</span>
-<span class="n">UNPROCESSABLE_INPUT</span><span class="o">=</span><span class="s2">&quot;UNPROCESSABLE_INPUT&quot;</span>
+<span class="n">UNPROCESSABLE_INPUT</span> <span class="o">=</span> <span class="s2">&quot;UNPROCESSABLE_INPUT&quot;</span>
 <span class="n">DOTENV_FILE</span> <span class="o">=</span> <span class="s2">&quot;.env&quot;</span>
 <span class="n">API_SCHEMA_FILE</span> <span class="o">=</span> <span class="s2">&quot;api_schema.json&quot;</span>
 <span class="n">MODEL_SIZE_FILE</span> <span class="o">=</span> <span class="s2">&quot;size.json&quot;</span>
@@ -142,7 +142,7 @@
 <span class="n">SESSION_JSON</span> <span class="o">=</span> <span class="s2">&quot;session.json&quot;</span>
 <span class="n">LOGS_DIR</span> <span class="o">=</span> <span class="s2">&quot;logs&quot;</span>
 <span class="n">CONTAINER_LOGS_TMP_DIR</span> <span class="o">=</span> <span class="s2">&quot;_logs/tmp&quot;</span>
-<span class="n">CONTAINER_LOGS_EOS_DIR</span> <span class="o">=</span> <span class="s2">&quot;_logs/eos&quot;</span> <span class="c1"># This is not used</span>
+<span class="n">CONTAINER_LOGS_EOS_DIR</span> <span class="o">=</span> <span class="s2">&quot;_logs/eos&quot;</span>  <span class="c1"># This is not used</span>
 <span class="n">LOGGING_FILE</span> <span class="o">=</span> <span class="s2">&quot;console.log&quot;</span>
 <span class="n">CURRENT_LOGGING_FILE</span> <span class="o">=</span> <span class="s2">&quot;current.log&quot;</span>
 <span class="n">SILENCE_FILE</span> <span class="o">=</span> <span class="s2">&quot;.silence.json&quot;</span>
@@ -170,7 +170,9 @@
 <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span> <span class="o">=</span> <span class="s2">&quot;https://airtable.com/shrNc3sTtTA3QeEZu&quot;</span>
 <span class="n">S3_BUCKET_URL</span> <span class="o">=</span> <span class="s2">&quot;https://ersilia-models.s3.eu-central-1.amazonaws.com&quot;</span>
 <span class="n">S3_BUCKET_URL_ZIP</span> <span class="o">=</span> <span class="s2">&quot;https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com&quot;</span>
-<span class="n">INFERENCE_STORE_API_URL</span> <span class="o">=</span> <span class="s2">&quot;https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations&quot;</span>
+<span class="n">INFERENCE_STORE_API_URL</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations&quot;</span>
+<span class="p">)</span>
 
 <span class="c1"># EOS conda</span>
 <span class="n">_resolve_script</span> <span class="o">=</span> <span class="s2">&quot;conda_env_resolve.py&quot;</span>
@@ -179,6 +181,7 @@
     <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span>
         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;utils&quot;</span><span class="p">,</span> <span class="s2">&quot;supp&quot;</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">),</span> <span class="n">resolve_script</span>
     <span class="p">)</span>
+
 
 <span class="c1"># Catalog table border constants</span>
 <div class="viewcode-block" id="TableConstants">
@@ -197,6 +200,7 @@
     <span class="n">BOTTOM_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┘&quot;</span>
     <span class="n">CELL_PADDING</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
     <span class="n">COLUMN_SEPARATOR</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span></div>
+
 
 
 <span class="n">snippet</span> <span class="o">=</span> <span class="p">(</span>

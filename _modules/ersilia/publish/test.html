@@ -93,7 +93,6 @@
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command_check_output</span>
 
 
-
 <span class="c1"># Check if we have the required imports in the environment</span>
 <span class="n">MISSING_PACKAGES</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
@@ -148,8 +147,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">ratio</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">)</span>
 
-<span class="w">   </span>
-<span class="w">   </span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    When the user specifies an output file, the file will show the user how big the model is. This function </span>
 <span class="sd">    calculates the size of the model to allow this. </span>
@@ -366,8 +363,6 @@
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
-
-
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking that model information is correct&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="n">BOLD</span>
@@ -391,7 +386,6 @@
 
         <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">information_check</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="w">        </span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Runs the model on a single smiles string and prints to the user if no output is specified.</span>
@@ -423,7 +417,9 @@
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
         <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">try_predefined</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> 
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span>
+            <span class="n">n_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">try_predefined</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="n">BOLD</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Testing model on input of 5 smiles given by &#39;example&#39; command...</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -444,12 +440,7 @@
 <span class="sd">    it is not consistent, an InconsistentOutput error is raised. Lastly, it makes sure that the number of </span>
 <span class="sd">    outputs equals the number of inputs.  </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-    
-    
-    
-    
-    
+
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_consistent_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">compute_rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
@@ -457,17 +448,24 @@
             <span class="n">mse</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">squared_errors</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">squared_errors</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">mse</span>
 
-    
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Confirming model produces consistent output...&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Confirming model produces consistent output...&quot;</span> <span class="o">+</span> <span class="n">RESET</span>
+        <span class="p">)</span>
 
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
 
         <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">try_predefined</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span>
+            <span class="n">n_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">try_predefined</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
 
-        <span class="n">mdl1</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">mdl2</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">mdl1</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">mdl2</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">mdl1</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
         <span class="n">result2</span> <span class="o">=</span> <span class="n">mdl2</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 
@@ -540,15 +538,16 @@
                             <span class="p">)</span>
                             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
                     <span class="c1"># Check String Outputs</span>
-                    <span class="k">else</span><span class="p">:</span> 
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_output_strings</span><span class="p">(</span><span class="n">output1</span><span class="p">[</span><span class="n">key1</span><span class="p">],</span> <span class="n">output2</span><span class="p">[</span><span class="n">key2</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">95</span><span class="p">:</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_compare_output_strings</span><span class="p">(</span><span class="n">output1</span><span class="p">[</span><span class="n">key1</span><span class="p">],</span> <span class="n">output2</span><span class="p">[</span><span class="n">key2</span><span class="p">])</span>
+                            <span class="o">&lt;=</span> <span class="mi">95</span>
+                        <span class="p">):</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;output1 value: </span><span class="si">{</span><span class="n">output1</span><span class="p">[</span><span class="n">key1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;output2 value: </span><span class="si">{</span><span class="n">output2</span><span class="p">[</span><span class="n">key2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consistent_output</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;Test: Output Consistency, SUCCESS! ✅</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">RESET</span>
-        <span class="p">)</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;Test: Output Consistency, SUCCESS! ✅</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Confirming there are same number of outputs as inputs...&quot;</span> <span class="o">+</span> <span class="n">RESET</span>
@@ -599,12 +598,10 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
-
     <span class="k">def</span> <span class="nf">_compare_string_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">,</span> <span class="n">similarity_threshold</span><span class="p">):</span>
         <span class="n">similarity</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">ratio</span><span class="p">(</span><span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">similarity</span> <span class="o">&gt;=</span> <span class="n">similarity_threshold</span>
 
-    
 <div class="viewcode-block" id="ModelTester.get_directory_size_without_symlinks">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.get_directory_size_without_symlinks">[docs]</a>
     <span class="nd">@staticmethod</span>
@@ -613,11 +610,11 @@
             <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
             <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{}</span>
-        
+
         <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">file_types</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">file_sizes</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        
+
         <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
                 <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
@@ -627,9 +624,8 @@
                     <span class="n">file_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">file_types</span><span class="p">[</span><span class="n">file_extension</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">file_sizes</span><span class="p">[</span><span class="n">file_extension</span><span class="p">]</span> <span class="o">+=</span> <span class="n">size</span>
-        
-        <span class="k">return</span> <span class="n">total_size</span><span class="p">,</span> <span class="n">file_types</span><span class="p">,</span> <span class="n">file_sizes</span></div>
 
+        <span class="k">return</span> <span class="n">total_size</span><span class="p">,</span> <span class="n">file_types</span><span class="p">,</span> <span class="n">file_sizes</span></div>
 
 
 <div class="viewcode-block" id="ModelTester.get_directory_size_with_symlinks">
@@ -640,11 +636,11 @@
             <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
             <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{},</span> <span class="p">{}</span>
-        
+
         <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">file_types</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">file_sizes</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        
+
         <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
                 <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
@@ -655,7 +651,7 @@
                 <span class="n">file_sizes</span><span class="p">[</span><span class="n">file_extension</span><span class="p">]</span> <span class="o">+=</span> <span class="n">size</span>
         <span class="k">return</span> <span class="n">total_size</span><span class="p">,</span> <span class="n">file_types</span><span class="p">,</span> <span class="n">file_sizes</span></div>
 
-        
+
     <span class="c1"># Get location of conda environment</span>
     <span class="k">def</span> <span class="nf">_get_environment_location</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
@@ -663,29 +659,42 @@
         <span class="n">env_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">python_path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
         <span class="n">env_dir</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">env_dir</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">env_dir</span>
-    
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">get_directories_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;Calculating model size... &quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+
         <span class="k">def</span> <span class="nf">log_file_analysis</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">file_types</span><span class="p">,</span> <span class="n">file_sizes</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analyzing files in </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File types &amp; counts: </span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="n">file_types</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total size: </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
+
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">bundle_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">bentoml_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bentoml_location</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">env_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_environment_location</span><span class="p">()</span>
-        <span class="n">dest_size</span><span class="p">,</span> <span class="n">dest_file_types</span><span class="p">,</span> <span class="n">dest_file_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_directory_size_without_symlinks</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
-        <span class="n">bundle_size</span><span class="p">,</span> <span class="n">bundle_file_types</span><span class="p">,</span> <span class="n">bundle_file_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_directory_size_without_symlinks</span><span class="p">(</span><span class="n">bundle_dir</span><span class="p">)</span>
-        <span class="n">bentoml_size</span><span class="p">,</span> <span class="n">bentoml_file_types</span><span class="p">,</span> <span class="n">bentoml_file_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_directory_size_without_symlinks</span><span class="p">(</span><span class="n">bentoml_dir</span><span class="p">)</span>
-        <span class="n">env_size</span><span class="p">,</span> <span class="n">env_file_types</span><span class="p">,</span> <span class="n">env_file_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_directory_size_with_symlinks</span><span class="p">(</span><span class="n">env_dir</span><span class="p">)</span>
+        <span class="n">dest_size</span><span class="p">,</span> <span class="n">dest_file_types</span><span class="p">,</span> <span class="n">dest_file_sizes</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_directory_size_without_symlinks</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">bundle_size</span><span class="p">,</span> <span class="n">bundle_file_types</span><span class="p">,</span> <span class="n">bundle_file_sizes</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_directory_size_without_symlinks</span><span class="p">(</span><span class="n">bundle_dir</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">bentoml_size</span><span class="p">,</span> <span class="n">bentoml_file_types</span><span class="p">,</span> <span class="n">bentoml_file_sizes</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_directory_size_without_symlinks</span><span class="p">(</span><span class="n">bentoml_dir</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">env_size</span><span class="p">,</span> <span class="n">env_file_types</span><span class="p">,</span> <span class="n">env_file_sizes</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_directory_size_with_symlinks</span><span class="p">(</span><span class="n">env_dir</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="n">log_file_analysis</span><span class="p">(</span><span class="n">dest_size</span><span class="p">,</span> <span class="n">dest_file_types</span><span class="p">,</span> <span class="n">dest_file_sizes</span><span class="p">,</span> <span class="s2">&quot;dest_dir&quot;</span><span class="p">)</span>
-        <span class="n">log_file_analysis</span><span class="p">(</span><span class="n">bundle_size</span><span class="p">,</span> <span class="n">bundle_file_types</span><span class="p">,</span> <span class="n">bundle_file_sizes</span><span class="p">,</span> <span class="s2">&quot;bundle_dir&quot;</span><span class="p">)</span>
-        <span class="n">log_file_analysis</span><span class="p">(</span><span class="n">bentoml_size</span><span class="p">,</span> <span class="n">bentoml_file_types</span><span class="p">,</span> <span class="n">bentoml_file_sizes</span><span class="p">,</span> <span class="s2">&quot;bentoml_dir&quot;</span><span class="p">)</span>
+        <span class="n">log_file_analysis</span><span class="p">(</span>
+            <span class="n">bundle_size</span><span class="p">,</span> <span class="n">bundle_file_types</span><span class="p">,</span> <span class="n">bundle_file_sizes</span><span class="p">,</span> <span class="s2">&quot;bundle_dir&quot;</span>
+        <span class="p">)</span>
+        <span class="n">log_file_analysis</span><span class="p">(</span>
+            <span class="n">bentoml_size</span><span class="p">,</span> <span class="n">bentoml_file_types</span><span class="p">,</span> <span class="n">bentoml_file_sizes</span><span class="p">,</span> <span class="s2">&quot;bentoml_dir&quot;</span>
+        <span class="p">)</span>
         <span class="n">log_file_analysis</span><span class="p">(</span><span class="n">env_size</span><span class="p">,</span> <span class="n">env_file_types</span><span class="p">,</span> <span class="n">env_file_sizes</span><span class="p">,</span> <span class="s2">&quot;env_dir&quot;</span><span class="p">)</span>
-        
+
         <span class="n">model_size</span> <span class="o">=</span> <span class="n">dest_size</span> <span class="o">+</span> <span class="n">bundle_size</span> <span class="o">+</span> <span class="n">bentoml_size</span> <span class="o">+</span> <span class="n">env_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_size</span> <span class="o">=</span> <span class="n">model_size</span>
         <span class="n">size_kb</span> <span class="o">=</span> <span class="n">model_size</span> <span class="o">/</span> <span class="mi">1024</span>
@@ -703,25 +712,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bentoml_size: </span><span class="si">{</span><span class="n">bentoml_size</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;env_size: </span><span class="si">{</span><span class="n">env_size</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;dest_size&quot;</span><span class="p">:</span> <span class="n">dest_size</span><span class="p">,</span>
-        <span class="s2">&quot;bundle_size&quot;</span><span class="p">:</span> <span class="n">bundle_size</span><span class="p">,</span>
-        <span class="s2">&quot;bentoml_size&quot;</span><span class="p">:</span> <span class="n">bentoml_size</span><span class="p">,</span>
-        <span class="s2">&quot;env_size&quot;</span><span class="p">:</span> <span class="n">env_size</span>
-    <span class="p">}</span>
-    
-    
+            <span class="s2">&quot;dest_size&quot;</span><span class="p">:</span> <span class="n">dest_size</span><span class="p">,</span>
+            <span class="s2">&quot;bundle_size&quot;</span><span class="p">:</span> <span class="n">bundle_size</span><span class="p">,</span>
+            <span class="s2">&quot;bentoml_size&quot;</span><span class="p">:</span> <span class="n">bentoml_size</span><span class="p">,</span>
+            <span class="s2">&quot;env_size&quot;</span><span class="p">:</span> <span class="n">env_size</span><span class="p">,</span>
+        <span class="p">}</span>
+
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">run_bash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">updated_read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">ersilia_flag</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">updated_read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">ersilia_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
                 <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
                 <span class="n">headers</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">ersilia_flag</span><span class="p">:</span>
                     <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
-                
+
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                
+
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing line: </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="n">values</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
@@ -729,8 +737,10 @@
                         <span class="n">selected_values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">selected_values</span> <span class="o">=</span> <span class="n">values</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected Values: </span><span class="si">{</span><span class="n">selected_values</span><span class="si">}</span><span class="s2"> and their type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Selected Values: </span><span class="si">{</span><span class="n">selected_values</span><span class="si">}</span><span class="s2"> and their type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;Float&quot;</span><span class="p">]:</span>
                         <span class="n">selected_values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">selected_values</span><span class="p">]</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converted to floats: </span><span class="si">{</span><span class="n">selected_values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -738,25 +748,28 @@
                         <span class="n">selected_values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">selected_values</span><span class="p">]</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converted to integers: </span><span class="si">{</span><span class="n">selected_values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown type, keeping as strings: </span><span class="si">{</span><span class="n">selected_values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Unknown type, keeping as strings: </span><span class="si">{</span><span class="n">selected_values</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
                     <span class="n">row_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">selected_values</span><span class="p">))</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Appending row data: </span><span class="si">{</span><span class="n">row_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
-            
+
             <span class="k">return</span> <span class="n">data</span>
-        
+
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running the model bash script...&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>  
-            <span class="n">model_path</span> <span class="o">=</span>  <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running the model bash script...&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+            <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;dest&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
             <span class="c1"># Create an example input</span>
             <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-            <span class="nb">input</span> <span class="o">=</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">try_predefined</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="nb">input</span> <span class="o">=</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span>
+                <span class="n">n_samples</span><span class="o">=</span><span class="n">NUM_SAMPLES</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">try_predefined</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
             <span class="c1"># Read it into a temp file</span>
             <span class="n">ex_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;example_file.csv&quot;</span><span class="p">))</span>
-            
-            
+
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ex_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">input</span><span class="p">:</span>
@@ -765,21 +778,25 @@
             <span class="n">run_sh_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">,</span> <span class="s2">&quot;run.sh&quot;</span><span class="p">)</span>
             <span class="n">run_sh_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">,</span> <span class="s2">&quot;run.sh&quot;</span><span class="p">)</span>
             <span class="c1"># Halt this check if the run.sh file does not exist (e.g. eos3b5e)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span> <span class="p">(</span><span class="n">run_sh_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ⛔️ Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3. ⛔️&quot;</span> <span class="o">+</span> <span class="n">RESET</span>
+                    <span class="n">BOLD</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> ⛔️ Check halted. Either run.sh file does not exist, or model was not fetched via --from_github or --from_s3. ⛔️&quot;</span>
+                    <span class="o">+</span> <span class="n">RESET</span>
                 <span class="p">)</span>
                 <span class="k">return</span>
 
             <span class="c1"># Navigate into the temporary directory</span>
-           
+
             <span class="n">subdirectory_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Changing directory to: </span><span class="si">{</span><span class="n">subdirectory_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">subdirectory_path</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">run_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">subdirectory_path</span><span class="p">)</span>
                 <span class="n">tmp_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;script.sh&quot;</span><span class="p">))</span>
-                <span class="n">bash_output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;bash_output.csv&quot;</span><span class="p">))</span>
+                <span class="n">bash_output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;bash_output.csv&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
                 <span class="n">output_log</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;output.txt&quot;</span><span class="p">))</span>
                 <span class="n">error_log</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;error.txt&quot;</span><span class="p">))</span>
                 <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -811,7 +828,9 @@
                     <span class="p">)</span>
                 <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;STDOUT: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stdout</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Error encountered while running the bash script.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="s2">&quot;Error encountered while running the bash script.&quot;</span>
+                    <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">):</span>
                     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">bash_output_file</span><span class="p">:</span>
@@ -820,35 +839,47 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Captured Raw Bash Output:&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">output_content</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING: Bash output file not found when reading the path:&quot;</span><span class="o">+</span><span class="n">RESET</span><span class="p">)</span>
+                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                        <span class="n">BOLD</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING: Bash output file not found when reading the path:&quot;</span>
+                        <span class="o">+</span> <span class="n">RESET</span>
+                    <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">)</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Ersilia and Bash comparison will raise an error&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating bash script content for debugging: </span><span class="si">{</span><span class="n">tmp_script</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-             
+                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                        <span class="n">BOLD</span>
+                        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Ersilia and Bash comparison will raise an error&quot;</span>
+                        <span class="o">+</span> <span class="n">RESET</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Generating bash script content for debugging: </span><span class="si">{</span><span class="n">tmp_script</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">error_log</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">error_file</span><span class="p">:</span>
                     <span class="n">error_content</span> <span class="o">=</span> <span class="n">error_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Captured Error:&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">error_content</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No errors on bash run found 😄 ✅</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">run_using_bash</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># bash run was successful</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">run_using_bash</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># bash run was successful</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">error_content</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error while activating the conda environment: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Executing ersilia run...&quot;</span><span class="o">+</span><span class="n">RESET</span><span class="p">)</span>
-            <span class="n">ersilia_output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;ersilia_output.csv&quot;</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ersilia output will be written to: </span><span class="si">{</span><span class="n">ersilia_output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Executing ersilia run...&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+            <span class="n">ersilia_output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;ersilia_output.csv&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Ersilia output will be written to: </span><span class="si">{</span><span class="n">ersilia_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
             <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
             <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
             <span class="p">)</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">ex_file</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">ersilia_output_path</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> 
-           
-
+            <span class="n">result</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">ex_file</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">ersilia_output_path</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ersilia_output_path</span><span class="p">):</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ersilia_output_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ersilia_output_file</span><span class="p">:</span>
@@ -857,15 +888,18 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Captured Raw Ersilia Output:&quot;</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">output_content</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span><span class="o">+</span><span class="sa">f</span><span class="s2">&quot;Ersilia output file not found from the path: </span><span class="si">{</span><span class="n">ersilia_output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">+</span><span class="n">RESET</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="n">BOLD</span>
+                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Ersilia output file not found from the path: </span><span class="si">{</span><span class="n">ersilia_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">RESET</span>
+                <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Processing ersilia csv output...&quot;</span><span class="p">)</span>
             <span class="n">ersilia_run</span> <span class="o">=</span> <span class="n">updated_read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ersilia_output_path</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
-
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">bash_output_file</span><span class="p">:</span>
-                    <span class="n">output_content</span> <span class="o">=</span> <span class="n">bash_output_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Captured Raw Bash Output:&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">output_content</span><span class="p">)</span>
+                <span class="n">output_content</span> <span class="o">=</span> <span class="n">bash_output_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Captured Raw Bash Output:&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">output_content</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Processing raw bash output...: &quot;</span><span class="p">)</span>
             <span class="n">bash_run</span> <span class="o">=</span> <span class="n">updated_read_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bash_output_path</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash output:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">bash_run</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -883,13 +917,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Bash columns:  </span><span class="si">{</span><span class="n">bash_columns</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="n">common_columns</span> <span class="o">=</span> <span class="n">ersilia_columns</span> <span class="o">&amp;</span> <span class="n">bash_columns</span>
+
             <span class="k">def</span> <span class="nf">compute_rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
                 <span class="n">squared_errors</span> <span class="o">=</span> <span class="p">[(</span><span class="n">yt</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)]</span>
                 <span class="n">mse</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">squared_errors</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">squared_errors</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">mse</span>
 
             <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Comparing outputs from Ersilia and Bash runs...&quot;</span> <span class="o">+</span> <span class="n">RESET</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="n">BOLD</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Comparing outputs from Ersilia and Bash runs...&quot;</span> <span class="o">+</span> <span class="n">RESET</span>
+            <span class="p">)</span>
             <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">common_columns</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">)):</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">],</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -898,17 +935,23 @@
                         <span class="n">values1</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ersilia_run</span><span class="p">]</span>
                         <span class="n">values2</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">bash_run</span><span class="p">]</span>
                         <span class="n">rmse</span> <span class="o">=</span> <span class="n">compute_rmse</span><span class="p">(</span><span class="n">values1</span><span class="p">,</span> <span class="n">values2</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Root Mean Square Error for </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">rmse</span> <span class="o">&gt;</span> <span class="mf">0.10</span><span class="p">:</span>  
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Root Mean Square Error for </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rmse</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">rmse</span> <span class="o">&gt;</span> <span class="mf">0.10</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                                 <span class="n">BOLD</span>
                                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash run and Ersilia run produce inconsistent results (Root Mean Square Error difference exceeds 10%).&quot;</span>
                                 <span class="o">+</span> <span class="n">RESET</span>
                             <span class="p">)</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values that raised error: </span><span class="si">{</span><span class="n">values1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">values2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Values that raised error: </span><span class="si">{</span><span class="n">values1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">values2</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
                             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
                         <span class="n">rho</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">(</span><span class="n">values1</span><span class="p">,</span> <span class="n">values2</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spearman&#39;s correlation for </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Spearman&#39;s correlation for </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
                         <span class="k">if</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>  <span class="c1"># Adjust the threshold as needed</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                                 <span class="n">BOLD</span>
@@ -929,7 +972,9 @@
                                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bash run and Ersilia run produce inconsistent results.&quot;</span>
                                 <span class="o">+</span> <span class="n">RESET</span>
                             <span class="p">)</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in the following column:  </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Error in the following column:  </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">ersilia_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">bash_run</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">column</span><span class="p">])</span>
                             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -973,7 +1018,6 @@
 
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
 
-
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;date and time run&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>  <span class="c1"># Add date and time field</span>
             <span class="s2">&quot;model size&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;KB&quot;</span><span class="p">:</span> <span class="n">size_kb</span><span class="p">,</span> <span class="s2">&quot;MB&quot;</span><span class="p">:</span> <span class="n">size_mb</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">:</span> <span class="n">size_gb</span><span class="p">},</span>
@@ -992,10 +1036,12 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">MISSING_PACKAGES</span><span class="p">:</span>
-          <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
                 <span class="s2">&quot;Missing packages required for testing, please install test extras as &#39;pip install ersilia[test]&#39;&quot;</span>
-        <span class="p">)</span>  
-        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;TEST_MODULE_OUTPUT.csv&quot;</span><span class="p">)</span> 
+            <span class="p">)</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;TEST_MODULE_OUTPUT.csv&quot;</span>
+        <span class="p">)</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_information</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_single_input</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
@@ -1006,8 +1052,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">run_bash</span><span class="p">()</span>
         <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">seconds_taken</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
-        
-        
+
         <span class="k">if</span> <span class="n">output_file</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">make_output</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">seconds_taken</span><span class="p">)</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📁 The output file is located at: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

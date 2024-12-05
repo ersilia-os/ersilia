@@ -540,7 +540,7 @@
         <span class="k">return</span> <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span>
         <span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">_get_file_content_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">branch</span><span class="p">):</span>
         <span class="n">json_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_github_json_url</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">branch</span><span class="p">)</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">json_url</span><span class="p">)</span>
@@ -553,7 +553,7 @@
                 <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-            
+
 <div class="viewcode-block" id="RepoMetadataFile.get_json_or_yaml_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile.get_json_or_yaml_file">[docs]</a>
     <span class="k">def</span> <span class="nf">get_json_or_yaml_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -927,6 +927,7 @@
 </div>
 
 
+
 <div class="viewcode-block" id="LakeCard">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LakeCard">[docs]</a>
 <span class="k">class</span> <span class="nc">LakeCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -965,7 +966,7 @@
             <span class="k">if</span> <span class="n">model</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">model_id</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">model</span></div>
 
-    
+
 <div class="viewcode-block" id="S3JsonCard.get_card_by_slug">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.S3JsonCard.get_card_by_slug">[docs]</a>
     <span class="k">def</span> <span class="nf">get_card_by_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
@@ -974,7 +975,7 @@
             <span class="k">if</span> <span class="n">model</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">slug</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">model</span></div>
 
-            
+
 <div class="viewcode-block" id="S3JsonCard.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.S3JsonCard.get">[docs]</a>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -985,6 +986,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either model_id or slug must be provided&quot;</span><span class="p">)</span></div>
 </div>
+
 
 
 <div class="viewcode-block" id="ModelCard">
@@ -1027,7 +1029,6 @@
             <span class="k">return</span> <span class="n">card</span></div>
 </div>
 
-    
 </pre></div>
 
            </div>

@@ -151,7 +151,6 @@
                     <span class="ow">and</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">]</span>
                     <span class="ow">and</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]</span>
                 <span class="p">):</span>  <span class="c1"># Parse through json object and ensure</span>
-
                     <span class="n">pub_url_works</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
                     <span class="p">)</span>
@@ -343,19 +342,18 @@
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
 
 
-
 <div class="viewcode-block" id="ModelInspector.check_comptuational_performance">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_comptuational_performance">[docs]</a>
     <span class="k">def</span> <span class="nf">check_comptuational_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Measure computational performance by serving the model and running predictions.</span>
 <span class="sd">        Uses --track flag to automatically upload performance metrics to S3.</span>
-<span class="sd">    </span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    
+
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> --track &amp;&amp; &quot;</span>  <span class="c1"># Track flag enables automatic S3 upload of metrics</span>
@@ -363,9 +361,9 @@
                 <span class="s2">&quot;ersilia run -i my_input.csv &amp;&amp; &quot;</span>
                 <span class="s2">&quot;ersilia close&quot;</span>
             <span class="p">)</span>
-    
+
             <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    
+
             <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
                 <span class="n">cmd</span><span class="p">,</span>
                 <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -373,14 +371,16 @@
                 <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                 <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
-    
+
             <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error serving model: </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    
+                <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                    <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error serving model: </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
             <span class="n">endTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="n">executionTime</span> <span class="o">=</span> <span class="n">endTime</span> <span class="o">-</span> <span class="n">startTime</span>
             <span class="n">details</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Execution time (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> Prediction(s)): </span><span class="si">{</span><span class="n">executionTime</span><span class="si">}</span><span class="s2"> seconds. &quot;</span>
-    
+
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
 
 
