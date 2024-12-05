@@ -2,7 +2,7 @@ import importlib
 import sys
 from ...utils.terminal import run_command
 
-
+# TODO This whole class can go away
 class PyAirtableRequirement:
     def __init__(self):
         self.name = "pyairtable"

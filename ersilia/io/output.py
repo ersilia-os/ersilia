@@ -11,7 +11,7 @@ from .pure import PureDataTyper
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
-from ..db.hubdata.interfaces import AirtableInterface
+from ..db.hubdata.interfaces import AirtableInterface # TODO Remove this
 from ..db.hubdata.json_models_interface import JsonModelsInterface
 from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
 from ..utils.paths import resolve_pack_method
@@ -261,6 +261,7 @@ class GenericOutputAdapter(ResponseRefactor):
                 self.logger.warning("The Output Shape key is missing")
         return output_shape
 
+    # TODO This can go away
     def _get_outputshape_from_airtable(self, model_id):
         airtable_interface = AirtableInterface(config_json=self.config_json)
         output_shape = None

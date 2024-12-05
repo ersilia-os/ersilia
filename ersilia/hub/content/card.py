@@ -567,6 +567,9 @@ class ReadmeMetadata(ErsiliaBase):
         self.logger.debug(
             "Cannot read directly from README file. Using AirTable instead"
         )
+        # Note: This class is only used in the ReadmeUpdater class
+        # and this class is only utilised in a pipeline script, therefore,
+        # it is not directly user facing, and does not need to use the S3 JSON.
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
         self.logger.info(bi.as_dict())
