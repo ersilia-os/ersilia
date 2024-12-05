@@ -5,7 +5,8 @@ from ...publish.inspect import ModelInspector
 from ...cli import echo
 from ... import ErsiliaBase
 
-
+# Dont put an echo here: the json output will be used in test cmd
+# try: logger
 class InspectCommand(ErsiliaBase):
     def __init__(
         self, 
@@ -22,10 +23,9 @@ class InspectCommand(ErsiliaBase):
             "folder_structure_result": inspector.check_complete_folder_structure,
             "dependencies_result": inspector.check_dependencies_are_valid,
             "performance_result": inspector.check_computational_performance,
-            "extra_files_result": inspector.check_no_extra_files,
+            "extra_files_result": inspector.check_no_extra_files if dir is None else None,
         }
 
-        self.logger.debug("Performing checks...")
         return {key: check() for key, check in checks.items() if check}
 
     def _format_output(self, results, dir):

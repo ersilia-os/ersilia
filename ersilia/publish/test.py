@@ -884,7 +884,6 @@ class RunnerService:
              "-b", str(batch)
             ],
             logger=self.logger,
-            capture_output=True
         )
         return out
 
@@ -1062,7 +1061,9 @@ class RunnerService:
                  "serve", self.model_id, 
                 ]
             )
-            self.logger.debug(f"Running model for bash data consistency checking")
+            self.logger.debug(
+                f"Running model for bash data consistency checking"
+            )
             out = run_subprocess(
                 ["ersilia", "-v", 
                  "run", 
@@ -1182,17 +1183,24 @@ class RunnerService:
                 command=command,
                 logger=self.logger,
                 capture_output=True,
-                shell=True
             )
         elif not self.remote and self.inspect:
             out = SetupService.run_command(
                 f"{command} -d {self.dir}",
                 logger=self.logger,
-                shell=True
+                capture_output=True,
             )
         if out is not None:
+            self.logger.info(f"Inspect output: {out}")
+            self.logger.debug("Loading Json")
             out = json.loads(out)
-            out = {" ".join(word.capitalize() for word in k.split("_")): self.transform_key(v) for k, v in out.items()}
+            self.logger.debug("Loading Done")
+            out = {
+                    " ".join(word.capitalize() 
+                    for word in k.split("_")): self.transform_key(v)
+                    for k, v in out.items()
+                }
+
             data = [(key, value) for key, value in out.items()]
 
             self.ios_service._generate_table(
@@ -1261,7 +1269,6 @@ class RunnerService:
                 logger=self.logger,
             )
 
-
 class ModelTester(ErsiliaBase):
     def __init__(
             self, 
@@ -1321,7 +1328,7 @@ class ModelTester(ErsiliaBase):
     def setup(self):
         self.logger.debug(f"Running conda setup for {self.model_id}")
         self.setup_service.fetch_repo() # for remote option
-        self.logger.debug(f"Fetching model {self.model_id} from local dir")
+        self.logger.debug(f"Fetching model {self.model_id} from local dir: {self.dir}")
         self.runner.fetch()
         self.setup_service.check_conda_env()
 
