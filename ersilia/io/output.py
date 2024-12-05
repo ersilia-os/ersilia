@@ -11,7 +11,6 @@ from .pure import PureDataTyper
 from ..serve.schema import ApiSchema
 from .. import ErsiliaBase
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
-from ..db.hubdata.interfaces import AirtableInterface # TODO Remove this
 from ..db.hubdata.json_models_interface import JsonModelsInterface
 from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
 from ..utils.paths import resolve_pack_method
@@ -261,23 +260,8 @@ class GenericOutputAdapter(ResponseRefactor):
                 self.logger.warning("The Output Shape key is missing")
         return output_shape
 
-    # TODO This can go away
-    def _get_outputshape_from_airtable(self, model_id):
-        airtable_interface = AirtableInterface(config_json=self.config_json)
-        output_shape = None
-        for record in airtable_interface.items():
-            _model_id = record["fields"]["Identifier"]
-            try:
-                if _model_id == model_id:
-                    output_shape = record["fields"]["Output Shape"]
-            except KeyError:
-                self.logger.warning("The Output Shape field is empty")
-        return output_shape
-
     def _get_outputshape(self, model_id):
-        output_shape = self._get_outputshape_from_s3_models_json(
-            model_id
-        ) or self._get_outputshape_from_airtable(model_id)
+        output_shape = self._get_outputshape_from_s3_models_json(model_id)
         if output_shape is None:
             self.logger.warning("Output shape not found")
             output_shape = " "
