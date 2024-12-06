@@ -63,12 +63,14 @@ scipy = { version = "<=1.10.0", optional = true }
 rdkit-pypi = { version = "*", optional = true }
 nox = { version = "*", optional = true }
 rich = { version = "*", optional = true }
+ruff = { version = "*", optional = true }
+pre-commit = { version = "*", optional = true }
 
 [tool.poetry.extras]
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 lake = ["isaura"]
 docs = ["sphinx", "jinja2"]
-test = ["pytest", "pytest-asyncio", "pytest-benchmark", "nox", "rich", "fuzzywuzzy", "scipy", "rdkit-pypi"]
+test = ["pytest", "pytest-asyncio", "pytest-benchmark", "nox", "rich", "fuzzywuzzy", "scipy", "rdkit-pypi", "ruff", "pre-commit"]
 #all = [lake, docs, test]
 
 [tool.poetry.scripts]
