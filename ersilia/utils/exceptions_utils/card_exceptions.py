@@ -21,7 +21,7 @@ class CardErsiliaError(ErsiliaError):
         self.hints = ""
         ErsiliaError.__init__(self, self.message, self.hints)
 
-
+# TODO Unused - remove
 class BaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model information\n"

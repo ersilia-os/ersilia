@@ -52,7 +52,7 @@ def convert_airtable_to_json(
         )
         print("file models.json uploaded")
     except NoCredentialsError:
-        logging.error("Unable to upload tracking data to AWS: Credentials not found")
+        logging.error("Unable to upload data to AWS: Credentials not found")
     except ClientError as e:
         logging.error(e)
 

@@ -12,7 +12,6 @@ from ....default import (
     IS_FETCHED_FROM_HOSTED_FILE,
     SERVICE_CLASS_FILE,
 )
-from ....db.hubdata.interfaces import AirtableInterface
 from ....utils.exceptions_utils.fetch_exceptions import InvalidUrlError
 from ...fetch import ModelURLResolver
 

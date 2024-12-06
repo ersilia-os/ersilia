@@ -7,7 +7,7 @@ from ... import ErsiliaBase
 from ... import throw_ersilia_exception
 
 
-# Open WIP Issue here: https://github.com/ersilia-os/ersilia/issues/768
+# Potentially related issue: https://github.com/ersilia-os/ersilia/issues/1407
 class AirtableSanitizer(ErsiliaBase):
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
