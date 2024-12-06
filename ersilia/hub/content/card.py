@@ -713,38 +713,6 @@ class ReadmeCard(ErsiliaBase):
             return None
 
 
-class AirtableCard(AirtableInterface):
-    def __init__(self, config_json):
-        AirtableInterface.__init__(self, config_json=config_json)
-
-    def _find_card(self, text, field):
-        card = None
-        for records in self.table.iterate(
-            page_size=self.page_size, max_records=self.max_rows
-        ):
-            for record in records:
-                fields = record["fields"]
-                if field not in fields:
-                    continue
-                if text == record["fields"][field]:
-                    card = record["fields"]
-        return card
-
-    def find_card_by_model_id(self, model_id):
-        return self._find_card(model_id, "Identifier")
-
-    def find_card_by_slug(self, slug):
-        return self._find_card(slug, "Slug")
-
-    def get(self, model_id=None, slug=None):
-        if model_id is not None:
-            return self.find_card_by_model_id(model_id)
-        elif slug is not None:
-            return self.find_card_by_slug(slug)
-        else:
-            raise ValueError("Either model_id, slug or mode must be provided")
-
-
 class LocalCard(ErsiliaBase):
     """
     This class provides information on models that have been fetched and are available locally.
@@ -840,10 +808,6 @@ class ModelCard(object):
             return card
         jc = S3JsonCard(config_json=self.config_json)
         card = jc.get(model_id, slug)
-        if card is not None:
-            return card
-        ac = AirtableCard(config_json=self.config_json)
-        card = ac.get(model_id, slug)
         if card is not None:
             return card
         rc = ReadmeCard(config_json=self.config_json)

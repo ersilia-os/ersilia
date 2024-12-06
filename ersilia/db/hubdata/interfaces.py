@@ -9,10 +9,6 @@ from ...default import AIRTABLE_MODEL_HUB_BASE_ID, AIRTABLE_MODEL_HUB_TABLE_NAME
 from ...setup.requirements.pyairtable import PyAirtableRequirement
 
 
-
-
-
-
 AIRTABLE_MAX_ROWS = 100000
 AIRTABLE_PAGE_SIZE = 100
 
