@@ -11,6 +11,7 @@ ROOT = os.path.dirname(os.path.realpath(__file__))
 BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
 CHECKSUM_NCHAR = 8
 CONDA_ENV_YML_FILE = "environment.yml"
+RUN_FILE = "run.sh"
 DOCKERFILE_FILE = "Dockerfile"
 GITHUB_ORG = "ersilia-os"
 GITHUB_ERSILIA_REPO = "ersilia"
@@ -41,6 +42,7 @@ EXAMPLE_STANDARD_INPUT_CSV_FILENAME = "example_standard_input.csv"
 EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 PREDEFINED_EXAMPLE_FILES = [
     "model/framework/examples/input.csv",
+    "model/framework/examples/output.csv",
     "model/framework/input.csv",
     "model/framework/example.csv",
     "example.csv",
@@ -48,6 +50,7 @@ PREDEFINED_EXAMPLE_FILES = [
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
 METADATA_YAML_FILE = "metadata.yml"
+INSTALL_YAML_FILE = "install.yml"
 SERVICE_CLASS_FILE = "service_class.txt"
 MODEL_SOURCE_FILE = "model_source.txt"
 APIS_LIST_FILE = "apis_list.txt"
@@ -60,7 +63,6 @@ DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
 PACK_METHOD_FASTAPI = "fastapi"
 PACK_METHOD_BENTOML = "bentoml"
-
 # Session and logging
 SESSIONS_DIR = os.path.join(EOS, "sessions")
 if not os.path.exists(SESSIONS_DIR):
