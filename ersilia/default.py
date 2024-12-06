@@ -9,7 +9,6 @@ if not os.path.exists(EOS):
     os.makedirs(EOS)
 ROOT = os.path.dirname(os.path.realpath(__file__))
 BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
-PYTHON_VERSION = "3.10" # default
 CHECKSUM_NCHAR = 8
 CONDA_ENV_YML_FILE = "environment.yml"
 RUN_FILE = "run.sh"

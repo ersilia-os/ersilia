@@ -5,7 +5,6 @@ import time
 import types
 import asyncio
 import importlib
-import asyncio
 import collections
 import __main__ as main
 

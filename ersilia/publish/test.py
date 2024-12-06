@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from typing import List
 from datetime import datetime
 from pathlib import Path
-
+from .inspect import ModelInspector
 from ..utils.conda import SimpleConda
 from .. import ErsiliaBase, throw_ersilia_exception
 from ..io.input import ExampleGenerator
@@ -24,7 +24,6 @@ from ..default import (
     INFORMATION_FILE, 
     INSTALL_YAML_FILE, 
     DOCKERFILE_FILE,
-    PYTHON_VERSION,
     PACK_METHOD_FASTAPI,
     PACK_METHOD_BENTOML,
     METADATA_JSON_FILE,
@@ -59,7 +58,7 @@ class TableType(Enum):
     MODEL_DIRECTORY_SIZES = "Model Directory Sizes"
     RUNNER_CHECKUP_STATUS = "Runner Checkup Status"
     FINAL_RUN_SUMMARY = "Test Run Summary"
-    INSPECT_SUMMARY = "Test Run Summary"
+    INSPECT_SUMMARY = "Inspect Summary"
 
 @dataclass
 class TableConfig:
@@ -107,6 +106,130 @@ class STATUS_CONFIGS(Enum):
 
     def __str__(self):
         return f"[{self.color}]{self.icon} {self.label}[/{self.color}]"
+
+# fmt: off
+class TestResult(Enum):
+    DATE_TIME_RUN = (
+        "Date and Time Run", 
+        lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+    TIME_ELAPSED = (
+        "Time to Run Tests (seconds)", 
+        lambda elapsed: elapsed
+    )
+    BASIC_CHECKS = (
+        "Basic Checks Passed", 
+        lambda svc: svc.information_check
+    )
+    SINGLE_INPUT = (
+        "Single Input Run Without Error", 
+        lambda svc: svc.single_input
+    )
+    EXAMPLE_INPUT = (
+        "Example Input Run Without Error", 
+        lambda svc: svc.example_input
+    )
+    CONSISTENT_OUTPUT = (
+        "Outputs Consistent", 
+        lambda svc: svc.consistent_output
+    )
+    BASH_RUN = (
+        "Bash Run Without Error",
+        lambda run_bash: run_bash,
+    )
+# fmt: on
+    def __init__(self, key, value_function):
+        self.key = key
+        self.value_function = value_function
+
+    @classmethod
+    def generate_results(cls, checkup_service, elapsed_time, run_using_bash):
+        results = {}
+        for test in cls:
+            func_args = {}
+            if "svc" in test.value_function.__code__.co_varnames:
+                func_args["svc"] = checkup_service
+            if "elapsed" in test.value_function.__code__.co_varnames:
+                func_args["elapsed"] = elapsed_time
+            if "run_bash" in test.value_function.__code__.co_varnames:
+                func_args["run_bash"] = run_using_bash
+
+            value = test.value_function(**func_args)
+            results[test.key] = value
+        return results
+    
+class CheckStrategy:
+    def __init__(self, check_function, success_key, details_key):
+        self.check_function = check_function
+        self.success_key = success_key
+        self.details_key = details_key
+
+    def execute(self):
+        if self.check_function is None:
+            return {}
+        result = self.check_function()
+        if result is None:  
+            return {}
+        return {
+            self.success_key: result.success,
+            self.details_key: result.details,
+        }
+
+
+class InspectService(ErsiliaBase):
+    def __init__(self, dir=None, model=None, config_json=None, credentials_json=None):
+        super().__init__(config_json, credentials_json)
+        self.dir = dir
+        self.model = model
+# fmt: off
+    def _get_checks(self, inspector):
+        is_dir_none = self.dir is None
+        return [
+            CheckStrategy(
+                inspector.check_repo_exists if is_dir_none else lambda: None,
+                "is_github_url_available",
+                "is_github_url_available_details",
+            ),
+            CheckStrategy(
+                inspector.check_complete_metadata if is_dir_none else lambda: None,
+                "complete_metadata",
+                "complete_metadata_details",
+            ),
+            CheckStrategy(
+                inspector.check_complete_folder_structure,
+                "complete_folder_structure",
+                "complete_folder_structure_details",
+            ),
+            CheckStrategy(
+                inspector.check_dependencies_are_valid,
+                "docker_check",
+                "docker_check_details",
+            ),
+            CheckStrategy(
+                inspector.check_computational_performance,
+                "computational_performance_tracking",
+                "computational_performance_tracking_details",
+            ),
+            CheckStrategy(
+                inspector.check_no_extra_files if is_dir_none else lambda: None,
+                "extra_files_check",
+                "extra_files_check_details",
+            ),
+        ]
+# fmt: on
+    def run(self):
+        if not self.model:
+            raise ValueError("Model must be specified.")
+        
+        inspector = ModelInspector(self.model, self.dir)
+        checks = self._get_checks(inspector)
+        
+        output = {}
+        for strategy in checks:
+            if strategy.check_function:
+                output.update(strategy.execute())
+        
+        return output
 
 class SetupService:
 
@@ -789,47 +912,20 @@ class CheckService:
             simple=True, 
             try_predefined=False
         )
-        out1 = run_model(
+        run_model(
             input=input_samples, 
             output=output1_path, 
             batch=100
         )
-        out2 = run_model(
+        run_model(
             input=input_samples, 
             output=output2_path, 
             batch=100
         )
-        def create_csv(file_path, data):
-    # Ensure the file path's directory exists
-            Path(file_path).parent.mkdir(parents=True, exist_ok=True)
-            
-            # Write data to the CSV file
-            with open(file_path, mode='w', newline='') as csv_file:
-                writer = csv.DictWriter(csv_file, fieldnames=data[0].keys())
-                writer.writeheader()
-                writer.writerows(data)
 
-            # Check if the file exists after creation
-            if os.path.exists(file_path):
-                print(f"File successfully created: {file_path}")
-            else:
-                print(f"File creation failed: {file_path}")
-
-        # Example usage
-        file_path = "output/example.csv"
-        data = [
-            {"name": "Alice", "age": 25},
-            {"name": "Bob", "age": 30},
-            {"name": "Charlie", "age": 35}
-        ]
-
-        create_csv(file_path, data)
-        self.logger.debug(f"Output1: {out1}")
-        self.logger.debug(f"Output2: {out2}")
         data1 = read_csv(output1_path)
-        self.logger.info(f"Data1: {data1}")
         data2 = read_csv(output1_path)
-        self.logger.info(f"Data2: {data2}")
+
         for res1, res2 in zip(data1, data2):
             for key in res1:
                 if key in res2:
@@ -852,7 +948,8 @@ class RunnerService:
         dir,
         remote,
         inspect,
-        remove
+        remove,
+        inspecter
     ):
         self.model_id = model_id
         self.logger = logger
@@ -866,6 +963,7 @@ class RunnerService:
         self.remote = remote
         self.inspect = inspect
         self.remove = remove
+        self.inspecter = inspecter
         self.example = ExampleGenerator(
             model_id=self.model_id
         )
@@ -1099,18 +1197,12 @@ class RunnerService:
 
 
     def make_output(self, elapsed_time):
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        test_results = {
-            "Date and Time Run": timestamp,
-            "Time to Run Tests (seconds)": elapsed_time,
-            "Basic Checks Passed": self.checkup_service.information_check,
-            "Single Input Run Without Error": self.checkup_service.single_input,
-            "Example Input Run Without Error": self.checkup_service.example_input,
-            "Outputs Consistent": self.checkup_service.consistent_output,
-            "Bash Run Without Error": self.run_using_bash,
-        }
-
-        data = [(key, str(value)) for key, value in test_results.items()]
+        results = TestResult.generate_results(
+            self.checkup_service,
+            elapsed_time, 
+            self.run_using_bash
+        )
+        data = [(key, str(value)) for key, value in results.items()]
         self.ios_service._generate_table(
             **TABLE_CONFIGS[TableType.FINAL_RUN_SUMMARY].__dict__,
             rows=data
@@ -1159,29 +1251,13 @@ class RunnerService:
         return value
     
     def _perform_inspect(self):
-        command, out = f"ersilia -v inspect {self.model_id}", None
-        if self.remote and self.inspect:
-            out = SetupService.run_command(
-                command=command,
-                logger=self.logger,
-                capture_output=True,
-            )
-        elif not self.remote and self.inspect:
-            out = SetupService.run_command(
-                f"{command} -d {self.dir}",
-                logger=self.logger,
-                capture_output=True,
-            )
-        if out is not None:
-            self.logger.info(f"Inspect output: {out}")
-            self.logger.debug("Loading Json")
-            out = json.loads(out)
-            self.logger.debug("Loading Done")
+        if self.inspect:
+            out = self.inspecter.run()
             out = {
                     " ".join(word.capitalize() 
                     for word in k.split("_")): self.transform_key(v)
                     for k, v in out.items()
-                }
+            }
 
             data = [(key, value) for key, value in out.items()]
 
@@ -1294,6 +1370,10 @@ class ModelTester(ErsiliaBase):
             self.dir,
             self.ios,
         )
+        self.inspecter = InspectService(
+            dir=dir,
+            model=self.model_id
+        )
         self.runner = RunnerService(
             self.model_id,
             self.logger, 
@@ -1305,8 +1385,10 @@ class ModelTester(ErsiliaBase):
             self.dir,
             self.remote,
             self.inspect,
-            self.remove
+            self.remove,
+            self.inspecter
         )
+
     def setup(self):
         self.logger.debug(f"Running conda setup for {self.model_id}")
         self.setup_service.fetch_repo() # for remote option

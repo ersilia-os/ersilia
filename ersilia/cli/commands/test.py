@@ -15,6 +15,7 @@ def test_cmd():
         "-l", 
         "--level", 
         "level", 
+        help="Level of testing, None: for default, deep: for deep testing",
         required=False, 
         default=None, 
         type=click.STRING
@@ -23,22 +24,26 @@ def test_cmd():
         "-d", 
         "--dir", 
         "dir", 
+        help="Model directory",
         required=False, 
         default=None, 
         type=click.STRING
     )
     @click.option(
         "--inspect", 
-         is_flag=True, 
-        default=False
-    )
-    @click.option(
-        "--remote", 
+        help="Inspect the model: More on the docs", 
         is_flag=True, 
         default=False
     )
     @click.option(
-        "--remove", 
+        "--remote",
+        help="Test the model from remote git repository", 
+        is_flag=True, 
+        default=False
+    )
+    @click.option(
+        "--remove",
+        help="Remove the model after testing", 
         is_flag=True, 
         default=False
     )
