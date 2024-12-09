@@ -5,7 +5,7 @@ from ...default import ERSILIA_MODEL_HUB_S3_BUCKET, MODELS_JSON
 
 
 class JsonModelsInterface(ErsiliaBase):
-    def __init__(self, config_json):
+    def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.json_file_name = MODELS_JSON
         self.url = f"https://{ERSILIA_MODEL_HUB_S3_BUCKET}.s3.eu-central-1.amazonaws.com/{MODELS_JSON}"
