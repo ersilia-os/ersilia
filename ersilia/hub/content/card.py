@@ -5,8 +5,7 @@ import yaml
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...auth.auth import Auth
-from ...db.hubdata.interfaces import AirtableInterface
-from ...db.hubdata.json_models_interface import JsonModelsInterface
+from ...db.hubdata.interfaces import JsonModelsInterface
 import validators
 
 try:
@@ -456,7 +455,7 @@ class RepoMetadataFile(ErsiliaBase):
         return "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
             org, self.model_id, branch, METADATA_YAML_FILE
         )
-    
+
     def _get_file_content_from_github(self, org, branch):
         json_url = self._github_json_url(org, branch)
         r = requests.get(json_url)
@@ -469,15 +468,9 @@ class RepoMetadataFile(ErsiliaBase):
                 return yaml.safe_load(r.content)
         else:
             return json.loads(r.content)
-            
+
     def get_json_or_yaml_file(self, org=None, branch=None):
         return self._get_file_content_from_github(org, branch)
-
-    def exists(self, org=None, branch=None):
-        if self.get_json_file(org=org, branch=branch) is None:
-            return False
-        else:
-            return True
 
     def read_information(self, org=None, branch=None, json_or_yaml_path=None):
         if json_or_yaml_path is None:
@@ -486,139 +479,27 @@ class RepoMetadataFile(ErsiliaBase):
             with open(json_or_yaml_path, "r") as f:
                 if json_or_yaml_path.endswith(".json"):
                     data = json.load(f)
-                else:
+                elif json_or_yaml_path.endswith(".yaml"):
                     data = yaml.safe_load(f)
+                else:
+                    raise ValueError("File format not supported")
         bi = BaseInformation(config_json=self.config_json)
         bi.from_dict(data)
         return bi
 
-    def write_information(self, data: BaseInformation, json_path=None):
+    def write_information(self, data: BaseInformation, json_or_yaml_path=None):
         data = data.as_dict()
-        if json_path is not None:
-            with open(json_path, "w") as f:
+        if json_or_yaml_path.endswith(".json"):
+            path = json_or_yaml_path
+            with open(path, "w") as f:
                 json.dump(data, f, indent=4)
+        elif json_or_yaml_path.endswith(".yaml"):
+            path = json_or_yaml_path
+            with open(path, "w") as f:
+                yaml.dump(data, f)
         else:
-            return data
-
-
-class AirtableMetadata(AirtableInterface):
-    def __init__(self, model_id, config_json=None):
-        self.model_id = model_id
-        AirtableInterface.__init__(self, config_json=config_json)
-        self._warning_empty_row_message = "The AirTable field Identifier was not found! Please check that there are not empty rows."
-
-    def _find_record(self):
-        data = None
-        for records in self.table.iterate(
-            page_size=self.page_size, max_records=self.max_rows
-        ):
-            for record in records:
-                try:
-                    if self.model_id == record["fields"]["Identifier"]:
-                        data = record["fields"]
-                except:
-                    self.logger.warning(self._warning_empty_row_message)
-
+            raise ValueError("File format not supported")
         return data
-
-    def _find_airtable_record_id(self):
-        rec_id = None
-        for records in self.table.iterate(
-            page_size=self.page_size, max_records=self.max_rows
-        ):
-            for record in records:
-                try:
-                    if self.model_id == record["fields"]["Identifier"]:
-                        rec_id = record["id"]
-                except:
-                    self.logger.warning(self._warning_empty_row_message)
-        return rec_id
-
-    def read_information(self):
-        data = self._find_record()
-        bi = BaseInformation(config_json=self.config_json)
-        bi.from_dict(data)
-        return bi
-
-    def write_information(self, data: BaseInformation):
-        d = data.as_dict()
-        d["GitHub"] = data.github
-        rec_id = self._find_airtable_record_id()
-        if rec_id is None:
-            self.logger.debug(
-                "Model {0} does not exist in AirTable. Creating new record".format(
-                    self.model_id
-                )
-            )
-            self.table.create(d)
-        else:
-            self.logger.debug(
-                "Model {0} exists in AirTable. Updating record".format(self.model_id)
-            )
-            self.table.update(record_id=rec_id, fields=d)
-
-
-class ReadmeMetadata(ErsiliaBase):
-    def __init__(self, model_id, config_json=None):
-        self.model_id = model_id
-        ErsiliaBase.__init__(self, config_json=config_json)
-
-    def read_information(self):
-        self.logger.debug(
-            "Cannot read directly from README file. Using AirTable instead"
-        )
-        am = AirtableMetadata(model_id=self.model_id)
-        bi = am.read_information()
-        self.logger.info(bi.as_dict())
-        return bi
-
-    def write_information(self, data: BaseInformation, readme_path=None):
-        d = data.as_dict()
-        text = "# {0}\n\n".format(d["Title"])
-        text += "{0}\n\n".format(d["Description"].rstrip("\n"))
-        text += "## Identifiers\n\n"
-        text += "* EOS model ID: `{0}`\n".format(d["Identifier"])
-        text += "* Slug: `{0}`\n\n".format(d["Slug"])
-        text += "## Characteristics\n\n"
-        text += "* Input: `{0}`\n".format(", ".join(d["Input"]))
-        text += "* Input Shape: `{0}`\n".format(d["Input Shape"])
-        text += "* Task: `{0}`\n".format(", ".join(d["Task"]))
-        text += "* Output: `{0}`\n".format(", ".join(d["Output"]))
-        text += "* Output Type: `{0}`\n".format(", ".join(d["Output Type"]))
-        text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
-        text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
-        text += "## References\n\n"
-        text += "* [Publication]({0})\n".format(d["Publication"])
-        text += "* [Source Code]({0})\n".format(d["Source Code"])
-        text += "* Ersilia contributor: [{0}](https://github.com/{0})\n\n".format(
-            d["Contributor"]
-        )
-        text += "## Ersilia model URLs\n"
-        text += "* [GitHub]({0})\n".format(data.github)
-        if "S3" in d:
-            text += "* [AWS S3]({0})\n".format(d["S3"])
-        if "DockerHub" in d:
-            text += "* [DockerHub]({0}) ({1})\n".format(
-                d["DockerHub"], ", ".join(d["Docker Architecture"])
-            )
-        text += "\n"
-        text += "## Citation\n\n"
-        text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).\n\n".format(
-            d["Publication"]
-        )
-        text += "## License\n\n"
-        text += "This package is licensed under a GPL-3.0 license. The model contained within this package is licensed under a {0} license.\n\n".format(
-            d["License"]
-        )
-        text += "Notice: Ersilia grants access to these models 'as is' provided by the original authors, please refer to the original code repository and/or publication if you use the model in your research.\n\n"
-        text += "## About Us\n\n"
-        text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.\n\n"
-        text += "[Help us](https://www.ersilia.io/donate) achieve our mission!"
-        if readme_path is None:
-            return text
-        else:
-            with open(readme_path, "w") as f:
-                f.write(text)
 
 
 class MetadataCard(ErsiliaBase):
@@ -711,38 +592,6 @@ class ReadmeCard(ErsiliaBase):
             return None
 
 
-class AirtableCard(AirtableInterface):
-    def __init__(self, config_json):
-        AirtableInterface.__init__(self, config_json=config_json)
-
-    def _find_card(self, text, field):
-        card = None
-        for records in self.table.iterate(
-            page_size=self.page_size, max_records=self.max_rows
-        ):
-            for record in records:
-                fields = record["fields"]
-                if field not in fields:
-                    continue
-                if text == record["fields"][field]:
-                    card = record["fields"]
-        return card
-
-    def find_card_by_model_id(self, model_id):
-        return self._find_card(model_id, "Identifier")
-
-    def find_card_by_slug(self, slug):
-        return self._find_card(slug, "Slug")
-
-    def get(self, model_id=None, slug=None):
-        if model_id is not None:
-            return self.find_card_by_model_id(model_id)
-        elif slug is not None:
-            return self.find_card_by_slug(slug)
-        else:
-            raise ValueError("Either model_id, slug or mode must be provided")
-
-
 class LocalCard(ErsiliaBase):
     """
     This class provides information on models that have been fetched and are available locally.
@@ -779,6 +628,7 @@ class LocalCard(ErsiliaBase):
         else:
             return
 
+
 class LakeCard(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -806,13 +656,13 @@ class S3JsonCard(JsonModelsInterface):
         for model in all_models:
             if model["Identifier"] == model_id:
                 return model
-    
+
     def get_card_by_slug(self, slug):
         all_models = self.items_all()
         for model in all_models:
             if model["Slug"] == slug:
                 return model
-            
+
     def get(self, model_id=None, slug=None):
         if model_id is not None:
             return self.get_card_by_model_id(model_id)
@@ -820,6 +670,7 @@ class S3JsonCard(JsonModelsInterface):
             return self.get_card_by_slug(slug)
         else:
             raise ValueError("Either model_id or slug must be provided")
+
 
 class ModelCard(object):
     def __init__(self, config_json=None):
@@ -838,10 +689,6 @@ class ModelCard(object):
         card = jc.get(model_id, slug)
         if card is not None:
             return card
-        ac = AirtableCard(config_json=self.config_json)
-        card = ac.get(model_id, slug)
-        if card is not None:
-            return card
         rc = ReadmeCard(config_json=self.config_json)
         card = rc.get(model_id, slug)
         if card is not None:
@@ -855,4 +702,3 @@ class ModelCard(object):
             return json.dumps(card, indent=4)
         else:
             return card
-    

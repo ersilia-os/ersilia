@@ -5,13 +5,18 @@ from rich.text import Text
 from rich import box
 from rich.panel import Panel
 
+
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
     console = Console()
-    
-    docker_status = Text("✔", style="green") if any(result["activate_docker"] for result in results) else Text("✘", style="red")
+
+    docker_status = (
+        Text("✔", style="green")
+        if any(result["activate_docker"] for result in results)
+        else Text("✘", style="red")
+    )
     runner = results[0]["runner"] if results else "N/A"
     cli_type = results[0]["cli_type"] if results else "N/A"
-    
+
     header_panel = Panel.fit(
         f"Docker Status: {docker_status}\nRunner: {runner}\nCLI Type: {cli_type}",
         title="Execution Summary",
@@ -31,7 +36,9 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         formatted_checkups = []
         for check in result["checkups"]:
             if check["status"]:
-                formatted_checkups.append(Text("✔", style="green") + f" {check['name']}")
+                formatted_checkups.append(
+                    Text("✔", style="green") + f" {check['name']}"
+                )
             else:
                 formatted_checkups.append(Text("✘", style="red") + f" {check['name']}")
         checkups_text = "\n".join(str(checkup) for checkup in formatted_checkups)

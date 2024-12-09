@@ -24,9 +24,7 @@ class SlugDb(ErsiliaBase):
             slug text,
             PRIMARY KEY (model_id, slug)
         );
-        """.format(
-            self._table
-        )
+        """.format(self._table)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -38,9 +36,7 @@ class SlugDb(ErsiliaBase):
             return
         sql = """
         INSERT OR IGNORE INTO {0} (model_id, slug) VALUES ('{1}', '{2}')
-        """.format(
-            self._table, model_id, slug
-        )
+        """.format(self._table, model_id, slug)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -53,9 +49,7 @@ class SlugDb(ErsiliaBase):
         sql = """
         DELETE FROM {0}
             WHERE model_id = '{1}'
-        """.format(
-            self._table, model_id
-        )
+        """.format(self._table, model_id)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -68,9 +62,7 @@ class SlugDb(ErsiliaBase):
         sql = """
         DELETE FROM {0}
             WHERE slug = '{1}'
-        """.format(
-            self._table, slug
-        )
+        """.format(self._table, slug)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -83,9 +75,7 @@ class SlugDb(ErsiliaBase):
         sql = """
         DELETE FROM {0}
             WHERE model_id = '{1}' AND slug = '{2}'
-        """.format(
-            self._table, model_id, slug
-        )
+        """.format(self._table, model_id, slug)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -96,9 +86,7 @@ class SlugDb(ErsiliaBase):
         sql = """
         SELECT model_id FROM {0}
             WHERE slug = '{1}'
-        """.format(
-            self._table, slug
-        )
+        """.format(self._table, slug)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -110,9 +98,7 @@ class SlugDb(ErsiliaBase):
         sql = """
         SELECT slug FROM {0}
             WHERE model_id = '{1}'
-        """.format(
-            self._table, model_id
-        )
+        """.format(self._table, model_id)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)
@@ -125,9 +111,7 @@ class SlugDb(ErsiliaBase):
             return
         sql = """
         DELETE FROM {0}
-        """.format(
-            self._table
-        )
+        """.format(self._table)
         conn = self._connect()
         c = conn.cursor()
         c.execute(sql)

@@ -1,9 +1,10 @@
-# TODO This is a placeholder for the environment variables module. This module will be able to manage environment variables, including secrets and API keys, and put them 
+# TODO This is a placeholder for the environment variables module. This module will be able to manage environment variables, including secrets and API keys, and put them
 # in the right place for the model to use them. This module will also be able to get the environment variables from the right place, including the environment, the terminal, etc.
 import os
 import shutil
 import subprocess
-#from dotenv import load_dotenv
+
+# from dotenv import load_dotenv
 from ...default import DOTENV_FILE
 from ... import ErsiliaBase
 
@@ -18,18 +19,17 @@ class GetEnvironmentVariable(ErsiliaBase):
 
     def _get_from_terminal(self, env):
         return os.system(f"echo ${env}")
-    
-    def _get_from_dotenv_in_cwd(self, env):
-        #load_dotenv()
-        return os.environ.get(env)
-    
-    def _get_from_dotenv_in_eos(self, env):
 
+    def _get_from_dotenv_in_cwd(self, env):
+        # load_dotenv()
         return os.environ.get(env)
-    
+
+    def _get_from_dotenv_in_eos(self, env):
+        return os.environ.get(env)
+
     def _get_from_github_secrets(self, env):
         return
-    
+
     def _get_from_bashrc(self, env):
         pass
 
@@ -49,7 +49,7 @@ class GetEnvironmentVariable(ErsiliaBase):
         value = self._get_from_bashrc(env)
         if value is not None:
             return value
-    
+
 
 class PutEnvironmentVariable(ErsiliaBase):
     def __init__(self, model_id, config_json=None):
@@ -59,13 +59,17 @@ class PutEnvironmentVariable(ErsiliaBase):
 
     def _get_framework_folder(self):
         bundle_path = self._get_bundle_location(model_id=self.model_id)
-        bentoml_style_path = os.path.join(bundle_path, self.model_id, "artifact", "model", "framework")
+        bentoml_style_path = os.path.join(
+            bundle_path, self.model_id, "artifact", "model", "framework"
+        )
         if os.path.exists(bentoml_style_path):
             return bentoml_style_path
-        fastapi_style_path = os.path.join(bundle_path, self.model_id, "model", "framework")
+        fastapi_style_path = os.path.join(
+            bundle_path, self.model_id, "model", "framework"
+        )
         if os.path.exists(fastapi_style_path):
             return fastapi_style_path
-        return None        
+        return None
 
     def _send_to_framework_in_docker_as_dotenv(self, dotenv_file):
         # TODO: Implement this
@@ -75,9 +79,13 @@ class PutEnvironmentVariable(ErsiliaBase):
         # TODO: Test this
         framework_dir = self._get_framework_folder()
         if framework_dir is None:
-            self.logger.debug("Framework directory not found. Cannot copy the .env file.")
+            self.logger.debug(
+                "Framework directory not found. Cannot copy the .env file."
+            )
             return None
-        self.logger.debug("Copying .env file to the framework directory: {0}".format(framework_dir))
+        self.logger.debug(
+            "Copying .env file to the framework directory: {0}".format(framework_dir)
+        )
         shutil.copy(dotenv_file, os.path.join(framework_dir, DOTENV_FILE))
 
     def put(self, env_dict: dict):

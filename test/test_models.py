@@ -8,34 +8,36 @@ from ersilia.core.session import Session
 
 MODELS = ["eos0t01", "eos3b5e", "eos0t03", "eos0t04"]
 RESULTS = [0, 312.89, 0, 0]
-API_NAME="run"
+API_NAME = "run"
 MIN_WEIGHT = 40.0
 MAX_WEIGHT = 60.0
+
 
 @pytest.fixture
 def mock_fetcher():
     with patch(
-        "ersilia.hub.fetch.fetch.ModelFetcher.fetch", 
-        new_callable=AsyncMock
+        "ersilia.hub.fetch.fetch.ModelFetcher.fetch", new_callable=AsyncMock
     ) as mock_fetch:
         yield mock_fetch
 
+
 @pytest.fixture
 def mock_set_apis():
-    with patch.object(
-        ErsiliaModel, 
-        "_set_apis", 
-        return_value=None
-    ) as mock_set_apis:
+    with patch.object(ErsiliaModel, "_set_apis", return_value=None) as mock_set_apis:
         yield mock_set_apis
+
 
 @pytest.fixture
 def mock_session():
-    with patch.object(Session, "current_model_id", return_value=MODELS[1]), \
-         patch.object(Session, "current_service_class", return_value="docker"), \
-         patch.object(Session, "tracking_status", return_value=False), \
-         patch.object(Session, "current_output_source", return_value="LOCAL_ONLY"):
+    with patch.object(
+        Session, "current_model_id", return_value=MODELS[1]
+    ), patch.object(
+        Session, "current_service_class", return_value="docker"
+    ), patch.object(Session, "tracking_status", return_value=False), patch.object(
+        Session, "current_output_source", return_value="LOCAL_ONLY"
+    ):
         yield
+
 
 @pytest.fixture
 def mock_convn_api_get_apis():
@@ -66,56 +68,47 @@ def mock_api_task():
     ) as mock_task:
         yield mock_task
 
+
 @pytest.fixture
 def mock_close():
-    with patch.object(
-        ErsiliaModel, 
-        "close", 
-        return_value=None
-        ) as mock_close_:
+    with patch.object(ErsiliaModel, "close", return_value=None) as mock_close_:
         yield mock_close_
+
 
 @pytest.fixture
 def mock_serve():
-    with patch.object(
-        ErsiliaModel, 
-        "serve", 
-        return_value=None
-        ) as mock_serve_:
+    with patch.object(ErsiliaModel, "serve", return_value=None) as mock_serve_:
         yield mock_serve_
+
 
 @pytest.fixture
 def mock_run():
-    with patch.object(
-        ErsiliaModel, 
-        "run", 
-        return_value=RESULTS[1]
-        ) as mock_run_:
+    with patch.object(ErsiliaModel, "run", return_value=RESULTS[1]) as mock_run_:
         yield mock_run_
+
 
 @patch("ersilia.core.model.ErsiliaModel")
 def test_models(
-    mock_ersilia_model, 
-    mock_fetcher, 
+    mock_ersilia_model,
+    mock_fetcher,
     mock_session,
     mock_set_apis,
     mock_convn_api_get_apis,
     mock_api_task,
     mock_serve,
     mock_run,
-    mock_close
+    mock_close,
 ):
     MODEL_ID = MODELS[1]
     INPUT = "CCCC"
 
     mf = ModelFetcher(overwrite=True)
     asyncio.run(mf.fetch(MODEL_ID))
-    
+
     em = ErsiliaModel(
-        model=MODEL_ID,
-        service_class="docker",
-        output_source="LOCAL_ONLY")
-    
+        model=MODEL_ID, service_class="docker", output_source="LOCAL_ONLY"
+    )
+
     result = em.run(
         input=INPUT,
         output="result.csv",

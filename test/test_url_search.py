@@ -1,9 +1,10 @@
 import pytest
-from ersilia.db.hubdata.json_models_interface import JsonModelsInterface
+from ersilia.db.hubdata.interfaces import JsonModelsInterface
 
 ji = JsonModelsInterface(config_json=None)
 
 import pytest
+
 
 class OriginalModelFinder:
     def __init__(self):
@@ -55,9 +56,11 @@ class OptimizedModelFinder:
 def original_finder():
     return OriginalModelFinder()
 
+
 @pytest.fixture
 def actual_url():
     return "https://eos9ei3-tkreo.ondigitalocean.app/"
+
 
 @pytest.fixture
 def optimized_finder():

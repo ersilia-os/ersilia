@@ -7,7 +7,12 @@ import yaml
 from pathlib import Path
 from ersilia import logger
 from .docker import resolve_pack_method_docker
-from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, METADATA_JSON_FILE, METADATA_YAML_FILE
+from ..default import (
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+    METADATA_JSON_FILE,
+    METADATA_YAML_FILE,
+)
 
 MODELS_DEVEL_DIRNAME = "models"
 
@@ -62,6 +67,7 @@ class Paths(object):
         else:
             return False
 
+
 @dataclass(init=True)
 class Metadata:
     Identifier: str
@@ -97,13 +103,16 @@ class Metadata:
                 except TypeError:
                     raise TypeError(f"Field {field_name} has the wrong type")
 
+
 class ErsiliaMetadataLoader(yaml.SafeLoader):
     """
     YAML loader for Ersilia metadata
     Mainly this is needed so we don't directly modify the SafeLoader class,
     which would break the YAML parsing for other parts of the code
     """
+
     pass
+
 
 def metadata_constructor(loader, node):
     _fields = loader.construct_mapping(node)
@@ -116,9 +125,11 @@ def metadata_constructor(loader, node):
             fields[key] = _fields[key]
     return Metadata(**fields)
 
+
 ErsiliaMetadataLoader.add_constructor(
     yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, metadata_constructor
 )
+
 
 def resolve_pack_method_source(model_path):
     if os.path.exists(os.path.join(model_path, "installs", "install.sh")):
@@ -128,6 +139,7 @@ def resolve_pack_method_source(model_path):
     logger.warning("Could not resolve pack method")
     return None
 
+
 def resolve_pack_method(model_path):
     with open(os.path.join(model_path, "service_class.txt"), "r") as f:
         service_class = f.read().strip()
@@ -136,7 +148,8 @@ def resolve_pack_method(model_path):
         return resolve_pack_method_docker(model_id)
     else:
         return resolve_pack_method_source(model_path)
-    
+
+
 def get_metadata_from_base_dir(path):
     if os.path.exists(os.path.join(path, METADATA_JSON_FILE)):
         with open(os.path.join(path, METADATA_JSON_FILE), "r") as f:
@@ -146,8 +159,7 @@ def get_metadata_from_base_dir(path):
             try:
                 metadata = asdict(yaml.load(f, Loader=ErsiliaMetadataLoader))
             except TypeError:
-                return 
+                return
     else:
         raise FileNotFoundError("Metadata file not found")
     return metadata
-

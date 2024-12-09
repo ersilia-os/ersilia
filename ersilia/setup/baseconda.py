@@ -66,9 +66,7 @@ class SetupBaseConda(object):
         bash_script = """
         source {0}/etc/profile.d/conda.sh
         conda search python > {1}
-        """.format(
-            self.conda.conda_prefix(is_base), tmp_file
-        )
+        """.format(self.conda.conda_prefix(is_base), tmp_file)
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
@@ -108,16 +106,12 @@ class SetupBaseConda(object):
             bash_script = """
             source {0}/etc/profile.d/conda.sh
             conda deactivate
-            """.format(
-                self.conda.conda_prefix(False)
-            )
+            """.format(self.conda.conda_prefix(False))
         else:
             bash_script = ""
         bash_script += """
         source {0}/etc/profile.d/conda.sh
-        """.format(
-            self.conda.conda_prefix(True)
-        )
+        """.format(self.conda.conda_prefix(True))
         python_version = self.find_closest_python_version(ptag["python"])
         bash_script += """
         cd {0}
@@ -125,9 +119,7 @@ class SetupBaseConda(object):
         conda activate {1}
         {3}
         conda deactivate
-        """.format(
-            tmp_repo, env, python_version, cmd
-        )
+        """.format(tmp_repo, env, python_version, cmd)
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))

@@ -22,6 +22,7 @@ from ...default import UNPROCESSABLE_INPUT
 
 nest_asyncio.apply()
 
+
 class CompoundIdentifier(object):
     def __init__(self, local=True, concurrency_limit=10, cache_maxsize=128):
         if local:
@@ -57,7 +58,7 @@ class CompoundIdentifier(object):
 
     def _is_smiles(self, text):
         if not isinstance(text, str) or not text.strip():
-            return False  
+            return False
         if self.Chem is None:
             return asyncio.run(self._process_pubchem_inchikey(text)) is not None
         else:
@@ -67,7 +68,7 @@ class CompoundIdentifier(object):
     async def _process_pubchem_inchikey(self, text):
         async with aiohttp.ClientSession() as session:
             return await self._pubchem_smiles_to_inchikey(session, text)
-            
+
     @staticmethod
     def _is_inchikey(text):
         if len(text) != 27:
@@ -134,7 +135,6 @@ class CompoundIdentifier(object):
         except Exception as e:
             return None
 
-        
     @staticmethod
     async def _nci_smiles_to_inchikey(session, smiles):
         """
@@ -154,7 +154,7 @@ class CompoundIdentifier(object):
         except Exception as e:
             logger.info(f"Failed to fetch InChIKey from NCI for {smiles}: {e}")
             return None
-    
+
     def convert_smiles_to_inchikey_with_rdkit(self, smiles):
         """
         Converts a SMILES string to an InChIKey using RDKit.
@@ -208,34 +208,40 @@ class CompoundIdentifier(object):
         return result_list
 
     def encode(self, smiles):
-            """Get InChIKey of compound based on SMILES string"""
-            if not isinstance(smiles, str) or not smiles.strip() or smiles == UNPROCESSABLE_INPUT:
-                return UNPROCESSABLE_INPUT
+        """Get InChIKey of compound based on SMILES string"""
+        if (
+            not isinstance(smiles, str)
+            or not smiles.strip()
+            or smiles == UNPROCESSABLE_INPUT
+        ):
+            return UNPROCESSABLE_INPUT
 
-            if self.Chem is None:
-                async def fetch_inchikeys():
-                    async with aiohttp.ClientSession() as session:
-                        inchikey = await self._pubchem_smiles_to_inchikey(session, smiles)
-                        if inchikey:
-                            return inchikey
-                        inchikey = await self._nci_smiles_to_inchikey(session, smiles)
+        if self.Chem is None:
+
+            async def fetch_inchikeys():
+                async with aiohttp.ClientSession() as session:
+                    inchikey = await self._pubchem_smiles_to_inchikey(session, smiles)
+                    if inchikey:
                         return inchikey
+                    inchikey = await self._nci_smiles_to_inchikey(session, smiles)
+                    return inchikey
 
-                inchikey = asyncio.run(fetch_inchikeys())
-            else:
-                try:
-                    mol = self.Chem.MolFromSmiles(smiles)
-                    if mol is None:
-                        return UNPROCESSABLE_INPUT
-                    inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
-                    if inchi is None:
-                        return UNPROCESSABLE_INPUT
-                    inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
-                except:
-                    inchikey = None
-            return inchikey if inchikey else UNPROCESSABLE_INPUT
-    
+            inchikey = asyncio.run(fetch_inchikeys())
+        else:
+            try:
+                mol = self.Chem.MolFromSmiles(smiles)
+                if mol is None:
+                    return UNPROCESSABLE_INPUT
+                inchi = self.Chem.rdinchi.MolToInchi(mol)[0]
+                if inchi is None:
+                    return UNPROCESSABLE_INPUT
+                inchikey = self.Chem.rdinchi.InchiToInchiKey(inchi)
+            except:
+                inchikey = None
+        return inchikey if inchikey else UNPROCESSABLE_INPUT
+
     def validate_smiles(self, smiles):
-            return smiles.strip() != "" and Chem.MolFromSmiles(smiles) is not None
+        return smiles.strip() != "" and Chem.MolFromSmiles(smiles) is not None
+
 
 Identifier = CompoundIdentifier
