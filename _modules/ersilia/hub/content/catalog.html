@@ -82,8 +82,8 @@
 <span class="kn">from</span> <span class="nn">.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...utils.identifiers.model</span> <span class="kn">import</span> <span class="n">ModelIdentifier</span>
-<span class="kn">from</span> <span class="nn">...auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="n">BENTOML_PATH</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span>
+<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">BENTOML_PATH</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">TableConstants</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
 
@@ -334,74 +334,32 @@
             <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://airtable.com/shrUcrUnd7jB9ChZV&quot;</span><span class="p">)</span> <span class="c1">#TODO Hardcoded</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_all_github_public_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com/users/</span><span class="si">{0}</span><span class="s2">/repos&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">GITHUB_ORG</span><span class="p">)</span>
-        <span class="k">while</span> <span class="n">url</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;per_page&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
-            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-            <span class="k">yield from</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-            <span class="k">if</span> <span class="s2">&quot;next&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">links</span><span class="p">:</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">links</span><span class="p">[</span><span class="s2">&quot;next&quot;</span><span class="p">][</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>  <span class="c1"># get the next page</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">break</span>  <span class="c1"># no more pages, stop the loop</span>
-
-<div class="viewcode-block" id="ModelCatalog.github">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.github">[docs]</a>
-    <span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available in the GitHub model hub repository&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">Github</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">token</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">token</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span><span class="o">.</span><span class="n">oauth_token</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Looking for model repositories in </span><span class="si">{0}</span><span class="s2"> organization&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">GITHUB_ORG</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">token</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Token provided: ***&quot;</span><span class="p">)</span>
-            <span class="n">g</span> <span class="o">=</span> <span class="n">Github</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
-            <span class="n">repo_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">get_repos</span><span class="p">()]</span>
-            <span class="n">repos</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">repo_list</span><span class="p">:</span>
-                <span class="n">owner</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">full_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">owner</span> <span class="o">!=</span> <span class="n">GITHUB_ORG</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="n">repos</span> <span class="o">+=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Token not provided!&quot;</span><span class="p">)</span>
-            <span class="n">repos</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_all_github_public_repos</span><span class="p">():</span>
-                <span class="n">repos</span> <span class="o">+=</span> <span class="p">[</span><span class="n">repo</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
-        <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
-                <span class="n">models</span> <span class="o">+=</span> <span class="p">[</span><span class="n">repo</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{0}</span><span class="s2"> models&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="n">models</span></div>
-
 
 <div class="viewcode-block" id="ModelCatalog.hub">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.hub">[docs]</a>
     <span class="k">def</span> <span class="nf">hub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available in Ersilia model hub repository&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available in Ersilia model hub from the S3 JSON&quot;&quot;&quot;</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
-        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">github</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">only_identifier</span><span class="p">:</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">]]</span>
-            <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
-                <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">card</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_slug</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_title</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">title</span><span class="p">]]</span>
-            <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">])</span></div>
+        <span class="n">ji</span> <span class="o">=</span> <span class="n">JsonModelsInterface</span><span class="p">()</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">ji</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_status</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;In Progress&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            
+            <span class="n">identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;identifier&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">only_identifier</span><span class="p">:</span>
+                <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">identifier</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_slug</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_title</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+                <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">identifier</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">title</span><span class="p">]]</span>
 
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">only_identifier</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
 
+                
 <div class="viewcode-block" id="ModelCatalog.local">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.local">[docs]</a>
     <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
