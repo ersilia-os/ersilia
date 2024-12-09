@@ -236,7 +236,7 @@ class ModelCatalog(ErsiliaBase):
     def airtable(self):
         """List models available in AirTable Ersilia Model Hub base"""
         if webbrowser:
-            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")
+            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV") #TODO Hardcoded
 
     def _get_all_github_public_repos(self):
         url = "https://api.github.com/users/{0}/repos".format(GITHUB_ORG)
