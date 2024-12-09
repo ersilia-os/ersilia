@@ -39,11 +39,7 @@ def run_cmd():
     @click.option(
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
-    @click.option(
-        "--table", 
-        is_flag=True, 
-        default=False
-    )
+    @click.option("--table", is_flag=True, default=False)
     def run(input, output, batch_size, table):
         session = Session(config_json=None)
         model_id = session.current_model_id()
@@ -78,7 +74,7 @@ def run_cmd():
                     if table:
                         print_result_table(formatted)
                     else:
-                        echo(formatted) 
+                        echo(formatted)
                 else:
                     echo("Something went wrong", fg="red")
         else:
@@ -86,7 +82,8 @@ def run_cmd():
                 print_result_table(result)
             else:
                 try:
-                 echo(result)
+                    echo(result)
                 except:
                     print_result_table(result)
+
     return run
