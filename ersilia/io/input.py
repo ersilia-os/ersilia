@@ -74,10 +74,8 @@ class BaseIOGetter(ErsiliaBase):
     def get(self, model_id=None, input_type=None, input_shape=None):
         if model_id is not None:
             return self._get_from_model(model_id=model_id)
-        elif input_type is not None and input_shape is not None:
-            return self._get_from_specs(input_type=input_type, input_shape=input_shape)
         else:
-            raise NullModelIdentifierError(model=model_id)
+            return self._get_from_specs(input_type=input_type, input_shape=input_shape)
 
 
 class _GenericAdapter(object):
@@ -273,7 +271,7 @@ class ExampleGenerator(ErsiliaBase):
         if try_predefined is True and file_name is not None:
             self.logger.debug("Trying with predefined input")
             predefined_available = self.predefined_example(file_name)
-
+        
         if predefined_available:
             with open(file_name, "r") as f:
                 return f.read()
