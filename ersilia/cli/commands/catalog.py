@@ -11,8 +11,8 @@ def catalog_cmd():
     # Example usage: ersilia catalog
     @ersilia_cli.command(help="List a catalog of models")
     @click.option(
-        "-l",
-        "--local/--hub",
+        "-h",
+        "--hub",
         is_flag=True,
         default=False,
         help="Show catalog of models available in the local computer",
@@ -47,7 +47,7 @@ def catalog_cmd():
         help="Show catalog in table format",
     )
     def catalog(
-        local=False,
+        hub=False,
         file_name=None,
         browser=False,
         more=False,
@@ -78,32 +78,24 @@ def catalog_cmd():
             except Exception as e:
                 click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
             return
-        if local is True and browser is True:
-            click.echo(
-                click.style(
-                    "You cannot show the local model catalog in the browser",
-                    fg="red",
-                )
-            )
-            return
-        if more:
-            only_identifier = False
-        else:
-            only_identifier = True
-        mc = ModelCatalog(only_identifier=only_identifier)
-        if browser:
+        
+        mc = ModelCatalog()
+        if hub and browser:
             mc.airtable()
             return
-        catalog_table = mc.local() if local else mc.hub()
+        
+        mc.only_identifier = False if more else True
+        catalog_table = mc.hub() if hub else mc.local()
 
-        if local and not catalog_table.data:
+        if not hub and not catalog_table.data:
             click.echo(
                 click.style(
-                    "No local model is available. Please fetch a model by running 'ersilia fetch' command",
+                    "No local models available. Please fetch a model by running 'ersilia fetch' command",
                     fg="red",
                 )
             )
             return
+        
         if file_name is None:
             catalog = catalog_table.as_table() if as_table else catalog_table.as_json()
         else:
