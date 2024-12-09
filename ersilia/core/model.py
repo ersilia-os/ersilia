@@ -148,9 +148,7 @@ class ErsiliaModel(ErsiliaBase):
         self.track_runs = track_runs
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
-        assert (
-            self._is_valid
-        ), "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
             model
         )
         self.config_json = config_json
@@ -733,13 +731,16 @@ class ErsiliaModel(ErsiliaBase):
         t1 = None
         status_ok = False
         result = self._standard_api_runner(input=input, output=output)
-        if type(output) is str: # TODO Redundant, should be removed
+        if type(output) is str:  # TODO Redundant, should be removed
             if os.path.exists(output):
                 t1 = os.path.getctime(output)
         if t1 is not None:
-            if t1 > t0: # TODO Why would this be less?
+            if t1 > t0:  # TODO Why would this be less?
                 status_ok = True
-        return result, status_ok # TODO This doesn't actually check whether the result exists and isn't null
+        return (
+            result,
+            status_ok,
+        )  # TODO This doesn't actually check whether the result exists and isn't null
 
     def run(
         self,
@@ -774,7 +775,7 @@ class ErsiliaModel(ErsiliaBase):
         # TODO this should be smart enough to init the container sampler
         # or a python process sampler based on how the model was fetched
         # Presently we only deal with containers
-        
+
         # Init the container metrics sampler
         if self.ct_tracker and track_run:
             self.ct_tracker.start_tracking()
@@ -784,9 +785,7 @@ class ErsiliaModel(ErsiliaBase):
         standard_status_ok = False
         self.logger.debug("Trying standard API")
         try:
-            result, standard_status_ok = self._standard_run(
-                input=input, output=output
-            )
+            result, standard_status_ok = self._standard_run(input=input, output=output)
         except Exception as e:
             self.logger.warning(
                 "Standard run did not work with exception {0}".format(e)
@@ -794,7 +793,7 @@ class ErsiliaModel(ErsiliaBase):
             result = None
             standard_status_ok = False
             self.logger.debug("We will try conventional run.")
-        if standard_status_ok: # TODO This should be an else block
+        if standard_status_ok:  # TODO This should be an else block
             return result
         else:
             self.logger.debug("Trying conventional run")
@@ -809,15 +808,13 @@ class ErsiliaModel(ErsiliaBase):
             self.ct_tracker.stop_tracking()
             container_metrics = self.ct_tracker.get_average_metrics()
             model_info = self.info()
-            if 'metadata' in model_info:
-                metadata = model_info['metadata']
-            elif 'card' in model_info:
-                metadata = model_info['card']
+            if "metadata" in model_info:
+                metadata = model_info["metadata"]
+            elif "card" in model_info:
+                metadata = model_info["card"]
             else:
                 metadata = {}
-            self._run_tracker.track(
-                input, result, metadata, container_metrics
-            )
+            self._run_tracker.track(input, result, metadata, container_metrics)
 
         return result
 
