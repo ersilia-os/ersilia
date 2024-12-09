@@ -235,6 +235,7 @@ class ReadmeUpdater:
 
 
 def insert_metadata_to_airtable(model, contributor, api_key):
+    # Works with airtable-insert option
     METADATA_YAML_FILE = "metadata.yml"
     ORG = "ersilia-os"
     BRANCH = "main"
@@ -264,6 +265,7 @@ def insert_metadata_to_airtable(model, contributor, api_key):
 
 
 def update_metadata_to_airtable(user, repo, branch, api_key):
+    # Works with airtable-update option
     rm = RepoMetadataFile(model_id=repo, config_json=None)
     data = rm.read_information(org=user, branch=branch)
     if api_key:
@@ -272,10 +274,53 @@ def update_metadata_to_airtable(user, repo, branch, api_key):
 
 
 def update_readme_from_airtable(repo, path):
+    # Works with readme-update option
     rm = ReadmeUpdater(model_id=repo, repo_path=path, commit=False)
     rm.update()
 
 
-
 if __name__ == "__main__":
-    pass
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+
+    subparsers = parser.add_subparsers(dest="command")
+
+    # Main commands
+    airtable_insert = subparsers.add_parser("airtable-insert", help="Insert metadata to AirTable")
+    airtable_update = subparsers.add_parser("airtable-update", help="Update metadata to AirTable")
+    readme_update = subparsers.add_parser("readme-update", help="Update README from AirTable")
+
+    # Options for airtable-insert
+    airtable_insert.add_argument("--model", type=str, required=True)
+    airtable_insert.add_argument("--contributor", type=str, required=True)
+    airtable_insert.add_argument("--api-key", type=str, required=True)
+
+    # Options for airtable-update
+    airtable_update.add_argument("--user", type=str, required=True)
+    airtable_update.add_argument("--repo", type=str, required=True)
+    airtable_update.add_argument("--branch", type=str, required=True)
+    airtable_update.add_argument("--api-key", type=str, required=True)
+
+    # Options for readme-update
+    readme_update.add_argument("--repo", type=str, required=True)
+    readme_update.add_argument("--path", type=str, required=True)
+
+    args = parser.parse_args()
+
+    if args.command == "airtable-insert":
+        print("Inserting metadata to AirTable")
+        insert_metadata_to_airtable(args.model, args.contributor, args.api_key)
+    
+    elif args.command == "airtable-update":
+        print("Updating metadata to AirTable")
+        # update_metadata_to_airtable(args.user, args.repo, args.branch, args.api_key)
+
+    elif args.command == "readme-update":
+        print("Updating README from AirTable")
+        # update_readme_from_airtable(args.repo, args.path)
+
+    else:
+        print("Invalid command")
+        parser.print_help()
+        exit(1)
