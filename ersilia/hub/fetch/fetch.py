@@ -258,8 +258,8 @@ class ModelFetcher(ErsiliaBase):
         except StandardModelExampleError:
             self.logger.debug("Standard model example failed, deleting artifacts")
             do_delete = yes_no_input(
-                "Do you want to delete the model artifacts? [Y/n]", default_answer="Y"
-            )
+                "Do you want to delete the model artifacts? [Y/n]", 
+                default_answer="Y")
             if do_delete:
                 md = ModelFullDeleter(overwrite=False)
                 md.delete(model_id)
