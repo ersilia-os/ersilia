@@ -5,8 +5,7 @@ import requests
 import random
 
 from ersilia.utils.exceptions_utils.card_exceptions import InputBaseInformationError
-from .interfaces import AirtableInterface
-from .json_models_interface import JsonModelsInterface
+from .interfaces import JsonModelsInterface
 from ... import ErsiliaBase
 
 
@@ -27,15 +26,6 @@ class ModelSampler(ErsiliaBase):
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    def _get_models_from_airtable(self):
-        airtable_interface = AirtableInterface(config_json=self.config_json)
-        model_ids = []
-        for record in airtable_interface.items():
-            status = record["fields"][_STATUS_FIELD]
-            if status == _MODEL_STATUS_READY:
-                model_ids += [record["fields"][_MODEL_ID_FIELD]]
-        return model_ids
-
     def _get_models_from_s3_models_json(self):
         json_models_interface = JsonModelsInterface(config_json=self.config_json)
         models = json_models_interface.items_all()
@@ -48,8 +38,6 @@ class ModelSampler(ErsiliaBase):
 
     def sample(self, n_samples, file_name=None):
         entities = self._get_models_from_s3_models_json()
-        if len(entities) == 0:
-            entities = self._get_models_from_airtable()
         entities = random.sample(entities, min(len(entities), n_samples))
         if file_name is None:
             for e in entities:
@@ -69,19 +57,6 @@ class InputSampler(ErsiliaBase):
         assert result is not None
         self.input_type = result[0]
         self.input_shape = result[1]
-
-    def _get_input_type_and_shape_from_airtable(self):
-        airtable_interface = AirtableInterface(config_json=self.config_json)
-        for records in airtable_interface.items():
-            fields = records["fields"]
-            model_id = fields[_MODEL_ID_FIELD]
-            input_type = fields[_INPUT_TYPE_FIELD]
-            input_shape = fields[_INPUT_SHAPE_FIELD]
-            status = fields[_STATUS_FIELD]
-            if status == _MODEL_STATUS_READY:
-                if model_id == self.model_id:
-                    return input_type, input_shape
-        return None
 
     def _get_input_type_and_shape_from_metadata(self):
         dest_path = self._model_path(self.model_id)
@@ -110,9 +85,6 @@ class InputSampler(ErsiliaBase):
         if res is not None:
             return res
         res = self._get_input_type_and_shape_from_s3_models_json()
-        if res is not None:
-            return res
-        res = self._get_input_type_and_shape_from_airtable()
         if res is not None:
             return res
         return None

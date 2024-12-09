@@ -31,7 +31,7 @@ class ModelHostedFetcher(ErsiliaBase):
 
     def _is_available_unknown_url(self, model_id):
         self.logger.debug(
-            "Trying to find an available URL where the model is hosted using Models JSON or Airtable"
+            "Trying to find an available URL where the model is hosted using Models JSON"
         )
         mdl_url_resolver = ModelURLResolver(
             model_id=model_id, config_json=self.config_json
