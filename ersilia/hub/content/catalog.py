@@ -9,8 +9,8 @@ import csv
 from .card import ModelCard
 from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
-from ...auth.auth import Auth
-from ...default import GITHUB_ORG, BENTOML_PATH, MODEL_SOURCE_FILE
+from ...db.hubdata.interfaces import JsonModelsInterface
+from ...default import BENTOML_PATH, MODEL_SOURCE_FILE
 from ...default import TableConstants
 from ... import logger
 
@@ -236,70 +236,31 @@ class ModelCatalog(ErsiliaBase):
     def airtable(self):
         """List models available in AirTable Ersilia Model Hub base"""
         if webbrowser:
-            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")
+            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV") #TODO Hardcoded
 
-    def _get_all_github_public_repos(self):
-        url = "https://api.github.com/users/{0}/repos".format(GITHUB_ORG)
-        while url:
-            response = requests.get(url, params={"per_page": 100})
-            response.raise_for_status()
-            yield from response.json()
-            if "next" in response.links:
-                url = response.links["next"]["url"]  # get the next page
-            else:
-                break  # no more pages, stop the loop
-
-    def github(self):
-        """List models available in the GitHub model hub repository"""
-        if Github is None:
-            token = None
-        else:
-            token = Auth().oauth_token()
-        logger.debug(
-            "Looking for model repositories in {0} organization".format(GITHUB_ORG)
-        )
-        if token:
-            self.logger.debug("Token provided: ***")
-            g = Github(token)
-            repo_list = [i for i in g.get_user().get_repos()]
-            repos = []
-            for r in repo_list:
-                owner, name = r.full_name.split("/")
-                if owner != GITHUB_ORG:
-                    continue
-                repos += [name]
-        else:
-            self.logger.debug("Token not provided!")
-            repos = []
-            for repo in self._get_all_github_public_repos():
-                repos += [repo["name"]]
-        models = []
-        for repo in repos:
-            if self._is_eos(repo):
-                models += [repo]
-        logger.info("Found {0} models".format(len(models)))
-        return models
 
     def hub(self):
-        """List models available in Ersilia model hub repository"""
+        """List models available in Ersilia model hub from the S3 JSON"""
         mc = ModelCard()
-        models = self.github()
-        if self.only_identifier:
-            R = []
-            for model_id in models:
-                R += [[model_id]]
-            return CatalogTable(R, columns=["Identifier"])
-        else:
-            R = []
-            for model_id in models:
-                card = mc.get(model_id)
-                if card is None:
-                    continue
-                slug = self._get_slug(card)
-                title = self._get_title(card)
-                R += [[model_id, slug, title]]
-            return CatalogTable(R, columns=["Identifier", "Slug", "Title"])
+        ji = JsonModelsInterface()
+        models = ji.items_all()
+        R = []
+        for model in models:
+            status = self._get_status(model)
+            if status == "In Progress":
+                continue
+            
+            identifier = self._get_item(model, "identifier")
+            if self.only_identifier:
+                R += [[identifier]]
+            else:
+                slug = self._get_slug(model)
+                title = self._get_title(model)
+                R += [[identifier, slug, title]]
 
+        columns = ["Identifier"] if self.only_identifier else ["Identifier", "Slug", "Title"]
+        return CatalogTable(R, columns=columns)
+                
     def local(self):
         """List models available locally"""
         mc = ModelCard()

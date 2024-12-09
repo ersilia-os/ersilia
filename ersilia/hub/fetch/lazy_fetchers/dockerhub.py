@@ -101,19 +101,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
     async def copy_example_if_available(self, model_id):
         # This needs to accommodate ersilia pack
         for pf in PREDEFINED_EXAMPLE_FILES:
-            fr_file = f"/root/eos/dest/{model_id}/{pf}"
-            to_file = f"{EOS}/dest/{model_id}/input.csv"
-            try:
-                self.simple_docker.cp_from_image(
-                    img_path=fr_file,
-                    local_path=to_file,
-                    org=DOCKERHUB_ORG,
-                    img=model_id,
-                    tag=DOCKERHUB_LATEST_TAG,
-                )
-                return
-            except:
-                self.logger.debug("Could not find example file in docker image")
+            await self._copy_from_image_to_local(model_id, pf)
 
     async def modify_information(self, model_id):
         """
