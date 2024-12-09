@@ -4,7 +4,7 @@ import importlib
 
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
-from ...db.hubdata.json_models_interface import JsonModelsInterface
+from ...db.hubdata.interfaces import JsonModelsInterface
 from ... import ErsiliaBase
 from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...hub.delete.delete import ModelFullDeleter

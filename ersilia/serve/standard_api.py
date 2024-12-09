@@ -295,7 +295,6 @@ class StandardCSVRunApi(ErsiliaBase):
                     result[idx] = item[list(item.keys())[0]]
 
         assert len(input_data) == len(result)
-
         with open(output_data, "w") as f:
             writer = csv.writer(f)
             writer.writerow(self.header)

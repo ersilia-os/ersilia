@@ -22,7 +22,6 @@ def create_ersilia_cli():
     if is_contributor:
         cmd.publish()
 
-    cmd.sample()
     cmd.serve()
     cmd.run()
 

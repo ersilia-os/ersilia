@@ -89,10 +89,6 @@ ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
 # Other
 FEATURE_MERGE_PATTERN = "---"
 
-# Airtable
-AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
-AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
-
 # URLS
 ERSILIA_WEB_URL = "https://ersilia.io"
 ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"

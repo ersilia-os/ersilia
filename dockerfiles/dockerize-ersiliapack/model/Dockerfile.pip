@@ -7,4 +7,7 @@ RUN mkdir /root/bundles && ersilia_model_pack --repo_path $MODEL --bundles_repo_
     rm -rf /root/$MODEL && rm -rf /root/.cache && \
     cp /root/bundles/$MODEL/*/information.json /root/information.json && \
     cp /root/bundles/$MODEL/*/api_schema.json /root/api_schema.json && \
-    cp /root/bundles/$MODEL/*/status.json /root/status.json
+    cp /root/bundles/$MODEL/*/status.json /root/status.json && \
+    mkdir -p /root/model/framework/examples && \
+    cp /root/bundles/$MODEL/*/model/framework/examples/output.csv /root/model/framework/examples/output.csv && \
+    cp /root/bundles/$MODEL/*/model/framework/examples/input.csv /root/model/framework/examples/input.csv
