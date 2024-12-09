@@ -72,8 +72,7 @@
              
   <h1>Source code for ersilia.hub.fetch</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">validators</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">AirtableInterface</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.json_models_interface</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 
 <span class="n">MODEL_INSTALL_COMMANDS_FILE</span> <span class="o">=</span> <span class="s2">&quot;model_install_commands.sh&quot;</span>
@@ -93,7 +92,6 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ai</span> <span class="o">=</span> <span class="n">AirtableInterface</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ji</span> <span class="o">=</span> <span class="n">JsonModelsInterface</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">models_cache</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -119,19 +117,6 @@
                 <span class="k">return</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model was not found in S3 Models JSON&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_find_url_using_airtable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">url_field</span> <span class="o">=</span> <span class="n">HOST_URL</span>
-        <span class="n">identifier_field</span> <span class="o">=</span> <span class="n">IDENTIFIER</span>
-        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ai</span><span class="o">.</span><span class="n">items_all</span><span class="p">():</span>
-            <span class="n">fields</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">fields</span><span class="p">[</span><span class="n">identifier_field</span><span class="p">]</span> <span class="o">==</span> <span class="n">model_id</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">url_field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">fields</span><span class="p">[</span><span class="n">url_field</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No hosted URL found for this model in AirTable&quot;</span><span class="p">)</span>
-                    <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model was not found in AirTable&quot;</span><span class="p">)</span>
-
 <div class="viewcode-block" id="ModelURLResolver.resolve_valid_hosted_model_url">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.ModelURLResolver.resolve_valid_hosted_model_url">[docs]</a>
     <span class="k">def</span> <span class="nf">resolve_valid_hosted_model_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
@@ -147,9 +132,7 @@
 <span class="sd">        Tuple[bool, str]</span>
 <span class="sd">            Tuple containing a boolean indicating if the URL is valid and the URL itself</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_url_using_s3_models_json</span><span class="p">(</span>
-            <span class="n">model_id</span>
-        <span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_url_using_airtable</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_url_using_s3_models_json</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This model has an associated URL: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>

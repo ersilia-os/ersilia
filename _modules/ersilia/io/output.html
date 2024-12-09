@@ -84,8 +84,7 @@
 <span class="kn">from</span> <span class="nn">..serve.schema</span> <span class="kn">import</span> <span class="n">ApiSchema</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..utils.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5Data</span><span class="p">,</span> <span class="n">Hdf5DataStacker</span>
-<span class="kn">from</span> <span class="nn">..db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">AirtableInterface</span>
-<span class="kn">from</span> <span class="nn">..db.hubdata.json_models_interface</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+<span class="kn">from</span> <span class="nn">..db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">FEATURE_MERGE_PATTERN</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span>
 <span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">resolve_pack_method</span>
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
@@ -357,22 +356,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The Output Shape key is missing&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output_shape</span>
 
-    <span class="k">def</span> <span class="nf">_get_outputshape_from_airtable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">airtable_interface</span> <span class="o">=</span> <span class="n">AirtableInterface</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">output_shape</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">airtable_interface</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">_model_id</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">_model_id</span> <span class="o">==</span> <span class="n">model_id</span><span class="p">:</span>
-                    <span class="n">output_shape</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The Output Shape field is empty&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">output_shape</span>
-
     <span class="k">def</span> <span class="nf">_get_outputshape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">output_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_outputshape_from_s3_models_json</span><span class="p">(</span>
-            <span class="n">model_id</span>
-        <span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_outputshape_from_airtable</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">output_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_outputshape_from_s3_models_json</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">output_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Output shape not found&quot;</span><span class="p">)</span>
             <span class="n">output_shape</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>

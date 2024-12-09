@@ -78,8 +78,7 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">...auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">AirtableInterface</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.json_models_interface</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
 <span class="kn">import</span> <span class="nn">validators</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -560,15 +559,6 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_file_content_from_github</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">branch</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="RepoMetadataFile.exists">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile.exists">[docs]</a>
-    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_json_file</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="n">org</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
-
-
 <div class="viewcode-block" id="RepoMetadataFile.read_information">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile.read_information">[docs]</a>
     <span class="k">def</span> <span class="nf">read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_or_yaml_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -578,8 +568,10 @@
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_or_yaml_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">json_or_yaml_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">json_or_yaml_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">):</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File format not supported&quot;</span><span class="p">)</span>
         <span class="n">bi</span> <span class="o">=</span> <span class="n">BaseInformation</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">bi</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">bi</span></div>
@@ -587,151 +579,19 @@
 
 <div class="viewcode-block" id="RepoMetadataFile.write_information">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile.write_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BaseInformation</span><span class="p">,</span> <span class="n">json_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">write_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BaseInformation</span><span class="p">,</span> <span class="n">json_or_yaml_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">json_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">json_or_yaml_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">json_or_yaml_path</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">json_or_yaml_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">json_or_yaml_path</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="AirtableMetadata">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableMetadata">[docs]</a>
-<span class="k">class</span> <span class="nc">AirtableMetadata</span><span class="p">(</span><span class="n">AirtableInterface</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="n">AirtableInterface</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_warning_empty_row_message</span> <span class="o">=</span> <span class="s2">&quot;The AirTable field Identifier was not found! Please check that there are not empty rows.&quot;</span>
-
-    <span class="k">def</span> <span class="nf">_find_record</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">records</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span>
-            <span class="n">page_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_size</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rows</span>
-        <span class="p">):</span>
-            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">==</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]:</span>
-                        <span class="n">data</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_warning_empty_row_message</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">def</span> <span class="nf">_find_airtable_record_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">rec_id</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">records</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span>
-            <span class="n">page_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_size</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rows</span>
-        <span class="p">):</span>
-            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">==</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]:</span>
-                        <span class="n">rec_id</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_warning_empty_row_message</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">rec_id</span>
-
-<div class="viewcode-block" id="AirtableMetadata.read_information">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableMetadata.read_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_record</span><span class="p">()</span>
-        <span class="n">bi</span> <span class="o">=</span> <span class="n">BaseInformation</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">bi</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">bi</span></div>
-
-
-<div class="viewcode-block" id="AirtableMetadata.write_information">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableMetadata.write_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BaseInformation</span><span class="p">):</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;GitHub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">github</span>
-        <span class="n">rec_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_airtable_record_id</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">rec_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> does not exist in AirTable. Creating new record&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> exists in AirTable. Updating record&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">record_id</span><span class="o">=</span><span class="n">rec_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="n">d</span><span class="p">)</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="ReadmeMetadata">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ReadmeMetadata">[docs]</a>
-<span class="k">class</span> <span class="nc">ReadmeMetadata</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ReadmeMetadata.read_information">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ReadmeMetadata.read_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Cannot read directly from README file. Using AirTable instead&quot;</span>
-        <span class="p">)</span>
-        <span class="n">am</span> <span class="o">=</span> <span class="n">AirtableMetadata</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">bi</span> <span class="o">=</span> <span class="n">am</span><span class="o">.</span><span class="n">read_information</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">bi</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">bi</span></div>
-
-
-<div class="viewcode-block" id="ReadmeMetadata.write_information">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ReadmeMetadata.write_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BaseInformation</span><span class="p">,</span> <span class="n">readme_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;# </span><span class="si">{0}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">])</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Description&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## Identifiers</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* EOS model ID: `</span><span class="si">{0}</span><span class="s2">`</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">])</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Slug: `</span><span class="si">{0}</span><span class="s2">`</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">])</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## Characteristics</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Input: `</span><span class="si">{0}</span><span class="s2">`</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Input&quot;</span><span class="p">]))</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Input Shape: `</span><span class="si">{0}</span><span class="s2">`</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">])</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Task: `</span><span class="si">{0}</span><span class="s2">`</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Task&quot;</span><span class="p">]))</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Output: `</span><span class="si">{0}</span><span class="s2">`</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Output&quot;</span><span class="p">]))</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Output Type: `</span><span class="si">{0}</span><span class="s2">`</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">]))</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Output Shape: `</span><span class="si">{0}</span><span class="s2">`</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">])</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Interpretation: </span><span class="si">{0}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Interpretation&quot;</span><span class="p">])</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## References</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* [Publication](</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">])</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* [Source Code](</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Source Code&quot;</span><span class="p">])</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* Ersilia contributor: [</span><span class="si">{0}</span><span class="s2">](https://github.com/</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;Contributor&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## Ersilia model URLs</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* [GitHub](</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">github</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;S3&quot;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* [AWS S3](</span><span class="si">{0}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="s2">&quot;DockerHub&quot;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;* [DockerHub](</span><span class="si">{0}</span><span class="s2">) (</span><span class="si">{1}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">],</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">])</span>
-            <span class="p">)</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## Citation</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;If you use this model, please cite the [original authors](</span><span class="si">{0}</span><span class="s2">) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## License</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;This package is licensed under a GPL-3.0 license. The model contained within this package is licensed under a </span><span class="si">{0}</span><span class="s2"> license.</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;License&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;Notice: Ersilia grants access to these models &#39;as is&#39; provided by the original authors, please refer to the original code repository and/or publication if you use the model in your research.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;## About Us</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;[Help us](https://www.ersilia.io/donate) achieve our mission!&quot;</span>
-        <span class="k">if</span> <span class="n">readme_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">text</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">readme_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File format not supported&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
 
@@ -837,50 +697,6 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="AirtableCard">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableCard">[docs]</a>
-<span class="k">class</span> <span class="nc">AirtableCard</span><span class="p">(</span><span class="n">AirtableInterface</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
-        <span class="n">AirtableInterface</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_find_card</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
-        <span class="n">card</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">records</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span>
-            <span class="n">page_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">page_size</span><span class="p">,</span> <span class="n">max_records</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_rows</span>
-        <span class="p">):</span>
-            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
-                <span class="n">fields</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">][</span><span class="n">field</span><span class="p">]:</span>
-                    <span class="n">card</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">card</span>
-
-<div class="viewcode-block" id="AirtableCard.find_card_by_model_id">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableCard.find_card_by_model_id">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_card_by_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_card</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot;Identifier&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="AirtableCard.find_card_by_slug">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableCard.find_card_by_slug">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_card_by_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_card</span><span class="p">(</span><span class="n">slug</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="AirtableCard.get">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.AirtableCard.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_card_by_model_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">slug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_card_by_slug</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either model_id, slug or mode must be provided&quot;</span><span class="p">)</span></div>
 </div>
 
 
@@ -1006,10 +822,6 @@
             <span class="k">return</span> <span class="n">card</span>
         <span class="n">jc</span> <span class="o">=</span> <span class="n">S3JsonCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">card</span> <span class="o">=</span> <span class="n">jc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">card</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">card</span>
-        <span class="n">ac</span> <span class="o">=</span> <span class="n">AirtableCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">card</span> <span class="o">=</span> <span class="n">ac</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">card</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">card</span>
         <span class="n">rc</span> <span class="o">=</span> <span class="n">ReadmeCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
