@@ -677,6 +677,7 @@ class ModelCard(object):
         self.config_json = config_json
 
     def _get(self, model_id, slug):
+        print(model_id)
         lc = LocalCard(config_json=self.config_json)
         card = lc.get(model_id, slug)
         if card is not None:

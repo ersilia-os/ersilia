@@ -246,18 +246,17 @@ class ModelCatalog(ErsiliaBase):
         models = ji.items_all()
         R = []
         for model in models:
-            card = mc.get(model)
-            if card is None:
-                continue
-            status = self._get_status(model, card)
+            status = self._get_status(model)
             if status == "In Progress":
                 continue
+            
+            identifier = self._get_item(model, "identifier")
             if self.only_identifier:
-                R += [[model]]
+                R += [[identifier]]
             else:
-                slug = self._get_slug(card)
-                title = self._get_title(card)
-                R += [[model, slug, title]]
+                slug = self._get_slug(model)
+                title = self._get_title(model)
+                R += [[identifier, slug, title]]
 
         columns = ["Identifier"] if self.only_identifier else ["Identifier", "Slug", "Title"]
         return CatalogTable(R, columns=columns)
