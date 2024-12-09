@@ -59,7 +59,7 @@ class ModelStandardExample(ErsiliaBase):
         self.logger.debug(output_csv)
         commands = [
             "ersilia serve {0}".format(self.model_id),
-            "ersilia example -n 3 -c -f {0}".format(input_csv),
+            "ersilia example inputs -n 3 -c -f {0}".format(input_csv),
             "ersilia -v run -i {0} -o {1} > {2} 2>&1".format(
                 input_csv, output_csv, run_log
             ),
