@@ -64,7 +64,6 @@ class StandardCSVRunApi(ErsiliaBase):
             with open(os.path.join(self.path, INFORMATION_FILE), "r") as f:
                 info = json.load(f)
                 return info
-
         except FileNotFoundError:
             self.logger.debug(
                 f"Error: File '{INFORMATION_FILE}' not found in the path '{self.path}'"
@@ -295,6 +294,7 @@ class StandardCSVRunApi(ErsiliaBase):
                     result[idx] = item[list(item.keys())[0]]
 
         assert len(input_data) == len(result)
+
         with open(output_data, "w") as f:
             writer = csv.writer(f)
             writer.writerow(self.header)
