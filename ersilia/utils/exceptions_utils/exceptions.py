@@ -93,7 +93,9 @@ class EmptyOutputError(ErsiliaError):
         output_file = os.path.join(framework_dir, "example_output.csv")
         tmp_folder = make_temp_dir(prefix="ersilia-")
         log_file = os.path.join(tmp_folder, "terminal.log")
-        run_command("ersilia example inputs {0} -n 3 -f {1}".format(self.model_id, input_file))
+        run_command(
+            "ersilia example inputs {0} -n 3 -f {1}".format(self.model_id, input_file)
+        )
         cmd = "bash {0} {1} {2} {3} 2>&1 | tee -a {4}".format(
             exec_file, framework_dir, input_file, output_file, log_file
         )
