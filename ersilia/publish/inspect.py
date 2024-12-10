@@ -80,27 +80,16 @@ class ModelInspector:
         self.pack_type = self.get_pack_type()
      
     def get_pack_type(self):
-        if self.dir is None:
-            resolver = TemplateResolver(
-                model_id=self.model
-              )
-            if resolver.is_bentoml():
-                return PACK_METHOD_BENTOML
-            elif resolver.is_fastapi():
-                return PACK_METHOD_FASTAPI
-            else:
-                return None
+        resolver = TemplateResolver(
+            model_id=self.model,
+            repo_path=self.dir
+        )
+        if resolver.is_bentoml():
+            return PACK_METHOD_BENTOML
+        elif resolver.is_fastapi():
+            return PACK_METHOD_FASTAPI
         else:
-            resolver = TemplateResolver(
-                model_id=self.model,
-                repo_path=self.dir
-            )
-            if resolver.is_bentoml():
-                return PACK_METHOD_BENTOML
-            elif resolver.is_fastapi():
-                return PACK_METHOD_FASTAPI
-            else:
-                return None
+            return None
             
     def check_repo_exists(self):
         if self._url_exists(self.repo_url):
