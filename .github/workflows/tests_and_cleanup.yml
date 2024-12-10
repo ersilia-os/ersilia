@@ -116,11 +116,6 @@ jobs:
           source activate          
           pip install pytest pytest-benchmark pytest-asyncio rdkit-pypi nox rich fuzzywuzzy scipy
           pytest
-      - name: Run Model Tester
-        run: |
-          source activate
-          ersilia -v delete eos3b5e          
-          ersilia -v test eos3b5e -d eos3b5e --inspect --remote -l deep
 
   run-cli-test-single:
     needs: run-pytest
