@@ -90,8 +90,8 @@
 
     <span class="c1"># Example usage: ersilia example {MODEL} -n 10 [--file_name {FILE_NAME} --simple/--complete]</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">group</span><span class="p">(</span>
-            <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Generate sample of Ersilia models or model inputs&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;This command can sample both ersilia models, or inputs for a given or currently running model.</span><span class="se">\n</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Generate sample of Ersilia models or model inputs&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;This command can sample both ersilia models, or inputs for a given or currently running model.</span><span class="se">\n</span>
 <span class="s2">For the model input, the number of examples can be specified, as well as a file name.</span><span class="se">\n</span>
 <span class="s2">Simple inputs only contain the essential information, while complete inputs contain key and other fields, potentially.</span><span class="se">\n</span>
 <span class="s2">For ersilia models, only model identifiers are returned for a given sample size.</span>
@@ -100,7 +100,6 @@
     <span class="k">def</span> <span class="nf">example</span><span class="p">():</span>
         <span class="k">pass</span>
 
-    
     <span class="nd">@example</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--n_samples&quot;</span><span class="p">,</span> <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">)</span>
@@ -115,7 +114,10 @@
             <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;Error: No model id given and no model found running in this shell.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">),</span>
+                    <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
+                        <span class="s2">&quot;Error: No model id given and no model found running in this shell.&quot;</span><span class="p">,</span>
+                        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                    <span class="p">),</span>
                     <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">return</span>
@@ -129,7 +131,6 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">,</span> <span class="n">try_predefined</span><span class="o">=</span><span class="n">predefined</span><span class="p">)</span>
-
 
     <span class="nd">@example</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--n_samples&quot;</span><span class="p">,</span> <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">)</span>
