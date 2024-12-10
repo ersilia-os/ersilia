@@ -74,8 +74,10 @@ class BaseIOGetter(ErsiliaBase):
     def get(self, model_id=None, input_type=None, input_shape=None):
         if model_id is not None:
             return self._get_from_model(model_id=model_id)
-        else:
+        elif input_type is not None and input_shape is not None:
             return self._get_from_specs(input_type=input_type, input_shape=input_shape)
+        else:
+            raise NullModelIdentifierError(model=model_id)
 
 
 class _GenericAdapter(object):

@@ -24,8 +24,6 @@ def fetch_cmd():
         "an EOS folder, then packed to a BentoML bundle",
     )
     @click.argument("model", type=click.STRING)
-    @click.option("--mode", "-m", default=None, type=click.STRING)
-    @click.option("--dockerize/--not-dockerize", default=False)
     @click.option(
         "--overwrite/--reuse",
         default=True,
@@ -59,12 +57,6 @@ def fetch_cmd():
         help="Force fetch from hosted service. This only creates a basic folder structure for the model, the model is not actually downloaded.",
     )
     @click.option(
-        "--from_url",
-        type=click.STRING,
-        default=None,
-        help="Fetch a model based on a URL. This only creates a basic folder structure for the model, the model is not actually downloaded.",
-    )
-    @click.option(
         "--with_bentoml",
         is_flag=True,
         default=False,
@@ -78,15 +70,12 @@ def fetch_cmd():
     )
     def fetch(
         model,
-        mode,
-        dockerize,
         overwrite,
         from_dir,
         from_github,
         from_dockerhub,
         from_s3,
         from_hosted,
-        from_url,
         with_bentoml,
         with_fastapi,
     ):
@@ -104,8 +93,6 @@ def fetch_cmd():
         )
         mf = ModelFetcher(
             repo_path=from_dir,
-            mode=mode,
-            dockerize=dockerize,
             overwrite=overwrite,
             force_from_github=from_github,
             force_from_s3=from_s3,
@@ -113,7 +100,7 @@ def fetch_cmd():
             force_from_hosted=from_hosted,
             force_with_bentoml=with_bentoml,
             force_with_fastapi=with_fastapi,
-            hosted_url=from_url,
+            hosted_url=from_hosted,
             local_dir=from_dir,
         )
         is_fetched = _fetch(mf, model_id)
