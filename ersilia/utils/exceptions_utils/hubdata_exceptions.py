@@ -1,5 +1,6 @@
 from .exceptions import ErsiliaError
 
+
 # Note: Not really used anywhere right now except in the sanitize class
 class InvalidUrlInAirtableError(ErsiliaError):
     def __init__(self, url):

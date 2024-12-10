@@ -4,14 +4,13 @@ from pathlib import Path
 
 
 class NoxSession:
-   
     def __init__(self, name):
         self.name = name
 
     def execute(self, noxfile):
         try:
             subprocess.run(
-                ["nox","-f", noxfile, "-s", self.name],
+                ["nox", "-f", noxfile, "-s", self.name],
                 check=True,
             )
             print(f"Session '{self.name}' executed successfully.")
@@ -40,10 +39,9 @@ class NoxRunner:
         self.queue.append(NoxSession(session_name))
 
     def execute_all(self):
-       
         for session in self.queue:
             session.execute(self.noxfile)
-        self.queue.clear() 
+        self.queue.clear()
 
     def clear_queue(self):
         self.queue.clear()
@@ -68,4 +66,3 @@ class NoxRunner:
 
     def test_conventional_run(self):
         self.add_session("test_conventional_run")
-

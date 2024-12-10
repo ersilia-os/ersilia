@@ -29,12 +29,11 @@ def mock_set_apis():
 
 @pytest.fixture
 def mock_session():
-    with patch.object(
-        Session, "current_model_id", return_value=MODELS[1]
-    ), patch.object(
-        Session, "current_service_class", return_value="docker"
-    ), patch.object(Session, "tracking_status", return_value=False), patch.object(
-        Session, "current_output_source", return_value="LOCAL_ONLY"
+    with (
+        patch.object(Session, "current_model_id", return_value=MODELS[1]),
+        patch.object(Session, "current_service_class", return_value="docker"),
+        patch.object(Session, "tracking_status", return_value=False),
+        patch.object(Session, "current_output_source", return_value="LOCAL_ONLY"),
     ):
         yield
 

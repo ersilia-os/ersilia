@@ -249,7 +249,7 @@ def insert_metadata_to_airtable(model, contributor, api_key):
     if r.status_code == 200:
         text = r.content
         data = yaml.safe_load(text)
-    
+
     airtable_data = {}
     airtable_data["Identifier"] = model
     airtable_data["Slug"] = data["Slug"]
@@ -286,9 +286,15 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers(dest="command")
 
     # Main commands
-    airtable_insert = subparsers.add_parser("airtable-insert", help="Insert metadata to AirTable")
-    airtable_update = subparsers.add_parser("airtable-update", help="Update metadata to AirTable")
-    readme_update = subparsers.add_parser("readme-update", help="Update README from AirTable")
+    airtable_insert = subparsers.add_parser(
+        "airtable-insert", help="Insert metadata to AirTable"
+    )
+    airtable_update = subparsers.add_parser(
+        "airtable-update", help="Update metadata to AirTable"
+    )
+    readme_update = subparsers.add_parser(
+        "readme-update", help="Update README from AirTable"
+    )
 
     # Options for airtable-insert
     airtable_insert.add_argument("--model", type=str, required=True)
@@ -310,7 +316,7 @@ if __name__ == "__main__":
     if args.command == "airtable-insert":
         print("Inserting metadata to AirTable")
         insert_metadata_to_airtable(args.model, args.contributor, args.api_key)
-    
+
     elif args.command == "airtable-update":
         print("Updating metadata to AirTable")
         # update_metadata_to_airtable(args.user, args.repo, args.branch, args.api_key)

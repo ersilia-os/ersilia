@@ -236,8 +236,7 @@ class ModelCatalog(ErsiliaBase):
     def airtable(self):
         """List models available in AirTable Ersilia Model Hub base"""
         if webbrowser:
-            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV") #TODO Hardcoded
-
+            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")  # TODO Hardcoded
 
     def hub(self):
         """List models available in Ersilia model hub from the S3 JSON"""
@@ -249,7 +248,7 @@ class ModelCatalog(ErsiliaBase):
             status = self._get_status(model)
             if status == "In Progress":
                 continue
-            
+
             identifier = self._get_item(model, "identifier")
             if self.only_identifier:
                 R += [[identifier]]
@@ -258,9 +257,11 @@ class ModelCatalog(ErsiliaBase):
                 title = self._get_title(model)
                 R += [[identifier, slug, title]]
 
-        columns = ["Identifier"] if self.only_identifier else ["Identifier", "Slug", "Title"]
+        columns = (
+            ["Identifier"] if self.only_identifier else ["Identifier", "Slug", "Title"]
+        )
         return CatalogTable(R, columns=columns)
-                
+
     def local(self):
         """List models available locally"""
         mc = ModelCard()
