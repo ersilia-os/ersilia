@@ -22,7 +22,6 @@ def serve_cmd():
             from cloud precalculation store only ({OutputSource.CLOUD_ONLY})",
     )
     @click.option("--lake/--no-lake", is_flag=True, default=True)
-    @click.option("--docker/--no-docker", is_flag=True, default=False)
     @click.option(
         "--port",
         "-p",
@@ -39,11 +38,7 @@ def serve_cmd():
         required=False,
         default=False,
     )
-    def serve(model, output_source, lake, docker, port, track):
-        if docker:
-            service_class = "docker"
-        else:
-            service_class = None
+    def serve(model, output_source, lake, port, track):
         if OutputSource.is_cloud(output_source):
             if store_has_model(model_id=model):
                 echo("Model {0} found in inference store.".format(model))
@@ -53,7 +48,6 @@ def serve_cmd():
             model,
             output_source=output_source,
             save_to_lake=lake,
-            service_class=service_class,
             preferred_port=port,
             track_runs=track,
         )
