@@ -17,10 +17,11 @@ def mock_close():
 
 @pytest.fixture
 def mock_session():
-    with patch.object(Session, "current_model_id", return_value=MODEL_ID), patch.object(
-        Session, "current_service_class", return_value="pulled_docker"
-    ), patch.object(Session, "tracking_status", return_value=False), patch.object(
-        Session, "current_output_source", return_value="LOCAL_ONLY"
+    with (
+        patch.object(Session, "current_model_id", return_value=MODEL_ID),
+        patch.object(Session, "current_service_class", return_value="pulled_docker"),
+        patch.object(Session, "tracking_status", return_value=False),
+        patch.object(Session, "current_output_source", return_value="LOCAL_ONLY"),
     ):
         yield
 

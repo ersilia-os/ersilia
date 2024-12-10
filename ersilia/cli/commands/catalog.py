@@ -86,7 +86,7 @@ def catalog_cmd():
             except Exception as e:
                 click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
             return
-        
+
         # The idea here is to deter the user from running ersilia catalog --local --hub
         if local and hub:
             click.echo(
@@ -96,7 +96,7 @@ def catalog_cmd():
                 err=True,
             )
             return
-        
+
         mc = ModelCatalog()
         mc.only_identifier = False if more else True
 
@@ -104,28 +104,28 @@ def catalog_cmd():
             if browser:
                 mc.airtable()
                 return
-            
+
             catalog_table = mc.hub()
 
-        else: # This will work even if the user doesn't explicitly specify the --local flag
+        else:  # This will work even if the user doesn't explicitly specify the --local flag
             if browser:
                 click.echo(
                     click.style(
                         "Error: Cannot show local models in the browser.\nPlease use the --hub option to see models in the browser.",
-                        fg="red"
+                        fg="red",
                     )
                 )
                 return
             catalog_table = mc.local()
             if not catalog_table.data:
                 click.echo(
-                click.style(
-                    "No local models available. Please fetch a model by running 'ersilia fetch' command",
-                    fg="red",
+                    click.style(
+                        "No local models available. Please fetch a model by running 'ersilia fetch' command",
+                        fg="red",
                     )
                 )
                 return
-        
+
         if file_name is None:
             catalog = catalog_table.as_table() if as_table else catalog_table.as_json()
         else:

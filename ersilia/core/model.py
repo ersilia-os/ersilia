@@ -515,6 +515,9 @@ class ErsiliaModel(ErsiliaBase):
             return result
         else:
             self.logger.debug("Trying conventional run")
+            self.logger.debug("Input: {0}".format(input))
+            self.logger.debug("Output: {0}".format(output))
+            self.logger.debug("Batch size: {0}".format(batch_size))
             result = self._run(
                 input=input, output=output, batch_size=batch_size, track_run=track_run
             )
