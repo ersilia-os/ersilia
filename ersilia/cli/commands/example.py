@@ -27,6 +27,12 @@ def example_cmd():
         else:
             session = Session(config_json=None)
             model_id = session.current_model_id()
+            if model_id is None:
+                click.echo(
+                    click.style("Error: No model id given and no model found running in this shell.", fg="red"),
+                    err=True,
+                )
+                return
         eg = ExampleGenerator(model_id=model_id)
         if file_name is None:
             echo(
