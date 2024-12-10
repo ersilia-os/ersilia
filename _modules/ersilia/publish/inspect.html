@@ -71,364 +71,468 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.publish.inspect</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span></span><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">..hub.content.card</span> <span class="kn">import</span> <span class="n">RepoMetadataFile</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">METADATA_JSON_FILE</span>
-
-<span class="c1"># a namedtuple for the results</span>
+<span class="kn">from</span> <span class="nn">..hub.fetch.actions.template_resolver</span> <span class="kn">import</span> <span class="n">TemplateResolver</span>
+<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">INSTALL_YAML_FILE</span><span class="p">,</span> 
+    <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
+    <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
+    <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
+    <span class="n">RUN_FILE</span><span class="p">,</span>
+    <span class="n">PREDEFINED_EXAMPLE_FILES</span>
+<span class="p">)</span>
 <span class="n">Result</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Result&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">])</span>
-
+<span class="c1"># Base URL for the Ersilia OS Github</span>
+<span class="n">BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/ersilia-os/&quot;</span>
+<span class="n">RAW_CONTENT_URL</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{model}</span><span class="s2">/main/&quot;</span>
+<span class="n">REPO_API_URL</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com/repos/ersilia-os/</span><span class="si">{model}</span><span class="s2">/contents&quot;</span>
+<span class="n">USER_AGENT</span> <span class="o">=</span> <span class="s2">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36&quot;</span>
 
 <div class="viewcode-block" id="ModelInspector">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelInspector</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+<span class="k">class</span> <span class="nc">ModelInspector</span><span class="p">:</span>
 
+    <span class="n">RUN_FILE</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;model/framework/</span><span class="si">{</span><span class="n">RUN_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+    <span class="n">COMMON_FILES</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">RUN_FILE</span><span class="p">,</span>
+        <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">BENTOML_FOLDERS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;src&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.github&quot;</span>
+    <span class="p">]</span>
+    <span class="n">BENTOML_FILES</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
+        <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
+        <span class="s2">&quot;src/service.py&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pack.py&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.gitignore&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;input.csv&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    
+    <span class="n">ERSILIAPACK_FOLDERS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.github&quot;</span>
+    <span class="p">]</span>
+
+    <span class="n">ERSILIAPACK_FILES</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">INSTALL_YAML_FILE</span><span class="p">,</span>
+        <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
+        <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s2">&quot;.dockerignore&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.gitignore&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.gitattributes&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">BENTOML_FILES</span>     <span class="o">=</span> <span class="n">COMMON_FILES</span> <span class="o">+</span> <span class="n">BENTOML_FILES</span>
+    <span class="n">ERSILIAPACK_FILES</span> <span class="o">=</span> <span class="n">COMMON_FILES</span> <span class="o">+</span> <span class="n">ERSILIAPACK_FILES</span>
+
+    <span class="n">REQUIRED_FIELDS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;Publication&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;S3&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;DockerHub&quot;</span>
+    <span class="p">]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="nb">dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repo_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE_URL</span><span class="si">}{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_url</span> <span class="o">=</span> <span class="n">RAW_CONTENT_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pack_type</span><span class="p">()</span>
+     
+<div class="viewcode-block" id="ModelInspector.get_pack_type">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.get_pack_type">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_pack_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
+        <span class="k">elif</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+            
 <div class="viewcode-block" id="ModelInspector.check_repo_exists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_repo_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">check_repo_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Verify that the repository exists at a given link.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_url</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                <span class="kc">False</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Connection invalid, no github repository found at https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that this repository exists in the ersilia-os database.&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+                <span class="kc">True</span><span class="p">,</span> 
+                <span class="s2">&quot;Repository exists.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="kc">False</span><span class="p">,</span> 
+            <span class="sa">f</span><span class="s2">&quot;Repository not found at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_url</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ModelInspector.check_complete_metadata">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_metadata">[docs]</a>
     <span class="k">def</span> <span class="nf">check_complete_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Search for specific keys in metadata JSON file.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/main/metadata.json&quot;</span>  <span class="c1"># Get raw file from GitHub</span>
-        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># Make sure repo exists</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content_url</span><span class="si">}{</span><span class="n">METADATA_JSON_FILE</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="s2">&quot;bentoml&quot;</span> \
+            <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content_url</span><span class="si">}{</span><span class="n">METADATA_YAML_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                <span class="kc">False</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Metadata file could not be loated for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that the link https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/main/metadata.json is valid.&quot;</span><span class="p">,</span>
+                <span class="kc">False</span><span class="p">,</span> 
+                <span class="sa">f</span><span class="s2">&quot;Metadata file missing at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>  <span class="c1"># Save as json object</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_json</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span> 
+                <span class="s2">&quot;Failed to fetch or parse metadata.&quot;</span>
+            <span class="p">)</span>
 
-        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">missing_fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">field</span> 
+            <span class="k">for</span> <span class="n">field</span> 
+            <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">REQUIRED_FIELDS</span> 
+            <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metadata</span>
+        <span class="p">]</span>
+        <span class="n">invalid_urls</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">metadata</span><span class="p">[</span><span class="n">field</span><span class="p">])</span> 
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">REQUIRED_FIELDS</span> 
+            <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">metadata</span> 
+            <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_exists</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="n">field</span><span class="p">])</span>
+        <span class="p">]</span>
 
-        <span class="n">test</span> <span class="o">=</span> <span class="n">RepoMetadataFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">missing_fields</span><span class="p">:</span>
+            <span class="n">details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Missing fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing_fields</span><span class="p">)</span><span class="si">}</span><span class="s2">. </span><span class="se">\</span>
+<span class="s2">                  Required: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">REQUIRED_FIELDS</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">invalid_urls</span><span class="p">:</span>
+            <span class="n">details</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid URL in &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span> 
+                <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">url</span> 
+                <span class="ow">in</span> <span class="n">invalid_urls</span>
+            <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">RepoMetadataFile</span><span class="o">.</span><span class="n">read_information</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
-
+            <span class="n">RepoMetadataFile</span><span class="o">.</span><span class="n">read_information</span><span class="p">(</span><span class="n">RepoMetadataFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">details</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Error encountered when parsing through metadata file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="n">details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error encountered when parsing metadata file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">details</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">details</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Metadata is complete.&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="ModelInspector.check_dependencies_are_valid">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_dependencies_are_valid">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_dependencies_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> 
+            <span class="n">PACK_METHOD_FASTAPI</span>
+            <span class="p">]:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span> 
+                <span class="sa">f</span><span class="s2">&quot;Unsupported pack type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-            <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DOCKERFILE_FILE</span> 
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span> 
+            <span class="k">else</span> <span class="n">INSTALL_YAML_FILE</span>
+        <span class="p">)</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_dockerfile</span> 
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span> 
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_yml</span>
+        <span class="p">)</span>
+
+        <span class="n">content</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_file_content</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+
+        <span class="n">errors</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> dependencies are valid.&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> not found at </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">file</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">]</span>
-                    <span class="ow">and</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;Source Code&quot;</span><span class="p">]</span>
-                    <span class="ow">and</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">]</span>
-                    <span class="ow">and</span> <span class="n">file</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]</span>
-                <span class="p">):</span>  <span class="c1"># Parse through json object and ensure</span>
-                    <span class="n">pub_url_works</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">pub_url_works</span><span class="p">:</span>
-                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">details</span>
-                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;The URL (</span><span class="si">{</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;Publication&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) listed in the publication field of the metadata was not found (Error code </span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;Publication&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Please verify that this link is accurate. &quot;</span>
-                        <span class="p">)</span>
-                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-
-                    <span class="n">source_url_works</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;Source Code&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">source_url_works</span><span class="p">:</span>
-                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">details</span>
-                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;The URL (</span><span class="si">{</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;Source Code&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) listed in the source code field of the metadata was not able to be accessed (Error code </span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;Source Code&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Please verify that this link is accurate. &quot;</span>
-                        <span class="p">)</span>
-                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-
-                    <span class="n">s3_url_works</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">s3_url_works</span><span class="p">:</span>
-                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">details</span>
-                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;The URL (</span><span class="si">{</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;S3&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) listed in the S3 field of the metadata was not able to be accessed (Error code </span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;S3&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Please verify that this link is accurate. &quot;</span>
-                        <span class="p">)</span>
-                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-
-                    <span class="n">docker_url_works</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">404</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">docker_url_works</span><span class="p">:</span>
-                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">details</span>
-                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;The URL (</span><span class="si">{</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;DockerHub&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) listed in the DockerHub field of the metadata was not able to be accessed (Error code </span><span class="si">{</span><span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s1">&#39;DockerHub&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Please verify that this link is accurate. &quot;</span>
-                        <span class="p">)</span>
-                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">details</span>
-                        <span class="o">+</span> <span class="s2">&quot;A field in the metadata is empty. Please check that there are values listed for Publication, Source Code, S3, and DockerHub listed in the metadata. &quot;</span>
-                    <span class="p">)</span>
-                    <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># If a given key not present in json file return false</span>
-                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">details</span>
-                    <span class="o">+</span> <span class="s2">&quot;Not all required fields were found in the metadata. Please check that Publication, Source Code, S3, and DockerHub are all present in the metadata. &quot;</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="kc">None</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="kc">None</span><span class="p">,</span> 
+                    <span class="sa">f</span><span class="s2">&quot;Failed to read </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> content: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-
-            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">:</span>
-                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">details</span>
-                    <span class="o">+</span> <span class="s2">&quot;Connection failed when trying to access a URL listed in the metadata. Please check that URLs are all accurate and accessible. &quot;</span>
+        <span class="k">else</span><span class="p">:</span>  
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content_url</span><span class="si">}{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> not found at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_text</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="kc">None</span><span class="p">,</span> 
+                    <span class="sa">f</span><span class="s2">&quot;Failed to fetch </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> content.&quot;</span>
                 <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
-
+            <span class="k">return</span> <span class="n">content</span><span class="p">,</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="ModelInspector.check_complete_folder_structure">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_folder_structure">[docs]</a>
     <span class="k">def</span> <span class="nf">check_complete_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Validate folder structure of the repository.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># Make sure repo exists</span>
+        <span class="n">invalid_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_repo_structure</span><span class="p">(</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">invalid_items</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                <span class="kc">False</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Repository could not be loated for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that the link https://github.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> is valid.&quot;</span><span class="p">,</span>
+                <span class="kc">False</span><span class="p">,</span> 
+                <span class="sa">f</span><span class="s2">&quot;Missing folders: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_items</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-
-        <span class="n">folders</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;.github/workflows&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;model&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;src&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;model/checkpoints&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;model/framework&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;/tree/main/&quot;</span> <span class="o">+</span> <span class="n">name</span>
-            <span class="p">)</span>  <span class="c1"># Check if the folders are present in a given repository</span>
-            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">details</span>
-                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;No </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> folder could be found. please check that the link </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/blob/main/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is valid. &quot;</span>
-                <span class="p">)</span>
-                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># If the folder URL is not valid return false</span>
-
-        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span> <span class="s2">&quot;Dockerfile&quot;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;/blob/main/&quot;</span> <span class="o">+</span> <span class="n">name</span>
-            <span class="p">)</span>  <span class="c1"># Check if the files are present in a given repository</span>
-            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">details</span>
-                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;No </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> file could be found. please check that the link </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/blob/main/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is valid. &quot;</span>
-                <span class="p">)</span>
-                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># If the folder URL is not valid return false</span>
-
-        <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="kc">True</span><span class="p">,</span> 
+            <span class="s2">&quot;Folder structure is complete.&quot;</span>
+        <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ModelInspector.check_dependencies_are_valid">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_dependencies_are_valid">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_dependencies_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check dependencies specified in the Dockerfile.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/main/Dockerfile&quot;</span>  <span class="c1"># Get raw file from GitHub</span>
-        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># Make sure repo exists</span>
-            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                <span class="kc">False</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Dockerfile could not be loated for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that the link https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/main/Dockerfile is valid.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
-        <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">s</span><span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;RUN pip install&quot;</span><span class="p">):</span>
-                <span class="n">info</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;==&quot;</span><span class="p">)</span>
-                <span class="n">install</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;RUN &quot;</span><span class="p">)</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                    <span class="n">install</span><span class="p">,</span>
-                    <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error running </span><span class="si">{</span><span class="n">install</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">details</span>
-                        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;No version specification found for the line </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> in the Docker file. &quot;</span>
-                    <span class="p">)</span>
-                    <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">specification</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">specification</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">details</span>
-                            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;No version specification found for the line </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> in the Docker file. &quot;</span>
-                        <span class="p">)</span>
-                        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="k">if</span> <span class="s2">&quot;WORKDIR /repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]:</span>
-            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">details</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Dockerfile is missing &#39;WORKDIR /repo&#39; in the right place. &quot;</span>
-            <span class="p">)</span>
-            <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="s2">&quot;COPY . /repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="ow">and</span> <span class="s2">&quot;COPY ./repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="p">):</span>
-            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">details</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Dockerfile is missing &#39;COPY . /repo&#39; in the right place or has incorrect syntax. &quot;</span>
-            <span class="p">)</span>
-            <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ModelInspector.check_comptuational_performance">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_comptuational_performance">[docs]</a>
-    <span class="k">def</span> <span class="nf">check_comptuational_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Measure computational performance by serving the model and running predictions.</span>
-<span class="sd">        Uses --track flag to automatically upload performance metrics to S3.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
+<div class="viewcode-block" id="ModelInspector.check_computational_performance">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_computational_performance">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_computational_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> --track &amp;&amp; &quot;</span>  <span class="c1"># Track flag enables automatic S3 upload of metrics</span>
-                <span class="sa">f</span><span class="s2">&quot;ersilia example -f my_input.csv -n </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> &amp;&amp; &quot;</span>
-                <span class="s2">&quot;ersilia run -i my_input.csv &amp;&amp; &quot;</span>
-                <span class="s2">&quot;ersilia close&quot;</span>
-            <span class="p">)</span>
-
-            <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                <span class="n">cmd</span><span class="p">,</span>
-                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                    <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error serving model: </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-
-            <span class="n">endTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="n">executionTime</span> <span class="o">=</span> <span class="n">endTime</span> <span class="o">-</span> <span class="n">startTime</span>
-            <span class="n">details</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Execution time (</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> Prediction(s)): </span><span class="si">{</span><span class="n">executionTime</span><span class="si">}</span><span class="s2"> seconds. &quot;</span>
-
-        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_performance_check</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="n">details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">details</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">details</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="ModelInspector.check_no_extra_files">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_no_extra_files">[docs]</a>
     <span class="k">def</span> <span class="nf">check_no_extra_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Ensure that there are no excess files in the root directory of the repository.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
+            <span class="n">expected_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BENTOML_FILES</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BENTOML_FOLDERS</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
+            <span class="n">expected_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERSILIAPACK_FILES</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERSILIAPACK_FOLDERS</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unsupported pack type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            Result: A namedtuple containing a boolean success status and details of the check.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">details</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://api.github.com/repos/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/contents&quot;</span>
-        <span class="k">if</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># Make sure repo exists</span>
-            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                <span class="kc">False</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Repository could not be loated for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">. Please check that the link https://api.github.com/repos/ersilia-os/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">/contents is valid.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/vnd.github.v3+json&quot;</span><span class="p">}</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-
-        <span class="n">folders</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;.github&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;model&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;src&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;.gitignore&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Dockerfile&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
-            <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
-            <span class="s2">&quot;pack.py&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;.gitattributes&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">():</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
-                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">details</span>
-                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Unexpected folder/file </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> found in root directory. Please check that </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is a valid folder/file. &quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">unexpected_items</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">):</span>
+                <span class="n">relative_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
+                <span class="n">items_in_dir</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">relative_path</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> 
+                    <span class="k">for</span> <span class="n">item</span> 
+                    <span class="ow">in</span> <span class="n">files</span> <span class="o">+</span> <span class="n">dirs</span>
+                <span class="p">]</span>
+                <span class="n">unexpected_items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="n">item</span> 
+                    <span class="k">for</span> <span class="n">item</span> 
+                    <span class="ow">in</span> <span class="n">items_in_dir</span> 
+                    <span class="k">if</span> <span class="n">item</span> 
+                    <span class="ow">not</span> <span class="ow">in</span> <span class="n">expected_items</span>
                 <span class="p">)</span>
-                <span class="n">check_passed</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># If the folder URL is not valid return false</span>
 
-        <span class="k">if</span> <span class="n">check_passed</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Check passed.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span></div>
-</div>
+            <span class="k">if</span> <span class="n">unexpected_items</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                    <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unexpected items found: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unexpected_items</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;No extra files found locally.&quot;</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">REPO_API_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span> 
+                <span class="sa">f</span><span class="s2">&quot;Failed to access repository contents at: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/vnd.github.v3+json&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Failed to fetch repository contents.&quot;</span><span class="p">)</span>
+        <span class="n">unexpected_items</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">expected_items</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">unexpected_items</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span> 
+                <span class="sa">f</span><span class="s2">&quot;Unexpected items found: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unexpected_items</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;No extra files found.&quot;</span><span class="p">)</span></div>
+
+
+
+    <span class="k">def</span> <span class="nf">_url_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span><span class="n">USER_AGENT</span> 
+            <span class="p">}</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;URl: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> | status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_fetch_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span>
+                <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">,</span> 
+                <span class="ne">ValueError</span>
+            <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_fetch_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_validate_urls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+        <span class="n">invalid_urls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">url</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+                <span class="n">invalid_urls</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">field</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="mi">404</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">invalid_urls</span>
+
+    <span class="k">def</span> <span class="nf">_validate_repo_structure</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> 
+            <span class="n">required_items</span><span class="p">,</span>
+        <span class="p">):</span>
+        <span class="n">missing_items</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">required_items</span><span class="p">:</span>
+                <span class="n">item_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">item_path</span><span class="p">):</span>
+                    <span class="n">missing_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">required_items</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">RAW_CONTENT_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span><span class="si">}{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> | STatus Code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">missing_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">missing_items</span>
+    
+<div class="viewcode-block" id="ModelInspector.validate_repo_structure">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.validate_repo_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">validate_repo_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pack Type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
+            <span class="n">required_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BENTOML_FILES</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
+            <span class="n">required_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERSILIAPACK_FILES</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported pack type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_repo_structure</span><span class="p">(</span><span class="n">required_items</span><span class="p">)</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">_validate_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dockerfile_content</span><span class="p">):</span>
+        <span class="n">lines</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">dockerfile_content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(),</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;RUN pip install&quot;</span><span class="p">):</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;RUN &quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="n">cmd</span><span class="p">,</span> 
+                    <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> 
+                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> 
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Failed to run </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;WORKDIR /repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dockerfile_content</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Missing &#39;WORKDIR /repo&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;COPY . /repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dockerfile_content</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Missing &#39;COPY . /repo&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">errors</span>
+    
+    <span class="k">def</span> <span class="nf">_validate_yml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yml_content</span><span class="p">):</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">yml_data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yml_content</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;YAML parsing error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        
+        <span class="n">python_version</span> <span class="o">=</span> <span class="n">yml_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">python_version</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Missing Python version in install.yml.&quot;</span><span class="p">)</span>
+        
+        <span class="n">commands</span> <span class="o">=</span> <span class="n">yml_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;commands&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;pip&quot;</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid command format: </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="c1"># package: name &amp; version</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing package name in command: </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">version</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">errors</span>
+
+
+    <span class="k">def</span> <span class="nf">_run_performance_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">&amp;&amp; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ersilia example inputs -n </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> -c -f my_input.csv &amp;&amp; &quot;</span>
+             <span class="s2">&quot;ersilia run -i my_input.csv &amp;&amp; ersilia close&quot;</span>
+        <span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="p">,</span> 
+            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> 
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span> 
+                <span class="sa">f</span><span class="s2">&quot;Error serving model: </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">execution_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="kc">True</span><span class="p">,</span> 
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="n">execution_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds.&quot;</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 

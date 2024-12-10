@@ -339,8 +339,8 @@
         <span class="k">except</span> <span class="n">StandardModelExampleError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Standard model example failed, deleting artifacts&quot;</span><span class="p">)</span>
             <span class="n">do_delete</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
-                <span class="s2">&quot;Do you want to delete the model artifacts? [Y/n]&quot;</span><span class="p">,</span> <span class="n">default_answer</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span>
-            <span class="p">)</span>
+                <span class="s2">&quot;Do you want to delete the model artifacts? [Y/n]&quot;</span><span class="p">,</span> 
+                <span class="n">default_answer</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">do_delete</span><span class="p">:</span>
                 <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
