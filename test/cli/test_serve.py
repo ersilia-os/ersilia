@@ -32,13 +32,13 @@ def test_serve_cmd(mock_store_has_model, mock_ersilia_model, mock_set_apis, mock
     mock_mdl_instance.model_id = MODEL_ID
     mock_mdl_instance.slug = "molecular-weight"
     mock_mdl_instance.pid = 1234
-    mock_mdl_instance.scl = "docker"
+    mock_mdl_instance.scl = "pulled_docker"
     mock_mdl_instance.output_source = "LOCAL_ONLY"
     mock_mdl_instance.get_apis.return_value = ["run"]
 
     mock_ersilia_model.return_value = mock_mdl_instance
 
-    result = runner.invoke(serve_cmd(), [MODEL_ID, "--docker"])
+    result = runner.invoke(serve_cmd(), [MODEL_ID])
 
     assert result.exit_code == 0
     assert mock_serve.called
