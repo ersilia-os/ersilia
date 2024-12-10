@@ -319,11 +319,11 @@ if __name__ == "__main__":
 
     elif args.command == "airtable-update":
         print("Updating metadata to AirTable")
-        # update_metadata_to_airtable(args.user, args.repo, args.branch, args.api_key)
+        update_metadata_to_airtable(args.user, args.repo, args.branch, args.api_key)
 
     elif args.command == "readme-update":
         print("Updating README from AirTable")
-        # update_readme_from_airtable(args.repo, args.path)
+        update_readme_from_airtable(args.repo, args.path)
 
     else:
         print("Invalid command")
