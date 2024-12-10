@@ -48,7 +48,8 @@ def catalog_cmd():
         required=False,
     )
     @click.option(
-        "--as-table",
+        "-j/-t",
+        "--as-json/--as-table",
         is_flag=True,
         default=False,
         help="Show catalog in table format",
@@ -61,7 +62,7 @@ def catalog_cmd():
         more=False,
         card=False,
         model=None,
-        as_table=False,
+        as_json=False,
     ):
         if card and not model:
             click.echo(
@@ -125,9 +126,8 @@ def catalog_cmd():
                     )
                 )
                 return
-
         if file_name is None:
-            catalog = catalog_table.as_table() if as_table else catalog_table.as_json()
+            catalog = catalog_table.as_json() if as_json else catalog_table.as_table()
         else:
             catalog_table.write(file_name)
             catalog = None
