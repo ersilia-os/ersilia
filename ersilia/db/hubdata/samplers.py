@@ -21,7 +21,14 @@ _ERSILIA_MAINTAINED_INPUTS_GITHUB_REPOSITORY = "ersilia-model-hub-maintained-inp
 
 
 class ModelSampler(ErsiliaBase):
-    """Get a random working model from the model hub to use in downstream automations."""
+    """
+    Samples random working models from the S3 model hub for downstream automations.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for initializing the sampler.
+    """
 
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -37,6 +44,21 @@ class ModelSampler(ErsiliaBase):
         return model_ids
 
     def sample(self, n_samples, file_name=None):
+        """
+        Samples a specified number of models from S3 model hub.
+
+        Parameters
+        ----------
+        n_samples : int
+            Number of models to sample.
+        file_name : str, optional
+            Name of the file to save the sampled models.
+
+        Returns
+        -------
+        list
+            List of sampled model identifiers.
+        """
         mdls = self._get_models_from_s3_models_json()
         sampled = random.sample(mdls, min(len(mdls), n_samples))
         return sampled
