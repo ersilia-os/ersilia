@@ -6,8 +6,26 @@ from ...hub.content.card import ModelCard
 
 
 def catalog_cmd():
-    """Creates catalog command"""
+    """
+    Creates the catalog command for the CLI.
 
+    This command allows users to list a catalog of models available either locally or in the model hub.
+    It provides options to display the catalog in various formats(such as tables or json), show more detailed information,
+    and view model cards for specific models.
+
+    Returns
+    -------
+    function
+        The catalog command function to be used by the CLI and for testing in the pytest.
+
+    Examples
+    --------
+    List models available in the local computer and show more detailed information:
+    $ ersilia catalog --local --more
+
+    Display model card for a specific model ID and show catalog in table format:
+    $ ersilia catalog --card <model_id> --as-table
+    """
     # Example usage: ersilia catalog
     @ersilia_cli.command(help="List a catalog of models")
     @click.option(

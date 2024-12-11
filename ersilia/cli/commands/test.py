@@ -4,11 +4,31 @@ from . import ersilia_cli
 from ...publish.test import ModelTester
 
 def test_cmd():
+    """
+    Test a model and obtain performance metrics.
 
-# Example usage: ersilia test {MODEL} -d local_dir -l deep --remote
+    This command allows you to test a model using various options to customize the testing process.
+
+    The command performs the following steps:
+    - Sets up the model tester with the specified model and options.
+    - Executes tests to evaluate the model's performance, metadata check, output consistency and more.
+    - Generates and outputs performance metrics.
+
+    Examples
+    --------
+    With default settings:
+    $ ersilia test my_model -d /path/to/model
+
+    With deep testing level and inspect:
+    $ ersilia test my_model -d /path/to/model --level deep --inspect --remote
+    """
     @ersilia_cli.command(
         short_help="Test a model",
-        help="Test a model and obtain performance metrics",
+        help=
+        """
+        Test a local models that are under development as well as on deployment and obtain a detailed report on its expected behavior and performance
+        """
+        ,
     )
     @click.argument("model", type=click.STRING)
     @click.option(
@@ -43,7 +63,7 @@ def test_cmd():
     )
     @click.option(
         "--remove",
-        help="Remove the model after testing", 
+        help="Remove the model directory after testing", 
         is_flag=True, 
         default=False
     )
@@ -66,4 +86,4 @@ def test_cmd():
         echo("Setting up model tester...")
         mt.setup()
         echo("Testing model...")
-        mt.run(output_file=None)  
+        mt.run(output_file=None)

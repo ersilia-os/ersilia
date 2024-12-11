@@ -10,16 +10,29 @@ from ... import ModelBase
 
 
 def example_cmd():
-    """Create example command"""
+    """
+    Generates example files such as compound SMILES that serve as input for models.
 
-    # Example usage: ersilia example {MODEL} -n 10 [--file_name {FILE_NAME} --simple/--complete]
+    This command allows users to generate example files that can be used as input for models in the CLI.
+
+    Returns
+    -------
+    function
+        The example command function to be used by the CLI.
+
+    Examples
+    --------
+    Generate sample inputs for a model:
+    $ ersilia example {MODEL} -n 10 [--file_name {FILE_NAME} --simple/--complete]
+    """
     @ersilia_cli.group(
-            short_help="Generate sample of Ersilia models or model inputs",
-            help="""This command can sample both ersilia models, or inputs for a given or currently running model.\n
-For the model input, the number of examples can be specified, as well as a file name.\n
-Simple inputs only contain the essential information, while complete inputs contain key and other fields, potentially.\n
-For ersilia models, only model identifiers are returned for a given sample size.
-""",
+        short_help="Generate samples of Ersilia models or model inputs",
+        help="""
+        This command allows users to generate samples of Ersilia models or inputs for a specified or currently running model.
+        For model inputs, users can specify the number of examples, as well as an optional file name.
+        Simple inputs contain only essential information, while complete inputs may include additional fields.
+        For Ersilia models, only model identifiers are returned for a given sample size.
+        """
     )
     def example():
         pass
