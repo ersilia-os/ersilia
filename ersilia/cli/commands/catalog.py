@@ -29,24 +29,14 @@ def catalog_cmd():
     # Example usage: ersilia catalog
     @ersilia_cli.command(help="List a catalog of models")
     @click.option(
-        "-l",
-        "--local",
-        is_flag=True,
-        default=False,
-        help="Show catalog of models available in the local computer",
-    )
-    @click.option(
-        "-h",
-        "--hub",
+        "-h/-l",
+        "--hub/--local",
         is_flag=True,
         default=False,
         help="Show catalog of models available in the model hub",
     )
     @click.option(
         "--file_name", "-f", default=None, type=click.STRING, help="Catalog file name"
-    )
-    @click.option(
-        "--browser", is_flag=True, default=False, help="Show catalog in the browser"
     )
     @click.option(
         "--more/--less",
@@ -73,7 +63,6 @@ def catalog_cmd():
         help="Show catalog in table format",
     )
     def catalog(
-        local=False,
         hub=False,
         file_name=None,
         browser=False,
@@ -88,7 +77,7 @@ def catalog_cmd():
                 err=True,
             )
             return
-        if card and model:
+        elif card and model:
             try:
                 mc = ModelCard()
                 model_metadata = mc.get(model, as_json=True)
@@ -105,51 +94,29 @@ def catalog_cmd():
             except Exception as e:
                 click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
             return
-
-        # The idea here is to deter the user from running ersilia catalog --local --hub
-        if local and hub:
-            click.echo(
-                click.style(
-                    "Error: Cannot show local and hub models together", fg="red"
-                ),
-                err=True,
-            )
-            return
-
-        mc = ModelCatalog()
-        mc.only_identifier = False if more else True
-
-        if hub:
-            if browser:
-                mc.airtable()
-                return
-
-            catalog_table = mc.hub()
-
-        else:  # This will work even if the user doesn't explicitly specify the --local flag
-            if browser:
-                click.echo(
-                    click.style(
-                        "Error: Cannot show local models in the browser.\nPlease use the --hub option to see models in the browser.",
-                        fg="red",
-                    )
-                )
-                return
-            catalog_table = mc.local()
-            if not catalog_table.data:
-                click.echo(
-                    click.style(
-                        "No local models available. Please fetch a model by running 'ersilia fetch' command",
-                        fg="red",
-                    )
-                )
-                return
-        if file_name is None:
-            catalog = catalog_table.as_json() if as_json else catalog_table.as_table()
         else:
-            catalog_table.write(file_name)
-            catalog = None
+            mc = ModelCatalog(less=not more)
 
-        click.echo(catalog)
+            if hub:
+                catalog_table = mc.hub()
+            else:
+                catalog_table = mc.local()
+                if not catalog_table.data:
+                    click.echo(
+                        click.style(
+                            "No local models available. Please fetch a model by running 'ersilia fetch' command",
+                            fg="red",
+                        )
+                    )
+                    return
+            if file_name is None:
+                catalog = (
+                    catalog_table.as_json() if as_json else catalog_table.as_table()
+                )
+            else:
+                catalog_table.write(file_name)
+                catalog = None
+
+            click.echo(catalog)
 
     return catalog
