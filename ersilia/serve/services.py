@@ -472,7 +472,6 @@ class SystemBundleService(_LocalService):
         exception_value : Exception
             The exception instance.
         traceback : traceback
-            The traceback object.
         """
         self.close()
 
@@ -568,7 +567,6 @@ class VenvEnvironmentService(_LocalService):
         exception_value : Exception
             The exception instance.
         traceback : traceback
-            The traceback object.
         """
         self.close()
 
@@ -972,7 +970,7 @@ class DummyService(BaseServing):
 
 class PulledDockerImageService(BaseServing):
     """
-    Service class for managing pulled Docker image models.
+    Service class for managing Docker image models pulled from a registry.
 
     Parameters
     ----------
@@ -985,6 +983,38 @@ class PulledDockerImageService(BaseServing):
     url : str, optional
         URL for the served model.
     """
+
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        self._is_docker_active()
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
+        self.client = docker.from_env()
+        if preferred_port is None:
+            self.port = find_free_port()
+        else:
+            self.port = preferred_port
+        self.logger.debug("Using port {0}".format(self.port))
+        self.image_name = "{0}/{1}:{2}".format(
+            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+        )
+        self.logger.debug("Starting Docker Daemon service")
+        self.container_tmp_logs = os.path.join(
+            get_session_dir(), CONTAINER_LOGS_TMP_DIR
+        )
+        self.logger.debug(
+            "Creating container tmp logs folder {0} and mounting as volume in container".format(
+                self.container_tmp_logs
+            )
+        )
+        if not os.path.exists(self.container_tmp_logs):
+            os.makedirs(self.container_tmp_logs)
+        self.simple_docker = SimpleDocker()
+        self.pid = -1
+        self._mem_gb = self._get_memory()
 
     def __enter__(self):
         """
@@ -1011,9 +1041,40 @@ class PulledDockerImageService(BaseServing):
         """
         self.close()
 
-    def is_available(self):
+    @throw_ersilia_exception()
+    def _is_docker_active(self):
+        dr = DockerRequirement()
+        if not dr.is_active():
+            raise DockerNotActiveError()
+        return True
+
+    def _api_with_url(self, api_name, input):
+        if self.url is None:
+            return
+        self.logger.debug("Using URL: {0}".format(self.url))
+        response = requests.post("{0}/{1}".format(self.url, api_name), json=input)
+        return response.json()
+
+    def _get_memory(self):
+        info_file = os.path.join(self._model_path(self.model_id), INFORMATION_FILE)
+        if not os.path.exists(info_file):
+            return None
+        with open(info_file, "r") as f:
+            info = json.load(f)["card"]
+        memory_field = "Memory Gb"
+        if memory_field not in info:
+            return None
+        mem_gb = info[memory_field]
+        if type(mem_gb) != int:
+            return None
+        if mem_gb < 2:
+            mem_gb = 2
+        self.logger.debug("Asking for {0} GB of memory".format(mem_gb))
+        return mem_gb
+
+    def is_available(self) -> bool:
         """
-        Check if the pulled Docker image service is available.
+        Check if the Docker image service is available.
 
         Returns
         -------
@@ -1032,9 +1093,84 @@ class PulledDockerImageService(BaseServing):
             )
             return False
 
+    def _stop_all_containers_of_image(self):
+        self.logger.debug(
+            "Stopping all containers related to model {0}".format(self.model_id)
+        )
+        containers = self.client.containers.list(all=True)
+        for container in containers:
+            if container.name.startswith(self.model_id):
+                self.logger.debug(
+                    "Stopping and removing container {0}".format(container.name)
+                )
+                container.stop()
+                self.logger.debug("Container stopped")
+                container.remove()
+                self.logger.debug("Container removed")
+
+    @throw_ersilia_exception()
+    def _get_apis(self):
+        file_name = os.path.join(
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
+        )
+        self.logger.debug("Getting APIs")
+        if os.path.exists(file_name):
+            with open(file_name, "r") as f:
+                apis_list = []
+                for l in f:
+                    apis_list += [l.rstrip()]
+            if len(apis_list) > 0:
+                return apis_list
+        self.logger.debug("Getting them using info endpoint")
+        url = "{0}/info".format(self.url)
+        self.logger.debug("Using URL: {0}".format(url))
+        data = "{}"
+        response = requests.post(url, data=data)
+        self.logger.debug("Status code: {0}".format(response.status_code))
+        if response.status_code == 502:
+            raise BadGatewayError(url)
+        apis_list = json.loads(response.text)["apis_list"]
+        self.logger.debug("Writing file {0}".format(file_name))
+        with open(file_name, "w") as f:
+            for api in apis_list:
+                f.write(api + os.linesep)
+        return apis_list
+
+    def is_url_available(self, url):
+        """
+        Check if the given URL is available.
+
+        Parameters
+        ----------
+        url : str
+            The URL to check.
+
+        Returns
+        -------
+        bool
+            True if the URL is available, False otherwise.
+        """
+        try:
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+        except requests.HTTPError as http_err:
+            return False
+        except Exception as err:
+            return False
+        else:
+            return True
+
+    def _wait_until_container_is_running(self):
+        while True:
+            if self.is_url_available(self.url):
+                break
+            else:
+                self.logger.debug("Container in {0} is not ready yet".format(self.url))
+            time.sleep(1)
+
     def serve(self):
         """
-        Serve the model using the pulled Docker image service.
+        Serve the model using the Docker image service.
         """
         self._stop_all_containers_of_image()
         self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
@@ -1065,7 +1201,7 @@ class PulledDockerImageService(BaseServing):
         self._apis_list = self._get_apis()
         self.logger.debug(self._apis_list)
 
-    def api(self, api_name, input):
+    def api(self, api_name: str, input: dict) -> dict:
         """
         Call an API with the given name and input.
 
@@ -1085,7 +1221,7 @@ class PulledDockerImageService(BaseServing):
 
     def close(self):
         """
-        Close the pulled Docker image service.
+        Close the Docker image service by stopping and removing the container.
         """
         self.logger.debug("Stopping and removing container")
         self._stop_all_containers_of_image()
@@ -1106,6 +1242,19 @@ class HostedService(BaseServing):
     url : str, optional
         URL for the served model.
     """
+
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=None,
+        )
+        if url is None:
+            self.url = self._resolve_url()
+        else:
+            self.url = url
+        self.pid = -1
 
     def __enter__(self):
         """
@@ -1132,7 +1281,28 @@ class HostedService(BaseServing):
         """
         self.close()
 
-    def is_available(self):
+    def _api_with_url(self, api_name, input):
+        if self.url is None:
+            return
+        self.logger.debug("Using URL: {0}".format(self.url))
+        response = requests.post("{0}/{1}".format(self.url, api_name), json=input)
+        return response.json()
+
+    def _resolve_url(self):
+        from_hosted_file = os.path.join(
+            self._model_path(self.model_id), IS_FETCHED_FROM_HOSTED_FILE
+        )
+        self.logger.debug("Reading hosted file: {0}".format(from_hosted_file))
+        if not os.path.exists(from_hosted_file):
+            return None
+        with open(from_hosted_file, "r") as f:
+            data = json.load(f)
+        self.logger.debug("From hosted file: {0}".format(data))
+        if not data["hosted"]:
+            return None
+        return data["url"]
+
+    def is_available(self) -> bool:
         """
         Check if the hosted service is available.
 
@@ -1148,6 +1318,61 @@ class HostedService(BaseServing):
             self.logger.debug("URL {0} is not available".format(self.url))
             return False
 
+    def _get_apis(self):
+        """
+        Get the list of APIs available for the model.
+
+        Returns
+        -------
+        list
+            List of API names.
+        """
+        file_name = os.path.join(
+            self._get_bundle_location(self.model_id), APIS_LIST_FILE
+        )
+        self.logger.debug("Getting APIs")
+        if os.path.exists(file_name):
+            with open(file_name, "r") as f:
+                apis_list = []
+                for l in f:
+                    apis_list += [l.rstrip()]
+            if len(apis_list) > 0:
+                return apis_list
+        self.logger.debug("Getting them using info endpoint")
+        url = "{0}/info".format(self.url)
+        self.logger.debug("Using URL: {0}".format(url))
+        data = "{}"
+        apis_list = json.loads(requests.post(url, data=data).text)["apis_list"]
+        self.logger.debug("Writing file {0}".format(file_name))
+        with open(file_name, "w") as f:
+            for api in apis_list:
+                f.write(api + os.linesep)
+        return apis_list
+
+    def is_url_available(self, url):
+        """
+        Check if the given URL is available.
+
+        Parameters
+        ----------
+        url : str
+            The URL to check.
+
+        Returns
+        -------
+        bool
+            True if the URL is available, False otherwise.
+        """
+        try:
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+        except requests.HTTPError as http_err:
+            return False
+        except Exception as err:
+            return False
+        else:
+            return True
+
     def serve(self):
         """
         Serve the model using the hosted service.
@@ -1155,7 +1380,7 @@ class HostedService(BaseServing):
         self._apis_list = self._get_apis()
         self.logger.debug(self._apis_list)
 
-    def api(self, api_name, input):
+    def api(self, api_name: str, input: dict) -> dict:
         """
         Call an API with the given name and input.
 
