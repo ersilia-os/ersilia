@@ -45,18 +45,65 @@ except ModuleNotFoundError:
 
 
 class ErsiliaModel(ErsiliaBase):
+    """
+    ErsiliaModel class for managing and interacting with different models.
+
+    This class provides methods to fetch, serve, run, and close models form a model hub.
+    It also supports tracking runs and handling various input and output formats.
+
+    Parameters
+    ----------
+    model : str
+        The identifier of the model.
+    output_source : OutputSource, optional
+        The source of the output, by default OutputSource.LOCAL_ONLY.
+    save_to_lake : bool, optional
+        Whether to save to lake, by default True.
+    service_class : str, optional
+        The service class, by default None.
+    config_json : dict, optional
+        Configuration in JSON format, by default None.
+    credentials_json : dict, optional
+        Credentials in JSON format, by default None.
+    verbose : bool, optional
+        Verbosity flag, by default None.
+    fetch_if_not_available : bool, optional
+        Whether to fetch the model if not available locally, by default True.
+    preferred_port : int, optional
+        Preferred port for serving the model, by default None.
+    track_runs : bool, optional
+        Whether to track runs, by default False.
+
+    Examples
+    --------
+    Fetching a model:
+    >>> model = ErsiliaModel(model="model_id")
+    >>> model.fetch()
+
+    Serving a model:
+    >>> model = ErsiliaModel(model="model_id")
+    >>> model.serve()
+
+    Running a model:
+    >>> model = ErsiliaModel(model="model_id")
+    >>> result = model.run(input="input_data.csv", output="output_data.csv")
+
+    Closing a model:
+    >>> model = ErsiliaModel(model="model_id")
+    >>> model.close()
+    """
     def __init__(
         self,
-        model,
-        output_source=OutputSource.LOCAL_ONLY,
-        save_to_lake=True,
-        service_class=None,
-        config_json=None,
-        credentials_json=None,
-        verbose=None,
-        fetch_if_not_available=True,
-        preferred_port=None,
-        track_runs=False,
+        model: str,
+        output_source: OutputSource = OutputSource.LOCAL_ONLY,
+        save_to_lake: bool = True,
+        service_class: str = None,
+        config_json: dict = None,
+        credentials_json: dict = None,
+        verbose: bool = None,
+        fetch_if_not_available: bool = True,
+        preferred_port: int = None,
+        track_runs: bool = False,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -146,14 +193,78 @@ class ErsiliaModel(ErsiliaBase):
 
         self.logger.info("Done with initialization!")
 
+    def fetch(self):
+        """
+        Fetch the model if not available locally.
+
+        This method fetches the model from the Ersilia Model Hub if it is not available locally.
+        """
+        if not self._is_available_locally and self.fetch_if_not_available:
+            self.logger.info("Model is not available locally")
+            try:
+                do_fetch = yes_no_input(
+                    "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
+                        self.model_id
+                    ),
+                    default_answer="Y",
+                )
+            except:
+                self.logger.debug("Unable to capture user input. Fetching anyway.")
+                do_fetch = True
+            if do_fetch:
+                fetch = importlib.import_module("ersilia.hub.fetch.fetch")
+                mf = fetch.ModelFetcher(
+                    config_json=self.config_json, credentials_json=self.credentials_json
+                )
+                asyncio.run(mf.fetch(self.model_id))
+            else:
+                return
+
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        This method is called when the runtime context is entered using the `with` statement.
+        It starts serving the model.
+
+        Returns
+        -------
+        ErsiliaModel
+            The instance of the ErsiliaModel.
+        """
         self.serve()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Exit the runtime context related to this object.
+
+        This method is called when the runtime context is exited using the `with` statement.
+        It closes the model services and session.
+
+        Parameters
+        ----------
+        exc_type : type
+            The exception type.
+        exc_val : Exception
+            The exception instance.
+        exc_tb : traceback
+            The traceback object.
+        """
         self.close()
 
     def is_valid(self):
+        """
+        Check if the model identifier is valid.
+
+        This method verifies if the provided model identifier is valid by checking its existence
+        and validity in the model hub.
+
+        Returns
+        -------
+        bool
+            True if the model identifier is valid, False otherwise.
+        """
         return self._is_valid
 
     def _set_api(self, api_name):
@@ -201,7 +312,7 @@ class ErsiliaModel(ErsiliaBase):
 
     def _get_api_instance(self, api_name):
         url = self._get_url()
-        if api_name is None:
+        if (api_name is None):
             api_names = self.autoservice.get_apis()
             assert (
                 len(api_names) == 1
@@ -216,14 +327,58 @@ class ErsiliaModel(ErsiliaBase):
         )
         return api
 
-    def _api_runner_iter(self, api, input, output, batch_size):
+    def _api_runner_iter(self, api: Api, input: str, output: str, batch_size: int):
+        """
+        Run the API in an iterative manner.
+
+        This method executes the API in an iterative manner, yielding results one by one.
+        It is useful for handling large datasets that need to be processed in batches.
+
+        Parameters
+        ----------
+        api : Api
+            The API instance to run.
+        input : str
+            The input data.
+        output : str
+            The output data.
+        batch_size : int
+            The batch size.
+
+        Yields
+        ------
+        Any
+            The result of each API call.
+        """
         for result in api.post(input=input, output=output, batch_size=batch_size):
             assert (
                 result is not None
             ), "Something went wrong. Please contact us at hello@ersila.io"
             yield result
 
-    def _api_runner_return(self, api, input, output, batch_size):
+    def _api_runner_return(self, api: Api, input: str, output: str, batch_size: int):
+        """
+        Run the API and return the results.
+
+        This method executes the API and returns the results in the specified output format.
+        It handles different output formats such as JSON, HDF5, CSV, NumPy arrays, Pandas DataFrames, and dictionaries.
+
+        Parameters
+        ----------
+        api : Api
+            The API instance to run.
+        input : str
+            The input data.
+        output : str
+            The output data.
+        batch_size : int
+            The batch size.
+
+        Returns
+        -------
+        Any
+            The result of the API run in the specified output format.
+        """
         if output == "pandas" and pd is None:
             raise Exception
         if output == "json":
@@ -273,6 +428,20 @@ class ErsiliaModel(ErsiliaBase):
                 d["inputs"] = data.inputs
                 d["values"] = data.values
                 return d
+
+    def _get_api_runner(self, output):
+        if output is None:
+            use_iter = True
+        elif self.__output_is_file(output):
+            use_iter = True
+        elif self.__output_is_format(output):
+            use_iter = False
+        else:
+            raise ApiSpecifiedOutputError
+        if use_iter:
+            return self._api_runner_iter
+        else:
+            return self._api_runner_return
 
     def _standard_api_runner(self, input, output):
         scra = StandardCSVRunApi(model_id=self.model_id, url=self._get_url())
@@ -369,6 +538,28 @@ class ErsiliaModel(ErsiliaBase):
     def api(
         self, api_name=None, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE
     ):
+        """
+        Run the specified API with the given input and output.
+
+        This method executes the specified API(usually with the end point run) using the provided input and output parameters.
+        It handles file splitting and caching if necessary.
+
+        Parameters
+        ----------
+        api_name : str, optional
+            The name of the API to run, by default None.
+        input : str, optional
+            The input data, by default None.
+        output : str, optional
+            The output data, by default None.
+        batch_size : int, optional
+            The batch size, by default DEFAULT_BATCH_SIZE.
+
+        Returns
+        -------
+        Any
+            The result of the API run.
+        """
         if OutputSource.is_cloud(self.output_source):
             store = InferenceStoreApi(model_id=self.model_id)
             return store.get_precalculations(input)
@@ -395,6 +586,28 @@ class ErsiliaModel(ErsiliaBase):
             )
 
     def api_task(self, api_name, input, output, batch_size):
+        """
+        Run the specified API task with the given input and output.
+
+        This method executes the specified API task using the provided input and output parameters.
+        It returns the result of the API task, which can be a generator, file, or other data types.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API to run.
+        input : str
+            The input data.
+        output : str
+            The output data.
+        batch_size : int
+            The batch size.
+
+        Returns
+        -------
+        Any
+            The result of the API task.
+        """
         api_instance = self._get_api_instance(api_name=api_name)
         api_runner = self._get_api_runner(output=output)
         result = api_runner(
@@ -413,6 +626,17 @@ class ErsiliaModel(ErsiliaBase):
             return result
 
     def update_model_usage_time(self, model_id):
+        """
+        Update the model usage time.
+
+        This method updates the usage time of the specified model by recording the current timestamp
+        in the fetched models file.
+
+        Parameters
+        ----------
+        model_id : str
+            The identifier of the model.
+        """
         file_name = os.path.join(EOS, FETCHED_MODELS_FILENAME)
         ts_str = str(time.time())
         with open(file_name, "r") as infile:
@@ -426,10 +650,22 @@ class ErsiliaModel(ErsiliaBase):
                 f.write(f"{key},{values}\n")
 
     def setup(self):
+        """
+        Setup the necessary requirements for the model.
+
+        This method ensures that the required dependencies and resources for the model are available.
+        """
         RdkitRequirement()
         ChemblWebResourceClientRequirement()
 
     def serve(self):
+        """
+        Serve the model by starting the necessary services.
+
+        This method sets up the required dependencies, opens a session, and starts the model service.
+        It registers the service class and output source, updates the model's URL and process ID (PID),
+        and tracks resource usage if tracking is enabled.
+        """
         self.logger.debug("Checking rdkit and other requirements")
         self.setup()
         self.close()
@@ -451,10 +687,25 @@ class ErsiliaModel(ErsiliaBase):
             session.update_cpu_time(cpu_time_serve)
 
     def close(self):
+        """
+        Close the model services and session.
+
+        This method stops the model service and closes the session.
+        """
         self.autoservice.close()
         self.session.close()
 
     def get_apis(self):
+        """
+        Get the list of available APIs for the model.
+
+        This method retrieves the list of APIs that are available for the model.
+
+        Returns
+        -------
+        list
+            The list of available APIs.
+        """
         return self.autoservice.get_apis()
 
     def _run(
@@ -485,11 +736,34 @@ class ErsiliaModel(ErsiliaBase):
 
     def run(
         self,
-        input=None,
-        output=None,
-        batch_size=DEFAULT_BATCH_SIZE,
-        track_run=False,
+        input: str = None,
+        output: str = None,
+        batch_size: int = DEFAULT_BATCH_SIZE,
+        track_run: bool = False,
     ):
+        """
+        Run the model with the given input and output.
+
+        This method executes the model using the provided input and output parameters.
+        It first tries to run the model using the standard API, and if that fails, it falls back to
+        the conventional run method. It also tracks the run if the track_run flag is set.
+
+        Parameters
+        ----------
+        input : str, optional
+            The input data, by default None.
+        output : str, optional
+            The output data, by default None.
+        batch_size : int, optional
+            The batch size, by default DEFAULT_BATCH_SIZE.
+        track_run : bool, optional
+            Whether to track the run, by default False.
+
+        Returns
+        -------
+        Any
+            The result of the model run(such as output csv file name, json).
+        """
         # TODO this should be smart enough to init the container sampler
         # or a python process sampler based on how the model was fetched
         # Presently we only deal with containers
@@ -538,6 +812,17 @@ class ErsiliaModel(ErsiliaBase):
 
     @property
     def paths(self):
+        """
+        Get the paths related to the model.
+
+        This property returns a dictionary containing various paths related to the model,
+        such as the destination path, repository path, and BentoML path.
+
+        Returns
+        -------
+        dict
+            The dictionary containing paths.
+        """
         p = {
             "dest": self._model_path(self.model_id),
             "repository": self._get_bundle_location(self.model_id),
@@ -547,34 +832,119 @@ class ErsiliaModel(ErsiliaBase):
 
     @property
     def input_type(self):
+        """
+        Get the input type of the model.
+
+        This property reads the input type information from the model's card file and returns it
+        as a list of input types.
+
+        Returns
+        -------
+        list
+            The list of input types(such as compounds).
+        """
         with open(os.path.join(self._model_path(self.model_id), CARD_FILE), "r") as f:
             return [x.lower() for x in json.load(f)["Input"]]
 
     @property
     def output_type(self):
+        """
+        Get the output type of the model.
+
+        This property reads the output type information from the model's card file and returns it
+        as a list of output types.
+
+        Returns
+        -------
+        list
+            The list of output types(such as Descriptor, score, probability etc...).
+        """
         with open(os.path.join(self._model_path(self.model_id), CARD_FILE), "r") as f:
             return [x.lower() for x in json.load(f)["Output"]]
 
     @property
     def schema(self):
+        """
+        Get the schema of the model.
+
+        This property returns the schema of the model, which defines the structure and format
+        of the model's input and output data.
+
+        Returns
+        -------
+        dict
+            The schema of the model.
+        """
         return self.api_schema.schema
 
     @property
     def meta(self):
+        """
+        Get the metadata of the model.
+
+        This property returns the metadata of the model, which provides additional information
+        about the model, such as its description, version, and author.
+
+        Returns
+        -------
+        dict
+            The metadata of the model.
+        """
         return self.api_schema.get_meta()
 
     @property
     def size(self):
+        """
+        Get the size of the model.
+
+        This property reads the size information from the model's size file and returns it
+        as a dictionary.
+
+        Returns
+        -------
+        dict
+            The size of the model.
+        """
         with open(
             os.path.join(self._model_path(self.model_id), MODEL_SIZE_FILE), "r"
         ) as f:
             return json.load(f)
 
     def example(self, n_samples, file_name=None, simple=True):
+        """
+        Generate example data for the model.
+
+        This method generates example data for the model using the specified number of samples.
+        The generated data can be saved to a file if a file name is provided.
+
+        Parameters
+        ----------
+        n_samples : int
+            The number of samples to generate.
+        file_name : str, optional
+            The file name to save the examples, by default None.
+        simple : bool, optional
+            Whether to generate simple examples, by default True.
+
+        Returns
+        -------
+        Any
+            The generated example data(path, list of smiles etc...).
+        """
         eg = ExampleGenerator(model_id=self.model_id, config_json=self.config_json)
         return eg.example(n_samples=n_samples, file_name=file_name, simple=simple)
 
     def info(self):
+        """
+        Get the information of the model.
+
+        This method reads the information file of the model and returns its content as a dictionary.
+
+        Returns
+        -------
+        dict
+            The information of the model.
+        """
         information_file = os.path.join(
             self._model_path(self.model_id), INFORMATION_FILE
         )

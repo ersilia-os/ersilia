@@ -272,7 +272,7 @@ class ExampleGenerator(ErsiliaBase):
         if try_predefined is True and file_name is not None:
             self.logger.debug("Trying with predefined input")
             predefined_available = self.predefined_example(file_name)
-
+        
         if predefined_available:
             with open(file_name, "r") as f:
                 return f.read()
