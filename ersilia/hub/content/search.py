@@ -6,6 +6,17 @@ import re
 
 
 class ModelSearcher(object):
+    """
+    Class to handle model search operations.
+
+    This class provides methods to search for models in the catalog table
+    using text and mode of training.
+
+    Parameters
+    ----------
+    catalog : CatalogTable
+        The catalog table containing the models.
+    """
     """This class is used for searching through the catalog table
 
     Attributes:
@@ -16,8 +27,22 @@ class ModelSearcher(object):
     def __init__(self, catalog):
         self.catalog = catalog
 
-    def levenshtein_ratio_and_distance(self, s, t):
-        """Algorithm to fuzzy match strings"""
+    def levenshtein_ratio_and_distance(self, s: str, t: str) -> float:
+        """
+        Algorithm to fuzzy match strings using Levenshtein distance.
+
+        Parameters
+        ----------
+        s : str
+            The first string.
+        t : str
+            The second string.
+
+        Returns
+        -------
+        float
+            The Levenshtein distance ratio between the two strings.
+        """
         # Initialize matrix of zeros
         s = str(s)
         t = str(t)
@@ -50,8 +75,20 @@ class ModelSearcher(object):
         Ratio = ((len(s) + len(t)) - distance[row][col]) / (len(s) + len(t))
         return Ratio
 
-    def search_text(self, s):
-        """Search using text and return the closest matching string"""
+    def search_text(self, s: str) -> CatalogTable:
+        """
+        Search using text and return the closest matching string.
+
+        Parameters
+        ----------
+        s : str
+            The text to search for.
+
+        Returns
+        -------
+        CatalogTable
+            The catalog table containing the closest matching models.
+        """
         idxs = set()
         s = s.lower()
         ratio_list = []
@@ -81,8 +118,20 @@ class ModelSearcher(object):
 
         return CatalogTable(data=R, columns=self.catalog.columns)
 
-    def search_mode(self, s):
-        """searches the mode of training"""
+    def search_mode(self, s: str) -> CatalogTable:
+        """
+        Search the mode of training.
+
+        Parameters
+        ----------
+        s : str
+            The mode of training to search for.
+
+        Returns
+        -------
+        CatalogTable
+            The catalog table containing the models with the specified mode of training.
+        """
         idxs = set()
         s = s.lower()
         data = self.catalog.data

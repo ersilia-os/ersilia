@@ -7,7 +7,25 @@ from .... import throw_ersilia_exception
 
 
 class ModelPreparer(BaseAction):
-    def __init__(self, model_id, overwrite, config_json):
+    """
+    Prepares a model for use by deleting existing data if necessary.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model to be prepared.
+    overwrite : bool
+        Whether to overwrite existing data.
+    config_json : dict
+        Configuration settings for the preparer.
+
+    Methods
+    -------
+    prepare()
+        Prepares the model by deleting existing data if necessary.
+    """
+
+    def __init__(self, model_id: str, overwrite: bool, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
@@ -19,6 +37,9 @@ class ModelPreparer(BaseAction):
 
     @throw_ersilia_exception()
     def prepare(self):
+        """
+        Prepares the model by deleting existing data if necessary.
+        """
         try:
             self.deleter.delete(self.model_id)
         except:

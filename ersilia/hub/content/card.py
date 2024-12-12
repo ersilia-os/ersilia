@@ -55,8 +55,23 @@ from ...utils.paths import get_metadata_from_base_dir
 
 
 class BaseInformation(ErsiliaBase):
+    """
+    Class to handle the base information of a model card.
+
+    A model card contains metadata about a model, such as its identifier, slug, status,
+    title, description, mode, input, output, and other relevant information. And This class provides
+    methods to validate and set various fields of a model card.
+
+    Parameters
+    ----------
+    config_json : dict
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, config_json):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=None
+        )
         self._github = None
         self._identifier = None
         self._slug = None
@@ -185,7 +200,9 @@ class BaseInformation(ErsiliaBase):
 
     @input_shape.setter
     def input_shape(self, new_input_shape):
-        if new_input_shape not in self._read_default_fields("Input Shape"):
+        if new_input_shape not in self._read_default_fields(
+            "Input Shape"
+        ):
             raise InputShapeBaseInformationError
         self._input_shape = new_input_shape
 
@@ -318,7 +335,9 @@ class BaseInformation(ErsiliaBase):
         model_id = self.identifier
         if model_id is None:
             raise GithubBaseInformationError
-        self._github = "https://github.com/ersilia-os/{0}".format(model_id)
+        self._github = "https://github.com/ersilia-os/{0}".format(
+            model_id
+        )
         return self._github
 
     @property
@@ -327,7 +346,9 @@ class BaseInformation(ErsiliaBase):
 
     @dockerhub.setter
     def dockerhub(self, new_dockerhub_url):
-        if not new_dockerhub_url.startswith("https://hub.docker.com/r/ersiliaos/"):
+        if not new_dockerhub_url.startswith(
+            "https://hub.docker.com/r/ersiliaos/"
+        ):
             raise DockerhubBaseInformationError
         self._dockerhub = new_dockerhub_url
 
@@ -340,7 +361,9 @@ class BaseInformation(ErsiliaBase):
         if type(new_docker_architecture) is str:
             new_docker_architecture = [new_docker_architecture]
         for d in new_docker_architecture:
-            if d not in self._read_default_fields("Docker Architecture"):
+            if d not in self._read_default_fields(
+                "Docker Architecture"
+            ):
                 raise DockerArchitectureInformationError
         self._docker_architecture = new_docker_architecture
 
@@ -375,7 +398,15 @@ class BaseInformation(ErsiliaBase):
             raise MemoryGbBaseInformationError
         self._memory_gb = new_memory_gb
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
+        """
+        Convert the base information to a dictionary.
+
+        Returns
+        -------
+        dict
+            The base information as a dictionary.
+        """
         data = {
             "Identifier": self.identifier,
             "Slug": self.slug,
@@ -403,7 +434,15 @@ class BaseInformation(ErsiliaBase):
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
 
-    def from_dict(self, data):
+    def from_dict(self, data: dict):
+        """
+        Set the base information from a dictionary.
+
+        Parameters
+        ----------
+        data : dict
+            The dictionary containing the base information.
+        """
         self.identifier = data["Identifier"]
         self.slug = data["Slug"]
         self.status = data["Status"]
@@ -434,17 +473,35 @@ class BaseInformation(ErsiliaBase):
 
 
 class RepoMetadataFile(ErsiliaBase):
+    """
+    Class to handle the metadata file of a model repository.
+
+    This class provides methods to get the URL of the metadata file from GitHub,
+    read information from the metadata file, and write information to the metadata file.
+
+    Parameters
+    ----------
+    model_id : str, optional
+        The model identifier.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, model_id=None, config_json=None):
         self.model_id = model_id
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=None
+        )
 
     def _github_json_url(self, org=None, branch=None):
         if org is None:
             org = "ersilia-os"
         if branch is None:
             branch = "main"
-        return "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
-            org, self.model_id, branch, METADATA_JSON_FILE
+        return (
+            "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
+                org, self.model_id, branch, METADATA_JSON_FILE
+            )
         )
 
     def _github_yaml_url(self, org=None, branch=None):
@@ -452,8 +509,10 @@ class RepoMetadataFile(ErsiliaBase):
             org = "ersilia-os"
         if branch is None:
             branch = "main"
-        return "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
-            org, self.model_id, branch, METADATA_YAML_FILE
+        return (
+            "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
+                org, self.model_id, branch, METADATA_YAML_FILE
+            )
         )
 
     def _get_file_content_from_github(self, org, branch):
@@ -469,10 +528,50 @@ class RepoMetadataFile(ErsiliaBase):
         else:
             return json.loads(r.content)
 
-    def get_json_or_yaml_file(self, org=None, branch=None):
+    def get_json_or_yaml_file(
+        self, org: str = None, branch: str = None
+    ) -> dict:
+        """
+        Get the metadata file from GitHub in JSON or YAML format. JSON format typically used for bentoml
+        packed models and YAML format typically used for ersilia pack models.
+
+        Parameters
+        ----------
+        org : str, optional
+            The GitHub organization.
+        branch : str, optional
+            The GitHub branch.
+
+        Returns
+        -------
+        dict
+            The metadata file content.
+        """
         return self._get_file_content_from_github(org, branch)
 
-    def read_information(self, org=None, branch=None, json_or_yaml_path=None):
+    def read_information(
+        self,
+        org: str = None,
+        branch: str = None,
+        json_or_yaml_path: str = None,
+    ) -> BaseInformation:
+        """
+        Read information from the metadata file.
+
+        Parameters
+        ----------
+        org : str, optional
+            The GitHub organization.
+        branch : str, optional
+            The GitHub branch.
+        json_or_yaml_path : str, optional
+            The path to the JSON or YAML file.
+
+        Returns
+        -------
+        BaseInformation
+            The base information read from the metadata file.
+        """
         if json_or_yaml_path is None:
             data = self.get_json_or_yaml_file(org=org, branch=branch)
         else:
@@ -487,7 +586,24 @@ class RepoMetadataFile(ErsiliaBase):
         bi.from_dict(data)
         return bi
 
-    def write_information(self, data: BaseInformation, json_or_yaml_path=None):
+    def write_information(
+        self, data: BaseInformation, json_or_yaml_path: str = None
+    ) -> dict:
+        """
+        Write information to the metadata file.
+
+        Parameters
+        ----------
+        data : BaseInformation
+            The base information to write.
+        json_or_yaml_path : str, optional
+            The path to the JSON or YAML file.
+
+        Returns
+        -------
+        dict
+            The written data.
+        """
         data = data.as_dict()
         if json_or_yaml_path.endswith(".json"):
             path = json_or_yaml_path
@@ -503,13 +619,41 @@ class RepoMetadataFile(ErsiliaBase):
 
 
 class MetadataCard(ErsiliaBase):
+    """
+    Class to handle the metadata card of a model.
+
+    This class provides methods to get the metadata card of a model from the local repository.
+
+    Parameters
+    ----------
+    config_json : dict
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    def get(self, model_id=None, slug=None):
+    def get(self, model_id: str = None, slug: str = None) -> dict:
+        """
+        Get the metadata card of a model from the local repository.
+
+        Parameters
+        ----------
+        model_id : str, optional
+            The ID of the model.
+        slug : str, optional
+            The slug of the model.
+
+        Returns
+        -------
+        dict
+            The metadata card of the model.
+        """
         if model_id is not None:
             dest_dir = self._model_path(model_id=model_id)
-            self.logger.debug("Trying to get metadata from: {0}".format(dest_dir))
+            self.logger.debug(
+                "Trying to get metadata from: {0}".format(dest_dir)
+            )
             try:
                 data = get_metadata_from_base_dir(dest_dir)
             except FileNotFoundError:
@@ -520,21 +664,32 @@ class MetadataCard(ErsiliaBase):
 
 
 class ReadmeCard(ErsiliaBase):
+    """
+    Class to handle the README card of a model.
+
+    This class provides methods to get the README card of a model from GitHub.
+
+    Parameters
+    ----------
+    config_json : dict
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
-        url = (
-            "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
-                model_id
-            )
+        url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
+            model_id
         )
         return url
 
     def _gh_view(self, model_id):
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "view.md")
-        cmd = "gh repo view {0}/{1} > {2}".format("ersilia-os", model_id, tmp_file)
+        cmd = "gh repo view {0}/{1} > {2}".format(
+            "ersilia-os", model_id, tmp_file
+        )
         run_command(cmd)
         with open(tmp_file, "r") as f:
             text = f.read()
@@ -585,7 +740,22 @@ class ReadmeCard(ErsiliaBase):
         }
         return results
 
-    def get(self, model_id=None, slug=None):
+    def get(self, model_id: str = None, slug: str = None) -> dict:
+        """
+        Get the README card of a model from GitHub.
+
+        Parameters
+        ----------
+        model_id : str, optional
+            The ID of the model.
+        slug : str, optional
+            The slug of the model.
+
+        Returns
+        -------
+        dict
+            The README card of the model.
+        """
         if model_id:
             return self.parse(model_id)
         else:
@@ -594,8 +764,14 @@ class ReadmeCard(ErsiliaBase):
 
 class LocalCard(ErsiliaBase):
     """
-    This class provides information on models that have been fetched and are available locally.
-    It retrieves and caches information about the models.
+    Class to handle the local card of a model.
+
+    This class provides methods to get the local card of a model from the local repository stored in eos directory.
+
+    Parameters
+    ----------
+    config_json : dict
+        Configuration settings in JSON format.
     """
 
     def __init__(self, config_json):
@@ -618,9 +794,21 @@ class LocalCard(ErsiliaBase):
         else:
             return None
 
-    def get(self, model_id=None, slug=None):
+    def get(self, model_id: str = None, slug: str = None) -> dict:
         """
-        This method returns the card for a model. If the model does not exist, it returns None.
+        Get the local card of a model from the local repository.
+
+        Parameters
+        ----------
+        model_id : str, optional
+            The ID of the model.
+        slug : str, optional
+            The slug of the model.
+
+        Returns
+        -------
+        dict
+            The local card of the model.
         """
         if model_id:
             card = self._load_data(model_id)
@@ -630,10 +818,45 @@ class LocalCard(ErsiliaBase):
 
 
 class LakeCard(ErsiliaBase):
+    """
+    Class to handle the lake card of a model.
+
+    The lake in ersilia refers to a result storage platform powered by isaura package to 
+    store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to 
+    explore and retrieve information from HDF5 files.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
-    def get(self, model_id=None, slug=None, as_json=False):
+    def get(
+        self,
+        model_id: str = None,
+        slug: str = None,
+        as_json: bool = False,
+    ) -> dict:
+        """
+        Get the lake card of a model from the HDF5 explorer.
+
+        Parameters
+        ----------
+        model_id : str, optional
+            The ID of the model.
+        slug : str, optional
+            The slug of the model.
+        as_json : bool, optional
+            Whether to return the lake card in JSON format.
+
+        Returns
+        -------
+        dict
+            The lake card of the model.
+        """
         if model_id is not None:
             if Hdf5Explorer is None:
                 self.logger.debug("No lake found")
@@ -648,6 +871,17 @@ class LakeCard(ErsiliaBase):
 
 
 class S3JsonCard(JsonModelsInterface):
+    """
+    Class to handle the S3 JSON card of a model.
+
+    This class provides methods to get the S3 JSON card of a model from the S3 bucket.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, config_json=None):
         JsonModelsInterface.__init__(self, config_json=config_json)
 
@@ -663,7 +897,22 @@ class S3JsonCard(JsonModelsInterface):
             if model["Slug"] == slug:
                 return model
 
-    def get(self, model_id=None, slug=None):
+    def get(self, model_id: str = None, slug: str = None) -> dict:
+        """
+        Get the S3 JSON card of a model from the S3 bucket by model id or slug.
+
+        Parameters
+        ----------
+        model_id : str, optional
+            The ID of the model.
+        slug : str, optional
+            The slug of the model.
+
+        Returns
+        -------
+        dict
+            The S3 JSON card of the model.
+        """
         if model_id is not None:
             return self.get_card_by_model_id(model_id)
         elif slug is not None:
@@ -673,6 +922,18 @@ class S3JsonCard(JsonModelsInterface):
 
 
 class ModelCard(object):
+    """
+    Class to handle the model card.
+
+    This class provides methods to get the model card from various sources,
+    such as local repository, metadata card, S3 JSON card, and README card.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, config_json=None):
         self.config_json = config_json
 
@@ -694,7 +955,29 @@ class ModelCard(object):
         if card is not None:
             return card
 
-    def get(self, model_id=None, slug=None, as_json=False):
+    def get(
+        self,
+        model_id: str = None,
+        slug: str = None,
+        as_json: bool = False,
+    ) -> dict:
+        """
+        Get the model card from various sources.
+
+        Parameters
+        ----------
+        model_id : str, optional
+            The ID of the model.
+        slug : str, optional
+            The slug of the model.
+        as_json : bool, optional
+            Whether to return the model card in JSON format.
+
+        Returns
+        -------
+        dict
+            The model card.
+        """
         card = self._get(model_id, slug)
         if card is None:
             return

@@ -24,17 +24,48 @@ from . import STATUS_FILE, DONE_TAG
 
 
 class ModelFetcherFromBentoML(ErsiliaBase):
+    """
+    ModelFetcherFromBentoML is responsible for fetching models from the Ersilia Model Hub using BentoML.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the fetcher.
+    credentials_json : dict, optional
+        Credentials for accessing the model hub.
+    overwrite : bool, optional
+        Whether to overwrite existing files.
+    repo_path : str, optional
+        Path to the repository.
+    mode : str, optional
+        Mode of operation, e.g., 'docker'.
+    pip : bool, optional
+        Whether to use pip for installation.
+    dockerize : bool, optional
+        Whether to dockerize the model.
+    force_from_github : bool, optional
+        Whether to force fetching from GitHub.
+    force_from_s3 : bool, optional
+        Whether to force fetching from S3.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        fetcher = ModelFetcherFromBentoML(config_json=config)
+        fetcher.fetch(model_id="eosxxxx")
+    """
     def __init__(
         self,
-        config_json=None,
-        credentials_json=None,
-        overwrite=None,
-        repo_path=None,
-        mode=None,
-        pip=False,
-        dockerize=False,
-        force_from_github=False,
-        force_from_s3=False,
+        config_json: dict = None,
+        credentials_json: dict = None,
+        overwrite: bool = None,
+        repo_path: str = None,
+        mode: str = None,
+        pip: bool = False,
+        dockerize: bool = False,
+        force_from_github: bool = False,
+        force_from_s3: bool = False,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -67,7 +98,7 @@ class ModelFetcherFromBentoML(ErsiliaBase):
             model_id=self.model_id,
             repo_path=self.repo_path,
             config_json=self.config_json,
-            force_from_gihtub=self.force_from_github,
+            force_from_github=self.force_from_github,
             force_from_s3=self.force_from_s3,
         )
         mg.get()
@@ -110,7 +141,7 @@ class ModelFetcherFromBentoML(ErsiliaBase):
         mr = ModelRegisterer(self.model_id, config_json=self.config_json)
         mr.register(is_from_dockerhub=False)
 
-    def _fetch_not_from_dockerhub(self, model_id):
+    def _fetch_not_from_dockerhub(self, model_id: str):
         start = timer()
         self.model_id = model_id
         self._setup_check()
@@ -132,18 +163,48 @@ class ModelFetcherFromBentoML(ErsiliaBase):
             "Fetching {0} done successfully: {1}".format(model_id, elapsed_time)
         )
 
-    def _fetch(self, model_id):
+    def _fetch(self, model_id: str):
         self.logger.debug("Starting fetching procedure")
         if self.overwrite is None:
             self.overwrite = True
         self._fetch_not_from_dockerhub(model_id=model_id)
 
-    def seems_installable(self, model_id):
+    def seems_installable(self, model_id: str) -> bool:
+        """
+        Check if the model is installable with BentoML.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be checked.
+
+        Returns
+        -------
+        bool
+            True if the model is installable with BentoML, False otherwise.
+        """
         tr = TemplateResolver(
             model_id=model_id, repo_path=self.repo_path, config_json=self.config_json
         )
         self.logger.debug("Checking if the model is installable with BentoML")
         return tr.is_bentoml()
 
-    def fetch(self, model_id):
+    def fetch(self, model_id: str):
+        """
+        Fetch the model from the Ersilia Model Hub.
+
+        This method initiates the fetching process for the model.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be fetched.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            fetcher = ModelFetcherFromBentoML(config_json=config)
+            fetcher.fetch(model_id="eosxxxx")
+        """
         self._fetch(model_id)
