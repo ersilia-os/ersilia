@@ -273,10 +273,19 @@
 <div class="viewcode-block" id="ModelCatalog">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelCatalog</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">only_identifier</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">LESS_FIELDS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">]</span>
+    <span class="n">MORE_FIELDS</span> <span class="o">=</span> <span class="n">LESS_FIELDS</span> <span class="o">+</span> <span class="p">[</span>
+        <span class="s2">&quot;Title&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Task&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Input Shape&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Output&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Output Shape&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">less</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mi</span> <span class="o">=</span> <span class="n">ModelIdentifier</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">only_identifier</span> <span class="o">=</span> <span class="n">only_identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="o">=</span> <span class="n">less</span>
 
     <span class="k">def</span> <span class="nf">_is_eos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
@@ -311,7 +320,8 @@
     <span class="k">def</span> <span class="nf">_get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_get_model_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_model_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;identifier&quot;</span><span class="p">)</span>
         <span class="n">model_source_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_source_file</span><span class="p">):</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_source_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -334,31 +344,38 @@
             <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://airtable.com/shrUcrUnd7jB9ChZV&quot;</span><span class="p">)</span>  <span class="c1"># TODO Hardcoded</span></div>
 
 
+    <span class="k">def</span> <span class="nf">_get_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">model_cards</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the catalog of models&quot;&quot;&quot;</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Index&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">columns</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">card</span> <span class="ow">in</span> <span class="n">model_cards</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_status</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;In Progress&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">&quot;Model Source&quot;</span><span class="p">:</span>
+                    <span class="n">r</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(</span><span class="n">card</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">r</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="n">field</span><span class="p">)]</span>
+            <span class="c1"># Sort R by Identifier</span>
+
+            <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        
 <div class="viewcode-block" id="ModelCatalog.hub">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.hub">[docs]</a>
     <span class="k">def</span> <span class="nf">hub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available in Ersilia model hub from the S3 JSON&quot;&quot;&quot;</span>
-        <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
         <span class="n">ji</span> <span class="o">=</span> <span class="n">JsonModelsInterface</span><span class="p">()</span>
         <span class="n">models</span> <span class="o">=</span> <span class="n">ji</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_status</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;In Progress&quot;</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;identifier&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">only_identifier</span><span class="p">:</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">identifier</span><span class="p">]]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_slug</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_title</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">identifier</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">title</span><span class="p">]]</span>
-
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">only_identifier</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LESS_FIELDS</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">MORE_FIELDS</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_catalog</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">models</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">table</span></div>
 
 
 <div class="viewcode-block" id="ModelCatalog.local">
@@ -366,53 +383,18 @@
     <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available locally&quot;&quot;&quot;</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Looking for models in </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">only_identifier</span><span class="p">:</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-                    <span class="k">continue</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">model_id</span><span class="p">]]</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-                    <span class="k">continue</span>
-                <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-                <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_slug</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_title</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_status</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">model_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-                <span class="n">service_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_service_class</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span>
-                    <span class="p">[</span>
-                        <span class="n">model_id</span><span class="p">,</span>
-                        <span class="n">slug</span><span class="p">,</span>
-                        <span class="n">title</span><span class="p">,</span>
-                        <span class="n">status</span><span class="p">,</span>
-                        <span class="n">inputs</span><span class="p">,</span>
-                        <span class="n">output</span><span class="p">,</span>
-                        <span class="n">model_source</span><span class="p">,</span>
-                        <span class="n">service_class</span><span class="p">,</span>
-                    <span class="p">]</span>
-                <span class="p">]</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;Identifier&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Slug&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Title&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Status&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Input&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Output&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Model Source&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Service Class&quot;</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{0}</span><span class="s2"> models&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[],</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LESS_FIELDS</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">MORE_FIELDS</span><span class="o">+</span><span class="p">[</span><span class="s2">&quot;Model Source&quot;</span><span class="p">]</span>
+        <span class="n">cards</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">card</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">cards</span> <span class="o">+=</span> <span class="p">[</span><span class="n">card</span><span class="p">]</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_catalog</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">cards</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">table</span></div>
+
 
 
 <div class="viewcode-block" id="ModelCatalog.bentoml">

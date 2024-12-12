@@ -105,24 +105,14 @@
     <span class="c1"># Example usage: ersilia catalog</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;List a catalog of models&quot;</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-l&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--local&quot;</span><span class="p">,</span>
-        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the local computer&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-h&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--hub&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-h/-l&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--hub/--local&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog of models available in the model hub&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--file_name&quot;</span><span class="p">,</span> <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Catalog file name&quot;</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--browser&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog in the browser&quot;</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--more/--less&quot;</span><span class="p">,</span>
@@ -142,20 +132,20 @@
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--as-table&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-j/-t&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--as-json/--as-table&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show catalog in table format&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span> <span class="nf">catalog</span><span class="p">(</span>
-        <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">hub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">browser</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">more</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">card</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">as_table</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">as_json</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">card</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">model</span><span class="p">:</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
@@ -163,7 +153,7 @@
                 <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="n">card</span> <span class="ow">and</span> <span class="n">model</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">card</span> <span class="ow">and</span> <span class="n">model</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
                 <span class="n">model_metadata</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -180,53 +170,30 @@
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fetching model metadata: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
             <span class="k">return</span>
-
-        <span class="c1"># The idea here is to deter the user from running ersilia catalog --local --hub</span>
-        <span class="k">if</span> <span class="n">local</span> <span class="ow">and</span> <span class="n">hub</span><span class="p">:</span>
-            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                    <span class="s2">&quot;Error: Cannot show local and hub models together&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
-                <span class="p">),</span>
-                <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">return</span>
-
-        <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">()</span>
-        <span class="n">mc</span><span class="o">.</span><span class="n">only_identifier</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">more</span> <span class="k">else</span> <span class="kc">True</span>
-
-        <span class="k">if</span> <span class="n">hub</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">browser</span><span class="p">:</span>
-                <span class="n">mc</span><span class="o">.</span><span class="n">airtable</span><span class="p">()</span>
-                <span class="k">return</span>
-
-            <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span>
-
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># This will work even if the user doesn&#39;t explicitly specify the --local flag</span>
-            <span class="k">if</span> <span class="n">browser</span><span class="p">:</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                        <span class="s2">&quot;Error: Cannot show local models in the browser.</span><span class="se">\n</span><span class="s2">Please use the --hub option to see models in the browser.&quot;</span><span class="p">,</span>
-                        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
-                <span class="k">return</span>
-            <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                        <span class="s2">&quot;No local models available. Please fetch a model by running &#39;ersilia fetch&#39; command&quot;</span><span class="p">,</span>
-                        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
-                <span class="k">return</span>
-
-        <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">catalog</span> <span class="o">=</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">as_table</span><span class="p">()</span> <span class="k">if</span> <span class="n">as_table</span> <span class="k">else</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">as_json</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">catalog_table</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-            <span class="n">catalog</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">(</span><span class="n">less</span><span class="o">=</span><span class="ow">not</span> <span class="n">more</span><span class="p">)</span>
 
-        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hub</span><span class="p">:</span>
+                <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                        <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
+                            <span class="s2">&quot;No local models available. Please fetch a model by running &#39;ersilia fetch&#39; command&quot;</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span>
+            <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">catalog</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">catalog_table</span><span class="o">.</span><span class="n">as_json</span><span class="p">()</span> <span class="k">if</span> <span class="n">as_json</span> <span class="k">else</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">as_table</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">catalog_table</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+                <span class="n">catalog</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">catalog</span></div>
 
