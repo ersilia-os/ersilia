@@ -180,10 +180,19 @@ class CatalogTable(object):
 
 
 class ModelCatalog(ErsiliaBase):
-    def __init__(self, config_json=None, only_identifier=True):
+    LESS_FIELDS = ["Identifier", "Slug"]
+    MORE_FIELDS = LESS_FIELDS + [
+        "Title",
+        "Task",
+        "Input Shape",
+        "Output",
+        "Output Shape",
+    ]
+
+    def __init__(self, config_json=None, less=True):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mi = ModelIdentifier()
-        self.only_identifier = only_identifier
+        self.less = less
 
     def _is_eos(self, s):
         if self.mi.is_valid(s):
@@ -218,7 +227,8 @@ class ModelCatalog(ErsiliaBase):
     def _get_output(self, card):
         return self._get_item(card, "output")[0]
 
-    def _get_model_source(self, model_id):
+    def _get_model_source(self, card):
+        model_id = self._get_item(card, "identifier")
         model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
         if os.path.exists(model_source_file):
             with open(model_source_file) as f:
@@ -238,80 +248,52 @@ class ModelCatalog(ErsiliaBase):
         if webbrowser:
             webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")  # TODO Hardcoded
 
-    def hub(self):
-        """List models available in Ersilia model hub from the S3 JSON"""
-        mc = ModelCard()
-        ji = JsonModelsInterface()
-        models = ji.items_all()
+    def _get_catalog(self, columns: list, model_cards: list):
+        """Get the catalog of models"""
         R = []
-        for model in models:
-            status = self._get_status(model)
+        columns = ["Index"] + columns
+
+        idx = 0
+        for card in model_cards:
+            status = self._get_status(card)
             if status == "In Progress":
                 continue
+            idx += 1
+            r = [idx]
+            for field in columns[1:]:
+                if field == "Model Source":
+                    r += [self._get_model_source(card)]
+                else:
+                    r += [self._get_item(card, field)]
+            # Sort R by Identifier
 
-            identifier = self._get_item(model, "identifier")
-            if self.only_identifier:
-                R += [[identifier]]
-            else:
-                slug = self._get_slug(model)
-                title = self._get_title(model)
-                R += [[identifier, slug, title]]
-
-        columns = (
-            ["Identifier"] if self.only_identifier else ["Identifier", "Slug", "Title"]
-        )
-        return CatalogTable(R, columns=columns)
+            R += [r]
+        R = sorted(R, key=lambda x: x[0])
+        return CatalogTable(data=R, columns=columns)
+        
+    def hub(self):
+        """List models available in Ersilia model hub from the S3 JSON"""
+        ji = JsonModelsInterface()
+        models = ji.items_all()
+        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS
+        table = self._get_catalog(columns, models)
+        return table
 
     def local(self):
         """List models available locally"""
         mc = ModelCard()
-        R = []
-        logger.debug("Looking for models in {0}".format(self._bundles_dir))
-        if self.only_identifier:
-            R = []
-            for model_id in os.listdir(self._bundles_dir):
-                if not self._is_eos(model_id):
-                    continue
-                R += [[model_id]]
-            columns = ["Identifier"]
-        else:
-            for model_id in os.listdir(self._bundles_dir):
-                if not self._is_eos(model_id):
-                    continue
-                card = mc.get(model_id)
-                slug = self._get_slug(card)
-                title = self._get_title(card)
-                status = self._get_status(card)
-                inputs = self._get_input(card)
-                output = self._get_output(card)
-                model_source = self._get_model_source(model_id)
-                service_class = self._get_service_class(card)
-                R += [
-                    [
-                        model_id,
-                        slug,
-                        title,
-                        status,
-                        inputs,
-                        output,
-                        model_source,
-                        service_class,
-                    ]
-                ]
-            columns = [
-                "Identifier",
-                "Slug",
-                "Title",
-                "Status",
-                "Input",
-                "Output",
-                "Model Source",
-                "Service Class",
-            ]
-        logger.info("Found {0} models".format(len(R)))
-        if len(R) == 0:
-            return CatalogTable(data=[], columns=columns)
-        return CatalogTable(data=R, columns=columns)
+        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS+["Model Source"]
+        cards = []
+        for model_id in os.listdir(self._bundles_dir):
+            if not self._is_eos(model_id):
+                continue
+            card = mc.get(model_id)
+            if not card:
+                continue
+            cards += [card]
+        table = self._get_catalog(columns, cards)
+        return table
+
 
     def bentoml(self):
         """List models available as BentoServices"""

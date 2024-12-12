@@ -37,7 +37,6 @@ def example_cmd():
     def example():
         pass
 
-    
     @example.command()
     @click.argument("model", required=False, default=None, type=click.STRING)
     @click.option("--n_samples", "-n", default=5, type=click.INT)
@@ -50,6 +49,15 @@ def example_cmd():
         else:
             session = Session(config_json=None)
             model_id = session.current_model_id()
+            if model_id is None:
+                click.echo(
+                    click.style(
+                        "Error: No model id given and no model found running in this shell.",
+                        fg="red",
+                    ),
+                    err=True,
+                )
+                return
         eg = ExampleGenerator(model_id=model_id)
         if file_name is None:
             echo(
@@ -60,7 +68,6 @@ def example_cmd():
             )
         else:
             eg.example(n_samples, file_name, simple, try_predefined=predefined)
-
 
     @example.command()
     @click.option("--n_samples", "-n", default=5, type=click.INT)
