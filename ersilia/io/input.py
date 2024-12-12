@@ -234,7 +234,7 @@ class ExampleGenerator(ErsiliaBase):
         if file_name is None:
             data = [v for v in self.IO.example(n_samples)]
             if simple:
-                data = [d["input"] for d in data]
+                data = [{'input': d["input"]} for d in data]
             return data
         else:
             extension = file_name.split(".")[-1]
