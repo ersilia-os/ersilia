@@ -139,25 +139,22 @@ class ModelFetcher(ErsiliaBase):
     def _fetch_not_from_dockerhub(self, model_id):
         self.model_id = model_id
         is_fetched = False
-        if not self.exists(model_id):
-            self.logger.debug("Model doesn't exist in your local, fetching it now")
-            if self.force_with_fastapi:
-                self._fetch_from_fastapi()
-                is_fetched = True
-            if self.force_with_bentoml:
-                self._fetch_from_bentoml()
-                is_fetched = True
-            if is_fetched:
-                return
-            else:
-                self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
-                fetcher_type = self._decide_fetcher(model_id)
-                if fetcher_type == PACK_METHOD_FASTAPI:
-                    self._fetch_from_fastapi()
-                if fetcher_type == PACK_METHOD_BENTOML:
-                    self._fetch_from_bentoml()
+        self.logger.debug("Model doesn't exist in your local, fetching it now")
+        if self.force_with_fastapi:
+            self._fetch_from_fastapi()
+            is_fetched = True
+        if self.force_with_bentoml:
+            self._fetch_from_bentoml()
+            is_fetched = True
+        if is_fetched:
+            return
         else:
-            self.logger.debug("Model already exists in your local, skipping fetching")
+            self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
+            fetcher_type = self._decide_fetcher(model_id)
+            if fetcher_type == PACK_METHOD_FASTAPI:
+                self._fetch_from_fastapi()
+            if fetcher_type == PACK_METHOD_BENTOML:
+                self._fetch_from_bentoml()
 
     def _standard_csv_example(self, model_id):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
@@ -222,22 +219,26 @@ class ModelFetcher(ErsiliaBase):
             return False
 
     async def _fetch(self, model_id):
-        self.logger.debug("Starting fetching procedure")
-        do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
-        if do_dockerhub:
-            self.logger.debug("Decided to fetch from DockerHub")
-            await self._fetch_from_dockerhub(model_id=model_id)
-            return
-        do_hosted = self._decide_if_use_hosted(model_id=model_id)
-        if do_hosted:
-            self.logger.debug("Fetching from hosted")
-            self._fetch_from_hosted(model_id=model_id)
-            return
-        if self.overwrite is None:
-            self.logger.debug("Overwriting")
-            self.overwrite = True
-        self.logger.debug("Fetching in your system, not from DockerHub")
-        self._fetch_not_from_dockerhub(model_id=model_id)
+        if not self.exists(model_id):
+            self.logger.debug("Starting fetching procedure")
+            do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
+            if do_dockerhub:
+                self.logger.debug("Decided to fetch from DockerHub")
+                await self._fetch_from_dockerhub(model_id=model_id)
+                return
+            do_hosted = self._decide_if_use_hosted(model_id=model_id)
+            if do_hosted:
+                self.logger.debug("Fetching from hosted")
+                self._fetch_from_hosted(model_id=model_id)
+                return
+            if self.overwrite is None:
+                self.logger.debug("Overwriting")
+                self.overwrite = True
+            self.logger.debug("Fetching in your system, not from DockerHub")
+            self._fetch_not_from_dockerhub(model_id=model_id)
+        else:
+            self.logger.debug("Model already exists in your local, skipping fetching")
+        
 
     async def fetch(self, model_id):
         """Fetches a model with the given eos identifier
