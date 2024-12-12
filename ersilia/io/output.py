@@ -10,7 +10,7 @@ from .dataframe import Dataframe
 from .readers.file import FileTyper
 from .pure import PureDataTyper
 from ..serve.schema import ApiSchema
-from . import ErsiliaBase
+from .. import ErsiliaBase
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..db.hubdata.interfaces import JsonModelsInterface
 from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
