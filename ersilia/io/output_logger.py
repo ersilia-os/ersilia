@@ -7,30 +7,36 @@ MAX_LOG_COLUMNS = 10
 
 
 class TabularResultLogger(object):
+    """
+    Class to log tabular results.
+
+    This class handles logging of results from tabular files such as CSV and TSV.
+
+    Parameters
+    ----------
+    None
+    """
     def __init__(self):
         pass
 
-    def _is_tabular_file(self, s):
-        if type(s) is str:
-            if not os.path.exists(s):
-                return False
-            if s.endswith(".csv"):
-                return True
-            if s.endswith(".tsv"):
-                return True
-            if s.endswith(".h5"):
-                return True
-        else:
-            return False
-
-    def _get_delimiter(self, s):
-        if s.endswith(".csv"):
-            return ","
-        if s.endswith(".tsv"):
-            return "\t"
-        return None
-
     def tabulate(self, result, identifier=None, model_id=None):
+        """
+        Tabulate the results from a file.
+
+        Parameters
+        ----------
+        result : str
+            Path to the result file.
+        identifier : str, optional
+            Identifier to include in the results.
+        model_id : str, optional
+            Model ID to include in the results.
+
+        Returns
+        -------
+        list or None
+            List of tabulated results or None if the file is not tabular.
+        """
         if self._is_tabular_file(result):
             if result.endswith(".h5"):
                 return False  # TODO include HDF5 compatibility
@@ -53,4 +59,24 @@ class TabularResultLogger(object):
                     s += r[:MAX_LOG_COLUMNS]
                     R += [s]
                 return R
+        return None
+
+    def _is_tabular_file(self, s):
+        if type(s) is str:
+            if not os.path.exists(s):
+                return False
+            if s.endswith(".csv"):
+                return True
+            if s.endswith(".tsv"):
+                return True
+            if s.endswith(".h5"):
+                return True
+        else:
+            return False
+
+    def _get_delimiter(self, s):
+        if s.endswith(".csv"):
+            return ","
+        if s.endswith(".tsv"):
+            return "\t"
         return None
