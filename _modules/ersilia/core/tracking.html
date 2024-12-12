@@ -112,10 +112,17 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.flatten_dict">[docs]</a>
 <span class="k">def</span> <span class="nf">flatten_dict</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This will flatten the nested dictionaries from the generator into a single-level dictionary,</span>
-<span class="sd">    where keys from all levels are merged into one dictionary.</span>
+<span class="sd">    Flatten the nested dictionaries from the generator into a single-level dictionary.</span>
 
-<span class="sd">    :flat_dict: Result returned in a dictionary</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        The nested dictionary to flatten.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The flattened dictionary.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">flat_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">outer_key</span><span class="p">,</span> <span class="n">inner_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -129,10 +136,17 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.log_files_metrics">[docs]</a>
 <span class="k">def</span> <span class="nf">log_files_metrics</span><span class="p">(</span><span class="n">file_log</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function will log the number of errors and warnings in the log files.</span>
+<span class="sd">    Log the number of errors and warnings in the log files.</span>
 
-<span class="sd">    :param file: The log file to be read</span>
-<span class="sd">    :return: None (writes to file)</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_log : str</span>
+<span class="sd">        The log file to be read.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary containing the error count and warning count.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">error_count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -210,6 +224,16 @@
 <div class="viewcode-block" id="serialize_session_json_to_csv">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_session_json_to_csv">[docs]</a>
 <span class="k">def</span> <span class="nf">serialize_session_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize session JSON data to a CSV file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    json_file : str</span>
+<span class="sd">        The path to the JSON file.</span>
+<span class="sd">    csv_file : str</span>
+<span class="sd">        The path to the CSV file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
@@ -227,6 +251,16 @@
 <div class="viewcode-block" id="serialize_tracking_json_to_csv">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_tracking_json_to_csv">[docs]</a>
 <span class="k">def</span> <span class="nf">serialize_tracking_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize tracking JSON data to a CSV file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    json_file : str</span>
+<span class="sd">        The path to the JSON file.</span>
+<span class="sd">    csv_file : str</span>
+<span class="sd">        The path to the CSV file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">2</span><span class="p">:]</span>  <span class="c1"># Ignore model_id and runs</span>
@@ -246,12 +280,22 @@
 <div class="viewcode-block" id="upload_to_s3">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_s3">[docs]</a>
 <span class="k">def</span> <span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="n">TRACKING_BUCKET</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a file to an S3 bucket</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Upload a file to an S3 bucket.</span>
 
-<span class="sd">    :param json_dict: JSON object to upload</span>
-<span class="sd">    :param bucket: Bucket to upload to</span>
-<span class="sd">    :param object_name: S3 object name. If not specified then we generate a name based on the timestamp and model id.</span>
-<span class="sd">    :return: True if file was uploaded, else False</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The identifier of the model.</span>
+<span class="sd">    metadata : dict</span>
+<span class="sd">        The metadata to upload.</span>
+<span class="sd">    bucket : str, optional</span>
+<span class="sd">        The S3 bucket to upload to, by default TRACKING_BUCKET.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the file was uploaded successfully, False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span>
@@ -305,16 +349,20 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_cddvault">[docs]</a>
 <span class="k">def</span> <span class="nf">upload_to_cddvault</span><span class="p">(</span><span class="n">output_df</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This function takes in the output dataframe from the model run and uploads the data to CDD vault.</span>
+<span class="sd">    Upload the output dataframe from the model run to CDD Vault.</span>
 
-<span class="sd">    NOTE: Currently, this is simply a skeleton of what the final code should look like. The TODO details</span>
-<span class="sd">    what the remaining changes should look like.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    output_df : pd.DataFrame</span>
+<span class="sd">        The output dataframe from the model run.</span>
+<span class="sd">    api_key : str</span>
+<span class="sd">        The API key for CDD Vault&#39;s API.</span>
 
-<span class="sd">    :param output_df: The output dataframe from the model run</span>
-<span class="sd">    :param api_key: The API key for CDD Vault&#39;s API</span>
-<span class="sd">    :return: Whether the API call was successful</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the API call was successful, False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># We use the slurps API path to be able to bulk upload data</span>
     <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://app.collaborativedrug.com/api/v1/vaults/&lt;vault_id&gt;/slurps&quot;</span>
     <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;CDD-Token&quot;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">}</span>
@@ -371,10 +419,17 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.get_nan_counts">[docs]</a>
 <span class="k">def</span> <span class="nf">get_nan_counts</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculates the number of None values in each key of a list of dictionaries.</span>
+<span class="sd">    Calculate the number of NAN values in each key of a list of dictionaries.</span>
 
-<span class="sd">    :param data_list: List of dictionaries containing the data</span>
-<span class="sd">    :return: Dictionary containing the count of None values for each key</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_list : list</span>
+<span class="sd">        List of dictionaries containing the data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The count of NAN values for each key.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">nan_count</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -399,9 +454,16 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker">[docs]</a>
 <span class="k">class</span> <span class="nc">RunTracker</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class will be responsible for tracking model runs. It calculates the desired metadata based on a model&#39;s</span>
+<span class="sd">    This class is responsible for tracking model runs. It calculates the desired metadata based on a model&#39;s</span>
 <span class="sd">    inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested</span>
 <span class="sd">    to Ersilia&#39;s Splunk dashboard.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The identifier of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
@@ -422,11 +484,19 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_file_sizes">[docs]</a>
     <span class="k">def</span> <span class="nf">get_file_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the size of the input and output dataframes, as well as the average size of each row.</span>
+<span class="sd">        Calculate the size of the input and output dataframes, as well as the average size of each row.</span>
 
-<span class="sd">        :input_file: Pandas dataframe containing the input data</span>
-<span class="sd">        :output_file: Pandas dataframe containing the output data</span>
-<span class="sd">        :return: dictionary containing the input size, output size, average input size, and average output size</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_file : pd.DataFrame</span>
+<span class="sd">            Pandas dataframe containing the input data.</span>
+<span class="sd">        output_file : pd.DataFrame</span>
+<span class="sd">            Pandas dataframe containing the output data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing the input size, output size, average input size, and average output size.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">input_size</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span>
@@ -454,12 +524,21 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.check_types">[docs]</a>
     <span class="k">def</span> <span class="nf">check_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method is responsible for checking the types of the output file against the expected types.</span>
-<span class="sd">        This includes checking the shape of the output file (list vs single) and the types of each column.</span>
+<span class="sd">        Check the types of the output file against the expected types.</span>
 
-<span class="sd">        :param result: The output file</span>
-<span class="sd">        :param metadata: The metadata dictionary</span>
-<span class="sd">        :return: A dictionary containing the number of mismatched types and a boolean for whether the shape is correct</span>
+<span class="sd">        This method checks the shape of the output file (list vs single) and the types of each column.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The output data.</span>
+<span class="sd">        metadata : dict</span>
+<span class="sd">            The metadata dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing the number of mismatched types and a boolean for whether the shape is correct.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">type_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="s2">&quot;int&quot;</span><span class="p">:</span> <span class="s2">&quot;Int&quot;</span><span class="p">}</span>
@@ -498,8 +577,12 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_peak_memory">[docs]</a>
     <span class="k">def</span> <span class="nf">get_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the peak memory usage of ersilia&#39;s Python instance during the run.</span>
-<span class="sd">        :return: The peak memory usage in Megabytes.</span>
+<span class="sd">        Calculate the peak memory usage of Ersilia&#39;s Python instance during the run.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The peak memory usage in Megabytes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">usage</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">getrusage</span><span class="p">(</span><span class="n">resource</span><span class="o">.</span><span class="n">RUSAGE_SELF</span><span class="p">)</span>
@@ -512,7 +595,12 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_memory_info">[docs]</a>
     <span class="k">def</span> <span class="nf">get_memory_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieves the memory information of the current process</span>
+<span class="sd">        Retrieve the memory information of the current process.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing the memory usage in MB and the total CPU time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">current_process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">()</span>
@@ -542,6 +630,16 @@
 <div class="viewcode-block" id="RunTracker.log_result">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_result">[docs]</a>
     <span class="k">def</span> <span class="nf">log_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log the result of the model run.</span>
+
+<span class="sd">        This method logs the result of the model run to a CSV file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The result data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">get_session_uuid</span><span class="p">()</span>
         <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
         <span class="n">tabular_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span>
@@ -558,10 +656,21 @@
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">container_metrics</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Tracks the results of a model run.</span>
-<span class="sd">        :param input: The input data used in the model run.</span>
-<span class="sd">        :param result: The output data in the form of a csv file path or Generator from the model run.</span>
-<span class="sd">        :param meta: The metadata of the model.</span>
+<span class="sd">        Track the results of a model run.</span>
+
+<span class="sd">        This method collects relevant data for the run, updates the session file with the stats,</span>
+<span class="sd">        and uploads the data to AWS if credentials are available.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input : str</span>
+<span class="sd">            The input data used in the model run.</span>
+<span class="sd">        result : str or Generator</span>
+<span class="sd">            The output data in the form of a CSV file path or Generator from the model run.</span>
+<span class="sd">        meta : dict</span>
+<span class="sd">            The metadata of the model.</span>
+<span class="sd">        container_metrics : dict</span>
+<span class="sd">            The container metrics data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Set up requirements for tracking the run</span>
         <span class="c1"># self.docker_client = SimpleDocker()</span>

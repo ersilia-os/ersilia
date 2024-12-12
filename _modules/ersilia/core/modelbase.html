@@ -87,8 +87,21 @@
 <div class="viewcode-block" id="ModelBase">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class of a Model.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for managing models.</span>
 
+<span class="sd">    This class provides foundational functionality for handling models, including initialization,</span>
+<span class="sd">    validation, and checking local availability.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id_or_slug : str, optional</span>
+<span class="sd">        The model identifier or slug, by default None.</span>
+<span class="sd">    repo_path : str, optional</span>
+<span class="sd">        The repository path, by default None.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration in JSON format, by default None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id_or_slug</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -136,6 +149,14 @@
 <div class="viewcode-block" id="ModelBase.is_valid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_valid">[docs]</a>
     <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model identifier and slug are valid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model identifier and slug are valid, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
@@ -166,6 +187,15 @@
 <div class="viewcode-block" id="ModelBase.is_available_locally">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_available_locally">[docs]</a>
     <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model is available locally either from the status file</span>
+<span class="sd">        or from DockerHub.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model is available locally, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_status</span><span class="p">()</span>
         <span class="n">bd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally_from_dockerhub</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">bs</span> <span class="ow">or</span> <span class="n">bd</span><span class="p">:</span>
@@ -177,6 +207,14 @@
 <div class="viewcode-block" id="ModelBase.was_fetched_from_dockerhub">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub">[docs]</a>
     <span class="k">def</span> <span class="nf">was_fetched_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model was fetched from DockerHub by reading the DockerHub file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model was fetched from DockerHub, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">from_dockerhub_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
         <span class="p">)</span>

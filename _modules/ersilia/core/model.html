@@ -120,18 +120,65 @@
 <div class="viewcode-block" id="ErsiliaModel">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel">[docs]</a>
 <span class="k">class</span> <span class="nc">ErsiliaModel</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ErsiliaModel class for managing and interacting with different models.</span>
+
+<span class="sd">    This class provides methods to fetch, serve, run, and close models form a model hub.</span>
+<span class="sd">    It also supports tracking runs and handling various input and output formats.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : str</span>
+<span class="sd">        The identifier of the model.</span>
+<span class="sd">    output_source : OutputSource, optional</span>
+<span class="sd">        The source of the output, by default OutputSource.LOCAL_ONLY.</span>
+<span class="sd">    save_to_lake : bool, optional</span>
+<span class="sd">        Whether to save to lake, by default True.</span>
+<span class="sd">    service_class : str, optional</span>
+<span class="sd">        The service class, by default None.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration in JSON format, by default None.</span>
+<span class="sd">    credentials_json : dict, optional</span>
+<span class="sd">        Credentials in JSON format, by default None.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Verbosity flag, by default None.</span>
+<span class="sd">    fetch_if_not_available : bool, optional</span>
+<span class="sd">        Whether to fetch the model if not available locally, by default True.</span>
+<span class="sd">    preferred_port : int, optional</span>
+<span class="sd">        Preferred port for serving the model, by default None.</span>
+<span class="sd">    track_runs : bool, optional</span>
+<span class="sd">        Whether to track runs, by default False.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Fetching a model:</span>
+<span class="sd">    &gt;&gt;&gt; model = ErsiliaModel(model=&quot;model_id&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; model.fetch()</span>
+
+<span class="sd">    Serving a model:</span>
+<span class="sd">    &gt;&gt;&gt; model = ErsiliaModel(model=&quot;model_id&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; model.serve()</span>
+
+<span class="sd">    Running a model:</span>
+<span class="sd">    &gt;&gt;&gt; model = ErsiliaModel(model=&quot;model_id&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; result = model.run(input=&quot;input_data.csv&quot;, output=&quot;output_data.csv&quot;)</span>
+
+<span class="sd">    Closing a model:</span>
+<span class="sd">    &gt;&gt;&gt; model = ErsiliaModel(model=&quot;model_id&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; model.close()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">,</span>
-        <span class="n">output_source</span><span class="o">=</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">,</span>
-        <span class="n">save_to_lake</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">service_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">fetch_if_not_available</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">track_runs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output_source</span><span class="p">:</span> <span class="n">OutputSource</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">,</span>
+        <span class="n">save_to_lake</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">service_class</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fetch_if_not_available</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">preferred_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">track_runs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -221,16 +268,83 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with initialization!&quot;</span><span class="p">)</span>
 
+<div class="viewcode-block" id="ErsiliaModel.fetch">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.fetch">[docs]</a>
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch the model if not available locally.</span>
+
+<span class="sd">        This method fetches the model from the Ersilia Model Hub if it is not available locally.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_if_not_available</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Model is not available locally&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">do_fetch</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
+                    <span class="s2">&quot;Requested model </span><span class="si">{0}</span><span class="s2"> is not available locally. Do you want to fetch it? [Y/n]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+                    <span class="p">),</span>
+                    <span class="n">default_answer</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Unable to capture user input. Fetching anyway.&quot;</span><span class="p">)</span>
+                <span class="n">do_fetch</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">do_fetch</span><span class="p">:</span>
+                <span class="n">fetch</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.hub.fetch.fetch&quot;</span><span class="p">)</span>
+                <span class="n">mf</span> <span class="o">=</span> <span class="n">fetch</span><span class="o">.</span><span class="n">ModelFetcher</span><span class="p">(</span>
+                    <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials_json</span>
+                <span class="p">)</span>
+                <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span></div>
+
+
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enter the runtime context related to this object.</span>
+
+<span class="sd">        This method is called when the runtime context is entered using the `with` statement.</span>
+<span class="sd">        It starts serving the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ErsiliaModel</span>
+<span class="sd">            The instance of the ErsiliaModel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exit the runtime context related to this object.</span>
+
+<span class="sd">        This method is called when the runtime context is exited using the `with` statement.</span>
+<span class="sd">        It closes the model services and session.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        exc_type : type</span>
+<span class="sd">            The exception type.</span>
+<span class="sd">        exc_val : Exception</span>
+<span class="sd">            The exception instance.</span>
+<span class="sd">        exc_tb : traceback</span>
+<span class="sd">            The traceback object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ErsiliaModel.is_valid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.is_valid">[docs]</a>
     <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model identifier is valid.</span>
+
+<span class="sd">        This method verifies if the provided model identifier is valid by checking its existence</span>
+<span class="sd">        and validity in the model hub.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model identifier is valid, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span></div>
 
 
@@ -279,7 +393,7 @@
 
     <span class="k">def</span> <span class="nf">_get_api_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">api_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">api_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">api_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">api_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
@@ -294,14 +408,58 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">api</span>
 
-    <span class="k">def</span> <span class="nf">_api_runner_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_api_runner_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">:</span> <span class="n">Api</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the API in an iterative manner.</span>
+
+<span class="sd">        This method executes the API in an iterative manner, yielding results one by one.</span>
+<span class="sd">        It is useful for handling large datasets that need to be processed in batches.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api : Api</span>
+<span class="sd">            The API instance to run.</span>
+<span class="sd">        input : str</span>
+<span class="sd">            The input data.</span>
+<span class="sd">        output : str</span>
+<span class="sd">            The output data.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            The batch size.</span>
+
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        Any</span>
+<span class="sd">            The result of each API call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="p">),</span> <span class="s2">&quot;Something went wrong. Please contact us at hello@ersila.io&quot;</span>
             <span class="k">yield</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_api_runner_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_api_runner_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">:</span> <span class="n">Api</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the API and return the results.</span>
+
+<span class="sd">        This method executes the API and returns the results in the specified output format.</span>
+<span class="sd">        It handles different output formats such as JSON, HDF5, CSV, NumPy arrays, Pandas DataFrames, and dictionaries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api : Api</span>
+<span class="sd">            The API instance to run.</span>
+<span class="sd">        input : str</span>
+<span class="sd">            The input data.</span>
+<span class="sd">        output : str</span>
+<span class="sd">            The output data.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            The batch size.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Any</span>
+<span class="sd">            The result of the API run in the specified output format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span> <span class="ow">and</span> <span class="n">pd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span>
         <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
@@ -351,6 +509,20 @@
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">inputs</span>
                 <span class="n">d</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span>
                 <span class="k">return</span> <span class="n">d</span>
+
+    <span class="k">def</span> <span class="nf">_get_api_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">use_iter</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">__output_is_file</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+            <span class="n">use_iter</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">__output_is_format</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+            <span class="n">use_iter</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ApiSpecifiedOutputError</span>
+        <span class="k">if</span> <span class="n">use_iter</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_runner_iter</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_runner_return</span>
 
     <span class="k">def</span> <span class="nf">_standard_api_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="n">scra</span> <span class="o">=</span> <span class="n">StandardCSVRunApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">())</span>
@@ -449,6 +621,28 @@
     <span class="k">def</span> <span class="nf">api</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the specified API with the given input and output.</span>
+
+<span class="sd">        This method executes the specified API(usually with the end point run) using the provided input and output parameters.</span>
+<span class="sd">        It handles file splitting and caching if necessary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str, optional</span>
+<span class="sd">            The name of the API to run, by default None.</span>
+<span class="sd">        input : str, optional</span>
+<span class="sd">            The input data, by default None.</span>
+<span class="sd">        output : str, optional</span>
+<span class="sd">            The output data, by default None.</span>
+<span class="sd">        batch_size : int, optional</span>
+<span class="sd">            The batch size, by default DEFAULT_BATCH_SIZE.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Any</span>
+<span class="sd">            The result of the API run.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">is_cloud</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">):</span>
             <span class="n">store</span> <span class="o">=</span> <span class="n">InferenceStoreApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">get_precalculations</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
@@ -478,6 +672,28 @@
 <div class="viewcode-block" id="ErsiliaModel.api_task">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.api_task">[docs]</a>
     <span class="k">def</span> <span class="nf">api_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the specified API task with the given input and output.</span>
+
+<span class="sd">        This method executes the specified API task using the provided input and output parameters.</span>
+<span class="sd">        It returns the result of the API task, which can be a generator, file, or other data types.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str</span>
+<span class="sd">            The name of the API to run.</span>
+<span class="sd">        input : str</span>
+<span class="sd">            The input data.</span>
+<span class="sd">        output : str</span>
+<span class="sd">            The output data.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            The batch size.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Any</span>
+<span class="sd">            The result of the API task.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">api_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_api_instance</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">)</span>
         <span class="n">api_runner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_api_runner</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">api_runner</span><span class="p">(</span>
@@ -499,6 +715,17 @@
 <div class="viewcode-block" id="ErsiliaModel.update_model_usage_time">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.update_model_usage_time">[docs]</a>
     <span class="k">def</span> <span class="nf">update_model_usage_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the model usage time.</span>
+
+<span class="sd">        This method updates the usage time of the specified model by recording the current timestamp</span>
+<span class="sd">        in the fetched models file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The identifier of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">FETCHED_MODELS_FILENAME</span><span class="p">)</span>
         <span class="n">ts_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
@@ -515,6 +742,11 @@
 <div class="viewcode-block" id="ErsiliaModel.setup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.setup">[docs]</a>
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup the necessary requirements for the model.</span>
+
+<span class="sd">        This method ensures that the required dependencies and resources for the model are available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">RdkitRequirement</span><span class="p">()</span>
         <span class="n">ChemblWebResourceClientRequirement</span><span class="p">()</span></div>
 
@@ -522,6 +754,13 @@
 <div class="viewcode-block" id="ErsiliaModel.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.serve">[docs]</a>
     <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serve the model by starting the necessary services.</span>
+
+<span class="sd">        This method sets up the required dependencies, opens a session, and starts the model service.</span>
+<span class="sd">        It registers the service class and output source, updates the model&#39;s URL and process ID (PID),</span>
+<span class="sd">        and tracks resource usage if tracking is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking rdkit and other requirements&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -546,6 +785,11 @@
 <div class="viewcode-block" id="ErsiliaModel.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.close">[docs]</a>
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the model services and session.</span>
+
+<span class="sd">        This method stops the model service and closes the session.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -553,6 +797,16 @@
 <div class="viewcode-block" id="ErsiliaModel.get_apis">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.get_apis">[docs]</a>
     <span class="k">def</span> <span class="nf">get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of available APIs for the model.</span>
+
+<span class="sd">        This method retrieves the list of APIs that are available for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The list of available APIs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span></div>
 
 
@@ -586,11 +840,34 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
-        <span class="n">track_run</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+        <span class="n">track_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the model with the given input and output.</span>
+
+<span class="sd">        This method executes the model using the provided input and output parameters.</span>
+<span class="sd">        It first tries to run the model using the standard API, and if that fails, it falls back to</span>
+<span class="sd">        the conventional run method. It also tracks the run if the track_run flag is set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input : str, optional</span>
+<span class="sd">            The input data, by default None.</span>
+<span class="sd">        output : str, optional</span>
+<span class="sd">            The output data, by default None.</span>
+<span class="sd">        batch_size : int, optional</span>
+<span class="sd">            The batch size, by default DEFAULT_BATCH_SIZE.</span>
+<span class="sd">        track_run : bool, optional</span>
+<span class="sd">            Whether to track the run, by default False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Any</span>
+<span class="sd">            The result of the model run(such as output csv file name, json).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO this should be smart enough to init the container sampler</span>
         <span class="c1"># or a python process sampler based on how the model was fetched</span>
         <span class="c1"># Presently we only deal with containers</span>
@@ -640,6 +917,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the paths related to the model.</span>
+
+<span class="sd">        This property returns a dictionary containing various paths related to the model,</span>
+<span class="sd">        such as the destination path, repository path, and BentoML path.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The dictionary containing paths.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;dest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
             <span class="s2">&quot;repository&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
@@ -649,24 +937,79 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the input type of the model.</span>
+
+<span class="sd">        This property reads the input type information from the model&#39;s card file and returns it</span>
+<span class="sd">        as a list of input types.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The list of input types(such as compounds).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">CARD_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="s2">&quot;Input&quot;</span><span class="p">]]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the output type of the model.</span>
+
+<span class="sd">        This property reads the output type information from the model&#39;s card file and returns it</span>
+<span class="sd">        as a list of output types.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The list of output types(such as Descriptor, score, probability etc...).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">CARD_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="s2">&quot;Output&quot;</span><span class="p">]]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the schema of the model.</span>
+
+<span class="sd">        This property returns the schema of the model, which defines the structure and format</span>
+<span class="sd">        of the model&#39;s input and output data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The schema of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span><span class="o">.</span><span class="n">schema</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the metadata of the model.</span>
+
+<span class="sd">        This property returns the metadata of the model, which provides additional information</span>
+<span class="sd">        about the model, such as its description, version, and author.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The metadata of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span><span class="o">.</span><span class="n">get_meta</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the size of the model.</span>
+
+<span class="sd">        This property reads the size information from the model&#39;s size file and returns it</span>
+<span class="sd">        as a dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The size of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -675,6 +1018,26 @@
 <div class="viewcode-block" id="ErsiliaModel.example">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.example">[docs]</a>
     <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate example data for the model.</span>
+
+<span class="sd">        This method generates example data for the model using the specified number of samples.</span>
+<span class="sd">        The generated data can be saved to a file if a file name is provided.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_samples : int</span>
+<span class="sd">            The number of samples to generate.</span>
+<span class="sd">        file_name : str, optional</span>
+<span class="sd">            The file name to save the examples, by default None.</span>
+<span class="sd">        simple : bool, optional</span>
+<span class="sd">            Whether to generate simple examples, by default True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Any</span>
+<span class="sd">            The generated example data(path, list of smiles etc...).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="n">simple</span><span class="p">)</span></div>
 
@@ -682,6 +1045,16 @@
 <div class="viewcode-block" id="ErsiliaModel.info">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.info">[docs]</a>
     <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the information of the model.</span>
+
+<span class="sd">        This method reads the information file of the model and returns its content as a dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The information of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">information_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">INFORMATION_FILE</span>
         <span class="p">)</span>

@@ -86,6 +86,19 @@
 <div class="viewcode-block" id="Session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session">[docs]</a>
 <span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Session class for managing model sessions.</span>
+
+<span class="sd">    This class provides functionality to manage sessions, including opening, closing,</span>
+<span class="sd">    and updating session information. Sessions are essential for tracking the state</span>
+<span class="sd">    and usage of models, ensuring that all necessary information is stored and can be</span>
+<span class="sd">    retrieved when needed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">session_dir</span> <span class="o">=</span> <span class="n">get_session_dir</span><span class="p">()</span>
@@ -94,6 +107,16 @@
 <div class="viewcode-block" id="Session.current_model_id">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_model_id">[docs]</a>
     <span class="k">def</span> <span class="nf">current_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current model ID from the session.</span>
+
+<span class="sd">        This method retrieves the current model ID from the session data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The current model ID, or None if no session data is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -104,6 +127,16 @@
 <div class="viewcode-block" id="Session.current_identifier">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_identifier">[docs]</a>
     <span class="k">def</span> <span class="nf">current_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current identifier from the session.</span>
+
+<span class="sd">        This method retrieves the current identifier from the session data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The current identifier, or None if no session data is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -114,6 +147,16 @@
 <div class="viewcode-block" id="Session.current_service_class">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_service_class">[docs]</a>
     <span class="k">def</span> <span class="nf">current_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current service class from the session.</span>
+
+<span class="sd">        This method retrieves the current service class from the session data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The current service class, or None if no session data is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service_class&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -124,6 +167,16 @@
 <div class="viewcode-block" id="Session.current_output_source">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_output_source">[docs]</a>
     <span class="k">def</span> <span class="nf">current_output_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current output source from the session.</span>
+
+<span class="sd">        This method retrieves the current output source from the session data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The current output source, or None if no session data is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -134,6 +187,16 @@
 <div class="viewcode-block" id="Session.register_service_class">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_service_class">[docs]</a>
     <span class="k">def</span> <span class="nf">register_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_class</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the service class in the session.</span>
+
+<span class="sd">        This method updates the session data with the provided service class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        service_class : str</span>
+<span class="sd">            The service class to register.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;service_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_class</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -143,6 +206,16 @@
 <div class="viewcode-block" id="Session.register_output_source">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_output_source">[docs]</a>
     <span class="k">def</span> <span class="nf">register_output_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_source</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the output source in the session.</span>
+
+<span class="sd">        This method updates the session data with the provided output source.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_source : str</span>
+<span class="sd">            The output source to register.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;output_source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_source</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -152,6 +225,16 @@
 <div class="viewcode-block" id="Session.tracking_status">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.tracking_status">[docs]</a>
     <span class="k">def</span> <span class="nf">tracking_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the tracking status from the session.</span>
+
+<span class="sd">        This method retrieves the tracking status from the session data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool or None</span>
+<span class="sd">            The tracking status, or None if no session data is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -162,6 +245,18 @@
 <div class="viewcode-block" id="Session.open">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.open">[docs]</a>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">track_runs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open a new session for the specified model.</span>
+
+<span class="sd">        This method creates a new session for the specified model and saves the session data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The identifier of the model.</span>
+<span class="sd">        track_runs : bool</span>
+<span class="sd">            Whether to track runs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Opening session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
         <span class="n">session</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
@@ -176,6 +271,18 @@
 <div class="viewcode-block" id="Session.get">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.get">[docs]</a>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current session data.</span>
+
+<span class="sd">        This method retrieves the current session data from the session file. The session file</span>
+<span class="sd">        is a JSON file that contains information about the current session, such as the model ID,</span>
+<span class="sd">        timestamp, identifier, tracking status, service class, and output source.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict or None</span>
+<span class="sd">            The session data, or None if no session file exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting session from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -190,7 +297,15 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.update_total_memory">[docs]</a>
     <span class="k">def</span> <span class="nf">update_total_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">additional_memory</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Methods to get the the total memory of processess during serving and running.</span>
+<span class="sd">        Update the total memory usage in the session data.</span>
+
+<span class="sd">        This method updates the total memory usage in the session data by adding the provided</span>
+<span class="sd">        additional memory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        additional_memory : float</span>
+<span class="sd">            The additional memory to add.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -206,7 +321,13 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.update_cpu_time">[docs]</a>
     <span class="k">def</span> <span class="nf">update_cpu_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cpu_time</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Methods to get the total cpu time of processess during serving and running</span>
+<span class="sd">        Updates the total CPU time usage in the session data by adding the provided</span>
+<span class="sd">        CPU time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cpu_time : float</span>
+<span class="sd">            The CPU time to add.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -222,7 +343,15 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.update_peak_memory">[docs]</a>
     <span class="k">def</span> <span class="nf">update_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peak_memory</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update peak memory usage in session data if the new peak is higher.</span>
+<span class="sd">        Update the peak memory usage in the session data.</span>
+
+<span class="sd">        This method updates the peak memory usage in the session data if the new peak is higher</span>
+<span class="sd">        than the stored peak memory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        peak_memory : float</span>
+<span class="sd">            The peak memory usage to update.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="s2">&quot;peak memory used by model(MiB)&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
@@ -238,6 +367,11 @@
 <div class="viewcode-block" id="Session.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.close">[docs]</a>
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the current session.</span>
+
+<span class="sd">        This method removes the session file, effectively closing the session.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Closing session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">)</span></div>
