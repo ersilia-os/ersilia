@@ -8,7 +8,21 @@ from ...hub.content.information import InformationDisplayer
 
 
 def info_cmd():
-    # Example usage: ersilia info {MODEL}
+    """
+    Provides information about a specified model.
+
+    This command allows users to get detailed information about a current active session.
+
+    Returns
+    -------
+    function
+        The info command function to be used by the CLI.
+
+    Examples
+    --------
+    Get information about active session as json:
+    $ ersilia info  --as_json
+    """
     @ersilia_cli.command(
         short_help="Get model information", help="Get model information"
     )

@@ -2,6 +2,10 @@ import importlib
 
 
 class Command(object):
+    """
+    Command class to dynamically import and execute CLI commands.
+    """
+
     def __init__(self):
         pass
 

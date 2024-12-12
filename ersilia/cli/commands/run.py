@@ -12,8 +12,24 @@ from ...utils.terminal import print_result_table
 
 
 def run_cmd():
-    """Create run command"""
+    """
+    Runs a specified model.
 
+    This command allows users to run a specified model with given inputs.
+
+    Returns
+    -------
+    function
+        The run command function to be used by the CLI and for testing in the pytest.
+
+    Examples
+    --------
+    Run a model by its ID with input data:
+    $ ersilia run -i <input_data> --table
+
+    Run a model with batch size:
+    $ ersilia run -i <input_data> -b 50
+    """
     # Example usage: ersilia run -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
     @ersilia_cli.command(short_help="Run a served model", help="Run a served model")
     @click.option("-i", "--input", "input", required=True, type=click.STRING)
