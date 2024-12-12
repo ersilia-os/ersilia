@@ -18,6 +18,30 @@ from ..utils.logging import make_temp_dir
 
 
 class Api(object):
+    """
+    Class to interact with the API for a given model.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    url : str
+        The URL of the API.
+    api_name : str
+        The name of the API.
+    save_to_lake : bool
+        Whether to save results to the data lake.
+    config_json : dict
+        Configuration in JSON format.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        api = Api(model_id='eosxxxx', url='http://0.0.0.0:25512/', api_name='run', save_to_lake=True, config_json={})
+        result = api.post(input='input.json', output='output.csv', batch_size=10)
+    """
+
     def __init__(self, model_id, url, api_name, save_to_lake, config_json):
         self.config_json = config_json
         self.model_id = model_id
@@ -31,7 +55,7 @@ class Api(object):
             model_id=model_id, api_name=api_name, config_json=config_json
         )
         self.save_to_lake = save_to_lake
-        if url[-1] == "/":
+        if (url[-1] == "/"):
             self.url = url[:-1]
         else:
             self.url = url
@@ -99,7 +123,6 @@ class Api(object):
     def _post(self, input, output):
         result = self._do_post(input, output)
         if result is None and self._batch_size > 1 and len(input) > 1:
-            # if batch predictions didn't work, do one by one
             self.logger.warning(
                 "Batch prediction didn't seem to work. Doing predictions one by one..."
             )
@@ -114,11 +137,65 @@ class Api(object):
             result = json.dumps(result, indent=4)
             result = self.__result_returner(result, output)
         if result is None and len(input) == 1:
-            # if the only one prediction did not work, return empty
             result = [{"input": input[0], "output": self._empty_output}]
             result = json.dumps(result, indent=4)
             result = self.__result_returner(result, output)
         return result
+
+    def post(self, input, output, batch_size):
+        """
+        Post input data to the API and get the result.
+
+        Parameters
+        ----------
+        input : str
+            The input data file or data.
+        output : str
+            The output data file.
+        batch_size : int
+            The batch size for processing.
+
+        Yields
+        ------
+        dict
+            The result of the API call.
+        """
+        if self._is_input_file(input):
+            if not os.path.exists(input):
+                raise InputFileNotFoundError(file_name=input)
+        self.logger.debug("Posting to {0}".format(self.api_name))
+        self.logger.debug("Batch size {0}".format(batch_size))
+        unique_input, mapping = self._unique_input(input)
+        results_ = {}
+        for res in self.post_unique_input(
+            input=unique_input, output=None, batch_size=batch_size
+        ):
+            for i in mapping[res["input"]["key"]]:
+                results_[i] = res
+        self.logger.debug("Done with unique posting")
+        sorted_idxs = sorted(results_.keys())
+        results = [results_[i] for i in sorted_idxs]
+        if output is not None:
+            results = json.dumps(results)
+            self.output_adapter.adapt(
+                results, output, model_id=self.model_id, api_name=self.api_name
+            )
+            for o in [output]:
+                yield o
+        else:
+            for result in results:
+                yield result
+
+    def meta(self):
+        """
+        Get metadata from the output adapter.
+
+        Returns
+        -------
+        dict
+            Metadata information.
+        """
+        return self.output_adapter.meta()
 
     def post_only_calculations(self, input, output, batch_size):
         self._batch_size = batch_size
@@ -144,11 +221,6 @@ class Api(object):
                 for r in result:
                     yield r
 
-    def _post_reads(self, input, output):
-        results = self.lake.read(input)
-        results = json.dumps(results, indent=4)
-        return self.__result_returner(results, output)
-
     def post_only_reads(self, input, output, batch_size):
         self._batch_size = batch_size
         if output is not None:
@@ -172,52 +244,6 @@ class Api(object):
                 result = json.loads(self._post_reads(input, output))
                 for r in result:
                     yield r
-
-    def _write_done_todo_file(self, cur_idx, filename, data):
-        with open(filename, "a+") as f:
-            writer = csv.writer(f)
-            for d in data:
-                idx = cur_idx + d["idx"]
-                key = d["key"]
-                inp = d["input"]
-                txt = d["text"]
-                writer.writerow([idx, key, inp, txt])
-
-    def _process_done_todo_results(
-        self, done_input, todo_input, done_output, todo_output
-    ):
-        mapping = {}
-        if done_output is not None:
-            with open(done_input, "r") as f:
-                reader = csv.reader(f)
-                for i, r in enumerate(reader):
-                    mapping[int(r[0])] = (i, True)
-            with open(done_output, "r") as f:
-                done_output_data = json.load(f)
-        else:
-            done_output_data = {}
-        if todo_output is not None:
-            with open(todo_input, "r") as f:
-                reader = csv.reader(f)
-                for i, r in enumerate(reader):
-                    mapping[int(r[0])] = (i, False)
-            with open(todo_output, "r") as f:
-                todo_output_data = json.load(f)
-        else:
-            todo_output_data = {}
-        for j in range(len(mapping)):
-            i, is_done = mapping[j]
-            if is_done:
-                yield done_output_data[i]
-            else:
-                yield todo_output_data[i]
-
-    @staticmethod
-    def __is_empty_file(filename):
-        if os.stat(filename).st_size == 0:
-            return True
-        else:
-            return False
 
     def post_amenable_to_h5(self, input, output, batch_size):
         self.logger.debug(
@@ -278,16 +304,6 @@ class Api(object):
             for result in results:
                 yield result
 
-    def _unique_input(self, input):
-        mapping = collections.defaultdict(list)
-        unique_input = []
-        for i, inp in enumerate(self.input_adapter.adapt_one_by_one(input)):
-            key = inp["key"]
-            if key not in mapping:
-                unique_input += [inp]
-            mapping[key] += [i]
-        return unique_input, mapping
-
     def post_unique_input(self, input, output, batch_size):
         schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
         if (
@@ -313,32 +329,58 @@ class Api(object):
                 return True
         return False
 
-    def post(self, input, output, batch_size):
-        if self._is_input_file(input):
-            if not os.path.exists(input):
-                raise InputFileNotFoundError(file_name=input)
-        self.logger.debug("Posting to {0}".format(self.api_name))
-        self.logger.debug("Batch size {0}".format(batch_size))
-        unique_input, mapping = self._unique_input(input)
-        results_ = {}
-        for res in self.post_unique_input(
-            input=unique_input, output=None, batch_size=batch_size
-        ):
-            for i in mapping[res["input"]["key"]]:
-                results_[i] = res
-        self.logger.debug("Done with unique posting")
-        sorted_idxs = sorted(results_.keys())
-        results = [results_[i] for i in sorted_idxs]
-        if output is not None:
-            results = json.dumps(results)
-            self.output_adapter.adapt(
-                results, output, model_id=self.model_id, api_name=self.api_name
-            )
-            for o in [output]:
-                yield o
-        else:
-            for result in results:
-                yield result
+    def _unique_input(self, input):
+        mapping = collections.defaultdict(list)
+        unique_input = []
+        for i, inp in enumerate(self.input_adapter.adapt_one_by_one(input)):
+            key = inp["key"]
+            if key not in mapping:
+                unique_input += [inp]
+            mapping[key] += [i]
+        return unique_input, mapping
 
-    def meta(self):
-        return self.output_adapter.meta()
+    def _write_done_todo_file(self, cur_idx, filename, data):
+        with open(filename, "a+") as f:
+            writer = csv.writer(f)
+            for d in data:
+                idx = cur_idx + d["idx"]
+                key = d["key"]
+                inp = d["input"]
+                txt = d["text"]
+                writer.writerow([idx, key, inp, txt])
+
+    def _process_done_todo_results(
+        self, done_input, todo_input, done_output, todo_output
+    ):
+        mapping = {}
+        if done_output is not None:
+            with open(done_input, "r") as f:
+                reader = csv.reader(f)
+                for i, r in enumerate(reader):
+                    mapping[int(r[0])] = (i, True)
+            with open(done_output, "r") as f:
+                done_output_data = json.load(f)
+        else:
+            done_output_data = {}
+        if todo_output is not None:
+            with open(todo_input, "r") as f:
+                reader = csv.reader(f)
+                for i, r in enumerate(reader):
+                    mapping[int(r[0])] = (i, False)
+            with open(todo_output, "r") as f:
+                todo_output_data = json.load(f)
+        else:
+            todo_output_data = {}
+        for j in range(len(mapping)):
+            i, is_done = mapping[j]
+            if is_done:
+                yield done_output_data[i]
+            else:
+                yield todo_output_data[i]
+
+    @staticmethod
+    def __is_empty_file(filename):
+        if os.stat(filename).st_size == 0:
+            return True
+        else:
+            return False

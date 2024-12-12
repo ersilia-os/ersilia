@@ -29,6 +29,37 @@ DEFAULT_OUTPUT = None
 
 
 class AutoService(ErsiliaBase):
+    """
+    Class to automatically determine and manage the service for a given model.
+
+    This class is responsible for selecting the appropriate service to run a model based on its configuration.
+    A "service" in this context refers to the environment or platform where the model will be executed, such as
+    a system bundle, virtual environment, Conda environment, Docker image, or a hosted service.
+
+    The class can automatically decide which service to use based on the availability and configuration of the model.
+    It also provides methods to start, stop, and manage the service, as well as to interact with the model's APIs.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    service_class : str, optional
+        The class of the service.
+    config_json : dict, optional
+        Configuration in JSON format.
+    preferred_port : int, optional
+        The preferred port for the service.
+    url : str, optional
+        The URL of the service.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        service = AutoService(model_id='model123', config_json={})
+        service.serve()
+    """
+
     def __init__(
         self,
         model_id,
@@ -263,6 +294,14 @@ class AutoService(ErsiliaBase):
             raise Exception()
 
     def get_apis(self):
+        """
+        Get the list of APIs available for the model.
+
+        Returns
+        -------
+        list
+            List of API names.
+        """
         apis = []
         with open(self.apis_list, "r") as f:
             for l in f:
@@ -271,12 +310,28 @@ class AutoService(ErsiliaBase):
         return sorted(apis)
 
     def is_available(self):
+        """
+        Check if the service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         if self.service is None:
             return False
         else:
             return True
 
     def is_served(self):
+        """
+        Check if the service is currently being served.
+
+        Returns
+        -------
+        bool
+            True if the service is being served, False otherwise.
+        """
         tmp_file = tmp_pid_file(self.model_id)
         if os.path.exists(tmp_file):
             return True
@@ -363,6 +418,25 @@ class AutoService(ErsiliaBase):
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE
     ):
+        """
+        Call an API for the model.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API.
+        input : str
+            The input data file or data.
+        output : str, optional
+            The output data file.
+        batch_size : int, optional
+            The batch size for processing.
+
+        Yields
+        ------
+        dict
+            The result of the API call.
+        """
         self.logger.debug("API: {0}".format(api_name))
         self.logger.debug("MODEL ID: {0}".format(self.model_id))
         self.logger.debug("SERVICE URL: {0}".format(self.service.url))
