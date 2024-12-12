@@ -544,6 +544,15 @@ class VenvEnvironmentService(_LocalService):
         URL for the served model.
     """
 
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        _LocalService.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
+        self.venv = SimpleVenv(self._model_path(model_id))
+
     def __enter__(self):
         """
         Enter the runtime context related to this object.
@@ -567,8 +576,15 @@ class VenvEnvironmentService(_LocalService):
         exception_value : Exception
             The exception instance.
         traceback : traceback
+            The traceback object.
         """
         self.close()
+
+    def _model_path(self, model_id):
+        return os.path.join(self._dest_dir, model_id)
+
+    def _run_command(self, cmd):
+        return self.venv.run_commandlines(DEFAULT_VENV, cmd)
 
     def is_available(self):
         """
@@ -629,6 +645,28 @@ class CondaEnvironmentService(_LocalService):
         URL for the served model.
     """
 
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        _LocalService.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
+        if CondaEnvironmentService.is_single_model_without_conda():
+            self._is_singe = True
+            self.conda = StandaloneConda()
+        else:
+            self._is_singe = False
+            self.db = EnvironmentDb()
+            self.db.table = "conda"
+            self.conda = SimpleConda()
+
+    @staticmethod
+    def is_single_model_without_conda():
+        conda_checker = CondaRequirement()
+        # Returns True if conda is not installed and False otherwise
+        return not conda_checker.is_installed()
+
     def __enter__(self):
         """
         Enter the runtime context related to this object.
@@ -654,6 +692,21 @@ class CondaEnvironmentService(_LocalService):
         traceback : traceback
         """
         self.close()
+
+    def _get_env_name(self):
+        if self._is_singe:
+            return self.model_id
+        else:
+            envs = list(self.db.envs_of_model(self.model_id))
+            for env in envs:
+                if self.conda.exists(env):
+                    return env
+            return None
+
+    def _run_command(self, cmd):
+        env = self._get_env_name()
+        self.logger.debug("Running on conda environment {0}".format(env))
+        return self.conda.run_commandlines(env, cmd)
 
     def is_available(self):
         """
@@ -717,6 +770,20 @@ class DockerImageService(BaseServing):
         URL for the served model.
     """
 
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        self._is_docker_active()
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
+        self.db = EnvironmentDb()
+        self.db.table = "docker"
+        self.docker = SimpleDocker()
+        self.dm = DockerManager(config_json=config_json, preferred_port=preferred_port)
+        self.pid = -1
+
     def __enter__(self):
         """
         Enter the runtime context related to this object.
@@ -742,6 +809,22 @@ class DockerImageService(BaseServing):
         traceback : traceback
         """
         self.close()
+
+    def _get_env_name(self):
+        envs = list(self.db.envs_of_model(self.model_id))
+        for env in envs:
+            org, img, tag = self.docker._splitter(env)
+            if self.docker.exists(org=org, img=img, tag=tag):
+                self.logger.debug("Docker image found {0}".format(env))
+                return env
+        return None
+
+    @throw_ersilia_exception()
+    def _is_docker_active(self):
+        dr = DockerRequirement()
+        if not dr.is_active():
+            raise DockerNotActiveError()
+        return True
 
     def is_available(self):
         """
@@ -795,6 +878,7 @@ class DockerImageService(BaseServing):
         return self._api_with_url(api_name, input)
 
 
+# TODO: Include 'pip' within available service_class
 class PipInstalledService(BaseServing):
     """
     Service class for managing pip-installed models.
@@ -810,6 +894,15 @@ class PipInstalledService(BaseServing):
     url : str, optional
         URL for the served model.
     """
+
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
+        self.pid = -1
 
     def __enter__(self):
         """
@@ -836,6 +929,13 @@ class PipInstalledService(BaseServing):
         traceback : traceback
         """
         self.close()
+
+    def _import(self):
+        try:
+            model = importlib.import_module(self.model_id, package=None)
+            return model
+        except ModuleNotFoundError:
+            return None
 
     def is_available(self):
         """
@@ -900,6 +1000,14 @@ class DummyService(BaseServing):
     url : str, optional
         URL for the served model.
     """
+
+    def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
+        BaseServing.__init__(
+            self,
+            model_id=model_id,
+            config_json=config_json,
+            preferred_port=preferred_port,
+        )
 
     def __enter__(self):
         """
