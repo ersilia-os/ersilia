@@ -242,13 +242,14 @@ class ExampleGenerator(ErsiliaBase):
                 with open(file_name, "w") as f:
                     data = [v for v in self.IO.example(n_samples)]
                     if simple:
-                        data = [d["input"] for d in data]
+                        data = [{'input': d["input"]} for d in data]
                     json.dump(data, f, indent=4)
             else:
                 delimiter = self._get_delimiter(file_name)
                 with open(file_name, "w", newline="") as f:
                     writer = csv.writer(f, delimiter=delimiter)
                     if simple:
+                        writer.writerow(["input"])
                         for v in self.IO.example(n_samples):
                             writer.writerow(self._flatten(v["input"]))
                     else:
