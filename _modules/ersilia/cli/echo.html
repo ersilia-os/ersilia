@@ -85,6 +85,23 @@
 <div class="viewcode-block" id="Silencer">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer">[docs]</a>
 <span class="k">class</span> <span class="nc">Silencer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage the silencing of CLI output.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    silence_file : str</span>
+<span class="sd">        Path to the silence file.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    is_silence()</span>
+<span class="sd">        Checks if the CLI output is silenced.</span>
+<span class="sd">    speak()</span>
+<span class="sd">        Enables CLI output.</span>
+<span class="sd">    silence()</span>
+<span class="sd">        Disables CLI output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SILENCE_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">):</span>
@@ -93,6 +110,14 @@
 <div class="viewcode-block" id="Silencer.is_silence">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.is_silence">[docs]</a>
     <span class="k">def</span> <span class="nf">is_silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the CLI output is silenced.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the CLI output is silenced, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;silence&quot;</span><span class="p">]</span></div>
@@ -101,6 +126,9 @@
 <div class="viewcode-block" id="Silencer.speak">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.speak">[docs]</a>
     <span class="k">def</span> <span class="nf">speak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enables CLI output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;silence&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
@@ -108,6 +136,9 @@
 <div class="viewcode-block" id="Silencer.silence">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.silence">[docs]</a>
     <span class="k">def</span> <span class="nf">silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disables CLI output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;silence&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 </div>
@@ -117,6 +148,20 @@
 <div class="viewcode-block" id="echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.echo">[docs]</a>
 <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prints styled text to the CLI, optionally with emojis, unless silenced.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    text : str</span>
+<span class="sd">        The text to be printed.</span>
+<span class="sd">    **styles : dict</span>
+<span class="sd">        Additional styling options for the text.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">silencer</span> <span class="o">=</span> <span class="n">Silencer</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">silencer</span><span class="o">.</span><span class="n">is_silence</span><span class="p">():</span>
         <span class="k">return</span>

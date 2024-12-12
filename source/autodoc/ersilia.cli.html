@@ -189,6 +189,7 @@
 <dt class="sig sig-object py" id="ersilia.cli.cmd.Command">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.cli.cmd.</span></span><span class="sig-name descname"><span class="pre">Command</span></span><a class="reference internal" href="../../_modules/ersilia/cli/cmd.html#Command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.cmd.Command" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Command class to dynamically import and execute CLI commands.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.cmd.Command.auth">
 <span class="sig-name descname"><span class="pre">auth</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/cmd.html#Command.auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.cmd.Command.auth" title="Link to this definition"></a></dt>
@@ -262,7 +263,18 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.create_cli.create_ersilia_cli">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.create_cli.</span></span><span class="sig-name descname"><span class="pre">create_ersilia_cli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/create_cli.html#create_ersilia_cli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.create_cli.create_ersilia_cli" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Creates and configures the Ersilia CLI.</p>
+<p>This function initializes the Command class, checks if the user is a contributor,
+and dynamically imports and executes various CLI commands based on the user’s role.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ersilia_cli</strong> – The configured Ersilia CLI module.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>module</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-ersilia.cli.echo">
@@ -271,27 +283,80 @@
 <dt class="sig sig-object py" id="ersilia.cli.echo.Silencer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">Silencer</span></span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to manage the silencing of CLI output.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.cli.echo.Silencer.silence_file">
+<span class="sig-name descname"><span class="pre">silence_file</span></span><a class="headerlink" href="#ersilia.cli.echo.Silencer.silence_file" title="Link to this definition"></a></dt>
+<dd><p>Path to the silence file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.echo.Silencer.is_silence">
 <span class="sig-name descname"><span class="pre">is_silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.is_silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.is_silence" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.cli.echo.Silencer.silence">
-<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.silence" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if the CLI output is silenced.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.echo.Silencer.speak">
 <span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.speak" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Enables CLI output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.cli.echo.Silencer.silence">
+<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.Silencer.silence" title="Link to this definition"></a></dt>
+<dd><p>Disables CLI output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">is_silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.is_silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Checks if the CLI output is silenced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the CLI output is silenced, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Disables CLI output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>Enables CLI output.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.echo.echo">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.echo" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Prints styled text to the CLI, optionally with emojis, unless silenced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – The text to be printed.</p></li>
+<li><p><strong>**styles</strong> (<em>dict</em>) – Additional styling options for the text.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-ersilia.cli.messages">
@@ -300,10 +365,29 @@
 <dt class="sig sig-object py" id="ersilia.cli.messages.ModelNotFound">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.cli.messages.</span></span><span class="sig-name descname"><span class="pre">ModelNotFound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#ModelNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.ModelNotFound" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to handle the scenario when a model is not found.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.cli.messages.ModelNotFound.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#ersilia.cli.messages.ModelNotFound.model" title="Link to this definition"></a></dt>
+<dd><p>The model object that was not found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.messages.ModelNotFound.echo">
 <span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#ModelNotFound.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.ModelNotFound.echo" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Prints an error message and exits the program.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#ModelNotFound.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd><p>Prints an error message indicating the model was not found and exits the program.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -311,10 +395,29 @@
 <dt class="sig sig-object py" id="ersilia.cli.messages.ModelNotInLocal">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.cli.messages.</span></span><span class="sig-name descname"><span class="pre">ModelNotInLocal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#ModelNotInLocal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.ModelNotInLocal" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to handle the scenario when a model is not found locally.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.cli.messages.ModelNotInLocal.model_id">
+<span class="sig-name descname"><span class="pre">model_id</span></span><a class="headerlink" href="#ersilia.cli.messages.ModelNotInLocal.model_id" title="Link to this definition"></a></dt>
+<dd><p>The identifier of the model that was not found locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.cli.messages.ModelNotInLocal.echo">
 <span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#ModelNotInLocal.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.ModelNotInLocal.echo" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Prints an error message and exits the program.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#ModelNotInLocal.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd><p>Prints an error message indicating the model was not found locally and exits the program.</p>
+</dd></dl>
 
 </dd></dl>
 

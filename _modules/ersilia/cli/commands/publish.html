@@ -84,8 +84,24 @@
 <div class="viewcode-block" id="publish_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.publish.publish_cmd">[docs]</a>
 <span class="k">def</span> <span class="nf">publish_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create publish commmand&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Publishes a specified model.</span>
 
+<span class="sd">    This command allows users to publish a specified model to the model hub.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    function</span>
+<span class="sd">        The publish command function to be used by the CLI.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Publish a model by its ID:</span>
+<span class="sd">    $ ersilia publish create &lt;model_id&gt;</span>
+
+<span class="sd">    Rebase a model:</span>
+<span class="sd">    $ ersilia publish rebase &lt;model_id&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_publish</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">mf</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 

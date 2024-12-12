@@ -86,8 +86,24 @@
 <div class="viewcode-block" id="fetch_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.fetch.fetch_cmd">[docs]</a>
 <span class="k">def</span> <span class="nf">fetch_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create fetch commmand&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetches a specified model.</span>
 
+<span class="sd">    This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc...).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    function</span>
+<span class="sd">        The fetch command function to be used by the CLI and for testing in the pytest.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Fetch a model by its ID:</span>
+<span class="sd">    $ ersilia fetch &lt;model_id&gt; [auto model source decider] or ersilia fetch &lt;model_id&gt; --from_github/--from_dockerhub</span>
+
+<span class="sd">    Fetch a model from a local directory:</span>
+<span class="sd">    $ ersilia fetch &lt;model_id&gt; --from_dir &lt;path&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">res</span>

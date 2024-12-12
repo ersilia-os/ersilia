@@ -81,8 +81,24 @@
 <div class="viewcode-block" id="setup_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.setup.setup_cmd">[docs]</a>
 <span class="k">def</span> <span class="nf">setup_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates setup command&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets up the environment.</span>
 
+<span class="sd">    This command allows users to set up the environment for using the CLI.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    function</span>
+<span class="sd">        The setup command function to be used by the CLI.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Set up the environment with full installation:</span>
+<span class="sd">    $ ersilia setup --full</span>
+
+<span class="sd">    Set up the environment with base installation:</span>
+<span class="sd">    $ ersilia setup --base</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Example usage: ersilia setup</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
         <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Setup ersilia&quot;</span><span class="p">,</span>

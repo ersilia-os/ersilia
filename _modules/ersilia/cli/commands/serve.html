@@ -84,8 +84,24 @@
 <div class="viewcode-block" id="serve_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.serve.serve_cmd">[docs]</a>
 <span class="k">def</span> <span class="nf">serve_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates serve command&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serves a specified model.</span>
 
+<span class="sd">    This command allows users to serve a specified model as an API.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    function</span>
+<span class="sd">        The serve command function to be used by the CLI and for testing in the pytest.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Serve a model by its ID:</span>
+<span class="sd">    $ ersilia serve &lt;model_id&gt; --port 8080</span>
+
+<span class="sd">    Serve a model and track the session:</span>
+<span class="sd">    $ ersilia serve &lt;model_id&gt; --track</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Example usage: ersilia serve {MODEL}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>

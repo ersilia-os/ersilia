@@ -130,7 +130,23 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.catalog.catalog_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.catalog.</span></span><span class="sig-name descname"><span class="pre">catalog_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/catalog.html#catalog_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.catalog.catalog_cmd" title="Link to this definition"></a></dt>
-<dd><p>Creates catalog command</p>
+<dd><p>Creates the catalog command for the CLI.</p>
+<p>This command allows users to list a catalog of models available either locally or in the model hub.
+It provides options to display the catalog in various formats(such as tables or json), show more detailed information,
+and view model cards for specific models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The catalog command function to be used by the CLI and for testing in the pytest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>List models available in the local computer and show more detailed information:
+$ ersilia catalog –local –more</p>
+<p>Display model card for a specific model ID and show catalog in table format:
+$ ersilia catalog –card &lt;model_id&gt; –as-table</p>
 </dd></dl>
 
 </section>
@@ -139,7 +155,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.close.close_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.close.</span></span><span class="sig-name descname"><span class="pre">close_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/close.html#close_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.close.close_cmd" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Closes the current session.</p>
+<p>This command allows users to close the current session and clean up any resources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The close command function to be used by the CLI and for testing in the pytest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Close the current session:
+$ ersilia close</p>
+</dd></dl>
 
 </section>
 <section id="module-ersilia.cli.commands.delete">
@@ -147,7 +176,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.delete.delete_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.delete.</span></span><span class="sig-name descname"><span class="pre">delete_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/delete.html#delete_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.delete.delete_cmd" title="Link to this definition"></a></dt>
-<dd><p>Create delete command</p>
+<dd><p>Deletes a specified model.</p>
+<p>This command allows users to delete a specified model from the local storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The delete command function to be used by the CLI and for testing in the pytest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Delete a specific model:
+$ ersilia delete &lt;model_id&gt;</p>
+<p>Delete all models:
+$ ersilia delete –all</p>
 </dd></dl>
 
 </section>
@@ -156,7 +199,19 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.example.example_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.example.</span></span><span class="sig-name descname"><span class="pre">example_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/example.html#example_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.example.example_cmd" title="Link to this definition"></a></dt>
-<dd><p>Create example command</p>
+<dd><p>Generates example files such as compound SMILES that serve as input for models.</p>
+<p>This command allows users to generate example files that can be used as input for models in the CLI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The example command function to be used by the CLI.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Generate sample inputs for a model:
+$ ersilia example {MODEL} -n 10 [–file_name {FILE_NAME} –simple/–complete]</p>
 </dd></dl>
 
 </section>
@@ -165,7 +220,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.fetch.fetch_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.fetch.</span></span><span class="sig-name descname"><span class="pre">fetch_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/fetch.html#fetch_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.fetch.fetch_cmd" title="Link to this definition"></a></dt>
-<dd><p>Create fetch commmand</p>
+<dd><p>Fetches a specified model.</p>
+<p>This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc…).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The fetch command function to be used by the CLI and for testing in the pytest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Fetch a model by its ID:
+$ ersilia fetch &lt;model_id&gt; [auto model source decider] or ersilia fetch &lt;model_id&gt; –from_github/–from_dockerhub</p>
+<p>Fetch a model from a local directory:
+$ ersilia fetch &lt;model_id&gt; –from_dir &lt;path&gt;</p>
 </dd></dl>
 
 </section>
@@ -174,7 +243,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.info.info_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.info.</span></span><span class="sig-name descname"><span class="pre">info_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/info.html#info_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.info.info_cmd" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Provides information about a specified model.</p>
+<p>This command allows users to get detailed information about a current active session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The info command function to be used by the CLI.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Get information about active session as json:
+$ ersilia info  –as_json</p>
+</dd></dl>
 
 </section>
 <section id="module-ersilia.cli.commands.publish">
@@ -182,7 +264,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.publish.publish_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.publish.</span></span><span class="sig-name descname"><span class="pre">publish_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/publish.html#publish_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.publish.publish_cmd" title="Link to this definition"></a></dt>
-<dd><p>Create publish commmand</p>
+<dd><p>Publishes a specified model.</p>
+<p>This command allows users to publish a specified model to the model hub.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The publish command function to be used by the CLI.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Publish a model by its ID:
+$ ersilia publish create &lt;model_id&gt;</p>
+<p>Rebase a model:
+$ ersilia publish rebase &lt;model_id&gt;</p>
 </dd></dl>
 
 </section>
@@ -191,7 +287,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.run.run_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.run.</span></span><span class="sig-name descname"><span class="pre">run_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/run.html#run_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.run.run_cmd" title="Link to this definition"></a></dt>
-<dd><p>Create run command</p>
+<dd><p>Runs a specified model.</p>
+<p>This command allows users to run a specified model with given inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The run command function to be used by the CLI and for testing in the pytest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Run a model by its ID with input data:
+$ ersilia run -i &lt;input_data&gt; –table</p>
+<p>Run a model with batch size:
+$ ersilia run -i &lt;input_data&gt; -b 50</p>
 </dd></dl>
 
 </section>
@@ -200,7 +310,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.serve.serve_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.serve.</span></span><span class="sig-name descname"><span class="pre">serve_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/serve.html#serve_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.serve.serve_cmd" title="Link to this definition"></a></dt>
-<dd><p>Creates serve command</p>
+<dd><p>Serves a specified model.</p>
+<p>This command allows users to serve a specified model as an API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The serve command function to be used by the CLI and for testing in the pytest.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Serve a model by its ID:
+$ ersilia serve &lt;model_id&gt; –port 8080</p>
+<p>Serve a model and track the session:
+$ ersilia serve &lt;model_id&gt; –track</p>
 </dd></dl>
 
 </section>
@@ -209,7 +333,21 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.setup.setup_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.setup.</span></span><span class="sig-name descname"><span class="pre">setup_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/setup.html#setup_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.setup.setup_cmd" title="Link to this definition"></a></dt>
-<dd><p>Creates setup command</p>
+<dd><p>Sets up the environment.</p>
+<p>This command allows users to set up the environment for using the CLI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The setup command function to be used by the CLI.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Set up the environment with full installation:
+$ ersilia setup –full</p>
+<p>Set up the environment with base installation:
+$ ersilia setup –base</p>
 </dd></dl>
 
 </section>
@@ -218,7 +356,18 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.commands.test.test_cmd">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.commands.test.</span></span><span class="sig-name descname"><span class="pre">test_cmd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/commands/test.html#test_cmd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.commands.test.test_cmd" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Test a model and obtain performance metrics.</p>
+<p>This command allows you to test a model using various options to customize the testing process.</p>
+<p>The command performs the following steps:
+- Sets up the model tester with the specified model and options.
+- Executes tests to evaluate the model’s performance, metadata check, output consistency and more.
+- Generates and outputs performance metrics.</p>
+<p class="rubric">Examples</p>
+<p>With default settings:
+$ ersilia test my_model -d /path/to/model</p>
+<p>With deep testing level and inspect:
+$ ersilia test my_model -d /path/to/model –level deep –inspect –remote</p>
+</dd></dl>
 
 </section>
 <section id="module-ersilia.cli.commands.uninstall">
