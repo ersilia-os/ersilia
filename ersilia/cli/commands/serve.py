@@ -8,8 +8,26 @@ from ...store.utils import OutputSource, ModelNotInStore, store_has_model
 
 
 def serve_cmd():
-    """Creates serve command"""
+    """
+    Serves a specified model.
 
+    This command allows users to serve a specified model as an API.
+
+    Returns
+    -------
+    function
+        The serve command function to be used by the CLI and for testing in the pytest.
+
+    Examples
+    --------
+    .. code-block:: console
+
+        Serve a model by its ID:
+        $ ersilia serve <model_id> --port 8080
+
+        Serve a model and track the session:
+        $ ersilia serve <model_id> --track
+    """
     # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)

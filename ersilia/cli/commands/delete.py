@@ -11,7 +11,26 @@ from ... import ModelBase
 
 
 def delete_cmd():
-    """Create delete command"""
+    """
+    Deletes a specified model.
+
+    This command allows users to delete a specified model from the local storage.
+
+    Returns
+    -------
+    function
+        The delete command function to be used by the CLI and for testing in the pytest.
+
+    Examples
+    --------
+    .. code-block:: console
+
+        Delete a specific model:
+        $ ersilia delete <model_id>
+
+        Delete all models:
+        $ ersilia delete --all
+    """
 
     def _delete_model_by_id(model_id):
         md = ModelFullDeleter()

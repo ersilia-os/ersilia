@@ -5,8 +5,26 @@ from ...utils.installers import base_installer, full_installer
 
 
 def setup_cmd():
-    """Creates setup command"""
+    """
+    Sets up the environment.
 
+    This command allows users to set up the environment for using the CLI.
+
+    Returns
+    -------
+    function
+        The setup command function to be used by the CLI.
+
+    Examples
+    --------
+    .. code-block:: console
+
+        Set up the environment with full installation:
+        $ ersilia setup --full
+
+        Set up the environment with base installation:
+        $ ersilia setup --base
+    """
     # Example usage: ersilia setup
     @ersilia_cli.command(
         short_help="Setup ersilia",

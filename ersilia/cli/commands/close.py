@@ -7,6 +7,23 @@ from ...core.session import Session
 
 
 def close_cmd():
+    """
+    Closes the current session.
+
+    This command allows users to close the current session and clean up any resources.
+
+    Returns
+    -------
+    function
+        The close command function to be used by the CLI and for testing in the pytest.
+
+    Examples
+    --------
+    .. code-block:: console
+
+        Close the current session:
+        $ ersilia close
+    """
     # Example usage: ersilia close {MODEL}
     @ersilia_cli.command(short_help="Close model", help="Close model")
     def close():
