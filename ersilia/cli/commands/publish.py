@@ -20,11 +20,13 @@ def publish_cmd():
 
     Examples
     --------
-    Publish a model by its ID:
-    $ ersilia publish create <model_id>
+    .. code-block:: console
 
-    Rebase a model:
-    $ ersilia publish rebase <model_id>
+        Publish a model by its ID:
+        $ ersilia publish create <model_id>
+
+        Rebase a model:
+        $ ersilia publish rebase <model_id>
     """
     def _publish(mf, model_id):
         mf.publish(model_id)

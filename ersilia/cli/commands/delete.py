@@ -23,11 +23,13 @@ def delete_cmd():
 
     Examples
     --------
-    Delete a specific model:
-    $ ersilia delete <model_id>
+    .. code-block:: console
 
-    Delete all models:
-    $ ersilia delete --all
+        Delete a specific model:
+        $ ersilia delete <model_id>
+
+        Delete all models:
+        $ ersilia delete --all
     """
 
     def _delete_model_by_id(model_id):

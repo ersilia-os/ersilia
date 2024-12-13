@@ -6,7 +6,27 @@ from ..utils.paths import get_metadata_from_base_dir
 
 
 class PureDataTyper(ErsiliaBase):
-    def __init__(self, data, model_id=None, config_json=None):
+    """
+    A class used to determine the type of data provided.
+
+    Parameters
+    ----------
+    data : any
+        The data to be typed.
+    model_id : str, optional
+        The model identifier, by default None.
+    config_json : str, optional
+        Path to the configuration JSON file, by default None.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        >>> data_typer = PureDataTyper(data=[1, 2, 3])
+        >>> data_typer.get_type()
+        {'type': 'numeric_array', 'shape': (3,)}
+    """
+    def __init__(self, data: any, model_id: str = None, config_json: str = None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.data = data
         self.model_id = model_id
@@ -74,7 +94,15 @@ class PureDataTyper(ErsiliaBase):
         else:
             return False
 
-    def get_type_from_metadata(self):
+    def get_type_from_metadata(self) -> dict:
+        """
+        Get the type of data from the model metadata.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the type and shape of the data if available, otherwise None.
+        """
         if self.model_id is None:
             return
         dest = self._model_path(self.model_id)
@@ -107,7 +135,15 @@ class PureDataTyper(ErsiliaBase):
             return
         return
 
-    def get_type(self):
+    def get_type(self) -> dict:
+        """
+        Determine the type of the data.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the type and shape of the data.
+        """
         data_type = self.get_type_from_metadata()
         if data_type is not None:
             return data_type
