@@ -14,7 +14,24 @@ from ..... import EOS
 
 
 class SystemPack(BasePack):
-    def __init__(self, model_id, config_json):
+    """
+    SystemPack is responsible for packing models with system installation.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be packed.
+    config_json : dict
+        Configuration settings for the packer.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        packer = SystemPack(model_id="eosxxxx", config_json=config)
+        packer.run()
+    """
+    def __init__(self, model_id: str, config_json: dict):
         BasePack.__init__(self, model_id, config_json)
         self.logger.debug("Initializing system packer")
 
@@ -30,11 +47,33 @@ class SystemPack(BasePack):
         self._symlinks()
 
     def run(self):
+        """
+        Run the system packer.
+
+        This method initiates the packing process for the model using system installation.
+        """
         self._run()
 
 
 class CondaPack(BasePack):
-    def __init__(self, model_id, config_json):
+    """
+    CondaPack is responsible for packing models within a Conda environment.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be packed.
+    config_json : dict
+        Configuration settings for the packer.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        packer = CondaPack(model_id="eosxxxx", config_json=config)
+        packer.run()
+    """
+    def __init__(self, model_id: str, config_json: dict):
         BasePack.__init__(self, model_id, config_json)
         self.conda = SimpleConda()
         self.logger.debug("Initializing conda packer")
@@ -104,11 +143,36 @@ class CondaPack(BasePack):
 
     @throw_ersilia_exception()
     def run(self):
+        """
+        Run the Conda packer.
+
+        This method initiates the packing process for the model within a Conda environment.
+        """
         self.logger.debug("Packing model with Conda")
         self._run()
 
 
-def get_runner(pack_mode):
+def get_runner(pack_mode: str):
+    """
+    Get the appropriate runner based on the pack mode.
+
+    Parameters
+    ----------
+    pack_mode : str
+        The mode of packing, either 'system' or 'conda'.
+
+    Returns
+    -------
+    type
+        The class of the appropriate packer.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        runner_class = get_runner(pack_mode="system")
+        runner = runner_class(model_id="eosxxxx", config_json=config)
+    """
     if pack_mode == "system":
         return SystemPack
     if pack_mode == "conda":
