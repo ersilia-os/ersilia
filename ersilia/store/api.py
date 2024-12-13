@@ -12,7 +12,38 @@ import csv
 
 
 class InferenceStoreApi(ErsiliaBase):
-    def __init__(self, model_id):
+    """
+    A class to interact with the Inference Store API.
+
+    This class provides methods to upload input data to the inference store,
+    request predictions, and retrieve the results. It handles the creation
+    of unique request IDs, obtaining presigned URLs for file uploads, and
+    managing the input data format.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model for which the inference is being performed.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        api = InferenceStoreApi(model_id="eosxxxx")
+        inputs = ["CCO", "CCN"]
+        api.get_precalculations(inputs)
+
+    Mechanism
+    ---------
+    1. Initialize the class with a model ID.
+    2. Generate a unique request ID for each inference request.
+    3. Obtain a presigned URL from the inference store for uploading input data.
+    4. Adapt the input data to the required format and upload it using the presigned URL.
+    5. Request the predictions from the inference store using the request ID.
+    6. Retrieve and return the URL of the output predictions.
+    """
+
+    def __init__(self, model_id: str):
         ErsiliaBase.__init__(self)
         self.model_id = model_id
         self.request_id = None
@@ -59,7 +90,20 @@ class InferenceStoreApi(ErsiliaBase):
         output_presigned_url = response.text
         return output_presigned_url
 
-    def get_precalculations(self, inputs):
+    def get_precalculations(self, inputs: list) -> str:
+        """
+        Get precalculations for the given inputs.
+
+        Parameters
+        ----------
+        inputs : list
+            A list of input data for which precalculations are to be fetched.
+
+        Returns
+        -------
+        str
+            The URL of the output presigned URL or an error message.
+        """
         self._generate_request_id()
         presigned_url = self._get_presigned_url()
 
