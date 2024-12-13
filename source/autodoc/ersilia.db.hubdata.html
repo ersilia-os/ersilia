@@ -111,20 +111,53 @@
 <dt class="sig sig-object py" id="ersilia.db.hubdata.interfaces.JsonModelsInterface">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.db.hubdata.interfaces.</span></span><span class="sig-name descname"><span class="pre">JsonModelsInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/interfaces.html#JsonModelsInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.interfaces.JsonModelsInterface" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Interface for fetching model metadata from models stored in S3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings for initializing the interface.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.interfaces.JsonModelsInterface.identifier_exists">
 <span class="sig-name descname"><span class="pre">identifier_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/interfaces.html#JsonModelsInterface.identifier_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.interfaces.JsonModelsInterface.identifier_exists" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if a model identifier exists in the JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the identifier exists, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.interfaces.JsonModelsInterface.items">
 <span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/interfaces.html#JsonModelsInterface.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.interfaces.JsonModelsInterface.items" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Yields models from the JSON file one by one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> – A model from the JSON file.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.interfaces.JsonModelsInterface.items_all">
 <span class="sig-name descname"><span class="pre">items_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/interfaces.html#JsonModelsInterface.items_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.interfaces.JsonModelsInterface.items_all" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves all models from the JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of all models.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -135,10 +168,17 @@
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.db.hubdata.localslugs.</span></span><span class="sig-name descname"><span class="pre">SlugDb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/localslugs.html#SlugDb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.localslugs.SlugDb" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Manages slug database operations for models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings for initializing the slug database.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb.clean">
 <span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/localslugs.html#SlugDb.clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.localslugs.SlugDb.clean" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Cleans the database by deleting all entries.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb.create_table">
@@ -148,32 +188,86 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/localslugs.html#SlugDb.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.localslugs.SlugDb.delete" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Deletes a specific entry from the database by model ID and slug.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>slug</strong> (<em>str</em>) – Slug associated with the model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb.delete_by_model_id">
 <span class="sig-name descname"><span class="pre">delete_by_model_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/localslugs.html#SlugDb.delete_by_model_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.localslugs.SlugDb.delete_by_model_id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Deletes entries from the database by model ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to delete.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb.delete_by_slug">
 <span class="sig-name descname"><span class="pre">delete_by_slug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slug</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/localslugs.html#SlugDb.delete_by_slug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.localslugs.SlugDb.delete_by_slug" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Deletes entries from the database by slug.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slug</strong> (<em>str</em>) – Slug to delete.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb.insert">
 <span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/localslugs.html#SlugDb.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.localslugs.SlugDb.insert" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Inserts a model ID and slug into the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>slug</strong> (<em>str</em>) – Slug associated with the model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb.models_of_slug">
 <span class="sig-name descname"><span class="pre">models_of_slug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slug</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/localslugs.html#SlugDb.models_of_slug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.localslugs.SlugDb.models_of_slug" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves model IDs associated with a specific slug.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slug</strong> (<em>str</em>) – Slug to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of model IDs associated with the slug.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.hubdata.localslugs.SlugDb.slugs_of_model">
 <span class="sig-name descname"><span class="pre">slugs_of_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/hubdata/localslugs.html#SlugDb.slugs_of_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.hubdata.localslugs.SlugDb.slugs_of_model" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves slugs associated with a specific model ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of slugs associated with the model ID.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

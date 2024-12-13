@@ -111,10 +111,25 @@
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.db.environments.localdb.</span></span><span class="sig-name descname"><span class="pre">EnvironmentDb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Manages the storage and retrieval of model environments.</p>
+<p>Specifically it is essential for keeping track of the environments associated with each model.
+It provides a database where models and their corresponding environments (such as Docker images or conda environments) are stored and managed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings for initializing the environment database.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env_db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env_db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s1">&#39;conda&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env_db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s1">&#39;model_id&#39;</span><span class="p">,</span> <span class="s1">&#39;venv_name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.clean">
 <span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.clean" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Cleans the database by deleting all entries from the current table.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.create_table">
@@ -124,42 +139,126 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.delete" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Deletes a specific entry from the database by model ID and environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>env</strong> (<em>str</em>) – Environment associated with the model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.envs_of_model">
 <span class="sig-name descname"><span class="pre">envs_of_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.envs_of_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.envs_of_model" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves environments associated with a specific model ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of environments associated with the model ID.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.envs_with_same_model">
 <span class="sig-name descname"><span class="pre">envs_with_same_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.envs_with_same_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.envs_with_same_model" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves environments that share the same model as the given environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<em>str</em>) – Environment to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of environments that share the same model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.fetchall">
 <span class="sig-name descname"><span class="pre">fetchall</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.fetchall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.fetchall" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves all entries from the current table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of all entries in the table.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.insert">
 <span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.insert" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Inserts a model ID and environment into the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>env</strong> (<em>str</em>) – Environment associated with the model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.models_of_env">
 <span class="sig-name descname"><span class="pre">models_of_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.models_of_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.models_of_env" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves model IDs associated with a specific environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<em>str</em>) – Environment to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of model IDs associated with the environment.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.models_with_same_env">
 <span class="sig-name descname"><span class="pre">models_with_same_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.models_with_same_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.models_with_same_env" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves model IDs that share the same environment as the given model ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of model IDs that share the same environment.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.table">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">table</span></span><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.table" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Gets the current table name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current table name.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -181,40 +280,134 @@
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.db.environments.managers.</span></span><span class="sig-name descname"><span class="pre">DockerManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_bentoml</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Manages Docker operations for Ersilia models.</p>
+<p>It provides methods to build, run, and manage Docker images and containers
+associated with Ersilia models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings for initializing the Docker manager.</p></li>
+<li><p><strong>preferred_port</strong> (<em>int</em><em>, </em><em>optional</em>) – Preferred port number for running Docker containers.</p></li>
+<li><p><strong>with_bentoml</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to use BentoML for model serving.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s1">&#39;eosxxxx&#39;</span><span class="p">,</span> <span class="n">docker_user</span><span class="o">=</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s1">&#39;eosxxxx&#39;</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.build">
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docker_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docker_pwd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.build" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Builds a Docker image for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>docker_user</strong> (<em>str</em>) – Docker Hub username.</p></li>
+<li><p><strong>docker_pwd</strong> (<em>str</em>) – Docker Hub password.</p></li>
+<li><p><strong>use_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use Docker’s cache when building the image.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.build_with_bentoml">
 <span class="sig-name descname"><span class="pre">build_with_bentoml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.build_with_bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.build_with_bentoml" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Builds a Docker image for the model using BentoML.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>use_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use Docker’s cache when building the image.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.build_with_ersilia">
 <span class="sig-name descname"><span class="pre">build_with_ersilia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docker_user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docker_pwd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.build_with_ersilia"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.build_with_ersilia" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Builds a Docker image for the model using Ersilia’s base image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>docker_user</strong> (<em>str</em>) – Docker Hub username.</p></li>
+<li><p><strong>docker_pwd</strong> (<em>str</em>) – Docker Hub password.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.container_exists">
 <span class="sig-name descname"><span class="pre">container_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.container_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.container_exists" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if a Docker container with the specified name exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>container_name</strong> (<em>str</em>) – Name of the Docker container.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the container exists, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.containers">
 <span class="sig-name descname"><span class="pre">containers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">only_run</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.containers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.containers" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves a dictionary of Docker containers related to Ersilia models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>only_run</strong> (<em>bool</em>) – If True, only return running containers.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of Docker containers with container names as keys.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.containers_of_model">
 <span class="sig-name descname"><span class="pre">containers_of_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_run</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_latest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.containers_of_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.containers_of_model" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves Docker containers for a specific model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>only_run</strong> (<em>bool</em>) – If True, only return running containers.</p></li>
+<li><p><strong>only_latest</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only consider images with the latest tag.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of Docker containers for the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.delete_containers">
 <span class="sig-name descname"><span class="pre">delete_containers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.delete_containers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.delete_containers" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Deletes all Docker containers associated with a model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.delete_image">
@@ -224,77 +417,201 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.delete_images">
 <span class="sig-name descname"><span class="pre">delete_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">purge_unnamed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.delete_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.delete_images" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Deletes Docker images associated with a model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>purge_unnamed</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, also remove unnamed images.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.image_exists">
 <span class="sig-name descname"><span class="pre">image_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.image_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.image_exists" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if a Docker image for the specified model exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the Docker image exists, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.images">
 <span class="sig-name descname"><span class="pre">images</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.images" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves a dictionary of Docker images related to Ersilia models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary of Docker images with image names as keys.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.images_of_model">
 <span class="sig-name descname"><span class="pre">images_of_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_latest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.images_of_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.images_of_model" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Retrieves Docker images for a specific model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>only_latest</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only return images with the latest tag.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of Docker images for the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.is_active">
 <span class="sig-name descname"><span class="pre">is_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.is_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.is_active" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if Docker is active and running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if Docker is active, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.is_inside_docker">
 <span class="sig-name descname"><span class="pre">is_inside_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.is_inside_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.is_inside_docker" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if the current process is running inside a Docker container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if running inside Docker, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.is_installed">
 <span class="sig-name descname"><span class="pre">is_installed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.is_installed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.is_installed" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if Docker is installed on the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if Docker is installed, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.is_logged_in">
 <span class="sig-name descname"><span class="pre">is_logged_in</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.is_logged_in"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.is_logged_in" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if the user is logged in to Docker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the user is logged in to Docker, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.prune">
 <span class="sig-name descname"><span class="pre">prune</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.prune"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.prune" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Prunes unused Docker objects to free up space.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.remove">
 <span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.remove" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Removes the Docker image for the specified model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.remove_stopped_containers">
 <span class="sig-name descname"><span class="pre">remove_stopped_containers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.remove_stopped_containers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.remove_stopped_containers" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Removes all stopped Docker containers.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_microbatch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.run" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Runs a Docker container for the specified model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>workers</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of worker processes.</p></li>
+<li><p><strong>enable_microbatch</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, enable micro-batching.</p></li>
+<li><p><strong>memory</strong> (<em>int</em><em>, </em><em>optional</em>) – Memory limit for the container in gigabytes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing container name and port.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.start">
 <span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.start" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Starts a stopped Docker container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>container_name</strong> (<em>str</em>) – Name of the Docker container to start.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.stop">
 <span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">container_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.stop" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Stops a running Docker container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>container_name</strong> (<em>str</em>) – Name of the Docker container to stop.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.stop_containers">
 <span class="sig-name descname"><span class="pre">stop_containers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.stop_containers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.stop_containers" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Stops all running Docker containers associated with a model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

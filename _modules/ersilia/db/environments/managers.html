@@ -98,6 +98,28 @@
 <div class="viewcode-block" id="DockerManager">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager">[docs]</a>
 <span class="k">class</span> <span class="nc">DockerManager</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages Docker operations for Ersilia models.</span>
+
+<span class="sd">    It provides methods to build, run, and manage Docker images and containers</span>
+<span class="sd">    associated with Ersilia models. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings for initializing the Docker manager.</span>
+<span class="sd">    preferred_port : int, optional</span>
+<span class="sd">        Preferred port number for running Docker containers.</span>
+<span class="sd">    with_bentoml : bool, optional</span>
+<span class="sd">        Flag indicating whether to use BentoML for model serving.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; docker_manager = DockerManager(config_json=config, preferred_port=8080)</span>
+<span class="sd">    &gt;&gt;&gt; docker_manager.build(model_id=&#39;eosxxxx&#39;, docker_user=&#39;user&#39;, docker_pwd=&#39;pass&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; docker_manager.run(model_id=&#39;eosxxxx&#39;, workers=2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_eos_regex</span> <span class="o">=</span> <span class="n">Paths</span><span class="p">()</span><span class="o">.</span><span class="n">_eos_regex</span><span class="p">()</span>
@@ -112,30 +134,75 @@
 <div class="viewcode-block" id="DockerManager.is_inside_docker">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_inside_docker">[docs]</a>
     <span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the current process is running inside a Docker container.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if running inside Docker, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inside_docker</span></div>
 
 
 <div class="viewcode-block" id="DockerManager.is_installed">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_installed">[docs]</a>
     <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if Docker is installed on the system.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if Docker is installed, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DockerManager.is_logged_in">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_logged_in">[docs]</a>
     <span class="k">def</span> <span class="nf">is_logged_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the user is logged in to Docker.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the user is logged in to Docker, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DockerManager.is_active">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_active">[docs]</a>
     <span class="k">def</span> <span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if Docker is active and running.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if Docker is active, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_active</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DockerManager.image_exists">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.image_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">image_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a Docker image for the specified model exists.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the Docker image exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">images_of_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">only_latest</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -145,6 +212,19 @@
 <div class="viewcode-block" id="DockerManager.container_exists">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.container_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">container_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a Docker container with the specified name exists.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        container_name : str</span>
+<span class="sd">            Name of the Docker container.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the container exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">containers</span><span class="p">(</span><span class="n">only_run</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">container_name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -155,6 +235,14 @@
 <div class="viewcode-block" id="DockerManager.images">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.images">[docs]</a>
     <span class="k">def</span> <span class="nf">images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a dictionary of Docker images related to Ersilia models.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary of Docker images with image names as keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">img_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">images</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eos_regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_org_regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
@@ -165,6 +253,19 @@
 <div class="viewcode-block" id="DockerManager.containers">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.containers">[docs]</a>
     <span class="k">def</span> <span class="nf">containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_run</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a dictionary of Docker containers related to Ersilia models.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        only_run : bool</span>
+<span class="sd">            If True, only return running containers.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary of Docker containers with container names as keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">()</span>
         <span class="n">cnt_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">containers</span><span class="p">(</span><span class="n">only_run</span><span class="o">=</span><span class="n">only_run</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -176,6 +277,21 @@
 <div class="viewcode-block" id="DockerManager.images_of_model">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.images_of_model">[docs]</a>
     <span class="k">def</span> <span class="nf">images_of_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">only_latest</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves Docker images for a specific model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        only_latest : bool, optional</span>
+<span class="sd">            If True, only return images with the latest tag.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary of Docker images for the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">()</span>
         <span class="n">img_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">images</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -191,6 +307,23 @@
 <div class="viewcode-block" id="DockerManager.containers_of_model">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.containers_of_model">[docs]</a>
     <span class="k">def</span> <span class="nf">containers_of_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">only_run</span><span class="p">,</span> <span class="n">only_latest</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves Docker containers for a specific model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        only_run : bool</span>
+<span class="sd">            If True, only return running containers.</span>
+<span class="sd">        only_latest : bool, optional</span>
+<span class="sd">            If True, only consider images with the latest tag.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary of Docker containers for the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">valid_images</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">images_of_model</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">only_latest</span><span class="o">=</span><span class="n">only_latest</span>
@@ -206,6 +339,16 @@
 <div class="viewcode-block" id="DockerManager.build_with_bentoml">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.build_with_bentoml">[docs]</a>
     <span class="k">def</span> <span class="nf">build_with_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a Docker image for the model using BentoML.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        use_cache : bool, optional</span>
+<span class="sd">            If True, use Docker&#39;s cache when building the image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bundle_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;build.sh&quot;</span><span class="p">)</span>
@@ -259,6 +402,18 @@
 <div class="viewcode-block" id="DockerManager.build_with_ersilia">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.build_with_ersilia">[docs]</a>
     <span class="k">def</span> <span class="nf">build_with_ersilia</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">docker_user</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a Docker image for the model using Ersilia&#39;s base image.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        docker_user : str</span>
+<span class="sd">            Docker Hub username.</span>
+<span class="sd">        docker_pwd : str</span>
+<span class="sd">            Docker Hub password.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating docker image with ersilia incorporated&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_exists</span><span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">):</span>
             <span class="k">pass</span>
@@ -307,6 +462,20 @@
 <div class="viewcode-block" id="DockerManager.build">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.build">[docs]</a>
     <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">docker_user</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a Docker image for the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        docker_user : str</span>
+<span class="sd">            Docker Hub username.</span>
+<span class="sd">        docker_pwd : str</span>
+<span class="sd">            Docker Hub password.</span>
+<span class="sd">        use_cache : bool, optional</span>
+<span class="sd">            If True, use Docker&#39;s cache when building the image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_bentoml</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">build_with_bentoml</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="n">use_cache</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -318,6 +487,14 @@
 <div class="viewcode-block" id="DockerManager.remove">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.remove">[docs]</a>
     <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes the Docker image for the specified model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -328,6 +505,25 @@
 <div class="viewcode-block" id="DockerManager.run">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">enable_microbatch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs a Docker container for the specified model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        workers : int, optional</span>
+<span class="sd">            Number of worker processes.</span>
+<span class="sd">        enable_microbatch : bool, optional</span>
+<span class="sd">            If True, enable micro-batching.</span>
+<span class="sd">        memory : int, optional</span>
+<span class="sd">            Memory limit for the container in gigabytes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing container name and port.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running docker manager&quot;</span><span class="p">)</span>
         <span class="n">imgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">images_of_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">only_latest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Available images: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">imgs</span><span class="p">))</span>
@@ -370,6 +566,14 @@
 <div class="viewcode-block" id="DockerManager.start">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.start">[docs]</a>
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts a stopped Docker container.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        container_name : str</span>
+<span class="sd">            Name of the Docker container to start.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker start </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">container_name</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
 
@@ -377,6 +581,14 @@
 <div class="viewcode-block" id="DockerManager.stop">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.stop">[docs]</a>
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stops a running Docker container.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        container_name : str</span>
+<span class="sd">            Name of the Docker container to stop.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker stop </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">container_name</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
 
@@ -388,6 +600,14 @@
 <div class="viewcode-block" id="DockerManager.delete_containers">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.delete_containers">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes all Docker containers associated with a model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">containers_of_model</span><span class="p">(</span>
             <span class="n">model_id</span><span class="p">,</span> <span class="n">only_run</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">only_latest</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -400,6 +620,9 @@
 <div class="viewcode-block" id="DockerManager.remove_stopped_containers">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.remove_stopped_containers">[docs]</a>
     <span class="k">def</span> <span class="nf">remove_stopped_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removes all stopped Docker containers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
@@ -460,6 +683,14 @@
 <div class="viewcode-block" id="DockerManager.stop_containers">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.stop_containers">[docs]</a>
     <span class="k">def</span> <span class="nf">stop_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stops all running Docker containers associated with a model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
@@ -490,6 +721,9 @@
 <div class="viewcode-block" id="DockerManager.prune">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.prune">[docs]</a>
     <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prunes unused Docker objects to free up space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker system prune -f&quot;</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
 
@@ -520,6 +754,16 @@
 <div class="viewcode-block" id="DockerManager.delete_images">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.delete_images">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">purge_unnamed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes Docker images associated with a model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        purge_unnamed : bool, optional</span>
+<span class="sd">            If True, also remove unnamed images.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
@@ -556,6 +800,7 @@
 <div class="viewcode-block" id="CondaManager">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.CondaManager">[docs]</a>
 <span class="k">class</span> <span class="nc">CondaManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 

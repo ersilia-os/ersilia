@@ -81,6 +81,15 @@
 <div class="viewcode-block" id="SlugDb">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb">[docs]</a>
 <span class="k">class</span> <span class="nc">SlugDb</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manages slug database operations for models.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings for initializing the slug database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eos_dir</span><span class="p">,</span> <span class="n">SLUGDB_FILE</span><span class="p">)</span>
@@ -112,6 +121,16 @@
 <div class="viewcode-block" id="SlugDb.insert">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.insert">[docs]</a>
     <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inserts a model ID and slug into the database.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        slug : str</span>
+<span class="sd">            Slug associated with the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -127,6 +146,14 @@
 <div class="viewcode-block" id="SlugDb.delete_by_model_id">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete_by_model_id">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_by_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes entries from the database by model ID.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model to delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -143,6 +170,14 @@
 <div class="viewcode-block" id="SlugDb.delete_by_slug">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete_by_slug">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_by_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes entries from the database by slug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slug : str</span>
+<span class="sd">            Slug to delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -159,6 +194,16 @@
 <div class="viewcode-block" id="SlugDb.delete">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.delete">[docs]</a>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a specific entry from the database by model ID and slug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        slug : str</span>
+<span class="sd">            Slug associated with the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -175,6 +220,19 @@
 <div class="viewcode-block" id="SlugDb.models_of_slug">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.models_of_slug">[docs]</a>
     <span class="k">def</span> <span class="nf">models_of_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves model IDs associated with a specific slug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slug : str</span>
+<span class="sd">            Slug to search for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        set</span>
+<span class="sd">            Set of model IDs associated with the slug.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        SELECT model_id FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE slug = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
@@ -190,6 +248,19 @@
 <div class="viewcode-block" id="SlugDb.slugs_of_model">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.slugs_of_model">[docs]</a>
     <span class="k">def</span> <span class="nf">slugs_of_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves slugs associated with a specific model ID.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model to search for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        set</span>
+<span class="sd">            Set of slugs associated with the model ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        SELECT slug FROM </span><span class="si">{0}</span>
 <span class="s2">            WHERE model_id = &#39;</span><span class="si">{1}</span><span class="s2">&#39;</span>
@@ -205,6 +276,9 @@
 <div class="viewcode-block" id="SlugDb.clean">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.localslugs.SlugDb.clean">[docs]</a>
     <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Cleans the database by deleting all entries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>

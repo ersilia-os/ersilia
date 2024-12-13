@@ -86,7 +86,7 @@
 <span class="sd">    Creates the catalog command for the CLI.</span>
 
 <span class="sd">    This command allows users to list a catalog of models available either locally or in the model hub.</span>
-<span class="sd">    It provides options to display the catalog in various formats(such as tables or json), show more detailed information,</span>
+<span class="sd">    It provides options to display the catalog in various formats(such as tables by default or json), show more detailed information,</span>
 <span class="sd">    and view model cards for specific models.</span>
 
 <span class="sd">    Returns</span>
@@ -96,11 +96,13 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    List models available in the local computer and show more detailed information:</span>
-<span class="sd">    $ ersilia catalog --local --more</span>
+<span class="sd">    .. code-block:: console</span>
 
-<span class="sd">    Display model card for a specific model ID and show catalog in table format:</span>
-<span class="sd">    $ ersilia catalog --card &lt;model_id&gt; --as-table</span>
+<span class="sd">        # List models available in the local computer and show more detailed information:</span>
+<span class="sd">        $ ersilia catalog --local --more</span>
+
+<span class="sd">        # Display model card for a specific model ID and show catalog in json format:</span>
+<span class="sd">        $ ersilia catalog --card &lt;model_id&gt; --as-json</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Example usage: ersilia catalog</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;List a catalog of models&quot;</span><span class="p">)</span>

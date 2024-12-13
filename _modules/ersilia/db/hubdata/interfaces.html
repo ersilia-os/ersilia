@@ -80,6 +80,15 @@
 <div class="viewcode-block" id="JsonModelsInterface">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.JsonModelsInterface">[docs]</a>
 <span class="k">class</span> <span class="nc">JsonModelsInterface</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interface for fetching model metadata from models stored in S3.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings for initializing the interface.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">json_file_name</span> <span class="o">=</span> <span class="n">MODELS_JSON</span>
@@ -93,6 +102,14 @@
 <div class="viewcode-block" id="JsonModelsInterface.items">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.JsonModelsInterface.items">[docs]</a>
     <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Yields models from the JSON file one by one.</span>
+
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A model from the JSON file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">mdl</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">mdl</span></div>
@@ -101,6 +118,14 @@
 <div class="viewcode-block" id="JsonModelsInterface.items_all">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.JsonModelsInterface.items_all">[docs]</a>
     <span class="k">def</span> <span class="nf">items_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves all models from the JSON file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of all models.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">models</span></div>
 
@@ -108,6 +133,19 @@
 <div class="viewcode-block" id="JsonModelsInterface.identifier_exists">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.JsonModelsInterface.identifier_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">identifier_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a model identifier exists in the JSON file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the identifier exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_json_file</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">model_id</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span></div>
 </div>
