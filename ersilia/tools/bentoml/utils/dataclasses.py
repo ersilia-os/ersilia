@@ -19,9 +19,29 @@ from dataclasses import is_dataclass
 
 
 class DataclassJsonEncoder(json.JSONEncoder):
-    """Special json encoder for numpy types"""
+    """
+    Special JSON encoder for dataclass types.
+
+    Methods
+    -------
+    default(o)
+        Override the default method to handle dataclass objects.
+    """
 
     def default(self, o):  # pylint: disable=method-hidden
+        """
+        Override the default method to handle dataclass objects.
+
+        Parameters
+        ----------
+        o : object
+            The object to encode.
+
+        Returns
+        -------
+        dict
+            The encoded object as a dictionary.
+        """
         if is_dataclass(o):
             if hasattr(o, "to_json"):
                 return o.to_json()
@@ -31,6 +51,22 @@ class DataclassJsonEncoder(json.JSONEncoder):
 
 
 class json_serializer:
+    """
+    A decorator for serializing dataclass objects to JSON.
+
+    Parameters
+    ----------
+    fields : list, optional
+        The fields to include in the JSON output (default is None, which includes all fields).
+    compat : bool, optional
+        If True, only include fields that have non-default values (default is False).
+
+    Methods
+    -------
+    __call__(klass)
+        Apply the decorator to the dataclass.
+    """
+
     def __init__(self, fields=None, compat=False):
         self.fields = fields
         self.compat = compat
@@ -42,6 +78,24 @@ class json_serializer:
         return obj
 
     def __call__(self, klass):
+        """
+        Apply the decorator to the dataclass.
+
+        Parameters
+        ----------
+        klass : type
+            The dataclass type to decorate.
+
+        Returns
+        -------
+        type
+            The decorated dataclass type.
+
+        Raises
+        ------
+        TypeError
+            If the klass is not a dataclass.
+        """
         if not is_dataclass(klass):
             raise TypeError(
                 f"{self.__class__.__name__} only accepts dataclasses, "
