@@ -10,7 +10,7 @@ def catalog_cmd():
     Creates the catalog command for the CLI.
 
     This command allows users to list a catalog of models available either locally or in the model hub.
-    It provides options to display the catalog in various formats(such as tables or json), show more detailed information,
+    It provides options to display the catalog in various formats(such as tables by default or json), show more detailed information,
     and view model cards for specific models.
 
     Returns
@@ -25,8 +25,8 @@ def catalog_cmd():
         # List models available in the local computer and show more detailed information:
         $ ersilia catalog --local --more
 
-        # Display model card for a specific model ID and show catalog in table format:
-        $ ersilia catalog --card <model_id> --as-table
+        # Display model card for a specific model ID and show catalog in json format:
+        $ ersilia catalog --card <model_id> --as-json
     """
     # Example usage: ersilia catalog
     @ersilia_cli.command(help="List a catalog of models")
