@@ -12,12 +12,38 @@ from ...fetch import ModelURLResolver
 
 
 class ModelHostedFetcher(ErsiliaBase):
-    def __init__(self, url, config_json=None):
+    """
+    A class used to fetch models from a hosted URL.
+
+    Attributes
+    ----------
+    url : str
+        URL where the model is hosted.
+    config_json : dict
+        Configuration settings in JSON format.
+
+    Methods
+    -------
+    is_available(model_id)
+        Check if the model is available at the hosted URL.
+    write_apis(model_id)
+        Write APIs for the model.
+    get_information(model_id)
+        Get information for the model.
+    get_metadata(model_id)
+        Get metadata for the model.
+    write_status(model_id)
+        Write the status file for the model.
+    fetch(model_id)
+        Fetch the model from the hosted URL.
+    """
+
+    def __init__(self, url: str, config_json: dict = None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.logger.debug("Initialized with URL: {0}".format(url))
         self.url = url
 
-    def _is_available_known_url(self):
+    def _is_available_known_url(self) -> bool:
         self.logger.debug("Checking if url {0} is reachable".format(self.url))
         try:
             response = requests.get(self.url, timeout=5)
@@ -29,7 +55,7 @@ class ModelHostedFetcher(ErsiliaBase):
             )
             return False
 
-    def _is_available_unknown_url(self, model_id):
+    def _is_available_unknown_url(self, model_id: str) -> bool:
         self.logger.debug(
             "Trying to find an available URL where the model is hosted using Models JSON"
         )
@@ -39,13 +65,26 @@ class ModelHostedFetcher(ErsiliaBase):
         is_valid_url, _ = mdl_url_resolver.resolve_valid_hosted_model_url(model_id)
         return is_valid_url
 
-    def is_available(self, model_id):
+    def is_available(self, model_id: str) -> bool:
+        """
+        Check if the model is available at the hosted URL.
+
+        Parameters
+        ----------
+        model_id : str
+            ID of the model to check.
+
+        Returns
+        -------
+        bool
+            True if the model is available, False otherwise.
+        """
         if self.url is None:
             return self._is_available_unknown_url(model_id=model_id)
         else:
             return self._is_available_known_url()
 
-    def _update_url(self, model_id):
+    def _update_url(self, model_id: str):
         if self.url is None:
             from_hosted_file = os.path.join(
                 self._model_path(model_id), IS_FETCHED_FROM_HOSTED_FILE
@@ -54,7 +93,15 @@ class ModelHostedFetcher(ErsiliaBase):
                 data = json.load(f)
             self.url = data["url"]
 
-    def write_apis(self, model_id):
+    def write_apis(self, model_id: str):
+        """
+        Write APIs for the model.
+
+        Parameters
+        ----------
+        model_id : str
+            ID of the model.
+        """
         self.logger.debug("Writing APIs")
         di = HostedService(
             model_id=model_id, config_json=self.config_json, url=self.url
@@ -62,7 +109,15 @@ class ModelHostedFetcher(ErsiliaBase):
         di.serve()
         di.close()
 
-    def get_information(self, model_id):
+    def get_information(self, model_id: str):
+        """
+        Get information for the model.
+
+        Parameters
+        ----------
+        model_id : str
+            ID of the model.
+        """
         self.logger.debug(
             "Getting information for model identifier: {0}".format(model_id)
         )
@@ -76,7 +131,15 @@ class ModelHostedFetcher(ErsiliaBase):
         with open(info_file, "w") as f:
             json.dump(info, f, indent=4)
 
-    def get_metadata(self, model_id):
+    def get_metadata(self, model_id: str):
+        """
+        Get metadata for the model.
+
+        Parameters
+        ----------
+        model_id : str
+            ID of the model.
+        """
         self.logger.debug(
             "Getting api_schema for model identifier: {0}".format(model_id)
         )
@@ -88,13 +151,29 @@ class ModelHostedFetcher(ErsiliaBase):
         with open(api_schema_file, "w") as f:
             json.dump(api_schema, f, indent=4)
 
-    def write_status(self, model_id):
+    def write_status(self, model_id: str):
+        """
+        Write the status file for the model.
+
+        Parameters
+        ----------
+        model_id : str
+            ID of the model.
+        """
         status = {"done": True}
         status_file = os.path.join(EOS, "dest", model_id, STATUS_FILE)
         with open(status_file, "w") as f:
             json.dump(status, f, indent=4)
 
-    def fetch(self, model_id):
+    def fetch(self, model_id: str):
+        """
+        Fetch the model from the hosted URL.
+
+        Parameters
+        ----------
+        model_id : str
+            ID of the model.
+        """
         self.logger.debug(
             "Fetching from hosted, model identifier: {0}".format(model_id)
         )

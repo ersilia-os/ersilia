@@ -22,7 +22,26 @@ PULL_IMAGE = os.environ.get("PULL_IMAGE", "Y")
 
 
 class ModelPuller(ErsiliaBase):
-    def __init__(self, model_id, overwrite=None, config_json=None):
+    """
+    ModelPuller is responsible for pulling models from DockerHub.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be pulled.
+    overwrite : bool, optional
+        Whether to overwrite existing files.
+    config_json : dict, optional
+        Configuration settings for the puller.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        puller = ModelPuller(model_id="eosxxxx", config_json=config)
+        await puller.async_pull()
+    """
+    def __init__(self, model_id: str, overwrite: bool = None, config_json: dict = None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.model_id = model_id
@@ -31,7 +50,15 @@ class ModelPuller(ErsiliaBase):
         )
         self.overwrite = overwrite
 
-    def is_available_locally(self):
+    def is_available_locally(self) -> bool:
+        """
+        Check if the Docker image is available locally.
+
+        Returns
+        -------
+        bool
+            True if the image is available locally, False otherwise.
+        """
         is_available = self.simple_docker.exists(
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
@@ -44,7 +71,15 @@ class ModelPuller(ErsiliaBase):
             )
             return False
 
-    def is_available_in_dockerhub(self):
+    def is_available_in_dockerhub(self) -> bool:
+        """
+        Check if the Docker image is available in DockerHub.
+
+        Returns
+        -------
+        bool
+            True if the image is available in DockerHub, False otherwise.
+        """
         url = "https://hub.docker.com/v2/repositories/{0}/{1}/tags/{2}".format(
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
@@ -70,7 +105,7 @@ class ModelPuller(ErsiliaBase):
             org=DOCKERHUB_ORG, img=self.model_id, tag=DOCKERHUB_LATEST_TAG
         )
 
-    def _get_size_of_local_docker_image_in_mb(self):
+    def _get_size_of_local_docker_image_in_mb(self) -> float:
         try:
             image_name = "{0}/{1}:{2}".format(
                 DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
@@ -87,6 +122,9 @@ class ModelPuller(ErsiliaBase):
 
     @throw_ersilia_exception()
     async def async_pull(self):
+        """
+        Asynchronously pull the Docker image.
+        """
         if self.is_available_locally():
             if self.overwrite is None:
                 do_pull = yes_no_input(
@@ -184,6 +222,9 @@ class ModelPuller(ErsiliaBase):
 
     @throw_ersilia_exception()
     def pull(self):
+        """
+        This method pulls the Docker image non-asynchronously.
+        """
         if self.is_available_locally():
             if self.overwrite is None:
                 do_pull = yes_no_input(

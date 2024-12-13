@@ -26,11 +26,33 @@ except ModuleNotFoundError as err:
 
 
 class CatalogTable(object):
+    """
+    Class to handle the catalog table of models.
+
+    This class provides methods to convert the model catalog into various formats,
+    such as list of dictionaries, JSON, and table format. It also provides methods
+    to write the catalog table to a file.
+
+    Parameters
+    ----------
+    data : list
+        The data of the catalog table.
+    columns : list
+        The columns of the catalog table.
+    """
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
 
-    def as_list_of_dicts(self):
+    def as_list_of_dicts(self) -> list:
+        """
+        Convert the catalog table to a list of dictionaries.
+
+        Returns
+        -------
+        list
+            The catalog table as a list of dictionaries.
+        """
         R = []
         for r in self.data:
             d = {}
@@ -39,7 +61,15 @@ class CatalogTable(object):
             R += [d]
         return R
 
-    def as_json(self):
+    def as_json(self) -> str:
+        """
+        Convert the catalog table to JSON format.
+
+        Returns
+        -------
+        str
+            The catalog table in JSON format.
+        """
         R = self.as_list_of_dicts()
         return json.dumps(R, indent=4)
 
@@ -47,41 +77,34 @@ class CatalogTable(object):
         """
         Generates a separator line for the table based on the given borders and column widths.
 
-        The line starts with a 'left' border, followed by repeated 'horizontal'
-        sections for each column's width, joined by 'middle' separators, and ends
-        with a 'right' border.
+        Parameters
+        ----------
+        left : str
+            The character to use for the left border of the line.
+        middle : str
+            The character to use between columns (as separators).
+        right : str
+            The character to use for the right border of the line.
+        horizontal : str
+            The character used to draw the horizontal border.
+        widths : list of int
+            A list of column widths to determine how much horizontal space each column takes.
 
-        Args:
-            left (str): The character to use for the left border of the line.
-            middle (str): The character to use between columns (as separators).
-            right (str): The character to use for the right border of the line.
-            horizontal (str): The character used to draw the horizontal border.
-            widths (list[int]): A list of column widths to determine how much
-                                horizontal space each column takes.
-
-        Returns:
-            str: The formatted separator line as a string.
+        Returns
+        -------
+        str
+            The formatted separator line as a string.
         """
         return left + middle.join(horizontal * (width + 2) for width in widths) + right
 
-    def as_table(self):
+    def as_table(self) -> str:
         """
-        Returns the catalog data in table format. The method calculates the
-        column widths dynamically by determining the maximum width of each column,
-        based on the data and column headers.
+        Convert the catalog table to table format.
 
-        A row format string is then constructed using the column widths,
-        specifying that each cell is left-aligned and padded with a column seperator sperating the rows.
-
-        The method starts by constructing the top border using the
-        'generate_separator_line' helper. It then adds the headers,
-        formatted to fit the column widths, followed by a separator line
-        also created by the helper function.
-
-        A 'for' loop iterates over the data rows, adding each row to the
-        table with borders and padding. After each row, a separator line is inserted.
-        Finally, the bottom border is added using the helper function, completing the table.
-
+        Returns
+        -------
+        str
+            The catalog table in table format.
         """
         column_widths = [
             max(
@@ -159,7 +182,15 @@ class CatalogTable(object):
 
         return table
 
-    def write(self, file_name):
+    def write(self, file_name: str):
+        """
+        Write the catalog table to a file.
+
+        Parameters
+        ----------
+        file_name : str
+            The name of the file to write the catalog table to.
+        """
         with open(file_name, "w") as f:
             if file_name.endswith(".csv"):
                 delimiter = ","
@@ -244,7 +275,9 @@ class ModelCatalog(ErsiliaBase):
         return None
 
     def airtable(self):
-        """List models available in AirTable Ersilia Model Hub base"""
+        """
+        List models available in AirTable Ersilia Model Hub base.
+        """
         if webbrowser:
             webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")  # TODO Hardcoded
 
@@ -279,8 +312,15 @@ class ModelCatalog(ErsiliaBase):
         table = self._get_catalog(columns, models)
         return table
 
-    def local(self):
-        """List models available locally"""
+    def local(self) -> CatalogTable:
+        """
+        List models metadata from the local repository.
+
+        Returns
+        -------
+        CatalogTable
+            The catalog table containing the models available locally.
+        """
         mc = ModelCard()
         columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS+["Model Source"]
         cards = []
@@ -295,8 +335,15 @@ class ModelCatalog(ErsiliaBase):
         return table
 
 
-    def bentoml(self):
-        """List models available as BentoServices"""
+    def bentoml(self) -> CatalogTable:
+        """
+        List models available as BentoServices.
+
+        Returns
+        -------
+        CatalogTable
+            The catalog table containing the models available as BentoServices.
+        """
         try:
             result = subprocess.run(
                 ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ, timeout=10

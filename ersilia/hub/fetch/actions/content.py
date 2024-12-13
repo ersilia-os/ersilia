@@ -7,6 +7,17 @@ from ....default import CARD_FILE
 
 
 class CardGetter(BaseAction):
+    """
+    Gets the model card and saves it locally.
+
+    Parameters
+    ----------
+    model_id : str
+        The model identifier.
+    config_json : dict
+        The configuration settings in JSON format.
+    """
+
     def __init__(self, model_id, config_json):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
