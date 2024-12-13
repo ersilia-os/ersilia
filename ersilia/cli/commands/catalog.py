@@ -20,11 +20,13 @@ def catalog_cmd():
 
     Examples
     --------
-    List models available in the local computer and show more detailed information:
-    $ ersilia catalog --local --more
+    .. code-block:: console
 
-    Display model card for a specific model ID and show catalog in json format:
-    $ ersilia catalog --card <model_id> --as-json
+        # List models available in the local computer and show more detailed information:
+        $ ersilia catalog --local --more
+
+        # Display model card for a specific model ID and show catalog in json format:
+        $ ersilia catalog --card <model_id> --as-json
     """
     # Example usage: ersilia catalog
     @ersilia_cli.command(help="List a catalog of models")

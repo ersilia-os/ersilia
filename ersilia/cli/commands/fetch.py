@@ -22,11 +22,13 @@ def fetch_cmd():
 
     Examples
     --------
-    Fetch a model by its ID:
-    $ ersilia fetch <model_id> [auto model source decider] or ersilia fetch <model_id> --from_github/--from_dockerhub
+    .. code-block:: console
 
-    Fetch a model from a local directory:
-    $ ersilia fetch <model_id> --from_dir <path>
+        Fetch a model by its ID:
+        $ ersilia fetch <model_id> [auto model source decider] or ersilia fetch <model_id> --from_github/--from_dockerhub
+
+        Fetch a model from a local directory:
+        $ ersilia fetch <model_id> --from_dir <path>
     """
     def _fetch(mf, model_id):
         res = asyncio.run(mf.fetch(model_id))

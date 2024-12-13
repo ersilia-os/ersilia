@@ -20,11 +20,13 @@ def serve_cmd():
 
     Examples
     --------
-    Serve a model by its ID:
-    $ ersilia serve <model_id> --port 8080
+    .. code-block:: console
 
-    Serve a model and track the session:
-    $ ersilia serve <model_id> --track
+        Serve a model by its ID:
+        $ ersilia serve <model_id> --port 8080
+
+        Serve a model and track the session:
+        $ ersilia serve <model_id> --track
     """
     # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
