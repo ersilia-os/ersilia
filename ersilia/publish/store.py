@@ -13,6 +13,18 @@ from ..utils.remove import OsfRemover
 
 
 class ModelStorager(ErsiliaBase):
+    """
+    Class for storing models in the local data directory and in OSF.
+
+    Parameters
+    ----------
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+    overwrite : bool, optional
+        Whether to overwrite existing files. Default is True.
+    """
     def __init__(self, config_json=None, credentials_json=None, overwrite=True):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -50,13 +62,39 @@ class ModelStorager(ErsiliaBase):
         self.osf_up.push(self.cfg.EXT.OSF_PROJECT, zip_file, destination)
         os.remove(zip_file)
 
-    def store(self, path, model_id):
-        """Store model in the local data directory and in OSF."""
+    def store(self, path: str, model_id: str):
+        """
+        Store model in the local data directory and in OSF.
+
+        Parameters
+        ----------
+        path : str
+            Path to the model directory.
+        model_id : str
+            The ID of the model to be stored.
+        """
         self._copy_to_local(path, model_id)
         self._upload_to_osf(model_id)
 
 
 class ModelRemover(ErsiliaBase):
+    """
+    Class for removing models from OSF.
+
+    Parameters
+    ----------
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        remover = ModelRemover(config_json="path/to/config.json", credentials_json="path/to/credentials.json")
+        remover.remove(model_id="model_id")
+    """
     def __init__(self, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -65,6 +103,14 @@ class ModelRemover(ErsiliaBase):
             username=self.cred.OSF.USER, password=self.cred.OSF.PWD
         )
 
-    def remove(self, model_id):
+    def remove(self, model_id: str):
+        """
+        Remove model from OSF.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be removed.
+        """
         zip_file = "models/" + model_id + ".zip"
         self.osf_rm.remove(self.cfg.EXT.OSF_PROJECT, zip_file)
