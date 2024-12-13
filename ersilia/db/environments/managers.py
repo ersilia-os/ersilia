@@ -23,6 +23,28 @@ INTERNAL_DOCKERPORT = 80
 
 
 class DockerManager(ErsiliaBase):
+    """
+    Manages Docker operations for Ersilia models.
+
+    It provides methods to build, run, and manage Docker images and containers
+    associated with Ersilia models. 
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for initializing the Docker manager.
+    preferred_port : int, optional
+        Preferred port number for running Docker containers.
+    with_bentoml : bool, optional
+        Flag indicating whether to use BentoML for model serving.
+
+    Examples
+    --------
+    >>> docker_manager = DockerManager(config_json=config, preferred_port=8080)
+    >>> docker_manager.build(model_id='eosxxxx', docker_user='user', docker_pwd='pass')
+    >>> docker_manager.run(model_id='eosxxxx', workers=2)
+    """
+
     def __init__(self, config_json=None, preferred_port=None, with_bentoml=False):
         ErsiliaBase.__init__(self, config_json=config_json)
         self._eos_regex = Paths()._eos_regex()
@@ -35,24 +57,82 @@ class DockerManager(ErsiliaBase):
         self.with_bentoml = with_bentoml
 
     def is_inside_docker(self):
+        """
+        Checks if the current process is running inside a Docker container.
+
+        Returns
+        -------
+        bool
+            True if running inside Docker, False otherwise.
+        """
         return self.inside_docker
 
     def is_installed(self):
+        """
+        Checks if Docker is installed on the system.
+
+        Returns
+        -------
+        bool
+            True if Docker is installed, False otherwise.
+        """
         return DockerRequirement().is_installed()
 
     def is_logged_in(self):
+        """
+        Checks if the user is logged in to Docker.
+
+        Returns
+        -------
+        bool
+            True if the user is logged in to Docker, False otherwise.
+        """
         return DockerRequirement().is_logged_in()
 
     def is_active(self):
+        """
+        Checks if Docker is active and running.
+
+        Returns
+        -------
+        bool
+            True if Docker is active, False otherwise.
+        """
         return DockerRequirement().is_active()
 
     def image_exists(self, model_id):
+        """
+        Checks if a Docker image for the specified model exists.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+
+        Returns
+        -------
+        bool
+            True if the Docker image exists, False otherwise.
+        """
         if self.images_of_model(model_id, only_latest=True):
             return True
         else:
             return False
 
     def container_exists(self, container_name):
+        """
+        Checks if a Docker container with the specified name exists.
+
+        Parameters
+        ----------
+        container_name : str
+            Name of the Docker container.
+
+        Returns
+        -------
+        bool
+            True if the container exists, False otherwise.
+        """
         names = set(self.containers(only_run=False).keys())
         if container_name in names:
             return True
@@ -60,6 +140,14 @@ class DockerManager(ErsiliaBase):
             return False
 
     def images(self):
+        """
+        Retrieves a dictionary of Docker images related to Ersilia models.
+
+        Returns
+        -------
+        dict
+            Dictionary of Docker images with image names as keys.
+        """
         img_dict = {}
         for k, v in self.docker.images().items():
             if self._eos_regex.search(k) and self._org_regex.search(k):
@@ -67,6 +155,19 @@ class DockerManager(ErsiliaBase):
         return img_dict
 
     def containers(self, only_run):
+        """
+        Retrieves a dictionary of Docker containers related to Ersilia models.
+
+        Parameters
+        ----------
+        only_run : bool
+            If True, only return running containers.
+
+        Returns
+        -------
+        dict
+            Dictionary of Docker containers with container names as keys.
+        """
         images = self.images()
         cnt_dict = {}
         for k, v in self.docker.containers(only_run=only_run).items():
@@ -75,6 +176,21 @@ class DockerManager(ErsiliaBase):
         return cnt_dict
 
     def images_of_model(self, model_id, only_latest=True):
+        """
+        Retrieves Docker images for a specific model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        only_latest : bool, optional
+            If True, only return images with the latest tag.
+
+        Returns
+        -------
+        dict
+            Dictionary of Docker images for the model.
+        """
         images = self.images()
         img_dict = {}
         for k, v in images.items():
@@ -87,6 +203,23 @@ class DockerManager(ErsiliaBase):
         return img_dict
 
     def containers_of_model(self, model_id, only_run, only_latest=True):
+        """
+        Retrieves Docker containers for a specific model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        only_run : bool
+            If True, only return running containers.
+        only_latest : bool, optional
+            If True, only consider images with the latest tag.
+
+        Returns
+        -------
+        dict
+            Dictionary of Docker containers for the model.
+        """
         valid_images = set()
         for k, v in self.images_of_model(
             model_id=model_id, only_latest=only_latest
@@ -99,6 +232,16 @@ class DockerManager(ErsiliaBase):
         return cnt_dict
 
     def build_with_bentoml(self, model_id, use_cache=True):
+        """
+        Builds a Docker image for the model using BentoML.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        use_cache : bool, optional
+            If True, use Docker's cache when building the image.
+        """
         bundle_path = self._get_bundle_location(model_id)
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "build.sh")
@@ -149,6 +292,18 @@ class DockerManager(ErsiliaBase):
         run_command(cmd)
 
     def build_with_ersilia(self, model_id, docker_user, docker_pwd):
+        """
+        Builds a Docker image for the model using Ersilia's base image.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        docker_user : str
+            Docker Hub username.
+        docker_pwd : str
+            Docker Hub password.
+        """
         self.logger.debug("Creating docker image with ersilia incorporated")
         if self.image_exists("base"):
             pass
@@ -194,6 +349,20 @@ class DockerManager(ErsiliaBase):
             run_command(cmd)
 
     def build(self, model_id, docker_user, docker_pwd, use_cache=True):
+        """
+        Builds a Docker image for the model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        docker_user : str
+            Docker Hub username.
+        docker_pwd : str
+            Docker Hub password.
+        use_cache : bool, optional
+            If True, use Docker's cache when building the image.
+        """
         if self.with_bentoml:
             self.build_with_bentoml(model_id=model_id, use_cache=use_cache)
         else:
@@ -202,6 +371,14 @@ class DockerManager(ErsiliaBase):
             )
 
     def remove(self, model_id):
+        """
+        Removes the Docker image for the specified model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        """
         self.docker.delete(org=DOCKERHUB_ORG, img=model_id, tag=DOCKERHUB_LATEST_TAG)
         self.db.delete(
             model_id=model_id,
@@ -209,6 +386,25 @@ class DockerManager(ErsiliaBase):
         )
 
     def run(self, model_id, workers=1, enable_microbatch=True, memory=None):
+        """
+        Runs a Docker container for the specified model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        workers : int, optional
+            Number of worker processes.
+        enable_microbatch : bool, optional
+            If True, enable micro-batching.
+        memory : int, optional
+            Memory limit for the container in gigabytes.
+
+        Returns
+        -------
+        dict
+            Dictionary containing container name and port.
+        """
         self.logger.debug("Running docker manager")
         imgs = self.images_of_model(model_id, only_latest=True)
         self.logger.debug("Available images: {0}".format(imgs))
@@ -248,10 +444,26 @@ class DockerManager(ErsiliaBase):
         return {"container_name": name, "port": port}
 
     def start(self, container_name):
+        """
+        Starts a stopped Docker container.
+
+        Parameters
+        ----------
+        container_name : str
+            Name of the Docker container to start.
+        """
         cmd = "docker start {0}".format(container_name)
         run_command(cmd)
 
     def stop(self, container_name):
+        """
+        Stops a running Docker container.
+
+        Parameters
+        ----------
+        container_name : str
+            Name of the Docker container to stop.
+        """
         cmd = "docker stop {0}".format(container_name)
         run_command(cmd)
 
@@ -260,6 +472,14 @@ class DockerManager(ErsiliaBase):
         run_command(cmd)
 
     def delete_containers(self, model_id):
+        """
+        Deletes all Docker containers associated with a model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        """
         for k, _ in self.containers_of_model(
             model_id, only_run=False, only_latest=False
         ).items():
@@ -269,6 +489,9 @@ class DockerManager(ErsiliaBase):
         self.remove(model_id)
 
     def remove_stopped_containers(self):
+        """
+        Removes all stopped Docker containers.
+        """
         if self.is_inside_docker():
             return
         if not self.is_installed():
@@ -326,6 +549,14 @@ class DockerManager(ErsiliaBase):
         shutil.rmtree(tmp_folder)
 
     def stop_containers(self, model_id):
+        """
+        Stops all running Docker containers associated with a model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        """
         if self.is_inside_docker:
             return
         if not self.is_installed():
@@ -353,6 +584,9 @@ class DockerManager(ErsiliaBase):
         self.remove_stopped_containers()
 
     def prune(self):
+        """
+        Prunes unused Docker objects to free up space.
+        """
         cmd = "docker system prune -f"
         run_command(cmd)
 
@@ -377,6 +611,16 @@ class DockerManager(ErsiliaBase):
                 self.delete_image(img)
 
     def delete_images(self, model_id, purge_unnamed=True):
+        """
+        Deletes Docker images associated with a model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        purge_unnamed : bool, optional
+            If True, also remove unnamed images.
+        """
         if self.is_inside_docker():
             return
         if not self.is_installed():
@@ -409,6 +653,7 @@ class DockerManager(ErsiliaBase):
 
 
 class CondaManager(object):
+
     def __init__(self):
         pass
 
