@@ -6,7 +6,23 @@ from . import BaseAction
 
 
 class SetupChecker(BaseAction):
-    def __init__(self, model_id, config_json):
+    """
+    Checks the setup requirements for the model to be installed and run.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model.
+    config_json : dict
+        Configuration settings for the setup checker.
+
+    Methods
+    -------
+    check()
+        Checks all setup requirements.
+    """
+
+    def __init__(self, model_id: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
@@ -43,6 +59,9 @@ class SetupChecker(BaseAction):
         self.logger.debug("EOS Home path exists")
 
     def check(self):
+        """
+        Checks all setup requirements.
+        """
         self._gh_cli()
         self._git_lfs()
         self._ping()

@@ -17,6 +17,14 @@ from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
 
 
 def rmtree(path):
+    """
+    Recursively delete a directory tree.
+
+    Parameters
+    ----------
+    path : str
+        Path to the directory to be deleted.
+    """
     try:
         shutil.rmtree(path)
     except:
@@ -28,6 +36,20 @@ def rmtree(path):
 
 
 class ModelEosDeleter(ErsiliaBase):
+    """
+    Deletes model data from the EOS storage directory, a directory to store fetched models locally.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes the model data from the EOS storage directory, a directory to store fetched models locally.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -35,7 +57,15 @@ class ModelEosDeleter(ErsiliaBase):
         folder = os.path.join(self._dest_dir, model_id)
         return folder
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes the model data from the EOS storage directory, a directory to store fetched models locally..
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
@@ -44,6 +74,24 @@ class ModelEosDeleter(ErsiliaBase):
 
 
 class ModelLakeDeleter(ErsiliaBase):
+    """
+    Deletes model data from the Lake storage.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes the model data from the Lake storage.
+    delete_local(model_id)
+        Deletes the local model data from the Lake storage.
+    delete_public(model_id)
+        Deletes the public model data from the Lake storage.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.path = self._lake_dir
@@ -54,19 +102,43 @@ class ModelLakeDeleter(ErsiliaBase):
         if os.path.islink(path):
             os.remove(path)
 
-    def delete_local(self, model_id):
+    def delete_local(self, model_id: str):
+        """
+        Deletes the local model data from the Lake storage.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         path = os.path.join(
             self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG_LOCAL)
         )
         self.logger.debug("Deleting {0}".format(path))
         self.delete_if_exists(path)
 
-    def delete_public(self, model_id):
+    def delete_public(self, model_id: str):
+        """
+        Deletes the public model data from the Lake storage.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         path = os.path.join(self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG))
         self.logger.debug("Deleting {0}".format(path))
         self.delete_if_exists(path)
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes the model data from the Lake storage.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         self.logger.debug("Attempting lake delete (local)")
         self.delete_local(model_id)
         self.logger.debug("Attempting lake delete (public)")
@@ -74,6 +146,20 @@ class ModelLakeDeleter(ErsiliaBase):
 
 
 class ModelTmpDeleter(ErsiliaBase):
+    """
+    Deletes temporary model data.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes the temporary model data.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -81,7 +167,15 @@ class ModelTmpDeleter(ErsiliaBase):
         folder = os.path.join(self._tmp_dir, model_id)
         return folder
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes the temporary model data from the EOS directory.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         self.logger.debug("Attempting temporary folder delete")
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
@@ -91,6 +185,20 @@ class ModelTmpDeleter(ErsiliaBase):
 
 
 class ModelBundleDeleter(ErsiliaBase):
+    """
+    Deletes model bundles from the EOS directory.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes the model bundle.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -98,7 +206,15 @@ class ModelBundleDeleter(ErsiliaBase):
         folder = os.path.join(self._bundles_dir, model_id)
         return folder
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes the model bundle.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
@@ -113,6 +229,22 @@ class ModelBundleDeleter(ErsiliaBase):
 
 
 class ModelBentoDeleter(ErsiliaBase):
+    """
+    Deletes BentoML services related to a model.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes all BentoML services related to the model.
+    clean(model_id)
+        Deletes all but the latest BentoML service related to the model.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
@@ -139,24 +271,76 @@ class ModelBentoDeleter(ErsiliaBase):
             self.logger.info("Removing BentoML service {0}".format(service))
             self._delete_service(service)
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes all BentoML services related to the model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         self.logger.debug("Attempting Bento delete")
         self._delete(model_id, keep_latest=False)
 
-    def clean(self, model_id):
+    def clean(self, model_id: str):
+        """
+        Deletes all but the latest BentoML service related to the model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be cleaned.
+        """
         self._delete(model_id, keep_latest=True)
 
 
 class ModelSlugDeleter(ErsiliaBase):
+    """
+    Deletes model slugs from the database.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes the model slug from the database.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.slugdb = SlugDb(config_json=config_json)
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes the model slug from the database.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         self.slugdb.delete_by_model_id(model_id)
 
 
 class ModelCondaDeleter(ErsiliaBase):
+    """
+    Deletes Conda environments related to a model.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes the Conda environment related to the model.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.envdb = EnvironmentDb(config_json=config_json)
@@ -171,7 +355,15 @@ class ModelCondaDeleter(ErsiliaBase):
         else:
             return list(env)[0]
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes the Conda environment related to the model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         envs = self.envdb.envs_of_model(model_id)
         envs = list(set(list(envs) + [model_id]))
         for env in envs:
@@ -188,13 +380,35 @@ class ModelCondaDeleter(ErsiliaBase):
 
 
 class ModelPipDeleter(ErsiliaBase):
+    """
+    Uninstalls pip packages related to a model.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Uninstalls the pip package related to the model.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
     def pip_uninstall(self, model_id):
         run_command("echo y | pip uninstall %s" % model_id)
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Uninstalls the pip package related to the model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         env = Environment()
         if env.has_module(model_id):
             self.logger.info("Uninstalling pip package {0}".format(model_id))
@@ -202,10 +416,32 @@ class ModelPipDeleter(ErsiliaBase):
 
 
 class ModelDockerDeleter(ErsiliaBase):
+    """
+    Deletes Docker images and stops containers related to a model.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes Docker images and stops containers related to the model.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes Docker images and stops containers related to the model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         if is_inside_docker():
             return
         self.logger.info(
@@ -219,30 +455,100 @@ class ModelDockerDeleter(ErsiliaBase):
 
 
 class ModelFetchedEntryDeleter(ErsiliaBase):
+    """
+    Deletes fetched model entries from the database.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+
+    Methods
+    -------
+    delete(model_id)
+        Deletes the fetched model entry from the database.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.fmm = FetchedModelsManager(config_json=config_json)
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes the fetched model entry from the database.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         self.fmm.delete(model_id)
 
 
 class TmpCleaner(ErsiliaBase):
+    """
+    Cleans temporary directories.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the cleaner.
+
+    Methods
+    -------
+    delete()
+        Deletes the temporary directory.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def delete(self):
+        """
+        Deletes the temporary directory.
+        """
         if os.path.exists(self._tmp_dir):
             os.rmdir(self._tmp_dir)
             os.makedirs(self._tmp_dir)
 
 
 class ModelFullDeleter(ErsiliaBase):
+    """
+    Deletes all data related to a model.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the deleter.
+    overwrite : bool, optional
+        Whether to overwrite existing data, by default True.
+
+    Methods
+    -------
+    needs_delete(model_id)
+        Checks if the model needs to be deleted.
+    delete(model_id)
+        Deletes all data related to the model.
+    """
+
     def __init__(self, config_json=None, overwrite=True):
         self.overwrite = overwrite
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
-    def needs_delete(self, model_id):
+    def needs_delete(self, model_id: str) -> bool:
+        """
+        Checks if the model needs to be deleted.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+
+        Returns
+        -------
+        bool
+            True if the model needs to be deleted, False otherwise.
+        """
         ms = ModelStatus().status(model_id)
         for k, v in ms.items():
             if v:
@@ -251,7 +557,15 @@ class ModelFullDeleter(ErsiliaBase):
             return True
         return False
 
-    def delete(self, model_id):
+    def delete(self, model_id: str):
+        """
+        Deletes all data related to the model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model to be deleted.
+        """
         self.logger.info("Starting delete of model {0}".format(model_id))
         ModelEosDeleter(self.config_json).delete(model_id)
         ModelSlugDeleter(self.config_json).delete(model_id)

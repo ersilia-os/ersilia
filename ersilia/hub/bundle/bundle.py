@@ -9,6 +9,20 @@ from dockerfile_parse import DockerfileParser
 
 
 class BundleEnvironmentFile(ErsiliaBase):
+    """
+    Class to handle the environment file for a model bundle.
+
+    Specifically provides methods to get the path, bundle Conda requirement,
+    add model installation commands of environment file, and check if the environment file exists.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -17,6 +31,14 @@ class BundleEnvironmentFile(ErsiliaBase):
         self.exists = os.path.exists(self.path)
 
     def get_file(self):
+        """
+        Get the path to the environment file.
+
+        Returns
+        -------
+        str
+            The path to the environment file.
+        """
         return self.path
 
     def _is_not_pip(self, dep):
@@ -26,6 +48,14 @@ class BundleEnvironmentFile(ErsiliaBase):
         return False
 
     def needs_conda(self):
+        """
+        Check if the environment file requires Conda.
+
+        Returns
+        -------
+        bool
+            True if the environment file requires Conda, False otherwise.
+        """
         if not self.exists:
             return False
         with open(self.path, "r") as f:
@@ -39,6 +69,9 @@ class BundleEnvironmentFile(ErsiliaBase):
             return False
 
     def add_model_install_commands(self):
+        """
+        Add model installation commands to the environment file.
+        """
         f0 = self.path
         with open(f0, "r") as f:
             data = yaml.safe_load(f)
@@ -72,11 +105,31 @@ class BundleEnvironmentFile(ErsiliaBase):
         with open(f0, "w") as f:
             yaml.safe_dump(data, f, sort_keys=False)
 
-    def check(self):
+    def check(self): # TODO: Removing this fucntion
+        """
+        Check if the environment file exists.
+
+        Returns
+        -------
+        bool
+        """
         return True
 
 
 class BundleRequirementsFile(ErsiliaBase):
+    """
+    Class to handle the requirements file for a model bundle.
+
+    Specifically provides methods to add model installation commands to the requirements file and check if the requirements file exists.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -85,6 +138,9 @@ class BundleRequirementsFile(ErsiliaBase):
         self.exists = os.path.exists(self.path)
 
     def add_model_install_commands(self):
+        """
+        Add model installation commands to the requirements file.
+        """
         f0 = os.path.join(self._get_bundle_location(self.model_id), REQUIREMENTS_TXT)
         reqs = []
         with open(f0, "r") as f:
@@ -103,11 +159,31 @@ class BundleRequirementsFile(ErsiliaBase):
             for l in reqs:
                 f.write(l + os.linesep)
 
-    def check(self):
+    def check(self): # TODO: Removing this fucntion
+        """
+        Check if the requirements file exists.
+
+        Returns
+        -------
+        bool
+        """
         return True
 
 
 class BundleDockerfileFile(ErsiliaBase):
+    """
+    Class to handle the Dockerfile for a model bundle.
+
+    It specifically provides methods to get the path to the Dockerfile, get the BentoML version required for the model, and more.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -116,13 +192,32 @@ class BundleDockerfileFile(ErsiliaBase):
         self.exists = os.path.exists(self.path)
         self.parser = DockerfileParser(path=self.path)
 
-    def get_file(self):
+    def get_file(self) -> str:
+        """
+        Get the path to the Dockerfile.
+
+        Returns
+        -------
+        str
+            The path to the Dockerfile.
+        """
         return self.path
 
-    def get_bentoml_version(self):
+    def get_bentoml_version(self) -> dict:
+        """
+        Get the BentoML version required for the model.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the BentoML version, slim flag, and Python version.
+        """
         return DockerfileFile(path=self.path).get_bentoml_version()
 
     def set_to_slim(self):
+        """
+        Set the Dockerfile to use the slim version of the BentoML image.
+        """
         ver = self.get_bentoml_version()
         if not ver:
             return
@@ -135,6 +230,9 @@ class BundleDockerfileFile(ErsiliaBase):
             f.write(content)
 
     def set_to_full(self):
+        """
+        Set the Dockerfile to use the full version of the BentoML image.
+        """
         ver = self.get_bentoml_version()
         if not ver:
             return
@@ -145,5 +243,12 @@ class BundleDockerfileFile(ErsiliaBase):
         with open(self.path, "w") as f:
             f.write(content)
 
-    def check(self):
+    def check(self): # TODO: Removing this fucntion
+        """
+        Check if the Dockerfile exists.
+
+        Returns
+        -------
+        bool
+        """
         return True
