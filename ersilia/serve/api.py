@@ -136,10 +136,9 @@ class Api(object):
                 result += r
             result = json.dumps(result, indent=4)
             result = self.__result_returner(result, output)
-        if result is None and len(input) == 1:
-            result = [{"input": input[0], "output": self._empty_output}]
-            result = json.dumps(result, indent=4)
-            result = self.__result_returner(result, output)
+        result = [{"input": input[0], "output": self._empty_output}]
+        result = json.dumps(result, indent=4)
+        result = self.__result_returner(result, output)
         return result
 
     def post(self, input, output, batch_size):
