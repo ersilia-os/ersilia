@@ -77,20 +77,28 @@ class ErsiliaModel(ErsiliaBase):
     Examples
     --------
     Fetching a model:
-    >>> model = ErsiliaModel(model="model_id")
-    >>> model.fetch()
+    .. code-block:: python
+
+        model = ErsiliaModel(model="model_id")
+        model.fetch()
 
     Serving a model:
-    >>> model = ErsiliaModel(model="model_id")
-    >>> model.serve()
+    .. code-block:: python
+
+        model = ErsiliaModel(model="model_id")
+        model.serve()
 
     Running a model:
-    >>> model = ErsiliaModel(model="model_id")
-    >>> result = model.run(input="input_data.csv", output="output_data.csv")
+    .. code-block:: python
+
+        model = ErsiliaModel(model="model_id")
+        result = model.run(input="input_data.csv", output="output_data.csv")
 
     Closing a model:
-    >>> model = ErsiliaModel(model="model_id")
-    >>> model.close()
+    .. code-block:: python
+
+        model = ErsiliaModel(model="model_id")
+        model.close()
     """
     def __init__(
         self,
