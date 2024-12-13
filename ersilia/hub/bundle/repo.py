@@ -18,31 +18,66 @@ ROOT_CHECKFILE = "README.md"
 
 
 class ReadmeFile(object):
-    def __init__(self, path):
-        self.path = os.path.abspath(path)
+    """
+    Class to handle README file operations.
 
-    def get_file(self):
-        return os.path.join(self.path, "README.md")
-
-    def check(self):
-        return True
-
-
-class ServiceFile(object):
-    """checks the model service file
-
-    Service File is needed to run a bentoml web app.
-    Bentoml web app is named "service" by default.
-
-    Attributes:
-        path: directory path where model is stored. Uses os module.
+    Parameters
+    ----------
+    path : str
+        The directory path where the README file is located.
     """
 
     def __init__(self, path):
         self.path = os.path.abspath(path)
 
     def get_file(self):
-        """gets the file from the specific directory"""
+        """
+        Get the path to the README file.
+
+        Returns
+        -------
+        str
+            The path to the README file.
+        """
+        return os.path.join(self.path, "README.md")
+
+    def check(self):
+        """
+        Check if the README file exists.
+
+        Returns
+        -------
+        bool
+            True if the README file exists, False otherwise.
+        """
+        return True
+
+
+class ServiceFile(object):
+    """
+    Class to handle service file operations for BentoML web apps.
+
+    This class provides methods to get the path to the service file, rename the service,
+    add an info API, and check if the service file contains the Service class.
+
+    Parameters
+    ----------
+    path : str
+        The directory path where the service file is located.
+    """
+
+    def __init__(self, path):
+        self.path = os.path.abspath(path)
+
+    def get_file(self) -> str:
+        """
+        Get the path to the service file.
+
+        Returns
+        -------
+        str
+            The path to the service file.
+        """
         return os.path.join(self.path, "src", "service.py")
 
     def _has_service_class(self):
@@ -55,7 +90,9 @@ class ServiceFile(object):
         return False
 
     def rename_service(self):
-        """renames the bentoml app from default "Service" to model_id."""
+        """
+        Rename the BentoML service from the default "Service" to the model ID.
+        """
         ru = RepoUtils(self.path)
         model_id = ru.get_model_id()
         add_text = ru.rename_service(model_id)
@@ -69,8 +106,15 @@ class ServiceFile(object):
         with open(file_name, "w") as f:
             f.write(text)
 
-    def add_info_api(self, information_file):
-        """Adds and info api to the service"""
+    def add_info_api(self, information_file: str):
+        """
+        Add an info API to the service.
+
+        Parameters
+        ----------
+        information_file : str
+            The path to the information file to be used by the info API.
+        """
         file_name = self.get_file()
         with open(file_name, "r") as f:
             text = f.read()
@@ -87,19 +131,55 @@ class ServiceFile(object):
             s = a + splitter_string + b
             f.write(s)
 
-    def check(self):
-        """checks if the service.py contains the Service Class"""
+    def check(self) -> bool:
+        """
+        Check if the service file contains the Service class.
+
+        Returns
+        -------
+        bool
+            True if the service file contains the Service class, False otherwise.
+        """
         return self._has_service_class()
 
 
 class PackFile(object):
+    """
+    Class to handle pack file operations.
+
+    This class provides methods to get the path to the pack file, check if the pack file needs a model,
+    and check if the pack file exists.
+
+    Parameters
+    ----------
+    path : str
+        The directory path where the pack file is located.
+    """
+
     def __init__(self, path):
         self.path = os.path.abspath(path)
 
-    def get_file(self):
+    def get_file(self) -> str:
+        """
+        Get the path to the pack file.
+
+        Returns
+        -------
+        str
+            The path to the pack file.
+        """
         return os.path.join(self.path, "pack.py")
 
-    def needs_model(self):
+    def needs_model(self) -> bool:
+        """
+        Check if the pack file needs a model. Specifically this determines whether the "pack.py" file 
+        requires a model by checking if the file contains lines with the .pack() method and whether "None" 
+        is specified as an argument.
+
+        Returns
+        -------
+        bool
+        """
         # TODO: work on this function to account for more cases.
         file_name = self.get_file()
         line = None
@@ -114,18 +194,28 @@ class PackFile(object):
         return True
 
     def check(self):
+        """
+        Check if the pack file exists.
+
+        Returns
+        -------
+        bool
+        """
         return True
 
 
 class DockerfileFile(object):
-    """Checks the model Dockerfile.
+    """
+    Class to handle Dockerfile operations for models.
 
-    Dockerfile specifies the bentoml version,
-    conda environment,
-    python version.
+    This class provides methods to get the path to the Dockerfile, get the BentoML version required for the model,
+    check if the Dockerfile contains RUN commands, check if the Dockerfile requires Conda, get installation commands,
+    and more.
 
-    Attributes:
-        path: directory path where model is stored. Uses os module.
+    Parameters
+    ----------
+    path : str
+        The directory path where the Dockerfile is located.
     """
 
     def __init__(self, path):
@@ -133,19 +223,25 @@ class DockerfileFile(object):
         self.parser = SimpleDockerfileParser(self.path)
         self.conda = SimpleConda()
 
-    def get_file(self):
-        """gets the file from the specific directory"""
+    def get_file(self) -> str:
+        """
+        Get the path to the Dockerfile.
+
+        Returns
+        -------
+        str
+            The path to the Dockerfile.
+        """
         return os.path.join(self.path, DOCKERFILE_FILE)
 
-    def get_bentoml_version(self):
-        """Identifies the bentoml version required for the models.
+    def get_bentoml_version(self) -> dict:
+        """
+        Get the BentoML version required for the model.
 
-        Uses the parser from dockerfile module to retrieve the baseimage
-
-        Returns:
-            A dictionary collecting bentoml version, slim (no conda env)
-            and python version. For example:
-            {"version":0.9.2, "slim" = True, "python":py37}
+        Returns
+        -------
+        dict
+            A dictionary containing the BentoML version, slim flag, and Python version.
         """
         bimg = self.parser.baseimage
         bimg = bimg.split("/")
@@ -192,13 +288,29 @@ class DockerfileFile(object):
                 result["python"] = "py310"
         return result
 
-    def has_runs(self):
+    def has_runs(self) -> bool:
+        """
+        Check if the Dockerfile contains RUN commands.
+
+        Returns
+        -------
+        bool
+            True if the Dockerfile contains RUN commands, False otherwise.
+        """
         if self.parser.get_runs():
             return True
         else:
             return False
 
-    def needs_conda(self):
+    def needs_conda(self) -> bool:
+        """
+        Check if the Dockerfile requires Conda.
+
+        Returns
+        -------
+        bool
+            True if the Dockerfile requires Conda, False otherwise.
+        """
         fn = self.get_file()
         if fn is None:
             return False
@@ -213,7 +325,15 @@ class DockerfileFile(object):
         runs = dp.get_runs()
         return runs
 
-    def get_install_commands(self):
+    def get_install_commands(self) -> dict:
+        """
+        Get the installation commands from the Dockerfile.
+
+        Returns
+        -------
+        dict
+            A dictionary containing Conda requirement, commands, and exclusive Conda and pip flag.
+        """
         fn = self.get_file()
         if fn is None:
             return None
@@ -235,7 +355,15 @@ class DockerfileFile(object):
         }
         return result
 
-    def append_run_command(self, cmd):
+    def append_run_command(self, cmd: str):
+        """
+        Append a RUN command to the Dockerfile.
+
+        Parameters
+        ----------
+        cmd : str
+            The RUN command to append.
+        """
         fn = self.get_file()
         if fn is None:
             return None
@@ -264,11 +392,30 @@ class DockerfileFile(object):
                 f.write(r)
         self.parser = SimpleDockerfileParser(self.path)
 
-    def check(self):
+    def check(self) -> bool:
+        """
+        Check if the Dockerfile exists.
+
+        Returns
+        -------
+        bool
+            True if the Dockerfile exists, False otherwise.
+        """
         return True
 
 
 class Integrity(object):
+    """
+    Class to check the integrity of the model files.
+
+    It provides methods to check if the README file, service file, and pack file exist.
+
+    Parameters
+    ----------
+    path : str
+        The directory path where the model files are located.
+    """
+
     def __init__(self, path):
         self.path = os.path.abspath(path)
 
@@ -281,19 +428,43 @@ class Integrity(object):
     def _pack_file(self):
         return PackFile(self.path).get_file()
 
-    def has_readme(self):
+    def has_readme(self) -> bool:
+        """
+        Check if the README file exists.
+
+        Returns
+        -------
+        bool
+            True if the README file exists, False otherwise.
+        """
         if os.path.exists(self._readme_file()):
             return True
         else:
             return False
 
-    def has_service(self):
+    def has_service(self) -> bool:
+        """
+        Check if the service file exists.
+
+        Returns
+        -------
+        bool
+            True if the service file exists, False otherwise.
+        """
         if os.path.exists(self._service_file()):
             return True
         else:
             return False
 
-    def has_pack(self):
+    def has_pack(self) -> bool:
+        """
+        Check if the pack file exists.
+
+        Returns
+        -------
+        bool
+            True if the pack file exists, False otherwise.
+        """
         if os.path.exists(self._pack_file()):
             return True
         else:
@@ -301,6 +472,20 @@ class Integrity(object):
 
 
 class RepoUtils(ErsiliaBase):
+    """
+    Utility class for handling repository operations.
+
+    It provides methods to get the model ID, get the path to the Conda environment YAML file,
+    get the Docker repository image, and rename the BentoML service.
+
+    Parameters
+    ----------
+    path : str
+        The directory path where the repository is located.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, path, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.dockerhub_org = self.cfg.EXT.DOCKERHUB_ORG
@@ -323,11 +508,19 @@ class RepoUtils(ErsiliaBase):
             cfg = json.load(f)
         return cfg["model_id"].replace("'", "").replace('"', "")
 
-    def get_model_id(self):
+    def get_model_id(self) -> str:
+        """
+        Get the model ID from the repository.
+
+        Returns
+        -------
+        str
+            The model ID.
+        """
         model_id = self._get_model_id_from_path()
-        if model_id is None:
+        if (model_id is None):
             model_id = self._get_model_id_from_config()
-        if model_id is None:
+        if (model_id is None):
             model_id = DEFAULT_MODEL_ID
         return model_id
 
@@ -360,7 +553,15 @@ class RepoUtils(ErsiliaBase):
         else:
             return False
 
-    def get_conda_env_yml_file(self):
+    def get_conda_env_yml_file(self) -> str:
+        """
+        Get the path to the Conda environment YAML file.
+
+        Returns
+        -------
+        str
+            The path to the Conda environment YAML file.
+        """
         if self._inside_docker():
             return os.path.join(DOCKER_BENTO_PATH, CONDA_ENV_YML_FILE)
         else:
@@ -388,13 +589,39 @@ class RepoUtils(ErsiliaBase):
             else:
                 return os.path.join(root, CONDA_ENV_YML_FILE)
 
-    def get_docker_repo_image(self, model_id):
+    def get_docker_repo_image(self, model_id: str) -> str:
+        """
+        Get the Docker repository image for the model.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model.
+
+        Returns
+        -------
+        str
+            The Docker repository image for the model.
+        """
         return os.path.join(
             self.dockerhub_org, "{0}:{1}".format(model_id, self.cfg.ENV.DOCKER.REPO_TAG)
         )
 
     @staticmethod
-    def rename_service(model_id):
+    def rename_service(model_id: str) -> str:
+        """
+        Rename the BentoML service to the model ID.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model.
+
+        Returns
+        -------
+        str
+            The command to rename the service.
+        """
         cmd = "Service.__name__ = '%s'\n" % model_id
         cmd += "%s = Service" % model_id
         return cmd

@@ -14,12 +14,29 @@ from .... import throw_ersilia_exception
 
 
 class ModelStandardExample(ErsiliaBase):
-    def __init__(self, model_id, config_json):
+    """
+    ModelStandardExample is responsible for running standard CSV examples for models.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to run the example for.
+    config_json : dict
+        Configuration settings for the example runner.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        example_runner = ModelStandardExample(model_id="model123", config_json=config)
+        example_runner.run()
+    """
+    def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
 
     @throw_ersilia_exception(exit=False)
-    def _check_file_exists(self, output_csv):
+    def _check_file_exists(self, output_csv: str):
         if not os.path.exists(output_csv):
             raise StandardModelExampleError(
                 model_id=self.model_id, file_name=output_csv
@@ -27,6 +44,11 @@ class ModelStandardExample(ErsiliaBase):
         self.logger.debug("File {0} created successfully!".format(output_csv))
 
     def run(self):
+        """
+        Run the standard CSV example for the model.
+
+        This method runs the standard CSV example for the model, generating input and output CSV files.
+        """
         self.logger.debug("Running standard CSV example")
         path = self._model_path(model_id=self.model_id)
         input_csv = os.path.join(path, EXAMPLE_STANDARD_INPUT_CSV_FILENAME)
