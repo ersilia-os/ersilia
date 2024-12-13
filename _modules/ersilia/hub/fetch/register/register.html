@@ -93,13 +93,35 @@
 <div class="viewcode-block" id="ModelRegisterer">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.register.ModelRegisterer">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelRegisterer</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ModelRegisterer is responsible for registering models from various sources.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model to be registered.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the registerer.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        registerer = ModelRegisterer(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        await registerer.register(is_from_dockerhub=True)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
 <div class="viewcode-block" id="ModelRegisterer.register_from_dockerhub">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.register.ModelRegisterer.register_from_dockerhub">[docs]</a>
     <span class="k">def</span> <span class="nf">register_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the model from DockerHub.</span>
+
+<span class="sd">        This method registers the model in the file system indicating it was fetched from DockerHub.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Registering model </span><span class="si">{0}</span><span class="s2"> in the file system&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -132,6 +154,11 @@
 <div class="viewcode-block" id="ModelRegisterer.register_not_from_dockerhub">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.register.ModelRegisterer.register_not_from_dockerhub">[docs]</a>
     <span class="k">def</span> <span class="nf">register_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the model indicating it was not fetched from DockerHub.</span>
+
+<span class="sd">        This method registers the model in the file system indicating it was not fetched from DockerHub.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">)</span>
@@ -144,6 +171,16 @@
 
 
     <span class="k">def</span> <span class="nf">_resolve_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve the URL for the hosted model.</span>
+
+<span class="sd">        This method resolves a valid URL for the hosted model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The resolved URL if valid, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mdl_url_resolver</span> <span class="o">=</span> <span class="n">ModelURLResolver</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
         <span class="p">)</span>
@@ -156,7 +193,17 @@
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">register_from_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">register_from_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the model from a hosted URL.</span>
+
+<span class="sd">        This method registers the model in the file system indicating it was fetched from a hosted URL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        url : str, optional</span>
+<span class="sd">            The URL from which the model is hosted. If not provided, it will be resolved automatically.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_url</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -193,6 +240,11 @@
 <div class="viewcode-block" id="ModelRegisterer.register_not_from_hosted">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.register.ModelRegisterer.register_not_from_hosted">[docs]</a>
     <span class="k">def</span> <span class="nf">register_not_from_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the model indicating it was not fetched from a hosted URL.</span>
+
+<span class="sd">        This method registers the model in the file system indicating it was not fetched from a hosted URL.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hosted&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span><span class="p">)</span>
@@ -206,7 +258,31 @@
 
 <div class="viewcode-block" id="ModelRegisterer.register">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.register.ModelRegisterer.register">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_from_hosted</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_from_dockerhub</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_from_hosted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the model based on its source.</span>
+
+<span class="sd">        This method registers the model in the file system based on whether it was fetched from DockerHub or a hosted URL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_from_dockerhub : bool, optional</span>
+<span class="sd">            Indicates if the model is from DockerHub.</span>
+<span class="sd">        is_from_hosted : bool, optional</span>
+<span class="sd">            Indicates if the model is from a hosted URL.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If both is_from_dockerhub and is_from_hosted are True.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            registerer = ModelRegisterer(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">            await registerer.register(is_from_dockerhub=True)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">is_from_dockerhub</span> <span class="ow">and</span> <span class="n">is_from_hosted</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model cannot be from both DockerHub and hosted&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">is_from_dockerhub</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_from_hosted</span><span class="p">:</span>

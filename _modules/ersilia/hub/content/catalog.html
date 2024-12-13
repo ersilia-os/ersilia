@@ -101,13 +101,35 @@
 <div class="viewcode-block" id="CatalogTable">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable">[docs]</a>
 <span class="k">class</span> <span class="nc">CatalogTable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the catalog table of models.</span>
+
+<span class="sd">    This class provides methods to convert the model catalog into various formats,</span>
+<span class="sd">    such as list of dictionaries, JSON, and table format. It also provides methods</span>
+<span class="sd">    to write the catalog table to a file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : list</span>
+<span class="sd">        The data of the catalog table.</span>
+<span class="sd">    columns : list</span>
+<span class="sd">        The columns of the catalog table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span>
 
 <div class="viewcode-block" id="CatalogTable.as_list_of_dicts">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_list_of_dicts">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_list_of_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">as_list_of_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the catalog table to a list of dictionaries.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The catalog table as a list of dictionaries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
@@ -119,7 +141,15 @@
 
 <div class="viewcode-block" id="CatalogTable.as_json">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_json">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the catalog table to JSON format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The catalog table in JSON format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_list_of_dicts</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
@@ -130,44 +160,37 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates a separator line for the table based on the given borders and column widths.</span>
 
-<span class="sd">        The line starts with a &#39;left&#39; border, followed by repeated &#39;horizontal&#39;</span>
-<span class="sd">        sections for each column&#39;s width, joined by &#39;middle&#39; separators, and ends</span>
-<span class="sd">        with a &#39;right&#39; border.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        left : str</span>
+<span class="sd">            The character to use for the left border of the line.</span>
+<span class="sd">        middle : str</span>
+<span class="sd">            The character to use between columns (as separators).</span>
+<span class="sd">        right : str</span>
+<span class="sd">            The character to use for the right border of the line.</span>
+<span class="sd">        horizontal : str</span>
+<span class="sd">            The character used to draw the horizontal border.</span>
+<span class="sd">        widths : list of int</span>
+<span class="sd">            A list of column widths to determine how much horizontal space each column takes.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            left (str): The character to use for the left border of the line.</span>
-<span class="sd">            middle (str): The character to use between columns (as separators).</span>
-<span class="sd">            right (str): The character to use for the right border of the line.</span>
-<span class="sd">            horizontal (str): The character used to draw the horizontal border.</span>
-<span class="sd">            widths (list[int]): A list of column widths to determine how much</span>
-<span class="sd">                                horizontal space each column takes.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            str: The formatted separator line as a string.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The formatted separator line as a string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">left</span> <span class="o">+</span> <span class="n">middle</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">horizontal</span> <span class="o">*</span> <span class="p">(</span><span class="n">width</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">width</span> <span class="ow">in</span> <span class="n">widths</span><span class="p">)</span> <span class="o">+</span> <span class="n">right</span></div>
 
 
 <div class="viewcode-block" id="CatalogTable.as_table">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_table">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the catalog data in table format. The method calculates the</span>
-<span class="sd">        column widths dynamically by determining the maximum width of each column,</span>
-<span class="sd">        based on the data and column headers.</span>
+<span class="sd">        Convert the catalog table to table format.</span>
 
-<span class="sd">        A row format string is then constructed using the column widths,</span>
-<span class="sd">        specifying that each cell is left-aligned and padded with a column seperator sperating the rows.</span>
-
-<span class="sd">        The method starts by constructing the top border using the</span>
-<span class="sd">        &#39;generate_separator_line&#39; helper. It then adds the headers,</span>
-<span class="sd">        formatted to fit the column widths, followed by a separator line</span>
-<span class="sd">        also created by the helper function.</span>
-
-<span class="sd">        A &#39;for&#39; loop iterates over the data rows, adding each row to the</span>
-<span class="sd">        table with borders and padding. After each row, a separator line is inserted.</span>
-<span class="sd">        Finally, the bottom border is added using the helper function, completing the table.</span>
-
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The catalog table in table format.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">column_widths</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">max</span><span class="p">(</span>
@@ -248,7 +271,15 @@
 
 <div class="viewcode-block" id="CatalogTable.write">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.write">[docs]</a>
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the catalog table to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            The name of the file to write the catalog table to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
                 <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
@@ -339,7 +370,9 @@
 <div class="viewcode-block" id="ModelCatalog.airtable">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.airtable">[docs]</a>
     <span class="k">def</span> <span class="nf">airtable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available in AirTable Ersilia Model Hub base&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List models available in AirTable Ersilia Model Hub base.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">webbrowser</span><span class="p">:</span>
             <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://airtable.com/shrUcrUnd7jB9ChZV&quot;</span><span class="p">)</span>  <span class="c1"># TODO Hardcoded</span></div>
 
@@ -380,8 +413,15 @@
 
 <div class="viewcode-block" id="ModelCatalog.local">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.local">[docs]</a>
-    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available locally&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List models metadata from the local repository.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CatalogTable</span>
+<span class="sd">            The catalog table containing the models available locally.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LESS_FIELDS</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">MORE_FIELDS</span><span class="o">+</span><span class="p">[</span><span class="s2">&quot;Model Source&quot;</span><span class="p">]</span>
         <span class="n">cards</span> <span class="o">=</span> <span class="p">[]</span>
@@ -399,8 +439,15 @@
 
 <div class="viewcode-block" id="ModelCatalog.bentoml">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.bentoml">[docs]</a>
-    <span class="k">def</span> <span class="nf">bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available as BentoServices&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List models available as BentoServices.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CatalogTable</span>
+<span class="sd">            The catalog table containing the models available as BentoServices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
                 <span class="p">[</span><span class="s2">&quot;bentoml&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>

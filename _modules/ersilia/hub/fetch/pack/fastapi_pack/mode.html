@@ -87,13 +87,44 @@
 <div class="viewcode-block" id="PackModeDecision">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.mode.PackModeDecision">[docs]</a>
 <span class="k">class</span> <span class="nc">PackModeDecision</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to decide the mode of operation for a model based on its configuration and the environment.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The identifier of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        The configuration JSON for the model.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        pmd = PackModeDecision(model_id=&quot;model123&quot;, config_json={})</span>
+<span class="sd">        mode = pmd.decide()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
 <div class="viewcode-block" id="PackModeDecision.decide_from_config_file_if_available">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.mode.PackModeDecision.decide_from_config_file_if_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">decide_from_config_file_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decide_from_config_file_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decide the mode from the configuration file if available.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The mode specified in the configuration file, or None if not specified.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If the default_mode in the configuration file is not one of the AVAILABLE_MODES.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">MODEL_CONFIG_FILENAME</span><span class="p">)):</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -114,7 +145,15 @@
 
 <div class="viewcode-block" id="PackModeDecision.decide">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.mode.PackModeDecision.decide">[docs]</a>
-    <span class="k">def</span> <span class="nf">decide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decide</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decide the mode of operation for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The mode of operation, either &quot;system&quot; or &quot;conda&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="n">SystemChecker</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">is_github_action</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>

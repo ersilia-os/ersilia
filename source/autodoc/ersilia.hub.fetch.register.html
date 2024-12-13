@@ -110,17 +110,51 @@
 <span id="ersilia-hub-fetch-register-register-module"></span><h2>ersilia.hub.fetch.register.register module<a class="headerlink" href="#module-ersilia.hub.fetch.register.register" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.register.register.ModelRegisterer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.register.register.</span></span><span class="sig-name descname"><span class="pre">ModelRegisterer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/register.html#ModelRegisterer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.register.ModelRegisterer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.register.register.</span></span><span class="sig-name descname"><span class="pre">ModelRegisterer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/register.html#ModelRegisterer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.register.ModelRegisterer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>ModelRegisterer is responsible for registering models from various sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model to be registered.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em>) – Configuration settings for the registerer.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">registerer</span> <span class="o">=</span> <span class="n">ModelRegisterer</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">registerer</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.register.register.ModelRegisterer.register">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_from_dockerhub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_from_hosted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/register.html#ModelRegisterer.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.register.ModelRegisterer.register" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_from_dockerhub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_from_hosted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/register.html#ModelRegisterer.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.register.ModelRegisterer.register" title="Link to this definition"></a></dt>
+<dd><p>Register the model based on its source.</p>
+<p>This method registers the model in the file system based on whether it was fetched from DockerHub or a hosted URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>is_from_dockerhub</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates if the model is from DockerHub.</p></li>
+<li><p><strong>is_from_hosted</strong> (<em>bool</em><em>, </em><em>optional</em>) – Indicates if the model is from a hosted URL.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If both is_from_dockerhub and is_from_hosted are True.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">registerer</span> <span class="o">=</span> <span class="n">ModelRegisterer</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">registerer</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.register.register.ModelRegisterer.register_from_dockerhub">
 <span class="sig-name descname"><span class="pre">register_from_dockerhub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/register.html#ModelRegisterer.register_from_dockerhub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.register.ModelRegisterer.register_from_dockerhub" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Register the model from DockerHub.</p>
+<p>This method registers the model in the file system indicating it was fetched from DockerHub.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.register.register.ModelRegisterer.register_from_hosted">
@@ -130,12 +164,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.register.register.ModelRegisterer.register_not_from_dockerhub">
 <span class="sig-name descname"><span class="pre">register_not_from_dockerhub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/register.html#ModelRegisterer.register_not_from_dockerhub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.register.ModelRegisterer.register_not_from_dockerhub" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Register the model indicating it was not fetched from DockerHub.</p>
+<p>This method registers the model in the file system indicating it was not fetched from DockerHub.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.register.register.ModelRegisterer.register_not_from_hosted">
 <span class="sig-name descname"><span class="pre">register_not_from_hosted</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/register.html#ModelRegisterer.register_not_from_hosted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.register.ModelRegisterer.register_not_from_hosted" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Register the model indicating it was not fetched from a hosted URL.</p>
+<p>This method registers the model in the file system indicating it was not fetched from a hosted URL.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -144,12 +182,28 @@
 <span id="ersilia-hub-fetch-register-standard-example-module"></span><h2>ersilia.hub.fetch.register.standard_example module<a class="headerlink" href="#module-ersilia.hub.fetch.register.standard_example" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.register.standard_example.ModelStandardExample">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.register.standard_example.</span></span><span class="sig-name descname"><span class="pre">ModelStandardExample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/standard_example.html#ModelStandardExample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.standard_example.ModelStandardExample" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.register.standard_example.</span></span><span class="sig-name descname"><span class="pre">ModelStandardExample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/standard_example.html#ModelStandardExample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.standard_example.ModelStandardExample" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>ModelStandardExample is responsible for running standard CSV examples for models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model to run the example for.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em>) – Configuration settings for the example runner.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">example_runner</span> <span class="o">=</span> <span class="n">ModelStandardExample</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model123&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<span class="n">example_runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.register.standard_example.ModelStandardExample.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/register/standard_example.html#ModelStandardExample.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.register.standard_example.ModelStandardExample.run" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Run the standard CSV example for the model.</p>
+<p>This method runs the standard CSV example for the model, generating input and output CSV files.</p>
+</dd></dl>
 
 </dd></dl>
 

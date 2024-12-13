@@ -102,8 +102,26 @@
 <div class="viewcode-block" id="BuiltinExampleReader">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader">[docs]</a>
 <span class="k">class</span> <span class="nc">BuiltinExampleReader</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads built-in examples for a BentoML model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the reader.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    has_builtin_example() -&gt; bool</span>
+<span class="sd">        Checks if a built-in example exists.</span>
+<span class="sd">    example(n=3) -&gt; list</span>
+<span class="sd">        Returns a list of examples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">example_file</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">pf</span> <span class="ow">in</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">:</span>
@@ -117,7 +135,15 @@
 
 <div class="viewcode-block" id="BuiltinExampleReader.has_builtin_example">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.has_builtin_example">[docs]</a>
-    <span class="k">def</span> <span class="nf">has_builtin_example</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">has_builtin_example</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a built-in example exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if a built-in example exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">example_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_file</span><span class="p">):</span>
@@ -128,7 +154,20 @@
 
 <div class="viewcode-block" id="BuiltinExampleReader.example">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.example">[docs]</a>
-    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of examples.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Number of examples to return, by default 3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of examples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -143,10 +182,24 @@
 <div class="viewcode-block" id="ModelSniffer">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelSniffer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
-        <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
-        <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Infers the structure of a model by sniffing its inputs and outputs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the sniffer.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    sniff()</span>
+<span class="sd">        Infers the structure of the model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing model for inferring its structure&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
             <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">fetch_if_not_available</span><span class="o">=</span><span class="kc">False</span>
@@ -164,7 +217,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Inputs sampled: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)))</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">__dicts_are_identical</span><span class="p">(</span><span class="n">dicts</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__dicts_are_identical</span><span class="p">(</span><span class="n">dicts</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">d1</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">d2</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">d1</span> <span class="o">!=</span> <span class="n">d2</span><span class="p">:</span>
@@ -172,14 +225,14 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_directory_size</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_directory_size</span><span class="p">(</span><span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="n">root_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
         <span class="nb">bytes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
             <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">root_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="nb">bytes</span>
 
-    <span class="k">def</span> <span class="nf">_get_size_in_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_size_in_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">repo_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_directory_size</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_directory_size</span><span class="p">(</span><span class="n">repo_dir</span><span class="p">)</span>
@@ -205,7 +258,7 @@
         <span class="k">return</span> <span class="n">md</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>  <span class="c1"># TODO Account for mixed types</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_get_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="n">input_schema</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="n">output_schema</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
@@ -328,7 +381,7 @@
 
         <span class="k">return</span> <span class="n">output_meta_in_schema</span>
 
-    <span class="k">def</span> <span class="nf">_try_to_resolve_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">output_type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_try_to_resolve_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">output_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;numeric_array&quot;</span> <span class="ow">or</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;string_array&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
                 <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">meta</span><span class="p">),)</span>
@@ -337,6 +390,24 @@
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">sniff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Infers the model&#39;s structure by analyzing its inputs and outputs.</span>
+
+<span class="sd">        This method:</span>
+<span class="sd">        - Calculates and saves the model size.</span>
+<span class="sd">        - Serves the model locally.</span>
+<span class="sd">        - Generates or retrieves sample inputs.</span>
+<span class="sd">        - Runs the model&#39;s APIs with these inputs.</span>
+<span class="sd">        - Collects outputs and infers input/output schemas.</span>
+<span class="sd">        - Saves the inferred schema for future use.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        EmptyOutputError</span>
+<span class="sd">            If the model outputs are empty.</span>
+<span class="sd">        OutputDataTypesNotConsistentError</span>
+<span class="sd">            If output data types are inconsistent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sniffing model&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting model size&quot;</span><span class="p">)</span>
         <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size_in_mb</span><span class="p">()</span>

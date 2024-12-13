@@ -91,7 +91,24 @@
 <div class="viewcode-block" id="SystemPack">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.SystemPack">[docs]</a>
 <span class="k">class</span> <span class="nc">SystemPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SystemPack is responsible for packing models with system installation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model to be packed.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the packer.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        packer = SystemPack(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        packer.run()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing system packer&quot;</span><span class="p">)</span>
 
@@ -109,6 +126,11 @@
 <div class="viewcode-block" id="SystemPack.run">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.SystemPack.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the system packer.</span>
+
+<span class="sd">        This method initiates the packing process for the model using system installation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div>
 </div>
 
@@ -117,7 +139,24 @@
 <div class="viewcode-block" id="CondaPack">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.CondaPack">[docs]</a>
 <span class="k">class</span> <span class="nc">CondaPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CondaPack is responsible for packing models within a Conda environment.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model to be packed.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the packer.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        packer = CondaPack(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        packer.run()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing conda packer&quot;</span><span class="p">)</span>
@@ -187,6 +226,11 @@
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the Conda packer.</span>
+
+<span class="sd">        This method initiates the packing process for the model within a Conda environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with Conda&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div>
 
@@ -194,7 +238,27 @@
 
 <div class="viewcode-block" id="get_runner">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.runners.get_runner">[docs]</a>
-<span class="k">def</span> <span class="nf">get_runner</span><span class="p">(</span><span class="n">pack_mode</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_runner</span><span class="p">(</span><span class="n">pack_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the appropriate runner based on the pack mode.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pack_mode : str</span>
+<span class="sd">        The mode of packing, either &#39;system&#39; or &#39;conda&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
+<span class="sd">        The class of the appropriate packer.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        runner_class = get_runner(pack_mode=&quot;system&quot;)</span>
+<span class="sd">        runner = runner_class(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">SystemPack</span>
     <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span><span class="p">:</span>

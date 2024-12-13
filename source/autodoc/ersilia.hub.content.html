@@ -111,10 +111,28 @@
 <dt class="sig sig-object py" id="ersilia.hub.content.card.BaseInformation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">BaseInformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#BaseInformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.BaseInformation" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the base information of a model card.</p>
+<p>A model card contains metadata about a model, such as its identifier, slug, status,
+title, description, mode, input, output, and other relevant information. And This class provides
+methods to validate and set various fields of a model card.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.BaseInformation.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#BaseInformation.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.BaseInformation.as_dict" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#BaseInformation.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.BaseInformation.as_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert the base information to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The base information as a dictionary.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.BaseInformation.both_identifiers">
@@ -148,8 +166,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.BaseInformation.from_dict">
-<span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#BaseInformation.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.BaseInformation.from_dict" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#BaseInformation.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.BaseInformation.from_dict" title="Link to this definition"></a></dt>
+<dd><p>Set the base information from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – The dictionary containing the base information.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.BaseInformation.github">
@@ -252,10 +276,35 @@
 <dt class="sig sig-object py" id="ersilia.hub.content.card.LakeCard">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">LakeCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LakeCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LakeCard" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the lake card of a model.</p>
+<p>The lake in ersilia refers to a result storage platform powered by isaura package to
+store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to
+explore and retrieve information from HDF5 files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.LakeCard.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LakeCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LakeCard.get" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LakeCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LakeCard.get" title="Link to this definition"></a></dt>
+<dd><p>Get the lake card of a model from the HDF5 explorer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The ID of the model.</p></li>
+<li><p><strong>slug</strong> (<em>str</em><em>, </em><em>optional</em>) – The slug of the model.</p></li>
+<li><p><strong>as_json</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return the lake card in JSON format.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The lake card of the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -263,12 +312,31 @@
 <dt class="sig sig-object py" id="ersilia.hub.content.card.LocalCard">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">LocalCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LocalCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LocalCard" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
-<p>This class provides information on models that have been fetched and are available locally.
-It retrieves and caches information about the models.</p>
+<p>Class to handle the local card of a model.</p>
+<p>This class provides methods to get the local card of a model from the local repository stored in eos directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.LocalCard.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LocalCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LocalCard.get" title="Link to this definition"></a></dt>
-<dd><p>This method returns the card for a model. If the model does not exist, it returns None.</p>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LocalCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LocalCard.get" title="Link to this definition"></a></dt>
+<dd><p>Get the local card of a model from the local repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The ID of the model.</p></li>
+<li><p><strong>slug</strong> (<em>str</em><em>, </em><em>optional</em>) – The slug of the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The local card of the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -277,10 +345,32 @@ It retrieves and caches information about the models.</p>
 <dt class="sig sig-object py" id="ersilia.hub.content.card.MetadataCard">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">MetadataCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#MetadataCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.MetadataCard" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the metadata card of a model.</p>
+<p>This class provides methods to get the metadata card of a model from the local repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.MetadataCard.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#MetadataCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.MetadataCard.get" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#MetadataCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.MetadataCard.get" title="Link to this definition"></a></dt>
+<dd><p>Get the metadata card of a model from the local repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The ID of the model.</p></li>
+<li><p><strong>slug</strong> (<em>str</em><em>, </em><em>optional</em>) – The slug of the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The metadata card of the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -288,10 +378,34 @@ It retrieves and caches information about the models.</p>
 <dt class="sig sig-object py" id="ersilia.hub.content.card.ModelCard">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">ModelCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#ModelCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.ModelCard" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to handle the model card.</p>
+<p>This class provides methods to get the model card from various sources,
+such as local repository, metadata card, S3 JSON card, and README card.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.ModelCard.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#ModelCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.ModelCard.get" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#ModelCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.ModelCard.get" title="Link to this definition"></a></dt>
+<dd><p>Get the model card from various sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The ID of the model.</p></li>
+<li><p><strong>slug</strong> (<em>str</em><em>, </em><em>optional</em>) – The slug of the model.</p></li>
+<li><p><strong>as_json</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return the model card in JSON format.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The model card.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -299,10 +413,32 @@ It retrieves and caches information about the models.</p>
 <dt class="sig sig-object py" id="ersilia.hub.content.card.ReadmeCard">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">ReadmeCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#ReadmeCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.ReadmeCard" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the README card of a model.</p>
+<p>This class provides methods to get the README card of a model from GitHub.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.ReadmeCard.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#ReadmeCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.ReadmeCard.get" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#ReadmeCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.ReadmeCard.get" title="Link to this definition"></a></dt>
+<dd><p>Get the README card of a model from GitHub.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The ID of the model.</p></li>
+<li><p><strong>slug</strong> (<em>str</em><em>, </em><em>optional</em>) – The slug of the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The README card of the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.ReadmeCard.parse">
@@ -315,20 +451,78 @@ It retrieves and caches information about the models.</p>
 <dt class="sig sig-object py" id="ersilia.hub.content.card.RepoMetadataFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">RepoMetadataFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#RepoMetadataFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.RepoMetadataFile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the metadata file of a model repository.</p>
+<p>This class provides methods to get the URL of the metadata file from GitHub,
+read information from the metadata file, and write information to the metadata file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The model identifier.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.RepoMetadataFile.get_json_or_yaml_file">
-<span class="sig-name descname"><span class="pre">get_json_or_yaml_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#RepoMetadataFile.get_json_or_yaml_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.RepoMetadataFile.get_json_or_yaml_file" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_json_or_yaml_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#RepoMetadataFile.get_json_or_yaml_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.RepoMetadataFile.get_json_or_yaml_file" title="Link to this definition"></a></dt>
+<dd><p>Get the metadata file from GitHub in JSON or YAML format. JSON format typically used for bentoml
+packed models and YAML format typically used for ersilia pack models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>org</strong> (<em>str</em><em>, </em><em>optional</em>) – The GitHub organization.</p></li>
+<li><p><strong>branch</strong> (<em>str</em><em>, </em><em>optional</em>) – The GitHub branch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The metadata file content.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.RepoMetadataFile.read_information">
-<span class="sig-name descname"><span class="pre">read_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_or_yaml_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#RepoMetadataFile.read_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.RepoMetadataFile.read_information" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">read_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_or_yaml_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ersilia.hub.content.card.BaseInformation" title="ersilia.hub.content.card.BaseInformation"><span class="pre">BaseInformation</span></a></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#RepoMetadataFile.read_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.RepoMetadataFile.read_information" title="Link to this definition"></a></dt>
+<dd><p>Read information from the metadata file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>org</strong> (<em>str</em><em>, </em><em>optional</em>) – The GitHub organization.</p></li>
+<li><p><strong>branch</strong> (<em>str</em><em>, </em><em>optional</em>) – The GitHub branch.</p></li>
+<li><p><strong>json_or_yaml_path</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to the JSON or YAML file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The base information read from the metadata file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ersilia.hub.content.card.BaseInformation" title="ersilia.hub.content.card.BaseInformation">BaseInformation</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.RepoMetadataFile.write_information">
-<span class="sig-name descname"><span class="pre">write_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.hub.content.card.BaseInformation" title="ersilia.hub.content.card.BaseInformation"><span class="pre">BaseInformation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_or_yaml_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#RepoMetadataFile.write_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.RepoMetadataFile.write_information" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">write_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.hub.content.card.BaseInformation" title="ersilia.hub.content.card.BaseInformation"><span class="pre">BaseInformation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_or_yaml_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#RepoMetadataFile.write_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.RepoMetadataFile.write_information" title="Link to this definition"></a></dt>
+<dd><p>Write information to the metadata file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference internal" href="#ersilia.hub.content.card.BaseInformation" title="ersilia.hub.content.card.BaseInformation"><em>BaseInformation</em></a>) – The base information to write.</p></li>
+<li><p><strong>json_or_yaml_path</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to the JSON or YAML file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The written data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -336,10 +530,32 @@ It retrieves and caches information about the models.</p>
 <dt class="sig sig-object py" id="ersilia.hub.content.card.S3JsonCard">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">S3JsonCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#S3JsonCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.S3JsonCard" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.db.hubdata.html#ersilia.db.hubdata.interfaces.JsonModelsInterface" title="ersilia.db.hubdata.interfaces.JsonModelsInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonModelsInterface</span></code></a></p>
+<p>Class to handle the S3 JSON card of a model.</p>
+<p>This class provides methods to get the S3 JSON card of a model from the S3 bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.S3JsonCard.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#S3JsonCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.S3JsonCard.get" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#S3JsonCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.S3JsonCard.get" title="Link to this definition"></a></dt>
+<dd><p>Get the S3 JSON card of a model from the S3 bucket by model id or slug.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The ID of the model.</p></li>
+<li><p><strong>slug</strong> (<em>str</em><em>, </em><em>optional</em>) – The slug of the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The S3 JSON card of the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.S3JsonCard.get_card_by_model_id">
@@ -361,40 +577,64 @@ It retrieves and caches information about the models.</p>
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.catalog.</span></span><span class="sig-name descname"><span class="pre">CatalogTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to handle the catalog table of models.</p>
+<p>This class provides methods to convert the model catalog into various formats,
+such as list of dictionaries, JSON, and table format. It also provides methods
+to write the catalog table to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>list</em>) – The data of the catalog table.</p></li>
+<li><p><strong>columns</strong> (<em>list</em>) – The columns of the catalog table.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable.as_json">
-<span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.as_json" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.as_json" title="Link to this definition"></a></dt>
+<dd><p>Convert the catalog table to JSON format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The catalog table in JSON format.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable.as_list_of_dicts">
-<span class="sig-name descname"><span class="pre">as_list_of_dicts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.as_list_of_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.as_list_of_dicts" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">as_list_of_dicts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.as_list_of_dicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.as_list_of_dicts" title="Link to this definition"></a></dt>
+<dd><p>Convert the catalog table to a list of dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The catalog table as a list of dictionaries.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable.as_table">
-<span class="sig-name descname"><span class="pre">as_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.as_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.as_table" title="Link to this definition"></a></dt>
-<dd><p>Returns the catalog data in table format. The method calculates the
-column widths dynamically by determining the maximum width of each column,
-based on the data and column headers.</p>
-<p>A row format string is then constructed using the column widths,
-specifying that each cell is left-aligned and padded with a column seperator sperating the rows.</p>
-<p>The method starts by constructing the top border using the
-‘generate_separator_line’ helper. It then adds the headers,
-formatted to fit the column widths, followed by a separator line
-also created by the helper function.</p>
-<p>A ‘for’ loop iterates over the data rows, adding each row to the
-table with borders and padding. After each row, a separator line is inserted.
-Finally, the bottom border is added using the helper function, completing the table.</p>
+<span class="sig-name descname"><span class="pre">as_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.as_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.as_table" title="Link to this definition"></a></dt>
+<dd><p>Convert the catalog table to table format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The catalog table in table format.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable.generate_separator_line">
 <span class="sig-name descname"><span class="pre">generate_separator_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">middle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.generate_separator_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.generate_separator_line" title="Link to this definition"></a></dt>
 <dd><p>Generates a separator line for the table based on the given borders and column widths.</p>
-<p>The line starts with a ‘left’ border, followed by repeated ‘horizontal’
-sections for each column’s width, joined by ‘middle’ separators, and ends
-with a ‘right’ border.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -402,8 +642,7 @@ with a ‘right’ border.</p>
 <li><p><strong>middle</strong> (<em>str</em>) – The character to use between columns (as separators).</p></li>
 <li><p><strong>right</strong> (<em>str</em>) – The character to use for the right border of the line.</p></li>
 <li><p><strong>horizontal</strong> (<em>str</em>) – The character used to draw the horizontal border.</p></li>
-<li><p><strong>widths</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – A list of column widths to determine how much
-horizontal space each column takes.</p></li>
+<li><p><strong>widths</strong> (<em>list</em><em> of </em><em>int</em>) – A list of column widths to determine how much horizontal space each column takes.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -417,8 +656,14 @@ horizontal space each column takes.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.CatalogTable.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.write" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#CatalogTable.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.CatalogTable.write" title="Link to this definition"></a></dt>
+<dd><p>Write the catalog table to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – The name of the file to write the catalog table to.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -439,13 +684,21 @@ horizontal space each column takes.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.ModelCatalog.airtable">
 <span class="sig-name descname"><span class="pre">airtable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#ModelCatalog.airtable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.ModelCatalog.airtable" title="Link to this definition"></a></dt>
-<dd><p>List models available in AirTable Ersilia Model Hub base</p>
+<dd><p>List models available in AirTable Ersilia Model Hub base.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.ModelCatalog.bentoml">
-<span class="sig-name descname"><span class="pre">bentoml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#ModelCatalog.bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.ModelCatalog.bentoml" title="Link to this definition"></a></dt>
-<dd><p>List models available as BentoServices</p>
+<span class="sig-name descname"><span class="pre">bentoml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable"><span class="pre">CatalogTable</span></a></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#ModelCatalog.bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.ModelCatalog.bentoml" title="Link to this definition"></a></dt>
+<dd><p>List models available as BentoServices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The catalog table containing the models available as BentoServices.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable">CatalogTable</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -456,8 +709,16 @@ horizontal space each column takes.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.catalog.ModelCatalog.local">
-<span class="sig-name descname"><span class="pre">local</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#ModelCatalog.local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.ModelCatalog.local" title="Link to this definition"></a></dt>
-<dd><p>List models available locally</p>
+<span class="sig-name descname"><span class="pre">local</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable"><span class="pre">CatalogTable</span></a></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/catalog.html#ModelCatalog.local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.catalog.ModelCatalog.local" title="Link to this definition"></a></dt>
+<dd><p>List models metadata from the local repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The catalog table containing the models available locally.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable">CatalogTable</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -469,10 +730,30 @@ horizontal space each column takes.</p></li>
 <dt class="sig sig-object py" id="ersilia.hub.content.information.Information">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.information.</span></span><span class="sig-name descname"><span class="pre">Information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/information.html#Information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.information.Information" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the information of a model.</p>
+<p>This class provides methods to get various information about a model,
+such as pack mode, service class, model source, API schema, size, metadata, and card.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.information.Information.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/information.html#Information.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.information.Information.get" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/information.html#Information.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.information.Information.get" title="Link to this definition"></a></dt>
+<dd><p>Get various information about the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing various information about the model.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -480,10 +761,22 @@ horizontal space each column takes.</p></li>
 <dt class="sig sig-object py" id="ersilia.hub.content.information.InformationDisplayer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.information.</span></span><span class="sig-name descname"><span class="pre">InformationDisplayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/information.html#InformationDisplayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.information.InformationDisplayer" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to display the information of a model.</p>
+<p>This class provides methods to display various information about a model,
+such as description, identifiers, code, and Docker information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>info_data</strong> (<em>dict</em>) – The information data of the model.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.information.InformationDisplayer.echo">
 <span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/information.html#InformationDisplayer.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.information.InformationDisplayer.echo" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Display the information about the model.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -495,25 +788,66 @@ horizontal space each column takes.</p></li>
 <dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.search.</span></span><span class="sig-name descname"><span class="pre">ModelSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This class is used for searching through the catalog table</p>
-<p>Attributes:
-catalog : list and description of model on the hub or in local</p>
+<p>Class to handle model search operations.</p>
+<p>This class provides methods to search for models in the catalog table
+using text and mode of training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>catalog</strong> (<a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable"><em>CatalogTable</em></a>) – The catalog table containing the models.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher.levenshtein_ratio_and_distance">
-<span class="sig-name descname"><span class="pre">levenshtein_ratio_and_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.levenshtein_ratio_and_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.levenshtein_ratio_and_distance" title="Link to this definition"></a></dt>
-<dd><p>Algorithm to fuzzy match strings</p>
+<span class="sig-name descname"><span class="pre">levenshtein_ratio_and_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.levenshtein_ratio_and_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.levenshtein_ratio_and_distance" title="Link to this definition"></a></dt>
+<dd><p>Algorithm to fuzzy match strings using Levenshtein distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>str</em>) – The first string.</p></li>
+<li><p><strong>t</strong> (<em>str</em>) – The second string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Levenshtein distance ratio between the two strings.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher.search_mode">
-<span class="sig-name descname"><span class="pre">search_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.search_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.search_mode" title="Link to this definition"></a></dt>
-<dd><p>searches the mode of training</p>
+<span class="sig-name descname"><span class="pre">search_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable"><span class="pre">CatalogTable</span></a></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.search_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.search_mode" title="Link to this definition"></a></dt>
+<dd><p>Search the mode of training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – The mode of training to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The catalog table containing the models with the specified mode of training.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable">CatalogTable</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.search.ModelSearcher.search_text">
-<span class="sig-name descname"><span class="pre">search_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.search_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.search_text" title="Link to this definition"></a></dt>
-<dd><p>Search using text and return the closest matching string</p>
+<span class="sig-name descname"><span class="pre">search_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable"><span class="pre">CatalogTable</span></a></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/search.html#ModelSearcher.search_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.search.ModelSearcher.search_text" title="Link to this definition"></a></dt>
+<dd><p>Search using text and return the closest matching string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – The text to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The catalog table containing the closest matching models.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ersilia.hub.content.catalog.CatalogTable" title="ersilia.hub.content.catalog.CatalogTable">CatalogTable</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -525,22 +859,64 @@ catalog : list and description of model on the hub or in local</p>
 <dt class="sig sig-object py" id="ersilia.hub.content.slug.Slug">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.slug.</span></span><span class="sig-name descname"><span class="pre">Slug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/slug.html#Slug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.slug.Slug" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle slug operations.</p>
+<p>This class provides methods to encode and decode slugs to model IDs
+and vice versa, using local and remote sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.slug.Slug.decode">
-<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/slug.html#Slug.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.slug.Slug.decode" title="Link to this definition"></a></dt>
-<dd><p>Given a model_id, get the slug</p>
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/slug.html#Slug.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.slug.Slug.decode" title="Link to this definition"></a></dt>
+<dd><p>Given a model_id, get the slug.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The model_id to decode.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The slug corresponding to the model_id.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.slug.Slug.encode">
-<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slug</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/slug.html#Slug.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.slug.Slug.encode" title="Link to this definition"></a></dt>
-<dd><p>Given a slug, get the model_id</p>
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/slug.html#Slug.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.slug.Slug.encode" title="Link to this definition"></a></dt>
+<dd><p>Given a slug, get the model_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slug</strong> (<em>str</em>) – The slug to encode.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The model_id corresponding to the slug.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.content.slug.Slug.is_slug">
-<span class="sig-name descname"><span class="pre">is_slug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/slug.html#Slug.is_slug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.slug.Slug.is_slug" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_slug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/slug.html#Slug.is_slug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.slug.Slug.is_slug" title="Link to this definition"></a></dt>
+<dd><p>Check if the given text is a slug.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The text to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the text is a slug, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

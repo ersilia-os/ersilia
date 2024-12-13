@@ -80,6 +80,17 @@
 <div class="viewcode-block" id="Slug">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug">[docs]</a>
 <span class="k">class</span> <span class="nc">Slug</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle slug operations.</span>
+
+<span class="sd">    This class provides methods to encode and decode slugs to model IDs</span>
+<span class="sd">    and vice versa, using local and remote sources.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">SlugDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
@@ -88,7 +99,20 @@
 
 <div class="viewcode-block" id="Slug.is_slug">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug.is_slug">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the given text is a slug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : str</span>
+<span class="sd">            The text to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the text is a slug, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
@@ -112,8 +136,20 @@
 
 <div class="viewcode-block" id="Slug.encode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug.encode">[docs]</a>
-    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a slug, get the model_id&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a slug, get the model_id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slug : str</span>
+<span class="sd">            The slug to encode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model_id corresponding to the slug.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_encode</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">model_id</span>
@@ -140,8 +176,20 @@
 
 <div class="viewcode-block" id="Slug.decode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug.decode">[docs]</a>
-    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a model_id, get the slug&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a model_id, get the slug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The model_id to decode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The slug corresponding to the model_id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_decode</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">slug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">slug</span>

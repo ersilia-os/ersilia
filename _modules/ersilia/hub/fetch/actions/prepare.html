@@ -84,7 +84,25 @@
 <div class="viewcode-block" id="ModelPreparer">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.prepare.ModelPreparer">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelPreparer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepares a model for use by deleting existing data if necessary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model to be prepared.</span>
+<span class="sd">    overwrite : bool</span>
+<span class="sd">        Whether to overwrite existing data.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the preparer.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    prepare()</span>
+<span class="sd">        Prepares the model by deleting existing data if necessary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
@@ -96,6 +114,9 @@
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepares the model by deleting existing data if necessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">deleter</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>

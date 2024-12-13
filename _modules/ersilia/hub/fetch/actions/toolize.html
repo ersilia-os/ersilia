@@ -84,7 +84,23 @@
 <div class="viewcode-block" id="ModelToolizer">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelToolizer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Toolizes a model by distributing it as a Python package or containerizing it using Docker.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model to be toolized.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the toolizer.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    toolize(do_pip, do_docker)</span>
+<span class="sd">        Toolizes the model by distributing it as a Python package or containerizing it using Docker.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
@@ -93,8 +109,15 @@
 
 <div class="viewcode-block" id="ModelToolizer.pip_install">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install">[docs]</a>
-    <span class="k">def</span> <span class="nf">pip_install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Install the model and distribute as a python package&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">pip_install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Installs the model and distributes it as a Python package.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model to be installed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Distributing as a python package with pip&quot;</span><span class="p">)</span>
         <span class="n">bento</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="n">bento</span><span class="p">])</span></div>
@@ -102,8 +125,15 @@
 
 <div class="viewcode-block" id="ModelToolizer.dockerize">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize">[docs]</a>
-    <span class="k">def</span> <span class="nf">dockerize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Containerize model using bentoml with docker&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">dockerize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Containerizes the model using BentoML with Docker.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model to be containerized.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cannot dockerize. Please make sure docker is installed.&quot;</span><span class="p">)</span>
@@ -124,7 +154,17 @@
 
 <div class="viewcode-block" id="ModelToolizer.toolize">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize">[docs]</a>
-    <span class="k">def</span> <span class="nf">toolize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">do_pip</span><span class="p">,</span> <span class="n">do_docker</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">toolize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">do_pip</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">do_docker</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Toolizes the model by distributing it as a Python package or containerizing it using Docker.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        do_pip : bool</span>
+<span class="sd">            Whether to distribute the model as a Python package.</span>
+<span class="sd">        do_docker : bool</span>
+<span class="sd">            Whether to containerize the model using Docker.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking if model needs to be integrated to a tool&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">do_pip</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Integrating to pip&quot;</span><span class="p">)</span>

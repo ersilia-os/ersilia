@@ -100,17 +100,48 @@
 <div class="viewcode-block" id="ModelFetcherFromBentoML">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch_bentoml.ModelFetcherFromBentoML">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelFetcherFromBentoML</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ModelFetcherFromBentoML is responsible for fetching models from the Ersilia Model Hub using BentoML.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings for the fetcher.</span>
+<span class="sd">    credentials_json : dict, optional</span>
+<span class="sd">        Credentials for accessing the model hub.</span>
+<span class="sd">    overwrite : bool, optional</span>
+<span class="sd">        Whether to overwrite existing files.</span>
+<span class="sd">    repo_path : str, optional</span>
+<span class="sd">        Path to the repository.</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        Mode of operation, e.g., &#39;docker&#39;.</span>
+<span class="sd">    pip : bool, optional</span>
+<span class="sd">        Whether to use pip for installation.</span>
+<span class="sd">    dockerize : bool, optional</span>
+<span class="sd">        Whether to dockerize the model.</span>
+<span class="sd">    force_from_github : bool, optional</span>
+<span class="sd">        Whether to force fetching from GitHub.</span>
+<span class="sd">    force_from_s3 : bool, optional</span>
+<span class="sd">        Whether to force fetching from S3.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        fetcher = ModelFetcherFromBentoML(config_json=config)</span>
+<span class="sd">        fetcher.fetch(model_id=&quot;eosxxxx&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">pip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">dockerize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_from_github</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_from_s3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dockerize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_from_github</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_from_s3</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -143,7 +174,7 @@
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">,</span>
             <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
-            <span class="n">force_from_gihtub</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span><span class="p">,</span>
+            <span class="n">force_from_github</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span><span class="p">,</span>
             <span class="n">force_from_s3</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_s3</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">mg</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
@@ -186,7 +217,7 @@
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModelRegisterer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_check</span><span class="p">()</span>
@@ -208,7 +239,7 @@
             <span class="s2">&quot;Fetching </span><span class="si">{0}</span><span class="s2"> done successfully: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting fetching procedure&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="kc">True</span>
@@ -216,7 +247,20 @@
 
 <div class="viewcode-block" id="ModelFetcherFromBentoML.seems_installable">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch_bentoml.ModelFetcherFromBentoML.seems_installable">[docs]</a>
-    <span class="k">def</span> <span class="nf">seems_installable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">seems_installable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model is installable with BentoML.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The ID of the model to be checked.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model is installable with BentoML, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tr</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
         <span class="p">)</span>
@@ -226,7 +270,24 @@
 
 <div class="viewcode-block" id="ModelFetcherFromBentoML.fetch">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch_bentoml.ModelFetcherFromBentoML.fetch">[docs]</a>
-    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch the model from the Ersilia Model Hub.</span>
+
+<span class="sd">        This method initiates the fetching process for the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The ID of the model to be fetched.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            fetcher = ModelFetcherFromBentoML(config_json=config)</span>
+<span class="sd">            fetcher.fetch(model_id=&quot;eosxxxx&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 </div>
 

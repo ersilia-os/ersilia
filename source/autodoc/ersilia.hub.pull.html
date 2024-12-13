@@ -109,8 +109,23 @@
 <span id="ersilia-hub-pull-pull-module"></span><h2>ersilia.hub.pull.pull module<a class="headerlink" href="#module-ersilia.hub.pull.pull" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.pull.pull.ModelPuller">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.pull.pull.</span></span><span class="sig-name descname"><span class="pre">ModelPuller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#ModelPuller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.pull.pull.</span></span><span class="sig-name descname"><span class="pre">ModelPuller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#ModelPuller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>ModelPuller is responsible for pulling models from DockerHub.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model to be pulled.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to overwrite existing files.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings for the puller.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">puller</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">puller</span><span class="o">.</span><span class="n">async_pull</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.pull.pull.ModelPuller.async_pull">
 <span class="sig-name descname"><span class="pre">async_pull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.async_pull" title="Link to this definition"></a></dt>
@@ -118,13 +133,31 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.pull.pull.ModelPuller.is_available_in_dockerhub">
-<span class="sig-name descname"><span class="pre">is_available_in_dockerhub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#ModelPuller.is_available_in_dockerhub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.is_available_in_dockerhub" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_available_in_dockerhub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#ModelPuller.is_available_in_dockerhub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.is_available_in_dockerhub" title="Link to this definition"></a></dt>
+<dd><p>Check if the Docker image is available in DockerHub.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the image is available in DockerHub, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.pull.pull.ModelPuller.is_available_locally">
-<span class="sig-name descname"><span class="pre">is_available_locally</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#ModelPuller.is_available_locally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.is_available_locally" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_available_locally</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/pull/pull.html#ModelPuller.is_available_locally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.pull.pull.ModelPuller.is_available_locally" title="Link to this definition"></a></dt>
+<dd><p>Check if the Docker image is available locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the image is available locally, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.pull.pull.ModelPuller.pull">

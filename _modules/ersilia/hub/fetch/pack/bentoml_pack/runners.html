@@ -102,6 +102,22 @@
 <div class="viewcode-block" id="SystemPack">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.SystemPack">[docs]</a>
 <span class="k">class</span> <span class="nc">SystemPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used to pack models with system installation.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    run()</span>
+<span class="sd">        Run the system packer.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        packer = SystemPack(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        packer.run()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing system packer&quot;</span><span class="p">)</span>
@@ -116,6 +132,9 @@
 <div class="viewcode-block" id="SystemPack.run">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.SystemPack.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the system packer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div>
 </div>
 
@@ -124,11 +143,20 @@
 <div class="viewcode-block" id="VenvPack">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.VenvPack">[docs]</a>
 <span class="k">class</span> <span class="nc">VenvPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used to pack models with virtual environments.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    run()</span>
+<span class="sd">        Run the virtual environment packer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing virtualenv packer&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimpleVenv</span><span class="p">:</span>
         <span class="n">model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">installs_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading install commands from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">installs_file</span><span class="p">))</span>
@@ -150,6 +178,9 @@
 <div class="viewcode-block" id="VenvPack.run">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.VenvPack.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the virtual environment packer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with VirtualEnv&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_model_install_commands</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div>
@@ -160,12 +191,21 @@
 <div class="viewcode-block" id="CondaPack">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.CondaPack">[docs]</a>
 <span class="k">class</span> <span class="nc">CondaPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used to pack models with Conda environments.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    run()</span>
+<span class="sd">        Run the Conda environment packer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing conda packer&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting up&quot;</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">installs_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -179,7 +219,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Conda environment </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Environment </span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
-            <span class="c1"># clone base conda environment and add model dependencies</span>
             <span class="n">base_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">get_base_env</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
             <span class="k">if</span> <span class="s2">&quot;-slim-&quot;</span> <span class="ow">in</span> <span class="n">base_env</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Removing -slim- from base environment!&quot;</span><span class="p">)</span>
@@ -205,10 +244,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">commandlines</span><span class="o">=</span><span class="n">commandlines</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Environment </span><span class="si">{0}</span><span class="s2"> does exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
-        <span class="c1"># create environment yml file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating environment YAML file&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">export_env_yml</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
-        <span class="c1"># store conda environment in the local environment database</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Storing Conda environment in the local environment database&quot;</span><span class="p">)</span>
         <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
@@ -236,6 +273,9 @@
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the Conda environment packer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with Conda&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_model_install_commands</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div>
@@ -245,6 +285,15 @@
 <div class="viewcode-block" id="DockerPack">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.DockerPack">[docs]</a>
 <span class="k">class</span> <span class="nc">DockerPack</span><span class="p">(</span><span class="n">BasePack</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used to pack models with Docker.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    run()</span>
+<span class="sd">        Run the Docker packer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">BasePack</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
@@ -252,7 +301,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">REPO_TAG</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing docker packer&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_model_from_tmp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load_model_from_tmp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -302,6 +351,9 @@
 <div class="viewcode-block" id="DockerPack.run">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.DockerPack.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the Docker packer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Packing model with Docker&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_model_install_commands</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div>
@@ -311,7 +363,20 @@
 
 <div class="viewcode-block" id="get_runner">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.runners.get_runner">[docs]</a>
-<span class="k">def</span> <span class="nf">get_runner</span><span class="p">(</span><span class="n">pack_mode</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_runner</span><span class="p">(</span><span class="n">pack_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the runner class based on the pack mode.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pack_mode : str</span>
+<span class="sd">        Packaging mode.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    type</span>
+<span class="sd">        Runner class corresponding to the pack mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">SystemPack</span>
     <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;venv&quot;</span><span class="p">:</span>

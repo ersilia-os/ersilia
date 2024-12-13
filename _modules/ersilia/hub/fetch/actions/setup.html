@@ -83,7 +83,23 @@
 <div class="viewcode-block" id="SetupChecker">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker">[docs]</a>
 <span class="k">class</span> <span class="nc">SetupChecker</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks the setup requirements for the model to be installed and run.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the setup checker.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    check()</span>
+<span class="sd">        Checks all setup requirements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
@@ -122,6 +138,9 @@
 <div class="viewcode-block" id="SetupChecker.check">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker.check">[docs]</a>
     <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks all setup requirements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gh_cli</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_git_lfs</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ping</span><span class="p">()</span>

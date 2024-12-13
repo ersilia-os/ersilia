@@ -87,6 +87,17 @@
 <div class="viewcode-block" id="ModelInformer">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.inform.ModelInformer">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelInformer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to inform about the model by writing information to a JSON file. Contains detail</span>
+<span class="sd">    metadata about the model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
@@ -110,6 +121,9 @@
 <div class="viewcode-block" id="ModelInformer.inform">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.inform.ModelInformer.inform">[docs]</a>
     <span class="k">def</span> <span class="nf">inform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write information to a JSON file and add API info for bentoml models.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_information_json</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">resolve_pack_method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span> <span class="o">==</span> <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_info_api</span><span class="p">()</span></div>

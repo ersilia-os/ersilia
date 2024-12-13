@@ -97,23 +97,66 @@
 <div class="viewcode-block" id="ModelFetcher">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ModelFetcher is responsible for fetching models from various sources.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings for the fetcher.</span>
+<span class="sd">    credentials_json : dict, optional</span>
+<span class="sd">        Credentials for accessing the model hub.</span>
+<span class="sd">    overwrite : bool, optional</span>
+<span class="sd">        Whether to overwrite existing files.</span>
+<span class="sd">    repo_path : str, optional</span>
+<span class="sd">        Path to the repository.</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        Mode of operation, e.g., &#39;docker&#39;.</span>
+<span class="sd">    pip : bool, optional</span>
+<span class="sd">        Whether to use pip for installation.</span>
+<span class="sd">    dockerize : bool, optional</span>
+<span class="sd">        Whether to dockerize the model.</span>
+<span class="sd">    force_from_github : bool, optional</span>
+<span class="sd">        Whether to force fetching from GitHub.</span>
+<span class="sd">    force_from_s3 : bool, optional</span>
+<span class="sd">        Whether to force fetching from S3.</span>
+<span class="sd">    force_from_dockerhub : bool, optional</span>
+<span class="sd">        Whether to force fetching from DockerHub.</span>
+<span class="sd">    force_from_hosted : bool, optional</span>
+<span class="sd">        Whether to force fetching from hosted services.</span>
+<span class="sd">    force_with_bentoml : bool, optional</span>
+<span class="sd">        Whether to force fetching with BentoML.</span>
+<span class="sd">    force_with_fastapi : bool, optional</span>
+<span class="sd">        Whether to force fetching with FastAPI.</span>
+<span class="sd">    hosted_url : str, optional</span>
+<span class="sd">        URL for hosted model.</span>
+<span class="sd">    local_dir : str, optional</span>
+<span class="sd">        Local directory for the model.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        fetcher = ModelFetcher(config_json=config)</span>
+<span class="sd">        await fetcher.fetch(model_id=&quot;eosxxxx&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">pip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">dockerize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_from_github</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_from_s3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_from_dockerhub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_from_hosted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_with_bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_with_fastapi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">hosted_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">local_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dockerize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_from_github</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_from_s3</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_from_dockerhub</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_from_hosted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_with_bentoml</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_with_fastapi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">hosted_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">local_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -162,7 +205,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model getting fetched from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_source</span><span class="p">))</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_decide_fetcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_decide_fetcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">tr</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
@@ -212,7 +255,7 @@
             <span class="k">raise</span> <span class="n">NotInstallableWithBentoML</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
@@ -235,20 +278,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model already exists in your local, skipping fetching&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_standard_csv_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_standard_csv_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStandardExample</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">ms</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching from DockerHub&quot;</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fetch_from_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_fetch_from_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching from hosted&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_hosted_fetcher</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching from hosted done&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_decide_if_use_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_decide_if_use_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span><span class="p">:</span>
@@ -270,7 +314,7 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_decide_if_use_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_decide_if_use_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span><span class="p">:</span>
@@ -288,7 +332,20 @@
 
 <div class="viewcode-block" id="ModelFetcher.exists">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher.exists">[docs]</a>
-    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model exists locally.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The ID of the model to be checked.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model exists locally, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">status_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">status_file</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -300,7 +357,7 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting fetching procedure&quot;</span><span class="p">)</span>
         <span class="n">do_dockerhub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decide_if_use_dockerhub</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">do_dockerhub</span><span class="p">:</span>
@@ -320,18 +377,26 @@
 
 <div class="viewcode-block" id="ModelFetcher.fetch">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher.fetch">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetches a model with the given eos identifier</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch a model with the given eos identifier.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
-<span class="sd">            The eos identifier of the model</span>
+<span class="sd">            The eos identifier of the model.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
-<span class="sd">            True if the model was fetched successfully, False otherwise</span>
+<span class="sd">            True if the model was fetched successfully, False otherwise.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            fetcher = ModelFetcher(config_json=config)</span>
+<span class="sd">            success = await fetcher.fetch(model_id=&quot;eosxxxx&quot;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>

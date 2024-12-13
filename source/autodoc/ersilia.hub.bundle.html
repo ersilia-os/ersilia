@@ -111,30 +111,66 @@
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleDockerfileFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.bundle.</span></span><span class="sig-name descname"><span class="pre">BundleDockerfileFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleDockerfileFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleDockerfileFile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the Dockerfile for a model bundle.</p>
+<p>It specifically provides methods to get the path to the Dockerfile, get the BentoML version required for the model, and more.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleDockerfileFile.check">
 <span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleDockerfileFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleDockerfileFile.check" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the Dockerfile exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleDockerfileFile.get_bentoml_version">
-<span class="sig-name descname"><span class="pre">get_bentoml_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleDockerfileFile.get_bentoml_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_bentoml_version" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_bentoml_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleDockerfileFile.get_bentoml_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_bentoml_version" title="Link to this definition"></a></dt>
+<dd><p>Get the BentoML version required for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the BentoML version, slim flag, and Python version.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleDockerfileFile.get_file">
-<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleDockerfileFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_file" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleDockerfileFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_file" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the Dockerfile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the Dockerfile.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_full">
 <span class="sig-name descname"><span class="pre">set_to_full</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleDockerfileFile.set_to_full"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_full" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Set the Dockerfile to use the full version of the BentoML image.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_slim">
 <span class="sig-name descname"><span class="pre">set_to_slim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleDockerfileFile.set_to_slim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_slim" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Set the Dockerfile to use the slim version of the BentoML image.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -142,25 +178,61 @@
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleEnvironmentFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.bundle.</span></span><span class="sig-name descname"><span class="pre">BundleEnvironmentFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleEnvironmentFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleEnvironmentFile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the environment file for a model bundle.</p>
+<p>Specifically provides methods to get the path, bundle Conda requirement,
+add model installation commands of environment file, and check if the environment file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleEnvironmentFile.add_model_install_commands">
 <span class="sig-name descname"><span class="pre">add_model_install_commands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleEnvironmentFile.add_model_install_commands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleEnvironmentFile.add_model_install_commands" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Add model installation commands to the environment file.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleEnvironmentFile.check">
 <span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleEnvironmentFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleEnvironmentFile.check" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the environment file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleEnvironmentFile.get_file">
 <span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleEnvironmentFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleEnvironmentFile.get_file" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get the path to the environment file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the environment file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleEnvironmentFile.needs_conda">
 <span class="sig-name descname"><span class="pre">needs_conda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleEnvironmentFile.needs_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleEnvironmentFile.needs_conda" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the environment file requires Conda.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the environment file requires Conda, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -168,15 +240,32 @@
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleRequirementsFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.bundle.</span></span><span class="sig-name descname"><span class="pre">BundleRequirementsFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleRequirementsFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleRequirementsFile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle the requirements file for a model bundle.</p>
+<p>Specifically provides methods to add model installation commands to the requirements file and check if the requirements file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleRequirementsFile.add_model_install_commands">
 <span class="sig-name descname"><span class="pre">add_model_install_commands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleRequirementsFile.add_model_install_commands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleRequirementsFile.add_model_install_commands" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Add model installation commands to the requirements file.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.bundle.BundleRequirementsFile.check">
 <span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/bundle.html#BundleRequirementsFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.bundle.BundleRequirementsFile.check" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the requirements file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -187,50 +276,81 @@
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.repo.</span></span><span class="sig-name descname"><span class="pre">DockerfileFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Checks the model Dockerfile.</p>
-<p>Dockerfile specifies the bentoml version,
-conda environment,
-python version.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.path">
-<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.path" title="Link to this definition"></a></dt>
-<dd><p>directory path where model is stored. Uses os module.</p>
+<p>Class to handle Dockerfile operations for models.</p>
+<p>This class provides methods to get the path to the Dockerfile, get the BentoML version required for the model,
+check if the Dockerfile contains RUN commands, check if the Dockerfile requires Conda, get installation commands,
+and more.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The directory path where the Dockerfile is located.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.append_run_command">
+<span class="sig-name descname"><span class="pre">append_run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.append_run_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.append_run_command" title="Link to this definition"></a></dt>
+<dd><p>Append a RUN command to the Dockerfile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cmd</strong> (<em>str</em>) – The RUN command to append.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.append_run_command">
-<span class="sig-name descname"><span class="pre">append_run_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.append_run_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.append_run_command" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.check">
-<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.check" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.check" title="Link to this definition"></a></dt>
+<dd><p>Check if the Dockerfile exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the Dockerfile exists, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.get_bentoml_version">
-<span class="sig-name descname"><span class="pre">get_bentoml_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.get_bentoml_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.get_bentoml_version" title="Link to this definition"></a></dt>
-<dd><p>Identifies the bentoml version required for the models.</p>
-<p>Uses the parser from dockerfile module to retrieve the baseimage</p>
+<span class="sig-name descname"><span class="pre">get_bentoml_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.get_bentoml_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.get_bentoml_version" title="Link to this definition"></a></dt>
+<dd><p>Get the BentoML version required for the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary collecting bentoml version, slim (no conda env)
-and python version. For example:
-{“version”:0.9.2, “slim” = True, “python”:py37}</p>
+<dd class="field-odd"><p>A dictionary containing the BentoML version, slim flag, and Python version.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.get_file">
-<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.get_file" title="Link to this definition"></a></dt>
-<dd><p>gets the file from the specific directory</p>
+<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.get_file" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the Dockerfile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the Dockerfile.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.get_install_commands">
-<span class="sig-name descname"><span class="pre">get_install_commands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.get_install_commands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.get_install_commands" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_install_commands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.get_install_commands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.get_install_commands" title="Link to this definition"></a></dt>
+<dd><p>Get the installation commands from the Dockerfile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing Conda requirement, commands, and exclusive Conda and pip flag.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.get_install_commands_from_dockerfile">
@@ -239,13 +359,31 @@ and python version. For example:
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.has_runs">
-<span class="sig-name descname"><span class="pre">has_runs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.has_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.has_runs" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">has_runs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.has_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.has_runs" title="Link to this definition"></a></dt>
+<dd><p>Check if the Dockerfile contains RUN commands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the Dockerfile contains RUN commands, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.DockerfileFile.needs_conda">
-<span class="sig-name descname"><span class="pre">needs_conda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.needs_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.needs_conda" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">needs_conda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#DockerfileFile.needs_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.DockerfileFile.needs_conda" title="Link to this definition"></a></dt>
+<dd><p>Check if the Dockerfile requires Conda.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the Dockerfile requires Conda, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -253,20 +391,54 @@ and python version. For example:
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.Integrity">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.repo.</span></span><span class="sig-name descname"><span class="pre">Integrity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#Integrity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.Integrity" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to check the integrity of the model files.</p>
+<p>It provides methods to check if the README file, service file, and pack file exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The directory path where the model files are located.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.Integrity.has_pack">
-<span class="sig-name descname"><span class="pre">has_pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#Integrity.has_pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.Integrity.has_pack" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">has_pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#Integrity.has_pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.Integrity.has_pack" title="Link to this definition"></a></dt>
+<dd><p>Check if the pack file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the pack file exists, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.Integrity.has_readme">
-<span class="sig-name descname"><span class="pre">has_readme</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#Integrity.has_readme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.Integrity.has_readme" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">has_readme</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#Integrity.has_readme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.Integrity.has_readme" title="Link to this definition"></a></dt>
+<dd><p>Check if the README file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the README file exists, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.Integrity.has_service">
-<span class="sig-name descname"><span class="pre">has_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#Integrity.has_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.Integrity.has_service" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">has_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#Integrity.has_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.Integrity.has_service" title="Link to this definition"></a></dt>
+<dd><p>Check if the service file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the service file exists, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -274,20 +446,51 @@ and python version. For example:
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.PackFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.repo.</span></span><span class="sig-name descname"><span class="pre">PackFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#PackFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.PackFile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to handle pack file operations.</p>
+<p>This class provides methods to get the path to the pack file, check if the pack file needs a model,
+and check if the pack file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The directory path where the pack file is located.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.PackFile.check">
 <span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#PackFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.PackFile.check" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the pack file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.PackFile.get_file">
-<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#PackFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.PackFile.get_file" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#PackFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.PackFile.get_file" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the pack file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the pack file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.PackFile.needs_model">
-<span class="sig-name descname"><span class="pre">needs_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#PackFile.needs_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.PackFile.needs_model" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">needs_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#PackFile.needs_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.PackFile.needs_model" title="Link to this definition"></a></dt>
+<dd><p>Check if the pack file needs a model. Specifically this determines whether the “pack.py” file
+requires a model by checking if the file contains lines with the .pack() method and whether “None”
+is specified as an argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -295,15 +498,39 @@ and python version. For example:
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ReadmeFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.repo.</span></span><span class="sig-name descname"><span class="pre">ReadmeFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ReadmeFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ReadmeFile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to handle README file operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The directory path where the README file is located.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ReadmeFile.check">
 <span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ReadmeFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ReadmeFile.check" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the README file exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the README file exists, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ReadmeFile.get_file">
 <span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ReadmeFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ReadmeFile.get_file" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Get the path to the README file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the README file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -311,25 +538,78 @@ and python version. For example:
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.RepoUtils">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.repo.</span></span><span class="sig-name descname"><span class="pre">RepoUtils</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Utility class for handling repository operations.</p>
+<p>It provides methods to get the model ID, get the path to the Conda environment YAML file,
+get the Docker repository image, and rename the BentoML service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – The directory path where the repository is located.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.RepoUtils.get_conda_env_yml_file">
-<span class="sig-name descname"><span class="pre">get_conda_env_yml_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils.get_conda_env_yml_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils.get_conda_env_yml_file" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_conda_env_yml_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils.get_conda_env_yml_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils.get_conda_env_yml_file" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the Conda environment YAML file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the Conda environment YAML file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.RepoUtils.get_docker_repo_image">
-<span class="sig-name descname"><span class="pre">get_docker_repo_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils.get_docker_repo_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils.get_docker_repo_image" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_docker_repo_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils.get_docker_repo_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils.get_docker_repo_image" title="Link to this definition"></a></dt>
+<dd><p>Get the Docker repository image for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Docker repository image for the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.RepoUtils.get_model_id">
-<span class="sig-name descname"><span class="pre">get_model_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils.get_model_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils.get_model_id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_model_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils.get_model_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils.get_model_id" title="Link to this definition"></a></dt>
+<dd><p>Get the model ID from the repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The model ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.RepoUtils.rename_service">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rename_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils.rename_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils.rename_service" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rename_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#RepoUtils.rename_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.RepoUtils.rename_service" title="Link to this definition"></a></dt>
+<dd><p>Rename the BentoML service to the model ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The command to rename the service.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -337,37 +617,57 @@ and python version. For example:
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ServiceFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.repo.</span></span><span class="sig-name descname"><span class="pre">ServiceFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ServiceFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>checks the model service file</p>
-<p>Service File is needed to run a bentoml web app.
-Bentoml web app is named “service” by default.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ServiceFile.path">
-<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile.path" title="Link to this definition"></a></dt>
-<dd><p>directory path where model is stored. Uses os module.</p>
-</dd></dl>
-
+<p>Class to handle service file operations for BentoML web apps.</p>
+<p>This class provides methods to get the path to the service file, rename the service,
+add an info API, and check if the service file contains the Service class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The directory path where the service file is located.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ServiceFile.add_info_api">
-<span class="sig-name descname"><span class="pre">add_info_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">information_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ServiceFile.add_info_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile.add_info_api" title="Link to this definition"></a></dt>
-<dd><p>Adds and info api to the service</p>
+<span class="sig-name descname"><span class="pre">add_info_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">information_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ServiceFile.add_info_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile.add_info_api" title="Link to this definition"></a></dt>
+<dd><p>Add an info API to the service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>information_file</strong> (<em>str</em>) – The path to the information file to be used by the info API.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ServiceFile.check">
-<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ServiceFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile.check" title="Link to this definition"></a></dt>
-<dd><p>checks if the service.py contains the Service Class</p>
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ServiceFile.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile.check" title="Link to this definition"></a></dt>
+<dd><p>Check if the service file contains the Service class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the service file contains the Service class, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ServiceFile.get_file">
-<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ServiceFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile.get_file" title="Link to this definition"></a></dt>
-<dd><p>gets the file from the specific directory</p>
+<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ServiceFile.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile.get_file" title="Link to this definition"></a></dt>
+<dd><p>Get the path to the service file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The path to the service file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.repo.ServiceFile.rename_service">
 <span class="sig-name descname"><span class="pre">rename_service</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/repo.html#ServiceFile.rename_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.repo.ServiceFile.rename_service" title="Link to this definition"></a></dt>
-<dd><p>renames the bentoml app from default “Service” to model_id.</p>
+<dd><p>Rename the BentoML service from the default “Service” to the model ID.</p>
 </dd></dl>
 
 </dd></dl>
@@ -379,45 +679,149 @@ Bentoml web app is named “service” by default.</p>
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.bundle.status.</span></span><span class="sig-name descname"><span class="pre">ModelStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to check the status of a model in terms of its installation and deployment.</p>
+<p>It specifically provides methods to check if a model is downloaded, available as a Docker image,
+pulled from Docker Hub, available in a Conda environment, available as a pip package,
+available as a bundle, or available as a BentoML service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus.is_bentoml">
-<span class="sig-name descname"><span class="pre">is_bentoml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_bentoml" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_bentoml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_bentoml" title="Link to this definition"></a></dt>
+<dd><p>Check if the model is available as a BentoML service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model is available as a BentoML service, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus.is_bundle">
-<span class="sig-name descname"><span class="pre">is_bundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_bundle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_bundle" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_bundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_bundle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_bundle" title="Link to this definition"></a></dt>
+<dd><p>Check if the model is available as a bundle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model is available as a bundle, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus.is_conda">
-<span class="sig-name descname"><span class="pre">is_conda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_conda" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_conda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_conda" title="Link to this definition"></a></dt>
+<dd><p>Check if the model is available in a Conda environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model is available in a Conda environment, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus.is_docker">
-<span class="sig-name descname"><span class="pre">is_docker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_docker" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_docker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_docker" title="Link to this definition"></a></dt>
+<dd><p>Check if the model is available as a Docker image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model is available as a Docker image, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus.is_downloaded">
-<span class="sig-name descname"><span class="pre">is_downloaded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_downloaded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_downloaded" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_downloaded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_downloaded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_downloaded" title="Link to this definition"></a></dt>
+<dd><p>Check if the model is downloaded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model is downloaded, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus.is_pip">
-<span class="sig-name descname"><span class="pre">is_pip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_pip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_pip" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_pip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_pip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_pip" title="Link to this definition"></a></dt>
+<dd><p>Check if the model is available as a pip package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model is available as a pip package, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus.is_pulled_docker">
-<span class="sig-name descname"><span class="pre">is_pulled_docker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_pulled_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_pulled_docker" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">is_pulled_docker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.is_pulled_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.is_pulled_docker" title="Link to this definition"></a></dt>
+<dd><p>Check if the Docker image for the model has been pulled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the Docker image has been pulled, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.bundle.status.ModelStatus.status">
-<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.status" title="Link to this definition"></a></dt>
-<dd><p>Check installation and deployment status of the model</p>
+<span class="sig-name descname"><span class="pre">status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/bundle/status.html#ModelStatus.status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.bundle.status.ModelStatus.status" title="Link to this definition"></a></dt>
+<dd><p>Check the installation and deployment status of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with the status of the model in various formats.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

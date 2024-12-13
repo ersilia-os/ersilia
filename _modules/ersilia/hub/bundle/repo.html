@@ -93,18 +93,43 @@
 <div class="viewcode-block" id="ReadmeFile">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ReadmeFile">[docs]</a>
 <span class="k">class</span> <span class="nc">ReadmeFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle README file operations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The directory path where the README file is located.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ReadmeFile.get_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ReadmeFile.get_file">[docs]</a>
     <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the path to the README file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The path to the README file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;README.md&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ReadmeFile.check">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ReadmeFile.check">[docs]</a>
     <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the README file exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the README file exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 </div>
 
@@ -113,13 +138,16 @@
 <div class="viewcode-block" id="ServiceFile">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile">[docs]</a>
 <span class="k">class</span> <span class="nc">ServiceFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;checks the model service file</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle service file operations for BentoML web apps.</span>
 
-<span class="sd">    Service File is needed to run a bentoml web app.</span>
-<span class="sd">    Bentoml web app is named &quot;service&quot; by default.</span>
+<span class="sd">    This class provides methods to get the path to the service file, rename the service,</span>
+<span class="sd">    add an info API, and check if the service file contains the Service class.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        path: directory path where model is stored. Uses os module.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The directory path where the service file is located.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -127,8 +155,15 @@
 
 <div class="viewcode-block" id="ServiceFile.get_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile.get_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;gets the file from the specific directory&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the path to the service file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The path to the service file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;service.py&quot;</span><span class="p">)</span></div>
 
 
@@ -144,7 +179,9 @@
 <div class="viewcode-block" id="ServiceFile.rename_service">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile.rename_service">[docs]</a>
     <span class="k">def</span> <span class="nf">rename_service</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;renames the bentoml app from default &quot;Service&quot; to model_id.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rename the BentoML service from the default &quot;Service&quot; to the model ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ru</span> <span class="o">=</span> <span class="n">RepoUtils</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">ru</span><span class="o">.</span><span class="n">get_model_id</span><span class="p">()</span>
         <span class="n">add_text</span> <span class="o">=</span> <span class="n">ru</span><span class="o">.</span><span class="n">rename_service</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -161,8 +198,15 @@
 
 <div class="viewcode-block" id="ServiceFile.add_info_api">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile.add_info_api">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_info_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">information_file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds and info api to the service&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">add_info_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">information_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add an info API to the service.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        information_file : str</span>
+<span class="sd">            The path to the information file to be used by the info API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -182,8 +226,15 @@
 
 <div class="viewcode-block" id="ServiceFile.check">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile.check">[docs]</a>
-    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;checks if the service.py contains the Service Class&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the service file contains the Service class.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the service file contains the Service class, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_service_class</span><span class="p">()</span></div>
 </div>
 
@@ -192,18 +243,47 @@
 <div class="viewcode-block" id="PackFile">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.PackFile">[docs]</a>
 <span class="k">class</span> <span class="nc">PackFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle pack file operations.</span>
+
+<span class="sd">    This class provides methods to get the path to the pack file, check if the pack file needs a model,</span>
+<span class="sd">    and check if the pack file exists.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The directory path where the pack file is located.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PackFile.get_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.PackFile.get_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the path to the pack file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The path to the pack file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;pack.py&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PackFile.needs_model">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.PackFile.needs_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">needs_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">needs_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the pack file needs a model. Specifically this determines whether the &quot;pack.py&quot; file </span>
+<span class="sd">        requires a model by checking if the file contains lines with the .pack() method and whether &quot;None&quot; </span>
+<span class="sd">        is specified as an argument.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO: work on this function to account for more cases.</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">()</span>
         <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
@@ -221,6 +301,13 @@
 <div class="viewcode-block" id="PackFile.check">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.PackFile.check">[docs]</a>
     <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the pack file exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 </div>
 
@@ -229,14 +316,17 @@
 <div class="viewcode-block" id="DockerfileFile">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile">[docs]</a>
 <span class="k">class</span> <span class="nc">DockerfileFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks the model Dockerfile.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle Dockerfile operations for models.</span>
 
-<span class="sd">    Dockerfile specifies the bentoml version,</span>
-<span class="sd">    conda environment,</span>
-<span class="sd">    python version.</span>
+<span class="sd">    This class provides methods to get the path to the Dockerfile, get the BentoML version required for the model,</span>
+<span class="sd">    check if the Dockerfile contains RUN commands, check if the Dockerfile requires Conda, get installation commands,</span>
+<span class="sd">    and more.</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        path: directory path where model is stored. Uses os module.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The directory path where the Dockerfile is located.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -246,22 +336,28 @@
 
 <div class="viewcode-block" id="DockerfileFile.get_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.get_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;gets the file from the specific directory&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the path to the Dockerfile.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The path to the Dockerfile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DockerfileFile.get_bentoml_version">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.get_bentoml_version">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Identifies the bentoml version required for the models.</span>
+    <span class="k">def</span> <span class="nf">get_bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the BentoML version required for the model.</span>
 
-<span class="sd">        Uses the parser from dockerfile module to retrieve the baseimage</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A dictionary collecting bentoml version, slim (no conda env)</span>
-<span class="sd">            and python version. For example:</span>
-<span class="sd">            {&quot;version&quot;:0.9.2, &quot;slim&quot; = True, &quot;python&quot;:py37}</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing the BentoML version, slim flag, and Python version.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bimg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span>
         <span class="n">bimg</span> <span class="o">=</span> <span class="n">bimg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
@@ -311,7 +407,15 @@
 
 <div class="viewcode-block" id="DockerfileFile.has_runs">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.has_runs">[docs]</a>
-    <span class="k">def</span> <span class="nf">has_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">has_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the Dockerfile contains RUN commands.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the Dockerfile contains RUN commands, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">get_runs</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -320,7 +424,15 @@
 
 <div class="viewcode-block" id="DockerfileFile.needs_conda">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.needs_conda">[docs]</a>
-    <span class="k">def</span> <span class="nf">needs_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">needs_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the Dockerfile requires Conda.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the Dockerfile requires Conda, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -341,7 +453,15 @@
 
 <div class="viewcode-block" id="DockerfileFile.get_install_commands">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.get_install_commands">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_install_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_install_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the installation commands from the Dockerfile.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing Conda requirement, commands, and exclusive Conda and pip flag.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -366,7 +486,15 @@
 
 <div class="viewcode-block" id="DockerfileFile.append_run_command">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.append_run_command">[docs]</a>
-    <span class="k">def</span> <span class="nf">append_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">append_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append a RUN command to the Dockerfile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cmd : str</span>
+<span class="sd">            The RUN command to append.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -398,7 +526,15 @@
 
 <div class="viewcode-block" id="DockerfileFile.check">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.check">[docs]</a>
-    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the Dockerfile exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the Dockerfile exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 </div>
 
@@ -407,6 +543,17 @@
 <div class="viewcode-block" id="Integrity">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.Integrity">[docs]</a>
 <span class="k">class</span> <span class="nc">Integrity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to check the integrity of the model files.</span>
+
+<span class="sd">    It provides methods to check if the README file, service file, and pack file exist.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The directory path where the model files are located.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -421,7 +568,15 @@
 
 <div class="viewcode-block" id="Integrity.has_readme">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.Integrity.has_readme">[docs]</a>
-    <span class="k">def</span> <span class="nf">has_readme</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">has_readme</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the README file exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the README file exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_readme_file</span><span class="p">()):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -430,7 +585,15 @@
 
 <div class="viewcode-block" id="Integrity.has_service">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.Integrity.has_service">[docs]</a>
-    <span class="k">def</span> <span class="nf">has_service</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">has_service</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the service file exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the service file exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_service_file</span><span class="p">()):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -439,7 +602,15 @@
 
 <div class="viewcode-block" id="Integrity.has_pack">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.Integrity.has_pack">[docs]</a>
-    <span class="k">def</span> <span class="nf">has_pack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">has_pack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the pack file exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the pack file exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pack_file</span><span class="p">()):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -451,6 +622,20 @@
 <div class="viewcode-block" id="RepoUtils">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.RepoUtils">[docs]</a>
 <span class="k">class</span> <span class="nc">RepoUtils</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Utility class for handling repository operations.</span>
+
+<span class="sd">    It provides methods to get the model ID, get the path to the Conda environment YAML file,</span>
+<span class="sd">    get the Docker repository image, and rename the BentoML service.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The directory path where the repository is located.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub_org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">DOCKERHUB_ORG</span>
@@ -475,11 +660,19 @@
 
 <div class="viewcode-block" id="RepoUtils.get_model_id">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.RepoUtils.get_model_id">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model ID from the repository.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_id_from_path</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_id_from_config</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">model_id</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL_ID</span>
         <span class="k">return</span> <span class="n">model_id</span></div>
 
@@ -515,7 +708,15 @@
 
 <div class="viewcode-block" id="RepoUtils.get_conda_env_yml_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.RepoUtils.get_conda_env_yml_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_conda_env_yml_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_conda_env_yml_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the path to the Conda environment YAML file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The path to the Conda environment YAML file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inside_docker</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DOCKER_BENTO_PATH</span><span class="p">,</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -546,7 +747,20 @@
 
 <div class="viewcode-block" id="RepoUtils.get_docker_repo_image">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.RepoUtils.get_docker_repo_image">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_docker_repo_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_docker_repo_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the Docker repository image for the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The ID of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The Docker repository image for the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub_org</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">DOCKER</span><span class="o">.</span><span class="n">REPO_TAG</span><span class="p">)</span>
         <span class="p">)</span></div>
@@ -555,7 +769,20 @@
 <div class="viewcode-block" id="RepoUtils.rename_service">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.RepoUtils.rename_service">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">rename_service</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rename_service</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rename the BentoML service to the model ID.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The ID of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The command to rename the service.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;Service.__name__ = &#39;</span><span class="si">%s</span><span class="s2">&#39;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span>
         <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> = Service&quot;</span> <span class="o">%</span> <span class="n">model_id</span>
         <span class="k">return</span> <span class="n">cmd</span></div>

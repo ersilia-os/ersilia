@@ -90,12 +90,29 @@
 <div class="viewcode-block" id="ModelStandardExample">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.standard_example.ModelStandardExample">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelStandardExample</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ModelStandardExample is responsible for running standard CSV examples for models.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model to run the example for.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the example runner.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        example_runner = ModelStandardExample(model_id=&quot;model123&quot;, config_json=config)</span>
+<span class="sd">        example_runner.run()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">(</span><span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_check_file_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_csv</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_check_file_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_csv</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_csv</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">StandardModelExampleError</span><span class="p">(</span>
                 <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">output_csv</span>
@@ -105,6 +122,11 @@
 <div class="viewcode-block" id="ModelStandardExample.run">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.standard_example.ModelStandardExample.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the standard CSV example for the model.</span>
+
+<span class="sd">        This method runs the standard CSV example for the model, generating input and output CSV files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running standard CSV example&quot;</span><span class="p">)</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">input_csv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span><span class="p">)</span>

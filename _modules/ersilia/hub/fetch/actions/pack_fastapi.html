@@ -85,7 +85,28 @@
 <div class="viewcode-block" id="ModelPacker">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelPacker</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Packs a model using FastAPI (aka ersilia-pack).</span>
+
+<span class="sd">    For more information about the ersilia-pack, visit:</span>
+<span class="sd">    https://github.com/ersilia-os/ersilia-pack.git</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model to be packed.</span>
+<span class="sd">    mode : str</span>
+<span class="sd">        Packing mode to be used.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the packer.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    pack()</span>
+<span class="sd">        Packs the model using FastAPI.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
@@ -115,6 +136,9 @@
 <div class="viewcode-block" id="ModelPacker.pack">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker.pack">[docs]</a>
     <span class="k">def</span> <span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Packs the model using FastAPI.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_decide_pack_mode</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div>

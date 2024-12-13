@@ -96,6 +96,19 @@
 <div class="viewcode-block" id="Information">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.Information">[docs]</a>
 <span class="k">class</span> <span class="nc">Information</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the information of a model.</span>
+
+<span class="sd">    This class provides methods to get various information about a model,</span>
+<span class="sd">    such as pack mode, service class, model source, API schema, size, metadata, and card.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -169,7 +182,15 @@
 
 <div class="viewcode-block" id="Information.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.Information.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get various information about the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing various information about the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;pack_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pack_mode</span><span class="p">(),</span>
             <span class="s2">&quot;service_class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_service_class</span><span class="p">(),</span>
@@ -188,6 +209,19 @@
 <div class="viewcode-block" id="InformationDisplayer">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.InformationDisplayer">[docs]</a>
 <span class="k">class</span> <span class="nc">InformationDisplayer</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to display the information of a model.</span>
+
+<span class="sd">    This class provides methods to display various information about a model,</span>
+<span class="sd">    such as description, identifiers, code, and Docker information.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    info_data : dict</span>
+<span class="sd">        The information data of the model.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_data</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span> <span class="o">=</span> <span class="n">info_data</span>
@@ -257,6 +291,9 @@
 <div class="viewcode-block" id="InformationDisplayer.echo">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.InformationDisplayer.echo">[docs]</a>
     <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display the information about the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_description_info</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers_info</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_code_info</span><span class="p">()</span>

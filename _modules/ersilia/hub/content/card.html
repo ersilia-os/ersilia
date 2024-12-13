@@ -130,8 +130,23 @@
 <div class="viewcode-block" id="BaseInformation">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation">[docs]</a>
 <span class="k">class</span> <span class="nc">BaseInformation</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the base information of a model card.</span>
+
+<span class="sd">    A model card contains metadata about a model, such as its identifier, slug, status,</span>
+<span class="sd">    title, description, mode, input, output, and other relevant information. And This class provides</span>
+<span class="sd">    methods to validate and set various fields of a model card.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_slug</span> <span class="o">=</span> <span class="kc">None</span>
@@ -260,7 +275,9 @@
 
     <span class="nd">@input_shape</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input_shape</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">new_input_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_input_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span>
+            <span class="s2">&quot;Input Shape&quot;</span>
+        <span class="p">):</span>
             <span class="k">raise</span> <span class="n">InputShapeBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="n">new_input_shape</span>
 
@@ -393,7 +410,9 @@
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">GithubBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model_id</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_github</span>
 
     <span class="nd">@property</span>
@@ -402,7 +421,9 @@
 
     <span class="nd">@dockerhub</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dockerhub_url</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_dockerhub_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://hub.docker.com/r/ersiliaos/&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_dockerhub_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+            <span class="s2">&quot;https://hub.docker.com/r/ersiliaos/&quot;</span>
+        <span class="p">):</span>
             <span class="k">raise</span> <span class="n">DockerhubBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="n">new_dockerhub_url</span>
 
@@ -415,7 +436,9 @@
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_docker_architecture</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_docker_architecture</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_docker_architecture</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">new_docker_architecture</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span>
+                <span class="s2">&quot;Docker Architecture&quot;</span>
+            <span class="p">):</span>
                 <span class="k">raise</span> <span class="n">DockerArchitectureInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="n">new_docker_architecture</span>
 
@@ -452,7 +475,15 @@
 
 <div class="viewcode-block" id="BaseInformation.as_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation.as_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the base information to a dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The base information as a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;Identifier&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
             <span class="s2">&quot;Slug&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span>
@@ -483,7 +514,15 @@
 
 <div class="viewcode-block" id="BaseInformation.from_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation.from_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the base information from a dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : dict</span>
+<span class="sd">            The dictionary containing the base information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Status&quot;</span><span class="p">]</span>
@@ -518,17 +557,35 @@
 <div class="viewcode-block" id="RepoMetadataFile">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile">[docs]</a>
 <span class="k">class</span> <span class="nc">RepoMetadataFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the metadata file of a model repository.</span>
+
+<span class="sd">    This class provides methods to get the URL of the metadata file from GitHub,</span>
+<span class="sd">    read information from the metadata file, and write information to the metadata file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str, optional</span>
+<span class="sd">        The model identifier.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_github_json_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">org</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">org</span> <span class="o">=</span> <span class="s2">&quot;ersilia-os&quot;</span>
         <span class="k">if</span> <span class="n">branch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">branch</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_github_yaml_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -536,8 +593,10 @@
             <span class="n">org</span> <span class="o">=</span> <span class="s2">&quot;ersilia-os&quot;</span>
         <span class="k">if</span> <span class="n">branch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">branch</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_file_content_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">branch</span><span class="p">):</span>
@@ -555,13 +614,53 @@
 
 <div class="viewcode-block" id="RepoMetadataFile.get_json_or_yaml_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile.get_json_or_yaml_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_json_or_yaml_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_json_or_yaml_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the metadata file from GitHub in JSON or YAML format. JSON format typically used for bentoml</span>
+<span class="sd">        packed models and YAML format typically used for ersilia pack models.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str, optional</span>
+<span class="sd">            The GitHub organization.</span>
+<span class="sd">        branch : str, optional</span>
+<span class="sd">            The GitHub branch.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The metadata file content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_file_content_from_github</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">branch</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RepoMetadataFile.read_information">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile.read_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json_or_yaml_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read_information</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">org</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">json_or_yaml_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseInformation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read information from the metadata file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str, optional</span>
+<span class="sd">            The GitHub organization.</span>
+<span class="sd">        branch : str, optional</span>
+<span class="sd">            The GitHub branch.</span>
+<span class="sd">        json_or_yaml_path : str, optional</span>
+<span class="sd">            The path to the JSON or YAML file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        BaseInformation</span>
+<span class="sd">            The base information read from the metadata file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">json_or_yaml_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_json_or_yaml_file</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="n">org</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">branch</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -579,7 +678,24 @@
 
 <div class="viewcode-block" id="RepoMetadataFile.write_information">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile.write_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BaseInformation</span><span class="p">,</span> <span class="n">json_or_yaml_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">write_information</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BaseInformation</span><span class="p">,</span> <span class="n">json_or_yaml_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write information to the metadata file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : BaseInformation</span>
+<span class="sd">            The base information to write.</span>
+<span class="sd">        json_or_yaml_path : str, optional</span>
+<span class="sd">            The path to the JSON or YAML file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The written data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">json_or_yaml_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">json_or_yaml_path</span>
@@ -599,15 +715,43 @@
 <div class="viewcode-block" id="MetadataCard">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.MetadataCard">[docs]</a>
 <span class="k">class</span> <span class="nc">MetadataCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the metadata card of a model.</span>
+
+<span class="sd">    This class provides methods to get the metadata card of a model from the local repository.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MetadataCard.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.MetadataCard.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the metadata card of a model from the local repository.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str, optional</span>
+<span class="sd">            The ID of the model.</span>
+<span class="sd">        slug : str, optional</span>
+<span class="sd">            The slug of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The metadata card of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying to get metadata from: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Trying to get metadata from: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
@@ -622,21 +766,32 @@
 <div class="viewcode-block" id="ReadmeCard">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ReadmeCard">[docs]</a>
 <span class="k">class</span> <span class="nc">ReadmeCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the README card of a model.</span>
+
+<span class="sd">    This class provides methods to get the README card of a model from GitHub.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_raw_readme_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/master/README.md&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">model_id</span>
-            <span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/master/README.md&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model_id</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">url</span>
 
     <span class="k">def</span> <span class="nf">_gh_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;view.md&quot;</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;gh repo view </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;ersilia-os&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">tmp_file</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;gh repo view </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">&quot;ersilia-os&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">tmp_file</span>
+        <span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -692,7 +847,22 @@
 
 <div class="viewcode-block" id="ReadmeCard.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ReadmeCard.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the README card of a model from GitHub.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str, optional</span>
+<span class="sd">            The ID of the model.</span>
+<span class="sd">        slug : str, optional</span>
+<span class="sd">            The slug of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The README card of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">model_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -705,8 +875,14 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LocalCard">[docs]</a>
 <span class="k">class</span> <span class="nc">LocalCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class provides information on models that have been fetched and are available locally.</span>
-<span class="sd">    It retrieves and caches information about the models.</span>
+<span class="sd">    Class to handle the local card of a model.</span>
+
+<span class="sd">    This class provides methods to get the local card of a model from the local repository stored in eos directory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
@@ -731,9 +907,21 @@
 
 <div class="viewcode-block" id="LocalCard.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LocalCard.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method returns the card for a model. If the model does not exist, it returns None.</span>
+<span class="sd">        Get the local card of a model from the local repository.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str, optional</span>
+<span class="sd">            The ID of the model.</span>
+<span class="sd">        slug : str, optional</span>
+<span class="sd">            The slug of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The local card of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">model_id</span><span class="p">:</span>
             <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_data</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -747,12 +935,47 @@
 <div class="viewcode-block" id="LakeCard">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LakeCard">[docs]</a>
 <span class="k">class</span> <span class="nc">LakeCard</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the lake card of a model.</span>
+
+<span class="sd">    The lake in ersilia refers to a result storage platform powered by isaura package to </span>
+<span class="sd">    store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to </span>
+<span class="sd">    explore and retrieve information from HDF5 files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LakeCard.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.LakeCard.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">as_json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the lake card of a model from the HDF5 explorer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str, optional</span>
+<span class="sd">            The ID of the model.</span>
+<span class="sd">        slug : str, optional</span>
+<span class="sd">            The slug of the model.</span>
+<span class="sd">        as_json : bool, optional</span>
+<span class="sd">            Whether to return the lake card in JSON format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The lake card of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">Hdf5Explorer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No lake found&quot;</span><span class="p">)</span>
@@ -771,6 +994,17 @@
 <div class="viewcode-block" id="S3JsonCard">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.S3JsonCard">[docs]</a>
 <span class="k">class</span> <span class="nc">S3JsonCard</span><span class="p">(</span><span class="n">JsonModelsInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the S3 JSON card of a model.</span>
+
+<span class="sd">    This class provides methods to get the S3 JSON card of a model from the S3 bucket.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">JsonModelsInterface</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -794,7 +1028,22 @@
 
 <div class="viewcode-block" id="S3JsonCard.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.S3JsonCard.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the S3 JSON card of a model from the S3 bucket by model id or slug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str, optional</span>
+<span class="sd">            The ID of the model.</span>
+<span class="sd">        slug : str, optional</span>
+<span class="sd">            The slug of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The S3 JSON card of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_card_by_model_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">slug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -808,6 +1057,18 @@
 <div class="viewcode-block" id="ModelCard">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ModelCard">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelCard</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle the model card.</span>
+
+<span class="sd">    This class provides methods to get the model card from various sources,</span>
+<span class="sd">    such as local repository, metadata card, S3 JSON card, and README card.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
 
@@ -831,7 +1092,29 @@
 
 <div class="viewcode-block" id="ModelCard.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ModelCard.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slug</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">as_json</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">as_json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model card from various sources.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str, optional</span>
+<span class="sd">            The ID of the model.</span>
+<span class="sd">        slug : str, optional</span>
+<span class="sd">            The slug of the model.</span>
+<span class="sd">        as_json : bool, optional</span>
+<span class="sd">            Whether to return the model card in JSON format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The model card.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">card</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>

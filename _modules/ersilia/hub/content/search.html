@@ -81,6 +81,17 @@
 <div class="viewcode-block" id="ModelSearcher">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelSearcher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle model search operations.</span>
+
+<span class="sd">    This class provides methods to search for models in the catalog table</span>
+<span class="sd">    using text and mode of training.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    catalog : CatalogTable</span>
+<span class="sd">        The catalog table containing the models.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class is used for searching through the catalog table</span>
 
 <span class="sd">    Attributes:</span>
@@ -93,8 +104,22 @@
 
 <div class="viewcode-block" id="ModelSearcher.levenshtein_ratio_and_distance">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.levenshtein_ratio_and_distance">[docs]</a>
-    <span class="k">def</span> <span class="nf">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Algorithm to fuzzy match strings&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Algorithm to fuzzy match strings using Levenshtein distance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        s : str</span>
+<span class="sd">            The first string.</span>
+<span class="sd">        t : str</span>
+<span class="sd">            The second string.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The Levenshtein distance ratio between the two strings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Initialize matrix of zeros</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
         <span class="n">t</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -130,8 +155,20 @@
 
 <div class="viewcode-block" id="ModelSearcher.search_text">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.search_text">[docs]</a>
-    <span class="k">def</span> <span class="nf">search_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Search using text and return the closest matching string&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">search_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search using text and return the closest matching string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        s : str</span>
+<span class="sd">            The text to search for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CatalogTable</span>
+<span class="sd">            The catalog table containing the closest matching models.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">idxs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">ratio_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -164,8 +201,20 @@
 
 <div class="viewcode-block" id="ModelSearcher.search_mode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.search_mode">[docs]</a>
-    <span class="k">def</span> <span class="nf">search_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;searches the mode of training&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">search_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search the mode of training.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        s : str</span>
+<span class="sd">            The mode of training to search for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CatalogTable</span>
+<span class="sd">            The catalog table containing the models with the specified mode of training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">idxs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">data</span>
