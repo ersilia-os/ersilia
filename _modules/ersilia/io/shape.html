@@ -74,6 +74,9 @@
 <div class="viewcode-block" id="InputShapeSingle">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.shape.InputShapeSingle">[docs]</a>
 <span></span><span class="k">class</span> <span class="nc">InputShapeSingle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing a single input shape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Single&quot;</span></div>
 
@@ -82,6 +85,9 @@
 <div class="viewcode-block" id="InputShapeList">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.shape.InputShapeList">[docs]</a>
 <span class="k">class</span> <span class="nc">InputShapeList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing a list input shape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;List&quot;</span></div>
 
@@ -90,6 +96,9 @@
 <div class="viewcode-block" id="InputShapePairOfLists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.shape.InputShapePairOfLists">[docs]</a>
 <span class="k">class</span> <span class="nc">InputShapePairOfLists</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class representing a pair of lists input shape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Pair of Lists&quot;</span></div>
 
@@ -98,7 +107,23 @@
 <div class="viewcode-block" id="InputShape">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.shape.InputShape">[docs]</a>
 <span class="k">class</span> <span class="nc">InputShape</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used to determine the input shape.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_shape : str or None</span>
+<span class="sd">        The input shape type. Can be &#39;single&#39;, &#39;list&#39;, or &#39;pair of lists&#39;. If None, defaults to &#39;Single&#39;.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &gt;&gt;&gt; shape = InputShape(&quot;list&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; shape.get().name</span>
+<span class="sd">        &#39;List&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">input_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">InputShapeSingle</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -113,6 +138,14 @@
 <div class="viewcode-block" id="InputShape.get">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.shape.InputShape.get">[docs]</a>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the input shape object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        object</span>
+<span class="sd">            The input shape object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span></div>
 </div>
 
