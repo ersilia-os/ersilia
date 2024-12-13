@@ -10,6 +10,17 @@ from ....utils.paths import resolve_pack_method
 
 
 class ModelInformer(BaseAction):
+    """
+    Class to inform about the model by writing information to a JSON file. Contains detail
+    metadata about the model.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict
+        Configuration settings for the model.
+    """
     def __init__(self, model_id, config_json):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -31,6 +42,9 @@ class ModelInformer(BaseAction):
             sf.add_info_api(information_file=self.information_file)
 
     def inform(self):
+        """
+        Write information to a JSON file and add API info for bentoml models.
+        """
         self._write_information_json()
         if resolve_pack_method(self._get_bundle_location(self.model_id)) == "bentoml":
             self._add_info_api()

@@ -10,18 +10,13 @@ home = str(Path.home())
 
 
 class ErsiliaBase(object):
-    """Base class of Ersilia.
+    """
+    Base class of Ersilia.
 
     This class is used as a configuration for many of the classes of the package.
     """
 
     def __init__(self, config_json=None, credentials_json=None):
-        """Initialize Ersilia base class.
-
-        Attributes:
-            config_json (str, optional): Path to a configuration file.
-            credentials_json (str, optional): Path to a credentials file.
-        """
         self.eos_dir = EOS
         self.config_json = config_json
         self.credentials_json = credentials_json
