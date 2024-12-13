@@ -13,12 +13,32 @@ AVAILABLE_MODES = ["system", "venv", "conda", "docker"]
 
 
 class PackModeDecision(ErsiliaBase):
-    def __init__(self, model_id, config_json):
+    """
+    A class used to decide the packaging mode for a model.
+
+    Attributes
+    ----------
+    model_id : str
+        ID of the model.
+    config_json : dict
+        Configuration settings in JSON format.
+    versioner : Versioner
+        Instance of Versioner for version checking.
+
+    Methods
+    -------
+    decide_from_config_file_if_available()
+        Decide the packaging mode from the config file if available.
+    decide()
+        Decide the packaging mode based on system and model requirements.
+    """
+
+    def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.versioner = Versioner(config_json=config_json)
 
-    def _correct_protobuf(self, version, dockerfile, protobuf_version="3.19.5"):
+    def _correct_protobuf(self, version: dict, dockerfile: DockerfileFile, protobuf_version: str = "3.19.5") -> DockerfileFile:
         if version["version"] == "0.11.0":
             self.logger.debug(
                 "Custom Ersilia BentoML is used, no need for modifying protobuf version"
@@ -35,7 +55,15 @@ class PackModeDecision(ErsiliaBase):
             )
         return dockerfile
 
-    def decide_from_config_file_if_available(self):
+    def decide_from_config_file_if_available(self) -> str:
+        """
+        Decide the packaging mode from the config file if available.
+
+        Returns
+        -------
+        str
+            Packaging mode if specified in the config file, None otherwise.
+        """
         folder = self._model_path(self.model_id)
         if not os.path.exists(os.path.join(folder, MODEL_CONFIG_FILENAME)):
             return None
@@ -53,7 +81,15 @@ class PackModeDecision(ErsiliaBase):
                 return default_mode
         return None
 
-    def decide(self):
+    def decide(self) -> str:
+        """
+        Decide the packaging mode based on system and model requirements.
+
+        Returns
+        -------
+        str
+            Decided packaging mode.
+        """
         sc = SystemChecker()
         if sc.is_github_action():
             self.logger.debug(

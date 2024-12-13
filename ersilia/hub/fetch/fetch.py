@@ -21,23 +21,66 @@ from . import STATUS_FILE, DONE_TAG
 
 
 class ModelFetcher(ErsiliaBase):
+    """
+    ModelFetcher is responsible for fetching models from various sources.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings for the fetcher.
+    credentials_json : dict, optional
+        Credentials for accessing the model hub.
+    overwrite : bool, optional
+        Whether to overwrite existing files.
+    repo_path : str, optional
+        Path to the repository.
+    mode : str, optional
+        Mode of operation, e.g., 'docker'.
+    pip : bool, optional
+        Whether to use pip for installation.
+    dockerize : bool, optional
+        Whether to dockerize the model.
+    force_from_github : bool, optional
+        Whether to force fetching from GitHub.
+    force_from_s3 : bool, optional
+        Whether to force fetching from S3.
+    force_from_dockerhub : bool, optional
+        Whether to force fetching from DockerHub.
+    force_from_hosted : bool, optional
+        Whether to force fetching from hosted services.
+    force_with_bentoml : bool, optional
+        Whether to force fetching with BentoML.
+    force_with_fastapi : bool, optional
+        Whether to force fetching with FastAPI.
+    hosted_url : str, optional
+        URL for hosted model.
+    local_dir : str, optional
+        Local directory for the model.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        fetcher = ModelFetcher(config_json=config)
+        await fetcher.fetch(model_id="eosxxxx")
+    """
     def __init__(
         self,
-        config_json=None,
-        credentials_json=None,
-        overwrite=None,
-        repo_path=None,
-        mode=None,
-        pip=False,
-        dockerize=False,
-        force_from_github=False,
-        force_from_s3=False,
-        force_from_dockerhub=False,
-        force_from_hosted=False,
-        force_with_bentoml=False,
-        force_with_fastapi=False,
-        hosted_url=None,
-        local_dir=None,
+        config_json: dict = None,
+        credentials_json: dict = None,
+        overwrite: bool = None,
+        repo_path: str = None,
+        mode: str = None,
+        pip: bool = False,
+        dockerize: bool = False,
+        force_from_github: bool = False,
+        force_from_s3: bool = False,
+        force_from_dockerhub: bool = False,
+        force_from_hosted: bool = False,
+        force_with_bentoml: bool = False,
+        force_with_fastapi: bool = False,
+        hosted_url: str = None,
+        local_dir: str = None,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -86,7 +129,7 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Model getting fetched from {0}".format(self.model_source))
 
     @throw_ersilia_exception()
-    def _decide_fetcher(self, model_id):
+    def _decide_fetcher(self, model_id: str) -> str:
         tr = TemplateResolver(model_id=model_id, repo_path=self.repo_path)
         if tr.is_bentoml():
             return PACK_METHOD_BENTOML
@@ -136,7 +179,7 @@ class ModelFetcher(ErsiliaBase):
             raise NotInstallableWithBentoML(model_id=self.model_id)
 
     @throw_ersilia_exception()
-    def _fetch_not_from_dockerhub(self, model_id):
+    def _fetch_not_from_dockerhub(self, model_id: str):
         self.model_id = model_id
         is_fetched = False
         if not self.exists(model_id):
@@ -159,20 +202,21 @@ class ModelFetcher(ErsiliaBase):
         else:
             self.logger.debug("Model already exists in your local, skipping fetching")
 
-    def _standard_csv_example(self, model_id):
+    def _standard_csv_example(self, model_id: str):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
         ms.run()
 
-    async def _fetch_from_dockerhub(self, model_id):
+    async def _fetch_from_dockerhub(self, model_id: str):
         self.logger.debug("Fetching from DockerHub")
         await self.model_dockerhub_fetcher.fetch(model_id=model_id)
 
-    def _fetch_from_hosted(self, model_id):
+    def _fetch_from_hosted(self, model_id: str):
         self.logger.debug("Fetching from hosted")
         self.model_hosted_fetcher.fetch(model_id=model_id)
         self.logger.debug("Fetching from hosted done")
 
-    def _decide_if_use_dockerhub(self, model_id):
+    def _decide_if_use_dockerhub(self, model_id: str) -> bool:
+
         if self.repo_path is not None:
             return False
         if self.force_from_dockerhub:
@@ -194,7 +238,7 @@ class ModelFetcher(ErsiliaBase):
             return False
         return True
 
-    def _decide_if_use_hosted(self, model_id):
+    def _decide_if_use_hosted(self, model_id: str) -> bool:
         if self.repo_path is not None:
             return False
         if self.force_from_dockerhub:
@@ -210,7 +254,20 @@ class ModelFetcher(ErsiliaBase):
             return True
         return False
 
-    def exists(self, model_id):
+    def exists(self, model_id: str) -> bool:
+        """
+        Check if the model exists locally.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be checked.
+
+        Returns
+        -------
+        bool
+            True if the model exists locally, False otherwise.
+        """
         status_file = os.path.join(self._model_path(model_id), STATUS_FILE)
         if not os.path.exists(status_file):
             return False
@@ -221,7 +278,7 @@ class ModelFetcher(ErsiliaBase):
         else:
             return False
 
-    async def _fetch(self, model_id):
+    async def _fetch(self, model_id: str):
         self.logger.debug("Starting fetching procedure")
         do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
         if do_dockerhub:
@@ -239,18 +296,26 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Fetching in your system, not from DockerHub")
         self._fetch_not_from_dockerhub(model_id=model_id)
 
-    async def fetch(self, model_id):
-        """Fetches a model with the given eos identifier
+    async def fetch(self, model_id: str) -> bool:
+        """
+        Fetch a model with the given eos identifier.
 
         Parameters
         ----------
         model_id : str
-            The eos identifier of the model
+            The eos identifier of the model.
 
         Returns
         -------
         bool
-            True if the model was fetched successfully, False otherwise
+            True if the model was fetched successfully, False otherwise.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            fetcher = ModelFetcher(config_json=config)
+            success = await fetcher.fetch(model_id="eosxxxx")
         """
         await self._fetch(model_id)
         try:
