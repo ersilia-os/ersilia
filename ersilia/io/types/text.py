@@ -14,6 +14,14 @@ EXAMPLES = "text.tsv"
 
 
 class IO(object):
+    """
+    Class to handle input/output operations for text data.
+
+    Parameters
+    ----------
+    input_shape : object
+        Input shape specification.
+    """
     def __init__(self, input_shape):
         self.logger = logger
         self.input_shape = input_shape
@@ -48,6 +56,124 @@ class IO(object):
                 "Input shape pair of list for text is not available in Ersilia yet!"
             )
             raise Exception
+
+    def setup(self):
+        """
+        Setup necessary requirements for text inputs.
+
+        Returns
+        -------
+        None
+        """
+        self.logger.debug("No setup is necessary for text file")
+
+    def example(self, n_samples):
+        """
+        Generate example data.
+
+        Parameters
+        ----------
+        n_samples : int
+            Number of samples to generate.
+
+        Returns
+        -------
+        generator
+            Generator yielding example data.
+        """
+        return self._example(n_samples)
+
+    def test(self):
+        """
+        Get test examples.
+
+        Returns
+        -------
+        list
+            List of test examples.
+        """
+        return self._test
+
+    def parse(self, datum):
+        """
+        Parse a datum.
+
+        Parameters
+        ----------
+        datum : any
+            The datum to parse.
+
+        Returns
+        -------
+        dict
+            Parsed datum.
+        """
+        if type(datum) is dict:
+            return datum
+        else:
+            return self._parser(datum)
+
+    def is_input(self, text):
+        """
+        Check if a text is a valid input.
+
+        Parameters
+        ----------
+        text : str
+            The text to check.
+
+        Returns
+        -------
+        bool
+            True if the text is a valid input, False otherwise.
+        """
+        if text == "input":
+            return False
+        if self.identifier._is_checksum(text):
+            return False
+        return True  # TODO
+
+    def is_key(self, text):
+        """
+        Check if a text is a valid key.
+
+        Parameters
+        ----------
+        text : str
+            The text to check.
+
+        Returns
+        -------
+        bool
+            True if the text is a valid key, False otherwise.
+        """
+        if text == "key":
+            return False
+        return self.identifier._is_checksum(text)
+
+    def string_delimiter(self):
+        """
+        Get the string delimiter.
+
+        Returns
+        -------
+        str
+            The string delimiter.
+        """
+        # TODO
+        return "$$$"
+
+    def column_delimiter(self):
+        """
+        Get the column delimiter.
+
+        Returns
+        -------
+        str
+            The column delimiter.
+        """
+        # TODO
+        return ","
 
     def _sample_example_singlets(self, n_samples):
         delimiter = None
@@ -84,15 +210,6 @@ class IO(object):
         for d in D:
             yield d
 
-    def setup(self):
-        self.logger.debug("No setup is necessary for text file")
-
-    def example(self, n_samples):
-        return self._example(n_samples)
-
-    def test(self):
-        return self._test
-
     def _parse_text(self, datum):
         text = str(datum)
         inp = text
@@ -109,29 +226,3 @@ class IO(object):
         key = self.arbitrary_identifier.encode(text)
         result = {"key": key, "input": inp, "text": text}
         return result
-
-    def parse(self, datum):
-        if type(datum) is dict:
-            return datum
-        else:
-            return self._parser(datum)
-
-    def is_input(self, text):
-        if text == "input":
-            return False
-        if self.identifier._is_checksum(text):
-            return False
-        return True  # TODO
-
-    def is_key(self, text):
-        if text == "key":
-            return False
-        return self.identifier._is_checksum(text)
-
-    def string_delimiter(self):
-        # TODO
-        return "$$$"
-
-    def column_delimiter(self):
-        # TODO
-        return ","

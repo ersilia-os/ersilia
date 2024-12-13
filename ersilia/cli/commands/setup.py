@@ -17,11 +17,13 @@ def setup_cmd():
 
     Examples
     --------
-    Set up the environment with full installation:
-    $ ersilia setup --full
+    .. code-block:: console
 
-    Set up the environment with base installation:
-    $ ersilia setup --base
+        Set up the environment with full installation:
+        $ ersilia setup --full
+
+        Set up the environment with base installation:
+        $ ersilia setup --base
     """
     # Example usage: ersilia setup
     @ersilia_cli.command(
