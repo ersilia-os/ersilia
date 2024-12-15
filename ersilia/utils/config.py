@@ -20,6 +20,16 @@ ERSILIA_SECRETS_GITHUB_REPO = "ersilia-secrets"
 
 
 class Checker(object):
+    """
+    A class to check and manage configuration and credentials files.
+
+    Methods
+    -------
+    config()
+        Ensure the configuration file exists.
+    get_development_path()
+        Get the development path.
+    """
     def __init__(self):
         self.development_path = None
         self._config()
@@ -78,6 +88,15 @@ class Checker(object):
                     os.symlink(src, dst)
 
     def config(self):
+        """
+        Ensure the configuration file exists.
+
+        If the configuration file does not exist, it will be created by copying from the development path or downloading from GitHub.
+
+        Returns
+        -------
+        None
+        """
         if os.path.exists(os.path.join(EOS, CONFIG_JSON)):
             return
         os.makedirs(EOS, exist_ok=True)
@@ -101,15 +120,20 @@ class Checker(object):
             )
 
     def get_development_path(self):
+        """
+        Get the development path.
+
+        Returns
+        -------
+        str
+            The development path.
+        """
         self._package_path()
         return self.development_path
 
 
 class _Field(object):
-    """Config Field placeholder."""
-
     def __init__(self, field_kv):
-        """Initialize updating __dict__ and evaluating values."""
         tmp = dict()
         for k, v in field_kv.items():
             if type(v) == dict:
@@ -145,8 +169,19 @@ class Config(object):
     """Config class.
 
     An instance of this object holds config file section as attributes.
-    """
 
+    Parameters
+    ----------
+    json_file : str, optional
+        The path to the JSON configuration file. Default is None.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        config = Config()
+        print(config.keys())
+    """
     def __init__(self, json_file=None):
         """Initialize a Config instance.
 
@@ -163,17 +198,32 @@ class Config(object):
         self.__dict__.update(eval_obj_dict)
 
     def keys(self):
+        """
+        Get the keys of the configuration.
+
+        Returns
+        -------
+        dict_keys
+            The keys of the configuration.
+        """
         return self.__dict__.keys()
 
 
 class Secrets(object):
+    """
+    A class to manage secrets and credentials.
+
+    Parameters
+    ----------
+    overwrite : bool, optional
+        Whether to overwrite existing files. Default is True.
+    """
     def __init__(self, overwrite=True):
         self.overwrite = overwrite
         self.secrets_json = os.path.join(EOS, SECRETS_JSON)
         self.gdrive_client_secrets_json = os.path.join(EOS, GDRIVE_CLIENT_SECRETS_JSON)
 
     def _fetch_from_github(self, remote_path, local_path):
-        """Fetch filename from ersilia-secrets repository"""
         from ..auth.auth import Auth
 
         auth = Auth()
@@ -188,15 +238,41 @@ class Secrets(object):
             )
 
     def fetch_from_github(self):
+        """
+        Fetch secrets from the GitHub repository.
+
+        Returns
+        -------
+        None
+        """
         self._fetch_from_github(SECRETS_JSON, self.secrets_json)
 
     def fetch_gdrive_secrets_from_github(self):
+        """
+        Fetch Google Drive client secrets from the GitHub repository.
+
+        Returns
+        -------
+        None
+        """
         self._fetch_from_github(
             GDRIVE_CLIENT_SECRETS_JSON, self.gdrive_client_secrets_json
         )
 
     def to_credentials(self, json_file):
-        """Convert secrets to credentials file"""
+        """
+        Convert secrets to a credentials file.
+
+        Parameters
+        ----------
+        json_file : str
+            The path to the credentials file.
+
+        Returns
+        -------
+        bool
+            True if the credentials file was created successfully, False otherwise.
+        """
         if not os.path.exists(self.secrets_json):
             return False
         with open(self.secrets_json, "r") as f:
@@ -213,6 +289,21 @@ class Secrets(object):
 
 
 class Credentials(object):
+    """
+    A class to manage credentials.
+
+    Parameters
+    ----------
+    json_file : str, optional
+        The path to the JSON credentials file. Default is None.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        credentials = Credentials()
+        print(credentials.keys())
+    """
     def __init__(self, json_file=None):
         if json_file is None:
             try:
@@ -229,6 +320,14 @@ class Credentials(object):
             self.exists = False
 
     def keys(self):
+        """
+        Get the keys of the credentials.
+
+        Returns
+        -------
+        dict_keys
+            The keys of the credentials.
+        """
         return self.__dict__.keys()
 
 

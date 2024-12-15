@@ -15,6 +15,13 @@ LENGTH = 8
 
 
 class ShortIdentifier(object):
+    """
+    A class to generate short identifiers.
+
+    Parameters
+    ----------
+    None
+    """
     def __init__(self):
         if Hashids is None:
             self.hashids = None
@@ -22,7 +29,14 @@ class ShortIdentifier(object):
             self.hashids = Hashids(salt="ersilia is open source", alphabet=ALPHABET)
 
     def encode(self):
-        """Short identifier based on timestamp"""
+        """
+        Generate a short identifier based on the current timestamp or a random number.
+
+        Returns
+        -------
+        str
+            A short identifier string.
+        """
         if self.hashids is None:
             return "".join([random.choice(ALPHABET) for _ in range(LENGTH)])
         else:

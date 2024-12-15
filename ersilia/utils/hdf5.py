@@ -3,6 +3,20 @@ import numpy as np
 
 
 class Hdf5Data(object):
+    """
+    A class to handle HDF5 data storage.
+
+    Parameters
+    ----------
+    values : array-like
+        The data values.
+    keys : array-like
+        The keys associated with the data.
+    inputs : array-like
+        The inputs associated with the data.
+    features : array-like
+        The features associated with the data.
+    """
     def __init__(self, values, keys, inputs, features):
         self.values = np.array(values, dtype=np.float32)
         self.keys = np.array(keys, dtype=h5py.string_dtype())
@@ -10,6 +24,18 @@ class Hdf5Data(object):
         self.features = np.array(features, dtype=h5py.string_dtype())
 
     def save(self, filename):
+        """
+        Save the data to an HDF5 file.
+
+        Parameters
+        ----------
+        filename : str
+            The path to the HDF5 file.
+
+        Returns
+        -------
+        None
+        """
         with h5py.File(filename, "w") as f:
             f.create_dataset("Values", data=self.values)
             f.create_dataset("Keys", data=self.keys)
@@ -18,6 +44,14 @@ class Hdf5Data(object):
 
 
 class Hdf5DataLoader(object):
+    """
+    A class to load data from HDF5 files.
+
+    Methods
+    -------
+    load(h5_file)
+        Load data from an HDF5 file.
+    """
     def __init__(self):
         self.values = None
         self.keys = None
@@ -25,6 +59,18 @@ class Hdf5DataLoader(object):
         self.features = None
 
     def load(self, h5_file):
+        """
+        Load data from an HDF5 file.
+
+        Parameters
+        ----------
+        h5_file : str
+            The path to the HDF5 file.
+
+        Returns
+        -------
+        None
+        """
         with h5py.File(h5_file, "r") as f:
             self.values = f["Values"][:]
             self.keys = [x.decode("utf-8") for x in f["Keys"][:]]
@@ -33,10 +79,30 @@ class Hdf5DataLoader(object):
 
 
 class Hdf5DataStacker(object):
+    """
+    A class to stack multiple HDF5 files into one.
+
+    Parameters
+    ----------
+    h5_files : list
+        A list of paths to the HDF5 files to stack.
+    """
     def __init__(self, h5_files):
         self.h5_files = h5_files
 
     def stack(self, h5_file):
+        """
+        Stack the HDF5 files into one.
+
+        Parameters
+        ----------
+        h5_file : str
+            The path to the output HDF5 file.
+
+        Returns
+        -------
+        None
+        """
         with h5py.File(h5_file, "a") as f0:
             for i, h5 in enumerate(self.h5_files):
                 with h5py.File(h5, "r") as f1:

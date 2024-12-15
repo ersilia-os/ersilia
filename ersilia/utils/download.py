@@ -18,6 +18,14 @@ from ..utils.logging import make_temp_dir
 
 
 class PseudoDownloader(object):
+    """
+    A class to simulate downloading by copying local directories.
+
+    Parameters
+    ----------
+    overwrite : bool
+        Whether to overwrite existing files.
+    """
     def __init__(self, overwrite):
         self.overwrite = overwrite
 
@@ -33,17 +41,56 @@ class PseudoDownloader(object):
         shutil.copytree(src, dst)
 
     def fetch(self, src, dst):
-        """Copy entire directory"""
+        """
+        Copy entire directory.
+
+        Parameters
+        ----------
+        src : str
+            The source directory.
+        dst : str
+            The destination directory.
+
+        Returns
+        -------
+        None
+        """
         self._copy_local_directory(
             src, dst
         )  # TODO: Add smart functions to deal with zipped files etc.
 
 
 class OsfDownloader(object):
+    """
+    A class to download files from the Open Science Framework (OSF).
+
+    Parameters
+    ----------
+    overwrite : bool
+        Whether to overwrite existing files.
+    """
     def __init__(self, overwrite):
         self.overwrite = overwrite
 
     def fetch(self, project_id, filename, destination, tmp_folder):
+        """
+        Fetch a file from OSF.
+
+        Parameters
+        ----------
+        project_id : str
+            The OSF project ID.
+        filename : str
+            The name of the file to fetch.
+        destination : str
+            The destination directory.
+        tmp_folder : str
+            The temporary folder to use.
+
+        Returns
+        -------
+        None
+        """
         src = os.path.basename(filename)
         outfile = os.path.join(destination, src)
         if os.path.exists(outfile):
@@ -59,6 +106,13 @@ class OsfDownloader(object):
 
 
 class GoogleDriveDownloader(object):
+    """
+    A class to download files from Google Drive.
+
+    Parameters
+    ----------
+    None
+    """
     def __init__(self):
         pass
 
@@ -78,6 +132,20 @@ class GoogleDriveDownloader(object):
                     f.write(chunk)
 
     def download_file_from_google_drive(self, file_id, destination):
+        """
+        Download a file from Google Drive.
+
+        Parameters
+        ----------
+        file_id : str
+            The Google Drive file ID.
+        destination : str
+            The destination path.
+
+        Returns
+        -------
+        None
+        """
         url = "https://docs.google.com/uc?export=download"
         session = requests.Session()
         response = session.get(url, params={"id": file_id}, stream=True)
@@ -88,7 +156,20 @@ class GoogleDriveDownloader(object):
         self.save_response_content(response, destination)
 
     def fetch_zip(self, file_id, destination):
-        """Download file from google docs. The file id is necessary. A .zip file is assumed."""
+        """
+        Download a ZIP file from Google Drive and extract it.
+
+        Parameters
+        ----------
+        file_id : str
+            The Google Drive file ID.
+        destination : str
+            The destination directory.
+
+        Returns
+        -------
+        None
+        """
         tmp_zip = tempfile.NamedTemporaryFile(dir=destination).name + ".zip"
         self.download_file_from_google_drive(file_id, tmp_zip)
         with zipfile.ZipFile(tmp_zip, "r") as zip_ref:
@@ -97,6 +178,16 @@ class GoogleDriveDownloader(object):
 
 
 class GitHubDownloader(object):
+    """
+    A class to download files and repositories from GitHub.
+
+    Parameters
+    ----------
+    overwrite : bool
+        Whether to overwrite existing files.
+    token : str, optional
+        The GitHub token for authentication. Default is None.
+    """
     def __init__(self, overwrite, token=None):
         self.logger = logger
 
@@ -259,6 +350,24 @@ class GitHubDownloader(object):
         self.logger.info("🚀 Model starting...")
 
     def clone(self, org, repo, destination, ungit=False):
+        """
+        Clone a GitHub repository.
+
+        Parameters
+        ----------
+        org : str
+            The GitHub organization name.
+        repo : str
+            The GitHub repository name.
+        destination : str
+            The destination directory.
+        ungit : bool, optional
+            Whether to remove Git-related files. Default is False.
+
+        Returns
+        -------
+        None
+        """
         if os.path.exists(destination):
             if self.overwrite:
                 shutil.rmtree(destination)
@@ -297,6 +406,25 @@ class GitHubDownloader(object):
         return is_done
 
     def download_single(self, org, repo, repo_path, destination):
+        """
+        Download a single file from a GitHub repository.
+
+        Parameters
+        ----------
+        org : str
+            The GitHub organization name.
+        repo : str
+            The GitHub repository name.
+        repo_path : str
+            The path to the file in the repository.
+        destination : str
+            The destination path.
+
+        Returns
+        -------
+        bool
+            True if the file was downloaded successfully, False otherwise.
+        """
         if os.path.exists(destination):
             if self.overwrite:
                 if os.path.isfile(destination):
@@ -322,10 +450,33 @@ class GitHubDownloader(object):
 
 
 class S3Downloader(object):
+    """
+    A class to download files from an S3 bucket.
+
+    Parameters
+    ----------
+    None
+    """
     def __init__(self):
         pass
 
     def download_from_s3(self, bucket_url, file_name, destination):
+        """
+        Download a file from an S3 bucket.
+
+        Parameters
+        ----------
+        bucket_url : str
+            The URL of the S3 bucket.
+        file_name : str
+            The name of the file to download.
+        destination : str
+            The destination path.
+
+        Returns
+        -------
+        None
+        """
         s3_url = bucket_url + "/" + file_name
         response = requests.get(s3_url)
         response.raise_for_status()

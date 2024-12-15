@@ -4,6 +4,16 @@ import json
 
 
 class CsvDataLoader(object):
+    """
+    A class to load and process data from CSV and JSON files.
+
+    Methods
+    -------
+    load(csv_file)
+        Load data from a CSV file.
+    read(file_path)
+        Read data from a CSV, TSV, or JSON file.
+    """
     def __init__(self):
         self.values = None
         self.keys = None
@@ -11,6 +21,18 @@ class CsvDataLoader(object):
         self.features = None
 
     def load(self, csv_file):
+        """
+        Load data from a CSV file.
+
+        Parameters
+        ----------
+        csv_file : str
+            The path to the CSV file.
+
+        Returns
+        -------
+        None
+        """
         with open(csv_file, "r") as f:
             reader = csv.reader(f)
             self.features = [
@@ -36,12 +58,23 @@ class CsvDataLoader(object):
 
     def read(self, file_path):
         """
-        Reads a file and returns the data as a list of dictionaries.
+        Read data from a CSV, TSV, or JSON file.
 
-        :param file_path: Path to the CSV file.
-        :return: A list of dictionaries containing the CSV data.
+        Parameters
+        ----------
+        file_path : str
+            The path to the file.
+
+        Returns
+        -------
+        list or dict
+            The data read from the file.
+
+        Raises
+        ------
+        ValueError
+            If the file format is unsupported.
         """
-
         file_extension = os.path.splitext(file_path)[1].lower()
         if file_extension == ".json":
             return self._read_json(file_path)
