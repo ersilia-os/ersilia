@@ -19,8 +19,10 @@ def close_cmd():
 
     Examples
     --------
-    Close the current session:
-    $ ersilia close
+    .. code-block:: console
+
+        Close the current session:
+        $ ersilia close
     """
     # Example usage: ersilia close {MODEL}
     @ersilia_cli.command(short_help="Close model", help="Close model")

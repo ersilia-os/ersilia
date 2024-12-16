@@ -16,11 +16,13 @@ def test_cmd():
 
     Examples
     --------
-    With default settings:
-    $ ersilia test my_model -d /path/to/model
+    .. code-block:: console
 
-    With deep testing level and inspect:
-    $ ersilia test my_model -d /path/to/model --level deep --inspect --remote
+        With default settings:
+        $ ersilia test my_model -d /path/to/model
+
+        With deep testing level and inspect:
+        $ ersilia test my_model -d /path/to/model --level deep --inspect --remote
     """
     @ersilia_cli.command(
         short_help="Test a model",

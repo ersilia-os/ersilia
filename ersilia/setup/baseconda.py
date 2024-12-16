@@ -12,26 +12,77 @@ from .. import logger
 
 
 class SetupBaseConda(object):
+    """
+    A class to handle the setup of a base Conda environment for the model server.
+
+    Methods
+    -------
+    find_closest_python_version(python_version)
+        Finds the closest available Python version.
+    setup(org, tag)
+        Creates a Conda environment to be used as base environment for the model server.
+    delete(org, tag)
+        Deletes the specified Conda environment.
+    """
     def __init__(self, config_json=None):
         self.conda = SimpleConda()
         self.versions = Versioner()
         self.cloner = ErsiliaCloner(config_json=config_json)
 
     @staticmethod
-    def _is_ersiliaos(org):
+    def _is_ersiliaos(org: str) -> bool:
+        """
+        Checks if the organization is ErsiliaOS.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+
+        Returns
+        -------
+        bool
+            True if the organization is ErsiliaOS, False otherwise.
+        """
         if org == "ersiliaos":
             return True
         else:
             return False
 
     @staticmethod
-    def _is_bentoml(org):
+    def _is_bentoml(org: str) -> bool:
+        """
+        Checks if the organization is BentoML.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+
+        Returns
+        -------
+        bool
+            True if the organization is BentoML, False otherwise.
+        """
         if org == "bentoml":
             return True
         else:
             return False
 
-    def _parse_tag(self, tag):
+    def _parse_tag(self, tag: str) -> dict:
+        """
+        Parses the tag to extract version and Python version information.
+
+        Parameters
+        ----------
+        tag : str
+            The tag in the format '0.0.0-py37'.
+
+        Returns
+        -------
+        dict
+            A dictionary containing version and Python version information.
+        """
         tag = tag.split("-")
         data = {
             "ver": tag[0],
@@ -40,7 +91,22 @@ class SetupBaseConda(object):
         }
         return data
 
-    def _install_command(self, org, tag):
+    def _install_command(self, org: str, tag: str) -> str:
+        """
+        Generates the install command based on the organization and tag.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+        tag : str
+            The tag in the format '0.0.0-py37'.
+
+        Returns
+        -------
+        str
+            The install command.
+        """
         tag = self._parse_tag(tag)
         if self._is_bentoml(org):
             if tag["ver"] == "0.11.0":
@@ -55,10 +121,38 @@ class SetupBaseConda(object):
             raise Exception
         return cmd
 
-    def _get_env_name(self, org, tag):
+    def _get_env_name(self, org: str, tag: str) -> str:
+        """
+        Generates the environment name based on the organization and tag.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+        tag : str
+            The tag in the format '0.0.0-py37'.
+
+        Returns
+        -------
+        str
+            The environment name.
+        """
         return self.versions.base_conda_name(org, tag)
 
-    def find_closest_python_version(self, python_version):
+    def find_closest_python_version(self, python_version: str) -> str:
+        """
+        Finds the closest available Python version.
+
+        Parameters
+        ----------
+        python_version : str
+            The desired Python version.
+
+        Returns
+        -------
+        str
+            The closest available Python version.
+        """
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "conda_search_python.txt")
         tmp_script = os.path.join(tmp_folder, "script.sh")
@@ -83,12 +177,20 @@ class SetupBaseConda(object):
                 kept += [v]
         return ".".join(kept[0].split(".")[:2])
 
-    def setup(self, org, tag):
-        """Creates a conda environment to be used as base environment for the model server.
+    def setup(self, org: str, tag: str) -> None:
+        """
+        Creates a Conda environment to be used as base environment for the model server.
 
-        Args:
-            org: organisation (bentoml or ersiliaos)
-            tag: 0.0.0-py37 format
+        Parameters
+        ----------
+        org : str
+            The organization name (bentoml or ersiliaos).
+        tag : str
+            The tag in the format '0.0.0-py37'.
+
+        Returns
+        -------
+        None
         """
         env = self._get_env_name(org, tag)
         if self.conda.exists(env):
@@ -124,6 +226,20 @@ class SetupBaseConda(object):
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
 
-    def delete(self, org, tag):
+    def delete(self, org: str, tag: str) -> None:
+        """
+        Deletes the specified Conda environment.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+        tag : str
+            The tag in the format '0.0.0-py37'.
+
+        Returns
+        -------
+        None
+        """
         env = self._get_env_name(org, tag)
         self.conda.delete(env)

@@ -54,7 +54,6 @@ class FileLike:
         - ``https://site.com/input.csv`` (Not implemented)
 
     name : str, default None
-
     """
 
     bytes_: Optional[bytes] = None
@@ -148,7 +147,6 @@ class HTTPHeaders(CIMultiDict):
     from_dict : create a HTTPHeaders object from a dict
 
     from_sequence : create a HTTPHeaders object from a list/tuple
-
     """
 
     @property
@@ -191,7 +189,6 @@ class HTTPRequest:
     headers : HTTPHeaders
 
     body : bytes
-
     """
 
     headers: HTTPHeaders = HTTPHeaders()
@@ -315,7 +312,6 @@ class InferenceResult(Generic[Output]):
         """
         Generate InferenceResults based on successful inference results and
         fallback results of discarded tasks.
-
         """
         iterable_results = iter(results)
         try:

@@ -8,13 +8,36 @@ from ...utils.versioning import Versioner
 
 
 class ErsiliaCloner(ErsiliaBase):
+    """
+    A class to handle cloning of the Ersilia repository.
+
+    Methods
+    -------
+    clone(path, version)
+        Clones the Ersilia repository to the specified path and version.
+    """
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         checker = Checker()
         checker._package_path()
         self.development_path = checker.get_development_path()
 
-    def clone(self, path, version):
+    def clone(self, path: str, version: str) -> str:
+        """
+        Clones the Ersilia repository to the specified path and version.
+
+        Parameters
+        ----------
+        path : str
+            The path where the repository should be cloned.
+        version : str
+            The version of the repository to clone.
+
+        Returns
+        -------
+        str
+            The path to the cloned repository.
+        """
         path_repo = os.path.join(path, self.cfg.HUB.PACKAGE)
         if self.development_path is not None:
             path_version = Versioner().ersilia_version_from_path(self.development_path)

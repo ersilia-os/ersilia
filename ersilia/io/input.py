@@ -20,9 +20,56 @@ from ..default import PREDEFINED_EXAMPLE_FILES
 
 
 class BaseIOGetter(ErsiliaBase):
+    """
+    Base class to get IO handlers based on model or specifications.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration JSON.
+    """
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mc = ModelCard(config_json=config_json)
+
+    def shape(self, model_id):
+        """
+        Get the input shape from the model card.
+
+        Parameters
+        ----------
+        model_id : str
+            Model identifier.
+
+        Returns
+        -------
+        InputShape
+            Input shape object.
+        """
+        return self._read_shape_from_card(model_id)
+
+    def get(self, model_id=None, input_type=None, input_shape=None):
+        """
+        Get the IO handler based on model or specifications.
+
+        Parameters
+        ----------
+        model_id : str, optional
+            Model identifier.
+        input_type : str, optional
+            Input type.
+        input_shape : str, optional
+            Input shape.
+
+        Returns
+        -------
+        IO
+            IO handler object.
+        """
+        if model_id is not None:
+            return self._get_from_model(model_id=model_id)
+        else:
+            return self._get_from_specs(input_type=input_type, input_shape=input_shape)
 
     def _read_input_from_card(self, model_id):
         self.logger.debug("Reading card from {0}".format(model_id))
@@ -47,9 +94,6 @@ class BaseIOGetter(ErsiliaBase):
         self.logger.debug("Input Shape: {0}".format(input_shape))
         return InputShape(input_shape).get()
 
-    def shape(self, model_id):
-        return self._read_shape_from_card(model_id)
-
     def _get_from_model(self, model_id):
         input_type = self._read_input_from_card(model_id)
         if input_type is None:
@@ -71,16 +115,39 @@ class BaseIOGetter(ErsiliaBase):
             input_shape=input_shape
         )
 
-    def get(self, model_id=None, input_type=None, input_shape=None):
-        if model_id is not None:
-            return self._get_from_model(model_id=model_id)
-        else:
-            return self._get_from_specs(input_type=input_type, input_shape=input_shape)
-
 
 class _GenericAdapter(object):
+    """
+    Class to adapt various input formats to a standard format.
+
+    This class handles different types of inputs such as files, lists, and strings,
+    and converts them into a standard format that can be processed by the IO handler.
+
+    Parameters
+    ----------
+    BaseIO : object
+        Base IO handler object.
+    """
     def __init__(self, BaseIO):
         self.IO = BaseIO
+
+    def adapt(self, inp):
+        """
+        Adapt the input to a standard format.
+
+        Parameters
+        ----------
+        inp : any
+            The input data.
+
+        Returns
+        -------
+        list
+            List of adapted data.
+        """
+        data = self._adapt(inp)
+        data = [self.IO.parse(d) for d in data]
+        return data
 
     def _is_file(self, inp):
         if not self._is_string(inp):
@@ -148,13 +215,25 @@ class _GenericAdapter(object):
         if self._is_python_instance(inp):
             return self._py_input_reader(inp)
 
-    def adapt(self, inp):
-        data = self._adapt(inp)
-        data = [self.IO.parse(d) for d in data]
-        return data
-
 
 class GenericInputAdapter(object):
+    """
+    Class to adapt generic inputs to a standard format.
+
+    This class uses the _GenericAdapter to handle different types of inputs and
+    convert them into a standard format that can be processed in batches or one by one.
+
+    Parameters
+    ----------
+    model_id : str, optional
+        Model identifier.
+    input_type : str, optional
+        Input type.
+    input_shape : str, optional
+        Input shape.
+    config_json : dict, optional
+        Configuration JSON.
+    """
     def __init__(
         self, model_id=None, input_type=None, input_shape=None, config_json=None
     ):
@@ -162,6 +241,44 @@ class GenericInputAdapter(object):
             model_id=model_id, input_type=input_type, input_shape=input_shape
         )
         self.adapter = _GenericAdapter(baseio)
+
+    def adapt(self, inp, batch_size):
+        """
+        Adapt the input data in batches.
+
+        Parameters
+        ----------
+        inp : any
+            The input data.
+        batch_size : int
+            Size of each batch.
+
+        Yields
+        ------
+        list
+            List of adapted data in batches.
+        """
+        data = self.adapter.adapt(inp)
+        for chunk in self.batch_iter(data, batch_size):
+            yield chunk
+
+    def adapt_one_by_one(self, inp):
+        """
+        Adapt the input data one by one.
+
+        Parameters
+        ----------
+        inp : any
+            The input data.
+
+        Yields
+        ------
+        dict
+            Adapted data.
+        """
+        data = self.adapter.adapt(inp)
+        for d in data:
+            yield d
 
     def batch_iter(self, data, batch_size):
         it = iter(data)
@@ -171,18 +288,18 @@ class GenericInputAdapter(object):
                 break
             yield chunk
 
-    def adapt(self, inp, batch_size):
-        data = self.adapter.adapt(inp)
-        for chunk in self.batch_iter(data, batch_size):
-            yield chunk
-
-    def adapt_one_by_one(self, inp):
-        data = self.adapter.adapt(inp)
-        for d in data:
-            yield d
-
 
 class ExampleGenerator(ErsiliaBase):
+    """
+    Class to generate examples for a model.
+
+    Parameters
+    ----------
+    model_id : str
+        Model identifier.
+    config_json : dict, optional
+        Configuration JSON.
+    """
     def __init__(self, model_id, config_json=None):
         self.model_id = model_id
         self.IO = BaseIOGetter(config_json=config_json).get(model_id)
@@ -198,35 +315,35 @@ class ExampleGenerator(ErsiliaBase):
         if type(self.input_shape) is InputShapePairOfLists:
             self._flatten = self._flatten_pair_of_lists
 
-    @throw_ersilia_exception()
-    def check_model_id(self, model_id):
-        if model_id is None:
-            raise NullModelIdentifierError(model=model_id)
-
-    @staticmethod
-    def _get_delimiter(file_name):
-        extension = file_name.split(".")[-1]
-        if extension == "tsv":
-            return "\t"
-        else:
-            return ","
-
-    def _flatten_single(self, datum):
-        return [datum]
-
-    def _flatten_list(self, datum):
-        return [self._string_delimiter.join(datum)]
-
-    def _flatten_pair_of_lists(self, datum):
-        return [
-            self._string_delimiter.join(datum[0]),
-            self._string_delimiter.join(datum[1]),
-        ]
-
     def test(self):
+        """
+        Get test examples.
+
+        Returns
+        -------
+        list
+            List of test examples.
+        """
         return self.IO.test()
 
     def random_example(self, n_samples, file_name, simple):
+        """
+        Generate random example data.
+
+        Parameters
+        ----------
+        n_samples : int
+            Number of samples to generate.
+        file_name : str
+            File name to save the examples.
+        simple : bool
+            Whether to generate simple examples.
+
+        Returns
+        -------
+        list or None
+            List of example data or None if saved to file.
+        """
         if not self._force_simple:
             simple = simple
         else:
@@ -258,6 +375,19 @@ class ExampleGenerator(ErsiliaBase):
                             writer.writerow([v["key"], v["input"], v["text"]])
 
     def predefined_example(self, file_name):
+        """
+        Get predefined example data.
+
+        Parameters
+        ----------
+        file_name : str
+            File name to save the examples.
+
+        Returns
+        -------
+        bool
+            True if predefined examples are available, False otherwise.
+        """
         dest_folder = self._model_path(self.model_id)
         for pf in PREDEFINED_EXAMPLE_FILES:
             example_file = os.path.join(dest_folder, pf)
@@ -268,6 +398,25 @@ class ExampleGenerator(ErsiliaBase):
                 return False
 
     def example(self, n_samples, file_name, simple, try_predefined):
+        """
+        Generate example data.
+
+        Parameters
+        ----------
+        n_samples : int
+            Number of samples to generate.
+        file_name : str
+            File name to save the examples.
+        simple : bool
+            Whether to generate simple examples.
+        try_predefined : bool
+            Whether to try predefined examples first.
+
+        Returns
+        -------
+        list or str
+            List of example data or file content if saved to file.
+        """
         predefined_available = False
         if try_predefined is True and file_name is not None:
             self.logger.debug("Trying with predefined input")
@@ -281,3 +430,45 @@ class ExampleGenerator(ErsiliaBase):
             return self.random_example(
                 n_samples=n_samples, file_name=file_name, simple=simple
             )
+
+    @throw_ersilia_exception()
+    def check_model_id(self, model_id):
+        """
+        Check if the model ID is valid.
+
+        Parameters
+        ----------
+        model_id : str
+            Model identifier.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        NullModelIdentifierError
+            If the model ID is None.
+        """
+        if model_id is None:
+            raise NullModelIdentifierError(model=model_id)
+
+    @staticmethod
+    def _get_delimiter(file_name):
+        extension = file_name.split(".")[-1]
+        if extension == "tsv":
+            return "\t"
+        else:
+            return ","
+
+    def _flatten_single(self, datum):
+        return [datum]
+
+    def _flatten_list(self, datum):
+        return [self._string_delimiter.join(datum)]
+
+    def _flatten_pair_of_lists(self, datum):
+        return [
+            self._string_delimiter.join(datum[0]),
+            self._string_delimiter.join(datum[1]),
+        ]
