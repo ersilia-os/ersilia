@@ -88,6 +88,18 @@
 <div class="viewcode-block" id="ModelStorager">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelStorager</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for storing models in the local data directory and in OSF.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : str, optional</span>
+<span class="sd">        Path to the configuration JSON file.</span>
+<span class="sd">    credentials_json : str, optional</span>
+<span class="sd">        Path to the credentials JSON file.</span>
+<span class="sd">    overwrite : bool, optional</span>
+<span class="sd">        Whether to overwrite existing files. Default is True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -127,8 +139,17 @@
 
 <div class="viewcode-block" id="ModelStorager.store">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelStorager.store">[docs]</a>
-    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store model in the local data directory and in OSF.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store model in the local data directory and in OSF.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to the model directory.</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The ID of the model to be stored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_copy_to_local</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_upload_to_osf</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 </div>
@@ -138,6 +159,23 @@
 <div class="viewcode-block" id="ModelRemover">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelRemover">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelRemover</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for removing models from OSF.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : str, optional</span>
+<span class="sd">        Path to the configuration JSON file.</span>
+<span class="sd">    credentials_json : str, optional</span>
+<span class="sd">        Path to the credentials JSON file.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        remover = ModelRemover(config_json=&quot;path/to/config.json&quot;, credentials_json=&quot;path/to/credentials.json&quot;)</span>
+<span class="sd">        remover.remove(model_id=&quot;model_id&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -148,7 +186,15 @@
 
 <div class="viewcode-block" id="ModelRemover.remove">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.store.ModelRemover.remove">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove model from OSF.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The ID of the model to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">zip_file</span> <span class="o">=</span> <span class="s2">&quot;models/&quot;</span> <span class="o">+</span> <span class="n">model_id</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">osf_rm</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">OSF_PROJECT</span><span class="p">,</span> <span class="n">zip_file</span><span class="p">)</span></div>
 </div>

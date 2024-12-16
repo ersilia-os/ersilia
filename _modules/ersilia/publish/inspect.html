@@ -90,7 +90,9 @@
     <span class="n">RUN_FILE</span><span class="p">,</span>
     <span class="n">PREDEFINED_EXAMPLE_FILES</span>
 <span class="p">)</span>
+
 <span class="n">Result</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Result&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">])</span>
+
 <span class="c1"># Base URL for the Ersilia OS Github</span>
 <span class="n">BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/ersilia-os/&quot;</span>
 <span class="n">RAW_CONTENT_URL</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{model}</span><span class="s2">/main/&quot;</span>
@@ -100,7 +102,26 @@
 <div class="viewcode-block" id="ModelInspector">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelInspector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for inspecting model repositories.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : str</span>
+<span class="sd">        The ID of the model to be inspected.</span>
+<span class="sd">    dir : str</span>
+<span class="sd">        The directory where the model repository is located.</span>
+<span class="sd">    config_json : str, optional</span>
+<span class="sd">        Path to the configuration JSON file.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        inspector = ModelInspector(model=&quot;model_id&quot;, dir=&quot;path/to/repo&quot;)</span>
+<span class="sd">        result = inspector.check_repo_exists()</span>
+<span class="sd">        result = inspector.check_complete_metadata()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">RUN_FILE</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;model/framework/</span><span class="si">{</span><span class="n">RUN_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
     
     <span class="n">COMMON_FILES</span> <span class="o">=</span> <span class="p">[</span>
@@ -146,7 +167,8 @@
         <span class="s2">&quot;S3&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;DockerHub&quot;</span>
     <span class="p">]</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="nb">dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE_URL</span><span class="si">}{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -157,6 +179,14 @@
 <div class="viewcode-block" id="ModelInspector.get_pack_type">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.get_pack_type">[docs]</a>
     <span class="k">def</span> <span class="nf">get_pack_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine the packaging method of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The packaging method, either &#39;bentoml&#39; or &#39;fastapi&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
             <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span>
@@ -172,6 +202,14 @@
 <div class="viewcode-block" id="ModelInspector.check_repo_exists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_repo_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">check_repo_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model repository exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Result</span>
+<span class="sd">            A namedtuple containing the success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_url</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
                 <span class="kc">True</span><span class="p">,</span> 
@@ -186,6 +224,14 @@
 <div class="viewcode-block" id="ModelInspector.check_complete_metadata">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_metadata">[docs]</a>
     <span class="k">def</span> <span class="nf">check_complete_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the metadata file is complete.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Result</span>
+<span class="sd">            A namedtuple containing the success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content_url</span><span class="si">}{</span><span class="n">METADATA_JSON_FILE</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="s2">&quot;bentoml&quot;</span> \
             <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">content_url</span><span class="si">}{</span><span class="n">METADATA_YAML_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url_exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
@@ -241,6 +287,14 @@
 <div class="viewcode-block" id="ModelInspector.check_dependencies_are_valid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_dependencies_are_valid">[docs]</a>
     <span class="k">def</span> <span class="nf">check_dependencies_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the dependencies in the Dockerfile or install.yml are valid.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Result</span>
+<span class="sd">            A namedtuple containing the success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
             <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> 
             <span class="n">PACK_METHOD_FASTAPI</span>
@@ -273,7 +327,6 @@
 
 
     <span class="k">def</span> <span class="nf">_get_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -301,8 +354,15 @@
 <div class="viewcode-block" id="ModelInspector.check_complete_folder_structure">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_complete_folder_structure">[docs]</a>
     <span class="k">def</span> <span class="nf">check_complete_folder_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">invalid_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_repo_structure</span><span class="p">(</span>
-        <span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the folder structure of the repository is complete.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Result</span>
+<span class="sd">            A namedtuple containing the success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">invalid_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_repo_structure</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">invalid_items</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
                 <span class="kc">False</span><span class="p">,</span> 
@@ -317,6 +377,14 @@
 <div class="viewcode-block" id="ModelInspector.check_computational_performance">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_computational_performance">[docs]</a>
     <span class="k">def</span> <span class="nf">check_computational_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check the computational performance of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Result</span>
+<span class="sd">            A namedtuple containing the success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">details</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_performance_check</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
@@ -329,6 +397,14 @@
 <div class="viewcode-block" id="ModelInspector.check_no_extra_files">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.check_no_extra_files">[docs]</a>
     <span class="k">def</span> <span class="nf">check_no_extra_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if there are no extra files in the repository.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Result</span>
+<span class="sd">            A namedtuple containing the success status and details of the check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
             <span class="n">expected_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BENTOML_FILES</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">BENTOML_FOLDERS</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
@@ -387,7 +463,6 @@
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;No extra files found.&quot;</span><span class="p">)</span></div>
 
 
-
     <span class="k">def</span> <span class="nf">_url_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
@@ -425,10 +500,7 @@
                 <span class="n">invalid_urls</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">field</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="mi">404</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">invalid_urls</span>
 
-    <span class="k">def</span> <span class="nf">_validate_repo_structure</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> 
-            <span class="n">required_items</span><span class="p">,</span>
-        <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_validate_repo_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">required_items</span><span class="p">):</span>
         <span class="n">missing_items</span> <span class="o">=</span> <span class="p">[]</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  
@@ -507,7 +579,6 @@
             <span class="k">if</span> <span class="n">name</span> <span class="ow">and</span> <span class="n">version</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="k">return</span> <span class="n">errors</span>
-
 
     <span class="k">def</span> <span class="nf">_run_performance_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>

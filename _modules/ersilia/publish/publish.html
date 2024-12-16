@@ -86,6 +86,18 @@
 <div class="viewcode-block" id="ModelPublisher">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelPublisher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for publishing models to GitHub.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model to be published.</span>
+<span class="sd">    config_json : str</span>
+<span class="sd">        Path to the configuration JSON file.</span>
+<span class="sd">    credentials_json : str</span>
+<span class="sd">        Path to the credentials JSON file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -101,6 +113,9 @@
 <div class="viewcode-block" id="ModelPublisher.rebase">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.rebase">[docs]</a>
     <span class="k">def</span> <span class="nf">rebase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rebase the model repository with the template repository.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rb</span> <span class="o">=</span> <span class="n">TemplateRebaser</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">template_repo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_repo</span><span class="p">,</span>
@@ -121,6 +136,14 @@
 <div class="viewcode-block" id="ModelPublisher.create">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.create">[docs]</a>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">public</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new GitHub repository for the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        public : bool, optional</span>
+<span class="sd">            Whether the repository should be public or private. Default is True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">public</span><span class="p">:</span>
             <span class="n">flag</span> <span class="o">=</span> <span class="s2">&quot;--public&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -142,6 +165,9 @@
 <div class="viewcode-block" id="ModelPublisher.dvc">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.dvc">[docs]</a>
     <span class="k">def</span> <span class="nf">dvc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up DVC (Data Version Control) for the model repository.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dvc</span> <span class="o">=</span> <span class="n">DVCSetup</span><span class="p">(</span><span class="n">local_repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">dvc</span><span class="o">.</span><span class="n">gdrive_setup</span><span class="p">()</span>
         <span class="n">dvc</span><span class="o">.</span><span class="n">set_dvc_gdrive</span><span class="p">()</span>
@@ -151,6 +177,14 @@
 <div class="viewcode-block" id="ModelPublisher.git_push">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.git_push">[docs]</a>
     <span class="k">def</span> <span class="nf">git_push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Push changes to the GitHub repository.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : str, optional</span>
+<span class="sd">            The commit message. If not provided, a default message is used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
@@ -164,6 +198,9 @@
 <div class="viewcode-block" id="ModelPublisher.push">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.publish.ModelPublisher.push">[docs]</a>
     <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up DVC and push changes to the GitHub repository.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dvc</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">git_push</span><span class="p">()</span></div>
 

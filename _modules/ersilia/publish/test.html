@@ -276,12 +276,64 @@
 <div class="viewcode-block" id="InspectService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.InspectService">[docs]</a>
 <span class="k">class</span> <span class="nc">InspectService</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Service for inspecting models and their configurations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dir : str, optional</span>
+<span class="sd">        Directory where the model is located.</span>
+<span class="sd">    model : str, optional</span>
+<span class="sd">        Model identifier.</span>
+<span class="sd">    config_json : str, optional</span>
+<span class="sd">        Path to the configuration JSON file.</span>
+<span class="sd">    credentials_json : str, optional</span>
+<span class="sd">        Path to the credentials JSON file.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        inspector = InspectService(dir=&quot;/path/to/model&quot;, model=&quot;model_id&quot;)</span>
+<span class="sd">        results = inspector.run()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="nb">dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-<span class="c1"># fmt: off</span>
-    <span class="k">def</span> <span class="nf">_get_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inspector</span><span class="p">):</span>
+
+<div class="viewcode-block" id="InspectService.run">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.InspectService.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the inspection checks on the specified model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing the results of the inspection checks.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the model is not specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model must be specified.&quot;</span><span class="p">)</span>
+        
+        <span class="n">inspector</span> <span class="o">=</span> <span class="n">ModelInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
+        <span class="n">checks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_checks</span><span class="p">(</span><span class="n">inspector</span><span class="p">)</span>
+        
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">checks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">strategy</span><span class="o">.</span><span class="n">check_function</span><span class="p">:</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">strategy</span><span class="o">.</span><span class="n">execute</span><span class="p">())</span>
+        
+        <span class="k">return</span> <span class="n">output</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inspector</span><span class="p">:</span> <span class="n">ModelInspector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="n">is_dir_none</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">CheckStrategy</span><span class="p">(</span>
@@ -314,38 +366,30 @@
                 <span class="s2">&quot;extra_files_check&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;extra_files_check_details&quot;</span><span class="p">,</span>
             <span class="p">),</span>
-        <span class="p">]</span>
-<span class="c1"># fmt: on</span>
-<div class="viewcode-block" id="InspectService.run">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.InspectService.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model must be specified.&quot;</span><span class="p">)</span>
-        
-        <span class="n">inspector</span> <span class="o">=</span> <span class="n">ModelInspector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
-        <span class="n">checks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_checks</span><span class="p">(</span><span class="n">inspector</span><span class="p">)</span>
-        
-        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">checks</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">strategy</span><span class="o">.</span><span class="n">check_function</span><span class="p">:</span>
-                <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">strategy</span><span class="o">.</span><span class="n">execute</span><span class="p">())</span>
-        
-        <span class="k">return</span> <span class="n">output</span></div>
-</div>
+        <span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="SetupService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.SetupService">[docs]</a>
 <span class="k">class</span> <span class="nc">SetupService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Service for setting up the environment and fetching the model repository.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    dir : str</span>
+<span class="sd">        Directory where the model repository will be cloned.</span>
+<span class="sd">    logger : logging.Logger</span>
+<span class="sd">        Logger for logging messages.</span>
+<span class="sd">    remote : bool</span>
+<span class="sd">        Flag indicating whether to fetch the repository from a remote source.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/ersilia-os/&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> 
-        <span class="nb">dir</span><span class="p">,</span> 
-        <span class="n">logger</span><span class="p">,</span>
-        <span class="n">remote</span>
-        <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">remote</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="nb">dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
@@ -356,8 +400,31 @@
 <div class="viewcode-block" id="SetupService.run_command">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.SetupService.run_command">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">run_command</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run_command</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">capture_output</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">shell</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run a shell command.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        command : str</span>
+<span class="sd">            The command to run.</span>
+<span class="sd">        logger : logging.Logger</span>
+<span class="sd">            Logger for logging messages.</span>
+<span class="sd">        capture_output : bool, optional</span>
+<span class="sd">            Flag indicating whether to capture the command output.</span>
+<span class="sd">        shell : bool, optional</span>
+<span class="sd">            Flag indicating whether to run the command in the shell.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The output of the command.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        subprocess.CalledProcessError</span>
+<span class="sd">            If the command returns a non-zero exit code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">capture_output</span><span class="p">:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
@@ -416,6 +483,9 @@
 <div class="viewcode-block" id="SetupService.fetch_repo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.SetupService.fetch_repo">[docs]</a>
     <span class="k">def</span> <span class="nf">fetch_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch the model repository from the remote source if the remote flag is set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">):</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">SetupService</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;git clone </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -427,6 +497,14 @@
 <div class="viewcode-block" id="SetupService.check_conda_env">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.SetupService.check_conda_env">[docs]</a>
     <span class="k">def</span> <span class="nf">check_conda_env</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the Conda environment for the model exists.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If the Conda environment does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Conda environment &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&#39; already exists.&quot;</span>
@@ -440,7 +518,27 @@
 <div class="viewcode-block" id="SetupService.get_conda_env_location">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.SetupService.get_conda_env_location">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_conda_env_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_conda_env_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the location of the Conda environment for the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        logger : logging.Logger</span>
+<span class="sd">            Logger for logging messages.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The location of the Conda environment.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        subprocess.CalledProcessError</span>
+<span class="sd">            If the command to list Conda environments returns a non-zero exit code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">SetupService</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
                 <span class="s2">&quot;conda env list&quot;</span><span class="p">,</span>
@@ -465,6 +563,35 @@
 <div class="viewcode-block" id="IOService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService">[docs]</a>
 <span class="k">class</span> <span class="nc">IOService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Service for handling input/output operations related to model testing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    logger : logging.Logger</span>
+<span class="sd">        Logger for logging messages.</span>
+<span class="sd">    dest_dir : str</span>
+<span class="sd">        Destination directory for storing model-related files.</span>
+<span class="sd">    model_path : str</span>
+<span class="sd">        Path to the model.</span>
+<span class="sd">    bundle_path : str</span>
+<span class="sd">        Path to the model bundle.</span>
+<span class="sd">    bentoml_path : str</span>
+<span class="sd">        Path to the BentoML files.</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    dir : str</span>
+<span class="sd">        Directory where the model repository is located.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        ios = IOService(logger=logger, dest_dir=&quot;/path/to/dest&quot;, model_path=&quot;/path/to/model&quot;, </span>
+<span class="sd">                        bundle_path=&quot;/path/to/bundle&quot;, bentoml_path=&quot;/path/to/bentoml&quot;, </span>
+<span class="sd">                        model_id=&quot;model_id&quot;, dir=&quot;/path/to/dir&quot;)</span>
+<span class="sd">        ios.read_information()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Required files</span>
     <span class="n">RUN_FILE</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;model/framework/</span><span class="si">{</span><span class="n">RUN_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -488,16 +615,7 @@
         <span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> 
-        <span class="n">logger</span><span class="p">,</span>
-        <span class="n">dest_dir</span><span class="p">,</span>
-        <span class="n">model_path</span><span class="p">,</span> 
-        <span class="n">bundle_path</span><span class="p">,</span> 
-        <span class="n">bentoml_path</span><span class="p">,</span> 
-        <span class="n">model_id</span><span class="p">,</span>
-        <span class="nb">dir</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bundle_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bentoml_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="nb">dir</span>
@@ -509,15 +627,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_path</span> <span class="o">=</span> <span class="n">bentoml_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span> <span class="o">=</span> <span class="n">dest_dir</span>
 
-
-    <span class="k">def</span> <span class="nf">_run_check</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> 
-            <span class="n">check_function</span><span class="p">,</span> 
-            <span class="n">data</span><span class="p">,</span> 
-            <span class="n">check_name</span><span class="p">,</span> 
-            <span class="n">additional_info</span><span class="o">=</span><span class="kc">None</span>
-        <span class="p">):</span>
-  
+    <span class="k">def</span> <span class="nf">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_function</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">check_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">additional_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">additional_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">check_function</span><span class="p">(</span><span class="n">additional_info</span><span class="p">)</span>
@@ -538,15 +648,7 @@
             <span class="p">))</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-
-    <span class="k">def</span> <span class="nf">_generate_table</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">title</span><span class="p">,</span>
-            <span class="n">headers</span><span class="p">,</span>
-            <span class="n">rows</span><span class="p">,</span>
-            <span class="n">large_table</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">merge</span><span class="o">=</span><span class="kc">False</span> 
-        <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">headers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">rows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">large_table</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">merge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">f_col_width</span> <span class="o">=</span> <span class="mi">30</span> <span class="k">if</span> <span class="n">large_table</span> <span class="k">else</span> <span class="mi">30</span>    
         <span class="n">l_col_width</span> <span class="o">=</span> <span class="mi">50</span> <span class="k">if</span> <span class="n">large_table</span> <span class="k">else</span> <span class="mi">10</span>     
         <span class="n">d_col_width</span> <span class="o">=</span> <span class="mi">30</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">large_table</span> <span class="k">else</span> <span class="mi">20</span> 
@@ -600,7 +702,22 @@
 <div class="viewcode-block" id="IOService.get_model_type">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_model_type">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_model_type</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_model_type</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the type of the model based on the repository contents.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        repo_path : str</span>
+<span class="sd">            Path to the model repository.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> 
             <span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span>
@@ -615,7 +732,20 @@
 
 <div class="viewcode-block" id="IOService.get_file_requirements">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_file_requirements">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_file_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_file_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of required files for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            List of required files.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the model type is unsupported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">type</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">get_model_type</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> 
             <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span>
@@ -632,7 +762,20 @@
 
 <div class="viewcode-block" id="IOService.read_information">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.read_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read the information file for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The contents of the information file.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        FileNotFoundError</span>
+<span class="sd">            If the information file does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> 
             <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> 
@@ -649,6 +792,16 @@
 <div class="viewcode-block" id="IOService.print_output">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.print_output">[docs]</a>
     <span class="k">def</span> <span class="nf">print_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print the output of a result.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result : any</span>
+<span class="sd">            The result to print.</span>
+<span class="sd">        output : file-like object</span>
+<span class="sd">            The output file to write to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">write_output</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
@@ -665,7 +818,20 @@
 
 <div class="viewcode-block" id="IOService.get_conda_env_size">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_conda_env_size">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_conda_env_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_conda_env_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the size of the Conda environment for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The size of the Conda environment in megabytes.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If there is an error calculating the size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">loc</span> <span class="o">=</span> <span class="n">SetupService</span><span class="o">.</span><span class="n">get_conda_env_location</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> 
@@ -681,7 +847,7 @@
 
 <div class="viewcode-block" id="IOService.calculate_directory_size">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.calculate_directory_size">[docs]</a>
-    <span class="k">def</span> <span class="nf">calculate_directory_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calculate_directory_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">size_output</span> <span class="o">=</span> <span class="n">SetupService</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
                 <span class="p">[</span><span class="s2">&quot;du&quot;</span><span class="p">,</span> <span class="s2">&quot;-sm&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">],</span> 
@@ -699,16 +865,47 @@
 
         
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">get_directories_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_directories_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the sizes of the model directory and the Conda environment directory.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing the sizes of the model directory and the Conda environment directory in megabytes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dir_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_directory_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
         <span class="n">env_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conda_env_size</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">dir_size</span><span class="p">,</span> <span class="n">env_size</span></div>
 
 
-
 <div class="viewcode-block" id="CheckService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.CheckService">[docs]</a>
 <span class="k">class</span> <span class="nc">CheckService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Service for performing various checks on the model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    logger : logging.Logger</span>
+<span class="sd">        Logger for logging messages.</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    dest_dir : str</span>
+<span class="sd">        Destination directory for storing model-related files.</span>
+<span class="sd">    dir : str</span>
+<span class="sd">        Directory where the model repository is located.</span>
+<span class="sd">    ios : IOService</span>
+<span class="sd">        Instance of IOService for handling input/output operations.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        check_service = CheckService(logger=logger, model_id=&quot;model_id&quot;, dest_dir=&quot;/path/to/dest&quot;, </span>
+<span class="sd">                                     dir=&quot;/path/to/dir&quot;, ios=ios)</span>
+<span class="sd">        check_service.check_files()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># model specs</span>
     <span class="n">MODEL_TASKS</span> <span class="o">=</span> <span class="p">{</span>
@@ -751,14 +948,7 @@
         <span class="s2">&quot;Serializable Object&quot;</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> 
-        <span class="n">logger</span><span class="p">,</span> 
-        <span class="n">model_id</span><span class="p">,</span> 
-        <span class="n">dest_dir</span><span class="p">,</span> 
-        <span class="nb">dir</span><span class="p">,</span> 
-        <span class="n">ios</span>
-        <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ios</span><span class="p">:</span> <span class="n">IOService</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span> <span class="o">=</span> <span class="n">dest_dir</span>
@@ -783,6 +973,9 @@
 <div class="viewcode-block" id="CheckService.check_files">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.CheckService.check_files">[docs]</a>
     <span class="k">def</span> <span class="nf">check_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check the existence of required files for the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">requirements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_requirements</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">requirements</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking file: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -886,7 +1079,7 @@
         <span class="k">if</span> <span class="n">invalid_outputs</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InvalidEntry</span><span class="p">(</span>
                 <span class="s2">&quot;Output&quot;</span><span class="p">,</span> 
-                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid outputs: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_outputs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid outputs: </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_outputs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;All outputs are valid.&quot;</span><span class="p">)</span>
@@ -934,6 +1127,14 @@
     
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform various checks on the model information.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output : file-like object</span>
+<span class="sd">            The output file to write to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Beginning checks for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> model information&quot;</span><span class="p">)</span>
         <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> 
@@ -958,27 +1159,61 @@
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_single_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">run_model</span><span class="p">,</span> <span class="n">run_example</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model can run with a single input to check if it has a value </span>
+<span class="sd">        in the produced output csv.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output : file-like object</span>
+<span class="sd">            The output file to write to.</span>
+<span class="sd">        run_model : callable</span>
+<span class="sd">            Function to run the model.</span>
+<span class="sd">        run_example : callable</span>
+<span class="sd">            Function to generate example input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="n">run_example</span><span class="p">(</span>
             <span class="n">n_samples</span><span class="o">=</span><span class="n">Options</span><span class="o">.</span><span class="n">NUM_SAMPLES</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
             <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
             <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
             <span class="n">try_predefined</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output: </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">run_model</span><span class="p">(</span>
             <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> 
             <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> 
             <span class="n">batch</span><span class="o">=</span><span class="mi">100</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">single_input</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="n">absolute_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
+                <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csv_file</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">csv_content</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">csv_content</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">single_input</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error reading CSV content: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_output</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_example_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">run_model</span><span class="p">,</span> <span class="n">run_example</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model can run with example input without error.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output : file-like object</span>
+<span class="sd">            The output file to write to.</span>
+<span class="sd">        run_model : callable</span>
+<span class="sd">            Function to run the model.</span>
+<span class="sd">        run_example : callable</span>
+<span class="sd">            Function to generate example input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">input_samples</span> <span class="o">=</span> <span class="n">run_example</span><span class="p">(</span>
             <span class="n">n_samples</span><span class="o">=</span><span class="n">Options</span><span class="o">.</span><span class="n">NUM_SAMPLES</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> 
             <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
@@ -994,20 +1229,32 @@
             <span class="n">batch</span><span class="o">=</span><span class="mi">100</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">input_samples</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">example_input</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_print_output</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">check_consistent_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_example</span><span class="p">,</span> <span class="n">run_model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the model produces consistent output.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_example : callable</span>
+<span class="sd">            Function to generate example input.</span>
+<span class="sd">        run_model : callable</span>
+<span class="sd">            Function to run the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">compute_rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
-             <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">yt</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">yt</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+
         <span class="k">def</span> <span class="nf">_compare_output_strings</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">output1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">output2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="mi">100</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">ratio</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">)</span>
+
         <span class="k">def</span> <span class="nf">validate_output</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">output2</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InconsistentOutputTypes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -1083,20 +1330,51 @@
 <div class="viewcode-block" id="RunnerService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.RunnerService">[docs]</a>
 <span class="k">class</span> <span class="nc">RunnerService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Service for running model tests and checks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    logger : logging.Logger</span>
+<span class="sd">        Logger for logging messages.</span>
+<span class="sd">    ios_service : IOService</span>
+<span class="sd">        Instance of IOService for handling input/output operations.</span>
+<span class="sd">    checkup_service : CheckService</span>
+<span class="sd">        Instance of CheckService for performing various checks on the model.</span>
+<span class="sd">    setup_service : SetupService</span>
+<span class="sd">        Instance of SetupService for setting up the environment and fetching the model repository.</span>
+<span class="sd">    model_path : str</span>
+<span class="sd">        Path to the model.</span>
+<span class="sd">    level : str</span>
+<span class="sd">        Level of checks to perform.</span>
+<span class="sd">    dir : str</span>
+<span class="sd">        Directory where the model repository is located.</span>
+<span class="sd">    remote : bool</span>
+<span class="sd">        Flag indicating whether to fetch the repository from a remote source.</span>
+<span class="sd">    inspect : bool</span>
+<span class="sd">        Flag indicating whether to perform inspection checks.</span>
+<span class="sd">    remove : bool</span>
+<span class="sd">        Flag indicating whether to remove the model directory after tests.</span>
+<span class="sd">    inspecter : InspectService</span>
+<span class="sd">        Instance of InspectService for inspecting models and their configurations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
-        <span class="n">model_id</span><span class="p">,</span> 
+        <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
         <span class="n">logger</span><span class="p">,</span> 
-        <span class="n">ios_service</span><span class="p">,</span> 
-        <span class="n">checkup_service</span><span class="p">,</span> 
-        <span class="n">setup_service</span><span class="p">,</span>
-        <span class="n">model_path</span><span class="p">,</span> 
-        <span class="n">level</span><span class="p">,</span>
-        <span class="nb">dir</span><span class="p">,</span>
-        <span class="n">remote</span><span class="p">,</span>
-        <span class="n">inspect</span><span class="p">,</span>
-        <span class="n">remove</span><span class="p">,</span>
-        <span class="n">inspecter</span>
+        <span class="n">ios_service</span><span class="p">:</span> <span class="n">IOService</span><span class="p">,</span> 
+        <span class="n">checkup_service</span><span class="p">:</span> <span class="n">CheckService</span><span class="p">,</span> 
+        <span class="n">setup_service</span><span class="p">:</span> <span class="n">SetupService</span><span class="p">,</span>
+        <span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">remote</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">inspect</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">remove</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">inspecter</span><span class="p">:</span> <span class="n">InspectService</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
@@ -1118,7 +1396,24 @@
 
 <div class="viewcode-block" id="RunnerService.run_model">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.RunnerService.run_model">[docs]</a>
-    <span class="k">def</span> <span class="nf">run_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">run_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the model with the given input and output parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input : list</span>
+<span class="sd">            List of input samples.</span>
+<span class="sd">        output : str</span>
+<span class="sd">            Path to the output file.</span>
+<span class="sd">        batch : int</span>
+<span class="sd">            Batch size for running the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The output of the command.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="nb">input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Running model&quot;</span><span class="p">)</span>
@@ -1132,6 +1427,9 @@
 <div class="viewcode-block" id="RunnerService.fetch">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.RunnerService.fetch">[docs]</a>
     <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch the model repository from the specified directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">SetupService</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
             <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;ersilia&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;-v&quot;</span><span class="p">,</span> 
@@ -1145,12 +1443,31 @@
 <div class="viewcode-block" id="RunnerService.run_exampe">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.RunnerService.run_exampe">[docs]</a>
     <span class="k">def</span> <span class="nf">run_exampe</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> 
-            <span class="n">n_samples</span><span class="p">,</span> 
-            <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-            <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-            <span class="n">try_predefined</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">):</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+        <span class="n">simple</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+        <span class="n">try_predefined</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate example input samples for the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_samples : int</span>
+<span class="sd">            Number of samples to generate.</span>
+<span class="sd">        file_name : str, optional</span>
+<span class="sd">            Name of the file to save the samples.</span>
+<span class="sd">        simple : bool, optional</span>
+<span class="sd">            Flag indicating whether to generate simple samples.</span>
+<span class="sd">        try_predefined : bool, optional</span>
+<span class="sd">            Flag indicating whether to try predefined samples.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of generated input samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">example</span><span class="p">(</span>
             <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> 
             <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> 
@@ -1160,6 +1477,14 @@
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">run_bash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the model using a bash script and compare the outputs for consistency.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If there is an error during the subprocess execution or output comparison.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">compute_rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">yt</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
         
@@ -1363,7 +1688,15 @@
 
 <div class="viewcode-block" id="RunnerService.make_output">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.RunnerService.make_output">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the final output table with the test results.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        elapsed_time : float</span>
+<span class="sd">            Time elapsed during the test run.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">TestResult</span><span class="o">.</span><span class="n">generate_results</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="p">,</span>
             <span class="n">elapsed_time</span><span class="p">,</span> 
@@ -1378,13 +1711,20 @@
 
 <div class="viewcode-block" id="RunnerService.run">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.RunnerService.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">MISSING_PACKAGES</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;Missing packages required for testing. &quot;</span>
-                <span class="s2">&quot;Please install test extras with &#39;pip install ersilia[test]&#39;.&quot;</span>
-            <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the model tests and checks.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_file : str, optional</span>
+<span class="sd">            Path to the output file for storing the test results.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ImportError</span>
+<span class="sd">            If required packages are missing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">output_file</span><span class="p">:</span>
             <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> 
@@ -1417,6 +1757,19 @@
 <div class="viewcode-block" id="RunnerService.transform_key">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.RunnerService.transform_key">[docs]</a>
     <span class="k">def</span> <span class="nf">transform_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform the test result key to a string representation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : any</span>
+<span class="sd">            The test result value.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The string representation of the test result.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
@@ -1525,6 +1878,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">inspect</span> <span class="o">=</span> <span class="n">inspect</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remote</span> <span class="o">=</span> <span class="n">remote</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span> <span class="o">=</span> <span class="n">remove</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_pedendency</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup_service</span> <span class="o">=</span> <span class="n">SetupService</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> 
             <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> 
@@ -1565,6 +1919,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inspecter</span>
         <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_check_pedendency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">MISSING_PACKAGES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;Missing packages required for testing. &quot;</span>
+                <span class="s2">&quot;Please install test extras with &#39;pip install ersilia[test]&#39;.&quot;</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="ModelTester.setup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.ModelTester.setup">[docs]</a>
