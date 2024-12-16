@@ -50,10 +50,6 @@ class PseudoDownloader(object):
             The source directory.
         dst : str
             The destination directory.
-
-        Returns
-        -------
-        None
         """
         self._copy_local_directory(
             src, dst
@@ -86,10 +82,6 @@ class OsfDownloader(object):
             The destination directory.
         tmp_folder : str
             The temporary folder to use.
-
-        Returns
-        -------
-        None
         """
         src = os.path.basename(filename)
         outfile = os.path.join(destination, src)
@@ -108,10 +100,6 @@ class OsfDownloader(object):
 class GoogleDriveDownloader(object):
     """
     A class to download files from Google Drive.
-
-    Parameters
-    ----------
-    None
     """
     def __init__(self):
         pass
@@ -141,10 +129,6 @@ class GoogleDriveDownloader(object):
             The Google Drive file ID.
         destination : str
             The destination path.
-
-        Returns
-        -------
-        None
         """
         url = "https://docs.google.com/uc?export=download"
         session = requests.Session()
@@ -165,10 +149,6 @@ class GoogleDriveDownloader(object):
             The Google Drive file ID.
         destination : str
             The destination directory.
-
-        Returns
-        -------
-        None
         """
         tmp_zip = tempfile.NamedTemporaryFile(dir=destination).name + ".zip"
         self.download_file_from_google_drive(file_id, tmp_zip)
@@ -363,10 +343,6 @@ class GitHubDownloader(object):
             The destination directory.
         ungit : bool, optional
             Whether to remove Git-related files. Default is False.
-
-        Returns
-        -------
-        None
         """
         if os.path.exists(destination):
             if self.overwrite:
@@ -452,10 +428,6 @@ class GitHubDownloader(object):
 class S3Downloader(object):
     """
     A class to download files from an S3 bucket.
-
-    Parameters
-    ----------
-    None
     """
     def __init__(self):
         pass
@@ -472,10 +444,6 @@ class S3Downloader(object):
             The name of the file to download.
         destination : str
             The destination path.
-
-        Returns
-        -------
-        None
         """
         s3_url = bucket_url + "/" + file_name
         response = requests.get(s3_url)

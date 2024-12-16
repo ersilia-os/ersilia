@@ -47,10 +47,6 @@ class BaseInstaller(ErsiliaBase):
     def write_log(self):
         """
         Write the installation log to a file.
-
-        Returns
-        -------
-        None
         """
         if self.log is None:
             return
@@ -66,10 +62,6 @@ class BaseInstaller(ErsiliaBase):
         ----------
         task : str
             The task to add to the log.
-
-        Returns
-        -------
-        None
         """
         if self.log is None:
             self.log = {task}
@@ -84,10 +76,6 @@ class BaseInstaller(ErsiliaBase):
         ----------
         task : str
             The task to remove from the log.
-
-        Returns
-        -------
-        None
         """
         if self.log is not None:
             if task in self.log:
@@ -97,10 +85,6 @@ class BaseInstaller(ErsiliaBase):
     def read_log(self):
         """
         Read the installation log from a file.
-
-        Returns
-        -------
-        None
         """
         if not os.path.exists(self.log_file):
             return
@@ -113,10 +97,6 @@ class BaseInstaller(ErsiliaBase):
     def remove_log(self):
         """
         Remove the installation log file.
-
-        Returns
-        -------
-        None
         """
         if os.path.exists(self.log_file):
             os.remove(self.log_file)
@@ -163,10 +143,6 @@ class Installer(BaseInstaller):
     def profile(self):
         """
         Set up the 'ersilia' CLI in the user profile.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("profile"):
             return
@@ -178,10 +154,6 @@ class Installer(BaseInstaller):
     def conda(self):
         """
         Check if Conda is installed.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("conda"):
             return
@@ -193,10 +165,6 @@ class Installer(BaseInstaller):
     def git(self):
         """
         Check if Git is installed.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("git"):
             return
@@ -208,10 +176,6 @@ class Installer(BaseInstaller):
     def rdkit(self):
         """
         Install RDKit from Conda if not already installed.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("rdkit"):
             return
@@ -229,10 +193,6 @@ class Installer(BaseInstaller):
     def config(self):
         """
         Set up the configuration file.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("config"):
             return
@@ -257,10 +217,6 @@ class Installer(BaseInstaller):
     def base_conda(self):
         """
         Create a base Conda environment.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("base_conda"):
             return
@@ -310,10 +266,6 @@ class Installer(BaseInstaller):
     def base_conda_slim(self):
         """
         Create a slim base Conda environment.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("base_conda_slim"):
             return
@@ -322,10 +274,6 @@ class Installer(BaseInstaller):
     def server_docker(self):
         """
         Build the Docker server image.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("server_docker"):
             return
@@ -376,10 +324,6 @@ class Installer(BaseInstaller):
     def server_docker_slim(self):
         """
         Build the slim Docker server image.
-
-        Returns
-        -------
-        None
         """
         if self._is_done("server_docker_slim"):
             return
@@ -410,10 +354,6 @@ class Uninstaller(BaseInstaller):
     def rdkit(self):
         """
         Uninstall RDKit.
-
-        Returns
-        -------
-        None
         """
         self.remove_from_log("rdkit")
         run_command("conda uninstall {0}".format("rdkit"))
@@ -421,10 +361,6 @@ class Uninstaller(BaseInstaller):
     def base_conda(self):
         """
         Delete the base Conda environment.
-
-        Returns
-        -------
-        None
         """
         self.remove_from_log("base_conda")
         eos_base_env = self.versions.base_conda_name()
@@ -434,10 +370,6 @@ class Uninstaller(BaseInstaller):
     def server_docker(self):
         """
         Delete the Docker server image.
-
-        Returns
-        -------
-        None
         """
         self.remove_from_log("server_docker")
         from .docker import SimpleDocker
@@ -480,10 +412,6 @@ def full_installer(ignore_status=False):
     ----------
     ignore_status : bool, optional
         Whether to ignore the current installation status. Default is False.
-
-    Returns
-    -------
-    None
     """
     status = check_install_status()
     if status["status"] != "full" or ignore_status:

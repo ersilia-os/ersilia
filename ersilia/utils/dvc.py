@@ -38,10 +38,6 @@ class DVCFetcher(object):
     def get_data(self):
         """
         Fetch data using DVC.
-
-        Returns
-        -------
-        None
         """
         if self.check_dvc_exists():
             terminal.run_command("dvc --cd " + self.repo_path + " pull")
@@ -94,10 +90,6 @@ class DVCFetcher(object):
 class DVCBrancher(object):
     """
     A class to manage DVC branches.
-
-    Parameters
-    ----------
-    None
     """
     def __init__(self):
         pass
@@ -125,10 +117,6 @@ class DVCSetup(object):
     def gdrive_setup(self):
         """
         Set up Google Drive folder for DVC.
-
-        Returns
-        -------
-        None
         """
         folder = self.drive.CreateFile(
             {
@@ -165,10 +153,6 @@ class DVCSetup(object):
     def set_dvc_gdrive(self):
         """
         Set up DVC remote storage on Google Drive.
-
-        Returns
-        -------
-        None
         """
         terminal.run_command("dvc --cd {0} add data.h5".format(self.repo_path))
         terminal.run_command(
@@ -188,10 +172,6 @@ class DVCSetup(object):
         ----------
         message : str, optional
             The commit message. Default is "Set to public data repo".
-
-        Returns
-        -------
-        None
         """
         cwd = os.getcwd()
         os.chdir(self.repo_path)

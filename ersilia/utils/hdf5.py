@@ -31,10 +31,6 @@ class Hdf5Data(object):
         ----------
         filename : str
             The path to the HDF5 file.
-
-        Returns
-        -------
-        None
         """
         with h5py.File(filename, "w") as f:
             f.create_dataset("Values", data=self.values)
@@ -66,10 +62,6 @@ class Hdf5DataLoader(object):
         ----------
         h5_file : str
             The path to the HDF5 file.
-
-        Returns
-        -------
-        None
         """
         with h5py.File(h5_file, "r") as f:
             self.values = f["Values"][:]
@@ -98,10 +90,6 @@ class Hdf5DataStacker(object):
         ----------
         h5_file : str
             The path to the output HDF5 file.
-
-        Returns
-        -------
-        None
         """
         with h5py.File(h5_file, "a") as f0:
             for i, h5 in enumerate(self.h5_files):

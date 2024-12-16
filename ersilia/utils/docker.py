@@ -243,9 +243,6 @@ class SimpleDocker(object):
         tag : str
             The image tag.
 
-        Returns
-        -------
-        None
         """
         if self._with_udocker:
             raise Exception("Cannot built with udocker")
@@ -268,10 +265,6 @@ class SimpleDocker(object):
             The image name.
         tag : str
             The image tag.
-
-        Returns
-        -------
-        None
         """
         if not self._with_udocker:
             cmd = "docker rmi -f %s" % self._image_name(org, img, tag)
@@ -335,10 +328,6 @@ class SimpleDocker(object):
         ----------
         name : str
             The container name.
-
-        Returns
-        -------
-        None
         """
         cmd = "docker kill {0}".format(name)
         run_command(cmd)
@@ -352,10 +341,6 @@ class SimpleDocker(object):
         ----------
         name : str
             The container name.
-
-        Returns
-        -------
-        None
         """
         cmd = "docker rm -f {0}".format(name)
         run_command(cmd)
@@ -379,9 +364,6 @@ class SimpleDocker(object):
             The image name. Default is None.
         tag : str, optional
             The image tag. Default is None.
-
-        Returns
-        -------
         None
         """
         local_path = os.path.abspath(local_path)
@@ -415,10 +397,6 @@ class SimpleDocker(object):
             The image name.
         tag : str
             The image tag.
-
-        Returns
-        -------
-        None
         """
         name = self.run(org, img, tag, name=None)
         self.cp_from_container(name, img_path, local_path, org=org, img=img, tag=tag)
@@ -435,10 +413,6 @@ class SimpleDocker(object):
             The container name.
         cmd : str
             The command to execute.
-
-        Returns
-        -------
-        None
         """
         cmd = 'docker exec -i %s bash -c "%s"' % (name, cmd)
         run_command(cmd)
@@ -459,10 +433,6 @@ class SimpleDocker(object):
             The image tag.
         name : str
             The container name.
-
-        Returns
-        -------
-        None
         """
         name = self.run(org, img, tag, name=name)
         self.exec_container(name, cmd)
@@ -542,10 +512,6 @@ class SimpleDocker(object):
     def cleanup_ersilia_images(self):
         """
         Remove all Ersilia-related Docker images.
-
-        Returns
-        -------
-        None
         """
         if self._with_udocker:
             self.logger.warning("Docker cleanup not supported with udocker")
@@ -741,10 +707,6 @@ class ContainerMetricsSampler:
     def start_tracking(self):
         """
         Start tracking metrics from the Docker container.
-
-        Returns
-        -------
-        None
         """
         if not self.tracking:
             self.tracking = True
@@ -756,10 +718,6 @@ class ContainerMetricsSampler:
     def stop_tracking(self):
         """
         Stop tracking metrics from the Docker container.
-
-        Returns
-        -------
-        None
         """
         if self.tracking:
             self.tracking = False

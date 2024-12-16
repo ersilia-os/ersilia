@@ -6,10 +6,6 @@ from bioservices.uniprot import UniProt
 class ProteinIdentifier(object):
     """
     A class to handle protein identification and sequence retrieval.
-
-    Parameters
-    ----------
-    None
     """
     def __init__(self):
         self.seguid = seguid

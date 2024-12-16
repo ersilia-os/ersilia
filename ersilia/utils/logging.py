@@ -119,10 +119,6 @@ class Logger(object):
         ----------
         verbose : bool
             Whether to enable verbose logging.
-
-        Returns
-        -------
-        None
         """
         if verbose:
             self._log_to_console()
@@ -140,10 +136,6 @@ class Logger(object):
         ----------
         text : str
             The message to log.
-
-        Returns
-        -------
-        None
         """
         self.logger.debug(text)
 
@@ -155,10 +147,6 @@ class Logger(object):
         ----------
         text : str
             The message to log.
-
-        Returns
-        -------
-        None
         """
         self.logger.info(text)
 
@@ -170,10 +158,6 @@ class Logger(object):
         ----------
         text : str
             The message to log.
-
-        Returns
-        -------
-        None
         """
         self.logger.warning(text)
 
@@ -185,10 +169,6 @@ class Logger(object):
         ----------
         text : str
             The message to log.
-
-        Returns
-        -------
-        None
         """
         self.logger.error(text)
 
@@ -200,10 +180,6 @@ class Logger(object):
         ----------
         text : str
             The message to log.
-
-        Returns
-        -------
-        None
         """
         self.logger.critical(text)
 
@@ -215,10 +191,6 @@ class Logger(object):
         ----------
         text : str
             The message to log.
-
-        Returns
-        -------
-        None
         """
         self.logger.success(text)
 

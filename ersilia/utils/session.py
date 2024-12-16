@@ -54,10 +54,6 @@ def create_session_files(session_name):
     ----------
     session_name : str
         The name of the session.
-
-    Returns
-    -------
-    None
     """
     session_dir = os.path.join(SESSIONS_DIR, session_name)
     os.makedirs(os.path.join(session_dir, LOGS_DIR), exist_ok=True)
@@ -67,10 +63,6 @@ def create_session_files(session_name):
 def create_session_dir():
     """
     Create a session directory.
-
-    Returns
-    -------
-    None
     """
     remove_orphaned_sessions()
     session_name = f"session_{get_parent_pid()}"
@@ -99,10 +91,6 @@ def remove_session_dir(session_name):
     ----------
     session_name : str
         The name of the session.
-
-    Returns
-    -------
-    None
     """
     session_dir = os.path.join(SESSIONS_DIR, session_name)
     shutil.rmtree(session_dir)
@@ -133,10 +121,6 @@ def determine_orphaned_session():
 def remove_orphaned_sessions():
     """
     Remove orphaned sessions.
-
-    Returns
-    -------
-    None
     """
     orphaned_sessions = determine_orphaned_session()
     for session in orphaned_sessions:

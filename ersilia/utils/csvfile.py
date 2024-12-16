@@ -28,10 +28,6 @@ class CsvDataLoader(object):
         ----------
         csv_file : str
             The path to the CSV file.
-
-        Returns
-        -------
-        None
         """
         with open(csv_file, "r") as f:
             reader = csv.reader(f)

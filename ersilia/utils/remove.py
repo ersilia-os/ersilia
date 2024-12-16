@@ -27,10 +27,6 @@ class OsfRemover(object):
             The OSF project ID.
         filename : str
             The name of the file to remove.
-
-        Returns
-        -------
-        None
         """
         environ = os.environ.copy()
         environ["OSF_USERNAME"] = self.username

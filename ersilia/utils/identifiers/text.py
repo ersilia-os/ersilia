@@ -5,11 +5,8 @@ class TextIdentifier(object):
     """
     A class to handle text identification by generating MD5 checksums.
 
-    This class provides methods to generate a unique identifier (checksum) for a given text string using the MD5 hashing algorithm. It also includes a method to perform a basic validation check on the generated checksum.
-
-    Parameters
-    ----------
-    None
+    This class provides methods to generate a unique identifier (checksum) for a given text string using the MD5 hashing algorithm. 
+    It also includes a method to perform a basic validation check on the generated checksum.
     """
     def __init__(self):
         pass
@@ -34,7 +31,8 @@ class TextIdentifier(object):
         """
         Generate an MD5 checksum for the given text.
 
-        This method takes a text string as input and returns a unique identifier (checksum) for the text using the MD5 hashing algorithm. The checksum is prefixed with "key" to distinguish it from other strings.
+        This method takes a text string as input and returns a unique identifier (checksum) for the text using the MD5 hashing algorithm.
+        The checksum is prefixed with "key" to distinguish it from other strings.
 
         Parameters
         ----------

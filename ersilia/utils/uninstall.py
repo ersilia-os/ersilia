@@ -67,10 +67,6 @@ class Uninstaller(object):
     def uninstall(self):
         """
         Main uninstallation method.
-
-        Returns
-        -------
-        None
         """
         try:
             logger.info("Starting Ersilia uninstallation...")

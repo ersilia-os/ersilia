@@ -535,10 +535,6 @@ class SimpleConda(CondaUtils):
         ----------
         environment : str
             The name of the environment to delete.
-
-        Returns
-        -------
-        None
         """
         if not self.exists(environment):
             return
@@ -571,10 +567,6 @@ class SimpleConda(CondaUtils):
         ----------
         environment : str
             The name of the environment to delete.
-
-        Returns
-        -------
-        None
         """
         self._proper_delete(environment)
         self._manual_delete(environment)
@@ -589,10 +581,6 @@ class SimpleConda(CondaUtils):
             The name of the environment to export.
         dest : str
             The destination directory for the YAML file.
-
-        Returns
-        -------
-        None
         """
         if not self.exists(environment):
             return
@@ -622,10 +610,6 @@ class SimpleConda(CondaUtils):
             The name of the source environment.
         dst_env : str
             The name of the destination environment.
-
-        Returns
-        -------
-        None
 
         Raises
         ------
@@ -698,10 +682,6 @@ class SimpleConda(CondaUtils):
         commandlines : str or list
             The commands to run.
 
-        Returns
-        -------
-        None
-
         Raises
         ------
         ModelPackageInstallError
@@ -737,10 +717,6 @@ class SimpleConda(CondaUtils):
 class StandaloneConda(object):
     """
     A class to manage standalone conda environments.
-
-    Parameters
-    ----------
-    None
     """
     def __init__(self):
         pass
@@ -771,10 +747,6 @@ class StandaloneConda(object):
             The name of the environment.
         commandlines : str or list
             The commands to run.
-
-        Returns
-        -------
-        None
         """
         logger.debug("Run commandlines on {0}".format(environment))
         logger.debug(commandlines)

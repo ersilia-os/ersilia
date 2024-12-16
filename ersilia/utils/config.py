@@ -1,8 +1,3 @@
-"""Ersilia config.
-
-The Config provide access to all sort of useful parameters.
-"""
-
 import os
 import json
 from ..default import (
@@ -92,10 +87,6 @@ class Checker(object):
         Ensure the configuration file exists.
 
         If the configuration file does not exist, it will be created by copying from the development path or downloading from GitHub.
-
-        Returns
-        -------
-        None
         """
         if os.path.exists(os.path.join(EOS, CONFIG_JSON)):
             return
@@ -174,13 +165,6 @@ class Config(object):
     ----------
     json_file : str, optional
         The path to the JSON configuration file. Default is None.
-
-    Examples
-    --------
-    .. code-block:: python
-
-        config = Config()
-        print(config.keys())
     """
     def __init__(self, json_file=None):
         """Initialize a Config instance.
@@ -240,20 +224,12 @@ class Secrets(object):
     def fetch_from_github(self):
         """
         Fetch secrets from the GitHub repository.
-
-        Returns
-        -------
-        None
         """
         self._fetch_from_github(SECRETS_JSON, self.secrets_json)
 
     def fetch_gdrive_secrets_from_github(self):
         """
         Fetch Google Drive client secrets from the GitHub repository.
-
-        Returns
-        -------
-        None
         """
         self._fetch_from_github(
             GDRIVE_CLIENT_SECRETS_JSON, self.gdrive_client_secrets_json
@@ -296,13 +272,6 @@ class Credentials(object):
     ----------
     json_file : str, optional
         The path to the JSON credentials file. Default is None.
-
-    Examples
-    --------
-    .. code-block:: python
-
-        credentials = Credentials()
-        print(credentials.keys())
     """
     def __init__(self, json_file=None):
         if json_file is None:

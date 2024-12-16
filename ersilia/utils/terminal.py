@@ -48,10 +48,6 @@ def run_command(cmd, quiet=None):
         The command to run.
     quiet : bool, optional
         Whether to run the command in quiet mode. Default is None.
-
-    Returns
-    -------
-    None
     """
     if quiet is None:
         quiet = is_quiet()
@@ -171,10 +167,6 @@ def print_result_table(data):
     ----------
     data : str or list
         The path to a CSV file or JSON-like data.
-
-    Returns
-    -------
-    None
     """
     HEADER_COLOR = "\033[95m"
     ROW_COLOR = "\033[94m"
