@@ -81,11 +81,27 @@
 <div class="viewcode-block" id="EosHomePathRequirement">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.eospath.EosHomePathRequirement">[docs]</a>
 <span class="k">class</span> <span class="nc">EosHomePathRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to check the existence of the EOS home path.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    eos_home_path_exists()</span>
+<span class="sd">        Checks if the EOS home path exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">eos_home_path_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">eos_home_path_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the EOS home path exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the EOS home path exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">EOS</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>

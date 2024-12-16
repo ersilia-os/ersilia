@@ -82,15 +82,34 @@
 <div class="viewcode-block" id="BentoMLRequirement">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement">[docs]</a>
 <span class="k">class</span> <span class="nc">BentoMLRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle the installation and version checking of BentoML for Ersilia.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    is_installed()</span>
+<span class="sd">        Checks if BentoML is installed.</span>
+<span class="sd">    is_bentoml_ersilia_version()</span>
+<span class="sd">        Checks if the installed BentoML version is the Ersilia version.</span>
+<span class="sd">    install()</span>
+<span class="sd">        Installs the Ersilia version of BentoML.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="BentoMLRequirement.is_installed">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement.is_installed">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if BentoML is installed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if BentoML is installed, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">bentoml</span>
-
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
@@ -98,7 +117,15 @@
 
 <div class="viewcode-block" id="BentoMLRequirement.is_bentoml_ersilia_version">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement.is_bentoml_ersilia_version">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_bentoml_ersilia_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_bentoml_ersilia_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the installed BentoML version is the Ersilia version.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the installed BentoML version is the Ersilia version, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
 
@@ -118,7 +145,16 @@
 
 <div class="viewcode-block" id="BentoMLRequirement.install">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement.install">[docs]</a>
-    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Installs the Ersilia version of BentoML.</span>
+
+<span class="sd">        This method installs the BentoML package from the Ersilia GitHub repository.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing bentoml (the ersilia version)&quot;</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> -m pip install -U git+https://github.com/ersilia-os/bentoml-ersilia.git&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>

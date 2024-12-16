@@ -87,26 +87,77 @@
 <div class="viewcode-block" id="SetupBaseConda">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda">[docs]</a>
 <span class="k">class</span> <span class="nc">SetupBaseConda</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle the setup of a base Conda environment for the model server.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    find_closest_python_version(python_version)</span>
+<span class="sd">        Finds the closest available Python version.</span>
+<span class="sd">    setup(org, tag)</span>
+<span class="sd">        Creates a Conda environment to be used as base environment for the model server.</span>
+<span class="sd">    delete(org, tag)</span>
+<span class="sd">        Deletes the specified Conda environment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">versions</span> <span class="o">=</span> <span class="n">Versioner</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cloner</span> <span class="o">=</span> <span class="n">ErsiliaCloner</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_is_ersiliaos</span><span class="p">(</span><span class="n">org</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_is_ersiliaos</span><span class="p">(</span><span class="n">org</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the organization is ErsiliaOS.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the organization is ErsiliaOS, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">org</span> <span class="o">==</span> <span class="s2">&quot;ersiliaos&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_is_bentoml</span><span class="p">(</span><span class="n">org</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_is_bentoml</span><span class="p">(</span><span class="n">org</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the organization is BentoML.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the organization is BentoML, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">org</span> <span class="o">==</span> <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_parse_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_parse_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses the tag to extract version and Python version information.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            The tag in the format &#39;0.0.0-py37&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing version and Python version information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;ver&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
@@ -115,7 +166,22 @@
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">data</span>
 
-    <span class="k">def</span> <span class="nf">_install_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_install_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the install command based on the organization and tag.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name.</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            The tag in the format &#39;0.0.0-py37&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The install command.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_bentoml</span><span class="p">(</span><span class="n">org</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;ver&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0.11.0&quot;</span><span class="p">:</span>
@@ -130,12 +196,40 @@
             <span class="k">raise</span> <span class="ne">Exception</span>
         <span class="k">return</span> <span class="n">cmd</span>
 
-    <span class="k">def</span> <span class="nf">_get_env_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_env_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the environment name based on the organization and tag.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name.</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            The tag in the format &#39;0.0.0-py37&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The environment name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">base_conda_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SetupBaseConda.find_closest_python_version">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.find_closest_python_version">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_closest_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_version</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">find_closest_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the closest available Python version.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        python_version : str</span>
+<span class="sd">            The desired Python version.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The closest available Python version.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;conda_search_python.txt&quot;</span><span class="p">)</span>
         <span class="n">tmp_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;script.sh&quot;</span><span class="p">)</span>
@@ -163,12 +257,20 @@
 
 <div class="viewcode-block" id="SetupBaseConda.setup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.setup">[docs]</a>
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a conda environment to be used as base environment for the model server.</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a Conda environment to be used as base environment for the model server.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            org: organisation (bentoml or ersiliaos)</span>
-<span class="sd">            tag: 0.0.0-py37 format</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name (bentoml or ersiliaos).</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            The tag in the format &#39;0.0.0-py37&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_env_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
@@ -207,7 +309,21 @@
 
 <div class="viewcode-block" id="SetupBaseConda.delete">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.baseconda.SetupBaseConda.delete">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes the specified Conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name.</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            The tag in the format &#39;0.0.0-py37&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_env_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">env</span><span class="p">)</span></div>
 </div>

@@ -84,6 +84,14 @@
 <div class="viewcode-block" id="SetupBaseDocker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.basedocker.SetupBaseDocker">[docs]</a>
 <span class="k">class</span> <span class="nc">SetupBaseDocker</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to set up the base Docker image for Ersilia.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
@@ -109,7 +117,21 @@
 
 <div class="viewcode-block" id="SetupBaseDocker.setup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.basedocker.SetupBaseDocker.setup">[docs]</a>
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up the Docker image.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name.</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            The tag for the Docker image.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">org</span> <span class="o">!=</span> <span class="s2">&quot;ersiliaos&quot;</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bimg</span>
@@ -144,7 +166,21 @@
 
 <div class="viewcode-block" id="SetupBaseDocker.delete">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.html#ersilia.setup.basedocker.SetupBaseDocker.delete">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete the Docker image.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name.</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            The tag for the Docker image.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 </div>
 

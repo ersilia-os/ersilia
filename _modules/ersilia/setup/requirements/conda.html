@@ -78,12 +78,30 @@
 <div class="viewcode-block" id="CondaRequirement">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement">[docs]</a>
 <span class="k">class</span> <span class="nc">CondaRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle the installation and checking of the Conda package manager.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    is_installed()</span>
+<span class="sd">        Checks if Conda is installed.</span>
+<span class="sd">    install()</span>
+<span class="sd">        Placeholder for installing Conda.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
 
 <div class="viewcode-block" id="CondaRequirement.is_installed">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement.is_installed">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if Conda is installed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if Conda is installed, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;command -v </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
@@ -94,7 +112,14 @@
 
 <div class="viewcode-block" id="CondaRequirement.install">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.conda.CondaRequirement.install">[docs]</a>
-    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Placeholder for installing Conda.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 </div>
 

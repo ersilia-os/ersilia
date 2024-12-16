@@ -80,18 +80,50 @@
 <div class="viewcode-block" id="DockerRequirement">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement">[docs]</a>
 <span class="k">class</span> <span class="nc">DockerRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle the checking and management of Docker.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    is_inside_docker()</span>
+<span class="sd">        Checks if the current environment is inside a Docker container.</span>
+<span class="sd">    is_working()</span>
+<span class="sd">        Checks if Docker is working by running a test container.</span>
+<span class="sd">    is_logged_in()</span>
+<span class="sd">        Checks if Docker is logged in.</span>
+<span class="sd">    is_active()</span>
+<span class="sd">        Checks if Docker is active.</span>
+<span class="sd">    is_installed()</span>
+<span class="sd">        Checks if Docker is installed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
 
 <div class="viewcode-block" id="DockerRequirement.is_inside_docker">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_inside_docker">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the current environment is inside a Docker container.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if inside a Docker container, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">is_inside_docker</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DockerRequirement.is_working">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_working">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_working</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_working</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if Docker is working by running a test container.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if Docker is working, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run --platform </span><span class="si">{0}</span><span class="s2"> --name my_hello_world hello-world&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">resolve_platform</span><span class="p">()</span>
         <span class="p">)</span>
@@ -104,17 +136,36 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
-    <span class="k">def</span> <span class="nf">is_logged_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DockerRequirement.is_logged_in">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_logged_in">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_logged_in</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if Docker is logged in.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if Docker is logged in, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker info&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;Username&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
 
 <div class="viewcode-block" id="DockerRequirement.is_active">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_active">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if Docker is active.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if Docker is active, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker ps&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;CONTAINER ID&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
@@ -125,21 +176,18 @@
 
 <div class="viewcode-block" id="DockerRequirement.is_installed">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_installed">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if Docker is installed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if Docker is installed, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker --version&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;Docker version&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div>
-
-
-<div class="viewcode-block" id="DockerRequirement.is_logged_in">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.docker.DockerRequirement.is_logged_in">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_logged_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker info&quot;</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;Username&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
