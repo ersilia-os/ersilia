@@ -82,6 +82,22 @@
 <div class="viewcode-block" id="ApiSchema">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema">[docs]</a>
 <span class="k">class</span> <span class="nc">ApiSchema</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to manage and interact with the API schema for a given model.</span>
+
+<span class="sd">    An API schema defines the structure of the input and output data for the APIs of a model.</span>
+<span class="sd">    It includes information about the types and shapes of the data fields, as well as any metadata</span>
+<span class="sd">    associated with them. This class provides methods to retrieve and manipulate the schema, check</span>
+<span class="sd">    for HDF5 serializability, and generate empty representations of the input and output data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -143,13 +159,29 @@
 
 <div class="viewcode-block" id="ApiSchema.isfile">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.isfile">[docs]</a>
-    <span class="k">def</span> <span class="nf">isfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">isfile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the schema file exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the schema file exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema_file</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ApiSchema.get">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the schema data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The schema data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">api</span><span class="p">,</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -159,24 +191,71 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the schema data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The schema data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ApiSchema.get_schema_by_api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_schema_by_api">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_schema_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_schema_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the schema for a specific API.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str</span>
+<span class="sd">            The name of the API.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The schema for the specified API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">api_name</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="ApiSchema.get_output_by_api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_output_by_api">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_output_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_output_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the output schema for a specific API.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str</span>
+<span class="sd">            The name of the API.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The output schema for the specified API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">api_name</span><span class="p">][</span><span class="s2">&quot;output&quot;</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="ApiSchema.is_h5_serializable">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.is_h5_serializable">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_h5_serializable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">is_h5_serializable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the output schema for a specific API is HDF5 serializable.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str</span>
+<span class="sd">            The name of the API.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the output schema is HDF5 serializable, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_output_by_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h5_serializable_types</span><span class="p">:</span>
@@ -186,7 +265,20 @@
 
 <div class="viewcode-block" id="ApiSchema.get_meta_by_api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_meta_by_api">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_meta_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_meta_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the metadata for a specific API.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str</span>
+<span class="sd">            The name of the API.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The metadata for the specified API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">api_name</span><span class="p">][</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -196,7 +288,15 @@
 
 <div class="viewcode-block" id="ApiSchema.get_meta">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_meta">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the metadata for all APIs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The metadata for all APIs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">api</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -207,13 +307,34 @@
 
 <div class="viewcode-block" id="ApiSchema.get_apis">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.get_apis">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of APIs available for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of API names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="ApiSchema.empty_by_field">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty_by_field">[docs]</a>
-    <span class="k">def</span> <span class="nf">empty_by_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">empty_by_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get an empty representation for a specific field.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        field : dict</span>
+<span class="sd">            The field schema.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            An empty representation of the field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">field</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_types</span><span class="p">:</span>
             <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -222,7 +343,20 @@
 
 <div class="viewcode-block" id="ApiSchema.empty_input_by_api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty_input_by_api">[docs]</a>
-    <span class="k">def</span> <span class="nf">empty_input_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">empty_input_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get an empty input representation for a specific API.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str</span>
+<span class="sd">            The name of the API.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            An empty input representation for the specified API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">api_name</span><span class="p">][</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
         <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -232,7 +366,20 @@
 
 <div class="viewcode-block" id="ApiSchema.empty_output_by_api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty_output_by_api">[docs]</a>
-    <span class="k">def</span> <span class="nf">empty_output_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">empty_output_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get an empty output representation for a specific API.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str</span>
+<span class="sd">            The name of the API.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            An empty output representation for the specified API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">api_name</span><span class="p">][</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
         <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -242,7 +389,20 @@
 
 <div class="viewcode-block" id="ApiSchema.empty_by_api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty_by_api">[docs]</a>
-    <span class="k">def</span> <span class="nf">empty_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">empty_by_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get an empty input and output representation for a specific API.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        api_name : str</span>
+<span class="sd">            The name of the API.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            An empty input and output representation for the specified API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_input_by_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">),</span>
             <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_output_by_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">),</span>
@@ -251,7 +411,15 @@
 
 <div class="viewcode-block" id="ApiSchema.empty">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.schema.ApiSchema.empty">[docs]</a>
-    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get an empty input and output representation for all APIs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            An empty input and output representation for all APIs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_apis</span><span class="p">():</span>
             <span class="n">d</span><span class="p">[</span><span class="n">api_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_by_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">)</span>
