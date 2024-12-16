@@ -11,6 +11,18 @@ from ..default import GITHUB_ORG
 
 
 class ModelPublisher(ErsiliaBase):
+    """
+    Class for publishing models to GitHub.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be published.
+    config_json : str
+        Path to the configuration JSON file.
+    credentials_json : str
+        Path to the credentials JSON file.
+    """
     def __init__(self, model_id, config_json, credentials_json):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -24,6 +36,9 @@ class ModelPublisher(ErsiliaBase):
         self.message = "Commit from Ersilia"
 
     def rebase(self):
+        """
+        Rebase the model repository with the template repository.
+        """
         rb = TemplateRebaser(
             model_id=self.model_id,
             template_repo=self.template_repo,
@@ -41,6 +56,14 @@ class ModelPublisher(ErsiliaBase):
         self.message = "Rebased from template {0}".format(self.template_repo)
 
     def create(self, public=True):
+        """
+        Create a new GitHub repository for the model.
+
+        Parameters
+        ----------
+        public : bool, optional
+            Whether the repository should be public or private. Default is True.
+        """
         if public:
             flag = "--public"
         else:
@@ -59,12 +82,23 @@ class ModelPublisher(ErsiliaBase):
         self.message = "Initial commit"
 
     def dvc(self):
+        """
+        Set up DVC (Data Version Control) for the model repository.
+        """
         dvc = DVCSetup(local_repo_path=self.repo_path, model_id=self.model_id)
         dvc.gdrive_setup()
         dvc.set_dvc_gdrive()
         dvc.git_add_and_commit()
 
     def git_push(self, message=None):
+        """
+        Push changes to the GitHub repository.
+
+        Parameters
+        ----------
+        message : str, optional
+            The commit message. If not provided, a default message is used.
+        """
         if not message:
             message = self.message
         os.chdir(self.repo_path)
@@ -75,6 +109,9 @@ class ModelPublisher(ErsiliaBase):
         os.chdir(self.cwd)
 
     def push(self):
+        """
+        Set up DVC and push changes to the GitHub repository.
+        """
         self.dvc()
         self.git_push()
 

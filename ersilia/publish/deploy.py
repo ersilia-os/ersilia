@@ -7,6 +7,16 @@ import streamlit
 
 
 class DeployBase(ErsiliaBase):
+    """
+    Base class for deployment operations.
+
+    Parameters
+    ----------
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+    """
     def __init__(self, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -84,7 +94,6 @@ class DeployBase(ErsiliaBase):
 
     def _modify_requirements(self, model_id):
         if self._was_ersilia_docker_env(model_id):
-            # no need for modifying requirements
             return
         app_type = self._app_type(model_id)
         R = self._read_bundle_requirements(model_id)
@@ -118,18 +127,36 @@ class DeployBase(ErsiliaBase):
                     f.write(r)
             return R
         if app_type == "swagger":
-            return  # TODO
+            return
         if app_type == "dash":
-            return  # TODO
+            return
 
 
 class Local(DeployBase):
+    """
+    Class for local deployment.
+
+    Parameters
+    ----------
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+    """
     def __init__(self, config_json=None, credentials_json=None):
         DeployBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
         )
 
-    def deploy(self, model_id):
+    def deploy(self, model_id: str):
+        """
+        Deploy the model locally.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be deployed.
+        """
         app_type = self._app_type(model_id)
         if app_type == "streamlit":
             app = StreamlitApp()
@@ -141,6 +168,23 @@ class Local(DeployBase):
 
 
 class Heroku(DeployBase):
+    """
+    Class for Heroku deployment, in a cloud platform that allows developers to build, run, and operate applications entirely in the cloud. 
+
+    Parameters
+    ----------
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        deployer = Heroku(config_json="path/to/config.json", credentials_json="path/to/credentials.json")
+        deployer.deploy("model_id")
+    """
     def __init__(self, config_json=None, credentials_json=None):
         DeployBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -151,28 +195,39 @@ class Heroku(DeployBase):
     def _login():
         subprocess.Popen("heroku container:login", shell=True).wait()
 
-    def _set_tmp(self, model_id):
+    def _set_tmp(self, model_id: str):
         self._copy_to_tmp(model_id)
         self._modify_requirements(model_id)
         self._modify_dockerfile(model_id, envport=True)
 
     @staticmethod
-    def _create_app(model_id):
+    def _create_app(model_id: str):
         subprocess.Popen("heroku create %s" % model_id, shell=True).wait()
 
     @staticmethod
-    def _push(model_id):
+    def _push(model_id: str):
         subprocess.Popen(
             "heroku container:push web --app %s" % model_id, shell=True
         ).wait()
 
     @staticmethod
-    def _release(model_id):
+    def _release(model_id: str):
         subprocess.Popen(
             "heroku container:release web --app %s" % model_id, shell=True
         ).wait()
 
-    def deploy(self, model_id):
+    def deploy(self, model_id: str):
+        """
+        Deploy the model to Heroku.
+
+        This method handles the entire deployment process to Heroku, including setting up temporary directories, 
+        creating the Heroku app, pushing the Docker container, and releasing the app.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be deployed.
+        """
         cwd = os.getcwd()
         self._set_tmp(model_id)
         os.chdir(self._get_tmp_directory(model_id))
@@ -183,11 +238,31 @@ class Heroku(DeployBase):
         self._delete_tmp(model_id)
 
     @staticmethod
-    def destroy(model_id):
+    def destroy(model_id: str):
+        """
+        Destroy the Heroku app.
+
+        This method permanently deletes the Heroku app associated with the given model ID.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be destroyed.
+        """
         subprocess.Popen("heroku apps:destroy %s --confirm %s" % (model_id, model_id))
 
 
 class Aws(DeployBase):
+    """
+    Class for AWS deployment.
+
+    Parameters
+    ----------
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+    """
     def __init__(self, config_json=None, credentials_json=None):
         DeployBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -197,11 +272,29 @@ class Aws(DeployBase):
     def _login(self):
         pass
 
-    def deploy(self, model_id):
+    def deploy(self, model_id: str):
+        """
+        Deploy the model to AWS.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be deployed.
+        """
         pass
 
 
 class GoogleCloud(DeployBase):
+    """
+    Class for Google Cloud deployment.
+
+    Parameters
+    ----------
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+    """
     def __init__(self, config_json=None, credentials_json=None):
         DeployBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -211,11 +304,29 @@ class GoogleCloud(DeployBase):
     def _login(self):
         pass
 
-    def deploy(self, model_id):
+    def deploy(self, model_id: str):
+        """
+        Deploy the model to Google Cloud.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be deployed.
+        """
         pass
 
 
 class Azure(ErsiliaBase):
+    """
+    Class for Azure deployment.
+
+    Parameters
+    ----------
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+    """
     def __init__(self, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -225,11 +336,38 @@ class Azure(ErsiliaBase):
     def _login(self):
         pass
 
-    def deploy(self, model_id):
+    def deploy(self, model_id: str):
+        """
+        Deploy the model to Azure.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be deployed.
+        """
         pass
 
 
 class Deployer(object):
+    """
+    Class for deploying models to various cloud platforms.
+
+    Parameters
+    ----------
+    cloud : str, optional
+        The cloud platform to deploy to. Default is 'heroku'.
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        deployer = Deployer(cloud="heroku", config_json="path/to/config.json", credentials_json="path/to/credentials.json")
+        deployer.deploy("model_id")
+    """
     def __init__(self, cloud="heroku", config_json=None, credentials_json=None):
         """Initialize a cloud deployer. For now, only 'heroku' is available."""
         self.cloud = cloud
@@ -249,5 +387,13 @@ class Deployer(object):
         if cloud == "azure":
             self.dep = Azure(config_json=config_json, credentials_json=credentials_json)
 
-    def deploy(self, model_id):
+    def deploy(self, model_id: str):
+        """
+        Deploy the model to the specified cloud platform.
+
+        Parameters
+        ----------
+        model_id : str
+            The ID of the model to be deployed.
+        """
         self.dep.deploy(model_id)

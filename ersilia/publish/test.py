@@ -177,12 +177,61 @@ class CheckStrategy:
 
 
 class InspectService(ErsiliaBase):
-    def __init__(self, dir=None, model=None, config_json=None, credentials_json=None):
+    """
+    Service for inspecting models and their configurations.
+
+    Parameters
+    ----------
+    dir : str, optional
+        Directory where the model is located.
+    model : str, optional
+        Model identifier.
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        inspector = InspectService(dir="/path/to/model", model="model_id")
+        results = inspector.run()
+    """
+
+    def __init__(self, dir: str = None, model: str = None, config_json: str = None, credentials_json: str = None):
         super().__init__(config_json, credentials_json)
         self.dir = dir
         self.model = model
-# fmt: off
-    def _get_checks(self, inspector):
+
+    def run(self) -> dict:
+        """
+        Run the inspection checks on the specified model.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the results of the inspection checks.
+
+        Raises
+        ------
+        ValueError
+            If the model is not specified.
+        """
+        if not self.model:
+            raise ValueError("Model must be specified.")
+        
+        inspector = ModelInspector(self.model, self.dir)
+        checks = self._get_checks(inspector)
+        
+        output = {}
+        for strategy in checks:
+            if strategy.check_function:
+                output.update(strategy.execute())
+        
+        return output
+
+    def _get_checks(self, inspector: ModelInspector) -> list:
         is_dir_none = self.dir is None
         return [
             CheckStrategy(
@@ -216,31 +265,26 @@ class InspectService(ErsiliaBase):
                 "extra_files_check_details",
             ),
         ]
-# fmt: on
-    def run(self):
-        if not self.model:
-            raise ValueError("Model must be specified.")
-        
-        inspector = ModelInspector(self.model, self.dir)
-        checks = self._get_checks(inspector)
-        
-        output = {}
-        for strategy in checks:
-            if strategy.check_function:
-                output.update(strategy.execute())
-        
-        return output
 
 class SetupService:
+    """
+    Service for setting up the environment and fetching the model repository.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model.
+    dir : str
+        Directory where the model repository will be cloned.
+    logger : logging.Logger
+        Logger for logging messages.
+    remote : bool
+        Flag indicating whether to fetch the repository from a remote source.
+    """
 
     BASE_URL = "https://github.com/ersilia-os/"
 
-    def __init__(
-        self, model_id, 
-        dir, 
-        logger,
-        remote
-        ):
+    def __init__(self, model_id: str, dir: str, logger, remote: bool):
         self.model_id = model_id
         self.dir = dir
         self.logger = logger
@@ -249,8 +293,31 @@ class SetupService:
         self.conda = SimpleConda()
 
     @staticmethod
-    def run_command(command, logger, capture_output=False, shell=True
-        ):
+    def run_command(command: str, logger, capture_output: bool = False, shell: bool = True) -> str:
+        """
+        Run a shell command.
+
+        Parameters
+        ----------
+        command : str
+            The command to run.
+        logger : logging.Logger
+            Logger for logging messages.
+        capture_output : bool, optional
+            Flag indicating whether to capture the command output.
+        shell : bool, optional
+            Flag indicating whether to run the command in the shell.
+
+        Returns
+        -------
+        str
+            The output of the command.
+
+        Raises
+        ------
+        subprocess.CalledProcessError
+            If the command returns a non-zero exit code.
+        """
         try:
             if capture_output:
                 result = subprocess.run(
@@ -306,6 +373,9 @@ class SetupService:
             sys.exit(1)
 
     def fetch_repo(self):
+        """
+        Fetch the model repository from the remote source if the remote flag is set.
+        """
         if self.remote and not os.path.exists(self.dir):
             out = SetupService.run_command(
                 f"git clone {self.repo_url}",
@@ -314,6 +384,14 @@ class SetupService:
             self.logger.info(out)
 
     def check_conda_env(self):
+        """
+        Check if the Conda environment for the model exists.
+
+        Raises
+        ------
+        Exception
+            If the Conda environment does not exist.
+        """
         if self.conda.exists(self.model_id):
             self.logger.debug(
                 f"Conda environment '{self.model_id}' already exists."
@@ -324,7 +402,27 @@ class SetupService:
             )
     
     @staticmethod
-    def get_conda_env_location(model_id, logger):
+    def get_conda_env_location(model_id: str, logger) -> str:
+        """
+        Get the location of the Conda environment for the model.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        logger : logging.Logger
+            Logger for logging messages.
+
+        Returns
+        -------
+        str
+            The location of the Conda environment.
+
+        Raises
+        ------
+        subprocess.CalledProcessError
+            If the command to list Conda environments returns a non-zero exit code.
+        """
         try:
             result = SetupService.run_command(
                 "conda env list",
@@ -345,6 +443,35 @@ class SetupService:
         return None
 
 class IOService:
+    """
+    Service for handling input/output operations related to model testing.
+
+    Parameters
+    ----------
+    logger : logging.Logger
+        Logger for logging messages.
+    dest_dir : str
+        Destination directory for storing model-related files.
+    model_path : str
+        Path to the model.
+    bundle_path : str
+        Path to the model bundle.
+    bentoml_path : str
+        Path to the BentoML files.
+    model_id : str
+        Identifier of the model.
+    dir : str
+        Directory where the model repository is located.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        ios = IOService(logger=logger, dest_dir="/path/to/dest", model_path="/path/to/model", 
+                        bundle_path="/path/to/bundle", bentoml_path="/path/to/bentoml", 
+                        model_id="model_id", dir="/path/to/dir")
+        ios.read_information()
+    """
 
     # Required files
     RUN_FILE = f"model/framework/{RUN_FILE}"
@@ -368,16 +495,7 @@ class IOService:
         "LICENSE",
     ]
 
-    def __init__(
-        self, 
-        logger,
-        dest_dir,
-        model_path, 
-        bundle_path, 
-        bentoml_path, 
-        model_id,
-        dir
-    ):
+    def __init__(self, logger, dest_dir: str, model_path: str, bundle_path: str, bentoml_path: str, model_id: str, dir: str):
         self.logger = logger
         self.model_id = model_id
         self.dir = dir
@@ -389,15 +507,7 @@ class IOService:
         self._bentoml_path = bentoml_path
         self._dest_dir = dest_dir
 
-
-    def _run_check(
-            self, 
-            check_function, 
-            data, 
-            check_name, 
-            additional_info=None
-        ):
-  
+    def _run_check(self, check_function, data, check_name: str, additional_info=None) -> bool:
         try:
             if additional_info is not None:
                 check_function(additional_info)
@@ -418,15 +528,7 @@ class IOService:
             ))
             return False
 
-
-    def _generate_table(
-            self,
-            title,
-            headers,
-            rows,
-            large_table=False,
-            merge=False 
-        ):
+    def _generate_table(self, title: str, headers: List[str], rows: List[List[str]], large_table: bool = False, merge: bool = False):
         f_col_width = 30 if large_table else 30    
         l_col_width = 50 if large_table else 10     
         d_col_width = 30 if not large_table else 20 
@@ -478,7 +580,22 @@ class IOService:
         self.console.print(table)
 
     @staticmethod
-    def get_model_type(model_id, repo_path):
+    def get_model_type(model_id: str, repo_path: str) -> str:
+        """
+        Get the type of the model based on the repository contents.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        repo_path : str
+            Path to the model repository.
+
+        Returns
+        -------
+        str
+            The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).
+        """
         resolver = TemplateResolver(
             model_id=model_id, 
             repo_path=repo_path
@@ -490,7 +607,20 @@ class IOService:
         else:
             return None
 
-    def get_file_requirements(self):
+    def get_file_requirements(self) -> List[str]:
+        """
+        Get the list of required files for the model.
+
+        Returns
+        -------
+        List[str]
+            List of required files.
+
+        Raises
+        ------
+        ValueError
+            If the model type is unsupported.
+        """
         type = IOService.get_model_type(
             model_id=self.model_id, 
             repo_path=self.dir
@@ -504,7 +634,20 @@ class IOService:
                 f"Unsupported model type: {type}"
             )
 
-    def read_information(self):
+    def read_information(self) -> dict:
+        """
+        Read the information file for the model.
+
+        Returns
+        -------
+        dict
+            The contents of the information file.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the information file does not exist.
+        """
         file = os.path.join(
             self._dest_dir, 
             self.model_id, 
@@ -518,6 +661,16 @@ class IOService:
             return json.load(f)
 
     def print_output(self, result, output):
+        """
+        Print the output of a result.
+
+        Parameters
+        ----------
+        result : any
+            The result to print.
+        output : file-like object
+            The output file to write to.
+        """
         def write_output(data):
             if output is not None:
                 with open(output.name, "w") as file:
@@ -531,7 +684,20 @@ class IOService:
         else:
             self.logger.debug(result)
 
-    def get_conda_env_size(self):
+    def get_conda_env_size(self) -> int:
+        """
+        Get the size of the Conda environment for the model.
+
+        Returns
+        -------
+        int
+            The size of the Conda environment in megabytes.
+
+        Raises
+        ------
+        Exception
+            If there is an error calculating the size.
+        """
         try:
             loc = SetupService.get_conda_env_location(
                 self.model_id, 
@@ -544,7 +710,7 @@ class IOService:
             )
             return 0
 
-    def calculate_directory_size(self, path):
+    def calculate_directory_size(self, path: str) -> int:
         try:
             size_output = SetupService.run_command(
                 ["du", "-sm", path], 
@@ -561,13 +727,44 @@ class IOService:
             return 0
         
     @throw_ersilia_exception()
-    def get_directories_sizes(self):
+    def get_directories_sizes(self) -> tuple:
+        """
+        Get the sizes of the model directory and the Conda environment directory.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the sizes of the model directory and the Conda environment directory in megabytes.
+        """
         dir_size = self.calculate_directory_size(self.dir)
         env_size = self.get_conda_env_size()
         return dir_size, env_size
 
-
 class CheckService:
+    """
+    Service for performing various checks on the model.
+
+    Parameters
+    ----------
+    logger : logging.Logger
+        Logger for logging messages.
+    model_id : str
+        Identifier of the model.
+    dest_dir : str
+        Destination directory for storing model-related files.
+    dir : str
+        Directory where the model repository is located.
+    ios : IOService
+        Instance of IOService for handling input/output operations.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        check_service = CheckService(logger=logger, model_id="model_id", dest_dir="/path/to/dest", 
+                                     dir="/path/to/dir", ios=ios)
+        check_service.check_files()
+    """
 
     # model specs
     MODEL_TASKS = {
@@ -610,14 +807,7 @@ class CheckService:
         "Serializable Object"
     }
 
-    def __init__(
-        self, 
-        logger, 
-        model_id, 
-        dest_dir, 
-        dir, 
-        ios
-        ):
+    def __init__(self, logger, model_id: str, dest_dir: str, dir: str, ios: IOService):
         self.logger = logger
         self.model_id = model_id
         self._dest_dir = dest_dir
@@ -640,6 +830,9 @@ class CheckService:
         )
 
     def check_files(self):
+        """
+        Check the existence of required files for the model.
+        """
         requirements = self.get_file_requirements()
         for file in requirements:
             self.logger.debug(f"Checking file: {file}")
@@ -742,7 +935,7 @@ class CheckService:
         if invalid_outputs:
             raise texc.InvalidEntry(
                 "Output", 
-                message=f"Invalid outputs: {', '.join(invalid_outputs)}"
+                message=f"Invalid outputs: {' '.join(invalid_outputs)}"
             )
 
         self.logger.debug("All outputs are valid.")
@@ -790,6 +983,14 @@ class CheckService:
     
     @throw_ersilia_exception()
     def check_information(self, output):
+        """
+        Perform various checks on the model information.
+
+        Parameters
+        ----------
+        output : file-like object
+            The output file to write to.
+        """
         self.logger.debug(f"Beginning checks for {self.model_id} model information")
         file = os.path.join(
             self._dest_dir, 
@@ -814,27 +1015,61 @@ class CheckService:
 
     @throw_ersilia_exception()
     def check_single_input(self, output, run_model, run_example):
+        """
+        Check if the model can run with a single input to check if it has a value 
+        in the produced output csv.
 
+        Parameters
+        ----------
+        output : file-like object
+            The output file to write to.
+        run_model : callable
+            Function to run the model.
+        run_example : callable
+            Function to generate example input.
+        """
         input = run_example(
             n_samples=Options.NUM_SAMPLES.value, 
             file_name=None, 
             simple=True, 
             try_predefined=False
         )
-        self.logger.debug(f"Output: {output}")
         result = run_model(
             input=input, 
             output=output, 
             batch=100
         )
 
-        if output is not None:
-            self.single_input = True
-        else:
+        def read_csv(file_path):
+            absolute_path = os.path.abspath(file_path)
+            if not os.path.exists(absolute_path):
+                raise FileNotFoundError(f"File not found: {absolute_path}")
+            with open(absolute_path, mode='r') as csv_file:
+                reader = csv.DictReader(csv_file)
+                return [row for row in reader]
+
+        try:
+            csv_content = read_csv(output)
+            if csv_content:
+                self.single_input = True
+        except Exception as e:
+            self.logger.error(f"Error reading CSV content: {e}")
             self._print_output(result, output)
 
     @throw_ersilia_exception()
     def check_example_input(self, output, run_model, run_example):
+        """
+        Check if the model can run with example input without error.
+
+        Parameters
+        ----------
+        output : file-like object
+            The output file to write to.
+        run_model : callable
+            Function to run the model.
+        run_example : callable
+            Function to generate example input.
+        """
         input_samples = run_example(
             n_samples=Options.NUM_SAMPLES.value, 
             file_name=None, 
@@ -850,20 +1085,32 @@ class CheckService:
             batch=100
         )
 
-        if output is not None:
+        if input_samples:
             self.example_input = True
         else:
             self._print_output(result, output)
 
     @throw_ersilia_exception()
     def check_consistent_output(self, run_example, run_model):
+        """
+        Check if the model produces consistent output.
+
+        Parameters
+        ----------
+        run_example : callable
+            Function to generate example input.
+        run_model : callable
+            Function to run the model.
+        """
         def compute_rmse(y_true, y_pred):
-             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
+            return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
+
         def _compare_output_strings(output1, output2):
             if output1 is None and output2 is None:
                 return 100
             else:
                 return fuzz.ratio(output1, output2)
+
         def validate_output(output1, output2):
             if not isinstance(output1, type(output2)):
                 raise texc.InconsistentOutputTypes(self.model_id)
@@ -936,20 +1183,51 @@ class CheckService:
         self.consistent_output = True
 
 class RunnerService:
+    """
+    Service for running model tests and checks.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model.
+    logger : logging.Logger
+        Logger for logging messages.
+    ios_service : IOService
+        Instance of IOService for handling input/output operations.
+    checkup_service : CheckService
+        Instance of CheckService for performing various checks on the model.
+    setup_service : SetupService
+        Instance of SetupService for setting up the environment and fetching the model repository.
+    model_path : str
+        Path to the model.
+    level : str
+        Level of checks to perform.
+    dir : str
+        Directory where the model repository is located.
+    remote : bool
+        Flag indicating whether to fetch the repository from a remote source.
+    inspect : bool
+        Flag indicating whether to perform inspection checks.
+    remove : bool
+        Flag indicating whether to remove the model directory after tests.
+    inspecter : InspectService
+        Instance of InspectService for inspecting models and their configurations.
+    """
+
     def __init__(
         self, 
-        model_id, 
+        model_id: str, 
         logger, 
-        ios_service, 
-        checkup_service, 
-        setup_service,
-        model_path, 
-        level,
-        dir,
-        remote,
-        inspect,
-        remove,
-        inspecter
+        ios_service: IOService, 
+        checkup_service: CheckService, 
+        setup_service: SetupService,
+        model_path: str, 
+        level: str,
+        dir: str,
+        remote: bool,
+        inspect: bool,
+        remove: bool,
+        inspecter: InspectService
     ):
         self.model_id = model_id
         self.logger = logger
@@ -969,7 +1247,24 @@ class RunnerService:
         )
         self.run_using_bash = False
 
-    def run_model(self, input, output, batch):
+    def run_model(self, input, output: str, batch: int):
+        """
+        Run the model with the given input and output parameters.
+
+        Parameters
+        ----------
+        input : list
+            List of input samples.
+        output : str
+            Path to the output file.
+        batch : int
+            Batch size for running the model.
+
+        Returns
+        -------
+        str
+            The output of the command.
+        """
         if isinstance(input, list):
             input = input[0]
         self.logger.info("Running model")
@@ -980,6 +1275,9 @@ class RunnerService:
         return out
 
     def fetch(self):
+        """
+        Fetch the model repository from the specified directory.
+        """
         SetupService.run_command(
             " ".join(["ersilia", 
             "-v", 
@@ -990,12 +1288,31 @@ class RunnerService:
         )
 
     def run_exampe(
-            self, 
-            n_samples, 
-            file_name=None, 
-            simple=True, 
-            try_predefined=False
-        ):
+        self, 
+        n_samples: int, 
+        file_name: str = None, 
+        simple: bool = True, 
+        try_predefined: bool = False
+    ):
+        """
+        Generate example input samples for the model.
+
+        Parameters
+        ----------
+        n_samples : int
+            Number of samples to generate.
+        file_name : str, optional
+            Name of the file to save the samples.
+        simple : bool, optional
+            Flag indicating whether to generate simple samples.
+        try_predefined : bool, optional
+            Flag indicating whether to try predefined samples.
+
+        Returns
+        -------
+        list
+            List of generated input samples.
+        """
         return self.example.example(
             n_samples=n_samples, 
             file_name=file_name, 
@@ -1004,6 +1321,14 @@ class RunnerService:
         )
     @throw_ersilia_exception()
     def run_bash(self):
+        """
+        Run the model using a bash script and compare the outputs for consistency.
+
+        Raises
+        ------
+        RuntimeError
+            If there is an error during the subprocess execution or output comparison.
+        """
         def compute_rmse(y_true, y_pred):
             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
         
@@ -1196,7 +1521,15 @@ class RunnerService:
         return similarity >= threshold
 
 
-    def make_output(self, elapsed_time):
+    def make_output(self, elapsed_time: float):
+        """
+        Generate the final output table with the test results.
+
+        Parameters
+        ----------
+        elapsed_time : float
+            Time elapsed during the test run.
+        """
         results = TestResult.generate_results(
             self.checkup_service,
             elapsed_time, 
@@ -1208,13 +1541,20 @@ class RunnerService:
             rows=data
         )
 
-    def run(self, output_file=None):
-        if MISSING_PACKAGES:
-            raise ImportError(
-                "Missing packages required for testing. "
-                "Please install test extras with 'pip install ersilia[test]'."
-            )
+    def run(self, output_file: str = Options.OUTPUT_CSV.value):
+        """
+        Run the model tests and checks.
 
+        Parameters
+        ----------
+        output_file : str, optional
+            Path to the output file for storing the test results.
+
+        Raises
+        ------
+        ImportError
+            If required packages are missing.
+        """
         if not output_file:
             output_file = os.path.join(
                 self._model_path(self.model_id), 
@@ -1244,6 +1584,19 @@ class RunnerService:
             )
 
     def transform_key(self, value):
+        """
+        Transform the test result key to a string representation.
+
+        Parameters
+        ----------
+        value : any
+            The test result value.
+
+        Returns
+        -------
+        str
+            The string representation of the test result.
+        """
         if value is True:
             return str(STATUS_CONFIGS.PASSED)
         elif value is False:
@@ -1348,6 +1701,7 @@ class ModelTester(ErsiliaBase):
         self.inspect = inspect
         self.remote = remote
         self.remove = remove
+        self._check_pedendency()
         self.setup_service = SetupService(
             self.model_id, 
             self.dir, 
@@ -1388,6 +1742,12 @@ class ModelTester(ErsiliaBase):
             self.remove,
             self.inspecter
         )
+    def _check_pedendency(self):
+        if MISSING_PACKAGES:
+            raise ImportError(
+                "Missing packages required for testing. "
+                "Please install test extras with 'pip install ersilia[test]'."
+            )
 
     def setup(self):
         self.logger.debug(f"Running conda setup for {self.model_id}")
