@@ -75,6 +75,12 @@ def fetch_cmd():
         help="Force fetch from hosted service. This only creates a basic folder structure for the model, the model is not actually downloaded.",
     )
     @click.option(
+        "--hosted_url",
+        default=None,
+        type=click.STRING,
+        help="URL of the hosted model service"
+    )
+    @click.option(
         "--with_bentoml",
         is_flag=True,
         default=False,
@@ -94,6 +100,7 @@ def fetch_cmd():
         from_dockerhub,
         from_s3,
         from_hosted,
+        hosted_url,
         with_bentoml,
         with_fastapi,
     ):
@@ -118,17 +125,17 @@ def fetch_cmd():
             force_from_hosted=from_hosted,
             force_with_bentoml=with_bentoml,
             force_with_fastapi=with_fastapi,
-            hosted_url=from_hosted,
+            hosted_url=hosted_url,
             local_dir=from_dir,
         )
-        is_fetched = _fetch(mf, model_id)
+        fetch_result = _fetch(mf, model_id)
 
-        if is_fetched:
+        if fetch_result.fetch_success:
             echo(
                 ":thumbs_up: Model {0} fetched successfully!".format(model_id),
                 fg="green",
             )
         else:
-            echo(":thumbs_down: Model {0} failed to fetch!".format(model_id), fg="red")
+            echo(f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}", fg="red")
 
     return fetch
