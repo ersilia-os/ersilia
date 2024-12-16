@@ -108,13 +108,52 @@
 <span id="ersilia-store-api-module"></span><h2>ersilia.store.api module<a class="headerlink" href="#module-ersilia.store.api" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.store.api.InferenceStoreApi">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.api.</span></span><span class="sig-name descname"><span class="pre">InferenceStoreApi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.api.</span></span><span class="sig-name descname"><span class="pre">InferenceStoreApi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>A class to interact with the Inference Store API.</p>
+<p>This class provides methods to upload input data to the inference store,
+request predictions, and retrieve the results. It handles the creation
+of unique request IDs, obtaining presigned URLs for file uploads, and
+managing the input data format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model for which the inference is being performed.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">InferenceStoreApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">)</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CCO&quot;</span><span class="p">,</span> <span class="s2">&quot;CCN&quot;</span><span class="p">]</span>
+<span class="n">api</span><span class="o">.</span><span class="n">get_precalculations</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="mechanism">
+<h3>Mechanism<a class="headerlink" href="#mechanism" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Initialize the class with a model ID.</p></li>
+<li><p>Generate a unique request ID for each inference request.</p></li>
+<li><p>Obtain a presigned URL from the inference store for uploading input data.</p></li>
+<li><p>Adapt the input data to the required format and upload it using the presigned URL.</p></li>
+<li><p>Request the predictions from the inference store using the request ID.</p></li>
+<li><p>Retrieve and return the URL of the output predictions.</p></li>
+</ol>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.store.api.InferenceStoreApi.get_precalculations">
-<span class="sig-name descname"><span class="pre">get_precalculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi.get_precalculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi.get_precalculations" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_precalculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi.get_precalculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi.get_precalculations" title="Link to this definition"></a></dt>
+<dd><p>Get precalculations for the given inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>list</em>) – A list of input data for which precalculations are to be fetched.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The URL of the output presigned URL or an error message.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
+</section>
 </dd></dl>
 
 </section>
@@ -124,12 +163,24 @@
 <dt class="sig sig-object py" id="ersilia.store.utils.InferenceStoreMessage">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">InferenceStoreMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#InferenceStoreMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.InferenceStoreMessage" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for inference store messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model for which the message is being generated.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.store.utils.ModelNotInStore">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">ModelNotInStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ModelNotInStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ModelNotInStore" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.store.utils.InferenceStoreMessage" title="ersilia.store.utils.InferenceStoreMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceStoreMessage</span></code></a></p>
+<p>Message class for models not found in the inference store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model that is not found.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.store.utils.ModelNotInStore.echo">
 <span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ModelNotInStore.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ModelNotInStore.echo" title="Link to this definition"></a></dt>
@@ -141,6 +192,7 @@
 <dt class="sig sig-object py" id="ersilia.store.utils.OutputSource">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">OutputSource</span></span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#OutputSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.OutputSource" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to define output source options.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.store.utils.OutputSource.ALL">
 <span class="sig-name descname"><span class="pre">ALL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['local-only',</span> <span class="pre">'cloud-only']</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.ALL" title="Link to this definition"></a></dt>
@@ -172,6 +224,15 @@
 <dt class="sig sig-object py" id="ersilia.store.utils.PrecalculationsInStore">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">PrecalculationsInStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#PrecalculationsInStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.PrecalculationsInStore" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.store.utils.InferenceStoreMessage" title="ersilia.store.utils.InferenceStoreMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceStoreMessage</span></code></a></p>
+<p>Message class for precalculations found in the inference store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model for which precalculations are found.</p></li>
+<li><p><strong>output_url</strong> (<em>str</em>) – The URL where the precalculations can be downloaded.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.store.utils.PrecalculationsInStore.echo">
 <span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#PrecalculationsInStore.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.PrecalculationsInStore.echo" title="Link to this definition"></a></dt>
@@ -183,6 +244,12 @@
 <dt class="sig sig-object py" id="ersilia.store.utils.PrecalculationsNotInStore">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">PrecalculationsNotInStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#PrecalculationsNotInStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.PrecalculationsNotInStore" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.store.utils.InferenceStoreMessage" title="ersilia.store.utils.InferenceStoreMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceStoreMessage</span></code></a></p>
+<p>Message class for precalculations not found in the inference store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model for which precalculations are not found.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.store.utils.PrecalculationsNotInStore.echo">
 <span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#PrecalculationsNotInStore.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.PrecalculationsNotInStore.echo" title="Link to this definition"></a></dt>
@@ -193,12 +260,33 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.store.utils.delete_file_upon_upload">
 <span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">delete_file_upon_upload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#delete_file_upon_upload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.delete_file_upon_upload" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Delete the file upon successful upload.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>response_code</strong> (<em>int</em>) – The HTTP response code from the upload request.</p></li>
+<li><p><strong>file_path</strong> (<em>str</em>) – The path of the file to delete.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.store.utils.store_has_model">
 <span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">store_has_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#store_has_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.store_has_model" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the model exists in the inference store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model exists in the store, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-ersilia.store">
