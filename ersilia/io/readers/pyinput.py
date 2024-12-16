@@ -2,6 +2,16 @@ from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 
 
 class PyInputReader(object):
+    """
+    Class to read and process Python input data.
+
+    Parameters
+    ----------
+    input : any
+        The input data.
+    IO : object
+        IO handler object.
+    """
     def __init__(self, input, IO):
         self.IO = IO
         self.input_shape = IO.input_shape
@@ -29,6 +39,14 @@ class PyInputReader(object):
         return inp
 
     def is_single_input(self):
+        """
+        Check if the input data is a single input.
+
+        Returns
+        -------
+        bool
+            True if the input data is a single input, False otherwise.
+        """
         data = self._data
         if self.entity_is_list:
             assert type(data) is list
@@ -57,6 +75,14 @@ class PyInputReader(object):
                 return False
 
     def read(self):
+        """
+        Read the input data.
+
+        Returns
+        -------
+        list
+            List of input data.
+        """
         if self.is_single_input():
             return [self._data]
         else:

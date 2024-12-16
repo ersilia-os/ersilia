@@ -18,6 +18,27 @@ EXAMPLES = "compound.tsv"
 
 
 class IO(object):
+    """
+    Class to handle input/output operations for compound data.
+
+    This class provides methods to set up requirements, generate example data,
+    parse input data, and validate compound identifiers. It supports different
+    input shapes such as single, list, and pair of lists.
+
+    Parameters
+    ----------
+    input_shape : object
+        Input shape specification.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        >>> from ersilia.io.shape import InputShapeSingle
+        >>> io = IO(InputShapeSingle())
+        >>> list(io.example(1))
+        [{'key': '...', 'input': '...', 'text': '...'}]
+    """
     def __init__(self, input_shape):
         self.logger = logger
         self.input_shape = input_shape
@@ -44,6 +65,120 @@ class IO(object):
             self._example = self._example_pair_of_lists
             self._parser = self._parse_pair_of_lists
             self._test = test_examples.input_shape_pair_of_lists
+
+    def setup(self):
+        """
+        Setup necessary requirements for compound inputs.
+
+        Returns
+        -------
+        None
+        """
+        self.logger.debug(
+            "Checking RDKIT and other requirements necessary for compound inputs"
+        )
+        RdkitRequirement()
+        ChemblWebResourceClientRequirement()
+
+    def example(self, n_samples):
+        """
+        Generate example data.
+
+        Parameters
+        ----------
+        n_samples : int
+            Number of samples to generate.
+
+        Returns
+        -------
+        generator
+            Generator yielding example data.
+        """
+        return self._example(n_samples)
+
+    def test(self):
+        """
+        Get test examples.
+
+        Returns
+        -------
+        list
+            List of test examples.
+        """
+        return self._test
+
+    def parse(self, datum):
+        """
+        Parse a datum.
+
+        Parameters
+        ----------
+        datum : any
+            The datum to parse.
+
+        Returns
+        -------
+        dict
+            Parsed datum.
+        """
+        if type(datum) is dict:
+            return datum
+        else:
+            return self._parser(datum)
+
+    def is_input(self, text):
+        """
+        Check if a text is a valid input.
+
+        Parameters
+        ----------
+        text : str
+            The text to check.
+
+        Returns
+        -------
+        bool
+            True if the text is a valid input, False otherwise.
+        """
+        return self.identifier._is_smiles(text)
+
+    def is_key(self, text):
+        """
+        Check if a text is a valid key.
+
+        Parameters
+        ----------
+        text : str
+            The text to check.
+
+        Returns
+        -------
+        bool
+            True if the text is a valid key, False otherwise.
+        """
+        return self.identifier._is_inchikey(text)
+
+    def string_delimiter(self):
+        """
+        Get the string delimiter.
+
+        Returns
+        -------
+        str
+            The string delimiter.
+        """
+        return "."
+
+    def column_delimiter(self):
+        """
+        Get the column delimiter.
+
+        Returns
+        -------
+        str
+            The column delimiter.
+        """
+        return ","
 
     def _sample_example_singlets(self, n_samples):
         delimiter = None
@@ -99,19 +234,6 @@ class IO(object):
         for d in D:
             yield d
 
-    def setup(self):
-        self.logger.debug(
-            "Checking RDKIT and other requirements necessary for compound inputs"
-        )
-        RdkitRequirement()
-        ChemblWebResourceClientRequirement()
-
-    def example(self, n_samples):
-        return self._example(n_samples)
-
-    def test(self):
-        return self._test
-
     def _parse_dict(self, datum):
         if "key" in datum:
             key = datum["key"]
@@ -164,21 +286,3 @@ class IO(object):
         key = self.arbitrary_identifier.encode(text)
         result = {"key": key, "input": inp, "text": text}
         return result
-
-    def parse(self, datum):
-        if type(datum) is dict:
-            return datum
-        else:
-            return self._parser(datum)
-
-    def is_input(self, text):
-        return self.identifier._is_smiles(text)
-
-    def is_key(self, text):
-        return self.identifier._is_inchikey(text)
-
-    def string_delimiter(self):
-        return "."
-
-    def column_delimiter(self):
-        return ","
