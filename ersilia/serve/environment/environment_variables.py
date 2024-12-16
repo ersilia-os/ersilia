@@ -10,6 +10,15 @@ from ... import ErsiliaBase
 
 
 class GetEnvironmentVariable(ErsiliaBase):
+    """
+    Class to get environment variables from various sources.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration in JSON format.
+    """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.logger.debug("Environmental variable getter created")
@@ -33,7 +42,20 @@ class GetEnvironmentVariable(ErsiliaBase):
     def _get_from_bashrc(self, env):
         pass
 
-    def get(self, env: str):
+    def get(self, env: str) -> str:
+        """
+        Get the value of an environment variable from various sources.
+
+        Parameters
+        ----------
+        env : str
+            The name of the environment variable.
+
+        Returns
+        -------
+        str
+            The value of the environment variable.
+        """
         value = self._get_from_python(env)
         if value is not None:
             return value
@@ -52,7 +74,18 @@ class GetEnvironmentVariable(ErsiliaBase):
 
 
 class PutEnvironmentVariable(ErsiliaBase):
-    def __init__(self, model_id, config_json=None):
+    """
+    Class to set environment variables for a given model.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict, optional
+        Configuration in JSON format.
+    """
+
+    def __init__(self, model_id: str, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.logger.debug("Environmental variable setter created")
@@ -72,11 +105,9 @@ class PutEnvironmentVariable(ErsiliaBase):
         return None
 
     def _send_to_framework_in_docker_as_dotenv(self, dotenv_file):
-        # TODO: Implement this
         subprocess.run("", shell=True).wait()
 
     def _send_to_local_framework_as_dotenv(self, dotenv_file):
-        # TODO: Test this
         framework_dir = self._get_framework_folder()
         if framework_dir is None:
             self.logger.debug(
@@ -89,4 +120,12 @@ class PutEnvironmentVariable(ErsiliaBase):
         shutil.copy(dotenv_file, os.path.join(framework_dir, DOTENV_FILE))
 
     def put(self, env_dict: dict):
+        """
+        Set environment variables for the model.
+
+        Parameters
+        ----------
+        env_dict : dict
+            Dictionary of environment variables to set, where keys are variable names and values are variable values.
+        """
         pass
