@@ -1,12 +1,14 @@
 import os
 import shutil
 import os.path
+from typing import Tuple
 from ... import ErsiliaBase
 from ...utils.terminal import run_command
 from ...utils.environment import Environment
 from ...utils.conda import SimpleConda
 from ...utils.system import is_inside_docker
 from ..content.catalog import ModelCatalog
+from ..content.card import ModelCard
 from ...db.environments.localdb import EnvironmentDb
 from ...db.hubdata.localslugs import SlugDb
 from ...db.environments.managers import DockerManager
@@ -450,7 +452,7 @@ class ModelDockerDeleter(ErsiliaBase):
             )
         )
         dm = DockerManager(config_json=self.config_json)
-        if dm.is_active():
+        if dm.is_active(): # TODO This is hacky but is needed by ModelPreparer when model is fetched. 
             dm.delete_images(model_id)
 
 
@@ -535,7 +537,7 @@ class ModelFullDeleter(ErsiliaBase):
         self.overwrite = overwrite
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
-    def needs_delete(self, model_id: str) -> bool:
+    def _needs_delete(self, model_id: str) -> bool:
         """
         Checks if the model needs to be deleted.
 
@@ -556,6 +558,30 @@ class ModelFullDeleter(ErsiliaBase):
         if os.path.exists(self._model_path(model_id)):
             return True
         return False
+
+    def can_be_deleted(self, model_id: str) -> Tuple[bool, str]:
+        """
+        Checks if the model can be deleted.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+
+        Returns
+        -------
+        bool
+            True if the model can be deleted, False otherwise.
+        """
+        needs_delete = self._needs_delete(model_id)
+        mc = ModelCard(config_json=self.config_json).get(model_id)
+        model_source = ModelCatalog(config_json=self.config_json)._get_model_source(mc)
+        dm = DockerManager(config_json=self.config_json)
+        if needs_delete:
+            if model_source == "DockerHub" and dm.is_active():
+                return False, "Model fetched through Docker but Docker engine is inactive."
+        else:
+            return False, f"Model {model_id} is not available locally, no delete necessary."
 
     def delete(self, model_id: str):
         """
