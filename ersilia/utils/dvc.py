@@ -24,24 +24,59 @@ def set_secrets_file():
 
 
 class DVCFetcher(object):
+    """
+    A class to fetch data using DVC (Data Version Control).
+
+    Parameters
+    ----------
+    local_repo_path : str
+        The local repository path.
+    """
     def __init__(self, local_repo_path):
         self.repo_path = local_repo_path
 
     def get_data(self):
+        """
+        Fetch data using DVC.
+        """
         if self.check_dvc_exists():
             terminal.run_command("dvc --cd " + self.repo_path + " pull")
 
     def check_dvc_exists(self):
+        """
+        Check if DVC file exists.
+
+        Returns
+        -------
+        bool
+            True if DVC file exists, False otherwise.
+        """
         if os.path.isfile(self._data_path() + ".dvc"):
             return True
         return False
 
     def check_h5_exists(self):
+        """
+        Check if H5 file exists.
+
+        Returns
+        -------
+        bool
+            True if H5 file exists, False otherwise.
+        """
         if os.path.isfile(self._data_path()):
             return True
         return False
 
     def has_data(self):
+        """
+        Check if H5 file contains data.
+
+        Returns
+        -------
+        bool
+            True if H5 file contains data, False otherwise.
+        """
         if self.check_h5_exists():
             with h5py.File(self._data_path(), "a") as f:
                 if len(f.keys()) > 0:
@@ -53,11 +88,24 @@ class DVCFetcher(object):
 
 
 class DVCBrancher(object):
+    """
+    A class to manage DVC branches.
+    """
     def __init__(self):
         pass
 
 
 class DVCSetup(object):
+    """
+    A class to set up DVC with Google Drive.
+
+    Parameters
+    ----------
+    local_repo_path : str
+        The local repository path.
+    model_id : str
+        The model identifier.
+    """
     def __init__(self, local_repo_path, model_id):
         self.repo_path = local_repo_path
         self.model_id = model_id
@@ -67,6 +115,9 @@ class DVCSetup(object):
         self.drive = GoogleDrive(gauth)
 
     def gdrive_setup(self):
+        """
+        Set up Google Drive folder for DVC.
+        """
         folder = self.drive.CreateFile(
             {
                 "title": self.model_id,
@@ -77,6 +128,14 @@ class DVCSetup(object):
         folder.Upload()
 
     def gdrive_folder_id(self):
+        """
+        Get the Google Drive folder ID for the model.
+
+        Returns
+        -------
+        str
+            The Google Drive folder ID.
+        """
         fileList = self.drive.ListFile(
             {
                 "q": "'" + ISAURA_GDRIVE + "' in parents and trashed=false",
@@ -92,6 +151,9 @@ class DVCSetup(object):
                 return str(file["id"])
 
     def set_dvc_gdrive(self):
+        """
+        Set up DVC remote storage on Google Drive.
+        """
         terminal.run_command("dvc --cd {0} add data.h5".format(self.repo_path))
         terminal.run_command(
             "dvc --cd "
@@ -103,6 +165,14 @@ class DVCSetup(object):
         terminal.run_command(cmd, quiet=False)
 
     def git_add_and_commit(self, message="Set to public data repo"):
+        """
+        Add and commit changes to Git.
+
+        Parameters
+        ----------
+        message : str, optional
+            The commit message. Default is "Set to public data repo".
+        """
         cwd = os.getcwd()
         os.chdir(self.repo_path)
         terminal.run_command(

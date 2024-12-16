@@ -17,6 +17,18 @@ INSTALL_LOG_FILE = ".install.log"
 
 
 class BaseInstaller(ErsiliaBase):
+    """
+    Base class for managing installations in Ersilia.
+
+    Parameters
+    ----------
+    check_install_log : bool
+        Whether to check the installation log.
+    config_json : dict, optional
+        Configuration settings in JSON format. Default is None.
+    credentials_json : dict, optional
+        Credentials settings in JSON format. Default is None.
+    """
     def __init__(self, check_install_log, config_json, credentials_json):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -33,6 +45,9 @@ class BaseInstaller(ErsiliaBase):
         self.development_path = checker.development_path
 
     def write_log(self):
+        """
+        Write the installation log to a file.
+        """
         if self.log is None:
             return
         with open(self.log_file, "w") as f:
@@ -40,18 +55,37 @@ class BaseInstaller(ErsiliaBase):
                 f.write(l + "\n")
 
     def update_log(self, task):
+        """
+        Update the installation log with a new task.
+
+        Parameters
+        ----------
+        task : str
+            The task to add to the log.
+        """
         if self.log is None:
             self.log = {task}
         self.log.update([task])
         self.write_log()
 
     def remove_from_log(self, task):
+        """
+        Remove a task from the installation log.
+
+        Parameters
+        ----------
+        task : str
+            The task to remove from the log.
+        """
         if self.log is not None:
             if task in self.log:
                 self.log.remove(task)
                 self.write_log()
 
     def read_log(self):
+        """
+        Read the installation log from a file.
+        """
         if not os.path.exists(self.log_file):
             return
         with open(self.log_file, "r") as f:
@@ -61,6 +95,9 @@ class BaseInstaller(ErsiliaBase):
         self.log = set(self.log)
 
     def remove_log(self):
+        """
+        Remove the installation log file.
+        """
         if os.path.exists(self.log_file):
             os.remove(self.log_file)
 
@@ -83,6 +120,18 @@ class BaseInstaller(ErsiliaBase):
 
 
 class Installer(BaseInstaller):
+    """
+    A class to manage the installation of dependencies for Ersilia.
+
+    Parameters
+    ----------
+    check_install_log : bool, optional
+        Whether to check the installation log. Default is True.
+    config_json : dict, optional
+        Configuration settings in JSON format. Default is None.
+    credentials_json : dict, optional
+        Credentials settings in JSON format. Default is None.
+    """
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
         BaseInstaller.__init__(
             self,
@@ -92,6 +141,9 @@ class Installer(BaseInstaller):
         )
 
     def profile(self):
+        """
+        Set up the 'ersilia' CLI in the user profile.
+        """
         if self._is_done("profile"):
             return
         from ..default import bashrc_cli_snippet
@@ -100,6 +152,9 @@ class Installer(BaseInstaller):
         bashrc_cli_snippet()
 
     def conda(self):
+        """
+        Check if Conda is installed.
+        """
         if self._is_done("conda"):
             return
         if self._is_tool("conda"):
@@ -108,6 +163,9 @@ class Installer(BaseInstaller):
         sys.exit(1)
 
     def git(self):
+        """
+        Check if Git is installed.
+        """
         if self._is_done("git"):
             return
         if self._is_tool("git"):
@@ -116,6 +174,9 @@ class Installer(BaseInstaller):
         sys.exit(1)
 
     def rdkit(self):
+        """
+        Install RDKit from Conda if not already installed.
+        """
         if self._is_done("rdkit"):
             return
         try:
@@ -130,6 +191,9 @@ class Installer(BaseInstaller):
         run_command("conda install -c conda-forge -y -q rdkit")
 
     def config(self):
+        """
+        Set up the configuration file.
+        """
         if self._is_done("config"):
             return
         if os.path.exists(os.path.join(EOS, CONFIG_JSON)):
@@ -151,6 +215,9 @@ class Installer(BaseInstaller):
         return path_repo
 
     def base_conda(self):
+        """
+        Create a base Conda environment.
+        """
         if self._is_done("base_conda"):
             return
         eos_base_env = self.versions.base_conda_name()
@@ -197,11 +264,17 @@ class Installer(BaseInstaller):
         run_command("bash {0}".format(tmp_script))
 
     def base_conda_slim(self):
+        """
+        Create a slim base Conda environment.
+        """
         if self._is_done("base_conda_slim"):
             return
         # TODO
 
     def server_docker(self):
+        """
+        Build the Docker server image.
+        """
         if self._is_done("server_docker"):
             return
         import tempfile
@@ -249,12 +322,27 @@ class Installer(BaseInstaller):
         docker.build(path=tmp_repo, org=org, img=img, tag=tag)
 
     def server_docker_slim(self):
+        """
+        Build the slim Docker server image.
+        """
         if self._is_done("server_docker_slim"):
             return
         # TODO
 
 
 class Uninstaller(BaseInstaller):
+    """
+    A class to manage the uninstallation of dependencies for Ersilia.
+
+    Parameters
+    ----------
+    check_install_log : bool, optional
+        Whether to check the installation log. Default is True.
+    config_json : dict, optional
+        Configuration settings in JSON format. Default is None.
+    credentials_json : dict, optional
+        Credentials settings in JSON format. Default is None.
+    """
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
         BaseInstaller.__init__(
             self,
@@ -264,16 +352,25 @@ class Uninstaller(BaseInstaller):
         )
 
     def rdkit(self):
+        """
+        Uninstall RDKit.
+        """
         self.remove_from_log("rdkit")
         run_command("conda uninstall {0}".format("rdkit"))
 
     def base_conda(self):
+        """
+        Delete the base Conda environment.
+        """
         self.remove_from_log("base_conda")
         eos_base_env = self.versions.base_conda_name()
         sc = SimpleConda()
         sc.delete(eos_base_env)
 
     def server_docker(self):
+        """
+        Delete the Docker server image.
+        """
         self.remove_from_log("server_docker")
         from .docker import SimpleDocker
 
@@ -284,8 +381,20 @@ class Uninstaller(BaseInstaller):
 
 
 def base_installer(ignore_status=False):
-    """The base installer does a bare minimum installation of dependencies.
-    It is mainly used to make a base environment for the models."""
+    """
+    Perform a bare minimum installation of dependencies.
+
+    This function is mainly used to create a base environment for the models.
+
+    Parameters
+    ----------
+    ignore_status : bool, optional
+        Whether to ignore the current installation status. Default is False.
+
+    Returns
+    -------
+    None
+    """
     status = check_install_status()
     if status["status"] is None or ignore_status:
         ins = Installer(check_install_log=False)
@@ -296,7 +405,14 @@ def base_installer(ignore_status=False):
 
 
 def full_installer(ignore_status=False):
-    """The full installer does all the installations necessary to run ersilia."""
+    """
+    Perform a full installation of dependencies for Ersilia.
+
+    Parameters
+    ----------
+    ignore_status : bool, optional
+        Whether to ignore the current installation status. Default is False.
+    """
     status = check_install_status()
     if status["status"] != "full" or ignore_status:
         ins = Installer()

@@ -19,18 +19,46 @@ SPECS_JSON = ".specs.json"
 
 
 class BaseConda(object):
+    """
+    Base class for managing conda environments.
+
+    Methods
+    -------
+    default_env()
+        Get the default conda environment.
+    is_base()
+        Check if the current environment is the base environment.
+    conda_prefix(is_base)
+        Get the conda prefix path.
+    """
     def __init__(self):
         self.SPECS_JSON = SPECS_JSON
         self.CHECKSUM_FILE = CHECKSUM_FILE
 
     @staticmethod
     def default_env():
+        """
+        Get the default conda environment.
+
+        Returns
+        -------
+        str
+            The name of the default conda environment.
+        """
         if "CONDA_DEFAULT_ENV" in os.environ:
             return os.environ["CONDA_DEFAULT_ENV"]
         else:
             return BASE
 
     def is_base(self):
+        """
+        Check if the current environment is the base environment.
+
+        Returns
+        -------
+        bool
+            True if the current environment is the base environment, False otherwise.
+        """
         default_env = self.default_env()
         if default_env == BASE:
             return True
@@ -39,6 +67,19 @@ class BaseConda(object):
 
     @staticmethod
     def conda_prefix(is_base):
+        """
+        Get the conda prefix path.
+
+        Parameters
+        ----------
+        is_base : bool
+            Whether the current environment is the base environment.
+
+        Returns
+        -------
+        str
+            The conda prefix path.
+        """
         o = run_command_check_output("which conda").rstrip()
         if o:
             o = os.path.abspath(os.path.join(o, "..", ".."))
@@ -52,6 +93,22 @@ class BaseConda(object):
 
 
 class CondaUtils(BaseConda):
+    """
+    Utility class for managing conda environments and packages.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings in JSON format. Default is None.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        conda_utils = CondaUtils()
+        conda_utils.create("myenv", "3.8")
+
+    """
     def __init__(self, config_json=None):
         BaseConda.__init__(self)
         self.versions = Versioner(config_json=config_json)
@@ -85,6 +142,19 @@ class CondaUtils(BaseConda):
         return checksum
 
     def checksum_from_file(self, filename):
+        """
+        Generate a checksum for the contents of a file.
+
+        Parameters
+        ----------
+        filename : str
+            The path to the file.
+
+        Returns
+        -------
+        str
+            The checksum of the file contents.
+        """
         with open(filename, "r") as f:
             text = f.read()
         checksum = self._text_checksum(text)
@@ -92,6 +162,21 @@ class CondaUtils(BaseConda):
 
     @staticmethod
     def checksum_from_conda_yml_file(self, env_yml, overwrite):
+        """
+        Generate a checksum for a conda environment YAML file.
+
+        Parameters
+        ----------
+        env_yml : str
+            The path to the conda environment YAML file.
+        overwrite : bool
+            Whether to overwrite the name and prefix in the YAML file with the checksum.
+
+        Returns
+        -------
+        str
+            The checksum of the YAML file contents.
+        """
         with open(env_yml, "r") as f:
             name_idx = None
             pref_idx = None
@@ -121,9 +206,20 @@ class CondaUtils(BaseConda):
     def get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(
         self, path, force_exclusive=True
     ):
-        """Identifies install commands from Dockerfile
-        For now this command is conservative and returns None if at least
-        one of the commands is not conda ... or pip ... or pip3 ...
+        """
+        Identify install commands from a Dockerfile.
+
+        Parameters
+        ----------
+        path : str
+            The path to the Dockerfile.
+        force_exclusive : bool, optional
+            Whether to force exclusive conda and pip commands. Default is True.
+
+        Returns
+        -------
+        list
+            A list of install commands.
         """
         dp = SimpleDockerfileParser(path)
         runs = dp.get_runs()
@@ -147,7 +243,21 @@ class CondaUtils(BaseConda):
             return None
 
     def specs_from_dockerfile_as_json(self, dockerfile_dir, dest):
-        """Writes a json file with the install requirements inferred from the Dockerfile."""
+        """
+        Write a JSON file with the install requirements inferred from the Dockerfile.
+
+        Parameters
+        ----------
+        dockerfile_dir : str
+            The directory containing the Dockerfile.
+        dest : str
+            The destination directory for the JSON file.
+
+        Returns
+        -------
+        str
+            The path to the JSON file.
+        """
         runs = self.get_conda_and_pip_install_commands_from_dockerfile_if_exclusive(
             dockerfile_dir, force_exclusive=False
         )
@@ -188,12 +298,40 @@ class CondaUtils(BaseConda):
         return json_path
 
     def get_base_env(self, path):
+        """
+        Get the base environment from a JSON file.
+
+        Parameters
+        ----------
+        path : str
+            The path to the JSON file.
+
+        Returns
+        -------
+        str
+            The base environment.
+        """
         json_path = os.path.join(path, self.SPECS_JSON)
         with open(json_path, "r") as f:
             data = json.load(f)
         return data["base-env"]
 
     def checksum_from_dockerfile(self, dockerfile_dir, dest=None):
+        """
+        Generate a checksum for a Dockerfile.
+
+        Parameters
+        ----------
+        dockerfile_dir : str
+            The directory containing the Dockerfile.
+        dest : str, optional
+            The destination directory for the checksum file. Default is None.
+
+        Returns
+        -------
+        str
+            The checksum of the Dockerfile.
+        """
         if dest is None:
             dest = dockerfile_dir
         filename = os.path.join(dest, self.CHECKSUM_FILE)
@@ -206,6 +344,25 @@ class CondaUtils(BaseConda):
     def specs_from_dockerfile(
         self, dockerfile_dir, dest=None, use_checksum=False, name=None
     ):
+        """
+        Generate specs from a Dockerfile.
+
+        Parameters
+        ----------
+        dockerfile_dir : str
+            The directory containing the Dockerfile.
+        dest : str, optional
+            The destination directory for the specs file. Default is None.
+        use_checksum : bool, optional
+            Whether to use a checksum for the specs. Default is False.
+        name : str, optional
+            The name to use for the specs. Default is None.
+
+        Returns
+        -------
+        str
+            The name or checksum of the specs.
+        """
         if use_checksum:
             return self.checksum_from_dockerfile(dockerfile, dest)  # TODO debug
         else:
@@ -220,6 +377,14 @@ class CondaUtils(BaseConda):
             return name
 
     def activate_base(self):
+        """
+        Generate a script to activate the base conda environment.
+
+        Returns
+        -------
+        str
+            The script to activate the base conda environment.
+        """
         if self.is_base():
             return ""
         snippet = """
@@ -230,6 +395,22 @@ class CondaUtils(BaseConda):
 
 
 class SimpleConda(CondaUtils):
+    """
+    A class to manage conda environments using simple commands.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings in JSON format. Default is None.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        simple_conda = SimpleConda()
+        simple_conda.create("myenv", "3.8")
+
+    """
     def __init__(self, config_json=None):
         CondaUtils.__init__(self, config_json=config_json)
 
@@ -251,10 +432,32 @@ class SimpleConda(CondaUtils):
         return envs
 
     def create(self, environment, python_version):
+        """
+        Create a new conda environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the new environment.
+        python_version : str
+            The Python version to use in the new environment.
+
+        Returns
+        -------
+        None
+        """
         cmd = "conda create -n {0} python={1} -y".format(environment, python_version)
         run_command(cmd)
 
     def active_env(self):
+        """
+        Get the currently active conda environment.
+
+        Returns
+        -------
+        str
+            The name of the currently active conda environment.
+        """
         envs = self._env_list()
         for l in envs:
             if "*" in l:
@@ -262,6 +465,19 @@ class SimpleConda(CondaUtils):
         return None
 
     def exists(self, environment):
+        """
+        Check if a conda environment exists.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment to check.
+
+        Returns
+        -------
+        bool
+            True if the environment exists, False otherwise.
+        """
         envs = self._env_list()
         n = len(environment)
         for l in envs:
@@ -270,6 +486,19 @@ class SimpleConda(CondaUtils):
         return False
 
     def startswith(self, environment):
+        """
+        Get a list of conda environments that start with the given prefix.
+
+        Parameters
+        ----------
+        environment : str
+            The prefix to check.
+
+        Returns
+        -------
+        list
+            A list of conda environments that start with the given prefix.
+        """
         envs = self._env_list()
         envs_list = []
         for l in envs:
@@ -278,6 +507,19 @@ class SimpleConda(CondaUtils):
         return envs_list
 
     def get_python_path_env(self, environment):
+        """
+        Get the Python path for a conda environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment.
+
+        Returns
+        -------
+        str
+            The Python path for the environment.
+        """
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "tmp.txt")
         self.run_commandlines(environment, "which python > {0}".format(tmp_file))
@@ -286,6 +528,14 @@ class SimpleConda(CondaUtils):
         return python_path
 
     def delete_one(self, environment):
+        """
+        Delete a conda environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment to delete.
+        """
         if not self.exists(environment):
             return
         tmp_folder = make_temp_dir(prefix="ersilia-")
@@ -310,12 +560,27 @@ class SimpleConda(CondaUtils):
                 shutil.rmtree(os.path.join(envs_path, env))
 
     def delete(self, environment):
+        """
+        Delete a conda environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment to delete.
+        """
         self._proper_delete(environment)
         self._manual_delete(environment)
 
     def export_env_yml(self, environment, dest):
         """
-        Export conda environment as an environment yml file.
+        Export a conda environment as an environment YAML file.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment to export.
+        dest : str
+            The destination directory for the YAML file.
         """
         if not self.exists(environment):
             return
@@ -337,7 +602,19 @@ class SimpleConda(CondaUtils):
 
     def clone(self, src_env, dst_env):
         """
-        Make exact copy of a conda environment.
+        Make an exact copy of a conda environment.
+
+        Parameters
+        ----------
+        src_env : str
+            The name of the source environment.
+        dst_env : str
+            The name of the destination environment.
+
+        Raises
+        ------
+        Exception
+            If the source environment does not exist or the destination environment already exists.
         """
         if not self.exists(src_env):
             raise Exception("{0} source environment does not exist".format(src_env))
@@ -364,6 +641,23 @@ class SimpleConda(CondaUtils):
         return critical_errors
 
     def create_executable_bash_script(self, environment, commandlines, file_name):
+        """
+        Create an executable bash script to run commands in a conda environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment.
+        commandlines : str or list
+            The commands to run.
+        file_name : str
+            The name of the bash script file.
+
+        Returns
+        -------
+        str
+            The path to the bash script file.
+        """
         if type(commandlines) is list:
             commandlines = "\n".join(commandlines)
         bash_script = self.activate_base()
@@ -380,6 +674,18 @@ class SimpleConda(CondaUtils):
     def run_commandlines(self, environment, commandlines):
         """
         Run commands in a given conda environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment.
+        commandlines : str or list
+            The commands to run.
+
+        Raises
+        ------
+        ModelPackageInstallError
+            If critical errors are found in the conda logs.
         """
         if type(commandlines) is list:
             commandlines = " && ".join(commandlines)
@@ -409,15 +715,38 @@ class SimpleConda(CondaUtils):
 
 
 class StandaloneConda(object):
+    """
+    A class to manage standalone conda environments.
+    """
     def __init__(self):
         pass
 
     def exists(self, environment):
+        """
+        Check if a standalone conda environment exists.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment to check.
+
+        Returns
+        -------
+        bool
+            True if the environment exists, False otherwise.
+        """
         return os.path.exists(os.path.join("/", environment))
 
     def run_commandlines(self, environment, commandlines):
         """
-        Run commands in a given conda environment.
+        Run commands in a given standalone conda environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the environment.
+        commandlines : str or list
+            The commands to run.
         """
         logger.debug("Run commandlines on {0}".format(environment))
         logger.debug(commandlines)
