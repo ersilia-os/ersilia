@@ -86,7 +86,26 @@
 <div class="viewcode-block" id="IsauraManager">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager">[docs]</a>
 <span class="k">class</span> <span class="nc">IsauraManager</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Manager class for handling Isaura HDF5 operations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier for the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    credentials_json : dict</span>
+<span class="sd">        Credentials settings in JSON format.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier for the model.</span>
+<span class="sd">    hdf5 : Hdf5Explorer</span>
+<span class="sd">        Instance of Hdf5Explorer for managing HDF5 operations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
         <span class="p">)</span>
@@ -96,6 +115,9 @@
 <div class="viewcode-block" id="IsauraManager.remove_local_duplicates">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.remove_local_duplicates">[docs]</a>
     <span class="k">def</span> <span class="nf">remove_local_duplicates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove local duplicate entries in the HDF5 file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">list_apis</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">set_curr_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">remove_local_duplicates</span><span class="p">()</span></div>
@@ -103,7 +125,15 @@
 
 <div class="viewcode-block" id="IsauraManager.append_local_to_public">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.append_local_to_public">[docs]</a>
-    <span class="k">def</span> <span class="nf">append_local_to_public</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">secret_keys</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="k">def</span> <span class="nf">append_local_to_public</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">secret_keys</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append local data to the public repository.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        secret_keys : list, optional</span>
+<span class="sd">            List of secret keys to be used for appending data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">list_apis</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">set_curr_api</span><span class="p">(</span><span class="n">api_name</span><span class="p">)</span>
@@ -112,7 +142,15 @@
 
 <div class="viewcode-block" id="IsauraManager.push">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.push">[docs]</a>
-    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add data with DVC&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Add data with DVC&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Push local changes to the remote repository.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : str, optional</span>
+<span class="sd">            Commit message for the push operation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;dvc add data.h5&quot;</span><span class="p">)</span>
@@ -126,6 +164,9 @@
 <div class="viewcode-block" id="IsauraManager.pull">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.manager.IsauraManager.pull">[docs]</a>
     <span class="k">def</span> <span class="nf">pull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pull the latest changes from the remote repository and remove local duplicates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;dvc pull&quot;</span><span class="p">)</span>
