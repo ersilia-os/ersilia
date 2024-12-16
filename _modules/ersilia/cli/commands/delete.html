@@ -107,10 +107,13 @@
 <span class="sd">        Delete all models:</span>
 <span class="sd">        $ ersilia delete --all</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
         <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">md</span><span class="o">.</span><span class="n">needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+        <span class="n">can_delete</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">can_be_deleted</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">can_delete</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Deleting model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
             <span class="n">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
             <span class="n">echo</span><span class="p">(</span>
@@ -119,14 +122,11 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">&quot;:person_tipping_hand: Model </span><span class="si">{0}</span><span class="s2"> is not available locally. No delete is necessary&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;:person_tipping_hand: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">model_id</span>
                 <span class="p">),</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_delete_all</span><span class="p">():</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to delete all locally available models&quot;&quot;&quot;</span>

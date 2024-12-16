@@ -74,12 +74,14 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">...utils.environment</span> <span class="kn">import</span> <span class="n">Environment</span>
 <span class="kn">from</span> <span class="nn">...utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span> <span class="nn">...utils.system</span> <span class="kn">import</span> <span class="n">is_inside_docker</span>
 <span class="kn">from</span> <span class="nn">..content.catalog</span> <span class="kn">import</span> <span class="n">ModelCatalog</span>
+<span class="kn">from</span> <span class="nn">..content.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
 <span class="kn">from</span> <span class="nn">...db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
 <span class="kn">from</span> <span class="nn">...db.hubdata.localslugs</span> <span class="kn">import</span> <span class="n">SlugDb</span>
 <span class="kn">from</span> <span class="nn">...db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
@@ -593,7 +595,7 @@
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span> <span class="c1"># TODO This is hacky but is needed by ModelPreparer when model is fetched. </span>
             <span class="n">dm</span><span class="o">.</span><span class="n">delete_images</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 </div>
 
@@ -694,9 +696,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ModelFullDeleter.needs_delete">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelFullDeleter.needs_delete">[docs]</a>
-    <span class="k">def</span> <span class="nf">needs_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_needs_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks if the model needs to be deleted.</span>
 
@@ -716,7 +716,34 @@
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)):</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="ModelFullDeleter.can_be_deleted">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelFullDeleter.can_be_deleted">[docs]</a>
+    <span class="k">def</span> <span class="nf">can_be_deleted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the model can be deleted.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model can be deleted, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">needs_delete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">model_source</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
+        <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">needs_delete</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">model_source</span> <span class="o">==</span> <span class="s2">&quot;DockerHub&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Model fetched through Docker but Docker engine is inactive.&quot;</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Model can be deleted.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is not available locally, no delete necessary.&quot;</span></div>
 
 
 <div class="viewcode-block" id="ModelFullDeleter.delete">
