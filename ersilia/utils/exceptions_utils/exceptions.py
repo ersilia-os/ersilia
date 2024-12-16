@@ -6,8 +6,28 @@ from ...utils.logging import make_temp_dir
 
 
 class ErsiliaError(Exception):
-    """Base class for managing errors in Ersilia"""
+    """
+    Base class for managing errors in Ersilia.
 
+    Parameters
+    ----------
+    message : str, optional
+        The error message to be displayed. Default is "Ersilia has experienced an error".
+    hints : str, optional
+        Additional hints or suggestions for resolving the error. Default is an empty string.
+    config_json : dict, optional
+        Configuration settings in JSON format. Default is None.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        try:
+            raise ErsiliaError("An error occurred", hints="Check your configuration")
+        except ErsiliaError as e:
+            print(e)
+
+    """
     def __init__(
         self, message="Ersilia has experienced an error", hints="", config_json=None
     ):
