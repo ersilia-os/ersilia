@@ -1,4 +1,4 @@
-Package index
+API documentation
 =============
 
 .. toctree::
