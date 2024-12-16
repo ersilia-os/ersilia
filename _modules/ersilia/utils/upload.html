@@ -79,6 +79,23 @@
 <div class="viewcode-block" id="OsfUploader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.upload.OsfUploader">[docs]</a>
 <span class="k">class</span> <span class="nc">OsfUploader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to upload files to the Open Science Framework (OSF).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    overwrite : bool</span>
+<span class="sd">        Whether to overwrite existing files.</span>
+<span class="sd">    username : str</span>
+<span class="sd">        The OSF username.</span>
+<span class="sd">    password : str</span>
+<span class="sd">        The OSF password.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    push(project_id, filename, destination)</span>
+<span class="sd">        Upload a file to OSF.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
@@ -87,7 +104,18 @@
 <div class="viewcode-block" id="OsfUploader.push">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.upload.OsfUploader.push">[docs]</a>
     <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Upload file to OSF&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Upload a file to OSF.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        project_id : str</span>
+<span class="sd">            The OSF project ID.</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The path to the file to upload.</span>
+<span class="sd">        destination : str</span>
+<span class="sd">            The destination path on OSF.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">environ</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OSF_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
         <span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OSF_PASSWORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span>

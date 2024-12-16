@@ -85,11 +85,18 @@
 <div class="viewcode-block" id="Uninstaller">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.uninstall.Uninstaller">[docs]</a>
 <span class="k">class</span> <span class="nc">Uninstaller</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage the uninstallation of Ersilia and its dependencies.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    uninstall()</span>
+<span class="sd">        Main uninstallation method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker_cleaner</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_uninstall_ersilia_package</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uninstall the Ersilia package if installed via pip.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Uninstalling Ersilia package...&quot;</span><span class="p">)</span>
             <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;uninstall&quot;</span><span class="p">,</span> <span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;ersilia&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -98,7 +105,6 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to uninstall Ersilia package: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove additional directories.&quot;&quot;&quot;</span>
         <span class="n">dirs_to_remove</span> <span class="o">=</span> <span class="p">[</span><span class="n">EOS</span><span class="p">,</span> <span class="n">BENTOML_PATH</span><span class="p">]</span>
         <span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">dirs_to_remove</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
@@ -137,10 +143,11 @@
 <div class="viewcode-block" id="Uninstaller.uninstall">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.uninstall.Uninstaller.uninstall">[docs]</a>
     <span class="k">def</span> <span class="nf">uninstall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Main uninstallation method&quot;&quot;&quot;</span>
-
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main uninstallation method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting Ersillia uninstallation...&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting Ersilia uninstallation...&quot;</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">docker_cleaner</span><span class="o">.</span><span class="n">cleanup_ersilia_images</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_uninstall_ersilia_package</span><span class="p">()</span>

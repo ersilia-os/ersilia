@@ -79,6 +79,14 @@
 <div class="viewcode-block" id="is_inside_docker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.is_inside_docker">[docs]</a>
 <span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the current environment is inside a Docker container.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if inside a Docker container, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;/.dockerenv&quot;</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
@@ -89,12 +97,32 @@
 <div class="viewcode-block" id="SystemChecker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.SystemChecker">[docs]</a>
 <span class="k">class</span> <span class="nc">SystemChecker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to check various system properties.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    is_arm64()</span>
+<span class="sd">        Check if the system architecture is ARM64.</span>
+<span class="sd">    is_github_action()</span>
+<span class="sd">        Check if the code is running inside a GitHub Action.</span>
+<span class="sd">    is_inside_docker()</span>
+<span class="sd">        Check if the code is running inside a Docker container.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uname</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SystemChecker.is_arm64">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.SystemChecker.is_arm64">[docs]</a>
     <span class="k">def</span> <span class="nf">is_arm64</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the system architecture is ARM64.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the system architecture is ARM64, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uname</span><span class="o">.</span><span class="n">machine</span> <span class="o">==</span> <span class="s2">&quot;arm64&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="s2">&quot;arm64&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uname</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
@@ -105,6 +133,14 @@
 <div class="viewcode-block" id="SystemChecker.is_github_action">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.SystemChecker.is_github_action">[docs]</a>
     <span class="k">def</span> <span class="nf">is_github_action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the code is running inside a GitHub Action.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if running inside a GitHub Action, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;GITHUB_ACTIONS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -114,6 +150,14 @@
 <div class="viewcode-block" id="SystemChecker.is_inside_docker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.SystemChecker.is_inside_docker">[docs]</a>
     <span class="k">def</span> <span class="nf">is_inside_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the code is running inside a Docker container.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if running inside a Docker container, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">is_inside_docker</span><span class="p">()</span></div>
 </div>
 

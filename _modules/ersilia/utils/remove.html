@@ -79,6 +79,16 @@
 <div class="viewcode-block" id="OsfRemover">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.remove.OsfRemover">[docs]</a>
 <span class="k">class</span> <span class="nc">OsfRemover</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to remove files from the Open Science Framework (OSF).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    username : str</span>
+<span class="sd">        The OSF username.</span>
+<span class="sd">    password : str</span>
+<span class="sd">        The OSF password.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
@@ -86,7 +96,16 @@
 <div class="viewcode-block" id="OsfRemover.remove">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.remove.OsfRemover.remove">[docs]</a>
     <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove file from OSF&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove a file from OSF.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        project_id : str</span>
+<span class="sd">            The OSF project ID.</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The name of the file to remove.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">environ</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OSF_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
         <span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OSF_PASSWORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span>

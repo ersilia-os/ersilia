@@ -79,6 +79,19 @@
 <div class="viewcode-block" id="is_port_in_use">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.ports.is_port_in_use">[docs]</a>
 <span class="k">def</span> <span class="nf">is_port_in_use</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a port is in use.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    port : int</span>
+<span class="sd">        The port number to check.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the port is in use, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span></div>
 
@@ -87,6 +100,19 @@
 <div class="viewcode-block" id="find_free_port">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.ports.find_free_port">[docs]</a>
 <span class="k">def</span> <span class="nf">find_free_port</span><span class="p">(</span><span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find a free port.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    preferred_port : int, optional</span>
+<span class="sd">        The preferred port number to check first. Default is None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        A free port number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">preferred_port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_port_in_use</span><span class="p">(</span><span class="n">preferred_port</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">preferred_port</span>

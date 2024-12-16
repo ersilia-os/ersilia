@@ -94,6 +94,14 @@
 <div class="viewcode-block" id="PseudoDownloader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.PseudoDownloader">[docs]</a>
 <span class="k">class</span> <span class="nc">PseudoDownloader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to simulate downloading by copying local directories.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    overwrite : bool</span>
+<span class="sd">        Whether to overwrite existing files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
 
@@ -111,7 +119,16 @@
 <div class="viewcode-block" id="PseudoDownloader.fetch">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.PseudoDownloader.fetch">[docs]</a>
     <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy entire directory&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copy entire directory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        src : str</span>
+<span class="sd">            The source directory.</span>
+<span class="sd">        dst : str</span>
+<span class="sd">            The destination directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_copy_local_directory</span><span class="p">(</span>
             <span class="n">src</span><span class="p">,</span> <span class="n">dst</span>
         <span class="p">)</span>  <span class="c1"># TODO: Add smart functions to deal with zipped files etc.</span></div>
@@ -122,12 +139,34 @@
 <div class="viewcode-block" id="OsfDownloader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.OsfDownloader">[docs]</a>
 <span class="k">class</span> <span class="nc">OsfDownloader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to download files from the Open Science Framework (OSF).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    overwrite : bool</span>
+<span class="sd">        Whether to overwrite existing files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
 
 <div class="viewcode-block" id="OsfDownloader.fetch">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.OsfDownloader.fetch">[docs]</a>
     <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">tmp_folder</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch a file from OSF.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        project_id : str</span>
+<span class="sd">            The OSF project ID.</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The name of the file to fetch.</span>
+<span class="sd">        destination : str</span>
+<span class="sd">            The destination directory.</span>
+<span class="sd">        tmp_folder : str</span>
+<span class="sd">            The temporary folder to use.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">outfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outfile</span><span class="p">):</span>
@@ -147,6 +186,9 @@
 <div class="viewcode-block" id="GoogleDriveDownloader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader">[docs]</a>
 <span class="k">class</span> <span class="nc">GoogleDriveDownloader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to download files from Google Drive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
@@ -174,6 +216,16 @@
 <div class="viewcode-block" id="GoogleDriveDownloader.download_file_from_google_drive">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.download_file_from_google_drive">[docs]</a>
     <span class="k">def</span> <span class="nf">download_file_from_google_drive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Download a file from Google Drive.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_id : str</span>
+<span class="sd">            The Google Drive file ID.</span>
+<span class="sd">        destination : str</span>
+<span class="sd">            The destination path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://docs.google.com/uc?export=download&quot;</span>
         <span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">file_id</span><span class="p">},</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -187,7 +239,16 @@
 <div class="viewcode-block" id="GoogleDriveDownloader.fetch_zip">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.GoogleDriveDownloader.fetch_zip">[docs]</a>
     <span class="k">def</span> <span class="nf">fetch_zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_id</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download file from google docs. The file id is necessary. A .zip file is assumed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Download a ZIP file from Google Drive and extract it.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_id : str</span>
+<span class="sd">            The Google Drive file ID.</span>
+<span class="sd">        destination : str</span>
+<span class="sd">            The destination directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tmp_zip</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="n">destination</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">download_file_from_google_drive</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">tmp_zip</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">tmp_zip</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
@@ -200,6 +261,16 @@
 <div class="viewcode-block" id="GitHubDownloader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.GitHubDownloader">[docs]</a>
 <span class="k">class</span> <span class="nc">GitHubDownloader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to download files and repositories from GitHub.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    overwrite : bool</span>
+<span class="sd">        Whether to overwrite existing files.</span>
+<span class="sd">    token : str, optional</span>
+<span class="sd">        The GitHub token for authentication. Default is None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
 
@@ -364,6 +435,20 @@
 <div class="viewcode-block" id="GitHubDownloader.clone">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.GitHubDownloader.clone">[docs]</a>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">ungit</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clone a GitHub repository.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The GitHub organization name.</span>
+<span class="sd">        repo : str</span>
+<span class="sd">            The GitHub repository name.</span>
+<span class="sd">        destination : str</span>
+<span class="sd">            The destination directory.</span>
+<span class="sd">        ungit : bool, optional</span>
+<span class="sd">            Whether to remove Git-related files. Default is False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">destination</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
@@ -405,6 +490,25 @@
 <div class="viewcode-block" id="GitHubDownloader.download_single">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.GitHubDownloader.download_single">[docs]</a>
     <span class="k">def</span> <span class="nf">download_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Download a single file from a GitHub repository.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The GitHub organization name.</span>
+<span class="sd">        repo : str</span>
+<span class="sd">            The GitHub repository name.</span>
+<span class="sd">        repo_path : str</span>
+<span class="sd">            The path to the file in the repository.</span>
+<span class="sd">        destination : str</span>
+<span class="sd">            The destination path.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the file was downloaded successfully, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">destination</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">destination</span><span class="p">):</span>
@@ -434,12 +538,27 @@
 <div class="viewcode-block" id="S3Downloader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.S3Downloader">[docs]</a>
 <span class="k">class</span> <span class="nc">S3Downloader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to download files from an S3 bucket.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="S3Downloader.download_from_s3">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.download.S3Downloader.download_from_s3">[docs]</a>
     <span class="k">def</span> <span class="nf">download_from_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket_url</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Download a file from an S3 bucket.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bucket_url : str</span>
+<span class="sd">            The URL of the S3 bucket.</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            The name of the file to download.</span>
+<span class="sd">        destination : str</span>
+<span class="sd">            The destination path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s3_url</span> <span class="o">=</span> <span class="n">bucket_url</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">file_name</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s3_url</span><span class="p">)</span>
         <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>

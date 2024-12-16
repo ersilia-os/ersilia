@@ -72,12 +72,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for ersilia.utils.config</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Ersilia config.</span>
-
-<span class="sd">The Config provide access to all sort of useful parameters.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">EOS</span><span class="p">,</span>
@@ -94,6 +89,16 @@
 
 
 <span class="k">class</span> <span class="nc">Checker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to check and manage configuration and credentials files.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    config()</span>
+<span class="sd">        Ensure the configuration file exists.</span>
+<span class="sd">    get_development_path()</span>
+<span class="sd">        Get the development path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">development_path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">()</span>
@@ -152,6 +157,11 @@
                     <span class="n">os</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensure the configuration file exists.</span>
+
+<span class="sd">        If the configuration file does not exist, it will be created by copying from the development path or downloading from GitHub.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">CONFIG_JSON</span><span class="p">)):</span>
             <span class="k">return</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -175,15 +185,20 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the development path.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The development path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_package_path</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">development_path</span>
 
 
 <span class="k">class</span> <span class="nc">_Field</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Config Field placeholder.&quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_kv</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize updating __dict__ and evaluating values.&quot;&quot;&quot;</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">field_kv</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
@@ -221,8 +236,12 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Config class.</span>
 
 <span class="sd">    An instance of this object holds config file section as attributes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    json_file : str, optional</span>
+<span class="sd">        The path to the JSON configuration file. Default is None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Config instance.</span>
 
@@ -241,19 +260,34 @@
 <div class="viewcode-block" id="Config.keys">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.config.Config.keys">[docs]</a>
     <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the keys of the configuration.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict_keys</span>
+<span class="sd">            The keys of the configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 </div>
 
 
 
 <span class="k">class</span> <span class="nc">Secrets</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage secrets and credentials.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    overwrite : bool, optional</span>
+<span class="sd">        Whether to overwrite existing files. Default is True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">secrets_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">SECRETS_JSON</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gdrive_client_secrets_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">GDRIVE_CLIENT_SECRETS_JSON</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_fetch_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remote_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch filename from ersilia-secrets repository&quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">..auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
 
         <span class="n">auth</span> <span class="o">=</span> <span class="n">Auth</span><span class="p">()</span>
@@ -268,15 +302,33 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">fetch_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch secrets from the GitHub repository.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_github</span><span class="p">(</span><span class="n">SECRETS_JSON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secrets_json</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">fetch_gdrive_secrets_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch Google Drive client secrets from the GitHub repository.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_github</span><span class="p">(</span>
             <span class="n">GDRIVE_CLIENT_SECRETS_JSON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gdrive_client_secrets_json</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">to_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert secrets to credentials file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert secrets to a credentials file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        json_file : str</span>
+<span class="sd">            The path to the credentials file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the credentials file was created successfully, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">secrets_json</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">secrets_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -295,6 +347,14 @@
 <div class="viewcode-block" id="Credentials">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.config.Credentials">[docs]</a>
 <span class="k">class</span> <span class="nc">Credentials</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage credentials.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    json_file : str, optional</span>
+<span class="sd">        The path to the JSON credentials file. Default is None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">json_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -313,6 +373,14 @@
 <div class="viewcode-block" id="Credentials.keys">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.config.Credentials.keys">[docs]</a>
     <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the keys of the credentials.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict_keys</span>
+<span class="sd">            The keys of the credentials.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 </div>
 

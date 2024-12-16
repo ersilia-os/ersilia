@@ -95,6 +95,14 @@
 <div class="viewcode-block" id="is_quiet">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.is_quiet">[docs]</a>
 <span class="k">def</span> <span class="nf">is_quiet</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the current session is in quiet mode.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the session is in quiet mode, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">verbose_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">VERBOSE_FILE</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">verbose_file</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -110,6 +118,16 @@
 <div class="viewcode-block" id="run_command">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.run_command">[docs]</a>
 <span class="k">def</span> <span class="nf">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a shell command.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cmd : str or list</span>
+<span class="sd">        The command to run.</span>
+<span class="sd">    quiet : bool, optional</span>
+<span class="sd">        Whether to run the command in quiet mode. Default is None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">quiet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">quiet</span> <span class="o">=</span> <span class="n">is_quiet</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
@@ -136,6 +154,19 @@
 <div class="viewcode-block" id="run_command_check_output">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.run_command_check_output">[docs]</a>
 <span class="k">def</span> <span class="nf">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a shell command and capture its output.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cmd : str or list</span>
+<span class="sd">        The command to run.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The output of the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">assert</span> <span class="s2">&quot;&gt;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cmd</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
@@ -157,6 +188,23 @@
 <div class="viewcode-block" id="raw_input_with_timeout">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.raw_input_with_timeout">[docs]</a>
 <span class="k">def</span> <span class="nf">raw_input_with_timeout</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prompt the user for input with a timeout.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prompt : str</span>
+<span class="sd">        The prompt message.</span>
+<span class="sd">    default_answer : str</span>
+<span class="sd">        The default answer if the user does not respond within the timeout.</span>
+<span class="sd">    timeout : int, optional</span>
+<span class="sd">        The timeout in seconds. Default is 5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The user&#39;s input or the default answer if the timeout is reached.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">inputimeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">input</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -170,6 +218,23 @@
 <div class="viewcode-block" id="yes_no_input">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.yes_no_input">[docs]</a>
 <span class="k">def</span> <span class="nf">yes_no_input</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prompt the user for a yes/no input with a timeout.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prompt : str</span>
+<span class="sd">        The prompt message.</span>
+<span class="sd">    default_answer : str</span>
+<span class="sd">        The default answer if the user does not respond within the timeout.</span>
+<span class="sd">    timeout : int, optional</span>
+<span class="sd">        The timeout in seconds. Default is 5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the user&#39;s input is &#39;yes&#39;, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ans</span> <span class="o">=</span> <span class="n">raw_input_with_timeout</span><span class="p">(</span>
         <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="o">=</span><span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
     <span class="p">)</span>
@@ -186,6 +251,14 @@
 <div class="viewcode-block" id="print_result_table">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.print_result_table">[docs]</a>
 <span class="k">def</span> <span class="nf">print_result_table</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print a result table from CSV or JSON-like data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : str or list</span>
+<span class="sd">        The path to a CSV file or JSON-like data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">HEADER_COLOR</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[95m&quot;</span>
     <span class="n">ROW_COLOR</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span>
     <span class="n">RESET_COLOR</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
@@ -236,6 +309,19 @@
 <div class="viewcode-block" id="read_csv_from_string">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.read_csv_from_string">[docs]</a>
 <span class="k">def</span> <span class="nf">read_csv_from_string</span><span class="p">(</span><span class="n">csv_string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read CSV data from a string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    csv_string : str</span>
+<span class="sd">        The CSV data as a string.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        A list of dictionaries representing the CSV data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">csv_string</span><span class="p">)</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">]</span></div>

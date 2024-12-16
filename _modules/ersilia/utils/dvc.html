@@ -103,12 +103,23 @@
 <div class="viewcode-block" id="DVCFetcher">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher">[docs]</a>
 <span class="k">class</span> <span class="nc">DVCFetcher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to fetch data using DVC (Data Version Control).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    local_repo_path : str</span>
+<span class="sd">        The local repository path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_repo_path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">local_repo_path</span>
 
 <div class="viewcode-block" id="DVCFetcher.get_data">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.get_data">[docs]</a>
     <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch data using DVC.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_dvc_exists</span><span class="p">():</span>
             <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;dvc --cd &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot; pull&quot;</span><span class="p">)</span></div>
 
@@ -116,6 +127,14 @@
 <div class="viewcode-block" id="DVCFetcher.check_dvc_exists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_dvc_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">check_dvc_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if DVC file exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if DVC file exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_path</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;.dvc&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
@@ -124,6 +143,14 @@
 <div class="viewcode-block" id="DVCFetcher.check_h5_exists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.check_h5_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">check_h5_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if H5 file exists.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if H5 file exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_path</span><span class="p">()):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
@@ -132,6 +159,14 @@
 <div class="viewcode-block" id="DVCFetcher.has_data">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCFetcher.has_data">[docs]</a>
     <span class="k">def</span> <span class="nf">has_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if H5 file contains data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if H5 file contains data, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_h5_exists</span><span class="p">():</span>
             <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_path</span><span class="p">(),</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -147,6 +182,9 @@
 <div class="viewcode-block" id="DVCBrancher">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCBrancher">[docs]</a>
 <span class="k">class</span> <span class="nc">DVCBrancher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage DVC branches.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
@@ -155,6 +193,16 @@
 <div class="viewcode-block" id="DVCSetup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup">[docs]</a>
 <span class="k">class</span> <span class="nc">DVCSetup</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to set up DVC with Google Drive.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    local_repo_path : str</span>
+<span class="sd">        The local repository path.</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The model identifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_repo_path</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">local_repo_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -166,6 +214,9 @@
 <div class="viewcode-block" id="DVCSetup.gdrive_setup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_setup">[docs]</a>
     <span class="k">def</span> <span class="nf">gdrive_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up Google Drive folder for DVC.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">CreateFile</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
@@ -179,6 +230,14 @@
 <div class="viewcode-block" id="DVCSetup.gdrive_folder_id">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.gdrive_folder_id">[docs]</a>
     <span class="k">def</span> <span class="nf">gdrive_folder_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the Google Drive folder ID for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The Google Drive folder ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fileList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drive</span><span class="o">.</span><span class="n">ListFile</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;q&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">ISAURA_GDRIVE</span> <span class="o">+</span> <span class="s2">&quot;&#39; in parents and trashed=false&quot;</span><span class="p">,</span>
@@ -197,6 +256,9 @@
 <div class="viewcode-block" id="DVCSetup.set_dvc_gdrive">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.set_dvc_gdrive">[docs]</a>
     <span class="k">def</span> <span class="nf">set_dvc_gdrive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up DVC remote storage on Google Drive.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;dvc --cd </span><span class="si">{0}</span><span class="s2"> add data.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">))</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
             <span class="s2">&quot;dvc --cd &quot;</span>
@@ -211,6 +273,14 @@
 <div class="viewcode-block" id="DVCSetup.git_add_and_commit">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.dvc.DVCSetup.git_add_and_commit">[docs]</a>
     <span class="k">def</span> <span class="nf">git_add_and_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Set to public data repo&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add and commit changes to Git.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        message : str, optional</span>
+<span class="sd">            The commit message. Default is &quot;Set to public data repo&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
         <span class="n">terminal</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>

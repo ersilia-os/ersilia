@@ -95,6 +95,18 @@
 <div class="viewcode-block" id="BaseConda">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.BaseConda">[docs]</a>
 <span class="k">class</span> <span class="nc">BaseConda</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for managing conda environments.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    default_env()</span>
+<span class="sd">        Get the default conda environment.</span>
+<span class="sd">    is_base()</span>
+<span class="sd">        Check if the current environment is the base environment.</span>
+<span class="sd">    conda_prefix(is_base)</span>
+<span class="sd">        Get the conda prefix path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SPECS_JSON</span> <span class="o">=</span> <span class="n">SPECS_JSON</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CHECKSUM_FILE</span> <span class="o">=</span> <span class="n">CHECKSUM_FILE</span>
@@ -103,6 +115,14 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.BaseConda.default_env">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_env</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the default conda environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The name of the default conda environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -112,6 +132,14 @@
 <div class="viewcode-block" id="BaseConda.is_base">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.BaseConda.is_base">[docs]</a>
     <span class="k">def</span> <span class="nf">is_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the current environment is the base environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the current environment is the base environment, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">default_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_env</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">default_env</span> <span class="o">==</span> <span class="n">BASE</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -123,6 +151,19 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.BaseConda.conda_prefix">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">conda_prefix</span><span class="p">(</span><span class="n">is_base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the conda prefix path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        is_base : bool</span>
+<span class="sd">            Whether the current environment is the base environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The conda prefix path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">o</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;which conda&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">o</span><span class="p">:</span>
             <span class="n">o</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">))</span>
@@ -140,6 +181,22 @@
 <div class="viewcode-block" id="CondaUtils">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils">[docs]</a>
 <span class="k">class</span> <span class="nc">CondaUtils</span><span class="p">(</span><span class="n">BaseConda</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Utility class for managing conda environments and packages.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format. Default is None.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        conda_utils = CondaUtils()</span>
+<span class="sd">        conda_utils.create(&quot;myenv&quot;, &quot;3.8&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseConda</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">versions</span> <span class="o">=</span> <span class="n">Versioner</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
@@ -175,6 +232,19 @@
 <div class="viewcode-block" id="CondaUtils.checksum_from_file">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_file">[docs]</a>
     <span class="k">def</span> <span class="nf">checksum_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a checksum for the contents of a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The path to the file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The checksum of the file contents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="n">checksum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text_checksum</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
@@ -185,6 +255,21 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_conda_yml_file">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">checksum_from_conda_yml_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_yml</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a checksum for a conda environment YAML file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        env_yml : str</span>
+<span class="sd">            The path to the conda environment YAML file.</span>
+<span class="sd">        overwrite : bool</span>
+<span class="sd">            Whether to overwrite the name and prefix in the YAML file with the checksum.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The checksum of the YAML file contents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">env_yml</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">name_idx</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">pref_idx</span> <span class="o">=</span> <span class="kc">None</span>
@@ -217,9 +302,20 @@
     <span class="k">def</span> <span class="nf">get_conda_and_pip_install_commands_from_dockerfile_if_exclusive</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">force_exclusive</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Identifies install commands from Dockerfile</span>
-<span class="sd">        For now this command is conservative and returns None if at least</span>
-<span class="sd">        one of the commands is not conda ... or pip ... or pip3 ...</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identify install commands from a Dockerfile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            The path to the Dockerfile.</span>
+<span class="sd">        force_exclusive : bool, optional</span>
+<span class="sd">            Whether to force exclusive conda and pip commands. Default is True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of install commands.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">dp</span> <span class="o">=</span> <span class="n">SimpleDockerfileParser</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">runs</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_runs</span><span class="p">()</span>
@@ -246,7 +342,21 @@
 <div class="viewcode-block" id="CondaUtils.specs_from_dockerfile_as_json">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.specs_from_dockerfile_as_json">[docs]</a>
     <span class="k">def</span> <span class="nf">specs_from_dockerfile_as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dockerfile_dir</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes a json file with the install requirements inferred from the Dockerfile.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a JSON file with the install requirements inferred from the Dockerfile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dockerfile_dir : str</span>
+<span class="sd">            The directory containing the Dockerfile.</span>
+<span class="sd">        dest : str</span>
+<span class="sd">            The destination directory for the JSON file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The path to the JSON file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">runs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conda_and_pip_install_commands_from_dockerfile_if_exclusive</span><span class="p">(</span>
             <span class="n">dockerfile_dir</span><span class="p">,</span> <span class="n">force_exclusive</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
@@ -290,6 +400,19 @@
 <div class="viewcode-block" id="CondaUtils.get_base_env">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.get_base_env">[docs]</a>
     <span class="k">def</span> <span class="nf">get_base_env</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the base environment from a JSON file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            The path to the JSON file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The base environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPECS_JSON</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
@@ -299,6 +422,21 @@
 <div class="viewcode-block" id="CondaUtils.checksum_from_dockerfile">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.checksum_from_dockerfile">[docs]</a>
     <span class="k">def</span> <span class="nf">checksum_from_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dockerfile_dir</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a checksum for a Dockerfile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dockerfile_dir : str</span>
+<span class="sd">            The directory containing the Dockerfile.</span>
+<span class="sd">        dest : str, optional</span>
+<span class="sd">            The destination directory for the checksum file. Default is None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The checksum of the Dockerfile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">dest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dest</span> <span class="o">=</span> <span class="n">dockerfile_dir</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHECKSUM_FILE</span><span class="p">)</span>
@@ -314,6 +452,25 @@
     <span class="k">def</span> <span class="nf">specs_from_dockerfile</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">dockerfile_dir</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_checksum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate specs from a Dockerfile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dockerfile_dir : str</span>
+<span class="sd">            The directory containing the Dockerfile.</span>
+<span class="sd">        dest : str, optional</span>
+<span class="sd">            The destination directory for the specs file. Default is None.</span>
+<span class="sd">        use_checksum : bool, optional</span>
+<span class="sd">            Whether to use a checksum for the specs. Default is False.</span>
+<span class="sd">        name : str, optional</span>
+<span class="sd">            The name to use for the specs. Default is None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The name or checksum of the specs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">use_checksum</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">checksum_from_dockerfile</span><span class="p">(</span><span class="n">dockerfile</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>  <span class="c1"># TODO debug</span>
         <span class="k">else</span><span class="p">:</span>
@@ -331,6 +488,14 @@
 <div class="viewcode-block" id="CondaUtils.activate_base">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.CondaUtils.activate_base">[docs]</a>
     <span class="k">def</span> <span class="nf">activate_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a script to activate the base conda environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The script to activate the base conda environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_base</span><span class="p">():</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="n">snippet</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -345,6 +510,22 @@
 <div class="viewcode-block" id="SimpleConda">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda">[docs]</a>
 <span class="k">class</span> <span class="nc">SimpleConda</span><span class="p">(</span><span class="n">CondaUtils</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage conda environments using simple commands.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format. Default is None.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        simple_conda = SimpleConda()</span>
+<span class="sd">        simple_conda.create(&quot;myenv&quot;, &quot;3.8&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">CondaUtils</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
@@ -368,6 +549,20 @@
 <div class="viewcode-block" id="SimpleConda.create">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.create">[docs]</a>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">python_version</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the new environment.</span>
+<span class="sd">        python_version : str</span>
+<span class="sd">            The Python version to use in the new environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;conda create -n </span><span class="si">{0}</span><span class="s2"> python=</span><span class="si">{1}</span><span class="s2"> -y&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">environment</span><span class="p">,</span> <span class="n">python_version</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
 
@@ -375,6 +570,14 @@
 <div class="viewcode-block" id="SimpleConda.active_env">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.active_env">[docs]</a>
     <span class="k">def</span> <span class="nf">active_env</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the currently active conda environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The name of the currently active conda environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">envs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;*&quot;</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
@@ -385,6 +588,19 @@
 <div class="viewcode-block" id="SimpleConda.exists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.exists">[docs]</a>
     <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a conda environment exists.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the environment exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">envs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_list</span><span class="p">()</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">environment</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
@@ -396,6 +612,19 @@
 <div class="viewcode-block" id="SimpleConda.startswith">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.startswith">[docs]</a>
     <span class="k">def</span> <span class="nf">startswith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of conda environments that start with the given prefix.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The prefix to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            A list of conda environments that start with the given prefix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">envs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_list</span><span class="p">()</span>
         <span class="n">envs_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
@@ -407,6 +636,19 @@
 <div class="viewcode-block" id="SimpleConda.get_python_path_env">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.get_python_path_env">[docs]</a>
     <span class="k">def</span> <span class="nf">get_python_path_env</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the Python path for a conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The Python path for the environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;tmp.txt&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">environment</span><span class="p">,</span> <span class="s2">&quot;which python &gt; </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">))</span>
@@ -418,6 +660,14 @@
 <div class="viewcode-block" id="SimpleConda.delete_one">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.delete_one">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment to delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">environment</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
@@ -445,6 +695,14 @@
 <div class="viewcode-block" id="SimpleConda.delete">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.delete">[docs]</a>
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete a conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment to delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_proper_delete</span><span class="p">(</span><span class="n">environment</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_manual_delete</span><span class="p">(</span><span class="n">environment</span><span class="p">)</span></div>
 
@@ -453,7 +711,14 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.export_env_yml">[docs]</a>
     <span class="k">def</span> <span class="nf">export_env_yml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Export conda environment as an environment yml file.</span>
+<span class="sd">        Export a conda environment as an environment YAML file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment to export.</span>
+<span class="sd">        dest : str</span>
+<span class="sd">            The destination directory for the YAML file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">environment</span><span class="p">):</span>
             <span class="k">return</span>
@@ -478,7 +743,19 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.clone">[docs]</a>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_env</span><span class="p">,</span> <span class="n">dst_env</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Make exact copy of a conda environment.</span>
+<span class="sd">        Make an exact copy of a conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        src_env : str</span>
+<span class="sd">            The name of the source environment.</span>
+<span class="sd">        dst_env : str</span>
+<span class="sd">            The name of the destination environment.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If the source environment does not exist or the destination environment already exists.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">src_env</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> source environment does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">src_env</span><span class="p">))</span>
@@ -508,6 +785,23 @@
 <div class="viewcode-block" id="SimpleConda.create_executable_bash_script">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.SimpleConda.create_executable_bash_script">[docs]</a>
     <span class="k">def</span> <span class="nf">create_executable_bash_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">commandlines</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an executable bash script to run commands in a conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment.</span>
+<span class="sd">        commandlines : str or list</span>
+<span class="sd">            The commands to run.</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            The name of the bash script file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The path to the bash script file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">commandlines</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
             <span class="n">commandlines</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commandlines</span><span class="p">)</span>
         <span class="n">bash_script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activate_base</span><span class="p">()</span>
@@ -525,6 +819,18 @@
     <span class="k">def</span> <span class="nf">run_commandlines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">commandlines</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run commands in a given conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment.</span>
+<span class="sd">        commandlines : str or list</span>
+<span class="sd">            The commands to run.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ModelPackageInstallError</span>
+<span class="sd">            If critical errors are found in the conda logs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">commandlines</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
             <span class="n">commandlines</span> <span class="o">=</span> <span class="s2">&quot; &amp;&amp; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commandlines</span><span class="p">)</span>
@@ -557,12 +863,28 @@
 <div class="viewcode-block" id="StandaloneConda">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.StandaloneConda">[docs]</a>
 <span class="k">class</span> <span class="nc">StandaloneConda</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage standalone conda environments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="StandaloneConda.exists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.StandaloneConda.exists">[docs]</a>
     <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a standalone conda environment exists.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the environment exists, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">environment</span><span class="p">))</span></div>
 
 
@@ -570,7 +892,14 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.conda.StandaloneConda.run_commandlines">[docs]</a>
     <span class="k">def</span> <span class="nf">run_commandlines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">commandlines</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Run commands in a given conda environment.</span>
+<span class="sd">        Run commands in a given standalone conda environment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str</span>
+<span class="sd">            The name of the environment.</span>
+<span class="sd">        commandlines : str or list</span>
+<span class="sd">            The commands to run.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Run commandlines on </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">environment</span><span class="p">))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">commandlines</span><span class="p">)</span>

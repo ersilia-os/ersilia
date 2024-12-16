@@ -86,6 +86,14 @@
 <div class="viewcode-block" id="LongIdentifier">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.long.LongIdentifier">[docs]</a>
 <span class="k">class</span> <span class="nc">LongIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to generate long identifiers (UUIDs).</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    encode()</span>
+<span class="sd">        Generate a UUID or a random identifier if UUID is not available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
@@ -93,7 +101,14 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.long.LongIdentifier.encode">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">encode</span><span class="p">():</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get UUID code (long identifier)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a UUID or a random identifier if UUID is not available.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            A UUID string or a randomly generated identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">uuid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">alphabet</span> <span class="o">=</span> <span class="n">ALPHABET</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">PATTERN</span><span class="p">:</span>

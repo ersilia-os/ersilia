@@ -335,7 +335,23 @@
 <dt class="sig sig-object py" id="ersilia.utils.exceptions_utils.exceptions.ErsiliaError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.exceptions_utils.exceptions.</span></span><span class="sig-name descname"><span class="pre">ErsiliaError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Ersilia</span> <span class="pre">has</span> <span class="pre">experienced</span> <span class="pre">an</span> <span class="pre">error'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/exceptions_utils/exceptions.html#ErsiliaError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.exceptions_utils.exceptions.ErsiliaError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Base class for managing errors in Ersilia</p>
+<p>Base class for managing errors in Ersilia.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>optional</em>) – The error message to be displayed. Default is “Ersilia has experienced an error”.</p></li>
+<li><p><strong>hints</strong> (<em>str</em><em>, </em><em>optional</em>) – Additional hints or suggestions for resolving the error. Default is an empty string.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format. Default is None.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ErsiliaError</span><span class="p">(</span><span class="s2">&quot;An error occurred&quot;</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="s2">&quot;Check your configuration&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">ErsiliaError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py exception">

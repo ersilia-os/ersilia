@@ -82,8 +82,28 @@
 <div class="viewcode-block" id="ErsiliaError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ErsiliaError">[docs]</a>
 <span class="k">class</span> <span class="nc">ErsiliaError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for managing errors in Ersilia&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for managing errors in Ersilia.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    message : str, optional</span>
+<span class="sd">        The error message to be displayed. Default is &quot;Ersilia has experienced an error&quot;.</span>
+<span class="sd">    hints : str, optional</span>
+<span class="sd">        Additional hints or suggestions for resolving the error. Default is an empty string.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format. Default is None.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        try:</span>
+<span class="sd">            raise ErsiliaError(&quot;An error occurred&quot;, hints=&quot;Check your configuration&quot;)</span>
+<span class="sd">        except ErsiliaError as e:</span>
+<span class="sd">            print(e)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Ersilia has experienced an error&quot;</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>

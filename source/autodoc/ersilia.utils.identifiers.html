@@ -131,10 +131,38 @@
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.compound.</span></span><span class="sig-name descname"><span class="pre">CompoundIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concurrency_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_maxsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to handle compound identification and conversion between different chemical identifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>local</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use local RDKit for SMILES to InChIKey conversion. Default is True.</p></li>
+<li><p><strong>concurrency_limit</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of concurrent API requests. Default is 10.</p></li>
+<li><p><strong>cache_maxsize</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum size of the LRU cache for storing API results. Default is 128.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">identifier</span> <span class="o">=</span> <span class="n">CompoundIdentifier</span><span class="p">()</span>
+<span class="n">smiles</span> <span class="o">=</span> <span class="s2">&quot;CCO&quot;</span>
+<span class="n">inchikey</span> <span class="o">=</span> <span class="n">identifier</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">inchikey</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chemical_identifier_resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.chemical_identifier_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver" title="Link to this definition"></a></dt>
-<dd><p>Returns SMILES string of a given identifier, using NCI tool</p>
+<dd><p>Resolve a chemical identifier to a SMILES string using the NCI tool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>identifier</strong> (<em>str</em>) – The chemical identifier to resolve.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The resolved SMILES string, or ‘UNPROCESSABLE_INPUT’ if resolution fails.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -142,12 +170,34 @@
 <span class="sig-name descname"><span class="pre">convert_smiles_to_inchikey_with_rdkit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit" title="Link to this definition"></a></dt>
 <dd><p>Converts a SMILES string to an InChIKey using RDKit.
 The results are cached to improve performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES string to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The InChIKey of the compound, or None if conversion fails.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.encode" title="Link to this definition"></a></dt>
-<dd><p>Get InChIKey of compound based on SMILES string</p>
+<dd><p>Get the InChIKey of a compound based on its SMILES string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES string of the compound.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The InChIKey of the compound, or ‘UNPROCESSABLE_INPUT’ if conversion fails.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -158,17 +208,53 @@ The results are cached to improve performance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">
 <span class="sig-name descname"><span class="pre">guess_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.guess_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Guess the type of the given text (either ‘smiles’ or ‘inchikey’).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The text to guess the type of.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The guessed type (‘smiles’, ‘inchikey’, or ‘UNPROCESSABLE_INPUT’).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header">
 <span class="sig-name descname"><span class="pre">is_input_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.is_input_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the given header is an input header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>h</strong> (<em>str</em>) – The header to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the header is an input header, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header">
 <span class="sig-name descname"><span class="pre">is_key_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.is_key_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if the given header is a key header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>h</strong> (<em>str</em>) – The header to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the header is a key header, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles">
@@ -178,12 +264,36 @@ The results are cached to improve performance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">
 <span class="sig-name descname"><span class="pre">unichem_resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inchikey</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.unichem_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Resolve an InChIKey to a SMILES string using UniChem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inchikey</strong> (<em>str</em>) – The InChIKey to resolve.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The resolved SMILES string, or None if resolution fails.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles">
 <span class="sig-name descname"><span class="pre">validate_smiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.validate_smiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Validate a SMILES string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES string to validate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the SMILES string is valid, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -200,10 +310,31 @@ The results are cached to improve performance.</p>
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.file.FileIdentifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.file.</span></span><span class="sig-name descname"><span class="pre">FileIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/file.html#FileIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.file.FileIdentifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to handle file identification and generate MD5 hashes for files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chunk_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The size of the chunks to read from the file. Default is 10000 bytes.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.file.FileIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/file.html#FileIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.file.FileIdentifier.encode" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Generate an MD5 hash for the given file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The path to the file to hash.</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of characters of the hash to return. Default is None, which returns the full hash.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The MD5 hash of the file, or the filename if MD5 is not available.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -226,10 +357,25 @@ The results are cached to improve performance.</p>
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.long.LongIdentifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.long.</span></span><span class="sig-name descname"><span class="pre">LongIdentifier</span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/long.html#LongIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.long.LongIdentifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to generate long identifiers (UUIDs).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.long.LongIdentifier.encode">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/long.html#LongIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.long.LongIdentifier.encode" title="Link to this definition"></a></dt>
-<dd><p>Get UUID code (long identifier)</p>
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/long.html#LongIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.long.LongIdentifier.encode" title="Link to this definition"></a></dt>
+<dd><p>Generate a UUID or a random identifier if UUID is not available.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/long.html#LongIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Generate a UUID or a random identifier if UUID is not available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A UUID string or a randomly generated identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -247,35 +393,102 @@ The results are cached to improve performance.</p>
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.model.ModelIdentifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.model.</span></span><span class="sig-name descname"><span class="pre">ModelIdentifier</span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/model.html#ModelIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.model.ModelIdentifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to handle model identification generation for new ersilia model and validation.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.model.ModelIdentifier.choice">
 <span class="sig-name descname"><span class="pre">choice</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/model.html#ModelIdentifier.choice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.model.ModelIdentifier.choice" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Generate a unique model identifier that does not exist in the Ersilia repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A unique model identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.model.ModelIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/model.html#ModelIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.model.ModelIdentifier.encode" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Generate a new model identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new model identifier.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.model.ModelIdentifier.exists">
 <span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/model.html#ModelIdentifier.exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.model.ModelIdentifier.exists" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if a model identifier exists in the Ersilia repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The model identifier to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model identifier exists, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.model.ModelIdentifier.generate">
 <span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/model.html#ModelIdentifier.generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.model.ModelIdentifier.generate" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Generate a list of unique model identifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The number of model identifiers to generate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of unique model identifiers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.model.ModelIdentifier.is_test">
 <span class="sig-name descname"><span class="pre">is_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/model.html#ModelIdentifier.is_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.model.ModelIdentifier.is_test" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if a given model identifier is a test identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – The model identifier to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model identifier is a test identifier, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.model.ModelIdentifier.is_valid">
 <span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/model.html#ModelIdentifier.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.model.ModelIdentifier.is_valid" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Check if a given string is a valid model identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – The string to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the string is a valid model identifier, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -295,10 +508,19 @@ The results are cached to improve performance.</p>
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.short.ShortIdentifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.short.</span></span><span class="sig-name descname"><span class="pre">ShortIdentifier</span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/short.html#ShortIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.short.ShortIdentifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to generate short identifiers.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.short.ShortIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/short.html#ShortIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.short.ShortIdentifier.encode" title="Link to this definition"></a></dt>
-<dd><p>Short identifier based on timestamp</p>
+<dd><p>Generate a short identifier based on the current timestamp or a random number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A short identifier string.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -316,10 +538,27 @@ The results are cached to improve performance.</p>
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.text.TextIdentifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.text.</span></span><span class="sig-name descname"><span class="pre">TextIdentifier</span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/text.html#TextIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.text.TextIdentifier" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to handle text identification by generating MD5 checksums.</p>
+<p>This class provides methods to generate a unique identifier (checksum) for a given text string using the MD5 hashing algorithm.
+It also includes a method to perform a basic validation check on the generated checksum.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.text.TextIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/text.html#TextIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.text.TextIdentifier.encode" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Generate an MD5 checksum for the given text.</p>
+<p>This method takes a text string as input and returns a unique identifier (checksum) for the text using the MD5 hashing algorithm.
+The checksum is prefixed with “key” to distinguish it from other strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The text string to generate a checksum for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The MD5 checksum of the text, prefixed with “key”.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

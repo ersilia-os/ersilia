@@ -100,6 +100,28 @@
 <div class="viewcode-block" id="CompoundIdentifier">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier">[docs]</a>
 <span class="k">class</span> <span class="nc">CompoundIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle compound identification and conversion between different chemical identifiers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    local : bool, optional</span>
+<span class="sd">        If True, use local RDKit for SMILES to InChIKey conversion. Default is True.</span>
+<span class="sd">    concurrency_limit : int, optional</span>
+<span class="sd">        The maximum number of concurrent API requests. Default is 10.</span>
+<span class="sd">    cache_maxsize : int, optional</span>
+<span class="sd">        The maximum size of the LRU cache for storing API results. Default is 128.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        identifier = CompoundIdentifier()</span>
+<span class="sd">        smiles = &quot;CCO&quot;</span>
+<span class="sd">        inchikey = identifier.encode(smiles)</span>
+<span class="sd">        print(inchikey)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">concurrency_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">cache_maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="o">=</span> <span class="n">Chem</span>
@@ -129,12 +151,38 @@
 <div class="viewcode-block" id="CompoundIdentifier.is_input_header">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header">[docs]</a>
     <span class="k">def</span> <span class="nf">is_input_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the given header is an input header.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        h : str</span>
+<span class="sd">            The header to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the header is an input header, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span></div>
 
 
 <div class="viewcode-block" id="CompoundIdentifier.is_key_header">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header">[docs]</a>
     <span class="k">def</span> <span class="nf">is_key_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the given header is a key header.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        h : str</span>
+<span class="sd">            The header to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the header is a key header, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span></div>
 
 
@@ -169,6 +217,19 @@
 <div class="viewcode-block" id="CompoundIdentifier.guess_type">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">[docs]</a>
     <span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Guess the type of the given text (either &#39;smiles&#39; or &#39;inchikey&#39;).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : str</span>
+<span class="sd">            The text to guess the type of.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The guessed type (&#39;smiles&#39;, &#39;inchikey&#39;, or &#39;UNPROCESSABLE_INPUT&#39;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">text</span> <span class="o">==</span> <span class="n">UNPROCESSABLE_INPUT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
@@ -181,6 +242,19 @@
 <div class="viewcode-block" id="CompoundIdentifier.unichem_resolver">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">[docs]</a>
     <span class="k">def</span> <span class="nf">unichem_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inchikey</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve an InChIKey to a SMILES string using UniChem.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inchikey : str</span>
+<span class="sd">            The InChIKey to resolve.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The resolved SMILES string, or None if resolution fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">unichem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
@@ -196,7 +270,19 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">chemical_identifier_resolver</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns SMILES string of a given identifier, using NCI tool&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve a chemical identifier to a SMILES string using the NCI tool.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        identifier : str</span>
+<span class="sd">            The chemical identifier to resolve.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The resolved SMILES string, or &#39;UNPROCESSABLE_INPUT&#39; if resolution fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">identifier</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
@@ -214,6 +300,18 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetch InChIKey for a single SMILES using PubChem API asynchronously.</span>
 <span class="sd">        The cache is used to store the results of the requests for unique SMILES.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session : aiohttp.ClientSession</span>
+<span class="sd">            The aiohttp session to use for the request.</span>
+<span class="sd">        smiles : str</span>
+<span class="sd">            The SMILES string to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The InChIKey of the compound, or None if conversion fails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">/property/InChIKey/json&quot;</span>
@@ -231,6 +329,18 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetch InChIKey for a single SMILES using NCI asynchronously.</span>
 <span class="sd">        The cache is used to store the results of the requests for unique SMILES.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session : aiohttp.ClientSession</span>
+<span class="sd">            The aiohttp session to use for the request.</span>
+<span class="sd">        smiles : str</span>
+<span class="sd">            The SMILES string to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The InChIKey of the compound, or None if conversion fails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/</span><span class="si">{0}</span><span class="s2">/property/InChIKey/json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -252,6 +362,16 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts a SMILES string to an InChIKey using RDKit.</span>
 <span class="sd">        The results are cached to improve performance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        smiles : str</span>
+<span class="sd">            The SMILES string to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The InChIKey of the compound, or None if conversion fails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -310,7 +430,19 @@
 <div class="viewcode-block" id="CompoundIdentifier.encode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode">[docs]</a>
     <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get InChIKey of compound based on SMILES string&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the InChIKey of a compound based on its SMILES string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        smiles : str</span>
+<span class="sd">            The SMILES string of the compound.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The InChIKey of the compound, or &#39;UNPROCESSABLE_INPUT&#39; if conversion fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="ow">or</span> <span class="ow">not</span> <span class="n">smiles</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -346,6 +478,19 @@
 <div class="viewcode-block" id="CompoundIdentifier.validate_smiles">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles">[docs]</a>
     <span class="k">def</span> <span class="nf">validate_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate a SMILES string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        smiles : str</span>
+<span class="sd">            The SMILES string to validate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the SMILES string is valid, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">smiles</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 </div>
 

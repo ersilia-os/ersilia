@@ -86,12 +86,47 @@
 <div class="viewcode-block" id="Versioner">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner">[docs]</a>
 <span class="k">class</span> <span class="nc">Versioner</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to manage versioning information for Ersilia.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    python_version(py_format=False)</span>
+<span class="sd">        Get the current Python version.</span>
+<span class="sd">    ersilia_version()</span>
+<span class="sd">        Get the current Ersilia version.</span>
+<span class="sd">    ersilia_version_with_py()</span>
+<span class="sd">        Get the current Ersilia version with Python version.</span>
+<span class="sd">    ersilia_version_from_path(path)</span>
+<span class="sd">        Get the Ersilia version from a given path.</span>
+<span class="sd">    bentoml_version()</span>
+<span class="sd">        Get the current BentoML version.</span>
+<span class="sd">    server_docker_name(tag=None, as_tuple=False)</span>
+<span class="sd">        Get the server Docker image name.</span>
+<span class="sd">    base_conda_name(org, tag)</span>
+<span class="sd">        Get the base Conda environment name.</span>
+<span class="sd">    reformat_py(v)</span>
+<span class="sd">        Reformat a Python version string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Versioner.python_version">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.python_version">[docs]</a>
     <span class="k">def</span> <span class="nf">python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">py_format</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current Python version.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        py_format : bool, optional</span>
+<span class="sd">            Whether to return the version in Python format (e.g., &#39;py38&#39;). Default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The current Python version.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">vi</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span>
         <span class="k">if</span> <span class="n">py_format</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;py</span><span class="si">{0}{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vi</span><span class="o">.</span><span class="n">major</span><span class="p">,</span> <span class="n">vi</span><span class="o">.</span><span class="n">minor</span><span class="p">)</span>
@@ -102,6 +137,14 @@
 <div class="viewcode-block" id="Versioner.ersilia_version">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.ersilia_version">[docs]</a>
     <span class="k">def</span> <span class="nf">ersilia_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current Ersilia version.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The current Ersilia version.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ver</span> <span class="o">=</span> <span class="n">__ersilia_version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
         <span class="n">ver</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">.</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ver</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ver</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ver</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">ver</span></div>
@@ -110,6 +153,14 @@
 <div class="viewcode-block" id="Versioner.ersilia_version_with_py">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.ersilia_version_with_py">[docs]</a>
     <span class="k">def</span> <span class="nf">ersilia_version_with_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current Ersilia version with Python version.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The current Ersilia version with Python version.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ersilia_version</span><span class="p">()</span>
         <span class="n">ver</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">-</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ver</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_version</span><span class="p">(</span><span class="n">py_format</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ver</span></div>
@@ -118,6 +169,19 @@
 <div class="viewcode-block" id="Versioner.ersilia_version_from_path">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.ersilia_version_from_path">[docs]</a>
     <span class="k">def</span> <span class="nf">ersilia_version_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the Ersilia version from a given path.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            The path to the Ersilia installation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The Ersilia version if found, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">static_version_file</span> <span class="o">=</span> <span class="s2">&quot;_static_version.py&quot;</span>
         <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;ersilia&quot;</span><span class="p">,</span> <span class="n">static_version_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
@@ -133,12 +197,35 @@
 <div class="viewcode-block" id="Versioner.bentoml_version">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.bentoml_version">[docs]</a>
     <span class="k">def</span> <span class="nf">bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current BentoML version.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The current BentoML version if available, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">__bentoml_version__</span></div>
 
 
 <div class="viewcode-block" id="Versioner.server_docker_name">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.server_docker_name">[docs]</a>
     <span class="k">def</span> <span class="nf">server_docker_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">as_tuple</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the server Docker image name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag : str, optional</span>
+<span class="sd">            The tag for the Docker image. Default is None.</span>
+<span class="sd">        as_tuple : bool, optional</span>
+<span class="sd">            Whether to return the name as a tuple. Default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or tuple</span>
+<span class="sd">            The server Docker image name, or a tuple of (org, img, tag) if as_tuple is True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">-</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ersilia_version</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_version</span><span class="p">(</span><span class="n">py_format</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -155,6 +242,21 @@
 <div class="viewcode-block" id="Versioner.base_conda_name">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.base_conda_name">[docs]</a>
     <span class="k">def</span> <span class="nf">base_conda_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the base Conda environment name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        org : str</span>
+<span class="sd">            The organization name.</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            The tag for the Conda environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The base Conda environment name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ersilia_version_with_py</span><span class="p">()</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">ENV</span><span class="o">.</span><span class="n">CONDA</span><span class="o">.</span><span class="n">EOS_BASE_ENV</span>
@@ -166,6 +268,24 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.versioning.Versioner.reformat_py">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">reformat_py</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reformat a Python version string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        v : str</span>
+<span class="sd">            The Python version string.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The reformatted Python version string.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        Exception</span>
+<span class="sd">            If the version string is too short.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">3</span><span class="p">:])</span></div>

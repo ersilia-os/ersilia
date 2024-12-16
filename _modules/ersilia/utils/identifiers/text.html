@@ -78,6 +78,12 @@
 <div class="viewcode-block" id="TextIdentifier">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.text.TextIdentifier">[docs]</a>
 <span class="k">class</span> <span class="nc">TextIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle text identification by generating MD5 checksums.</span>
+
+<span class="sd">    This class provides methods to generate a unique identifier (checksum) for a given text string using the MD5 hashing algorithm. </span>
+<span class="sd">    It also includes a method to perform a basic validation check on the generated checksum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
@@ -100,6 +106,22 @@
 <div class="viewcode-block" id="TextIdentifier.encode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.text.TextIdentifier.encode">[docs]</a>
     <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate an MD5 checksum for the given text.</span>
+
+<span class="sd">        This method takes a text string as input and returns a unique identifier (checksum) for the text using the MD5 hashing algorithm.</span>
+<span class="sd">        The checksum is prefixed with &quot;key&quot; to distinguish it from other strings.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : str</span>
+<span class="sd">            The text string to generate a checksum for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The MD5 checksum of the text, prefixed with &quot;key&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;key&quot;</span> <span class="o">+</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
 </div>
 
