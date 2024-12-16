@@ -1,6 +1,7 @@
 import os
 import json
 import importlib
+from collections import namedtuple
 
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
@@ -18,6 +19,8 @@ from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exce
 from ...utils.terminal import yes_no_input
 from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, EOS, MODEL_SOURCE_FILE
 from . import STATUS_FILE, DONE_TAG
+
+FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
 
 
 class ModelFetcher(ErsiliaBase):
@@ -102,6 +105,7 @@ class ModelFetcher(ErsiliaBase):
         self.model_hosted_fetcher = ModelHostedFetcher(
             url=hosted_url, config_json=self.config_json
         )
+        self.can_use_docker = self.is_docker_installed and self.is_docker_active
         self.force_from_github = force_from_github
         self.force_from_s3 = force_from_s3
         self.force_from_dockerhub = force_from_dockerhub
@@ -117,10 +121,7 @@ class ModelFetcher(ErsiliaBase):
             self.force_from_s3: "Amazon S3",
             self.force_from_dockerhub: "DockerHub",
             self.force_from_hosted: "Hosted services",
-            self.force_with_bentoml: "Bentoml",
-            self.force_with_fastapi: "Fastapi",
-            self.hosted_url is not None: "Hosted URL",
-            self.local_dir is not None: "Local path",
+            self.local_dir is not None: "Local Repository",
         }
 
         self.model_source = next(
@@ -182,25 +183,25 @@ class ModelFetcher(ErsiliaBase):
     def _fetch_not_from_dockerhub(self, model_id: str):
         self.model_id = model_id
         is_fetched = False
-        if not self.exists(model_id):
-            self.logger.debug("Model doesn't exist in your local, fetching it now")
-            if self.force_with_fastapi:
-                self._fetch_from_fastapi()
-                is_fetched = True
-            if self.force_with_bentoml:
-                self._fetch_from_bentoml()
-                is_fetched = True
-            if is_fetched:
-                return
-            else:
-                self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
-                fetcher_type = self._decide_fetcher(model_id)
-                if fetcher_type == PACK_METHOD_FASTAPI:
-                    self._fetch_from_fastapi()
-                if fetcher_type == PACK_METHOD_BENTOML:
-                    self._fetch_from_bentoml()
+
+        if self.force_with_fastapi:
+            self._fetch_from_fastapi()
+            is_fetched = True
+        if self.force_with_bentoml:
+            self._fetch_from_bentoml()
+            is_fetched = True
+
+        if is_fetched:
+            return
         else:
-            self.logger.debug("Model already exists in your local, skipping fetching")
+            self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
+            fetcher_type = self._decide_fetcher(model_id)
+            if fetcher_type == PACK_METHOD_FASTAPI:
+                self._fetch_from_fastapi()
+            if fetcher_type == PACK_METHOD_BENTOML:
+                self._fetch_from_bentoml()
+
+        self.logger.debug("Model already exists in your local, skipping fetching")
 
     def _standard_csv_example(self, model_id: str):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
@@ -228,13 +229,13 @@ class ModelFetcher(ErsiliaBase):
         if self.force_from_hosted:
             return False
         if not self.is_docker_installed:
-            self.logger.debug("Docker is not installed in your local")
+            self.logger.debug("Docker Engine is not installed on your system.")
             return False
         if not self.is_docker_active:
-            self.logger.debug("Docker is not active in your local")
+            self.logger.info("Docker is not active in your local")
             return False
         if not self.ji.identifier_exists(model_id=model_id):
-            self.logger.debug("Docker image of this model doesn't seem to be available")
+            self.logger.info("Docker image of this model doesn't seem to be available")
             return False
         return True
 
@@ -278,23 +279,31 @@ class ModelFetcher(ErsiliaBase):
         else:
             return False
 
-    async def _fetch(self, model_id: str):
-        self.logger.debug("Starting fetching procedure")
-        do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
-        if do_dockerhub:
-            self.logger.debug("Decided to fetch from DockerHub")
-            await self._fetch_from_dockerhub(model_id=model_id)
-            return
-        do_hosted = self._decide_if_use_hosted(model_id=model_id)
-        if do_hosted:
-            self.logger.debug("Fetching from hosted")
-            self._fetch_from_hosted(model_id=model_id)
-            return
-        if self.overwrite is None:
-            self.logger.debug("Overwriting")
-            self.overwrite = True
-        self.logger.debug("Fetching in your system, not from DockerHub")
-        self._fetch_not_from_dockerhub(model_id=model_id)
+    async def _fetch(self, model_id: str) -> FetchResult:
+        if not self.exists(model_id):
+            self.logger.info("Model doesn't exist on your system, fetching it now.")
+            self.logger.debug("Starting fetching procedure")
+            do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
+            if do_dockerhub:
+                self.logger.debug("Decided to fetch from DockerHub")
+                if not self.can_use_docker:
+                    return FetchResult(fetch_success=False, reason="Docker is not installed or active on your system.")
+                await self._fetch_from_dockerhub(model_id=model_id)
+                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+            do_hosted = self._decide_if_use_hosted(model_id=model_id)
+            if do_hosted:
+                self.logger.debug("Fetching from hosted")
+                self._fetch_from_hosted(model_id=model_id)
+                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+            if self.overwrite is None:
+                self.logger.debug("Overwriting")
+                self.overwrite = True
+            self.logger.debug("Fetching in your system, not from DockerHub")
+            self._fetch_not_from_dockerhub(model_id=model_id)
+            return FetchResult(fetch_success=True, reason="Model fetched successfully")
+        else:
+            self.logger.info("Model already exists on your system. If you want to fetch it again, please delete it first.")
+            return FetchResult(fetch_success=False, reason="Model already exists on your system. If you want to fetch it again, please delete the existing model first.")
 
     async def fetch(self, model_id: str) -> bool:
         """
@@ -317,27 +326,30 @@ class ModelFetcher(ErsiliaBase):
             fetcher = ModelFetcher(config_json=config)
             success = await fetcher.fetch(model_id="eosxxxx")
         """
-        await self._fetch(model_id)
-        try:
-            self._standard_csv_example(model_id)
-        except StandardModelExampleError:
-            self.logger.debug("Standard model example failed, deleting artifacts")
-            do_delete = yes_no_input(
-                "Do you want to delete the model artifacts? [Y/n]", 
-                default_answer="Y")
-            if do_delete:
-                md = ModelFullDeleter(overwrite=False)
-                md.delete(model_id)
-            return False
-        else:
-            self.logger.debug("Writing model source to file")
-            model_source_file = os.path.join(
-                self._model_path(model_id), MODEL_SOURCE_FILE
-            )
+        fr = await self._fetch(model_id)
+        if fr.fetch_success:
             try:
-                os.makedirs(self._model_path(model_id), exist_ok=True)
-            except OSError as error:
-                self.logger.error(f"Error during folder creation: {error}")
-            with open(model_source_file, "w") as f:
-                f.write(self.model_source)
-            return True
+                self._standard_csv_example(model_id)
+            except StandardModelExampleError:
+                self.logger.debug("Standard model example failed, deleting artifacts")
+                do_delete = yes_no_input(
+                    "Do you want to delete the model artifacts? [Y/n]", 
+                    default_answer="Y")
+                if do_delete:
+                    md = ModelFullDeleter(overwrite=False)
+                    md.delete(model_id)
+                return FetchResult(fetch_success=False, reason="Could not successfully run a standard example from the model.")
+            else:
+                self.logger.debug("Writing model source to file")
+                model_source_file = os.path.join(
+                    self._model_path(model_id), MODEL_SOURCE_FILE
+                )
+                try:
+                    os.makedirs(self._model_path(model_id), exist_ok=True)
+                except OSError as error:
+                    self.logger.error(f"Error during folder creation: {error}")
+                with open(model_source_file, "w") as f:
+                    f.write(self.model_source)
+                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+        else:
+            return fr
