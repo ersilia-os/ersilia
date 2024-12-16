@@ -578,8 +578,9 @@ class ModelFullDeleter(ErsiliaBase):
         model_source = ModelCatalog(config_json=self.config_json)._get_model_source(mc)
         dm = DockerManager(config_json=self.config_json)
         if needs_delete:
-            if model_source == "DockerHub" and dm.is_active():
+            if model_source == "DockerHub" and not dm.is_active():
                 return False, "Model fetched through Docker but Docker engine is inactive."
+            return True, "Model can be deleted."
         else:
             return False, f"Model {model_id} is not available locally, no delete necessary."
 

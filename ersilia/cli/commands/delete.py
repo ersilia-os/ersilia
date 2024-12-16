@@ -31,11 +31,13 @@ def delete_cmd():
         Delete all models:
         $ ersilia delete --all
     """
+    def _delete(md, model_id):
+        md.delete(model_id)
 
     def _delete_model_by_id(model_id):
         md = ModelFullDeleter()
         can_delete, reason = md.can_be_deleted(model_id)
-        if can_delete(model_id):
+        if can_delete:
             echo("Deleting model {0}".format(model_id))
             _delete(md, model_id)
             echo(
@@ -49,9 +51,6 @@ def delete_cmd():
                 ),
                 fg="yellow",
             )
-
-    def _delete(md, model_id):
-        md.delete(model_id)
 
     def _delete_all():
         """Function to delete all locally available models"""
