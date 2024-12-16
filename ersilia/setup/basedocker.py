@@ -9,6 +9,14 @@ from ..utils.logging import make_temp_dir
 
 # TODO: Make sure it is used.
 class SetupBaseDocker(ErsiliaBase):
+    """
+    A class to set up the base Docker image for Ersilia.
+
+    Parameters
+    ----------
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.docker = SimpleDocker()
@@ -32,7 +40,21 @@ class SetupBaseDocker(ErsiliaBase):
     def _get_img_name(self, org, tag):
         return "{0}/{1}:{2}".format(org, self.bimg, tag)
 
-    def setup(self, org, tag):
+    def setup(self, org: str, tag: str) -> None:
+        """
+        Set up the Docker image.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+        tag : str
+            The tag for the Docker image.
+
+        Returns
+        -------
+        None
+        """
         if org != "ersiliaos":
             return
         img = self.bimg
@@ -64,5 +86,19 @@ class SetupBaseDocker(ErsiliaBase):
                 f.write(l[8:] + "\n")
         self.docker.build(path=tmp_repo, org=org, img=img, tag=tag)
 
-    def delete(self, org, tag):
+    def delete(self, org: str, tag: str) -> None:
+        """
+        Delete the Docker image.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+        tag : str
+            The tag for the Docker image.
+
+        Returns
+        -------
+        None
+        """
         pass

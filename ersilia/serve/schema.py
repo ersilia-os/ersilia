@@ -7,6 +7,22 @@ from .. import ErsiliaBase
 
 
 class ApiSchema(ErsiliaBase):
+    """
+    Class to manage and interact with the API schema for a given model.
+
+    An API schema defines the structure of the input and output data for the APIs of a model.
+    It includes information about the types and shapes of the data fields, as well as any metadata
+    associated with them. This class provides methods to retrieve and manipulate the schema, check
+    for HDF5 serializability, and generate empty representations of the input and output data.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict
+        Configuration in JSON format.
+    """
+
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -66,10 +82,26 @@ class ApiSchema(ErsiliaBase):
         # TODO: Make this generalizable
         return None
 
-    def isfile(self):
+    def isfile(self) -> bool:
+        """
+        Check if the schema file exists.
+
+        Returns
+        -------
+        bool
+            True if the schema file exists, False otherwise.
+        """
         return os.path.isfile(self.schema_file)
 
-    def get(self):
+    def get(self) -> dict:
+        """
+        Get the schema data.
+
+        Returns
+        -------
+        dict
+            The schema data.
+        """
         with open(self.schema_file) as f:
             data = json.load(f)
         for api, sc in data.items():
@@ -78,30 +110,98 @@ class ApiSchema(ErsiliaBase):
         return data
 
     @property
-    def schema(self):
+    def schema(self) -> dict:
+        """
+        Get the schema data.
+
+        Returns
+        -------
+        dict
+            The schema data.
+        """
         return self.get()
 
-    def get_schema_by_api(self, api_name):
+    def get_schema_by_api(self, api_name: str) -> dict:
+        """
+        Get the schema for a specific API.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API.
+
+        Returns
+        -------
+        dict
+            The schema for the specified API.
+        """
         return self.schema[api_name]
 
-    def get_output_by_api(self, api_name):
+    def get_output_by_api(self, api_name: str) -> dict:
+        """
+        Get the output schema for a specific API.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API.
+
+        Returns
+        -------
+        dict
+            The output schema for the specified API.
+        """
         return self.schema[api_name]["output"]
 
-    def is_h5_serializable(self, api_name):
+    def is_h5_serializable(self, api_name: str) -> bool:
+        """
+        Check if the output schema for a specific API is HDF5 serializable.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API.
+
+        Returns
+        -------
+        bool
+            True if the output schema is HDF5 serializable, False otherwise.
+        """
         schema = self.get_output_by_api(api_name)
         for _, v in schema.items():
             if v["type"] not in self._h5_serializable_types:
                 return False
         return True
 
-    def get_meta_by_api(self, api_name):
+    def get_meta_by_api(self, api_name: str) -> dict:
+        """
+        Get the metadata for a specific API.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API.
+
+        Returns
+        -------
+        dict
+            The metadata for the specified API.
+        """
         sc = self.schema[api_name]["output"]
         meta = {}
         for k, v in sc.items():
             meta[k] = v["meta"]
         return meta
 
-    def get_meta(self):
+    def get_meta(self) -> dict:
+        """
+        Get the metadata for all APIs.
+
+        Returns
+        -------
+        dict
+            The metadata for all APIs.
+        """
         sc = self.schema
         meta = {}
         for api, _ in sc.items():
@@ -109,36 +209,104 @@ class ApiSchema(ErsiliaBase):
             meta[api] = meta_
         return meta
 
-    def get_apis(self):
+    def get_apis(self) -> list:
+        """
+        Get the list of APIs available for the model.
+
+        Returns
+        -------
+        list
+            List of API names.
+        """
         return sorted(self.schema.keys())
 
-    def empty_by_field(self, field):
+    def empty_by_field(self, field: dict) -> list:
+        """
+        Get an empty representation for a specific field.
+
+        Parameters
+        ----------
+        field : dict
+            The field schema.
+
+        Returns
+        -------
+        list
+            An empty representation of the field.
+        """
         if field["type"] in self._array_types:
             shape = tuple(field["shape"])
             return np.full(shape, None).tolist()
         return None
 
-    def empty_input_by_api(self, api_name):
+    def empty_input_by_api(self, api_name: str) -> dict:
+        """
+        Get an empty input representation for a specific API.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API.
+
+        Returns
+        -------
+        dict
+            An empty input representation for the specified API.
+        """
         sc = self.schema[api_name]["input"]
         d = {}
         for k, v in sc.items():
             d[k] = self.empty_by_field(v)
         return d
 
-    def empty_output_by_api(self, api_name):
+    def empty_output_by_api(self, api_name: str) -> dict:
+        """
+        Get an empty output representation for a specific API.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API.
+
+        Returns
+        -------
+        dict
+            An empty output representation for the specified API.
+        """
         sc = self.schema[api_name]["output"]
         d = {}
         for k, v in sc.items():
             d[k] = self.empty_by_field(v)
         return d
 
-    def empty_by_api(self, api_name):
+    def empty_by_api(self, api_name: str) -> dict:
+        """
+        Get an empty input and output representation for a specific API.
+
+        Parameters
+        ----------
+        api_name : str
+            The name of the API.
+
+        Returns
+        -------
+        dict
+            An empty input and output representation for the specified API.
+        """
         return {
             "input": self.empty_input_by_api(api_name),
             "output": self.empty_output_by_api(api_name),
         }
 
-    def empty(self):
+    def empty(self) -> dict:
+        """
+        Get an empty input and output representation for all APIs.
+
+        Returns
+        -------
+        dict
+            An empty input and output representation for all APIs.
+        """
         d = {}
         for api_name in self.get_apis():
             d[api_name] = self.empty_by_api(api_name)
