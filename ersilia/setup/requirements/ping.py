@@ -4,11 +4,27 @@ import requests
 
 
 class PingRequirement(object):
+    """
+    A class to check internet connectivity.
+
+    Methods
+    -------
+    is_connected()
+        Checks if the system is connected to the internet.
+    """
     def __init__(self):
         pass
 
     @throw_ersilia_exception()
-    def is_connected(self):
+    def is_connected(self) -> bool:
+        """
+        Checks if the system is connected to the internet.
+
+        Returns
+        -------
+        bool
+            True if the system is connected to the internet, False otherwise.
+        """
         url = "http://www.google.com/"
         try:
             _ = requests.get(url)
