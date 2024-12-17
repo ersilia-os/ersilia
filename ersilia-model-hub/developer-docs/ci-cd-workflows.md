@@ -1,10 +1,11 @@
 ---
-description: A summary of the
+description: >-
+  Ersilia relies heavily on GitHub Actions for CI/CD. Here is a high-level
+  summary of workflows involved in maintaining the Ersilia CLI and code-bases
+  from all  the Ersilia maintained models.
 ---
 
 # CI/CD workflows
-
-Ersilia relies heavily on GitHub Actions for CI/CD. Here is a high-level summary of workflows involved in&#x20;
 
 ## The main Ersilia repository
 
