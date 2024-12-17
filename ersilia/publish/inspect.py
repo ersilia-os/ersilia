@@ -17,7 +17,9 @@ from ..default import (
     RUN_FILE,
     PREDEFINED_EXAMPLE_FILES
 )
+
 Result = namedtuple("Result", ["success", "details"])
+
 # Base URL for the Ersilia OS Github
 BASE_URL = "https://github.com/ersilia-os/"
 RAW_CONTENT_URL = "https://raw.githubusercontent.com/ersilia-os/{model}/main/"
@@ -25,7 +27,26 @@ REPO_API_URL = "https://api.github.com/repos/ersilia-os/{model}/contents"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 
 class ModelInspector:
+    """
+    Class for inspecting model repositories.
 
+    Parameters
+    ----------
+    model : str
+        The ID of the model to be inspected.
+    dir : str
+        The directory where the model repository is located.
+    config_json : str, optional
+        Path to the configuration JSON file.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        inspector = ModelInspector(model="model_id", dir="path/to/repo")
+        result = inspector.check_repo_exists()
+        result = inspector.check_complete_metadata()
+    """
     RUN_FILE = f"model/framework/{RUN_FILE}"
     
     COMMON_FILES = [
@@ -71,7 +92,8 @@ class ModelInspector:
         "S3", 
         "DockerHub"
     ]
-    def __init__(self, model, dir, config_json=None):
+
+    def __init__(self, model: str, dir: str, config_json=None):
         self.model = model
         self.dir = dir
         self.repo_url = f"{BASE_URL}{model}"
@@ -80,6 +102,14 @@ class ModelInspector:
         self.pack_type = self.get_pack_type()
      
     def get_pack_type(self):
+        """
+        Determine the packaging method of the model.
+
+        Returns
+        -------
+        str
+            The packaging method, either 'bentoml' or 'fastapi'.
+        """
         resolver = TemplateResolver(
             model_id=self.model,
             repo_path=self.dir
@@ -92,6 +122,14 @@ class ModelInspector:
             return None
             
     def check_repo_exists(self):
+        """
+        Check if the model repository exists.
+
+        Returns
+        -------
+        Result
+            A namedtuple containing the success status and details of the check.
+        """
         if self._url_exists(self.repo_url):
             return Result(
                 True, 
@@ -103,6 +141,14 @@ class ModelInspector:
         )
 
     def check_complete_metadata(self):
+        """
+        Check if the metadata file is complete.
+
+        Returns
+        -------
+        Result
+            A namedtuple containing the success status and details of the check.
+        """
         url = f"{self.content_url}{METADATA_JSON_FILE}" if self.pack_type == "bentoml" \
             else f"{self.content_url}{METADATA_YAML_FILE}"
         if not self._url_exists(url):
@@ -155,6 +201,14 @@ class ModelInspector:
         return Result(True, "Metadata is complete.")
     
     def check_dependencies_are_valid(self):
+        """
+        Check if the dependencies in the Dockerfile or install.yml are valid.
+
+        Returns
+        -------
+        Result
+            A namedtuple containing the success status and details of the check.
+        """
         if self.pack_type not in [
             PACK_METHOD_BENTOML, 
             PACK_METHOD_FASTAPI
@@ -186,7 +240,6 @@ class ModelInspector:
         return Result(True, f"{file} dependencies are valid.")
 
     def _get_file_content(self, file):
-
         if self.dir is not None:  
             path = os.path.join(self.dir, file)
             if not os.path.isfile(path):
@@ -212,8 +265,15 @@ class ModelInspector:
             return content, None
 
     def check_complete_folder_structure(self):
-        invalid_items = self.validate_repo_structure(
-        )
+        """
+        Check if the folder structure of the repository is complete.
+
+        Returns
+        -------
+        Result
+            A namedtuple containing the success status and details of the check.
+        """
+        invalid_items = self.validate_repo_structure()
         if invalid_items:
             return Result(
                 False, 
@@ -225,6 +285,14 @@ class ModelInspector:
         )
 
     def check_computational_performance(self):
+        """
+        Check the computational performance of the model.
+
+        Returns
+        -------
+        Result
+            A namedtuple containing the success status and details of the check.
+        """
         details = []
         for n in (1, 10, 100):
             result = self._run_performance_check(n)
@@ -234,6 +302,14 @@ class ModelInspector:
         return Result(True, " ".join(details))
 
     def check_no_extra_files(self):
+        """
+        Check if there are no extra files in the repository.
+
+        Returns
+        -------
+        Result
+            A namedtuple containing the success status and details of the check.
+        """
         if self.pack_type == PACK_METHOD_BENTOML:
             expected_items = self.BENTOML_FILES + self.BENTOML_FOLDERS
         elif self.pack_type == PACK_METHOD_FASTAPI:
@@ -291,7 +367,6 @@ class ModelInspector:
 
         return Result(True, "No extra files found.")
 
-
     def _url_exists(self, url):
         try:
             headers = {
@@ -329,10 +404,7 @@ class ModelInspector:
                 invalid_urls.append((field, url, 404))
         return invalid_urls
 
-    def _validate_repo_structure(
-            self, 
-            required_items,
-        ):
+    def _validate_repo_structure(self, required_items):
         missing_items = []
         
         if self.dir is not None:  
@@ -408,7 +480,6 @@ class ModelInspector:
             if name and version:
                 pass
         return errors
-
 
     def _run_performance_check(self, n):
         cmd = (
