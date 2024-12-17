@@ -42,11 +42,11 @@ class AirtableInterface:
         return data["AIRTABLE_READONLY_API_KEY"]
 
     def _get_rw_table(self, api_key):
-        self.table = self._create_table(api_key=api_key)
+        return self._create_table(api_key=api_key)
 
     def _get_ro_table(self):
         ro_api_key = self._get_ro_airtable_api_key()
-        self.table = self._create_table(api_key=ro_api_key)
+        return self._create_table(api_key=ro_api_key)
 
     def items(self):
         for records in self.table.iterate(
