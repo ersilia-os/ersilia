@@ -3,6 +3,11 @@ ARG MODEL=eos_identifier
 ENV MODEL=$MODEL
 WORKDIR /root
 COPY ./$MODEL /root/$MODEL
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libfontconfig1 \
+    libxrender1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 RUN mkdir /root/bundles && ersilia_model_pack --repo_path $MODEL --bundles_repo_path /root/bundles && \
     rm -rf /root/$MODEL && rm -rf /root/.cache && \
     cp /root/bundles/$MODEL/*/information.json /root/information.json && \

@@ -28,7 +28,7 @@ ENV PATH="/usr/bin/conda/bin/:$PATH"
 COPY --from=build /root/bundles /root/bundles
 COPY --from=build /root/docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY --from=build /venv /usr/bin/conda
-
+RUN conda install -c conda-forge xorg-libxrender xorg-libxtst
 RUN cp /root/bundles/$MODEL/*/information.json /root/information.json && \
     cp /root/bundles/$MODEL/*/api_schema.json /root/api_schema.json && \
     cp /root/bundles/$MODEL/*/status.json /root/status.json && \
