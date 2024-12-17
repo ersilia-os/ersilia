@@ -17,7 +17,7 @@
   * [Troubleshooting models](ersilia-model-hub/model-contribution/troubleshooting-models.md)
   * [BioModels Annotation](ersilia-model-hub/model-contribution/biomodels-annotation.md)
 * [Developer Docs](ersilia-model-hub/developer-docs/README.md)
-  * [Command Line commands](ersilia-model-hub/developer-docs/command-line-commands.md)
+  * [Command Line Interface](ersilia-model-hub/developer-docs/command-line-interface.md)
   * [CI/CD workflows](ersilia-model-hub/developer-docs/ci-cd-workflows.md)
   * [Versioning](ersilia-model-hub/developer-docs/versioning.md)
   * [Testing Playground](ersilia-model-hub/developer-docs/testing-playground.md)
