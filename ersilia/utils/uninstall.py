@@ -9,11 +9,18 @@ from .logging import logger
 
 
 class Uninstaller(object):
+    """
+    A class to manage the uninstallation of Ersilia and its dependencies.
+
+    Methods
+    -------
+    uninstall()
+        Main uninstallation method.
+    """
     def __init__(self):
         self.docker_cleaner = SimpleDocker()
 
     def _uninstall_ersilia_package(self):
-        """Uninstall the Ersilia package if installed via pip."""
         try:
             logger.info("Uninstalling Ersilia package...")
             subprocess.run(["pip", "uninstall", "-y", "ersilia"], check=True)
@@ -22,7 +29,6 @@ class Uninstaller(object):
             logger.error(f"Failed to uninstall Ersilia package: {e}")
 
     def _directories(self):
-        """Remove additional directories."""
         dirs_to_remove = [EOS, BENTOML_PATH]
         for dir in dirs_to_remove:
             if os.path.exists(dir):
@@ -59,10 +65,11 @@ class Uninstaller(object):
             logger.error(f"Failed to remove Conda environment {env_name}: {e}")
 
     def uninstall(self):
-        """Main uninstallation method"""
-
+        """
+        Main uninstallation method.
+        """
         try:
-            logger.info("Starting Ersillia uninstallation...")
+            logger.info("Starting Ersilia uninstallation...")
 
             self.docker_cleaner.cleanup_ersilia_images()
             self._uninstall_ersilia_package()
