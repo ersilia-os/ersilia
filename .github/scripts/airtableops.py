@@ -42,11 +42,11 @@ class AirtableInterface:
         return data["AIRTABLE_READONLY_API_KEY"]
 
     def _get_rw_table(self, api_key):
-        self.table = self._create_table(api_key=api_key)
+        return self._create_table(api_key=api_key)
 
     def _get_ro_table(self):
         ro_api_key = self._get_ro_airtable_api_key()
-        self.table = self._create_table(api_key=ro_api_key)
+        return self._create_table(api_key=ro_api_key)
 
     def items(self):
         for records in self.table.iterate(
@@ -62,9 +62,9 @@ class AirtableInterface:
 
 
 class AirtableMetadata(AirtableInterface):
-    def __init__(self, model_id, api_key):
+    def __init__(self, model_id, api_key=None, mode="ro"):
         self.model_id = model_id
-        super().__init__(self, mode="rw", api_key=api_key)
+        super().__init__(self, mode=mode, api_key=api_key)
         self._empty_row_message = "The AirTable field Identifier was not found! Please check that there are not empty rows."
 
     def _find_record(self):
@@ -121,9 +121,7 @@ class ReadmeMetadata:
         self.model_id = model_id
 
     def read_information(self):
-        self.logger.debug(
-            "Cannot read directly from README file. Using AirTable instead"
-        )
+        print ("Cannot read directly from README file. Using AirTable instead")
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
         print(bi.as_dict())

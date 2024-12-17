@@ -24,6 +24,28 @@ nest_asyncio.apply()
 
 
 class CompoundIdentifier(object):
+    """
+    A class to handle compound identification and conversion between different chemical identifiers.
+
+    Parameters
+    ----------
+    local : bool, optional
+        If True, use local RDKit for SMILES to InChIKey conversion. Default is True.
+    concurrency_limit : int, optional
+        The maximum number of concurrent API requests. Default is 10.
+    cache_maxsize : int, optional
+        The maximum size of the LRU cache for storing API results. Default is 128.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        identifier = CompoundIdentifier()
+        smiles = "CCO"
+        inchikey = identifier.encode(smiles)
+        print(inchikey)
+
+    """
     def __init__(self, local=True, concurrency_limit=10, cache_maxsize=128):
         if local:
             self.Chem = Chem
@@ -51,9 +73,35 @@ class CompoundIdentifier(object):
         )(self.convert_smiles_to_inchikey_with_rdkit)
 
     def is_input_header(self, h):
+        """
+        Check if the given header is an input header.
+
+        Parameters
+        ----------
+        h : str
+            The header to check.
+
+        Returns
+        -------
+        bool
+            True if the header is an input header, False otherwise.
+        """
         return h.lower() in self.input_header_synonyms
 
     def is_key_header(self, h):
+        """
+        Check if the given header is a key header.
+
+        Parameters
+        ----------
+        h : str
+            The header to check.
+
+        Returns
+        -------
+        bool
+            True if the header is a key header, False otherwise.
+        """
         return h.lower() in self.key_header_synonyms
 
     def _is_smiles(self, text):
@@ -85,6 +133,19 @@ class CompoundIdentifier(object):
         return True
 
     def guess_type(self, text):
+        """
+        Guess the type of the given text (either 'smiles' or 'inchikey').
+
+        Parameters
+        ----------
+        text : str
+            The text to guess the type of.
+
+        Returns
+        -------
+        str
+            The guessed type ('smiles', 'inchikey', or 'UNPROCESSABLE_INPUT').
+        """
         if not isinstance(text, str) or not text.strip() or text == UNPROCESSABLE_INPUT:
             return UNPROCESSABLE_INPUT
         if self._is_inchikey(text):
@@ -94,6 +155,19 @@ class CompoundIdentifier(object):
         return UNPROCESSABLE_INPUT
 
     def unichem_resolver(self, inchikey):
+        """
+        Resolve an InChIKey to a SMILES string using UniChem.
+
+        Parameters
+        ----------
+        inchikey : str
+            The InChIKey to resolve.
+
+        Returns
+        -------
+        str
+            The resolved SMILES string, or None if resolution fails.
+        """
         if Chem is None or unichem is None:
             return None
         try:
@@ -106,7 +180,19 @@ class CompoundIdentifier(object):
 
     @staticmethod
     def chemical_identifier_resolver(identifier):
-        """Returns SMILES string of a given identifier, using NCI tool"""
+        """
+        Resolve a chemical identifier to a SMILES string using the NCI tool.
+
+        Parameters
+        ----------
+        identifier : str
+            The chemical identifier to resolve.
+
+        Returns
+        -------
+        str
+            The resolved SMILES string, or 'UNPROCESSABLE_INPUT' if resolution fails.
+        """
         if not identifier or not isinstance(identifier, str):
             return UNPROCESSABLE_INPUT
         identifier = urllib.parse.quote(identifier)
@@ -123,6 +209,18 @@ class CompoundIdentifier(object):
         """
         Fetch InChIKey for a single SMILES using PubChem API asynchronously.
         The cache is used to store the results of the requests for unique SMILES.
+
+        Parameters
+        ----------
+        session : aiohttp.ClientSession
+            The aiohttp session to use for the request.
+        smiles : str
+            The SMILES string to convert.
+
+        Returns
+        -------
+        str
+            The InChIKey of the compound, or None if conversion fails.
         """
         identifier = urllib.parse.quote(smiles)
         url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{identifier}/property/InChIKey/json"
@@ -140,6 +238,18 @@ class CompoundIdentifier(object):
         """
         Fetch InChIKey for a single SMILES using NCI asynchronously.
         The cache is used to store the results of the requests for unique SMILES.
+
+        Parameters
+        ----------
+        session : aiohttp.ClientSession
+            The aiohttp session to use for the request.
+        smiles : str
+            The SMILES string to convert.
+
+        Returns
+        -------
+        str
+            The InChIKey of the compound, or None if conversion fails.
         """
         identifier = urllib.parse.quote(smiles)
         url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{0}/property/InChIKey/json".format(
@@ -159,6 +269,16 @@ class CompoundIdentifier(object):
         """
         Converts a SMILES string to an InChIKey using RDKit.
         The results are cached to improve performance.
+
+        Parameters
+        ----------
+        smiles : str
+            The SMILES string to convert.
+
+        Returns
+        -------
+        str
+            The InChIKey of the compound, or None if conversion fails.
         """
         if not self.Chem:
             return None
@@ -208,7 +328,19 @@ class CompoundIdentifier(object):
         return result_list
 
     def encode(self, smiles):
-        """Get InChIKey of compound based on SMILES string"""
+        """
+        Get the InChIKey of a compound based on its SMILES string.
+
+        Parameters
+        ----------
+        smiles : str
+            The SMILES string of the compound.
+
+        Returns
+        -------
+        str
+            The InChIKey of the compound, or 'UNPROCESSABLE_INPUT' if conversion fails.
+        """
         if (
             not isinstance(smiles, str)
             or not smiles.strip()
@@ -241,6 +373,19 @@ class CompoundIdentifier(object):
         return inchikey if inchikey else UNPROCESSABLE_INPUT
 
     def validate_smiles(self, smiles):
+        """
+        Validate a SMILES string.
+
+        Parameters
+        ----------
+        smiles : str
+            The SMILES string to validate.
+
+        Returns
+        -------
+        bool
+            True if the SMILES string is valid, False otherwise.
+        """
         return smiles.strip() != "" and Chem.MolFromSmiles(smiles) is not None
 
 

@@ -8,7 +8,9 @@ from .lazy_fetchers.hosted import ModelHostedFetcher
 from ...db.hubdata.interfaces import JsonModelsInterface
 from ... import ErsiliaBase
 from ...hub.fetch.actions.template_resolver import TemplateResolver
+from ...hub.fetch.actions.setup import SetupChecker
 from ...hub.delete.delete import ModelFullDeleter
+from ...setup.requirements import check_bentoml
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithFastAPI,
     NotInstallableWithBentoML,
@@ -105,6 +107,7 @@ class ModelFetcher(ErsiliaBase):
         self.model_hosted_fetcher = ModelHostedFetcher(
             url=hosted_url, config_json=self.config_json
         )
+        self.check_bentoml = check_bentoml
         self.can_use_docker = self.is_docker_installed and self.is_docker_active
         self.force_from_github = force_from_github
         self.force_from_s3 = force_from_s3
@@ -161,6 +164,7 @@ class ModelFetcher(ErsiliaBase):
     @throw_ersilia_exception()
     def _fetch_from_bentoml(self):
         self.logger.debug("Fetching using BentoML")
+        self.check_bentoml()
         fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
         mf = fetch.ModelFetcherFromBentoML(
             config_json=self.config_json,

@@ -15,6 +15,23 @@ from ..utils.logging import make_temp_dir
 
 
 class SimpleVenv(ErsiliaBase):
+    """
+    A class to manage virtual environments for Ersilia.
+
+    Parameters
+    ----------
+    root : str
+        The root directory for the virtual environments.
+
+    Methods
+    -------
+    create(environment)
+        Create a new virtual environment.
+    delete(environment)
+        Delete a virtual environment.
+    run_commandlines(environment, commandlines)
+        Run command lines in a virtual environment.
+    """
     def __init__(self, root):
         ErsiliaBase.__init__(self, config_json=None, credentials_json=None)
         self.root = os.path.abspath(root)
@@ -24,6 +41,19 @@ class SimpleVenv(ErsiliaBase):
         return os.path.join(self.root, environment)
 
     def exists(self, environment):
+        """
+        Check if a virtual environment exists.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the virtual environment.
+
+        Returns
+        -------
+        bool
+            True if the virtual environment exists, False otherwise.
+        """
         if os.path.exists(self._get_path(environment)):
             return True
         else:
@@ -31,6 +61,23 @@ class SimpleVenv(ErsiliaBase):
 
     @throw_ersilia_exception()
     def create(self, environment):
+        """
+        Create a new virtual environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the virtual environment.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        VirtualEnvironmentSetupError
+            If the virtual environment setup fails.
+        """
         path = self._get_path(environment)
         if self.exists(path):
             return
@@ -39,6 +86,18 @@ class SimpleVenv(ErsiliaBase):
             raise VirtualEnvironmentSetupError(environment)
 
     def delete(self, environment):
+        """
+        Delete a virtual environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the virtual environment.
+
+        Returns
+        -------
+        None
+        """
         path = self._get_path(environment)
         if not self.exists(path):
             return
@@ -46,6 +105,25 @@ class SimpleVenv(ErsiliaBase):
 
     @throw_ersilia_exception()
     def run_commandlines(self, environment, commandlines):
+        """
+        Run command lines in a virtual environment.
+
+        Parameters
+        ----------
+        environment : str
+            The name of the virtual environment.
+        commandlines : str
+            The command lines to run.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ModelPackageInstallError
+            If the command lines execution fails.
+        """
         if not self.exists(environment):
             raise Exception("{0} environment does not exist".format(environment))
         tmp_folder = make_temp_dir(prefix="ersilia-")
