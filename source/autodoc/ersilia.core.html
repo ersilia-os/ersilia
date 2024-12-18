@@ -1,114 +1,333 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="ersilia.db package" href="ersilia.db.html" /><link rel="prev" title="ersilia.cli.commands.utils package" href="ersilia.cli.commands.utils.html" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>ersilia.core package - Ersilia documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
 
 
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ersilia.core package &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
   
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="ersilia.db package" href="ersilia.db.html" />
-    <link rel="prev" title="ersilia.cli.commands.utils package" href="ersilia.cli.commands.utils.html" /> 
-</head>
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          
-          
-          <a href="../../index.html" class="icon icon-home">
-            Ersilia
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../package.html">Package index</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="ersilia.html">ersilia package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="ersilia.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">ersilia.core package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia.default">ersilia.default module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../devel.html">For developers</a></li>
-</ul>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
 
-        </div>
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Ersilia  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
       </div>
-    </nav>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Ersilia  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">API documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="ersilia.html">ersilia package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of ersilia package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of ersilia.app package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.fastapi.html">ersilia.app.fastapi package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.streamlit.html">ersilia.app.streamlit package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of ersilia.cli package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.cli.commands.html">ersilia.cli.commands package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of ersilia.cli.commands package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.cli.commands.utils.html">ersilia.cli.commands.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">ersilia.core package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of ersilia.db package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.disk.html">ersilia.db.disk package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.environments.html">ersilia.db.environments package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.hubdata.html">ersilia.db.hubdata package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of ersilia.hub package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.bundle.html">ersilia.hub.bundle package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.content.html">ersilia.hub.content package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.delete.html">ersilia.hub.delete package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.hub.fetch.html">ersilia.hub.fetch package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of ersilia.hub.fetch package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.actions.html">ersilia.hub.fetch.actions package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.lazy_fetchers.html">ersilia.hub.fetch.lazy_fetchers package</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="ersilia.hub.fetch.pack.html">ersilia.hub.fetch.pack package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of ersilia.hub.fetch.pack package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html">ersilia.hub.fetch.pack.bentoml_pack package</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html">ersilia.hub.fetch.pack.fastapi_pack package</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.register.html">ersilia.hub.fetch.register package</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.pull.html">ersilia.hub.pull package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of ersilia.io package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.readers.html">ersilia.io.readers package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.io.types.html">ersilia.io.types package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of ersilia.io.types package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.io.types.examples.html">ersilia.io.types.examples package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.serve package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.environment.html">ersilia.serve.environment package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.setup package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html">ersilia.setup.requirements package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.utils.html">ersilia.setup.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of ersilia.tools package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of ersilia.tools.bentoml package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of ersilia.utils package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Ersilia</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../package.html">Package index</a></li>
-          <li class="breadcrumb-item"><a href="ersilia.html">ersilia package</a></li>
-      <li class="breadcrumb-item active">ersilia.core package</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/source/autodoc/ersilia.core.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="ersilia-core-package">
-<h1>ersilia.core package<a class="headerlink" href="#ersilia-core-package" title="Link to this heading"></a></h1>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../_sources/source/autodoc/ersilia.core.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="ersilia-core-package">
+<h1>ersilia.core package<a class="headerlink" href="#ersilia-core-package" title="Link to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
 <section id="module-ersilia.core.base">
-<span id="ersilia-core-base-module"></span><h2>ersilia.core.base module<a class="headerlink" href="#module-ersilia.core.base" title="Link to this heading"></a></h2>
+<span id="ersilia-core-base-module"></span><h2>ersilia.core.base module<a class="headerlink" href="#module-ersilia.core.base" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.core.base.ErsiliaBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.base.</span></span><span class="sig-name descname"><span class="pre">ErsiliaBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/base.html#ErsiliaBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.base.ErsiliaBase" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.base.</span></span><span class="sig-name descname"><span class="pre">ErsiliaBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/base.html#ErsiliaBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.base.ErsiliaBase" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class of Ersilia.</p>
 <p>This class is used as a configuration for many of the classes of the package.</p>
@@ -116,10 +335,10 @@
 
 </section>
 <section id="module-ersilia.core.model">
-<span id="ersilia-core-model-module"></span><h2>ersilia.core.model module<a class="headerlink" href="#module-ersilia.core.model" title="Link to this heading"></a></h2>
+<span id="ersilia-core-model-module"></span><h2>ersilia.core.model module<a class="headerlink" href="#module-ersilia.core.model" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.model.</span></span><span class="sig-name descname"><span class="pre">ErsiliaModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource" title="ersilia.store.utils.OutputSource"><span class="pre">OutputSource</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'local-only'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_lake</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_if_not_available</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_runs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.model.</span></span><span class="sig-name descname"><span class="pre">ErsiliaModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource" title="ersilia.store.utils.OutputSource"><span class="pre">OutputSource</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'local-only'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_lake</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_if_not_available</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_runs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>ErsiliaModel class for managing and interacting with different models.</p>
 <p>This class provides methods to fetch, serve, run, and close models form a model hub.
@@ -167,7 +386,7 @@ model.close()</p>
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.api">
-<span class="sig-name descname"><span class="pre">api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.api" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.api" title="Link to this definition">¶</a></dt>
 <dd><p>Run the specified API with the given input and output.</p>
 <p>This method executes the specified API(usually with the end point run) using the provided input and output parameters.
 It handles file splitting and caching if necessary.</p>
@@ -191,7 +410,7 @@ It handles file splitting and caching if necessary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.api_task">
-<span class="sig-name descname"><span class="pre">api_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.api_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.api_task" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">api_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.api_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.api_task" title="Link to this definition">¶</a></dt>
 <dd><p>Run the specified API task with the given input and output.</p>
 <p>This method executes the specified API task using the provided input and output parameters.
 It returns the result of the API task, which can be a generator, file, or other data types.</p>
@@ -215,14 +434,14 @@ It returns the result of the API task, which can be a generator, file, or other 
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.close">
-<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.close" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.close" title="Link to this definition">¶</a></dt>
 <dd><p>Close the model services and session.</p>
 <p>This method stops the model service and closes the session.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.example">
-<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.example" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.example" title="Link to this definition">¶</a></dt>
 <dd><p>Generate example data for the model.</p>
 <p>This method generates example data for the model using the specified number of samples.
 The generated data can be saved to a file if a file name is provided.</p>
@@ -245,14 +464,14 @@ The generated data can be saved to a file if a file name is provided.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.fetch">
-<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.fetch" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.fetch" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch the model if not available locally.</p>
 <p>This method fetches the model from the Ersilia Model Hub if it is not available locally.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.get_apis">
-<span class="sig-name descname"><span class="pre">get_apis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.get_apis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.get_apis" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_apis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.get_apis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.get_apis" title="Link to this definition">¶</a></dt>
 <dd><p>Get the list of available APIs for the model.</p>
 <p>This method retrieves the list of APIs that are available for the model.</p>
 <dl class="field-list simple">
@@ -267,7 +486,7 @@ The generated data can be saved to a file if a file name is provided.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.info">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.info" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.info" title="Link to this definition">¶</a></dt>
 <dd><p>Get the information of the model.</p>
 <p>This method reads the information file of the model and returns its content as a dictionary.</p>
 <dl class="field-list simple">
@@ -282,7 +501,7 @@ The generated data can be saved to a file if a file name is provided.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.input_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_type</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.input_type" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_type</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.input_type" title="Link to this definition">¶</a></dt>
 <dd><p>Get the input type of the model.</p>
 <p>This property reads the input type information from the model’s card file and returns it
 as a list of input types.</p>
@@ -298,7 +517,7 @@ as a list of input types.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.is_valid">
-<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.is_valid" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.is_valid" title="Link to this definition">¶</a></dt>
 <dd><p>Check if the model identifier is valid.</p>
 <p>This method verifies if the provided model identifier is valid by checking its existence
 and validity in the model hub.</p>
@@ -314,7 +533,7 @@ and validity in the model hub.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.meta">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">meta</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.meta" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">meta</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.meta" title="Link to this definition">¶</a></dt>
 <dd><p>Get the metadata of the model.</p>
 <p>This property returns the metadata of the model, which provides additional information
 about the model, such as its description, version, and author.</p>
@@ -330,7 +549,7 @@ about the model, such as its description, version, and author.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.output_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.output_type" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_type</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.output_type" title="Link to this definition">¶</a></dt>
 <dd><p>Get the output type of the model.</p>
 <p>This property reads the output type information from the model’s card file and returns it
 as a list of output types.</p>
@@ -346,7 +565,7 @@ as a list of output types.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.paths">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">paths</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.paths" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">paths</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.paths" title="Link to this definition">¶</a></dt>
 <dd><p>Get the paths related to the model.</p>
 <p>This property returns a dictionary containing various paths related to the model,
 such as the destination path, repository path, and BentoML path.</p>
@@ -362,7 +581,7 @@ such as the destination path, repository path, and BentoML path.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.run" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.run" title="Link to this definition">¶</a></dt>
 <dd><p>Run the model with the given input and output.</p>
 <p>This method executes the model using the provided input and output parameters.
 It first tries to run the model using the standard API, and if that fails, it falls back to
@@ -387,7 +606,7 @@ the conventional run method. It also tracks the run if the track_run flag is set
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.schema">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">schema</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.schema" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">schema</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.schema" title="Link to this definition">¶</a></dt>
 <dd><p>Get the schema of the model.</p>
 <p>This property returns the schema of the model, which defines the structure and format
 of the model’s input and output data.</p>
@@ -403,7 +622,7 @@ of the model’s input and output data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.serve">
-<span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.serve" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.serve" title="Link to this definition">¶</a></dt>
 <dd><p>Serve the model by starting the necessary services.</p>
 <p>This method sets up the required dependencies, opens a session, and starts the model service.
 It registers the service class and output source, updates the model’s URL and process ID (PID),
@@ -412,14 +631,14 @@ and tracks resource usage if tracking is enabled.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.setup">
-<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.setup" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.setup" title="Link to this definition">¶</a></dt>
 <dd><p>Setup the necessary requirements for the model.</p>
 <p>This method ensures that the required dependencies and resources for the model are available.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.size" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.size" title="Link to this definition">¶</a></dt>
 <dd><p>Get the size of the model.</p>
 <p>This property reads the size information from the model’s size file and returns it
 as a dictionary.</p>
@@ -435,7 +654,7 @@ as a dictionary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.model.ErsiliaModel.update_model_usage_time">
-<span class="sig-name descname"><span class="pre">update_model_usage_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.update_model_usage_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.update_model_usage_time" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_model_usage_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/model.html#ErsiliaModel.update_model_usage_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.update_model_usage_time" title="Link to this definition">¶</a></dt>
 <dd><p>Update the model usage time.</p>
 <p>This method updates the usage time of the specified model by recording the current timestamp
 in the fetched models file.</p>
@@ -450,10 +669,10 @@ in the fetched models file.</p>
 
 </section>
 <section id="module-ersilia.core.modelbase">
-<span id="ersilia-core-modelbase-module"></span><h2>ersilia.core.modelbase module<a class="headerlink" href="#module-ersilia.core.modelbase" title="Link to this heading"></a></h2>
+<span id="ersilia-core-modelbase-module"></span><h2>ersilia.core.modelbase module<a class="headerlink" href="#module-ersilia.core.modelbase" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.core.modelbase.ModelBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.modelbase.</span></span><span class="sig-name descname"><span class="pre">ModelBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.modelbase.</span></span><span class="sig-name descname"><span class="pre">ModelBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Base class for managing models.</p>
 <p>This class provides foundational functionality for handling models, including initialization,
@@ -469,7 +688,7 @@ validation, and checking local availability.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.modelbase.ModelBase.is_available_locally">
-<span class="sig-name descname"><span class="pre">is_available_locally</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase.is_available_locally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase.is_available_locally" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_available_locally</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase.is_available_locally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase.is_available_locally" title="Link to this definition">¶</a></dt>
 <dd><p>Check if the model is available locally either from the status file
 or from DockerHub.</p>
 <dl class="field-list simple">
@@ -484,7 +703,7 @@ or from DockerHub.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.modelbase.ModelBase.is_valid">
-<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase.is_valid" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase.is_valid" title="Link to this definition">¶</a></dt>
 <dd><p>Check if the model identifier and slug are valid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -498,7 +717,7 @@ or from DockerHub.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub">
-<span class="sig-name descname"><span class="pre">was_fetched_from_dockerhub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase.was_fetched_from_dockerhub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">was_fetched_from_dockerhub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/modelbase.html#ModelBase.was_fetched_from_dockerhub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub" title="Link to this definition">¶</a></dt>
 <dd><p>Check if the model was fetched from DockerHub by reading the DockerHub file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -514,10 +733,10 @@ or from DockerHub.</p>
 
 </section>
 <section id="module-ersilia.core.session">
-<span id="ersilia-core-session-module"></span><h2>ersilia.core.session module<a class="headerlink" href="#module-ersilia.core.session" title="Link to this heading"></a></h2>
+<span id="ersilia-core-session-module"></span><h2>ersilia.core.session module<a class="headerlink" href="#module-ersilia.core.session" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.core.session.Session">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.session.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.session.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Session class for managing model sessions.</p>
 <p>This class provides functionality to manage sessions, including opening, closing,
@@ -531,14 +750,14 @@ retrieved when needed.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.close">
-<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.close" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.close" title="Link to this definition">¶</a></dt>
 <dd><p>Close the current session.</p>
 <p>This method removes the session file, effectively closing the session.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.current_identifier">
-<span class="sig-name descname"><span class="pre">current_identifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_identifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_identifier" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">current_identifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_identifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_identifier" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current identifier from the session.</p>
 <p>This method retrieves the current identifier from the session data.</p>
 <dl class="field-list simple">
@@ -553,7 +772,7 @@ retrieved when needed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.current_model_id">
-<span class="sig-name descname"><span class="pre">current_model_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_model_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_model_id" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">current_model_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_model_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_model_id" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current model ID from the session.</p>
 <p>This method retrieves the current model ID from the session data.</p>
 <dl class="field-list simple">
@@ -568,7 +787,7 @@ retrieved when needed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.current_output_source">
-<span class="sig-name descname"><span class="pre">current_output_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_output_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_output_source" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">current_output_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_output_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_output_source" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current output source from the session.</p>
 <p>This method retrieves the current output source from the session data.</p>
 <dl class="field-list simple">
@@ -583,7 +802,7 @@ retrieved when needed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.current_service_class">
-<span class="sig-name descname"><span class="pre">current_service_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_service_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_service_class" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">current_service_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_service_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_service_class" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current service class from the session.</p>
 <p>This method retrieves the current service class from the session data.</p>
 <dl class="field-list simple">
@@ -598,7 +817,7 @@ retrieved when needed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.get" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.get" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current session data.</p>
 <p>This method retrieves the current session data from the session file. The session file
 is a JSON file that contains information about the current session, such as the model ID,
@@ -615,7 +834,7 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.open">
-<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_runs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.open" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_runs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.open" title="Link to this definition">¶</a></dt>
 <dd><p>Open a new session for the specified model.</p>
 <p>This method creates a new session for the specified model and saves the session data.</p>
 <dl class="field-list simple">
@@ -630,7 +849,7 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.register_output_source">
-<span class="sig-name descname"><span class="pre">register_output_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.register_output_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.register_output_source" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">register_output_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.register_output_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.register_output_source" title="Link to this definition">¶</a></dt>
 <dd><p>Register the output source in the session.</p>
 <p>This method updates the session data with the provided output source.</p>
 <dl class="field-list simple">
@@ -642,7 +861,7 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.register_service_class">
-<span class="sig-name descname"><span class="pre">register_service_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_class</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.register_service_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.register_service_class" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">register_service_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_class</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.register_service_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.register_service_class" title="Link to this definition">¶</a></dt>
 <dd><p>Register the service class in the session.</p>
 <p>This method updates the session data with the provided service class.</p>
 <dl class="field-list simple">
@@ -654,7 +873,7 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.tracking_status">
-<span class="sig-name descname"><span class="pre">tracking_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.tracking_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.tracking_status" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">tracking_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.tracking_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.tracking_status" title="Link to this definition">¶</a></dt>
 <dd><p>Get the tracking status from the session.</p>
 <p>This method retrieves the tracking status from the session data.</p>
 <dl class="field-list simple">
@@ -669,7 +888,7 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.update_cpu_time">
-<span class="sig-name descname"><span class="pre">update_cpu_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cpu_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.update_cpu_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.update_cpu_time" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_cpu_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cpu_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.update_cpu_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.update_cpu_time" title="Link to this definition">¶</a></dt>
 <dd><p>Updates the total CPU time usage in the session data by adding the provided
 CPU time.</p>
 <dl class="field-list simple">
@@ -681,7 +900,7 @@ CPU time.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.update_peak_memory">
-<span class="sig-name descname"><span class="pre">update_peak_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peak_memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.update_peak_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.update_peak_memory" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_peak_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peak_memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.update_peak_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.update_peak_memory" title="Link to this definition">¶</a></dt>
 <dd><p>Update the peak memory usage in the session data.</p>
 <p>This method updates the peak memory usage in the session data if the new peak is higher
 than the stored peak memory.</p>
@@ -694,7 +913,7 @@ than the stored peak memory.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.update_total_memory">
-<span class="sig-name descname"><span class="pre">update_total_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">additional_memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.update_total_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.update_total_memory" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_total_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">additional_memory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.update_total_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.update_total_memory" title="Link to this definition">¶</a></dt>
 <dd><p>Update the total memory usage in the session data.</p>
 <p>This method updates the total memory usage in the session data by adding the provided
 additional memory.</p>
@@ -709,10 +928,10 @@ additional memory.</p>
 
 </section>
 <section id="module-ersilia.core.tracking">
-<span id="ersilia-core-tracking-module"></span><h2>ersilia.core.tracking module<a class="headerlink" href="#module-ersilia.core.tracking" title="Link to this heading"></a></h2>
+<span id="ersilia-core-tracking-module"></span><h2>ersilia.core.tracking module<a class="headerlink" href="#module-ersilia.core.tracking" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">RunTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">RunTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>This class is responsible for tracking model runs. It calculates the desired metadata based on a model’s
 inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested
@@ -727,7 +946,7 @@ to Ersilia’s Splunk dashboard.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.check_types">
-<span class="sig-name descname"><span class="pre">check_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.check_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.check_types" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">check_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.check_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.check_types" title="Link to this definition">¶</a></dt>
 <dd><p>Check the types of the output file against the expected types.</p>
 <p>This method checks the shape of the output file (list vs single) and the types of each column.</p>
 <dl class="field-list simple">
@@ -748,7 +967,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.get_file_sizes">
-<span class="sig-name descname"><span class="pre">get_file_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_file_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_file_sizes" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_file_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_file_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_file_sizes" title="Link to this definition">¶</a></dt>
 <dd><p>Calculate the size of the input and output dataframes, as well as the average size of each row.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -768,7 +987,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.get_memory_info">
-<span class="sig-name descname"><span class="pre">get_memory_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_memory_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_memory_info" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_memory_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_memory_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_memory_info" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve the memory information of the current process.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -782,7 +1001,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.get_peak_memory">
-<span class="sig-name descname"><span class="pre">get_peak_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_peak_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_peak_memory" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_peak_memory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_peak_memory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_peak_memory" title="Link to this definition">¶</a></dt>
 <dd><p>Calculate the peak memory usage of Ersilia’s Python instance during the run.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -796,7 +1015,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.log_result">
-<span class="sig-name descname"><span class="pre">log_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.log_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.log_result" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">log_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.log_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.log_result" title="Link to this definition">¶</a></dt>
 <dd><p>Log the result of the model run.</p>
 <p>This method logs the result of the model run to a CSV file.</p>
 <dl class="field-list simple">
@@ -808,14 +1027,14 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.track">
-<span class="sig-name descname"><span class="pre">track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.core.tracking.RunTracker.track" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.core.tracking.RunTracker.track" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.core.tracking.flatten_dict">
-<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">flatten_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#flatten_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.flatten_dict" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">flatten_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#flatten_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.flatten_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Flatten the nested dictionaries from the generator into a single-level dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -832,7 +1051,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.core.tracking.get_nan_counts">
-<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">get_nan_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#get_nan_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.get_nan_counts" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">get_nan_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#get_nan_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.get_nan_counts" title="Link to this definition">¶</a></dt>
 <dd><p>Calculate the number of NAN values in each key of a list of dictionaries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -849,7 +1068,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.core.tracking.log_files_metrics">
-<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">log_files_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_log</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#log_files_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.log_files_metrics" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">log_files_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_log</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#log_files_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.log_files_metrics" title="Link to this definition">¶</a></dt>
 <dd><p>Log the number of errors and warnings in the log files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -866,7 +1085,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.core.tracking.serialize_session_json_to_csv">
-<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">serialize_session_json_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#serialize_session_json_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.serialize_session_json_to_csv" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">serialize_session_json_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#serialize_session_json_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.serialize_session_json_to_csv" title="Link to this definition">¶</a></dt>
 <dd><p>Serialize session JSON data to a CSV file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -880,7 +1099,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.core.tracking.serialize_tracking_json_to_csv">
-<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">serialize_tracking_json_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#serialize_tracking_json_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.serialize_tracking_json_to_csv" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">serialize_tracking_json_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#serialize_tracking_json_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.serialize_tracking_json_to_csv" title="Link to this definition">¶</a></dt>
 <dd><p>Serialize tracking JSON data to a CSV file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -894,7 +1113,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.core.tracking.upload_to_cddvault">
-<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">upload_to_cddvault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#upload_to_cddvault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.upload_to_cddvault" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">upload_to_cddvault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#upload_to_cddvault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.upload_to_cddvault" title="Link to this definition">¶</a></dt>
 <dd><p>Upload the output dataframe from the model run to CDD Vault.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -914,7 +1133,7 @@ to Ersilia’s Splunk dashboard.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.core.tracking.upload_to_s3">
-<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">upload_to_s3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ersilia-models-runs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#upload_to_s3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.upload_to_s3" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">upload_to_s3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ersilia-models-runs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#upload_to_s3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.upload_to_s3" title="Link to this definition">¶</a></dt>
 <dd><p>Upload a file to an S3 bucket.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -935,39 +1154,157 @@ to Ersilia’s Splunk dashboard.</p>
 
 </section>
 <section id="module-ersilia.core">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.core" title="Link to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.core" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 
-
-           </div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="ersilia.db.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">ersilia.db package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="ersilia.cli.commands.utils.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">ersilia.cli.commands.utils package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Ersilia Open Source Initiative
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="ersilia.cli.commands.utils.html" class="btn btn-neutral float-left" title="ersilia.cli.commands.utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="ersilia.db.html" class="btn btn-neutral float-right" title="ersilia.db package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
     </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ersilia.core package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ersilia.core.base">ersilia.core.base module</a><ul>
+<li><a class="reference internal" href="#ersilia.core.base.ErsiliaBase"><code class="docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.core.model">ersilia.core.model module</a><ul>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.api"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.api()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.api_task"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.api_task()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.close"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.close()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.example"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.example()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.fetch"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.fetch()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.get_apis"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.get_apis()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.info"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.info()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.input_type"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.input_type</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.is_valid"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.is_valid()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.meta"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.meta</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.output_type"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.output_type</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.paths"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.paths</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.run"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.run()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.schema"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.schema</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.serve"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.serve()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.setup"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.setup()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.size"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.size</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.model.ErsiliaModel.update_model_usage_time"><code class="docutils literal notranslate"><span class="pre">ErsiliaModel.update_model_usage_time()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.core.modelbase">ersilia.core.modelbase module</a><ul>
+<li><a class="reference internal" href="#ersilia.core.modelbase.ModelBase"><code class="docutils literal notranslate"><span class="pre">ModelBase</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.core.modelbase.ModelBase.is_available_locally"><code class="docutils literal notranslate"><span class="pre">ModelBase.is_available_locally()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.modelbase.ModelBase.is_valid"><code class="docutils literal notranslate"><span class="pre">ModelBase.is_valid()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub"><code class="docutils literal notranslate"><span class="pre">ModelBase.was_fetched_from_dockerhub()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.core.session">ersilia.core.session module</a><ul>
+<li><a class="reference internal" href="#ersilia.core.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.core.session.Session.close"><code class="docutils literal notranslate"><span class="pre">Session.close()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.current_identifier"><code class="docutils literal notranslate"><span class="pre">Session.current_identifier()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.current_model_id"><code class="docutils literal notranslate"><span class="pre">Session.current_model_id()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.current_output_source"><code class="docutils literal notranslate"><span class="pre">Session.current_output_source()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.current_service_class"><code class="docutils literal notranslate"><span class="pre">Session.current_service_class()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.get"><code class="docutils literal notranslate"><span class="pre">Session.get()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.open"><code class="docutils literal notranslate"><span class="pre">Session.open()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.register_output_source"><code class="docutils literal notranslate"><span class="pre">Session.register_output_source()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.register_service_class"><code class="docutils literal notranslate"><span class="pre">Session.register_service_class()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.tracking_status"><code class="docutils literal notranslate"><span class="pre">Session.tracking_status()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.update_cpu_time"><code class="docutils literal notranslate"><span class="pre">Session.update_cpu_time()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.update_peak_memory"><code class="docutils literal notranslate"><span class="pre">Session.update_peak_memory()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.update_total_memory"><code class="docutils literal notranslate"><span class="pre">Session.update_total_memory()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.core.tracking">ersilia.core.tracking module</a><ul>
+<li><a class="reference internal" href="#ersilia.core.tracking.RunTracker"><code class="docutils literal notranslate"><span class="pre">RunTracker</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.check_types"><code class="docutils literal notranslate"><span class="pre">RunTracker.check_types()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.get_file_sizes"><code class="docutils literal notranslate"><span class="pre">RunTracker.get_file_sizes()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.get_memory_info"><code class="docutils literal notranslate"><span class="pre">RunTracker.get_memory_info()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.get_peak_memory"><code class="docutils literal notranslate"><span class="pre">RunTracker.get_peak_memory()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.log_result"><code class="docutils literal notranslate"><span class="pre">RunTracker.log_result()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.track"><code class="docutils literal notranslate"><span class="pre">RunTracker.track()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.core.tracking.flatten_dict"><code class="docutils literal notranslate"><span class="pre">flatten_dict()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.get_nan_counts"><code class="docutils literal notranslate"><span class="pre">get_nan_counts()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.log_files_metrics"><code class="docutils literal notranslate"><span class="pre">log_files_metrics()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.serialize_session_json_to_csv"><code class="docutils literal notranslate"><span class="pre">serialize_session_json_to_csv()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.serialize_tracking_json_to_csv"><code class="docutils literal notranslate"><span class="pre">serialize_tracking_json_to_csv()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.upload_to_cddvault"><code class="docutils literal notranslate"><span class="pre">upload_to_cddvault()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.upload_to_s3"><code class="docutils literal notranslate"><span class="pre">upload_to_s3()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.core">Module contents</a></li>
+</ul>
+</li>
+</ul>
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2024, Ersilia Open Source Initiative.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          </div>
         </div>
       </div>
-    </section>
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
 </html>

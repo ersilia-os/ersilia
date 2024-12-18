@@ -1,116 +1,333 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="ersilia.hub.fetch.lazy_fetchers package" href="ersilia.hub.fetch.lazy_fetchers.html" /><link rel="prev" title="ersilia.hub.fetch package" href="ersilia.hub.fetch.html" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
+        <title>ersilia.hub.fetch.actions package - Ersilia documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
 
 
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ersilia.hub.fetch.actions package &mdash; Ersilia  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
   
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="ersilia.hub.fetch.lazy_fetchers package" href="ersilia.hub.fetch.lazy_fetchers.html" />
-    <link rel="prev" title="ersilia.hub.fetch package" href="ersilia.hub.fetch.html" /> 
-</head>
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          
-          
-          <a href="../../index.html" class="icon icon-home">
-            Ersilia
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../package.html">Package index</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="ersilia.html">ersilia package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="ersilia.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia.default">ersilia.default module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.html#module-ersilia">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../devel.html">For developers</a></li>
-</ul>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
 
-        </div>
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Ersilia  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
       </div>
-    </nav>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Ersilia  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">API documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="ersilia.html">ersilia package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of ersilia package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of ersilia.app package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.fastapi.html">ersilia.app.fastapi package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.streamlit.html">ersilia.app.streamlit package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of ersilia.cli package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.cli.commands.html">ersilia.cli.commands package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of ersilia.cli.commands package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.cli.commands.utils.html">ersilia.cli.commands.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of ersilia.db package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.disk.html">ersilia.db.disk package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.environments.html">ersilia.db.environments package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.hubdata.html">ersilia.db.hubdata package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of ersilia.hub package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.bundle.html">ersilia.hub.bundle package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.content.html">ersilia.hub.content package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.delete.html">ersilia.hub.delete package</a></li>
+<li class="toctree-l4 current has-children"><a class="reference internal" href="ersilia.hub.fetch.html">ersilia.hub.fetch package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of ersilia.hub.fetch package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">ersilia.hub.fetch.actions package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.lazy_fetchers.html">ersilia.hub.fetch.lazy_fetchers package</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="ersilia.hub.fetch.pack.html">ersilia.hub.fetch.pack package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of ersilia.hub.fetch.pack package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html">ersilia.hub.fetch.pack.bentoml_pack package</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html">ersilia.hub.fetch.pack.fastapi_pack package</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.register.html">ersilia.hub.fetch.register package</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.pull.html">ersilia.hub.pull package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of ersilia.io package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.readers.html">ersilia.io.readers package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.io.types.html">ersilia.io.types package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of ersilia.io.types package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.io.types.examples.html">ersilia.io.types.examples package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.serve package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.environment.html">ersilia.serve.environment package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.setup package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html">ersilia.setup.requirements package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.utils.html">ersilia.setup.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of ersilia.tools package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of ersilia.tools.bentoml package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of ersilia.utils package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">Ersilia</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../package.html">Package index</a></li>
-          <li class="breadcrumb-item"><a href="ersilia.html">ersilia package</a></li>
-          <li class="breadcrumb-item"><a href="ersilia.hub.html">ersilia.hub package</a></li>
-          <li class="breadcrumb-item"><a href="ersilia.hub.fetch.html">ersilia.hub.fetch package</a></li>
-      <li class="breadcrumb-item active">ersilia.hub.fetch.actions package</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/source/autodoc/ersilia.hub.fetch.actions.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="ersilia-hub-fetch-actions-package">
-<h1>ersilia.hub.fetch.actions package<a class="headerlink" href="#ersilia-hub-fetch-actions-package" title="Link to this heading"></a></h1>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../_sources/source/autodoc/ersilia.hub.fetch.actions.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="ersilia-hub-fetch-actions-package">
+<h1>ersilia.hub.fetch.actions package<a class="headerlink" href="#ersilia-hub-fetch-actions-package" title="Link to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
 <section id="module-ersilia.hub.fetch.actions.check">
-<span id="ersilia-hub-fetch-actions-check-module"></span><h2>ersilia.hub.fetch.actions.check module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.check" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-check-module"></span><h2>ersilia.hub.fetch.actions.check module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.check" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.check.ModelChecker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.check.</span></span><span class="sig-name descname"><span class="pre">ModelChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/check.html#ModelChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.check.ModelChecker" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.check.</span></span><span class="sig-name descname"><span class="pre">ModelChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/check.html#ModelChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.check.ModelChecker" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Checks the model by running an autoservice class.</p>
 <dl class="field-list simple">
@@ -123,17 +340,17 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.check.ModelChecker.check">
-<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/check.html#ModelChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.check.ModelChecker.check" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/check.html#ModelChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.check.ModelChecker.check" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.content">
-<span id="ersilia-hub-fetch-actions-content-module"></span><h2>ersilia.hub.fetch.actions.content module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.content" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-content-module"></span><h2>ersilia.hub.fetch.actions.content module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.content" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.content.CardGetter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.content.</span></span><span class="sig-name descname"><span class="pre">CardGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/content.html#CardGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.content.CardGetter" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.content.</span></span><span class="sig-name descname"><span class="pre">CardGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/content.html#CardGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.content.CardGetter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Gets the model card and saves it locally.</p>
 <dl class="field-list simple">
@@ -146,17 +363,17 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.content.CardGetter.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/content.html#CardGetter.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.content.CardGetter.get" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/content.html#CardGetter.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.content.CardGetter.get" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.get">
-<span id="ersilia-hub-fetch-actions-get-module"></span><h2>ersilia.hub.fetch.actions.get module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.get" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-get-module"></span><h2>ersilia.hub.fetch.actions.get module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.get" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.DockerfileCreator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">DockerfileCreator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commands</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#DockerfileCreator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.DockerfileCreator" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">DockerfileCreator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commands</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#DockerfileCreator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.DockerfileCreator" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Class to create a Dockerfile for the model.</p>
 <dl class="field-list simple">
@@ -170,7 +387,7 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.DockerfileCreator.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#DockerfileCreator.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.DockerfileCreator.run" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#DockerfileCreator.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.DockerfileCreator.run" title="Link to this definition">¶</a></dt>
 <dd><p>Create the Dockerfile and append necessary commands.</p>
 </dd></dl>
 
@@ -178,7 +395,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.ModelGetter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">ModelGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelGetter" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">ModelGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelGetter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Class to get the model repository and parameters.</p>
 <dl class="field-list simple">
@@ -194,14 +411,14 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.ModelGetter.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelGetter.get" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelGetter.get" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.ModelParametersGetter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">ModelParametersGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelParametersGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelParametersGetter" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">ModelParametersGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelParametersGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelParametersGetter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Class to get the model parameters. Getting the checkpoints, weights.</p>
 <dl class="field-list simple">
@@ -214,14 +431,14 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.ModelParametersGetter.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelParametersGetter.get" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelParametersGetter.get" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.ModelRepositoryGetter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">ModelRepositoryGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelRepositoryGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelRepositoryGetter" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">ModelRepositoryGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ModelRepositoryGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelRepositoryGetter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Class to get the model repository from local, GitHub, or S3.</p>
 <dl class="field-list simple">
@@ -237,14 +454,14 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.ModelRepositoryGetter.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelRepositoryGetter.get" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ModelRepositoryGetter.get" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.PackCreator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">PackCreator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#PackCreator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.PackCreator" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">PackCreator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#PackCreator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.PackCreator" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Class to create a pack for the model. The pack.py file loads a model,
 packs it into a BentoML Service instance, and saves the service for deployment.</p>
@@ -258,7 +475,7 @@ packs it into a BentoML Service instance, and saves the service for deployment.<
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.PackCreator.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#PackCreator.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.PackCreator.run" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#PackCreator.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.PackCreator.run" title="Link to this definition">¶</a></dt>
 <dd><p>Copy the pack creator script to the destination directory.</p>
 </dd></dl>
 
@@ -266,7 +483,7 @@ packs it into a BentoML Service instance, and saves the service for deployment.<
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.ServiceCreator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">ServiceCreator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ServiceCreator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ServiceCreator" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">ServiceCreator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ServiceCreator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ServiceCreator" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Class to create a service file for the model. The ‘service.py’ specifically
 facilitates the deployment of a custom model as a BENTOML REST API service.</p>
@@ -280,7 +497,7 @@ facilitates the deployment of a custom model as a BENTOML REST API service.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.ServiceCreator.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ServiceCreator.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ServiceCreator.run" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#ServiceCreator.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.ServiceCreator.run" title="Link to this definition">¶</a></dt>
 <dd><p>Create the service.py file in the src directory.</p>
 </dd></dl>
 
@@ -288,7 +505,7 @@ facilitates the deployment of a custom model as a BENTOML REST API service.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.TemplatePreparer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">TemplatePreparer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#TemplatePreparer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.TemplatePreparer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.get.</span></span><span class="sig-name descname"><span class="pre">TemplatePreparer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#TemplatePreparer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.TemplatePreparer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Class to prepare the template for the model.</p>
 <p>In this context, a template refers to a predefined structure or set of files
@@ -305,7 +522,7 @@ run the model.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.get.TemplatePreparer.prepare">
-<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#TemplatePreparer.prepare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.TemplatePreparer.prepare" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/get.html#TemplatePreparer.prepare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.get.TemplatePreparer.prepare" title="Link to this definition">¶</a></dt>
 <dd><p>Prepare the template by creating pack, service, and Dockerfile.</p>
 </dd></dl>
 
@@ -313,10 +530,10 @@ run the model.</p>
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.inform">
-<span id="ersilia-hub-fetch-actions-inform-module"></span><h2>ersilia.hub.fetch.actions.inform module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.inform" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-inform-module"></span><h2>ersilia.hub.fetch.actions.inform module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.inform" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.inform.ModelInformer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.inform.</span></span><span class="sig-name descname"><span class="pre">ModelInformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/inform.html#ModelInformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.inform.ModelInformer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.inform.</span></span><span class="sig-name descname"><span class="pre">ModelInformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/inform.html#ModelInformer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.inform.ModelInformer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Class to inform about the model by writing information to a JSON file. Contains detail
 metadata about the model.</p>
@@ -330,7 +547,7 @@ metadata about the model.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.inform.ModelInformer.inform">
-<span class="sig-name descname"><span class="pre">inform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/inform.html#ModelInformer.inform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.inform.ModelInformer.inform" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">inform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/inform.html#ModelInformer.inform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.inform.ModelInformer.inform" title="Link to this definition">¶</a></dt>
 <dd><p>Write information to a JSON file and add API info for bentoml models.</p>
 </dd></dl>
 
@@ -338,10 +555,10 @@ metadata about the model.</p>
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.lake">
-<span id="ersilia-hub-fetch-actions-lake-module"></span><h2>ersilia.hub.fetch.actions.lake module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.lake" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-lake-module"></span><h2>ersilia.hub.fetch.actions.lake module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.lake" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.lake.LakeGetter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.lake.</span></span><span class="sig-name descname"><span class="pre">LakeGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/lake.html#LakeGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.lake.LakeGetter" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.lake.</span></span><span class="sig-name descname"><span class="pre">LakeGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/lake.html#LakeGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.lake.LakeGetter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Class to fetch data from precalculated data from the DVC repository.</p>
 <dl class="field-list simple">
@@ -354,7 +571,7 @@ metadata about the model.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.lake.LakeGetter.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/lake.html#LakeGetter.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.lake.LakeGetter.get" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/lake.html#LakeGetter.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.lake.LakeGetter.get" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch data using DVCFetcher.</p>
 </dd></dl>
 
@@ -362,10 +579,10 @@ metadata about the model.</p>
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.modify">
-<span id="ersilia-hub-fetch-actions-modify-module"></span><h2>ersilia.hub.fetch.actions.modify module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.modify" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-modify-module"></span><h2>ersilia.hub.fetch.actions.modify module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.modify" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.modify.ModelModifier">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.modify.</span></span><span class="sig-name descname"><span class="pre">ModelModifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/modify.html#ModelModifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.modify.ModelModifier" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.modify.</span></span><span class="sig-name descname"><span class="pre">ModelModifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/modify.html#ModelModifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.modify.ModelModifier" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Modifies model bundles to ensure compatibility and consistency.</p>
 <p>Compatibility: Ensures that the model bundle can run in the target environment without issues.
@@ -380,13 +597,13 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.modify.ModelModifier.modify">
-<span class="sig-name descname"><span class="pre">modify</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/modify.html#ModelModifier.modify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.modify.ModelModifier.modify" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">modify</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/modify.html#ModelModifier.modify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.modify.ModelModifier.modify" title="Link to this definition">¶</a></dt>
 <dd><p>Modifies the model bundle.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">modify</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/modify.html#ModelModifier.modify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">modify</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/modify.html#ModelModifier.modify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
 <dd><p>Modifies the model bundle to ensure compatibility and consistency.</p>
 </dd></dl>
 
@@ -394,10 +611,10 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.pack_bentoml">
-<span id="ersilia-hub-fetch-actions-pack-bentoml-module"></span><h2>ersilia.hub.fetch.actions.pack_bentoml module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.pack_bentoml" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-pack-bentoml-module"></span><h2>ersilia.hub.fetch.actions.pack_bentoml module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.pack_bentoml" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.pack_bentoml.ModelPacker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.pack_bentoml.</span></span><span class="sig-name descname"><span class="pre">ModelPacker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_bentoml.html#ModelPacker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack_bentoml.ModelPacker" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.pack_bentoml.</span></span><span class="sig-name descname"><span class="pre">ModelPacker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_bentoml.html#ModelPacker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack_bentoml.ModelPacker" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Packs a model using BentoML.</p>
 <dl class="field-list simple">
@@ -411,13 +628,13 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.pack_bentoml.ModelPacker.pack">
-<span class="sig-name descname"><span class="pre">pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_bentoml.html#ModelPacker.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack_bentoml.ModelPacker.pack" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_bentoml.html#ModelPacker.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack_bentoml.ModelPacker.pack" title="Link to this definition">¶</a></dt>
 <dd><p>Packs the model using BentoML.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_bentoml.html#ModelPacker.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_bentoml.html#ModelPacker.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd><p>Packs the model using BentoML.</p>
 </dd></dl>
 
@@ -425,10 +642,10 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.pack_fastapi">
-<span id="ersilia-hub-fetch-actions-pack-fastapi-module"></span><h2>ersilia.hub.fetch.actions.pack_fastapi module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.pack_fastapi" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-pack-fastapi-module"></span><h2>ersilia.hub.fetch.actions.pack_fastapi module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.pack_fastapi" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.pack_fastapi.ModelPacker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.pack_fastapi.</span></span><span class="sig-name descname"><span class="pre">ModelPacker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_fastapi.html#ModelPacker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.pack_fastapi.</span></span><span class="sig-name descname"><span class="pre">ModelPacker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_fastapi.html#ModelPacker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Packs a model using FastAPI (aka ersilia-pack).</p>
 <p>For more information about the ersilia-pack, visit:
@@ -444,13 +661,13 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.pack_fastapi.ModelPacker.pack">
-<span class="sig-name descname"><span class="pre">pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_fastapi.html#ModelPacker.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker.pack" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_fastapi.html#ModelPacker.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker.pack" title="Link to this definition">¶</a></dt>
 <dd><p>Packs the model using FastAPI.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_fastapi.html#ModelPacker.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/pack_fastapi.html#ModelPacker.pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
 <dd><p>Packs the model using FastAPI.</p>
 </dd></dl>
 
@@ -458,10 +675,10 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.prepare">
-<span id="ersilia-hub-fetch-actions-prepare-module"></span><h2>ersilia.hub.fetch.actions.prepare module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.prepare" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-prepare-module"></span><h2>ersilia.hub.fetch.actions.prepare module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.prepare" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.prepare.ModelPreparer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.prepare.</span></span><span class="sig-name descname"><span class="pre">ModelPreparer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/prepare.html#ModelPreparer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.prepare.ModelPreparer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.prepare.</span></span><span class="sig-name descname"><span class="pre">ModelPreparer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/prepare.html#ModelPreparer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.prepare.ModelPreparer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Prepares a model for use by deleting existing data if necessary.</p>
 <dl class="field-list simple">
@@ -475,23 +692,23 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.prepare.ModelPreparer.prepare">
-<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.prepare.ModelPreparer.prepare" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.prepare.ModelPreparer.prepare" title="Link to this definition">¶</a></dt>
 <dd><p>Prepares the model by deleting existing data if necessary.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.setup">
-<span id="ersilia-hub-fetch-actions-setup-module"></span><h2>ersilia.hub.fetch.actions.setup module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.setup" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-setup-module"></span><h2>ersilia.hub.fetch.actions.setup module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.setup" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.setup.SetupChecker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.setup.</span></span><span class="sig-name descname"><span class="pre">SetupChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/setup.html#SetupChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.setup.SetupChecker" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.setup.</span></span><span class="sig-name descname"><span class="pre">SetupChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/setup.html#SetupChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.setup.SetupChecker" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Checks the setup requirements for the model to be installed and run.</p>
 <dl class="field-list simple">
@@ -504,13 +721,13 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.setup.SetupChecker.check">
-<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/setup.html#SetupChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.setup.SetupChecker.check" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/setup.html#SetupChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.setup.SetupChecker.check" title="Link to this definition">¶</a></dt>
 <dd><p>Checks all setup requirements.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/setup.html#SetupChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/setup.html#SetupChecker.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
 <dd><p>Checks all setup requirements.</p>
 </dd></dl>
 
@@ -518,10 +735,10 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.sniff_bentoml">
-<span id="ersilia-hub-fetch-actions-sniff-bentoml-module"></span><h2>ersilia.hub.fetch.actions.sniff_bentoml module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.sniff_bentoml" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-sniff-bentoml-module"></span><h2>ersilia.hub.fetch.actions.sniff_bentoml module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.sniff_bentoml" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.sniff_bentoml.</span></span><span class="sig-name descname"><span class="pre">BuiltinExampleReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.sniff_bentoml.</span></span><span class="sig-name descname"><span class="pre">BuiltinExampleReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Reads built-in examples for a BentoML model.</p>
 <dl class="field-list simple">
@@ -534,19 +751,19 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.has_builtin_example">
-<span class="sig-name descname"><span class="pre">has_builtin_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader.has_builtin_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.has_builtin_example" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">has_builtin_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader.has_builtin_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.has_builtin_example" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if a built-in example exists.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.example">
-<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.example" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.example" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a list of examples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id5">
-<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a list of examples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -563,7 +780,7 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id6">
-<span class="sig-name descname"><span class="pre">has_builtin_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader.has_builtin_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">has_builtin_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#BuiltinExampleReader.has_builtin_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if a built-in example exists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -579,7 +796,7 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.sniff_bentoml.</span></span><span class="sig-name descname"><span class="pre">ModelSniffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#ModelSniffer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.sniff_bentoml.</span></span><span class="sig-name descname"><span class="pre">ModelSniffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_bentoml.html#ModelSniffer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Infers the structure of a model by sniffing its inputs and outputs.</p>
 <dl class="field-list simple">
@@ -592,23 +809,23 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer.sniff">
-<span class="sig-name descname"><span class="pre">sniff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer.sniff" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sniff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer.sniff" title="Link to this definition">¶</a></dt>
 <dd><p>Infers the structure of the model.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id7">
-<span class="sig-name descname"><span class="pre">sniff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sniff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.sniff_fastapi">
-<span id="ersilia-hub-fetch-actions-sniff-fastapi-module"></span><h2>ersilia.hub.fetch.actions.sniff_fastapi module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.sniff_fastapi" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-sniff-fastapi-module"></span><h2>ersilia.hub.fetch.actions.sniff_fastapi module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.sniff_fastapi" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.sniff_fastapi.</span></span><span class="sig-name descname"><span class="pre">BuiltinExampleReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.sniff_fastapi.</span></span><span class="sig-name descname"><span class="pre">BuiltinExampleReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Reads built-in examples for a FastAPI model.</p>
 <dl class="field-list simple">
@@ -621,19 +838,19 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader.input_example">
-<span class="sig-name descname"><span class="pre">input_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader.input_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader.input_example" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">input_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader.input_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader.input_example" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a list of input examples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader.output_example">
-<span class="sig-name descname"><span class="pre">output_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader.output_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader.output_example" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">output_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader.output_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader.output_example" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a list of output examples.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id8">
-<span class="sig-name descname"><span class="pre">input_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader.input_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">input_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader.input_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a list of input examples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -647,7 +864,7 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id9">
-<span class="sig-name descname"><span class="pre">output_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader.output_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">output_example</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#BuiltinExampleReader.output_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a list of output examples.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -663,7 +880,7 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_fastapi.ModelSniffer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.sniff_fastapi.</span></span><span class="sig-name descname"><span class="pre">ModelSniffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#ModelSniffer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.ModelSniffer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.sniff_fastapi.</span></span><span class="sig-name descname"><span class="pre">ModelSniffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/sniff_fastapi.html#ModelSniffer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.ModelSniffer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Infers the structure of a model by sniffing its inputs and outputs.</p>
 <dl class="field-list simple">
@@ -676,23 +893,23 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.sniff_fastapi.ModelSniffer.sniff">
-<span class="sig-name descname"><span class="pre">sniff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.ModelSniffer.sniff" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sniff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.hub.fetch.actions.sniff_fastapi.ModelSniffer.sniff" title="Link to this definition">¶</a></dt>
 <dd><p>Infers the structure of the model.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id10">
-<span class="sig-name descname"><span class="pre">sniff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">sniff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.template_resolver">
-<span id="ersilia-hub-fetch-actions-template-resolver-module"></span><h2>ersilia.hub.fetch.actions.template_resolver module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.template_resolver" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-template-resolver-module"></span><h2>ersilia.hub.fetch.actions.template_resolver module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.template_resolver" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.template_resolver.TemplateResolver">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.template_resolver.</span></span><span class="sig-name descname"><span class="pre">TemplateResolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.template_resolver.</span></span><span class="sig-name descname"><span class="pre">TemplateResolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Resolves the template type (BentoML or FastAPI) for a model by checking the presence of specific files.</p>
 <dl class="field-list simple">
@@ -706,19 +923,19 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.template_resolver.TemplateResolver.is_fastapi">
-<span class="sig-name descname"><span class="pre">is_fastapi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver.is_fastapi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver.is_fastapi" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_fastapi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver.is_fastapi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver.is_fastapi" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if the model uses or built with FastAPI.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.template_resolver.TemplateResolver.is_bentoml">
-<span class="sig-name descname"><span class="pre">is_bentoml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver.is_bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver.is_bentoml" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_bentoml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver.is_bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver.is_bentoml" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if the model uses or built with BentoML.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id11">
-<span class="sig-name descname"><span class="pre">is_bentoml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver.is_bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_bentoml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver.is_bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if the model uses BentoML.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -732,7 +949,7 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id12">
-<span class="sig-name descname"><span class="pre">is_fastapi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver.is_fastapi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_fastapi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/template_resolver.html#TemplateResolver.is_fastapi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
 <dd><p>Checks if the model uses FastAPI.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -748,10 +965,10 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 </section>
 <section id="module-ersilia.hub.fetch.actions.toolize">
-<span id="ersilia-hub-fetch-actions-toolize-module"></span><h2>ersilia.hub.fetch.actions.toolize module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.toolize" title="Link to this heading"></a></h2>
+<span id="ersilia-hub-fetch-actions-toolize-module"></span><h2>ersilia.hub.fetch.actions.toolize module<a class="headerlink" href="#module-ersilia.hub.fetch.actions.toolize" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.toolize.ModelToolizer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.toolize.</span></span><span class="sig-name descname"><span class="pre">ModelToolizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.toolize.</span></span><span class="sig-name descname"><span class="pre">ModelToolizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction" title="ersilia.hub.fetch.actions.BaseAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAction</span></code></a></p>
 <p>Toolizes a model by distributing it as a Python package or containerizing it using Docker.</p>
 <dl class="field-list simple">
@@ -764,13 +981,13 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize">
-<span class="sig-name descname"><span class="pre">toolize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">do_pip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_docker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.toolize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">toolize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">do_pip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_docker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.toolize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize" title="Link to this definition">¶</a></dt>
 <dd><p>Toolizes the model by distributing it as a Python package or containerizing it using Docker.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize">
-<span class="sig-name descname"><span class="pre">dockerize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.dockerize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dockerize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.dockerize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize" title="Link to this definition">¶</a></dt>
 <dd><p>Containerizes the model using BentoML with Docker.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -781,7 +998,7 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install">
-<span class="sig-name descname"><span class="pre">pip_install</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.pip_install"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pip_install</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.pip_install"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install" title="Link to this definition">¶</a></dt>
 <dd><p>Installs the model and distributes it as a Python package.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -792,7 +1009,7 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id13">
-<span class="sig-name descname"><span class="pre">toolize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">do_pip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_docker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.toolize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">toolize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">do_pip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_docker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions/toolize.html#ModelToolizer.toolize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
 <dd><p>Toolizes the model by distributing it as a Python package or containerizing it using Docker.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -808,45 +1025,240 @@ Consistency: Ensures that the model bundle follows the same structure and conven
 
 </section>
 <section id="module-ersilia.hub.fetch.actions">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.hub.fetch.actions" title="Link to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.hub.fetch.actions" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.fetch.actions.BaseAction">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.</span></span><span class="sig-name descname"><span class="pre">BaseAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions.html#BaseAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.BaseAction" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.actions.</span></span><span class="sig-name descname"><span class="pre">BaseAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/actions.html#BaseAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.actions.BaseAction" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 </dd></dl>
 
 </section>
 </section>
 
-
-           </div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="ersilia.hub.fetch.lazy_fetchers.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">ersilia.hub.fetch.lazy_fetchers package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="ersilia.hub.fetch.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">ersilia.hub.fetch package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Ersilia Open Source Initiative
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="ersilia.hub.fetch.html" class="btn btn-neutral float-left" title="ersilia.hub.fetch package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="ersilia.hub.fetch.lazy_fetchers.html" class="btn btn-neutral float-right" title="ersilia.hub.fetch.lazy_fetchers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
     </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ersilia.hub.fetch.actions package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.check">ersilia.hub.fetch.actions.check module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.check.ModelChecker"><code class="docutils literal notranslate"><span class="pre">ModelChecker</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.check.ModelChecker.check"><code class="docutils literal notranslate"><span class="pre">ModelChecker.check()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.content">ersilia.hub.fetch.actions.content module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.content.CardGetter"><code class="docutils literal notranslate"><span class="pre">CardGetter</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.content.CardGetter.get"><code class="docutils literal notranslate"><span class="pre">CardGetter.get()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.get">ersilia.hub.fetch.actions.get module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.DockerfileCreator"><code class="docutils literal notranslate"><span class="pre">DockerfileCreator</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.DockerfileCreator.run"><code class="docutils literal notranslate"><span class="pre">DockerfileCreator.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.ModelGetter"><code class="docutils literal notranslate"><span class="pre">ModelGetter</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.ModelGetter.get"><code class="docutils literal notranslate"><span class="pre">ModelGetter.get()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.ModelParametersGetter"><code class="docutils literal notranslate"><span class="pre">ModelParametersGetter</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.ModelParametersGetter.get"><code class="docutils literal notranslate"><span class="pre">ModelParametersGetter.get()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.ModelRepositoryGetter"><code class="docutils literal notranslate"><span class="pre">ModelRepositoryGetter</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.ModelRepositoryGetter.get"><code class="docutils literal notranslate"><span class="pre">ModelRepositoryGetter.get()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.PackCreator"><code class="docutils literal notranslate"><span class="pre">PackCreator</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.PackCreator.run"><code class="docutils literal notranslate"><span class="pre">PackCreator.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.ServiceCreator"><code class="docutils literal notranslate"><span class="pre">ServiceCreator</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.ServiceCreator.run"><code class="docutils literal notranslate"><span class="pre">ServiceCreator.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.TemplatePreparer"><code class="docutils literal notranslate"><span class="pre">TemplatePreparer</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.get.TemplatePreparer.prepare"><code class="docutils literal notranslate"><span class="pre">TemplatePreparer.prepare()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.inform">ersilia.hub.fetch.actions.inform module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.inform.ModelInformer"><code class="docutils literal notranslate"><span class="pre">ModelInformer</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.inform.ModelInformer.inform"><code class="docutils literal notranslate"><span class="pre">ModelInformer.inform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.lake">ersilia.hub.fetch.actions.lake module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.lake.LakeGetter"><code class="docutils literal notranslate"><span class="pre">LakeGetter</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.lake.LakeGetter.get"><code class="docutils literal notranslate"><span class="pre">LakeGetter.get()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.modify">ersilia.hub.fetch.actions.modify module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.modify.ModelModifier"><code class="docutils literal notranslate"><span class="pre">ModelModifier</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.modify.ModelModifier.modify"><code class="docutils literal notranslate"><span class="pre">ModelModifier.modify()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">ModelModifier.modify()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.pack_bentoml">ersilia.hub.fetch.actions.pack_bentoml module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.pack_bentoml.ModelPacker"><code class="docutils literal notranslate"><span class="pre">ModelPacker</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.pack_bentoml.ModelPacker.pack"><code class="docutils literal notranslate"><span class="pre">ModelPacker.pack()</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">ModelPacker.pack()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.pack_fastapi">ersilia.hub.fetch.actions.pack_fastapi module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker"><code class="docutils literal notranslate"><span class="pre">ModelPacker</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker.pack"><code class="docutils literal notranslate"><span class="pre">ModelPacker.pack()</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">ModelPacker.pack()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.prepare">ersilia.hub.fetch.actions.prepare module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.prepare.ModelPreparer"><code class="docutils literal notranslate"><span class="pre">ModelPreparer</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.prepare.ModelPreparer.prepare"><code class="docutils literal notranslate"><span class="pre">ModelPreparer.prepare()</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">ModelPreparer.prepare()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.setup">ersilia.hub.fetch.actions.setup module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.setup.SetupChecker"><code class="docutils literal notranslate"><span class="pre">SetupChecker</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.setup.SetupChecker.check"><code class="docutils literal notranslate"><span class="pre">SetupChecker.check()</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">SetupChecker.check()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.sniff_bentoml">ersilia.hub.fetch.actions.sniff_bentoml module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.has_builtin_example"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader.has_builtin_example()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_bentoml.BuiltinExampleReader.example"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader.example()</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader.example()</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader.has_builtin_example()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer"><code class="docutils literal notranslate"><span class="pre">ModelSniffer</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_bentoml.ModelSniffer.sniff"><code class="docutils literal notranslate"><span class="pre">ModelSniffer.sniff()</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">ModelSniffer.sniff()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.sniff_fastapi">ersilia.hub.fetch.actions.sniff_fastapi module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader.input_example"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader.input_example()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_fastapi.BuiltinExampleReader.output_example"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader.output_example()</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader.input_example()</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">BuiltinExampleReader.output_example()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_fastapi.ModelSniffer"><code class="docutils literal notranslate"><span class="pre">ModelSniffer</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.sniff_fastapi.ModelSniffer.sniff"><code class="docutils literal notranslate"><span class="pre">ModelSniffer.sniff()</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">ModelSniffer.sniff()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.template_resolver">ersilia.hub.fetch.actions.template_resolver module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver"><code class="docutils literal notranslate"><span class="pre">TemplateResolver</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver.is_fastapi"><code class="docutils literal notranslate"><span class="pre">TemplateResolver.is_fastapi()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.template_resolver.TemplateResolver.is_bentoml"><code class="docutils literal notranslate"><span class="pre">TemplateResolver.is_bentoml()</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">TemplateResolver.is_bentoml()</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">TemplateResolver.is_fastapi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions.toolize">ersilia.hub.fetch.actions.toolize module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer"><code class="docutils literal notranslate"><span class="pre">ModelToolizer</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize"><code class="docutils literal notranslate"><span class="pre">ModelToolizer.toolize()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize"><code class="docutils literal notranslate"><span class="pre">ModelToolizer.dockerize()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install"><code class="docutils literal notranslate"><span class="pre">ModelToolizer.pip_install()</span></code></a></li>
+<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">ModelToolizer.toolize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.hub.fetch.actions">Module contents</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.fetch.actions.BaseAction"><code class="docutils literal notranslate"><span class="pre">BaseAction</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2024, Ersilia Open Source Initiative.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          </div>
         </div>
       </div>
-    </section>
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
 </html>
