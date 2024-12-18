@@ -68,7 +68,7 @@ class BaseInformation(ErsiliaBase):
         Configuration settings in JSON format.
     """
 
-    def __init__(self, config_json):
+    def __init__(self, config_json=None):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=None
         )

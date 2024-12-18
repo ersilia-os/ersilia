@@ -1237,6 +1237,10 @@ class PulledDockerImageService(BaseServing):
         self.logger.debug("Status code: {0}".format(response.status_code))
         if response.status_code == 502:
             raise BadGatewayError(url)
+        elif response.status_code == 405: # We try the GET endpoint here
+            response = requests.get(url)
+        else:
+            response.raise_for_status()
         apis_list = json.loads(response.text)["apis_list"]
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
