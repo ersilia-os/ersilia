@@ -62,9 +62,9 @@ class AirtableInterface:
 
 
 class AirtableMetadata(AirtableInterface):
-    def __init__(self, model_id, api_key):
+    def __init__(self, model_id, api_key=None, mode="ro"):
+        super().__init__(mode=mode, api_key=api_key)
         self.model_id = model_id
-        super().__init__(self, mode="rw", api_key=api_key)
         self._empty_row_message = "The AirTable field Identifier was not found! Please check that there are not empty rows."
 
     def _find_record(self):
@@ -96,7 +96,7 @@ class AirtableMetadata(AirtableInterface):
 
     def read_information(self):
         data = self._find_record()
-        bi = BaseInformation(config_json=self.config_json)
+        bi = BaseInformation()
         bi.from_dict(data)
         return bi
 
@@ -121,9 +121,7 @@ class ReadmeMetadata:
         self.model_id = model_id
 
     def read_information(self):
-        self.logger.debug(
-            "Cannot read directly from README file. Using AirTable instead"
-        )
+        print ("Cannot read directly from README file. Using AirTable instead")
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
         print(bi.as_dict())
@@ -268,7 +266,7 @@ def update_metadata_to_airtable(user, repo, branch, api_key):
     # Works with airtable-update option
     rm = RepoMetadataFile(model_id=repo, config_json=None)
     data = rm.read_information(org=user, branch=branch)
-    am = AirtableMetadata(model_id=repo, config_json=None)
+    am = AirtableMetadata(model_id=repo, api_key=api_key, mode="rw")
     am.write_information(data)
 
 
