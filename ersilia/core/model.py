@@ -772,9 +772,6 @@ class ErsiliaModel(ErsiliaBase):
         Any
             The result of the model run(such as output csv file name, json).
         """
-        # TODO this should be smart enough to init the container sampler
-        # or a python process sampler based on how the model was fetched
-        # Presently we only deal with containers
 
         # Init the container metrics sampler
         if self.ct_tracker and track_run:
@@ -793,17 +790,14 @@ class ErsiliaModel(ErsiliaBase):
             result = None
             standard_status_ok = False
             self.logger.debug("We will try conventional run.")
-        if standard_status_ok:  # TODO This should be an else block
-            return result
-        else:
+        
+        if not standard_status_ok:
             self.logger.debug("Trying conventional run")
-            self.logger.debug("Input: {0}".format(input))
-            self.logger.debug("Output: {0}".format(output))
-            self.logger.debug("Batch size: {0}".format(batch_size))
             result = self._run(
                 input=input, output=output, batch_size=batch_size, track_run=track_run
             )
-        # Start tracking model run if track flag is used in serve
+
+        # Collect metrics sampled during run if tracking is enabled
         if self._run_tracker and track_run:
             self.ct_tracker.stop_tracking()
             container_metrics = self.ct_tracker.get_average_metrics()
