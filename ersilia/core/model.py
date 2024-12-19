@@ -8,6 +8,8 @@ import importlib
 import collections
 import __main__ as main
 
+from click import secho as echo # Style-aware echo
+
 from .. import logger
 from ..serve.api import Api
 from .session import Session
@@ -20,7 +22,7 @@ from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.csvfile import CsvDataLoader
 from ..utils.terminal import yes_no_input
 from ..utils.docker import ContainerMetricsSampler
-from ..serve.autoservice import AutoService
+from ..serve.autoservice import AutoService, PulledDockerImageService
 from ..io.output import TabularOutputStacker
 from ..serve.standard_api import StandardCSVRunApi
 from ..io.input import ExampleGenerator, BaseIOGetter
@@ -28,7 +30,6 @@ from .tracking import RunTracker
 from ..io.readers.file import FileTyper, TabularFileReader
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
-
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
 from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
@@ -145,7 +146,6 @@ class ErsiliaModel(ErsiliaBase):
         self.url = None
         self.pid = None
         self.service_class = service_class
-        self.track_runs = track_runs
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
         assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
@@ -189,15 +189,21 @@ class ErsiliaModel(ErsiliaBase):
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
-
+        self._run_tracker = None
+        self.ct_tracker = None
+        self.track = False
         if track_runs:
-            self._run_tracker = RunTracker(
-                model_id=self.model_id, config_json=self.config_json
-            )
-            self.ct_tracker = ContainerMetricsSampler(model_id=self.model_id)
-        else:
-            self._run_tracker = None
-            self.ct_tracker = None
+            if not isinstance(self.autoservice.service, PulledDockerImageService):
+                echo(
+                    "Tracking runs is currently only supported for Dockerized models.\n",
+                    fg="yellow",
+                )
+            else:
+                self.track = True
+                self._run_tracker = RunTracker(
+                    model_id=self.model_id, config_json=self.config_json
+                )
+                self.ct_tracker = ContainerMetricsSampler(model_id=self.model_id)
 
         self.logger.info("Done with initialization!")
 
@@ -677,7 +683,7 @@ class ErsiliaModel(ErsiliaBase):
         self.logger.debug("Checking rdkit and other requirements")
         self.setup()
         self.close()
-        self.session.open(model_id=self.model_id, track_runs=self.track_runs)
+        self.session.open(model_id=self.model_id, track_runs=self.track)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
