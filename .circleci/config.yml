@@ -27,7 +27,7 @@ jobs:
           command: |
               conda create -n ersilia python=3.10
               source activate ersilia
-              pip install -U pip setuptools packaging
+              pip install -U pip setuptools
               python -m pip install -e .
       - run:
           name: Test CLI
@@ -84,7 +84,7 @@ jobs:
           name: Install theme
           command: |
               source activate ersilia
-              pip install sphinx_rtd_theme recommonmark
+              pip install furo recommonmark
       - run:
           name: Fetch documentation from Ersilia Hub
           command: |

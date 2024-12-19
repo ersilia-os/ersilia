@@ -27,7 +27,7 @@ def run_cmd():
     .. code-block:: console
 
         Run a model by its ID with input data:
-        $ ersilia run -i <input_data> --table
+        $ ersilia run -i <input_data> --as-table
 
         Run a model with batch size:
         $ ersilia run -i <input_data> -b 50
@@ -41,8 +41,8 @@ def run_cmd():
     @click.option(
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
-    @click.option("--table", is_flag=True, default=False)
-    def run(input, output, batch_size, table):
+    @click.option("--as-table", is_flag=True, default=False)
+    def run(input, output, batch_size, as_table):
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
@@ -73,14 +73,14 @@ def run_cmd():
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:
                     formatted = json.dumps(result, indent=4)
-                    if table:
+                    if as_table:
                         print_result_table(formatted)
                     else:
                         echo(formatted)
                 else:
                     echo("Something went wrong", fg="red")
         else:
-            if table:
+            if as_table:
                 print_result_table(result)
             else:
                 try:
