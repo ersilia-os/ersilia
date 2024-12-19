@@ -539,10 +539,12 @@
 <span class="sd">        results = inspector.run()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remote</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="nb">dir</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remote</span> <span class="o">=</span> <span class="n">remote</span>
 
 <div class="viewcode-block" id="InspectService.run">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.InspectService.run">[docs]</a>
@@ -575,15 +577,14 @@
 
 
     <span class="k">def</span> <span class="nf">_get_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inspector</span><span class="p">:</span> <span class="n">ModelInspector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="n">is_dir_none</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">CheckStrategy</span><span class="p">(</span>
-                <span class="n">inspector</span><span class="o">.</span><span class="n">check_repo_exists</span> <span class="k">if</span> <span class="n">is_dir_none</span> <span class="k">else</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">inspector</span><span class="o">.</span><span class="n">check_repo_exists</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote</span> <span class="k">else</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">&quot;is_github_url_available&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;is_github_url_available_details&quot;</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">CheckStrategy</span><span class="p">(</span>
-                <span class="n">inspector</span><span class="o">.</span><span class="n">check_complete_metadata</span> <span class="k">if</span> <span class="n">is_dir_none</span> <span class="k">else</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">inspector</span><span class="o">.</span><span class="n">check_complete_metadata</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote</span> <span class="k">else</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">&quot;complete_metadata&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;complete_metadata_details&quot;</span><span class="p">,</span>
             <span class="p">),</span>
@@ -603,7 +604,7 @@
                 <span class="s2">&quot;computational_performance_tracking_details&quot;</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">CheckStrategy</span><span class="p">(</span>
-                <span class="n">inspector</span><span class="o">.</span><span class="n">check_no_extra_files</span> <span class="k">if</span> <span class="n">is_dir_none</span> <span class="k">else</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">inspector</span><span class="o">.</span><span class="n">check_no_extra_files</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote</span> <span class="k">else</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="s2">&quot;extra_files_check&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;extra_files_check_details&quot;</span><span class="p">,</span>
             <span class="p">),</span>
@@ -2143,8 +2144,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inspecter</span> <span class="o">=</span> <span class="n">InspectService</span><span class="p">(</span>
-            <span class="nb">dir</span><span class="o">=</span><span class="nb">dir</span><span class="p">,</span>
-            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+            <span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">remote</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">remote</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">runner</span> <span class="o">=</span> <span class="n">RunnerService</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
