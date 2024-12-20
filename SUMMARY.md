@@ -10,6 +10,7 @@
 
 * [Getting started](ersilia-model-hub/getting-started.md)
 * [Online inference](ersilia-model-hub/online-inference.md)
+* [Page](ersilia-model-hub/page.md)
 * [Local inference](ersilia-model-hub/local-inference.md)
 * [Model Contribution](ersilia-model-hub/model-contribution/README.md)
   * [Model template](ersilia-model-hub/model-contribution/model-template.md)
