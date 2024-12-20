@@ -77,7 +77,3 @@
 * [On the use of Artificial Intelligence](about-us/on-the-use-of-artificial-intelligence.md)
 * [Ersilia, the Invisible City](about-us/ersilia-the-invisible-city.md)
 * [Strategic Plan 2021-2023](about-us/strategic-plan-2021-2023.md)
-
-## 🙌 Join our team
-
-* [Job offer: Postdoctoral researcher in AI/ML for Antimicrobial Drug Discovery](join-our-team/job-offer-postdoctoral-researcher-in-ai-ml-for-antimicrobial-drug-discovery.md)
