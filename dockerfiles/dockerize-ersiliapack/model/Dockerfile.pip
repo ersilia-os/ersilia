@@ -3,7 +3,15 @@ ARG MODEL=eos_identifier
 ENV MODEL=$MODEL
 WORKDIR /root
 COPY ./$MODEL /root/$MODEL
-RUN mkdir /root/bundles && ersilia_model_pack --repo_path $MODEL --bundles_repo_path /root/bundles && \
+
+RUN apt-get update && apt-cache search libxtst && \
+    apt-get install -y libfontconfig1 libxrender1 libxtst6 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \ 
+    apt-get install -y git && \
+    mkdir /root/bundles && ersilia_model_pack --repo_path $MODEL --bundles_repo_path /root/bundles && \
+    apt-get remove --purge -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* && \
     rm -rf /root/$MODEL && rm -rf /root/.cache && \
     cp /root/bundles/$MODEL/*/information.json /root/information.json && \
     cp /root/bundles/$MODEL/*/api_schema.json /root/api_schema.json && \
