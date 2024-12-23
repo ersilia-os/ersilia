@@ -77,25 +77,29 @@ class ErsiliaModel(ErsiliaBase):
 
     Examples
     --------
-    Fetching a model:
+    Fetching a model this requires to use asyncio since `fetch` is a coroutine.:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         model.fetch()
 
     Serving a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         model.serve()
 
     Running a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         result = model.run(input="input_data.csv", output="output_data.csv")
 
     Closing a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
