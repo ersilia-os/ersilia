@@ -14,7 +14,7 @@ RUN /$MODEL/bin/conda-unpack
 # the ersilia environment, the model environment, 
 # and the model itself (as a bentoml bundle)
 
-FROM python:3.7-slim-buster
+FROM python:3.10-slim-buster
 WORKDIR /root
 ARG MODEL=eos_identifier
 ENV MODEL=$MODEL
