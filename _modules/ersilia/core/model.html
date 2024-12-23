@@ -393,25 +393,29 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    Fetching a model:</span>
+<span class="sd">    Fetching a model this requires to use asyncio since `fetch` is a coroutine.:</span>
+
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
 <span class="sd">        model.fetch()</span>
 
 <span class="sd">    Serving a model:</span>
+
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
 <span class="sd">        model.serve()</span>
 
 <span class="sd">    Running a model:</span>
+
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
 <span class="sd">        result = model.run(input=&quot;input_data.csv&quot;, output=&quot;output_data.csv&quot;)</span>
 
 <span class="sd">    Closing a model:</span>
+
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
