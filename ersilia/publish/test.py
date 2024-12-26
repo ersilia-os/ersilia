@@ -199,10 +199,12 @@ class InspectService(ErsiliaBase):
         results = inspector.run()
     """
 
-    def __init__(self, dir: str = None, model: str = None, config_json: str = None, credentials_json: str = None):
+    def __init__(self, dir: str = None, model: str = None, remote: bool = False, config_json: str = None, credentials_json: str = None):
         super().__init__(config_json, credentials_json)
         self.dir = dir
+
         self.model = model
+        self.remote = remote
 
     def run(self) -> dict:
         """
@@ -232,15 +234,14 @@ class InspectService(ErsiliaBase):
         return output
 
     def _get_checks(self, inspector: ModelInspector) -> list:
-        is_dir_none = self.dir is None
         return [
             CheckStrategy(
-                inspector.check_repo_exists if is_dir_none else lambda: None,
+                inspector.check_repo_exists if self.remote else lambda: None,
                 "is_github_url_available",
                 "is_github_url_available_details",
             ),
             CheckStrategy(
-                inspector.check_complete_metadata if is_dir_none else lambda: None,
+                inspector.check_complete_metadata if self.remote else lambda: None,
                 "complete_metadata",
                 "complete_metadata_details",
             ),
@@ -260,7 +261,7 @@ class InspectService(ErsiliaBase):
                 "computational_performance_tracking_details",
             ),
             CheckStrategy(
-                inspector.check_no_extra_files if is_dir_none else lambda: None,
+                inspector.check_no_extra_files if self.remote else lambda: None,
                 "extra_files_check",
                 "extra_files_check_details",
             ),
@@ -1725,8 +1726,9 @@ class ModelTester(ErsiliaBase):
             self.ios,
         )
         self.inspecter = InspectService(
-            dir=dir,
-            model=self.model_id
+            dir=self.dir if not self.remote else None,
+            model=self.model_id,
+            remote=self.remote
         )
         self.runner = RunnerService(
             self.model_id,
