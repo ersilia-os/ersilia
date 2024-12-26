@@ -6,7 +6,6 @@ from ..hub.content.slug import Slug
 from ..hub.fetch import STATUS_FILE, DONE_TAG
 from ..default import IS_FETCHED_FROM_DOCKERHUB_FILE
 from ..utils.paths import get_metadata_from_base_dir
-
 from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
 from .. import throw_ersilia_exception
 
@@ -47,8 +46,12 @@ class ModelBase(ErsiliaBase):
                 raise InvalidModelIdentifierError(model=self.text)
 
         if repo_path is not None:
-            self.logger.debug("Repo path specified: {0}".format(repo_path))
-            self.logger.debug("Absolute path: {0}".format(os.path.abspath(repo_path)))
+            self.logger.debug(f"Repo path specified: {repo_path}")
+            abspath = os.path.abspath(repo_path)
+            self.logger.debug(f"Absolute path: {abspath}")
+            # Check if path actually exists
+            if not os.path.exists(abspath):
+                raise FileNotFoundError("Model directory does not exist at the provided path. Please check the path and try again.")
             self.text = self._get_model_id_from_path(repo_path)
             self.model_id = self.text
             slug = self._get_slug_if_available(repo_path)
