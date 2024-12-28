@@ -54,7 +54,6 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.info(
             "You are running the app with a standard runner. Beware that this runner does not do as many checks on the input as the conventional runner: use it at your own risk."
         )
-        self.redis_client = RedisClient()
         self.model_id = model_id
         # TODO WHY? Why can't we init with a cleaner url?
         if url[-1] == "/":
