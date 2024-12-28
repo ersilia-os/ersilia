@@ -46,7 +46,6 @@ class StandardCSVRunApi(ErsiliaBase):
         input_data = "path/to/input.csv"
         output_data = "path/to/output.csv"
         result = api.post(input_data, output_data)
-        print(result)
     """
 
     def __init__(self, model_id, url, config_json=None):
