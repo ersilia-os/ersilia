@@ -38,10 +38,36 @@ class OutputSource:
 
     @classmethod
     def is_local(cls, option):
+        """
+        Check if the option is local.
+
+        Parameters
+        ----------
+        option : str
+            The option to check.
+
+        Returns
+        -------
+        bool
+            True if the option is local, False otherwise.
+        """
         return option == cls.LOCAL_ONLY
 
     @classmethod
     def is_cloud(cls, option):
+        """
+        Check if the option is cloud.
+
+        Parameters
+        ----------
+        option : str
+            The option to check.
+
+        Returns
+        -------
+        bool
+            True if the option is cloud, False otherwise.
+        """
         return option == cls.CLOUD_ONLY
 
 
@@ -60,6 +86,9 @@ class ModelNotInStore(InferenceStoreMessage):
         self.model_id = model_id
 
     def echo(self):
+        """
+        Echo the message for model not found in inference store.
+        """
         super()._echo(
             "Model {0} could not be found in inference store".format(self.model_id),
             fg="red",
@@ -87,6 +116,9 @@ class PrecalculationsNotInStore(InferenceStoreMessage):
         self.model_id = model_id
 
     def echo(self):
+        """
+        Echo the message for precalculations not found in inference store.
+        """
         super()._echo(
             "Precalculations for model {0} could not be found in inference store".format(
                 self.model_id
@@ -118,6 +150,14 @@ class PrecalculationsInStore(InferenceStoreMessage):
         self.output_url = output_url
 
     def echo(self):
+        """
+        Echo the message for precalculations available for download.
+
+        Parameters
+        ----------
+        output_url : str
+            The URL for downloading the precalculations.
+        """
         super()._echo(
             "Precalculations for model {0} are now available for download via this link (expires in 60 minutes): {1}".format(
                 self.model_id, self.output_url

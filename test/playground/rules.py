@@ -1,5 +1,5 @@
-import json
 import csv
+import json
 from pathlib import Path
 
 RULE_REGISTRY = {}

@@ -2,25 +2,23 @@
 
 import json
 import os
-from timeit import default_timer as timer
 from datetime import timedelta
-
-from .actions.template_resolver import TemplateResolver
-from .actions.setup import SetupChecker
-from .actions.prepare import ModelPreparer
-from .actions.get import ModelGetter
-from .actions.lake import LakeGetter
-from .actions.pack_bentoml import ModelPacker
-from .actions.toolize import ModelToolizer
-from .actions.content import CardGetter
-from .actions.check import ModelChecker
-from .actions.sniff_bentoml import ModelSniffer
-from .actions.inform import ModelInformer
-from .register.register import ModelRegisterer
+from timeit import default_timer as timer
 
 from ... import ErsiliaBase
-
-from . import STATUS_FILE, DONE_TAG
+from . import DONE_TAG, STATUS_FILE
+from .actions.check import ModelChecker
+from .actions.content import CardGetter
+from .actions.get import ModelGetter
+from .actions.inform import ModelInformer
+from .actions.lake import LakeGetter
+from .actions.pack_bentoml import ModelPacker
+from .actions.prepare import ModelPreparer
+from .actions.setup import SetupChecker
+from .actions.sniff_bentoml import ModelSniffer
+from .actions.template_resolver import TemplateResolver
+from .actions.toolize import ModelToolizer
+from .register.register import ModelRegisterer
 
 
 class ModelFetcherFromBentoML(ErsiliaBase):
@@ -52,7 +50,9 @@ class ModelFetcherFromBentoML(ErsiliaBase):
     --------
     .. code-block:: python
 
-        fetcher = ModelFetcherFromBentoML(config_json=config)
+        fetcher = ModelFetcherFromBentoML(
+            config_json=config
+        )
         fetcher.fetch(model_id="eosxxxx")
     """
 
@@ -205,7 +205,9 @@ class ModelFetcherFromBentoML(ErsiliaBase):
         --------
         .. code-block:: python
 
-            fetcher = ModelFetcherFromBentoML(config_json=config)
+            fetcher = ModelFetcherFromBentoML(
+                config_json=config
+            )
             fetcher.fetch(model_id="eosxxxx")
         """
         self._fetch(model_id)

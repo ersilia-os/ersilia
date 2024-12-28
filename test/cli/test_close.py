@@ -1,9 +1,10 @@
+from unittest.mock import patch
+
 import pytest
-from unittest import TestCase
-from unittest.mock import patch, MagicMock, AsyncMock
 from click.testing import CliRunner
-from ersilia.core.model import ErsiliaModel
+
 from ersilia.cli.commands.close import close_cmd
+from ersilia.core.model import ErsiliaModel
 from ersilia.core.session import Session
 
 MODEL_ID = "eos3b5e"

@@ -1,7 +1,6 @@
 import os
-import boto3
 
-from .. import ErsiliaBase, EOS
+from .. import EOS, ErsiliaBase
 from ..default import ERSILIA_RUNS_FOLDER
 
 

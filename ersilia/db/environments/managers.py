@@ -1,26 +1,24 @@
 import os
-import tempfile
 import re
 import shutil
+import sys
 
 from ...core.base import ErsiliaBase
+from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...setup.requirements.docker import DockerRequirement
-from ...utils.paths import Paths
-from ...utils.terminal import run_command
 from ...utils.docker import SimpleDocker, resolve_platform
-from ...utils.system import is_inside_docker
 from ...utils.identifiers.short import ShortIdentifier
-from ...utils.ports import find_free_port
-from .localdb import EnvironmentDb
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
-from ...utils.session import get_session_dir
 from ...utils.logging import make_temp_dir
-
-import sys
+from ...utils.paths import Paths
+from ...utils.ports import find_free_port
+from ...utils.system import is_inside_docker
+from ...utils.terminal import run_command
+from .localdb import EnvironmentDb
 
 BENTOML_DOCKERPORT = 5000
 INTERNAL_DOCKERPORT = 80
 
+# ruff: noqa: D101, D102
 
 class DockerManager(ErsiliaBase):
     """
@@ -40,9 +38,15 @@ class DockerManager(ErsiliaBase):
 
     Examples
     --------
-    >>> docker_manager = DockerManager(config_json=config, preferred_port=8080)
-    >>> docker_manager.build(model_id='eosxxxx', docker_user='user', docker_pwd='pass')
-    >>> docker_manager.run(model_id='eosxxxx', workers=2)
+    >>> docker_manager = DockerManager(
+    ...     config_json=config, preferred_port=8080
+    ... )
+    >>> docker_manager.build(
+    ...     model_id="eosxxxx",
+    ...     docker_user="user",
+    ...     docker_pwd="pass",
+    ... )
+    >>> docker_manager.run(model_id="eosxxxx", workers=2)
     """
 
     def __init__(self, config_json=None, preferred_port=None, with_bentoml=False):
@@ -590,26 +594,6 @@ class DockerManager(ErsiliaBase):
         cmd = "docker system prune -f"
         run_command(cmd)
 
-    def delete_image(self, img):
-        fn = os.path.join(get_session_dir(), "rm_image_output.txt")
-        cmd = "docker image rm {0} --force 2> {1}".format(img, fn)
-        run_command(cmd)
-        with open(fn, "r") as f:
-            text = f.read()
-            patt = "image is being used by running container "
-            if patt in text:
-                container_id = text.split(patt)[1].rstrip()
-                self.logger.debug(
-                    "A running container was found {0}. Removing it before the image".format(
-                        container_id
-                    )
-                )
-                cmd = "docker stop {0}".format(container_id)
-                run_command(cmd)
-                cmd = "docker rm {0}".format(container_id)
-                run_command(cmd)
-                self.delete_image(img)
-
     def delete_images(self, model_id, purge_unnamed=True):
         """
         Deletes Docker images associated with a model.
@@ -653,7 +637,6 @@ class DockerManager(ErsiliaBase):
 
 
 class CondaManager(object):
-
     def __init__(self):
         pass
 

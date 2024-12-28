@@ -6,10 +6,11 @@ This functionality is used when developing of a model is done.
 
 import os
 import shutil
+
 from .. import ErsiliaBase
-from ..utils.zip import Zipper
-from ..utils.upload import OsfUploader
 from ..utils.remove import OsfRemover
+from ..utils.upload import OsfUploader
+from ..utils.zip import Zipper
 
 
 class ModelStorager(ErsiliaBase):
@@ -93,7 +94,10 @@ class ModelRemover(ErsiliaBase):
     --------
     .. code-block:: python
 
-        remover = ModelRemover(config_json="path/to/config.json", credentials_json="path/to/credentials.json")
+        remover = ModelRemover(
+            config_json="path/to/config.json",
+            credentials_json="path/to/credentials.json",
+        )
         remover.remove(model_id="model_id")
     """
 

@@ -1,6 +1,8 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
+
 from ersilia.cli.commands.fetch import fetch_cmd
 from ersilia.hub.fetch.fetch import FetchResult
 from ersilia.utils.logging import logger

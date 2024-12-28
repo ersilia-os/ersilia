@@ -1,7 +1,8 @@
+import os
+
 from ... import throw_ersilia_exception
 from ...default import EOS
 from ...utils.exceptions_utils.setup_exceptions import EosHomePathNotFoundError
-import os
 
 
 class EosHomePathRequirement(object):

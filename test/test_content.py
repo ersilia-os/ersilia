@@ -1,5 +1,5 @@
-from ersilia.hub.content.catalog import ModelCatalog
 from ersilia.hub.content.card import ModelCard
+from ersilia.hub.content.catalog import ModelCatalog
 
 MODEL_ID = "eos0t01"
 

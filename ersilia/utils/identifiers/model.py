@@ -1,6 +1,7 @@
+import json
 import random
 import string
-import json
+
 from ..paths import Paths
 from ..terminal import run_command_check_output
 

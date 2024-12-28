@@ -1,9 +1,11 @@
-from ..core.base import ErsiliaBase
-from ..app.app import AppBase, StreamlitApp
-import subprocess
 import os
 import shutil
+import subprocess
+
 import streamlit
+
+from ..app.app import AppBase, StreamlitApp
+from ..core.base import ErsiliaBase
 
 
 class DeployBase(ErsiliaBase):
@@ -184,7 +186,10 @@ class Heroku(DeployBase):
     --------
     .. code-block:: python
 
-        deployer = Heroku(config_json="path/to/config.json", credentials_json="path/to/credentials.json")
+        deployer = Heroku(
+            config_json="path/to/config.json",
+            credentials_json="path/to/credentials.json",
+        )
         deployer.deploy("model_id")
     """
 
@@ -371,7 +376,11 @@ class Deployer(object):
     --------
     .. code-block:: python
 
-        deployer = Deployer(cloud="heroku", config_json="path/to/config.json", credentials_json="path/to/credentials.json")
+        deployer = Deployer(
+            cloud="heroku",
+            config_json="path/to/config.json",
+            credentials_json="path/to/credentials.json",
+        )
         deployer.deploy("model_id")
     """
 

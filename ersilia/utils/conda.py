@@ -1,18 +1,18 @@
 # TODO Implement conda python telemetry for resources during model execution
-import os
-import json
 import hashlib
+import json
+import os
 import shutil
-from collections import defaultdict, OrderedDict
-from .terminal import run_command, run_command_check_output
-from .docker import SimpleDockerfileParser
-from .versioning import Versioner
-from .supp.conda_env_resolve import CHECKSUM_NCHAR, CHECKSUM_FILE
+from collections import OrderedDict, defaultdict
+
+from .. import logger, throw_ersilia_exception
 from ..default import CONDA_ENV_YML_FILE
-from .. import logger
 from ..utils.exceptions_utils.fetch_exceptions import ModelPackageInstallError
 from ..utils.logging import make_temp_dir
-from .. import throw_ersilia_exception
+from .docker import SimpleDockerfileParser
+from .supp.conda_env_resolve import CHECKSUM_FILE, CHECKSUM_NCHAR
+from .terminal import run_command, run_command_check_output
+from .versioning import Versioner
 
 BASE = "base"
 SPECS_JSON = ".specs.json"
@@ -366,11 +366,11 @@ class CondaUtils(BaseConda):
             The name or checksum of the specs.
         """
         if use_checksum:
-            return self.checksum_from_dockerfile(dockerfile, dest)  # TODO debug
+            return self.checksum_from_dockerfile(dockerfile_dir, dest)  # TODO debug
         else:
             if dest is None:
                 dest = dockerfile_dir
-            json_path = self.specs_from_dockerfile_as_json(
+            self.specs_from_dockerfile_as_json(
                 dockerfile_dir, dest=dest
             )  # TODO remove?
             filename = os.path.join(dest, self.CHECKSUM_FILE)

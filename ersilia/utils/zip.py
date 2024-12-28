@@ -1,6 +1,6 @@
-import zipfile
 import os
 import shutil
+import zipfile
 
 
 class Zipper(object):

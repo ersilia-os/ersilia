@@ -1,21 +1,21 @@
-import os
-import subprocess
-import json
-import tempfile
-import shutil
 import csv
-from .logging import logger
 import io
+import json
+import os
+import shutil
+import subprocess
+
+from .logging import logger
 
 try:
-    from inputimeout import inputimeout, TimeoutOccurred
+    from inputimeout import TimeoutOccurred, inputimeout
 except:
     inputimeout = None
     TimeoutOccurred = None
 
 from ..default import VERBOSE_FILE
-from ..utils.session import get_session_dir
 from ..utils.logging import make_temp_dir
+from ..utils.session import get_session_dir
 
 
 def is_quiet():

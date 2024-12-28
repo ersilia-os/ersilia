@@ -1,7 +1,14 @@
-# External imports
 import os
-from ._version import __version__
 import warnings
+
+from ._version import __version__
+from .core.base import ErsiliaBase
+from .core.model import ErsiliaModel
+from .core.modelbase import ModelBase
+from .default import CONFIG_JSON, EOS, INSTALL_STATUS_FILE, bashrc_cli_snippet
+from .utils.config import Config
+from .utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from .utils.logging import logger
 
 # Filter out some warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -10,10 +17,6 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # Default variables
-from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE
-
-# Logger
-from .utils.logging import logger
 
 # Config
 if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
@@ -21,23 +24,11 @@ if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
 
     Checker().config()
 
-# Exceptions
-from .utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
-
 # Environmental variables
 os.environ["EOS_HOME"] = EOS
 
-# Global imports
-from .utils.config import Config
-from .core.base import ErsiliaBase
-from .core.modelbase import ModelBase
-from .core.model import ErsiliaModel
-
 # User profile
-from .default import bashrc_cli_snippet
-
 bashrc_cli_snippet(overwrite=False)
-
 
 # Check status of installs
 def check_install_status():
@@ -52,3 +43,5 @@ def check_install_status():
 
 
 INSTALL_STATUS = check_install_status()["status"]
+
+__all__ = ['__version__', 'logger', 'throw_ersilia_exception', 'ErsiliaBase', 'ErsiliaModel', 'ModelBase', 'Config']

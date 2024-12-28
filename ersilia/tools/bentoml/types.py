@@ -19,11 +19,11 @@ from typing import (
     Union,
 )
 
+from bentoml import config
 from multidict import CIMultiDict
 from werkzeug.formparser import parse_form_data
 from werkzeug.http import parse_options_header
 
-from bentoml import config
 from .utils.dataclasses import json_serializer
 
 BATCH_HEADER = config("apiserver").get("batch_request_header")
@@ -94,6 +94,14 @@ class FileLike:
 
     @property
     def stream(self):
+        """
+        Get the stream.
+
+        Returns
+        -------
+        object
+            The stream object.
+        """
         if self._stream is not None:
             pass
         elif self.bytes_ is not None:
@@ -105,16 +113,53 @@ class FileLike:
         return self._stream
 
     def read(self, size=-1):
+        """
+        Read from the stream.
+
+        Parameters
+        ----------
+        size : int, optional
+            The number of bytes to read. Default is -1 (read all).
+
+        Returns
+        -------
+        bytes
+            The read bytes.
+        """
         # TODO: also write to log
         return self.stream.read(size)
 
     def seek(self, pos):
+        """
+        Seek to a position in the stream.
+
+        Parameters
+        ----------
+        pos : int
+            The position to seek to.
+
+        Returns
+        -------
+        int
+            The new position.
+        """
         return self.stream.seek(pos)
 
     def tell(self):
+        """
+        Tell the current position in the stream.
+
+        Returns
+        -------
+        int
+            The current position.
+        """
         return self.stream.tell()
 
     def close(self):
+        """
+        Close the stream.
+        """
         if self._stream is not None:
             self._stream.close()
 
@@ -151,30 +196,96 @@ class HTTPHeaders(CIMultiDict):
 
     @property
     def content_type(self) -> str:
+        """
+        Get the content type.
+
+        Returns
+        -------
+        str
+            The content type.
+        """
         return parse_options_header(self.get("content-type"))[0].lower()
 
     @property
     def charset(self) -> Optional[str]:
+        """
+        Get the charset.
+
+        Returns
+        -------
+        Optional[str]
+            The charset, if available.
+        """
         return parse_options_header(self.get("content-type"))[1].get("charset", None)
 
     @property
     def content_encoding(self) -> str:
+        """
+        Get the content encoding.
+
+        Returns
+        -------
+        str
+            The content encoding.
+        """
         return parse_options_header(self.get("content-encoding"))[0].lower()
 
     @property
     def is_batch_input(self) -> bool:
+        """
+        Check if the input is batch input.
+
+        Returns
+        -------
+        bool
+            True if the input is batch input, False otherwise.
+        """
         hv = parse_options_header(self.get(BATCH_HEADER))[0].lower()
         return hv == "true" if hv else None
 
     @classmethod
     def from_dict(cls, d: Mapping[str, str]):
+        """
+        Create an instance from a dictionary.
+
+        Parameters
+        ----------
+        d : Mapping[str, str]
+            The dictionary to create the instance from.
+
+        Returns
+        -------
+        object
+            The created instance.
+        """
         return cls(d)
 
     @classmethod
     def from_sequence(cls, seq: Sequence[Tuple[str, str]]):
+        """
+        Create an instance from a sequence.
+
+        Parameters
+        ----------
+        seq : Sequence[Tuple[str, str]]
+            The sequence to create the instance from.
+
+        Returns
+        -------
+        object
+            The created instance.
+        """
         return cls(seq)
 
     def to_json(self):
+        """
+        Convert the instance to JSON.
+
+        Returns
+        -------
+        tuple
+            The JSON representation of the instance.
+        """
         return tuple(self.items())
 
 
@@ -204,6 +315,19 @@ class HTTPRequest:
 
     @classmethod
     def parse_form_data(cls, self):
+        """
+        Parse form data.
+
+        Parameters
+        ----------
+        self : object
+            The object containing the form data.
+
+        Returns
+        -------
+        tuple
+            The parsed form data.
+        """
         if not self.body:
             return None, None, {}
         environ = {
@@ -220,12 +344,33 @@ class HTTPRequest:
 
     @classmethod
     def from_flask_request(cls, request):
+        """
+        Create an instance from a Flask request.
+
+        Parameters
+        ----------
+        request : object
+            The Flask request object.
+
+        Returns
+        -------
+        object
+            The created instance.
+        """
         return cls(
             tuple((k, v) for k, v in request.headers.items()),
             request.get_data(),
         )
 
     def to_flask_request(self):
+        """
+        Convert the instance to a Flask request.
+
+        Returns
+        -------
+        object
+            The Flask request object.
+        """
         from werkzeug.wrappers import Request
 
         return Request.from_values(
@@ -237,6 +382,9 @@ class HTTPRequest:
 
 @dataclass
 class HTTPResponse:
+    """
+    Class representing an HTTP response.
+    """
     status: int = 200
     headers: HTTPHeaders = HTTPHeaders()
     body: bytes = b""
@@ -250,6 +398,14 @@ class HTTPResponse:
             self.headers = HTTPHeaders.from_sequence(self.headers)
 
     def to_flask_response(self):
+        """
+        Convert the instance to a Flask response.
+
+        Returns
+        -------
+        object
+            The Flask response object.
+        """
         import flask
 
         return flask.Response(

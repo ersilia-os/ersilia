@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 try:
     import emoji
@@ -10,13 +10,13 @@ import click
 from .columns_information import ColumnsInformation
 from ... import ErsiliaBase
 from ...default import (
-    PACKMODE_FILE,
     API_SCHEMA_FILE,
-    MODEL_SIZE_FILE,
-    CARD_FILE,
-    SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
+    CARD_FILE,
+    MODEL_SIZE_FILE,
     MODEL_SOURCE_FILE,
+    PACKMODE_FILE,
+    SERVICE_CLASS_FILE,
 )
 from ...utils.paths import get_metadata_from_base_dir
 

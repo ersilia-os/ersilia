@@ -1,13 +1,12 @@
-import os
 import json
+import os
 
-from .. import ErsiliaBase
-from ..hub.content.slug import Slug
-from ..hub.fetch import STATUS_FILE, DONE_TAG
+from .. import ErsiliaBase, throw_ersilia_exception
 from ..default import IS_FETCHED_FROM_DOCKERHUB_FILE
-from ..utils.paths import get_metadata_from_base_dir
+from ..hub.content.slug import Slug
+from ..hub.fetch import DONE_TAG, STATUS_FILE
 from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
-from .. import throw_ersilia_exception
+from ..utils.paths import get_metadata_from_base_dir
 
 
 class ModelBase(ErsiliaBase):

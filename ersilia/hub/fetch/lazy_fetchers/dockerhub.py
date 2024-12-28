@@ -1,27 +1,25 @@
-import os
-import json
 import asyncio
-from ..register.register import ModelRegisterer
+import json
+import os
 
-from .... import ErsiliaBase, throw_ersilia_exception
-from .... import EOS
+from .... import EOS, ErsiliaBase, throw_ersilia_exception
 from ....default import (
-    DOCKERHUB_ORG,
-    DOCKERHUB_LATEST_TAG,
-    PREDEFINED_EXAMPLE_FILES,
-    INFORMATION_FILE,
     API_SCHEMA_FILE,
+    DOCKERHUB_LATEST_TAG,
+    DOCKERHUB_ORG,
+    INFORMATION_FILE,
+    PREDEFINED_EXAMPLE_FILES,
 )
-
-from ...pull.pull import ModelPuller
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
 from ....utils.docker import (
+    PACK_METHOD_BENTOML,
     SimpleDocker,
     resolve_pack_method_docker,
-    PACK_METHOD_BENTOML,
 )
+from ...pull.pull import ModelPuller
 from .. import STATUS_FILE
+from ..register.register import ModelRegisterer
 
 
 class ModelDockerHubFetcher(ErsiliaBase):

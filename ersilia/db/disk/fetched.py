@@ -1,8 +1,8 @@
-import os
 import csv
+import os
 
 from ... import ErsiliaBase
-from ...default import FETCHED_MODELS_FILENAME, EOS
+from ...default import EOS, FETCHED_MODELS_FILENAME
 
 
 class FetchedModelsManager(ErsiliaBase):

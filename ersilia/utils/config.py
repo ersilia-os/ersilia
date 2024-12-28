@@ -1,13 +1,13 @@
-import os
 import json
+import os
+
 from ..default import (
-    EOS,
-    GITHUB_ORG,
-    GITHUB_ERSILIA_REPO,
     CONFIG_JSON,
     CREDENTIALS_JSON,
+    EOS,
+    GITHUB_ERSILIA_REPO,
+    GITHUB_ORG,
 )
-
 
 SECRETS_JSON = "secrets.json"
 GDRIVE_CLIENT_SECRETS_JSON = "gdrive_client_secrets.json"
@@ -176,7 +176,7 @@ class Config(object):
         if json_file is None:
             try:
                 json_file = os.environ["EOS_CONFIG"]
-            except KeyError as err:
+            except KeyError:
                 json_file = os.path.join(EOS, CONFIG_JSON)
             except Exception as err:
                 raise err
@@ -281,7 +281,7 @@ class Credentials(object):
         if json_file is None:
             try:
                 json_file = os.environ["EOS_CREDENTIALS"]
-            except KeyError as err:
+            except KeyError:
                 json_file = os.path.join(EOS, CREDENTIALS_JSON)
             except Exception as err:
                 raise err

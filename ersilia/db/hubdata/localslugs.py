@@ -1,5 +1,6 @@
-import sqlite3
 import os
+import sqlite3
+
 from ... import ErsiliaBase
 
 SLUGDB_FILE = ".slug.db"
@@ -25,6 +26,9 @@ class SlugDb(ErsiliaBase):
         return sqlite3.connect(self.file_path)
 
     def create_table(self):
+        """
+        Creates the slugs table in the database if it does not exist.
+        """
         if self._table is None:
             return
         sql = """

@@ -1,13 +1,13 @@
-import os
 import json
+import os
 
 from ..... import ErsiliaBase
-from ....bundle.repo import DockerfileFile
-from .....utils.versioning import Versioner
-from .....utils.system import SystemChecker
+from .....default import MODEL_CONFIG_FILENAME
 from .....setup.requirements.conda import CondaRequirement
 from .....setup.requirements.docker import DockerRequirement
-from .....default import MODEL_CONFIG_FILENAME
+from .....utils.system import SystemChecker
+from .....utils.versioning import Versioner
+from ....bundle.repo import DockerfileFile
 
 AVAILABLE_MODES = ["system", "venv", "conda", "docker"]
 

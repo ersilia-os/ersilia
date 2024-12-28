@@ -1,10 +1,10 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest import TestCase
-from unittest.mock import patch, MagicMock, AsyncMock
 from click.testing import CliRunner
-from ersilia.core.model import ErsiliaModel
+
 from ersilia.cli.commands.serve import serve_cmd
-from ersilia.store.utils import store_has_model
+from ersilia.core.model import ErsiliaModel
 
 URL = "http://localhost"
 MODEL_ID = "eos3b5e"

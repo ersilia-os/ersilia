@@ -13,9 +13,8 @@
 # limitations under the License.
 
 import json
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
 from dataclasses import fields as get_fields
-from dataclasses import is_dataclass
 
 
 class DataclassJsonEncoder(json.JSONEncoder):

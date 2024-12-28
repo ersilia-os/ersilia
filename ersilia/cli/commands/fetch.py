@@ -1,10 +1,12 @@
-import click
 import asyncio
+
+import click
 import nest_asyncio
-from . import ersilia_cli
-from .. import echo
-from ...hub.fetch.fetch import ModelFetcher
+
 from ... import ModelBase
+from ...hub.fetch.fetch import ModelFetcher
+from .. import echo
+from . import ersilia_cli
 
 nest_asyncio.apply()
 

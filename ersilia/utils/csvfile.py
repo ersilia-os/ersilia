@@ -1,6 +1,6 @@
-import os
 import csv
 import json
+import os
 
 
 class CsvDataLoader(object):

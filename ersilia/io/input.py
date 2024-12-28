@@ -1,22 +1,17 @@
-import os
-import shutil
-import json
 import csv
 import importlib
 import itertools
+import json
+import os
+import shutil
 
-from ..hub.content.card import ModelCard
-from .. import ErsiliaBase
-from .. import throw_ersilia_exception
-
-from ..utils.exceptions_utils.exceptions import NullModelIdentifierError
-
-from .shape import InputShape
-from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
-from .readers.pyinput import PyInputReader
-from .readers.file import TabularFileReader, JsonFileReader
-
+from .. import ErsiliaBase, throw_ersilia_exception
 from ..default import PREDEFINED_EXAMPLE_FILES
+from ..hub.content.card import ModelCard
+from ..utils.exceptions_utils.exceptions import NullModelIdentifierError
+from .readers.file import JsonFileReader, TabularFileReader
+from .readers.pyinput import PyInputReader
+from .shape import InputShape, InputShapeList, InputShapePairOfLists, InputShapeSingle
 
 
 class BaseIOGetter(ErsiliaBase):
@@ -284,6 +279,21 @@ class GenericInputAdapter(object):
             yield d
 
     def batch_iter(self, data, batch_size):
+        """
+        Yield batches of data.
+
+        Parameters
+        ----------
+        data : iterable
+            The data to be batched.
+        batch_size : int
+            The size of each batch.
+
+        Yields
+        ------
+        iterable
+            A batch of data.
+        """
         it = iter(data)
         while True:
             chunk = tuple(itertools.islice(it, batch_size))

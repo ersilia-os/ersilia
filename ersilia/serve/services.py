@@ -1,34 +1,41 @@
-import tempfile
-import os
-import json
-import time
 import importlib
-import requests
+import json
+import os
+import time
 import uuid
+
 import docker
+import requests
+
 from .. import ErsiliaBase, throw_ersilia_exception
-from ..utils.terminal import run_command
-from ..utils.ports import find_free_port
-from ..utils.paths import resolve_pack_method
 from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
+from ..default import (
+    APIS_LIST_FILE,
+    CONTAINER_LOGS_TMP_DIR,
+    DEFAULT_VENV,
+    DOCKERHUB_LATEST_TAG,
+    DOCKERHUB_ORG,
+    INFORMATION_FILE,
+    IS_FETCHED_FROM_HOSTED_FILE,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+    PACKMODE_FILE,
+)
+from ..setup.requirements.conda import CondaRequirement
 from ..setup.requirements.docker import DockerRequirement
 from ..utils.conda import SimpleConda, StandaloneConda
 from ..utils.docker import SimpleDocker
-from ..utils.venv import SimpleVenv
-from ..default import DEFAULT_VENV
-from ..default import PACKMODE_FILE, APIS_LIST_FILE
-from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, CONTAINER_LOGS_TMP_DIR
-from ..default import IS_FETCHED_FROM_HOSTED_FILE
-from ..default import INFORMATION_FILE
-from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
-from ..utils.session import get_session_dir
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
 )
 from ..utils.logging import make_temp_dir
-from ..setup.requirements.conda import CondaRequirement
+from ..utils.paths import resolve_pack_method
+from ..utils.ports import find_free_port
+from ..utils.session import get_session_dir
+from ..utils.terminal import run_command
+from ..utils.venv import SimpleVenv
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -663,6 +670,14 @@ class CondaEnvironmentService(_LocalService):
 
     @staticmethod
     def is_single_model_without_conda():
+        """
+        Check if there is a single model without conda.
+
+        Returns
+        -------
+        bool
+            True if conda is not installed, False otherwise.
+        """
         conda_checker = CondaRequirement()
         # Returns True if conda is not installed and False otherwise
         return not conda_checker.is_installed()
@@ -1265,9 +1280,9 @@ class PulledDockerImageService(BaseServing):
         try:
             response = requests.get(url, timeout=5)
             response.raise_for_status()
-        except requests.HTTPError as http_err:
+        except requests.HTTPError:
             return False
-        except Exception as err:
+        except Exception:
             return False
         else:
             return True
@@ -1478,9 +1493,9 @@ class HostedService(BaseServing):
         try:
             response = requests.get(url, timeout=5)
             response.raise_for_status()
-        except requests.HTTPError as http_err:
+        except requests.HTTPError:
             return False
-        except Exception as err:
+        except Exception:
             return False
         else:
             return True

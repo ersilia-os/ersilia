@@ -1,12 +1,10 @@
-import os
-import csv
 import json
+import os
 import time
 import uuid
-import shutil
-from ..utils.session import get_session_dir
 
 from ..default import SESSION_JSON
+from ..utils.session import get_session_dir
 from .base import ErsiliaBase
 
 

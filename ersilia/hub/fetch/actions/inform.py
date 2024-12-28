@@ -1,12 +1,11 @@
-import os
 import json
-
-from ...content.information import Information
-from ...bundle.repo import ServiceFile
-from . import BaseAction
+import os
 
 from ....default import INFORMATION_FILE
 from ....utils.paths import resolve_pack_method
+from ...bundle.repo import ServiceFile
+from ...content.information import Information
+from . import BaseAction
 
 
 class ModelInformer(BaseAction):

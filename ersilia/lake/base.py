@@ -1,3 +1,4 @@
+import importlib
 import os
 
 try:
@@ -45,7 +46,7 @@ class LakeBase(ErsiliaBase):
             If 'isaura' is not installed, a warning is logged.
         """
         try:
-            import isaura
+            importlib.util.find_spec("isaura")
 
             return True
         except ModuleNotFoundError:

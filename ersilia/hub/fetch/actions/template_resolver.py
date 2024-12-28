@@ -1,10 +1,9 @@
-import os
 import http.client
+import os
 import urllib.parse
 
+from ....default import ALLOWED_API_NAMES, GITHUB_ORG
 from . import BaseAction
-
-from ....default import GITHUB_ORG, ALLOWED_API_NAMES
 
 
 class TemplateResolver(BaseAction):
@@ -51,7 +50,7 @@ class TemplateResolver(BaseAction):
             conn.request("HEAD", parsed_url.path)
             response = conn.getresponse()
             return response.status == 200
-        except Exception as e:
+        except Exception:
             return False
         finally:
             conn.close()

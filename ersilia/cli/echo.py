@@ -2,9 +2,11 @@ try:
     import emoji
 except:
     emoji = None
-import click
-import os
 import json
+import os
+
+import click
+
 from ..default import SILENCE_FILE
 from ..utils.session import get_session_dir
 

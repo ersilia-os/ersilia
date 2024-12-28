@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 CHECKSUM_NCHAR = 8
 CHECKSUM_FILE = ".conda_checksum"

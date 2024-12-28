@@ -1,8 +1,10 @@
 # from . import echo
+import sys
+
+import click
+
 from ...utils.cli_query import query_yes_no
 from ...utils.exceptions_utils.issue_reporting import send_exception_issue
-import sys
-import click
 
 try:
     import emoji

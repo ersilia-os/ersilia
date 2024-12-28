@@ -1,8 +1,10 @@
 """Search for models"""
 
-from .catalog import CatalogTable
-import numpy as np
 import re
+
+import numpy as np
+
+from .catalog import CatalogTable
 
 
 class ModelSearcher(object):
@@ -100,7 +102,7 @@ class ModelSearcher(object):
             string_ratio.append(ratio)
             ratio = self.levenshtein_ratio_and_distance(s, r[1])
             string_ratio.append(ratio)
-            x = re.split("\s", r[2])
+            x = re.split(r"\s", r[2])
             for r1 in x:
                 ratio = self.levenshtein_ratio_and_distance(s, r1)
                 string_ratio.append(ratio)

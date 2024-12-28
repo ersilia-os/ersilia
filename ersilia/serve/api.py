@@ -1,20 +1,18 @@
-import os
-import csv
-import requests
-import json
 import collections
-import tempfile
+import csv
+import json
+import os
 import time
 
+import requests
+
+from .. import ErsiliaBase, logger
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
 from ..lake.interface import IsauraInterface
-from .. import logger
-from .. import ErsiliaBase
-from .schema import ApiSchema
-
 from ..utils.exceptions_utils.api_exceptions import InputFileNotFoundError
 from ..utils.logging import make_temp_dir
+from .schema import ApiSchema
 
 
 class Api(object):
@@ -38,8 +36,18 @@ class Api(object):
     --------
     .. code-block:: python
 
-        api = Api(model_id='eosxxxx', url='http://0.0.0.0:25512/', api_name='run', save_to_lake=True, config_json={})
-        result = api.post(input='input.json', output='output.csv', batch_size=10)
+        api = Api(
+            model_id="eosxxxx",
+            url="http://0.0.0.0:25512/",
+            api_name="run",
+            save_to_lake=True,
+            config_json={},
+        )
+        result = api.post(
+            input="input.json",
+            output="output.csv",
+            batch_size=10,
+        )
     """
 
     def __init__(self, model_id, url, api_name, save_to_lake, config_json):
@@ -198,6 +206,18 @@ class Api(object):
         return self.output_adapter.meta()
 
     def post_only_calculations(self, input, output, batch_size):
+        """
+        Handle POST requests for calculations only.
+
+        Parameters
+        ----------
+        input : object
+            The input data.
+        output : object
+            The output data.
+        batch_size : int
+            The batch size.
+        """
         self._batch_size = batch_size
         if output is not None:
             tmp_folder = make_temp_dir(prefix="ersilia-")
@@ -222,6 +242,18 @@ class Api(object):
                     yield r
 
     def post_only_reads(self, input, output, batch_size):
+        """
+        Handle POST requests for reads only.
+
+        Parameters
+        ----------
+        input : object
+            The input data.
+        output : object
+            The output data.
+        batch_size : int
+            The batch size.
+        """
         self._batch_size = batch_size
         if output is not None:
             tmp_folder = make_temp_dir(prefix="ersilia-")
@@ -246,6 +278,18 @@ class Api(object):
                     yield r
 
     def post_amenable_to_h5(self, input, output, batch_size):
+        """
+        Handle POST requests amenable to H5 format.
+
+        Parameters
+        ----------
+        input : object
+            The input data.
+        output : object
+            The output data.
+        batch_size : int
+            The batch size.
+        """
         self.logger.debug(
             "Checking for already available calculations in the data lake"
         )
@@ -305,6 +349,18 @@ class Api(object):
                 yield result
 
     def post_unique_input(self, input, output, batch_size):
+        """
+        Handle POST requests with unique input.
+
+        Parameters
+        ----------
+        input : object
+            The input data.
+        output : object
+            The output data.
+        batch_size : int
+            The batch size.
+        """
         schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
         if (
             not schema.isfile()

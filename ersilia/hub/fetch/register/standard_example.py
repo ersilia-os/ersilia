@@ -1,16 +1,13 @@
 import os
 
-from ....utils.terminal import run_command_check_output, run_command
-from ....utils.conda import SimpleConda
-from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
-
+from .... import ErsiliaBase, throw_ersilia_exception
 from ....default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
 )
-
-from .... import ErsiliaBase
-from .... import throw_ersilia_exception
+from ....utils.conda import SimpleConda
+from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
+from ....utils.terminal import run_command, run_command_check_output
 
 
 class ModelStandardExample(ErsiliaBase):
@@ -28,7 +25,9 @@ class ModelStandardExample(ErsiliaBase):
     --------
     .. code-block:: python
 
-        example_runner = ModelStandardExample(model_id="model123", config_json=config)
+        example_runner = ModelStandardExample(
+            model_id="model123", config_json=config
+        )
         example_runner.run()
     """
 

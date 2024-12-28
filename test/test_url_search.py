@@ -1,4 +1,5 @@
 import pytest
+
 from ersilia.db.hubdata.interfaces import JsonModelsInterface
 
 ji = JsonModelsInterface(config_json=None)

@@ -1,17 +1,13 @@
-import tempfile
 import os
 import shutil
 
-from .. import ErsiliaBase
-
-from .terminal import run_command
+from .. import ErsiliaBase, logger, throw_ersilia_exception
 from ..utils.exceptions_utils.fetch_exceptions import (
-    VirtualEnvironmentSetupError,
     ModelPackageInstallError,
+    VirtualEnvironmentSetupError,
 )
-from .. import throw_ersilia_exception
-from .. import logger
 from ..utils.logging import make_temp_dir
+from .terminal import run_command
 
 
 class SimpleVenv(ErsiliaBase):

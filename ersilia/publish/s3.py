@@ -1,13 +1,10 @@
-import boto3
 import os
-import shutil
-import tempfile
-import zipfile
 
-from ..utils.terminal import run_command
-from ..utils.logging import make_temp_dir
+import boto3
+
 from .. import ErsiliaBase
 from ..default import ERSILIA_MODELS_S3_BUCKET, ERSILIA_MODELS_ZIP_S3_BUCKET
+from ..utils.logging import make_temp_dir
 
 AWS_ACCOUNT_REGION = "eu-central-1"
 
@@ -27,8 +24,14 @@ class S3BucketRepoUploader(ErsiliaBase):
     --------
     .. code-block:: python
 
-        uploader = S3BucketRepoUploader(model_id="model_id", config_json="path/to/config.json")
-        uploader.set_credentials(aws_access_key_id="access_key", aws_secret_access_key="secret_key")
+        uploader = S3BucketRepoUploader(
+            model_id="model_id",
+            config_json="path/to/config.json",
+        )
+        uploader.set_credentials(
+            aws_access_key_id="access_key",
+            aws_secret_access_key="secret_key",
+        )
         uploader.upload()
     """
 

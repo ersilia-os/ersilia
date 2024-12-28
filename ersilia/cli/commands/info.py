@@ -1,10 +1,12 @@
 import json
+
 import click
-from . import ersilia_cli
-from .. import echo
+
 from ... import ErsiliaModel
 from ...core.session import Session
 from ...hub.content.information import InformationDisplayer
+from .. import echo
+from . import ersilia_cli
 
 
 def info_cmd():

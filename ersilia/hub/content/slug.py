@@ -1,6 +1,6 @@
+from ... import ErsiliaBase
 from ...db.hubdata.localslugs import SlugDb
 from ...utils.identifiers.model import ModelIdentifier
-from ... import ErsiliaBase
 from .card import ModelCard
 
 

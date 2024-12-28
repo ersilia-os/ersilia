@@ -3,6 +3,7 @@ exclude = [
     ".direnv",
     ".eggs",
     ".git",
+    ".github",
     ".git-rewrite",
     ".hg",
     ".ipynb_checkpoints",
@@ -16,13 +17,13 @@ exclude = [
     ".svn",
     ".tox",
     ".venv",
-    "test",
     ".vscode",
     "__pypackages__",
     "_build",
     "buck-out",
     "build",
     "dist",
+    "test",
     "node_modules",
     "site-packages",
     "venv",
@@ -34,13 +35,14 @@ indent-width = 4
 target-version = "py310"
 
 [lint]
-select = ["E4", "E7", "E9", "F", "I", "W"]
-ignore = []
-
-fixable = ["ALL"]
+select = ["D101", "D102", "E4", "E9", "F", "I", "W"]
+ignore = ["D104", "D105", "D107"]
+fixable = ["ALL", "D"]
 unfixable = []
-
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.pydocstyle]
+convention = "numpy" 
 
 [format]
 quote-style = "double"

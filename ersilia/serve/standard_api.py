@@ -1,23 +1,24 @@
-import os
-import csv
-import json
-import importlib
-import requests
 import asyncio
+import csv
+import importlib
+import json
+import os
+
 import nest_asyncio
-from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
+import requests
+
 from .. import ErsiliaBase
 from ..default import (
-    EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
-    EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
-)
-from ..default import (
-    INFORMATION_FILE,
     API_SCHEMA_FILE,
     DEFAULT_API_NAME,
+    EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
+    EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
+    INFORMATION_FILE,
     PREDEFINED_EXAMPLE_FILES,
 )
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
+from ..utils.cache import RedisClient
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -54,6 +55,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.info(
             "You are running the app with a standard runner. Beware that this runner does not do as many checks on the input as the conventional runner: use it at your own risk."
         )
+        self.redis_client = RedisClient()
         self.model_id = model_id
         # TODO WHY? Why can't we init with a cleaner url?
         if url[-1] == "/":
@@ -101,7 +103,7 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def _read_field_from_metadata(self, meta, field):
         if not meta:
-            self.logger.error(f"No metadata given")
+            self.logger.error("No metadata given")
             return None
         if "metadata" in meta and field in meta["metadata"]:
             return meta["metadata"][field]
@@ -111,6 +113,14 @@ class StandardCSVRunApi(ErsiliaBase):
             self.logger.error(f"Neither 'metadata' nor 'card' contains '{field}' key.")
 
     def get_identifier_object_by_input_type(self):
+        """
+        Get the identifier object by input type.
+
+        Returns
+        -------
+        object
+            The identifier object.
+        """
         identifier_module_path = "ersilia.utils.identifiers.{0}".format(
             self.input_type[0].lower()
         )
@@ -264,6 +274,19 @@ class StandardCSVRunApi(ErsiliaBase):
         return [{"key": key, "input": input, "text": input}]
 
     def serialize_to_json_three_columns(self, input_data):
+        """
+        Serialize data to JSON with three columns.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The serialized JSON data.
+        """
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
@@ -274,6 +297,19 @@ class StandardCSVRunApi(ErsiliaBase):
         return json_data
 
     def serialize_to_json_two_columns(self, input_data):
+        """
+        Serialize data to JSON with two columns.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The serialized JSON data.
+        """
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
@@ -284,6 +320,19 @@ class StandardCSVRunApi(ErsiliaBase):
         return json_data
 
     def serialize_to_json_one_column(self, input_data):
+        """
+        Serialize data to JSON with one column.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The serialized JSON data.
+        """
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
@@ -295,12 +344,38 @@ class StandardCSVRunApi(ErsiliaBase):
         return json_data
 
     async def async_serialize_to_json_one_column(self, input_data):
+        """
+        Asynchronously serialize data to JSON with one column.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The serialized JSON data.
+        """
         smiles_list = self.get_list_from_csv(input_data)
         smiles_list = [smiles for smiles in smiles_list if self.validate_smiles(smiles)]
         json_data = await self.encoder.encode_batch(smiles_list)
         return json_data
 
     def get_list_from_csv(self, input_data):
+        """
+        Get a list from a CSV file.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The list of data from the CSV file.
+        """
         smiles_list = []
         with open(input_data, mode="r") as file:
             reader = csv.DictReader(file)
@@ -458,11 +533,30 @@ class StandardCSVRunApi(ErsiliaBase):
         if OutputSource.is_cloud(output_source):
             store = InferenceStoreApi(model_id=self.model_id)
             return store.get_precalculations(input_data)
+
+        result = asyncio.run(self._get_precomputed(input_data))
+
+        output_data = self.serialize_to_csv(input_data, result, output)
+        return output_data
+
+    async def _get_precomputed(self, input_data):
+        try:
+            await self.redis_client.check_redis_server()
+        except ConnectionError as e:
+            self.logger.error(e)
+            return
+        self.redis_client.set_model_id(self.model_id)
+
+        computed_results = await self.redis_client.get_computed_result(
+            input_data, self._post
+        )
+        await self.redis_client.close()
+        return computed_results
+
+    def _post(self, input_data):
         url = "{0}/{1}".format(self.url, self.api_name)
         response = requests.post(url, json=input_data)
         if response.status_code == 200:
-            result = response.json()
-            output_data = self.serialize_to_csv(input_data, result, output)
-            return output_data
+            return response.json()
         else:
             return None

@@ -1,12 +1,12 @@
-import os
 import importlib
 import json
+import os
 
-from ...utils.docker import SimpleDocker
-from ...utils.conda import SimpleConda
-from ...db.environments.localdb import EnvironmentDb
 from ... import ErsiliaBase
+from ...db.environments.localdb import EnvironmentDb
 from ...default import IS_FETCHED_FROM_DOCKERHUB_FILE
+from ...utils.conda import SimpleConda
+from ...utils.docker import SimpleDocker
 
 
 class ModelStatus(ErsiliaBase):

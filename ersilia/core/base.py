@@ -1,10 +1,11 @@
 import os
 import subprocess
 from pathlib import Path
+
+from .. import logger
+from ..default import EOS
 from ..utils.config import Config, Credentials
 from ..utils.paths import resolve_pack_method
-from ..default import EOS
-from .. import logger
 
 home = str(Path.home())
 

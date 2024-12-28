@@ -1,16 +1,12 @@
-"""
-Deal with privileges in Ersilia.
-Base on GitHub login.
-"""
-
-from pathlib import Path
 import os
+from pathlib import Path
+
 import yaml
 
 try:
     from github import Github
     from github.GithubException import UnknownObjectException
-except ModuleNotFoundError as err:
+except ModuleNotFoundError:
     Github = None
     UnknownObjectException = None
 
@@ -19,7 +15,10 @@ HOSTNAME = "github.com"
 SECRET_REPO = "ersilia-os/ersilia-secrets"
 
 
-class Auth(object):
+class Auth:
+    """
+    This class handles authentication.
+    """
     def __init__(self):
         self.hosts_yml = os.path.join(str(Path.home()), ".config", "gh", "hosts.yml")
         if os.path.exists(self.hosts_yml):

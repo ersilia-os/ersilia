@@ -1,4 +1,4 @@
-from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
+from ..shape import InputShapeList, InputShapePairOfLists, InputShapeSingle
 
 
 class PyInputReader(object):
