@@ -21,16 +21,12 @@ Simple inputs only contain the essential information, while complete inputs cont
 For ersilia models, only model identifiers are returned for a given sample size.
 """,
     )
-    def example():
-        pass
-
-    @example.command()
     @click.argument("model", required=False, default=None, type=click.STRING)
     @click.option("--n_samples", "-n", default=5, type=click.INT)
     @click.option("--file_name", "-f", default=None, type=click.STRING)
     @click.option("--simple/--complete", "-s/-c", default=True)
     @click.option("--predefined/--random", "-p/-r", default=True)
-    def inputs(model, n_samples, file_name, simple, predefined):
+    def example(model, n_samples, file_name, simple, predefined):
         if model is not None:
             model_id = ModelBase(model).model_id
         else:
@@ -38,8 +34,7 @@ For ersilia models, only model identifiers are returned for a given sample size.
             model_id = session.current_model_id()
         if not model_id:
             echo(
-                "No model found. Please specify a model or serve a model in the current shell.",
-                fg="red",
+                "No model found. Please specify a model or serve a model in the current shell.", fg="red"
             )
             return
         eg = ExampleGenerator(model_id=model_id)
