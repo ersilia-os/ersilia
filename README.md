@@ -108,6 +108,40 @@ The Ersilia Model Hub is a Free, Open Source Software and we highly value new co
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) code of conduct.
 
+### Development Guidelines
+
+To maintain consistency and code quality, we follow certain coding and linting standards. Please adhere to these guidelines when contributing:
+
+#### Pre-commit Hooks
+
+We use `pre-commit` and `ruff` to automate code quality checks. Ensure you install and set up `pre-commit` and `ruff` before committing any changes:
+
+1. Install pre-commit: `pip install pre-commit`
+2. Set up pre-commit hooks in your local repository by running:
+   ```bash
+   pre-commit install
+   ```
+3. When you commit it automatically fix the issues but will fail for critical error such as missing docstring on a public class and public methods.
+
+#### Manual with Ruff
+
+1. Run `ruff` to check for linting errors:
+   ```bash
+   ruff check .
+   ```
+2. Automatically fix linting issues (where possible):
+   ```bash
+   ruff check . --fix
+   ```
+
+#### Docstring Style
+
+We adhere to the [NumPy-style docstring format](https://numpydoc.readthedocs.io/en/latest/format.html). Please document all public methods and functions using this style.
+
+Consistent documentation ensures the code is easy to understand and maintain.
+
+Thank you for your contributions and for helping make the Ersilia Model Hub a better project!
+
 ### Submit a New Model
 
 If you want to incorporate a new model in the platform, open a new issue using the [model request template](https://github.com/ersilia-os/ersilia/issues/new?assignees=&labels=new-model&template=model_request.yml&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) or contact us using the following [form](https://www.ersilia.io/request-model).
