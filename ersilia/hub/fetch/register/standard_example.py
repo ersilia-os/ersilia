@@ -1,13 +1,16 @@
 import os
 
-from .... import ErsiliaBase, throw_ersilia_exception
+from ....utils.terminal import run_command_check_output, run_command
+from ....utils.conda import SimpleConda
+from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
+
 from ....default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
 )
-from ....utils.conda import SimpleConda
-from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
-from ....utils.terminal import run_command, run_command_check_output
+
+from .... import ErsiliaBase
+from .... import throw_ersilia_exception
 
 
 class ModelStandardExample(ErsiliaBase):
@@ -25,12 +28,9 @@ class ModelStandardExample(ErsiliaBase):
     --------
     .. code-block:: python
 
-        example_runner = ModelStandardExample(
-            model_id="model123", config_json=config
-        )
+        example_runner = ModelStandardExample(model_id="model123", config_json=config)
         example_runner.run()
     """
-
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -58,7 +58,7 @@ class ModelStandardExample(ErsiliaBase):
         self.logger.debug(output_csv)
         commands = [
             "ersilia serve {0}".format(self.model_id),
-            "ersilia example inputs -n 3 -c -f {0}".format(input_csv),
+            "ersilia example -n 3 -c -f {0}".format(input_csv),
             "ersilia -v run -i {0} -o {1} > {2} 2>&1".format(
                 input_csv, output_csv, run_log
             ),
