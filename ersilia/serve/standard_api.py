@@ -18,7 +18,6 @@ from ..default import (
 )
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
-from ..utils.cache import RedisClient
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
