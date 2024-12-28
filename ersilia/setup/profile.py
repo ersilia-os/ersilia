@@ -5,6 +5,7 @@ class SetupProfile(object):
     """
     Class to handle profile setup.
     """
+
     def __init__(self):
         pass
 

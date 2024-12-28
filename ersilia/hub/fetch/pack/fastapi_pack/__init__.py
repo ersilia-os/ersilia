@@ -54,5 +54,6 @@ class BasePack(_Symlinker):
     config_json : dict, optional
         Configuration settings for the pack.
     """
+
     def __init__(self, model_id, config_json=None):
         _Symlinker.__init__(self, model_id, config_json)

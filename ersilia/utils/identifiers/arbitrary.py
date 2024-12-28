@@ -5,6 +5,7 @@ class ArbitraryIdentifier(object):
     """
     Class for handling arbitrary identifiers.
     """
+
     def __init__(self):
         pass
 

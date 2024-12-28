@@ -453,7 +453,8 @@ class RunTracker(ErsiliaBase):
         mismatched_types = 0
         for column, dtype_set in dtypes_list.items():
             if not all(
-                type_dict.get(dtype) == metadata["Output Type"][0] for dtype in dtype_set
+                type_dict.get(dtype) == metadata["Output Type"][0]
+                for dtype in dtype_set
             ):
                 mismatched_types += 1
 

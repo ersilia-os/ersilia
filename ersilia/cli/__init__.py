@@ -7,4 +7,4 @@ create_session_dir()
 if __name__ == "__main__":
     cli()
 
-__all__ = ['echo']
+__all__ = ["echo"]

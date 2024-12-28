@@ -5,6 +5,7 @@ class TimeStampIdentifier(object):
     """
     Class for handling timestamp identifiers.
     """
+
     def __init__(self):
         self.stamp = datetime.now()
 

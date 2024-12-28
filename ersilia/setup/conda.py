@@ -2,6 +2,7 @@ class SetupConda(object):
     """
     Class to handle conda setup.
     """
+
     def __init__(self):
         pass
 

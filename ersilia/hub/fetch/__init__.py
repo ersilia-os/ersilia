@@ -29,6 +29,7 @@ class ModelURLResolver(ErsiliaBase):
     credentials_json : dict, optional
         Credentials settings in JSON format.
     """
+
     def __init__(self, model_id, config_json=None, credentials_json=None):
         super().__init__(config_json, credentials_json)
         self.model_id = model_id

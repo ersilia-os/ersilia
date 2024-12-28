@@ -385,6 +385,7 @@ class HTTPResponse:
     """
     Class representing an HTTP response.
     """
+
     status: int = 200
     headers: HTTPHeaders = HTTPHeaders()
     body: bytes = b""

@@ -1,10 +1,13 @@
 import os
+import shutil
+import zipfile
 
 import boto3
 
 from .. import ErsiliaBase
 from ..default import ERSILIA_MODELS_S3_BUCKET, ERSILIA_MODELS_ZIP_S3_BUCKET
 from ..utils.logging import make_temp_dir
+from ..utils.terminal import run_command
 
 AWS_ACCOUNT_REGION = "eu-central-1"
 

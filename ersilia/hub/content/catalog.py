@@ -223,6 +223,7 @@ class ModelCatalog(ErsiliaBase):
     MORE_FIELDS : list
         List of fields with more information.
     """
+
     LESS_FIELDS = ["Identifier", "Slug"]
     MORE_FIELDS = LESS_FIELDS + [
         "Title",
@@ -231,6 +232,7 @@ class ModelCatalog(ErsiliaBase):
         "Output",
         "Output Shape",
     ]
+
     def __init__(self, config_json=None, less=True):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mi = ModelIdentifier()

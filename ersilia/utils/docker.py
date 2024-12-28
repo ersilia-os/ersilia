@@ -309,7 +309,8 @@ class SimpleDocker(object):
         else:
             # TODO
             cmd = "sudo -u {0} udocker run {1} bash".format(
-                DEFAULT_UDOCKER_USERNAME, name)
+                DEFAULT_UDOCKER_USERNAME, name
+            )
             run_command(cmd)
         return name
 

@@ -280,7 +280,9 @@ class GitHubDownloader(object):
                 else:
                     self._download_large_file(response, file, total_length, filename)
 
-            self.logger.info(f"✅ Successfully downloaded {filename} to {local_filename}")
+            self.logger.info(
+                f"✅ Successfully downloaded {filename} to {local_filename}"
+            )
         except requests.RequestException as e:
             self.logger.error(
                 f"❗ Could not download file {filename} from S3 bucket: {file_url}. "

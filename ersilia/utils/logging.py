@@ -13,6 +13,7 @@ ROTATION = "10 MB"
 
 # ruff: noqa: D101, D102, F811
 
+
 def make_temp_dir(prefix):
     """
     Create a temporary directory with a symbolic link in the session logs directory.

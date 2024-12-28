@@ -10,6 +10,7 @@ class ErsiliaCommandGroup(click.Group):
     """
     Command group for Ersilia CLI commands.
     """
+
     NUMBER_OF_COMMON_PARAMS = 2
 
     @staticmethod
@@ -17,6 +18,7 @@ class ErsiliaCommandGroup(click.Group):
         """
         Add common parameters to the command.
         """
+
         @click.option(
             "-q",
             "--quiet",
@@ -34,6 +36,7 @@ class ErsiliaCommandGroup(click.Group):
         """
         Register a new command with common parameters.
         """
+
         def wrapper(func):
             func = ErsiliaCommandGroup.bentoml_common_params(func)
             func.__click_params__ = (

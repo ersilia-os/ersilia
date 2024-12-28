@@ -7,6 +7,7 @@ EXAMPLES = "protein.tsv"
 
 # ruff: noqa: D101, D102
 
+
 class IO(object):
     def __init__(self):
         self.identifier = ProteinIdentifier()

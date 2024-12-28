@@ -15,6 +15,7 @@ class LakeStorer(ErsiliaBase):
     credentials_json : dict
         Credentials in JSON format.
     """
+
     def __init__(self, model_id, config_json, credentials_json):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json

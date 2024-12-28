@@ -8,8 +8,6 @@ from ...db.hubdata.interfaces import JsonModelsInterface
 from ...default import MODEL_SOURCE_FILE, PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 from ...hub.delete.delete import ModelFullDeleter
 from ...hub.fetch.actions.template_resolver import TemplateResolver
-from ...hub.fetch.actions.setup import SetupChecker
-from ...hub.delete.delete import ModelFullDeleter
 from ...setup.requirements import check_bentoml
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithBentoML,

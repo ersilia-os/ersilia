@@ -9,6 +9,7 @@ class Environment(object):
     """
     Class to handle environment settings.
     """
+
     def __init__(self):
         self.python_packages = {dist.metadata["Name"] for dist in distributions()}
 

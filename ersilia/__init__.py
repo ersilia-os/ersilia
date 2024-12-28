@@ -30,6 +30,7 @@ os.environ["EOS_HOME"] = EOS
 # User profile
 bashrc_cli_snippet(overwrite=False)
 
+
 # Check status of installs
 def check_install_status():
     fn = os.path.join(EOS, INSTALL_STATUS_FILE)
@@ -44,4 +45,12 @@ def check_install_status():
 
 INSTALL_STATUS = check_install_status()["status"]
 
-__all__ = ['__version__', 'logger', 'throw_ersilia_exception', 'ErsiliaBase', 'ErsiliaModel', 'ModelBase', 'Config']
+__all__ = [
+    "__version__",
+    "logger",
+    "throw_ersilia_exception",
+    "ErsiliaBase",
+    "ErsiliaModel",
+    "ModelBase",
+    "Config",
+]

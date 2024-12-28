@@ -183,6 +183,7 @@ class Installer(BaseInstaller):
             return
         try:
             import importlib.util
+
             if importlib.util.find_spec("rdkit") is not None:
                 exists = True
         except ModuleNotFoundError:

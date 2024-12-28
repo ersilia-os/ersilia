@@ -19,6 +19,7 @@ class Auth:
     """
     This class handles authentication.
     """
+
     def __init__(self):
         self.hosts_yml = os.path.join(str(Path.home()), ".config", "gh", "hosts.yml")
         if os.path.exists(self.hosts_yml):

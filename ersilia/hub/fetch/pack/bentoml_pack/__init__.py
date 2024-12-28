@@ -152,6 +152,7 @@ class BasePack(_Deleter, _Symlinker, _Writer):
     config_json : dict
         Configuration settings for the pack.
     """
+
     def __init__(self, model_id, config_json):
         _Deleter.__init__(self, model_id, config_json)
         _Symlinker.__init__(self, model_id, config_json)

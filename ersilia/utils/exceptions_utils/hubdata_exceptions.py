@@ -2,6 +2,7 @@ from .exceptions import ErsiliaError
 
 # ruff: noqa: D101, D102
 
+
 # Note: Not really used anywhere right now except in the sanitize class
 class InvalidUrlInAirtableError(ErsiliaError):
     def __init__(self, url):

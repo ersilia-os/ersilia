@@ -20,6 +20,7 @@ INTERNAL_DOCKERPORT = 80
 
 # ruff: noqa: D101, D102
 
+
 class DockerManager(ErsiliaBase):
     """
     Manages Docker operations for Ersilia models.

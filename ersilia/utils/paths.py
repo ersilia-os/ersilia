@@ -221,6 +221,7 @@ class ErsiliaMetadataLoader(yaml.SafeLoader):
     """
     Custom YAML loader for Ersilia metadata.
     """
+
     pass
 
 

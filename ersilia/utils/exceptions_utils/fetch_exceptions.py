@@ -2,6 +2,7 @@ from .exceptions import ErsiliaError
 
 # ruff: noqa: D101, D102
 
+
 class FetchErsiliaError(ErsiliaError):
     def __init__(self, model_id):
         self.model_id = model_id

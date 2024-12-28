@@ -53,6 +53,7 @@ class MissingDependencyError(ErsiliaError):
     """
     Exception raised for missing dependency errors.
     """
+
     def __init__(self, dependency):
         self.dependency = dependency
         self.message = "Missing dependency {0}".format(self.dependency)
@@ -64,6 +65,7 @@ class NullModelIdentifierError(ErsiliaError):
     """
     Exception raised for null model identifier errors.
     """
+
     def __init__(self, model):
         self.model = model
         self.message = "Model identifier {0} is null".format(self.model)
@@ -75,6 +77,7 @@ class InvalidModelIdentifierError(ErsiliaError):
     """
     Exception raised for invalid model identifier errors.
     """
+
     def __init__(self, model):
         self.model = model
         self.message = "Could not identify model identifier or slug: {0}:".format(
@@ -90,6 +93,7 @@ class ModelNotAvailableLocallyError(ErsiliaError):
     """
     Exception raised when the model is not available locally.
     """
+
     def __init__(self, model):
         self.model = model
         self.message = (
@@ -106,6 +110,7 @@ class EmptyOutputError(ErsiliaError):
     """
     Exception raised for empty output errors.
     """
+
     def __init__(self, model_id, api_name):
         self.model_id = model_id
         self.api_name = api_name

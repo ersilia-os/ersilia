@@ -8,6 +8,7 @@ class SetupConfig(object):
     """
     Class to handle configuration setup.
     """
+
     def __init__(self):
         pass
 
