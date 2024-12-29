@@ -24,6 +24,7 @@
   * [Inputs](ersilia-model-hub/developer-docs/inputs.md)
   * [Dockerization of Ersilia Models](ersilia-model-hub/developer-docs/dockerization-of-ersilia-models.md)
   * [Ersilia CLI Overview](ersilia-model-hub/developer-docs/ersilia-cli-overview.md)
+  * [Model Tester](ersilia-model-hub/developer-docs/model-tester.md)
 * [What is the Ersilia Model Hub?](ersilia-model-hub/introduction.md)
 * [Installation](ersilia-model-hub/installation.md)
 * [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
