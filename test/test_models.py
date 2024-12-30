@@ -87,7 +87,7 @@ def mock_run():
 
 
 @patch("ersilia.core.model.ErsiliaModel")
-def test_models(
+def test_model_with_prior_fetching(
     mock_ersilia_model,
     mock_fetcher,
     mock_session,
@@ -107,6 +107,45 @@ def test_models(
     em = ErsiliaModel(
         model=MODEL_ID, service_class="docker", output_source="LOCAL_ONLY"
     )
+
+    result = em.run(
+        input=INPUT,
+        output="result.csv",
+        batch_size=100,
+        track_run=False,
+        try_standard=False,
+    )
+
+    em.serve()
+    em.close()
+
+    assert result == RESULTS[1]
+    assert mock_fetcher.called
+    assert mock_serve.called
+    assert mock_run.called
+    assert mock_close.called
+
+
+@patch("ersilia.core.model.ErsiliaModel")
+def test_model_with_no_prior_fetching(
+    mock_ersilia_model,
+    mock_fetcher,
+    mock_session,
+    mock_set_apis,
+    mock_convn_api_get_apis,
+    mock_api_task,
+    mock_serve,
+    mock_run,
+    mock_close,
+):
+    MODEL_ID = MODELS[1]
+    INPUT = "CCCC"
+
+    em = ErsiliaModel(
+        model=MODEL_ID, service_class="docker", output_source="LOCAL_ONLY"
+    )
+
+    em.fetch()
 
     result = em.run(
         input=INPUT,
