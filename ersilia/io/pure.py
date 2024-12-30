@@ -26,6 +26,7 @@ class PureDataTyper(ErsiliaBase):
         >>> data_typer.get_type()
         {'type': 'numeric_array', 'shape': (3,)}
     """
+
     def __init__(self, data: any, model_id: str = None, config_json: str = None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.data = data

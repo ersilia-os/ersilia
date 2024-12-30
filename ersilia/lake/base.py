@@ -22,6 +22,7 @@ class LakeBase(ErsiliaBase):
     lake_dir : str or None
         Absolute path to the lake directory if ISAURA_REPOSITORY_PATH is set, otherwise None.
     """
+
     def __init__(self, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json)
         if ISAURA_REPOSITORY_PATH is not None:

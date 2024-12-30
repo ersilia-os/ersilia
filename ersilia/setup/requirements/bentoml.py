@@ -18,6 +18,7 @@ class BentoMLRequirement(object):
     install()
         Installs the Ersilia version of BentoML.
     """
+
     def __init__(self):
         pass
 
@@ -32,6 +33,7 @@ class BentoMLRequirement(object):
         """
         try:
             import bentoml
+
             return True
         except ImportError:
             return False

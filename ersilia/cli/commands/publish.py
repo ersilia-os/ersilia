@@ -28,6 +28,7 @@ def publish_cmd():
         Rebase a model:
         $ ersilia publish rebase <model_id>
     """
+
     def _publish(mf, model_id):
         mf.publish(model_id)
 

@@ -22,6 +22,7 @@ class IO(object):
     input_shape : object
         Input shape specification.
     """
+
     def __init__(self, input_shape):
         self.logger = logger
         self.input_shape = input_shape

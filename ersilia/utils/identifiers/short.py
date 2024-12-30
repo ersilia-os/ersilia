@@ -18,6 +18,7 @@ class ShortIdentifier(object):
     """
     A class to generate short identifiers.
     """
+
     def __init__(self):
         if Hashids is None:
             self.hashids = None

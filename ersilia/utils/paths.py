@@ -32,6 +32,7 @@ class Paths(object):
     exists(path)
         Check if a path exists.
     """
+
     def __init__(self):
         self.essentials = ["setup.py", "README.md", "CODE_OF_CONDUCT.md"]
 
@@ -178,6 +179,7 @@ class Metadata:
     Contributor : Optional[str], optional
         The contributor of the model. Default is None.
     """
+
     Identifier: str
     Slug: str
     Title: str

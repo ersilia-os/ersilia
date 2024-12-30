@@ -23,6 +23,7 @@ class ModelPublisher(ErsiliaBase):
     credentials_json : str
         Path to the credentials JSON file.
     """
+
     def __init__(self, model_id, config_json, credentials_json):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json

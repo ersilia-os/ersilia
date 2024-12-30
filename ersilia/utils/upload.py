@@ -20,6 +20,7 @@ class OsfUploader(object):
     push(project_id, filename, destination)
         Upload a file to OSF.
     """
+
     def __init__(self, overwrite, username, password):
         self.overwrite = overwrite
         self.username = username

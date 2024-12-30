@@ -6,6 +6,7 @@ from ... import ErsiliaModel
 from ...core.session import Session
 from ...utils.session import deregister_model_session
 
+
 def close_cmd():
     """
     Closes the current session.
@@ -24,6 +25,7 @@ def close_cmd():
         Close the current session:
         $ ersilia close
     """
+
     # Example usage: ersilia close {MODEL}
     @ersilia_cli.command(short_help="Close model", help="Close model")
     def close():

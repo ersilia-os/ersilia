@@ -20,6 +20,7 @@ class DockerRequirement(object):
     is_installed()
         Checks if Docker is installed.
     """
+
     def __init__(self):
         self.name = "docker"
 

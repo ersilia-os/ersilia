@@ -34,6 +34,7 @@ class ModelRegisterer(ErsiliaBase):
         registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
         await registerer.register(is_from_dockerhub=True)
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -171,7 +172,9 @@ class ModelRegisterer(ErsiliaBase):
         with open(file_name, "w") as f:
             json.dump(data, f)
 
-    async def register(self, is_from_dockerhub: bool = False, is_from_hosted: bool = False):
+    async def register(
+        self, is_from_dockerhub: bool = False, is_from_hosted: bool = False
+    ):
         """
         Register the model based on its source.
 

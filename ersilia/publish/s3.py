@@ -31,6 +31,7 @@ class S3BucketRepoUploader(ErsiliaBase):
         uploader.set_credentials(aws_access_key_id="access_key", aws_secret_access_key="secret_key")
         uploader.upload()
     """
+
     def __init__(self, model_id: str, config_json=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -40,7 +41,7 @@ class S3BucketRepoUploader(ErsiliaBase):
         self.aws_access_key_id = None
         self.aws_secret_access_key = None
         self.ignore = ["upload_model_to_s3.py"]
-    
+
     def _clone(self):
         self.logger.debug("Cloning model {0} from ersilia-os".format(self.model_id))
         run_command(
@@ -105,7 +106,7 @@ class S3BucketRepoUploader(ErsiliaBase):
                         os.path.join(root, file), os.path.join(repo_path, "..")
                     ),
                 )
-                
+
     def _zip_model(self, repo_path):
         repo_path = os.path.abspath(repo_path)
         self.zip_model_file = os.path.join(self.tmp_zip_folder, self.model_id + ".zip")

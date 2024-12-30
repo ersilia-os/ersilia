@@ -12,6 +12,7 @@ class CondaRequirement(object):
     install()
         Placeholder for installing Conda.
     """
+
     def __init__(self):
         self.name = "conda"
 

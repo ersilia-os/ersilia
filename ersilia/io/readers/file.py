@@ -25,6 +25,7 @@ class FileTyper(object):
     path : str
         Path to the file.
     """
+
     def __init__(self, path):
         self.path = os.path.join(path)
 
@@ -142,6 +143,7 @@ class BatchCacher(object):
     """
     Class to handle caching of file batches.
     """
+
     def __init__(self):
         self.tmp_folder = make_temp_dir(prefix="ersilia-")
 
@@ -236,6 +238,7 @@ class BaseTabularFile(object):
     sniff_line_limit : int, optional
         Line limit for sniffing the file.
     """
+
     def __init__(
         self,
         path,
@@ -612,6 +615,7 @@ class TabularFileShapeStandardizer(BaseTabularFile):
         tfss = TabularFileShapeStandardizer("data.csv", "standard_data.csv", "single", IOHandler())
         tfss.standardize()
     """
+
     def __init__(self, src_path, dst_path, input_shape, IO, sniff_line_limit=100):
         if type(input_shape) is str:
             self.input_shape = InputShape(input_shape).get()
@@ -734,6 +738,7 @@ class StandardTabularFileReader(BatchCacher):
     path : str
         Path to the file.
     """
+
     def __init__(self, path):
         BatchCacher.__init__(self)
         self.path = os.path.abspath(path)
@@ -850,6 +855,7 @@ class TabularFileReader(StandardTabularFileReader):
     sniff_line_limit : int, optional
         Line limit for sniffing the file.
     """
+
     def __init__(self, path, IO, sniff_line_limit=100):
         self.src_path = os.path.abspath(path)
         self.tmp_folder = make_temp_dir(prefix="ersilia-")
@@ -922,6 +928,7 @@ class BaseJsonFile(object):
     expected_number : int
         Expected number of elements.
     """
+
     def __init__(self, path, IO, entity_is_list, expected_number):
         self.logger = logger
         self.path = os.path.abspath(path)
@@ -998,6 +1005,7 @@ class JsonFileShapeStandardizer(BaseJsonFile):
     IO : object
         IO handler object.
     """
+
     def __init__(self, src_path, dst_path, input_shape, IO):
         self.src_path = os.path.abspath(src_path)
         self.dst_path = os.path.abspath(dst_path)
@@ -1053,6 +1061,7 @@ class StandardJsonFileReader(BatchCacher):
     >>> sjfr.read()
     [{'key': 'value'}, {'key': 'value'}]
     """
+
     def __init__(self, path):
         BatchCacher.__init__(self)
         self.path = os.path.abspath(path)
@@ -1123,6 +1132,7 @@ class JsonFileReader(StandardJsonFileReader):
     IO : object
         IO handler object.
     """
+
     def __init__(self, path, IO):
         self.src_path = os.path.abspath(path)
         self.tmp_folder = make_temp_dir(prefix="ersilia-")

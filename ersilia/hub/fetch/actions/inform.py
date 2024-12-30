@@ -21,6 +21,7 @@ class ModelInformer(BaseAction):
     config_json : dict
         Configuration settings for the model.
     """
+
     def __init__(self, model_id, config_json):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None

@@ -46,6 +46,7 @@ class CompoundIdentifier(object):
         print(inchikey)
 
     """
+
     def __init__(self, local=True, concurrency_limit=10, cache_maxsize=128):
         if local:
             self.Chem = Chem

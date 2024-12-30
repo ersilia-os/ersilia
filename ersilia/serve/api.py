@@ -55,7 +55,7 @@ class Api(object):
             model_id=model_id, api_name=api_name, config_json=config_json
         )
         self.save_to_lake = save_to_lake
-        if (url[-1] == "/"):
+        if url[-1] == "/":
             self.url = url[:-1]
         else:
             self.url = url

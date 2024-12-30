@@ -13,7 +13,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    'sphinx.ext.autosummary'
+    "sphinx.ext.autosummary",
 ]
 
 autosummary_generate = True
@@ -26,15 +26,12 @@ master_doc = "index"
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "furo"
-html_theme_options = {
-    "collapse_navigation": True, 
-    "navigation_depth": 4        
-}
+html_theme_options = {"collapse_navigation": True, "navigation_depth": 4}
 
 html_static_path = []
 htmlhelp_basename = "ersilia_doc"
 
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 latex_documents = [
     (master_doc, "ersilia.tex", "Ersilia Documentation", author, "manual"),

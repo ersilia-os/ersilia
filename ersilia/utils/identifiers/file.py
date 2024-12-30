@@ -13,6 +13,7 @@ class FileIdentifier(object):
     chunk_size : int, optional
         The size of the chunks to read from the file. Default is 10000 bytes.
     """
+
     def __init__(self, chunk_size=10000):
         self.chunk_size = chunk_size
 

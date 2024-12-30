@@ -25,6 +25,7 @@ class ModelStorager(ErsiliaBase):
     overwrite : bool, optional
         Whether to overwrite existing files. Default is True.
     """
+
     def __init__(self, config_json=None, credentials_json=None, overwrite=True):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -95,6 +96,7 @@ class ModelRemover(ErsiliaBase):
         remover = ModelRemover(config_json="path/to/config.json", credentials_json="path/to/credentials.json")
         remover.remove(model_id="model_id")
     """
+
     def __init__(self, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json

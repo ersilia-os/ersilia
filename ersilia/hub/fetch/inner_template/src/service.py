@@ -18,7 +18,7 @@ CHECKPOINTS_BASEDIR = "checkpoints"
 FRAMEWORK_BASEDIR = "framework"
 
 
-def load_model(framework_dir: str, checkpoints_dir: str) -> 'Model':
+def load_model(framework_dir: str, checkpoints_dir: str) -> "Model":
     """
     Load the model with the given framework and checkpoints directories.
 
@@ -244,7 +244,7 @@ class Artifact(BentoServiceArtifact):
     def _model_file_path(self, base_path):
         return os.path.join(base_path, self.name + self._extension)
 
-    def pack(self, model: Model) -> 'Artifact':
+    def pack(self, model: Model) -> "Artifact":
         """
         Pack the model into the artifact.
 
@@ -261,7 +261,7 @@ class Artifact(BentoServiceArtifact):
         self._model = model
         return self
 
-    def load(self, path: str) -> 'Artifact':
+    def load(self, path: str) -> "Artifact":
         """
         Load the model from the given path.
 

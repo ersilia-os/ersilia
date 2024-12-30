@@ -27,6 +27,7 @@ class S3Logger(ErsiliaBase):
     aws_secret_access_key : str or None
         AWS secret access key.
     """
+
     def __init__(self, model_id: str, config_json: dict = None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id

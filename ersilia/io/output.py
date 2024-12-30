@@ -1,4 +1,3 @@
-
 import csv
 import os
 import json
@@ -723,7 +722,9 @@ class GenericOutputAdapter(ResponseRefactor):
                             fo.write(l)
                     use_header = False
 
-    def _adapt_generic(self, result: dict, output: str, model_id: str = None, api_name: str = None) -> dict:
+    def _adapt_generic(
+        self, result: dict, output: str, model_id: str = None, api_name: str = None
+    ) -> dict:
         """
         Adapts the output based on the result and model.
 
@@ -834,7 +835,9 @@ class GenericOutputAdapter(ResponseRefactor):
             pass
         return result
 
-    def adapt(self, result: dict, output: str, model_id: str = None, api_name: str = None) -> dict:
+    def adapt(
+        self, result: dict, output: str, model_id: str = None, api_name: str = None
+    ) -> dict:
         """
         Adapts the output based on the result and model.
 

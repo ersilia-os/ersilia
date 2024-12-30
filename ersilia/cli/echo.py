@@ -27,6 +27,7 @@ class Silencer(object):
     silence()
         Disables CLI output.
     """
+
     def __init__(self):
         self.silence_file = os.path.join(get_session_dir(), SILENCE_FILE)
         if not os.path.exists(self.silence_file):
