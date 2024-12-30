@@ -345,6 +345,7 @@
 <span class="sd">        Serve a model and track the session:</span>
 <span class="sd">        $ ersilia serve &lt;model_id&gt; --track</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="c1"># Example usage: ersilia serve {MODEL}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
@@ -393,7 +394,7 @@
         <span class="k">if</span> <span class="n">mdl</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No URL found. Service unsuccessful.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
             <span class="k">return</span>
-        
+
         <span class="n">register_model_session</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span>
             <span class="s2">&quot;:rocket: Serving model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>

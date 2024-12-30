@@ -345,6 +345,7 @@
 <span class="sd">    credentials_json : dict, optional</span>
 <span class="sd">        Credentials settings in JSON format. Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="p">,</span> <span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -466,6 +467,7 @@
 <span class="sd">    credentials_json : dict, optional</span>
 <span class="sd">        Credentials settings in JSON format. Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseInstaller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -584,12 +586,16 @@
             <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            source </span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">            conda deactivate</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">bash_script</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        source </span><span class="si">{0}</span><span class="s2">/etc/profile.d/conda.sh</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">))</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">sc</span><span class="o">.</span><span class="n">conda_prefix</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">bc</span> <span class="o">=</span> <span class="n">SetupBaseConda</span><span class="p">()</span>
         <span class="n">python_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">versions</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span>
         <span class="n">python_version</span> <span class="o">=</span> <span class="n">bc</span><span class="o">.</span><span class="n">find_closest_python_version</span><span class="p">(</span><span class="n">python_version</span><span class="p">)</span>
@@ -600,7 +606,9 @@
 <span class="s2">        pip install -e .</span>
 <span class="s2">        python </span><span class="si">{3}</span>
 <span class="s2">        conda deactivate</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_repo</span><span class="p">,</span> <span class="n">eos_base_env</span><span class="p">,</span> <span class="n">python_version</span><span class="p">,</span> <span class="n">tmp_python_script</span><span class="p">)</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">tmp_repo</span><span class="p">,</span> <span class="n">eos_base_env</span><span class="p">,</span> <span class="n">python_version</span><span class="p">,</span> <span class="n">tmp_python_script</span>
+        <span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
         <span class="n">python_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
@@ -707,6 +715,7 @@
 <span class="sd">    credentials_json : dict, optional</span>
 <span class="sd">        Credentials settings in JSON format. Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_install_log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseInstaller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>

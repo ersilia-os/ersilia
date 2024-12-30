@@ -367,8 +367,17 @@
 <span class="sd">    credentials_json : str, optional</span>
 <span class="sd">        Path to the credentials JSON file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">template_repo</span><span class="o">=</span><span class="s2">&quot;eos-template&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">template_repo</span><span class="o">=</span><span class="s2">&quot;eos-template&quot;</span><span class="p">,</span>
+        <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">template_repo</span> <span class="o">=</span> <span class="n">template_repo</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="p">)</span>
@@ -376,7 +385,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">template_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_repo</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">file_folder_rebaser</span> <span class="o">=</span> <span class="n">_FileFolderRebaser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_folder_rebaser</span> <span class="o">=</span> <span class="n">_FileFolderRebaser</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_path</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="TemplateRebaser.clone_template">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.rebase.TemplateRebaser.clone_template">[docs]</a>

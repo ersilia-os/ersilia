@@ -316,42 +316,12 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">.base_information</span> <span class="kn">import</span> <span class="n">BaseInformation</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">...auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
 <span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
-<span class="kn">import</span> <span class="nn">validators</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationFailure</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ValidationFailure</span>
-
-<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.card_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SlugBaseInformationError</span><span class="p">,</span>
-    <span class="n">IdentifierBaseInformationError</span><span class="p">,</span>
-    <span class="n">StatusBaseInformationError</span><span class="p">,</span>
-    <span class="n">TitleBaseInformationError</span><span class="p">,</span>
-    <span class="n">DescriptionBaseInformationError</span><span class="p">,</span>
-    <span class="n">ModeBaseInformationError</span><span class="p">,</span>
-    <span class="n">InputBaseInformationError</span><span class="p">,</span>
-    <span class="n">InputShapeBaseInformationError</span><span class="p">,</span>
-    <span class="n">OutputBaseInformationError</span><span class="p">,</span>
-    <span class="n">OutputTypeBaseInformationError</span><span class="p">,</span>
-    <span class="n">OutputShapeBaseInformationError</span><span class="p">,</span>
-    <span class="n">TaskBaseInformationError</span><span class="p">,</span>
-    <span class="n">TagBaseInformationError</span><span class="p">,</span>
-    <span class="n">PublicationBaseInformationError</span><span class="p">,</span>
-    <span class="n">SourceCodeBaseInformationError</span><span class="p">,</span>
-    <span class="n">LicenseBaseInformationError</span><span class="p">,</span>
-    <span class="n">GithubBaseInformationError</span><span class="p">,</span>
-    <span class="n">DockerhubBaseInformationError</span><span class="p">,</span>
-    <span class="n">DockerArchitectureInformationError</span><span class="p">,</span>
-    <span class="n">S3BaseInformationError</span><span class="p">,</span>
-    <span class="n">BothIdentifiersBaseInformationError</span><span class="p">,</span>
-    <span class="n">MemoryGbBaseInformationError</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">...utils.identifiers.model</span> <span class="kn">import</span> <span class="n">ModelIdentifier</span>
 <span class="kn">from</span> <span class="nn">...utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -366,433 +336,6 @@
     <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
-
-
-<div class="viewcode-block" id="BaseInformation">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseInformation</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to handle the base information of a model card.</span>
-
-<span class="sd">    A model card contains metadata about a model, such as its identifier, slug, status,</span>
-<span class="sd">    title, description, mode, input, output, and other relevant information. And This class provides</span>
-<span class="sd">    methods to validate and set various fields of a model card.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    config_json : dict</span>
-<span class="sd">        Configuration settings in JSON format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_slug</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">_is_valid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url_string</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ValidationFailure</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">_read_default_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
-        <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
-        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">valid_field</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">valid_field</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span>
-
-    <span class="nd">@identifier</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identifier</span><span class="p">):</span>
-        <span class="n">mi</span> <span class="o">=</span> <span class="n">ModelIdentifier</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">mi</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">new_identifier</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">IdentifierBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="n">new_identifier</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slug</span>
-
-    <span class="nd">@slug</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_slug</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">new_slug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">new_slug</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SlugBaseInformationError</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_slug</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">60</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SlugBaseInformationError</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_slug</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">SlugBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_slug</span> <span class="o">=</span> <span class="n">new_slug</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span>
-
-    <span class="nd">@status</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">new_status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">StatusBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="n">new_status</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
-
-    <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_title</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">TitleBaseInformationError</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">TitleBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">new_title</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
-
-    <span class="nd">@description</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_description</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_description</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DescriptionBaseInformationError</span>
-        <span class="k">if</span> <span class="n">new_description</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DescriptionBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="n">new_description</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span>
-
-    <span class="nd">@mode</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_mode</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">new_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Mode&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">ModeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">new_mode</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input</span>
-
-    <span class="nd">@input</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_input</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_input</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_input</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_input</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InputBaseInformationError</span>
-        <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">new_input</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">inp</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Input&quot;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">InputBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="n">new_input</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span>
-
-    <span class="nd">@input_shape</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input_shape</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">new_input_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span>
-            <span class="s2">&quot;Input Shape&quot;</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InputShapeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="n">new_input_shape</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span>
-
-    <span class="nd">@task</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_task</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_task</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_task</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_task</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_task</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">TaskBaseInformationError</span>
-        <span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="n">new_task</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">nt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Task&quot;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">TaskBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="n">new_task</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span>
-
-    <span class="nd">@output</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_output</span><span class="p">]</span>
-        <span class="n">default_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">no</span> <span class="ow">in</span> <span class="n">new_output</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">OutputBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">new_output</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span>
-
-    <span class="nd">@output_type</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_type</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_output_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_output_type</span><span class="p">]</span>
-        <span class="n">default_output_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">no</span> <span class="ow">in</span> <span class="n">new_output_type</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_type</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">OutputTypeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="n">new_output_type</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span>
-
-    <span class="nd">@output_shape</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_shape</span><span class="p">):</span>
-        <span class="n">default_output_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">new_output_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_shape</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">OutputShapeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="n">new_output_shape</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span>
-
-    <span class="nd">@interpretation</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_interpretation</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span> <span class="o">=</span> <span class="n">new_interpretation</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
-
-    <span class="nd">@tag</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_tag</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_tag</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_tag</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_tag</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_tag</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">TagBaseInformationError</span>
-        <span class="n">default_tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Tag&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="n">new_tag</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">nt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_tags</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">TagBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="n">new_tag</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">publication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span>
-
-    <span class="nd">@publication</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">publication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_url</span><span class="p">(</span><span class="n">new_publication</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">PublicationBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="n">new_publication</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span>
-
-    <span class="nd">@source_code</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source_code</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_url</span><span class="p">(</span><span class="n">new_source_code</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">SourceCodeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="n">new_source_code</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_license</span>
-
-    <span class="nd">@license</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_license</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">new_license</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;License&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">LicenseBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="n">new_license</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span>
-
-    <span class="nd">@date</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_date</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_date</span> <span class="o">=</span> <span class="n">new_date</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span>
-
-    <span class="nd">@contributor</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_contributor</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="n">new_contributor</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
-        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">GithubBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">model_id</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_github</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span>
-
-    <span class="nd">@dockerhub</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dockerhub_url</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_dockerhub_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-            <span class="s2">&quot;https://hub.docker.com/r/ersiliaos/&quot;</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DockerhubBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="n">new_dockerhub_url</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span>
-
-    <span class="nd">@docker_architecture</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_docker_architecture</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_docker_architecture</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_docker_architecture</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_docker_architecture</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">new_docker_architecture</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span>
-                <span class="s2">&quot;Docker Architecture&quot;</span>
-            <span class="p">):</span>
-                <span class="k">raise</span> <span class="n">DockerArchitectureInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="n">new_docker_architecture</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span>
-
-    <span class="nd">@s3</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_s3_url</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_s3_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-            <span class="s2">&quot;https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/&quot;</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">S3BaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="n">new_s3_url</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">both_identifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
-        <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span>
-        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">BothIdentifiersBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_both_identifiers</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">slug</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_both_identifiers</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span>
-
-    <span class="nd">@memory_gb</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_memory_gb</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_memory_gb</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MemoryGbBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span> <span class="o">=</span> <span class="n">new_memory_gb</span>
-
-<div class="viewcode-block" id="BaseInformation.as_dict">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation.as_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert the base information to a dictionary.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            The base information as a dictionary.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Identifier&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
-            <span class="s2">&quot;Slug&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span>
-            <span class="s2">&quot;Status&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
-            <span class="s2">&quot;Title&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
-            <span class="s2">&quot;Description&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
-            <span class="s2">&quot;Mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-            <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span>
-            <span class="s2">&quot;Input Shape&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span>
-            <span class="s2">&quot;Task&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">,</span>
-            <span class="s2">&quot;Output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
-            <span class="s2">&quot;Output Type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span><span class="p">,</span>
-            <span class="s2">&quot;Output Shape&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_shape</span><span class="p">,</span>
-            <span class="s2">&quot;Interpretation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpretation</span><span class="p">,</span>
-            <span class="s2">&quot;Tag&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
-            <span class="s2">&quot;Publication&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">publication</span><span class="p">,</span>
-            <span class="s2">&quot;Source Code&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_code</span><span class="p">,</span>
-            <span class="s2">&quot;License&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">,</span>
-            <span class="s2">&quot;Contributor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span><span class="p">,</span>
-            <span class="s2">&quot;DockerHub&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span><span class="p">,</span>
-            <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span><span class="p">,</span>
-            <span class="s2">&quot;S3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="p">,</span>
-            <span class="s2">&quot;Memory Gb&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_gb</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">data</span></div>
-
-
-<div class="viewcode-block" id="BaseInformation.from_dict">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.BaseInformation.from_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the base information from a dictionary.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        data : dict</span>
-<span class="sd">            The dictionary containing the base information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Status&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Description&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Mode&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Input&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Task&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Output&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_shape</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">interpretation</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Interpretation&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Tag&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">publication</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Publication&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">source_code</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Source Code&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">license</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;License&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;Contributor&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Contributor&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;DockerHub&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;Docker Architecture&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;S3&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">s3</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;Memory Gb&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">memory_gb</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Memory Gb&quot;</span><span class="p">]</span></div>
-</div>
-
 
 
 <div class="viewcode-block" id="RepoMetadataFile">
@@ -814,19 +357,15 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
-        <span class="p">)</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_github_json_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">org</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">org</span> <span class="o">=</span> <span class="s2">&quot;ersilia-os&quot;</span>
         <span class="k">if</span> <span class="n">branch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">branch</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span>
-            <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_github_yaml_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -834,10 +373,8 @@
             <span class="n">org</span> <span class="o">=</span> <span class="s2">&quot;ersilia-os&quot;</span>
         <span class="k">if</span> <span class="n">branch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">branch</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span>
-            <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_file_content_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">branch</span><span class="p">):</span>
@@ -855,9 +392,7 @@
 
 <div class="viewcode-block" id="RepoMetadataFile.get_json_or_yaml_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.RepoMetadataFile.get_json_or_yaml_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_json_or_yaml_file</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_json_or_yaml_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the metadata file from GitHub in JSON or YAML format. JSON format typically used for bentoml</span>
 <span class="sd">        packed models and YAML format typically used for ersilia pack models.</span>
@@ -990,9 +525,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Trying to get metadata from: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying to get metadata from: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">))</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
@@ -1022,17 +555,17 @@
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_raw_readme_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/master/README.md&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">model_id</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/master/README.md&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model_id</span>
+            <span class="p">)</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">url</span>
 
     <span class="k">def</span> <span class="nf">_gh_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;view.md&quot;</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;gh repo view </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="s2">&quot;ersilia-os&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">tmp_file</span>
-        <span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;gh repo view </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;ersilia-os&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">tmp_file</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -1179,8 +712,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle the lake card of a model.</span>
 
-<span class="sd">    The lake in ersilia refers to a result storage platform powered by isaura package to </span>
-<span class="sd">    store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to </span>
+<span class="sd">    The lake in ersilia refers to a result storage platform powered by isaura package to</span>
+<span class="sd">    store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to</span>
 <span class="sd">    explore and retrieve information from HDF5 files.</span>
 
 <span class="sd">    Parameters</span>

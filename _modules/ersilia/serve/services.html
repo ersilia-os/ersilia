@@ -422,19 +422,19 @@
 
     <span class="k">def</span> <span class="nf">_get_apis_from_where_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">apis_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_apis_from_apis_list</span><span class="p">()</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">apis_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">apis_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pack_method</span> <span class="o">=</span> <span class="n">resolve_pack_method</span><span class="p">(</span>
                 <span class="n">model_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting APIs from FastAPI&quot;</span><span class="p">)</span>
                 <span class="n">apis_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_apis_from_fastapi</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting APIs from BentoML&quot;</span><span class="p">)</span>
                 <span class="n">apis_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_apis_from_bento</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">apis_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">apis_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">apis_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">api</span> <span class="ow">in</span> <span class="n">apis_list</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">api</span>
@@ -1652,7 +1652,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Status code: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">502</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">BadGatewayError</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">405</span><span class="p">:</span> <span class="c1"># We try the GET endpoint here</span>
+        <span class="k">elif</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">405</span><span class="p">:</span>  <span class="c1"># We try the GET endpoint here</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>

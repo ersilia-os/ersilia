@@ -317,6 +317,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ersilia_cli</span>
 <span class="kn">from</span> <span class="nn">...publish.test</span> <span class="kn">import</span> <span class="n">ModelTester</span>
 
+
 <div class="viewcode-block" id="test_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.test.test_cmd">[docs]</a>
 <span class="k">def</span> <span class="nf">test_cmd</span><span class="p">():</span>
@@ -340,66 +341,58 @@
 <span class="sd">        With deep testing level and inspect:</span>
 <span class="sd">        $ ersilia test my_model -d /path/to/model --level deep --inspect --remote</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
         <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Test a model&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Test a local models that are under development as well as on deployment and obtain a detailed report on its expected behavior and performance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Test a local models that are under development as well as on deployment and obtain a detailed report on its expected behavior and performance</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-l&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;--level&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;level&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;-l&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--level&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;level&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Level of testing, None: for default, deep: for deep testing&quot;</span><span class="p">,</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-d&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;--dir&quot;</span><span class="p">,</span> 
-        <span class="s2">&quot;dir&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--dir&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dir&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Model directory&quot;</span><span class="p">,</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--inspect&quot;</span><span class="p">,</span> 
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inspect the model: More on the docs&quot;</span><span class="p">,</span> 
-        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="s2">&quot;--inspect&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inspect the model: More on the docs&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--remote&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Test the model from remote git repository&quot;</span><span class="p">,</span> 
-        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Test the model from remote git repository&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--remove&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Remove the model directory after testing&quot;</span><span class="p">,</span> 
-        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Remove the model directory after testing&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span>
-        <span class="n">model</span><span class="p">,</span> 
-        <span class="n">level</span><span class="p">,</span>
-        <span class="nb">dir</span><span class="p">,</span> 
-        <span class="n">inspect</span><span class="p">,</span>
-        <span class="n">remote</span><span class="p">,</span>
-        <span class="n">remove</span>
-      <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">inspect</span><span class="p">,</span> <span class="n">remote</span><span class="p">,</span> <span class="n">remove</span><span class="p">):</span>
         <span class="n">mt</span> <span class="o">=</span> <span class="n">ModelTester</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span> 
+            <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
             <span class="nb">dir</span><span class="o">=</span><span class="nb">dir</span><span class="p">,</span>
             <span class="n">inspect</span><span class="o">=</span><span class="n">inspect</span><span class="p">,</span>
             <span class="n">remote</span><span class="o">=</span><span class="n">remote</span><span class="p">,</span>
-            <span class="n">remove</span><span class="o">=</span><span class="n">remove</span>
+            <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Setting up model tester...&quot;</span><span class="p">)</span>
         <span class="n">mt</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>

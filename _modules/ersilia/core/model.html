@@ -321,7 +321,7 @@
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">click</span> <span class="kn">import</span> <span class="n">secho</span> <span class="k">as</span> <span class="n">echo</span> <span class="c1"># Style-aware echo</span>
+<span class="kn">from</span> <span class="nn">click</span> <span class="kn">import</span> <span class="n">secho</span> <span class="k">as</span> <span class="n">echo</span>  <span class="c1"># Style-aware echo</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">..serve.api</span> <span class="kn">import</span> <span class="n">Api</span>
@@ -421,6 +421,7 @@
 <span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
 <span class="sd">        model.close()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -444,7 +445,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;ps1&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span> <span class="o">=</span> <span class="n">save_to_lake</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span><span class="p">:</span>
@@ -469,7 +470,9 @@
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span><span class="p">,</span> <span class="s2">&quot;The identifier </span><span class="si">{0}</span><span class="s2"> is not valid. Please visit the Ersilia Model Hub for valid identifiers&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span>
+        <span class="p">),</span> <span class="s2">&quot;The identifier </span><span class="si">{0}</span><span class="s2"> is not valid. Please visit the Ersilia Model Hub for valid identifiers&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">model</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
@@ -536,7 +539,6 @@
             <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials_json</span>
         <span class="p">)</span>
         <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span></div>
-
 
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -634,7 +636,7 @@
 
     <span class="k">def</span> <span class="nf">_get_api_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">()</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">api_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">api_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">api_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">api_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
@@ -1127,7 +1129,7 @@
             <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">standard_status_ok</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;We will try conventional run.&quot;</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">standard_status_ok</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying conventional run&quot;</span><span class="p">)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span>

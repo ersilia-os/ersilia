@@ -347,6 +347,7 @@
 <span class="sd">        Delete all models:</span>
 <span class="sd">        $ ersilia delete --all</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 
@@ -362,9 +363,7 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;:person_tipping_hand: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">model_id</span>
-                <span class="p">),</span>
+                <span class="sa">f</span><span class="s2">&quot;:person_tipping_hand: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 

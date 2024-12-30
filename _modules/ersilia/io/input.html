@@ -344,6 +344,7 @@
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration JSON.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
@@ -451,6 +452,7 @@
 <span class="sd">    BaseIO : object</span>
 <span class="sd">        Base IO handler object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BaseIO</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">IO</span> <span class="o">=</span> <span class="n">BaseIO</span>
 
@@ -559,6 +561,7 @@
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration JSON.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
@@ -637,6 +640,7 @@
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration JSON.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">IO</span> <span class="o">=</span> <span class="n">BaseIOGetter</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -693,7 +697,7 @@
         <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
             <span class="k">if</span> <span class="n">simple</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">extension</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -701,7 +705,7 @@
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
                     <span class="k">if</span> <span class="n">simple</span><span class="p">:</span>
-                        <span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
                     <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_delimiter</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
@@ -769,7 +773,7 @@
         <span class="k">if</span> <span class="n">try_predefined</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying with predefined input&quot;</span><span class="p">)</span>
             <span class="n">predefined_available</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predefined_example</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="n">predefined_available</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>

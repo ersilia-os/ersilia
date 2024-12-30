@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>ersilia.hub.content.slug - Ersilia documentation</title>
+        <title>ersilia.hub.content.columns_information - Ersilia documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -311,132 +311,136 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for ersilia.hub.content.slug</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">...db.hubdata.localslugs</span> <span class="kn">import</span> <span class="n">SlugDb</span>
-<span class="kn">from</span> <span class="nn">...utils.identifiers.model</span> <span class="kn">import</span> <span class="n">ModelIdentifier</span>
+          <h1>Source code for ersilia.hub.content.columns_information</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
 
 
-<div class="viewcode-block" id="Slug">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug">[docs]</a>
-<span class="k">class</span> <span class="nc">Slug</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to handle slug operations.</span>
+<span class="n">ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 
-<span class="sd">    This class provides methods to encode and decode slugs to model IDs</span>
-<span class="sd">    and vice versa, using local and remote sources.</span>
+<span class="n">EXPECTED_HEADER</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="s2">&quot;direction&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">]</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    config_json : dict, optional</span>
-<span class="sd">        Configuration settings in JSON format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="n">MIN_DESCRIPTION_LENGTH</span> <span class="o">=</span> <span class="mi">60</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">SlugDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mi</span> <span class="o">=</span> <span class="n">ModelIdentifier</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Slug.is_slug">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug.is_slug">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if the given text is a slug.</span>
+<div class="viewcode-block" id="ColumnsInformation">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.columns_information.ColumnsInformation">[docs]</a>
+<span class="k">class</span> <span class="nc">ColumnsInformation</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span> <span class="o">=</span> <span class="n">api_name</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span> <span class="o">=</span> <span class="s2">&quot;model/framework/columns/</span><span class="si">{0}</span><span class="s2">_columns.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;columns&quot;</span><span class="p">,</span> <span class="s2">&quot;data_types.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">DATA_TYPES</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DATA_TYPES</span> <span class="o">+=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;columns&quot;</span><span class="p">,</span> <span class="s2">&quot;desired_directions.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">DESIRED_DIRECTIONS</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">DESIRED_DIRECTIONS</span> <span class="o">+=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        text : str</span>
-<span class="sd">            The text to check.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        bool</span>
-<span class="sd">            True if the text is a slug, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">def</span> <span class="nf">_get_columns_information_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">types</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">directions</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">header</span> <span class="o">!=</span> <span class="n">EXPECTED_HEADER</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Header </span><span class="si">{0}</span><span class="s2"> is not </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">EXPECTED_HEADER</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                    <span class="n">names</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                    <span class="n">types</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                    <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                        <span class="n">directions</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">directions</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+                    <span class="n">descriptions</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">names</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">types</span><span class="p">,</span> <span class="s2">&quot;direction&quot;</span><span class="p">:</span> <span class="n">directions</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">descriptions</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
-
-
-    <span class="k">def</span> <span class="nf">_local_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">models_of_slug</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete_by_slug</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Explicit columns data for </span><span class="si">{0}</span><span class="s2"> API does not exist in file </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span><span class="p">,</span> <span class="n">file_name</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">_remote_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">slug</span><span class="o">=</span><span class="n">slug</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        
+    <span class="k">def</span> <span class="nf">_get_columns_information_from_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns_information_from_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_get_columns_information_from_github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">org</span> <span class="o">=</span> <span class="s2">&quot;ersilia-os&quot;</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.org/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">/</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">org</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_path</span>
+        <span class="p">)</span>
+        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">&quot;columns.csv&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Explicit columns data for </span><span class="si">{0}</span><span class="s2"> API does not exist in GitHub&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_validate_columns_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Column names must be lowercase&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isalnum</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Column names must be alphanumeric or contain underscores&quot;</span>
+                <span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATA_TYPES</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Type </span><span class="si">{0}</span><span class="s2"> is not an accepted type: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DATA_TYPES</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;direction&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">DESIRED_DIRECTIONS</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Direction </span><span class="si">{0}</span><span class="s2"> is not an accepted direction: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DESIRED_DIRECTIONS</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MIN_DESCRIPTION_LENGTH</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Description is too short. A minimum of </span><span class="si">{0}</span><span class="s2"> characters is expected&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">MIN_DESCRIPTION_LENGTH</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
 
-<div class="viewcode-block" id="Slug.encode">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug.encode">[docs]</a>
-    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Given a slug, get the model_id.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        slug : str</span>
-<span class="sd">            The slug to encode.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The model_id corresponding to the slug.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_encode</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">model_id</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remote_encode</span><span class="p">(</span><span class="n">slug</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">model_id</span></div>
-
-
-    <span class="k">def</span> <span class="nf">_local_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">slugs_of_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete_by_model_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+<div class="viewcode-block" id="ColumnsInformation.load">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.columns_information.ColumnsInformation.load">[docs]</a>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns_information_from_local</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns_information_from_github</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">_remote_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
-                <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">res</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-
-<div class="viewcode-block" id="Slug.decode">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.slug.Slug.decode">[docs]</a>
-    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Given a model_id, get the slug.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model_id : str</span>
-<span class="sd">            The model_id to decode.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The slug corresponding to the model_id.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_decode</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">slug</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">slug</span>
-        <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remote_decode</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">slug</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_columns_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
 </pre></div>

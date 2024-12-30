@@ -341,6 +341,7 @@
 <span class="sd">    path : str</span>
 <span class="sd">        Path to the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -485,6 +486,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle caching of file batches.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
 
@@ -594,6 +596,7 @@
 <span class="sd">    sniff_line_limit : int, optional</span>
 <span class="sd">        Line limit for sniffing the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">,</span>
@@ -1000,6 +1003,7 @@
 <span class="sd">        tfss = TabularFileShapeStandardizer(&quot;data.csv&quot;, &quot;standard_data.csv&quot;, &quot;single&quot;, IOHandler())</span>
 <span class="sd">        tfss.standardize()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_path</span><span class="p">,</span> <span class="n">dst_path</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">sniff_line_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">InputShape</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
@@ -1128,6 +1132,7 @@
 <span class="sd">    path : str</span>
 <span class="sd">        Path to the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">BatchCacher</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1262,6 +1267,7 @@
 <span class="sd">    sniff_line_limit : int, optional</span>
 <span class="sd">        Line limit for sniffing the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">sniff_line_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
@@ -1340,6 +1346,7 @@
 <span class="sd">    expected_number : int</span>
 <span class="sd">        Expected number of elements.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">entity_is_list</span><span class="p">,</span> <span class="n">expected_number</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1425,6 +1432,7 @@
 <span class="sd">    IO : object</span>
 <span class="sd">        IO handler object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_path</span><span class="p">,</span> <span class="n">dst_path</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> <span class="n">IO</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">src_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_path</span><span class="p">)</span>
@@ -1486,6 +1494,7 @@
 <span class="sd">    &gt;&gt;&gt; sjfr.read()</span>
 <span class="sd">    [{&#39;key&#39;: &#39;value&#39;}, {&#39;key&#39;: &#39;value&#39;}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">BatchCacher</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1568,6 +1577,7 @@
 <span class="sd">    IO : object</span>
 <span class="sd">        IO handler object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">IO</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>

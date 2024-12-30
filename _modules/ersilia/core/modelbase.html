@@ -342,6 +342,7 @@
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration in JSON format, by default None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id_or_slug</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -367,7 +368,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Absolute path: </span><span class="si">{</span><span class="n">abspath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="c1"># Check if path actually exists</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">abspath</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Model directory does not exist at the provided path. Please check the path and try again.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                    <span class="s2">&quot;Model directory does not exist at the provided path. Please check the path and try again.&quot;</span>
+                <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_id_from_path</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
             <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_slug_if_available</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)</span>

@@ -346,6 +346,7 @@
 <span class="sd">        Fetch a model from a local directory:</span>
 <span class="sd">        $ ersilia fetch &lt;model_id&gt; --from_dir &lt;path&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">res</span>
@@ -394,7 +395,7 @@
         <span class="s2">&quot;--hosted_url&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;URL of the hosted model service&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;URL of the hosted model service&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--with_bentoml&quot;</span><span class="p">,</span>
@@ -452,7 +453,10 @@
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;:thumbs_down: Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed to fetch! </span><span class="si">{</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;:thumbs_down: Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed to fetch! </span><span class="si">{</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">fetch</span></div>
 

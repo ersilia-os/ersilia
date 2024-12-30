@@ -330,7 +330,11 @@
 <span class="kn">from</span> <span class="nn">..bundle.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
 
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">ISAURA_FILE_TAG</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG_LOCAL</span>
-<span class="kn">from</span> <span class="nn">...utils.session</span> <span class="kn">import</span> <span class="n">get_model_session</span><span class="p">,</span> <span class="n">remove_session_dir</span><span class="p">,</span> <span class="n">deregister_model_session</span>
+<span class="kn">from</span> <span class="nn">...utils.session</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_model_session</span><span class="p">,</span>
+    <span class="n">remove_session_dir</span><span class="p">,</span>
+    <span class="n">deregister_model_session</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="rmtree">
@@ -837,7 +841,9 @@
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span> <span class="c1"># TODO This is hacky but is needed by ModelPreparer when model is fetched. </span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">dm</span><span class="o">.</span><span class="n">is_active</span><span class="p">()</span>
+        <span class="p">):</span>  <span class="c1"># TODO This is hacky but is needed by ModelPreparer when model is fetched.</span>
             <span class="n">dm</span><span class="o">.</span><span class="n">delete_images</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 </div>
 
@@ -986,10 +992,16 @@
         <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">needs_delete</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">model_source</span> <span class="o">==</span> <span class="s2">&quot;DockerHub&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
-                <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Model fetched through Docker but Docker engine is inactive.&quot;</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">&quot;Model fetched through Docker but Docker engine is inactive.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Model can be deleted.&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is not available locally, no delete necessary.&quot;</span></div>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is not available locally, no delete necessary.&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ModelFullDeleter.delete">

@@ -598,9 +598,7 @@
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;service_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pulled_docker&quot;</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">mp</span><span class="o">.</span><span class="n">_get_size_of_local_docker_image_in_mb</span><span class="p">()</span>
-        <span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">_get_size_of_local_docker_image_in_mb</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 

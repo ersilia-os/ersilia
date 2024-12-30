@@ -343,8 +343,8 @@
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.PackCreator">[docs]</a>
 <span class="k">class</span> <span class="nc">PackCreator</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to create a pack for the model. The pack.py file loads a model, </span>
-<span class="sd">    packs it into a BentoML Service instance, and saves the service for deployment. </span>
+<span class="sd">    Class to create a pack for the model. The pack.py file loads a model,</span>
+<span class="sd">    packs it into a BentoML Service instance, and saves the service for deployment.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -353,6 +353,7 @@
 <span class="sd">    config_json : dict</span>
 <span class="sd">        Configuration settings for the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -377,7 +378,7 @@
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.ServiceCreator">[docs]</a>
 <span class="k">class</span> <span class="nc">ServiceCreator</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to create a service file for the model. The &#39;service.py&#39; specifically </span>
+<span class="sd">    Class to create a service file for the model. The &#39;service.py&#39; specifically</span>
 <span class="sd">    facilitates the deployment of a custom model as a BENTOML REST API service.</span>
 
 <span class="sd">    Parameters</span>
@@ -387,6 +388,7 @@
 <span class="sd">    config_json : dict</span>
 <span class="sd">        Configuration settings for the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -445,6 +447,7 @@
 <span class="sd">    commands : list</span>
 <span class="sd">        List of commands to be added to the Dockerfile.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -501,9 +504,9 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to prepare the template for the model.</span>
 
-<span class="sd">    In this context, a template refers to a predefined structure or set of files </span>
-<span class="sd">    that are necessary for setting up the model environment. This includes </span>
-<span class="sd">    configuration files, scripts, and other resources required to deploy and </span>
+<span class="sd">    In this context, a template refers to a predefined structure or set of files</span>
+<span class="sd">    that are necessary for setting up the model environment. This includes</span>
+<span class="sd">    configuration files, scripts, and other resources required to deploy and</span>
 <span class="sd">    run the model.</span>
 
 <span class="sd">    Parameters</span>
@@ -513,6 +516,7 @@
 <span class="sd">    config_json : dict</span>
 <span class="sd">        Configuration settings for the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
@@ -582,8 +586,14 @@
 <span class="sd">    repo_path : str</span>
 <span class="sd">        Path to the local repository.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">force_from_github</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_from_s3</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">force_from_github</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">force_from_s3</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
@@ -716,7 +726,7 @@
 <span class="c1">#  TODO: work outside GIT LFS</span>
 <div class="viewcode-block" id="ModelParametersGetter">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.ModelParametersGetter">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelParametersGetter</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span> 
+<span class="k">class</span> <span class="nc">ModelParametersGetter</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to get the model parameters. Getting the checkpoints, weights.</span>
 
@@ -727,6 +737,7 @@
 <span class="sd">    config_json : dict</span>
 <span class="sd">        Configuration settings for the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
@@ -781,8 +792,14 @@
 <span class="sd">    force_from_s3 : bool</span>
 <span class="sd">        Force download from S3.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">force_from_github</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">force_from_s3</span><span class="p">:</span> <span class="nb">bool</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">force_from_github</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">force_from_s3</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>

@@ -321,6 +321,7 @@
     <span class="n">emoji</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="kn">import</span> <span class="nn">click</span>
 
+<span class="kn">from</span> <span class="nn">.columns_information</span> <span class="kn">import</span> <span class="n">ColumnsInformation</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PACKMODE_FILE</span><span class="p">,</span>
@@ -350,6 +351,7 @@
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration settings in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -421,6 +423,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
+    <span class="k">def</span> <span class="nf">_get_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">columns_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">api_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_apis_list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">api_name</span> <span class="ow">in</span> <span class="n">api_names</span><span class="p">:</span>
+            <span class="n">ci</span> <span class="o">=</span> <span class="n">ColumnsInformation</span><span class="p">(</span>
+                <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
+            <span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">ci</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+            <span class="n">columns_data</span><span class="p">[</span><span class="n">api_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="n">columns_data</span>
+
 <div class="viewcode-block" id="Information.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.Information.get">[docs]</a>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -441,6 +454,7 @@
             <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size</span><span class="p">(),</span>
             <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata</span><span class="p">(),</span>
             <span class="s2">&quot;card&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_card</span><span class="p">(),</span>
+            <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(),</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -463,6 +477,7 @@
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration settings in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_data</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span> <span class="o">=</span> <span class="n">info_data</span>

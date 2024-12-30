@@ -339,6 +339,7 @@
 <span class="sd">    get_development_path()</span>
 <span class="sd">        Get the development path.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">development_path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">()</span>
@@ -482,6 +483,7 @@
 <span class="sd">    json_file : str, optional</span>
 <span class="sd">        The path to the JSON configuration file. Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Config instance.</span>
 
@@ -522,6 +524,7 @@
 <span class="sd">    overwrite : bool, optional</span>
 <span class="sd">        Whether to overwrite existing files. Default is True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">secrets_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">SECRETS_JSON</span><span class="p">)</span>
@@ -595,6 +598,7 @@
 <span class="sd">    json_file : str, optional</span>
 <span class="sd">        The path to the JSON credentials file. Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">json_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>

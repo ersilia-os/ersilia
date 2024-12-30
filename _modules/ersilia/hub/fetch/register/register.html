@@ -350,6 +350,7 @@
 <span class="sd">        registerer = ModelRegisterer(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
 <span class="sd">        await registerer.register(is_from_dockerhub=True)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -498,7 +499,9 @@
 
 <div class="viewcode-block" id="ModelRegisterer.register">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.register.ModelRegisterer.register">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_from_dockerhub</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_from_hosted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">is_from_dockerhub</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_from_hosted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register the model based on its source.</span>
 
