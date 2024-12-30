@@ -1,6 +1,7 @@
+import pytest
+
 from unittest.mock import patch
 
-import pytest
 from click.testing import CliRunner
 
 from ersilia.cli.commands.close import close_cmd
