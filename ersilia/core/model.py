@@ -4,15 +4,15 @@ import json
 import time
 import types
 import asyncio
-import importlib
 import collections
-import __main__ as main
+import sys
 
 from click import secho as echo # Style-aware echo
 
 from .. import logger
 from ..serve.api import Api
 from .session import Session
+from ..hub.fetch.fetch import ModelFetcher
 from .base import ErsiliaBase
 from ..lake.base import LakeBase
 from ..utils import tmp_pid_file
@@ -128,7 +128,7 @@ class ErsiliaModel(ErsiliaBase):
             else:
                 self.logger.set_verbosity(0)
         else:
-            if not hasattr(main, "__file__"):
+            if hasattr(sys, 'ps1'):
                 self.logger.set_verbosity(0)
         self.save_to_lake = save_to_lake
         if self.save_to_lake:
@@ -152,6 +152,7 @@ class ErsiliaModel(ErsiliaBase):
         self.service_class = service_class
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
+
         assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
             model
         )
@@ -174,13 +175,11 @@ class ErsiliaModel(ErsiliaBase):
                 self.logger.debug("Unable to capture user input. Fetching anyway.")
                 do_fetch = True
             if do_fetch:
-                fetch = importlib.import_module("ersilia.hub.fetch.fetch")
-                mf = fetch.ModelFetcher(
+                mf = ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
                 asyncio.run(mf.fetch(self.model_id))
-            else:
-                return
+
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
         )
@@ -213,30 +212,13 @@ class ErsiliaModel(ErsiliaBase):
 
     def fetch(self):
         """
-        Fetch the model if not available locally.
-
-        This method fetches the model from the Ersilia Model Hub if it is not available locally.
+        This method fetches the model from the Ersilia Model Hub.
         """
-        if not self._is_available_locally and self.fetch_if_not_available:
-            self.logger.info("Model is not available locally")
-            try:
-                do_fetch = yes_no_input(
-                    "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
-                        self.model_id
-                    ),
-                    default_answer="Y",
-                )
-            except:
-                self.logger.debug("Unable to capture user input. Fetching anyway.")
-                do_fetch = True
-            if do_fetch:
-                fetch = importlib.import_module("ersilia.hub.fetch.fetch")
-                mf = fetch.ModelFetcher(
-                    config_json=self.config_json, credentials_json=self.credentials_json
-                )
-                asyncio.run(mf.fetch(self.model_id))
-            else:
-                return
+        mf = ModelFetcher(
+            config_json=self.config_json, credentials_json=self.credentials_json
+        )
+        asyncio.run(mf.fetch(self.model_id))
+
 
     def __enter__(self):
         """

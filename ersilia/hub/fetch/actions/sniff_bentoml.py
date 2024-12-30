@@ -115,9 +115,7 @@ class ModelSniffer(BaseAction):
     def __init__(self, model_id: str, config_json: dict):
         super().__init__(model_id=model_id, config_json=config_json, credentials_json=None)
         self.logger.debug("Initializing model for inferring its structure")
-        self.model = ErsiliaModel(
-            model_id, config_json=config_json, fetch_if_not_available=False
-        )
+        self.model = ErsiliaModel(model_id, config_json=config_json)
         self.model_id = model_id
         self.logger.debug("Model successfully initialized in sniffer")
         er = BuiltinExampleReader(model_id, config_json=config_json)
