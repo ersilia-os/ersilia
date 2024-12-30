@@ -4,7 +4,7 @@ from . import ersilia_cli
 from .. import echo
 from ... import ErsiliaModel
 from ...core.session import Session
-
+from ...utils.session import deregister_model_session
 
 def close_cmd():
     """
@@ -35,6 +35,7 @@ def close_cmd():
             return
         mdl = ErsiliaModel(model_id, service_class=service_class)
         mdl.close()
+        deregister_model_session(model_id)
         echo(":no_entry: Model {0} closed".format(mdl.model_id), fg="green")
 
     return close

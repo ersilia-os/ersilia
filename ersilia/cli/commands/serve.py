@@ -5,6 +5,7 @@ from . import ersilia_cli
 from ... import ErsiliaModel
 from ..messages import ModelNotFound
 from ...store.utils import OutputSource, ModelNotInStore, store_has_model
+from ...utils.session import register_model_session
 
 
 def serve_cmd():
@@ -76,6 +77,8 @@ def serve_cmd():
         if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")
             return
+        
+        register_model_session(mdl.model_id, mdl.session._session_dir)
         echo(
             ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"
         )
