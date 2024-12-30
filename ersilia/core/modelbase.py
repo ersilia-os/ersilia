@@ -6,14 +6,26 @@ from ..hub.content.slug import Slug
 from ..hub.fetch import STATUS_FILE, DONE_TAG
 from ..default import IS_FETCHED_FROM_DOCKERHUB_FILE
 from ..utils.paths import get_metadata_from_base_dir
-
 from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
 from .. import throw_ersilia_exception
 
 
 class ModelBase(ErsiliaBase):
-    """Base class of a Model."""
+    """
+    Base class for managing models.
 
+    This class provides foundational functionality for handling models, including initialization,
+    validation, and checking local availability.
+
+    Parameters
+    ----------
+    model_id_or_slug : str, optional
+        The model identifier or slug, by default None.
+    repo_path : str, optional
+        The repository path, by default None.
+    config_json : dict, optional
+        Configuration in JSON format, by default None.
+    """
     @throw_ersilia_exception()
     def __init__(self, model_id_or_slug=None, repo_path=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -34,8 +46,12 @@ class ModelBase(ErsiliaBase):
                 raise InvalidModelIdentifierError(model=self.text)
 
         if repo_path is not None:
-            self.logger.debug("Repo path specified: {0}".format(repo_path))
-            self.logger.debug("Absolute path: {0}".format(os.path.abspath(repo_path)))
+            self.logger.debug(f"Repo path specified: {repo_path}")
+            abspath = os.path.abspath(repo_path)
+            self.logger.debug(f"Absolute path: {abspath}")
+            # Check if path actually exists
+            if not os.path.exists(abspath):
+                raise FileNotFoundError("Model directory does not exist at the provided path. Please check the path and try again.")
             self.text = self._get_model_id_from_path(repo_path)
             self.model_id = self.text
             slug = self._get_slug_if_available(repo_path)
@@ -59,6 +75,14 @@ class ModelBase(ErsiliaBase):
             return slug
 
     def is_valid(self):
+        """
+        Check if the model identifier and slug are valid.
+
+        Returns
+        -------
+        bool
+            True if the model identifier and slug are valid, False otherwise.
+        """
         if self.model_id is None or self.slug is None:
             return False
         else:
@@ -86,6 +110,15 @@ class ModelBase(ErsiliaBase):
             return True
 
     def is_available_locally(self):
+        """
+        Check if the model is available locally either from the status file
+        or from DockerHub.
+
+        Returns
+        -------
+        bool
+            True if the model is available locally, False otherwise.
+        """
         bs = self._is_available_locally_from_status()
         bd = self._is_available_locally_from_dockerhub()
         if bs or bd:
@@ -94,6 +127,14 @@ class ModelBase(ErsiliaBase):
             return False
 
     def was_fetched_from_dockerhub(self):
+        """
+        Check if the model was fetched from DockerHub by reading the DockerHub file.
+
+        Returns
+        -------
+        bool
+            True if the model was fetched from DockerHub, False otherwise.
+        """
         from_dockerhub_file = os.path.join(
             self._dest_dir, self.model_id, IS_FETCHED_FROM_DOCKERHUB_FILE
         )

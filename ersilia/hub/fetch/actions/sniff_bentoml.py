@@ -25,8 +25,26 @@ from ....utils.paths import get_metadata_from_base_dir
 
 
 class BuiltinExampleReader(ErsiliaBase):
-    def __init__(self, model_id, config_json):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+    """
+    Reads built-in examples for a BentoML model.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model.
+    config_json : dict
+        Configuration settings for the reader.
+
+    Methods
+    -------
+    has_builtin_example() -> bool
+        Checks if a built-in example exists.
+    example(n=3) -> list
+        Returns a list of examples.
+    """
+
+    def __init__(self, model_id: str, config_json: dict):
+        super().__init__(config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.example_file = None
         for pf in PREDEFINED_EXAMPLE_FILES:
@@ -38,7 +56,15 @@ class BuiltinExampleReader(ErsiliaBase):
                 self.example_file = example_file
                 break
 
-    def has_builtin_example(self):
+    def has_builtin_example(self) -> bool:
+        """
+        Checks if a built-in example exists.
+
+        Returns
+        -------
+        bool
+            True if a built-in example exists, False otherwise.
+        """
         if self.example_file is None:
             return False
         if os.path.exists(self.example_file):
@@ -46,7 +72,20 @@ class BuiltinExampleReader(ErsiliaBase):
         else:
             return False
 
-    def example(self, n=3):
+    def example(self, n: int = 3) -> list:
+        """
+        Returns a list of examples.
+
+        Parameters
+        ----------
+        n : int, optional
+            Number of examples to return, by default 3.
+
+        Returns
+        -------
+        list
+            List of examples.
+        """
         data = []
         with open(self.example_file, "r") as f:
             reader = csv.reader(f)
@@ -57,10 +96,24 @@ class BuiltinExampleReader(ErsiliaBase):
 
 
 class ModelSniffer(BaseAction):
-    def __init__(self, model_id, config_json):
-        BaseAction.__init__(
-            self, model_id=model_id, config_json=config_json, credentials_json=None
-        )
+    """
+    Infers the structure of a model by sniffing its inputs and outputs.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model.
+    config_json : dict
+        Configuration settings for the sniffer.
+
+    Methods
+    -------
+    sniff()
+        Infers the structure of the model.
+    """
+
+    def __init__(self, model_id: str, config_json: dict):
+        super().__init__(model_id=model_id, config_json=config_json, credentials_json=None)
         self.logger.debug("Initializing model for inferring its structure")
         self.model = ErsiliaModel(
             model_id, config_json=config_json, fetch_if_not_available=False
@@ -78,7 +131,7 @@ class ModelSniffer(BaseAction):
         self.logger.debug("Inputs sampled: {0}".format(len(self.inputs)))
 
     @staticmethod
-    def __dicts_are_identical(dicts):
+    def __dicts_are_identical(dicts: list) -> bool:
         for d1 in dicts:
             for d2 in dicts:
                 if d1 != d2:
@@ -86,14 +139,14 @@ class ModelSniffer(BaseAction):
         return True
 
     @staticmethod
-    def _get_directory_size(dir):
+    def _get_directory_size(dir: str) -> int:
         root_directory = Path(dir)
         bytes = sum(
             f.stat().st_size for f in root_directory.glob("**/*") if f.is_file()
         )
         return bytes
 
-    def _get_size_in_mb(self):
+    def _get_size_in_mb(self) -> float:
         dest_dir = self._model_path(self.model_id)
         repo_dir = self._get_bundle_location(self.model_id)
         size = self._get_directory_size(dest_dir) + self._get_directory_size(repo_dir)
@@ -114,12 +167,12 @@ class ModelSniffer(BaseAction):
         try:
             md = get_metadata_from_base_dir(dest_dir)
         except FileNotFoundError:
-            self.logger.debug("Metadata file not available")    
+            self.logger.debug("Metadata file not available")
             return
         return md["Output Shape"]  # TODO Account for mixed types
 
     @throw_ersilia_exception()
-    def _get_schema(self, results):
+    def _get_schema(self, results: list) -> dict:
         input_schema = collections.defaultdict(list)
         output_schema = collections.defaultdict(list)
         for res in results:
@@ -242,7 +295,7 @@ class ModelSniffer(BaseAction):
 
         return output_meta_in_schema
 
-    def _try_to_resolve_output_shape(self, meta, output_type):
+    def _try_to_resolve_output_shape(self, meta, output_type: str):
         if output_type == "numeric_array" or output_type == "string_array":
             if type(meta) is list:
                 shape = (len(meta),)
@@ -251,6 +304,24 @@ class ModelSniffer(BaseAction):
 
     @throw_ersilia_exception()
     def sniff(self):
+        """
+        Infers the model's structure by analyzing its inputs and outputs.
+
+        This method:
+        - Calculates and saves the model size.
+        - Serves the model locally.
+        - Generates or retrieves sample inputs.
+        - Runs the model's APIs with these inputs.
+        - Collects outputs and infers input/output schemas.
+        - Saves the inferred schema for future use.
+
+        Raises
+        ------
+        EmptyOutputError
+            If the model outputs are empty.
+        OutputDataTypesNotConsistentError
+            If output data types are inconsistent.
+        """
         self.logger.debug("Sniffing model")
         self.logger.debug("Getting model size")
         size = self._get_size_in_mb()

@@ -18,7 +18,11 @@ from .base import ErsiliaBase
 from ..utils.docker import SimpleDocker
 from ..utils.session import get_session_dir, get_session_uuid
 from ..utils.csvfile import CsvDataLoader
-from ..utils.tracking import init_tracking_summary, update_tracking_summary, RUN_DATA_STUB
+from ..utils.tracking import (
+    init_tracking_summary,
+    update_tracking_summary,
+    RUN_DATA_STUB,
+)
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..default import SESSION_JSON
 from ..io.output_logger import TabularResultLogger
@@ -30,12 +34,20 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = os.environ.get("AWS_REGIOIN", "eu-central-1")
 TRACKING_BUCKET = os.environ.get("TRACKING_BUCKET", "ersilia-models-runs")
 
+
 def flatten_dict(data):
     """
-    This will flatten the nested dictionaries from the generator into a single-level dictionary,
-    where keys from all levels are merged into one dictionary.
+    Flatten the nested dictionaries from the generator into a single-level dictionary.
 
-    :flat_dict: Result returned in a dictionary
+    Parameters
+    ----------
+    data : dict
+        The nested dictionary to flatten.
+
+    Returns
+    -------
+    dict
+        The flattened dictionary.
     """
     flat_dict = {}
     for outer_key, inner_dict in data.items():
@@ -46,10 +58,17 @@ def flatten_dict(data):
 
 def log_files_metrics(file_log):
     """
-    This function will log the number of errors and warnings in the log files.
+    Log the number of errors and warnings in the log files.
 
-    :param file: The log file to be read
-    :return: None (writes to file)
+    Parameters
+    ----------
+    file_log : str
+        The log file to be read.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the error count and warning count.
     """
 
     error_count = 0
@@ -113,7 +132,7 @@ def log_files_metrics(file_log):
         res_dict = {}
         res_dict["error_count"] = error_count
 
-        if len(errors) > 0: # TODO We are not consuming this right now
+        if len(errors) > 0:  # TODO We are not consuming this right now
             res_dict["error_details"] = {}
             for err in errors:
                 res_dict["error_details"][err] = errors[err]
@@ -124,11 +143,21 @@ def log_files_metrics(file_log):
 
 
 def serialize_session_json_to_csv(json_file, csv_file):
+    """
+    Serialize session JSON data to a CSV file.
+
+    Parameters
+    ----------
+    json_file : str
+        The path to the JSON file.
+    csv_file : str
+        The path to the CSV file.
+    """
     with open(json_file, "r") as f:
         data = json.load(f)
         header = []
         values = []
-        for k,v in data.items():
+        for k, v in data.items():
             header += [k]
             values += [v]
     with open(csv_file, "w") as f:
@@ -136,14 +165,25 @@ def serialize_session_json_to_csv(json_file, csv_file):
         writer.writerow(header)
         writer.writerow(values)
 
+
 def serialize_tracking_json_to_csv(json_file, csv_file):
+    """
+    Serialize tracking JSON data to a CSV file.
+
+    Parameters
+    ----------
+    json_file : str
+        The path to the JSON file.
+    csv_file : str
+        The path to the CSV file.
+    """
     with open(json_file, "r") as f:
         data = json.load(f)
-        header = ["model_id"] + list(data.keys())[2:] # Ignore model_id and runs
-        num_rows = data['runs']
+        header = ["model_id"] + list(data.keys())[2:]  # Ignore model_id and runs
+        num_rows = data["runs"]
         rows = []
         for i in range(num_rows):
-            row = [data['model_id']]+[data[k][i] for k in header[1:]]
+            row = [data["model_id"]] + [data[k][i] for k in header[1:]]
             rows.append(row)
     with open(csv_file, "w") as f:
         writer = csv.writer(f)
@@ -151,13 +191,24 @@ def serialize_tracking_json_to_csv(json_file, csv_file):
         for row in rows:
             writer.writerow(row)
 
-def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
-    """Upload a file to an S3 bucket    
 
-    :param json_dict: JSON object to upload
-    :param bucket: Bucket to upload to
-    :param object_name: S3 object name. If not specified then we generate a name based on the timestamp and model id.
-    :return: True if file was uploaded, else False
+def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
+    """
+    Upload a file to an S3 bucket.
+
+    Parameters
+    ----------
+    model_id : str
+        The identifier of the model.
+    metadata : dict
+        The metadata to upload.
+    bucket : str, optional
+        The S3 bucket to upload to, by default TRACKING_BUCKET.
+
+    Returns
+    -------
+    bool
+        True if the file was uploaded successfully, False otherwise.
     """
 
     s3_client = boto3.client(
@@ -179,29 +230,27 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
         # Upload run output to S3
         sid = get_session_uuid()
         output_file_path = os.path.join(get_session_dir(), "lake", f"output_{sid}.csv")
-        s3_client.upload_file(
-            output_file_path, bucket, f"output/output_{sid}.csv"
-        )
+        s3_client.upload_file(output_file_path, bucket, f"output/output_{sid}.csv")
 
         # Upload session info to S3
         session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
-        session_csv_path = session_json_path.split('.json')[0]+'.csv'
+        session_csv_path = session_json_path.split(".json")[0] + ".csv"
         serialize_session_json_to_csv(session_json_path, session_csv_path)
         s3_client.upload_file(session_csv_path, bucket, f"summary/session_{sid}.csv")
         os.remove(session_csv_path)
-        
+
         # Upload tracking summary to S3
-        tracking_json_path = os.path.join(get_session_dir(), f"{get_session_uuid()}.json")
+        tracking_json_path = os.path.join(
+            get_session_dir(), f"{get_session_uuid()}.json"
+        )
         s3_client.upload_file(tracking_json_path, bucket, f"tracking_raw/{sid}.json")
-        tracking_csv_path = tracking_json_path.split('.json')[0]+'.csv'
+        tracking_csv_path = tracking_json_path.split(".json")[0] + ".csv"
         serialize_tracking_json_to_csv(tracking_json_path, tracking_csv_path)
         s3_client.upload_file(tracking_csv_path, bucket, f"tracking/{sid}.csv")
         os.remove(tracking_csv_path)
 
     except NoCredentialsError:
-        logging.error(
-            "Unable to upload tracking data to AWS: Credentials not found"
-        )
+        logging.error("Unable to upload tracking data to AWS: Credentials not found")
     except ClientError as e:
         logging.error(e)
         return False
@@ -210,16 +259,20 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
 
 def upload_to_cddvault(output_df, api_key):
     """
-    This function takes in the output dataframe from the model run and uploads the data to CDD vault.
+    Upload the output dataframe from the model run to CDD Vault.
 
-    NOTE: Currently, this is simply a skeleton of what the final code should look like. The TODO details
-    what the remaining changes should look like.
+    Parameters
+    ----------
+    output_df : pd.DataFrame
+        The output dataframe from the model run.
+    api_key : str
+        The API key for CDD Vault's API.
 
-    :param output_df: The output dataframe from the model run
-    :param api_key: The API key for CDD Vault's API
-    :return: Whether the API call was successful
+    Returns
+    -------
+    bool
+        True if the API call was successful, False otherwise.
     """
-
     # We use the slurps API path to be able to bulk upload data
     url = "https://app.collaborativedrug.com/api/v1/vaults/<vault_id>/slurps"
     headers = {"CDD-Token": api_key}
@@ -273,10 +326,17 @@ def upload_to_cddvault(output_df, api_key):
 
 def get_nan_counts(data_list):
     """
-    Calculates the number of None values in each key of a list of dictionaries.
+    Calculate the number of NAN values in each key of a list of dictionaries.
 
-    :param data_list: List of dictionaries containing the data
-    :return: Dictionary containing the count of None values for each key
+    Parameters
+    ----------
+    data_list : list
+        List of dictionaries containing the data.
+
+    Returns
+    -------
+    int
+        The count of NAN values for each key.
     """
     nan_count = {}
 
@@ -298,9 +358,16 @@ def get_nan_counts(data_list):
 
 class RunTracker(ErsiliaBase):
     """
-    This class will be responsible for tracking model runs. It calculates the desired metadata based on a model's
+    This class is responsible for tracking model runs. It calculates the desired metadata based on a model's
     inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested
     to Ersilia's Splunk dashboard.
+
+    Parameters
+    ----------
+    model_id : str
+        The identifier of the model.
+    config_json : dict
+        Configuration in JSON format.
     """
 
     def __init__(self, model_id, config_json):
@@ -319,11 +386,19 @@ class RunTracker(ErsiliaBase):
 
     def get_file_sizes(self, input_file, output_file):
         """
-        Calculates the size of the input and output dataframes, as well as the average size of each row.
+        Calculate the size of the input and output dataframes, as well as the average size of each row.
 
-        :input_file: Pandas dataframe containing the input data
-        :output_file: Pandas dataframe containing the output data
-        :return: dictionary containing the input size, output size, average input size, and average output size
+        Parameters
+        ----------
+        input_file : pd.DataFrame
+            Pandas dataframe containing the input data.
+        output_file : pd.DataFrame
+            Pandas dataframe containing the output data.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the input size, output size, average input size, and average output size.
         """
 
         input_size = sys.getsizeof(input_file) / 1024
@@ -333,7 +408,9 @@ class RunTracker(ErsiliaBase):
             input_avg_row_size = input_size / len(input_file)
             output_avg_row_size = output_size / len(output_file)
         except ZeroDivisionError:
-            self.logger.warning("Encountered a ZeroDivisionError. No data in input or output file")
+            self.logger.warning(
+                "Encountered a ZeroDivisionError. No data in input or output file"
+            )
             input_avg_row_size = -1
             output_avg_row_size = -1
 
@@ -346,12 +423,21 @@ class RunTracker(ErsiliaBase):
 
     def check_types(self, result, metadata):
         """
-        This method is responsible for checking the types of the output file against the expected types.
-        This includes checking the shape of the output file (list vs single) and the types of each column.
+        Check the types of the output file against the expected types.
 
-        :param result: The output file
-        :param metadata: The metadata dictionary
-        :return: A dictionary containing the number of mismatched types and a boolean for whether the shape is correct
+        This method checks the shape of the output file (list vs single) and the types of each column.
+
+        Parameters
+        ----------
+        result : list
+            The output data.
+        metadata : dict
+            The metadata dictionary.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the number of mismatched types and a boolean for whether the shape is correct.
         """
 
         type_dict = {"float": "Float", "int": "Int"}
@@ -387,8 +473,12 @@ class RunTracker(ErsiliaBase):
 
     def get_peak_memory(self):
         """
-        Calculates the peak memory usage of ersilia's Python instance during the run.
-        :return: The peak memory usage in Megabytes.
+        Calculate the peak memory usage of Ersilia's Python instance during the run.
+
+        Returns
+        -------
+        float
+            The peak memory usage in Megabytes.
         """
 
         usage = resource.getrusage(resource.RUSAGE_SELF)
@@ -398,7 +488,12 @@ class RunTracker(ErsiliaBase):
 
     def get_memory_info(self):
         """
-        Retrieves the memory information of the current process
+        Retrieve the memory information of the current process.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the memory usage in MB and the total CPU time.
         """
         try:
             current_process = psutil.Process()
@@ -425,9 +520,21 @@ class RunTracker(ErsiliaBase):
             return str(e)
 
     def log_result(self, result):
-        identifier = get_session_uuid() 
+        """
+        Log the result of the model run.
+
+        This method logs the result of the model run to a CSV file.
+
+        Parameters
+        ----------
+        result : list
+            The result data.
+        """
+        identifier = get_session_uuid()
         output_file = os.path.join(self.lake_folder, f"output_{identifier}.csv")
-        tabular_result = self.tabular_result_logger.tabulate(result, identifier=identifier, model_id=self.model_id)
+        tabular_result = self.tabular_result_logger.tabulate(
+            result, identifier=identifier, model_id=self.model_id
+        )
         if tabular_result is None:
             return
         with open(output_file, "a+") as f:
@@ -438,10 +545,21 @@ class RunTracker(ErsiliaBase):
     @throw_ersilia_exception()
     def track(self, input, result, meta, container_metrics):
         """
-        Tracks the results of a model run.
-        :param input: The input data used in the model run.
-        :param result: The output data in the form of a csv file path or Generator from the model run.
-        :param meta: The metadata of the model.
+        Track the results of a model run.
+
+        This method collects relevant data for the run, updates the session file with the stats,
+        and uploads the data to AWS if credentials are available.
+
+        Parameters
+        ----------
+        input : str
+            The input data used in the model run.
+        result : str or Generator
+            The output data in the form of a CSV file path or Generator from the model run.
+        meta : dict
+            The metadata of the model.
+        container_metrics : dict
+            The container metrics data.
         """
         # Set up requirements for tracking the run
         # self.docker_client = SimpleDocker()
@@ -455,7 +573,7 @@ class RunTracker(ErsiliaBase):
             input_data = self.data.read(input)
         else:
             input_data = [{"input": input}]
-           
+
         # Create a temporary file to store the result if it is a generator
         if isinstance(result, types.GeneratorType):
             tmp_dir = os.path.join(get_session_dir(), "tmp")
@@ -480,7 +598,6 @@ class RunTracker(ErsiliaBase):
         else:
             result_data = self.data.read(result)
 
-
         # Collect relevant data for the run
         nan_count = get_nan_counts(result_data)
         type_and_shape_info = self.check_types(result_data, meta)
@@ -491,10 +608,18 @@ class RunTracker(ErsiliaBase):
         console_log_file_path = os.path.join(get_session_dir(), "console.log")
         error_and_warning_info_current_log = log_files_metrics(current_log_file_path)
         error_and_warning_info_console_log = log_files_metrics(console_log_file_path)
-        run_data["input_size"] = size_info["input_size"] if size_info["input_size"] else -1
-        run_data["output_size"] = size_info["output_size"] if size_info["output_size"] else -1
-        run_data["avg_input_size"] = size_info["avg_input_size"] if size_info["avg_input_size"] else -1
-        run_data["avg_output_size"] = size_info["avg_output_size"] if size_info["avg_output_size"] else -1
+        run_data["input_size"] = (
+            size_info["input_size"] if size_info["input_size"] else -1
+        )
+        run_data["output_size"] = (
+            size_info["output_size"] if size_info["output_size"] else -1
+        )
+        run_data["avg_input_size"] = (
+            size_info["avg_input_size"] if size_info["avg_input_size"] else -1
+        )
+        run_data["avg_output_size"] = (
+            size_info["avg_output_size"] if size_info["avg_output_size"] else -1
+        )
         run_data["container_cpu_perc"] = container_metrics["container_cpu_perc"]
         run_data["peak_container_cpu_perc"] = container_metrics["peak_cpu_perc"]
         run_data["container_memory_perc"] = container_metrics["container_memory_perc"]
@@ -502,9 +627,15 @@ class RunTracker(ErsiliaBase):
         run_data["nan_count_agg"] = nan_count if nan_count else -1
         run_data["mismatched_type_count"] = type_and_shape_info["mismatched_types"]
         run_data["correct_shape"] = type_and_shape_info["correct_shape"]
-        run_data["error_count"] = error_and_warning_info_current_log["error_count"] + error_and_warning_info_console_log["error_count"]
-        run_data["warning_count"] = error_and_warning_info_current_log["warning_count"] + error_and_warning_info_console_log["warning_count"]
-        
+        run_data["error_count"] = (
+            error_and_warning_info_current_log["error_count"]
+            + error_and_warning_info_console_log["error_count"]
+        )
+        run_data["warning_count"] = (
+            error_and_warning_info_current_log["warning_count"]
+            + error_and_warning_info_console_log["warning_count"]
+        )
+
         update_tracking_summary(model_id, run_data)
 
         # Get the memory stats of the run processs
@@ -516,6 +647,6 @@ class RunTracker(ErsiliaBase):
         session.update_total_memory(total_memory)
         session.update_cpu_time(cpu_time)
         self.log_result(result)
-        
+
         if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
             upload_to_s3(model_id=self.model_id, metadata=meta)

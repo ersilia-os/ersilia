@@ -8,8 +8,26 @@ from ... import ModelBase
 
 
 def publish_cmd():
-    """Create publish commmand"""
+    """
+    Publishes a specified model.
 
+    This command allows users to publish a specified model to the model hub.
+
+    Returns
+    -------
+    function
+        The publish command function to be used by the CLI.
+
+    Examples
+    --------
+    .. code-block:: console
+
+        Publish a model by its ID:
+        $ ersilia publish create <model_id>
+
+        Rebase a model:
+        $ ersilia publish rebase <model_id>
+    """
     def _publish(mf, model_id):
         mf.publish(model_id)
 

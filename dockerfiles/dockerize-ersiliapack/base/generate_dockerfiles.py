@@ -3,10 +3,10 @@ import sys
 
 CONDA_VERSIONS = [
     "py38_23.11.0-2",
-    "py39_24.7.1-0", 
+    "py39_24.7.1-0",
     "py310_24.7.1-0",
     "py311_24.7.1-0",
-    "py312_24.7.1-0"
+    "py312_24.7.1-0",
 ]
 
 PIP_VERSIONS = [
@@ -14,7 +14,7 @@ PIP_VERSIONS = [
     "3.9-slim-bullseye",
     "3.10-slim-bullseye",
     "3.11-slim-bullseye",
-    "3.12-slim-bullseye"
+    "3.12-slim-bullseye",
 ]
 
 # By default, we generate all versions
@@ -32,24 +32,29 @@ ersilia_model_serve --bundle_path /root/bundles/$MODEL --port 80
 echo "Serving model $MODEL..."
 """
 
+
 def read_conda_base_dockerfile():
     with open("Dockerfile.conda", "r") as f:
         return f.readlines()
-    
+
+
 def read_python_base_dockerfile():
     with open("Dockerfile.pip", "r") as f:
         return f.readlines()
+
 
 def write_entrypoint():
     with open("docker-entrypoint.sh", "w") as f:
         f.write(DOCKER_ENTRYPOINT)
 
+
 def generate_conda_dockerfile(version):
-    dockerfile = read_conda_base_dockerfile()    
+    dockerfile = read_conda_base_dockerfile()
     version = version.strip()
     with open(os.path.join("Dockerfile.conda" + version), "w") as f:
         for line in dockerfile:
             f.write(line.replace("version", version))
+
 
 def generate_pip_dockerfile(version):
     dockerfile = read_python_base_dockerfile()
@@ -57,6 +62,7 @@ def generate_pip_dockerfile(version):
     with open(os.path.join("Dockerfile.pip" + version), "w") as f:
         for line in dockerfile:
             f.write(line.replace("version", version))
+
 
 if __name__ == "__main__":
     if version_to_build == "all":
@@ -70,5 +76,7 @@ if __name__ == "__main__":
         elif version_to_build in PIP_VERSIONS:
             generate_pip_dockerfile(version_to_build)
         else:
-            print("Invalid version specified. Please specify a valid version or 'all' to build all versions")
+            print(
+                "Invalid version specified. Please specify a valid version or 'all' to build all versions"
+            )
     write_entrypoint()

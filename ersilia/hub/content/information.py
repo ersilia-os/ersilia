@@ -22,6 +22,19 @@ from ...utils.paths import get_metadata_from_base_dir
 
 
 class Information(ErsiliaBase):
+    """
+    Class to handle the information of a model.
+
+    This class provides methods to get various information about a model,
+    such as pack mode, service class, model source, API schema, size, metadata, and card.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -102,7 +115,15 @@ class Information(ErsiliaBase):
             columns_data[api_name] = data
         return columns_data
 
-    def get(self):
+    def get(self) -> dict:
+        """
+        Get various information about the model.
+
+        Returns
+        -------
+        dict
+            A dictionary containing various information about the model.
+        """
         data = {
             "pack_mode": self._get_pack_mode(),
             "service_class": self._get_service_class(),
@@ -118,6 +139,19 @@ class Information(ErsiliaBase):
 
 
 class InformationDisplayer(ErsiliaBase):
+    """
+    Class to display the information of a model.
+
+    This class provides methods to display various information about a model,
+    such as description, identifiers, code, and Docker information.
+
+    Parameters
+    ----------
+    info_data : dict
+        The information data of the model.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
     def __init__(self, info_data, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.info_data = info_data
@@ -185,6 +219,9 @@ class InformationDisplayer(ErsiliaBase):
             self.logger.warning("No metadata for Docker slots")
 
     def echo(self):
+        """
+        Display the information about the model.
+        """
         self._description_info()
         self._identifiers_info()
         self._code_info()

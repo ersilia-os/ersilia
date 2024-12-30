@@ -1,7 +1,11 @@
 name: Upload Ersilia base image to DockerHub
 on:
+  push:
+    branches:
+      - master
+
   workflow_run:
-    workflows: ["Tag to version"]
+    workflows: ["Ersilia Release"]
     types:
       - completed
 

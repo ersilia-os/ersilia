@@ -11,6 +11,7 @@ ROOT = os.path.dirname(os.path.realpath(__file__))
 BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
 CHECKSUM_NCHAR = 8
 CONDA_ENV_YML_FILE = "environment.yml"
+RUN_FILE = "run.sh"
 DOCKERFILE_FILE = "Dockerfile"
 GITHUB_ORG = "ersilia-os"
 GITHUB_ERSILIA_REPO = "ersilia"
@@ -30,7 +31,7 @@ DEFAULT_VENV = "env"
 DEFAULT_API_NAME = "run"
 PACKMODE_FILE = "pack_mode.txt"
 CARD_FILE = "card.json"
-UNPROCESSABLE_INPUT="UNPROCESSABLE_INPUT"
+UNPROCESSABLE_INPUT = "UNPROCESSABLE_INPUT"
 DOTENV_FILE = ".env"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
@@ -41,6 +42,7 @@ EXAMPLE_STANDARD_INPUT_CSV_FILENAME = "example_standard_input.csv"
 EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 PREDEFINED_EXAMPLE_FILES = [
     "model/framework/examples/input.csv",
+    "model/framework/examples/output.csv",
     "model/framework/input.csv",
     "model/framework/example.csv",
     "example.csv",
@@ -48,6 +50,7 @@ PREDEFINED_EXAMPLE_FILES = [
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
 METADATA_YAML_FILE = "metadata.yml"
+INSTALL_YAML_FILE = "install.yml"
 SERVICE_CLASS_FILE = "service_class.txt"
 MODEL_SOURCE_FILE = "model_source.txt"
 APIS_LIST_FILE = "apis_list.txt"
@@ -60,7 +63,6 @@ DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
 PACK_METHOD_FASTAPI = "fastapi"
 PACK_METHOD_BENTOML = "bentoml"
-
 # Session and logging
 SESSIONS_DIR = os.path.join(EOS, "sessions")
 if not os.path.exists(SESSIONS_DIR):
@@ -69,7 +71,7 @@ SESSION_HISTORY_FILE = "history.txt"
 SESSION_JSON = "session.json"
 LOGS_DIR = "logs"
 CONTAINER_LOGS_TMP_DIR = "_logs/tmp"
-CONTAINER_LOGS_EOS_DIR = "_logs/eos" # This is not used
+CONTAINER_LOGS_EOS_DIR = "_logs/eos"  # This is not used
 LOGGING_FILE = "console.log"
 CURRENT_LOGGING_FILE = "current.log"
 SILENCE_FILE = ".silence.json"
@@ -87,17 +89,15 @@ ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
 # Other
 FEATURE_MERGE_PATTERN = "---"
 
-# Airtable
-AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
-AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
-
 # URLS
 ERSILIA_WEB_URL = "https://ersilia.io"
 ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
 AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/shrNc3sTtTA3QeEZu"
 S3_BUCKET_URL = "https://ersilia-models.s3.eu-central-1.amazonaws.com"
 S3_BUCKET_URL_ZIP = "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com"
-INFERENCE_STORE_API_URL = "https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations"
+INFERENCE_STORE_API_URL = (
+    "https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations"
+)
 
 # EOS conda
 _resolve_script = "conda_env_resolve.py"
@@ -106,6 +106,7 @@ if not os.path.exists(resolve_script):
     shutil.copyfile(
         os.path.join(ROOT, "utils", "supp", _resolve_script), resolve_script
     )
+
 
 # Catalog table border constants
 class TableConstants(str, Enum):
@@ -122,6 +123,7 @@ class TableConstants(str, Enum):
     BOTTOM_RIGHT = "┘"
     CELL_PADDING = " "
     COLUMN_SEPARATOR = " | "
+
 
 snippet = (
     """

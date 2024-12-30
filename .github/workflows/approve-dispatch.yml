@@ -53,6 +53,7 @@ jobs:
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
+          python -m pip install .
 
       # add PyGithub to the conda environment
       - name: add PyGithub and Pyyaml to conda environment
@@ -144,7 +145,18 @@ jobs:
           echo "issue_creator=${ISSUE_CREATOR}"
           python3 -m pip install pyairtable
           python3 -m pip install requests
-          python3 .github/scripts/insert_metadata_to_airtable.py $REPO_NAME $ISSUE_CREATOR $AIRTABLE_API_KEY
+          python3 .github/scripts/airtableops.py airtable-insert --model $REPO_NAME --contributor $ISSUE_CREATOR --api-key $AIRTABLE_API_KEY
+
+      - name: sync metadata to S3 JSON
+        id: sync-metadata-to-s3
+        env:
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          pip install boto3 requests pyairtable
+          python .github/scripts/convert_airtable_to_json.py $AIRTABLE_API_KEY $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
+
 
       # find the creator of the issue
       - name: find original issue creator

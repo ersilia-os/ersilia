@@ -23,13 +23,16 @@ logger = logging.getLogger(__name__)
 
 
 class BentoMLConfigParser(ConfigParser):
-    """BentoML configuration parser
+    """
+    BentoML configuration parser.
 
-    :param default_config string - serve as default value when conf key not presented in
-        environment var or user local config file
+    Parameters
+    ----------
+    default_config : str
+        Serve as default value when conf key not presented in environment var or user local config file.
     """
 
-    def __init__(self, default_config, *args, **kwargs):
+    def __init__(self, default_config: str, *args, **kwargs):
         ConfigParser.__init__(self, *args, **kwargs)
 
         if default_config is not None:
@@ -39,11 +42,29 @@ class BentoMLConfigParser(ConfigParser):
     def _env_var_name(section, key):
         return "BENTOML__{}__{}".format(section.upper(), key.upper())
 
-    def get(self, section, key=None, **kwargs):  # pylint:disable=arguments-differ
-        """A simple hierarchical config access, priority order:
+    def get(self, section: str, key: str = None, **kwargs) -> str:  # pylint:disable=arguments-differ
+        """
+        A simple hierarchical config access, priority order:
         1. environment var
         2. user config file
         3. bentoml default config file
+
+        Parameters
+        ----------
+        section : str
+            The section of the configuration.
+        key : str, optional
+            The key within the section of the configuration. If not provided, the section is used as the key.
+
+        Returns
+        -------
+        str
+            The value of the configuration.
+
+        Raises
+        ------
+        BentoMLConfigException
+            If the section/key is not found in the configuration.
         """
         if key is None:
             key = section
@@ -62,7 +83,20 @@ class BentoMLConfigParser(ConfigParser):
                 "section/key '{}/{}' not found in BentoML config".format(section, key)
             )
 
-    def as_dict(self, display_source=False):
+    def as_dict(self, display_source: bool = False) -> dict:
+        """
+        Convert the configuration to a dictionary.
+
+        Parameters
+        ----------
+        display_source : bool, optional
+            If True, include the source of the configuration value (default is False).
+
+        Returns
+        -------
+        dict
+            The configuration as a dictionary.
+        """
         cfg = {}
 
         for section in self:
@@ -85,5 +119,13 @@ class BentoMLConfigParser(ConfigParser):
 
         return cfg
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """
+        String representation of the BentoMLConfigParser.
+
+        Returns
+        -------
+        str
+            The string representation of the configuration.
+        """
         return "<BentoML config: {}>".format(str(self.as_dict()))

@@ -37,16 +37,22 @@ class _FileFolderRebaser(object):
 
 
 class TemplateRebaser(ErsiliaBase):
-    def __init__(
-        self,
-        model_id,
-        template_repo="eos-template",
-        config_json=None,
-        credentials_json=None,
-    ):
-        ErsiliaBase.__init__(
-            self, config_json=config_json, credentials_json=credentials_json
-        )
+    """
+    Class for rebasing model repositories with a template repository.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be rebased.
+    template_repo : str, optional
+        The name of the template repository. Default is 'eos-template'.
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+    """
+    def __init__(self, model_id: str, template_repo="eos-template", config_json=None, credentials_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
         self.model_id = model_id
         self.template_repo = template_repo
         self.root = os.path.abspath(self._tmp_dir)
@@ -54,27 +60,36 @@ class TemplateRebaser(ErsiliaBase):
         self.model_path = os.path.join(self.root, self.model_id)
         self.template_path = os.path.join(self.root, self.template_repo)
         self.clean()
-        self.file_folder_rebaser = _FileFolderRebaser(
-            self.model_path, self.template_path
-        )
+        self.file_folder_rebaser = _FileFolderRebaser(self.model_path, self.template_path)
 
     def clone_template(self):
+        """
+        Clone the template repository.
+        """
         os.chdir(self.root)
         run_command("gh repo clone {0}/{1}".format(GITHUB_ORG, self.template_repo))
         os.chdir(self.cwd)
 
     def clone_current_model(self):
+        """
+        Clone the current model repository.
+        """
         os.chdir(self.root)
         run_command("gh repo clone {0}/{1}".format(GITHUB_ORG, self.model_id))
         os.chdir(self.cwd)
 
     def dvc_part(self):
-        # TODO: Better overwritting functionality
+        """
+        Set up DVC (Data Version Control) for the model repository.
+        """
         self.file_folder_rebaser.do_file("data.h5", overwrite=False)
         self.file_folder_rebaser.do_file(".dvcignore", overwrite=False)
         self.file_folder_rebaser.do_folder(".dvc", overwrite=False)
 
     def clean(self):
+        """
+        Clean up temporary directories.
+        """
         if os.path.exists(self.template_path):
             self.logger.debug("Cleaning {0}".format(self.template_path))
             run_command("rm -rf {0}".format(self.template_path))
@@ -84,6 +99,9 @@ class TemplateRebaser(ErsiliaBase):
 
     # TODO: Add other rebasing options
     def rebase(self):
+        """
+        Rebase the model repository with the template repository.
+        """
         self.clone_template()
         self.clone_current_model()
         self.dvc_part()

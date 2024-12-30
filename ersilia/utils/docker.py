@@ -10,11 +10,17 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 from .. import logger
-from ..default import (DEFAULT_DOCKER_PLATFORM, DEFAULT_UDOCKER_USERNAME,
-                       DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG,
-                       PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI)
+from ..default import (
+    DEFAULT_DOCKER_PLATFORM,
+    DEFAULT_UDOCKER_USERNAME,
+    DOCKERHUB_ORG,
+    DOCKERHUB_LATEST_TAG,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+)
 from ..utils.system import SystemChecker
 from ..utils.logging import make_temp_dir
+
 
 def resolve_pack_method_docker(model_id):
     client = docker.from_env()
@@ -24,7 +30,7 @@ def resolve_pack_method_docker(model_id):
     image_history = model_image.history()
     for hist in image_history:
         # Very hacky, but works bec we don't have nginx in ersilia-pack images
-        if "nginx" in hist["CreatedBy"]: 
+        if "nginx" in hist["CreatedBy"]:
             return PACK_METHOD_BENTOML
     return PACK_METHOD_FASTAPI
 
@@ -58,6 +64,14 @@ def is_udocker_installed():
 
 
 class SimpleDocker(object):
+    """
+    A class to manage Docker containers and images.
+
+    Parameters
+    ----------
+    use_udocker : bool, optional
+        Whether to use udocker instead of Docker. Default is None.
+    """
     def __init__(self, use_udocker=None):
         self.identifier = LongIdentifier()
         self.logger = logger
@@ -95,6 +109,14 @@ class SimpleDocker(object):
         return "%s/%s:%s" % (org, img, tag)
 
     def images(self):
+        """
+        Get a dictionary of Docker images.
+
+        Returns
+        -------
+        dict
+            A dictionary of Docker images with image names as keys and image IDs as values.
+        """
         tmp_dir = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_dir, "images.txt")
         if not self._with_udocker:
@@ -127,6 +149,19 @@ class SimpleDocker(object):
             return img_dict
 
     def containers(self, only_run):
+        """
+        Get a dictionary of Docker containers.
+
+        Parameters
+        ----------
+        only_run : bool
+            Whether to include only running containers.
+
+        Returns
+        -------
+        dict
+            A dictionary of Docker containers with container names as keys and image names as values.
+        """
         tmp_dir = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_dir, "containers.txt")
         if not only_run:
@@ -153,6 +188,23 @@ class SimpleDocker(object):
         return cnt_dict
 
     def exists(self, org, img, tag):
+        """
+        Check if a Docker image exists.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+        img : str
+            The image name.
+        tag : str
+            The image tag.
+
+        Returns
+        -------
+        bool
+            True if the image exists, False otherwise.
+        """
         bash_script = """
         #!/bin/bash
         image_and_tag="$1"
@@ -177,6 +229,21 @@ class SimpleDocker(object):
         return None
 
     def build(self, path, org, img, tag):
+        """
+        Build a Docker image.
+
+        Parameters
+        ----------
+        path : str
+            The path to the Dockerfile.
+        org : str
+            The organization name.
+        img : str
+            The image name.
+        tag : str
+            The image tag.
+
+        """
         if self._with_udocker:
             raise Exception("Cannot built with udocker")
         path = os.path.abspath(path)
@@ -187,6 +254,18 @@ class SimpleDocker(object):
         os.chdir(cwd)
 
     def delete(self, org, img, tag):
+        """
+        Delete a Docker image.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+        img : str
+            The image name.
+        tag : str
+            The image tag.
+        """
         if not self._with_udocker:
             cmd = "docker rmi -f %s" % self._image_name(org, img, tag)
             run_command(cmd)
@@ -196,6 +275,27 @@ class SimpleDocker(object):
             )
 
     def run(self, org, img, tag, name, memory=None):
+        """
+        Run a Docker container.
+
+        Parameters
+        ----------
+        org : str
+            The organization name.
+        img : str
+            The image name.
+        tag : str
+            The image tag.
+        name : str
+            The container name.
+        memory : int, optional
+            The memory limit for the container in GB. Default is None.
+
+        Returns
+        -------
+        str
+            The name of the running container.
+        """
         if name is None:
             name = self.identifier.encode()
         if not self._with_udocker:
@@ -221,16 +321,51 @@ class SimpleDocker(object):
 
     @staticmethod
     def kill(name):
+        """
+        Kill a Docker container.
+
+        Parameters
+        ----------
+        name : str
+            The container name.
+        """
         cmd = "docker kill {0}".format(name)
         run_command(cmd)
 
     @staticmethod
     def remove(name):
+        """
+        Remove a Docker container.
+
+        Parameters
+        ----------
+        name : str
+            The container name.
+        """
         cmd = "docker rm -f {0}".format(name)
         run_command(cmd)
 
     @staticmethod
     def cp_from_container(name, img_path, local_path, org=None, img=None, tag=None):
+        """
+        Copy files from a Docker container to the local filesystem.
+
+        Parameters
+        ----------
+        name : str
+            The container name.
+        img_path : str
+            The path inside the container.
+        local_path : str
+            The local path to copy files to.
+        org : str, optional
+            The organization name. Default is None.
+        img : str, optional
+            The image name. Default is None.
+        tag : str, optional
+            The image tag. Default is None.
+        None
+        """
         local_path = os.path.abspath(local_path)
         tmp_file = os.path.join(make_temp_dir(prefix="ersilia-"), "tmp.txt")
         cmd = "docker cp %s:%s %s &> %s" % (name, img_path, local_path, tmp_file)
@@ -247,23 +382,75 @@ class SimpleDocker(object):
             run_command(cmd)
 
     async def cp_from_image(self, img_path, local_path, org, img, tag):
+        """
+        Copy files from a Docker image to the local filesystem.
+
+        Parameters
+        ----------
+        img_path : str
+            The path inside the image.
+        local_path : str
+            The local path to copy files to.
+        org : str
+            The organization name.
+        img : str
+            The image name.
+        tag : str
+            The image tag.
+        """
         name = self.run(org, img, tag, name=None)
         self.cp_from_container(name, img_path, local_path, org=org, img=img, tag=tag)
         self.remove(name)
 
     @staticmethod
     def exec_container(name, cmd):
+        """
+        Execute a command in a Docker container.
+
+        Parameters
+        ----------
+        name : str
+            The container name.
+        cmd : str
+            The command to execute.
+        """
         cmd = 'docker exec -i %s bash -c "%s"' % (name, cmd)
         run_command(cmd)
 
     def exec(self, cmd, org, img, tag, name):
+        """
+        Execute a command in a Docker container and then kill the container.
+
+        Parameters
+        ----------
+        cmd : str
+            The command to execute.
+        org : str
+            The organization name.
+        img : str
+            The image name.
+        tag : str
+            The image tag.
+        name : str
+            The container name.
+        """
         name = self.run(org, img, tag, name=name)
         self.exec_container(name, cmd)
         self.kill(name)
 
     def container_peak(self, model_id):
         """
-        This function will get the peak memory of the Docker container running Ersilia Models.
+        Get the peak memory usage of a Docker container running an Ersilia model.
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+
+        Returns
+        -------
+        float or None
+            The peak memory usage in MB, or None if the container is not found or an error occurs.
         """
         try:
             client = docker.from_env()
@@ -321,9 +508,11 @@ class SimpleDocker(object):
         except Exception as e:
             self.logger.debug(f"An error occurred: {e}")
             return None
-        
+
     def cleanup_ersilia_images(self):
-        """Remove all Ersilia-related Docker images"""
+        """
+        Remove all Ersilia-related Docker images.
+        """
         if self._with_udocker:
             self.logger.warning("Docker cleanup not supported with udocker")
             return
@@ -333,8 +522,8 @@ class SimpleDocker(object):
 
             if not images_dict:
                 logger.info("No Docker images found")
-                return 
-            
+                return
+
             for image_name, image_id in images_dict.items():
                 if DOCKERHUB_ORG in image_name:
                     try:
@@ -342,20 +531,45 @@ class SimpleDocker(object):
                         self.delete(*self._splitter(image_name))
                     except Exception as e:
                         logger.error(f"Failed to remove Docker image {image_name}: {e}")
-        
+
         except Exception as e:
             self.logger.error(f"Failed to cleanup Docker images: {e}")
 
+
 class SimpleDockerfileParser(DockerfileParser):
+    """
+    A class to parse Dockerfiles.
+
+    Parameters
+    ----------
+    path : str
+        The path to the Dockerfile or the directory containing the Dockerfile.
+    """
     def __init__(self, path):
         if os.path.isdir(path):
             path = os.path.join(path, "Dockerfile")
         DockerfileParser.__init__(self, path=path)
 
     def get_baseimage(self):
+        """
+        Get the base image from the Dockerfile.
+
+        Returns
+        -------
+        str
+            The base image.
+        """
         return self.baseimage
 
     def get_runs(self):
+        """
+        Get the RUN commands from the Dockerfile.
+
+        Returns
+        -------
+        list
+            A list of RUN commands.
+        """
         structure = self.structure
         runs = []
         for d in structure:
@@ -367,7 +581,16 @@ class SimpleDockerfileParser(DockerfileParser):
 
 
 class ContainerMetricsSampler:
-    #TODO Perhaps this can be moved to a base Sampling class
+    """
+    A class to sample metrics from Docker containers.
+
+    Parameters
+    ----------
+    model_id : str
+        The model identifier.
+    sampling_interval : float, optional
+        The interval between samples in seconds. Default is 0.01.
+    """
     def __init__(self, model_id, sampling_interval=0.01):
         self.client = docker.from_env()
         self.logger = logger
@@ -376,11 +599,21 @@ class ContainerMetricsSampler:
         self.memory_samples = []
         self.tracking_thread = None
         self.tracking = False
-        self.sampling_interval = sampling_interval # Sample every 10ms
+        self.sampling_interval = sampling_interval  # Sample every 10ms
 
     def _get_container_for_model(self, model_id=None):
         """
         This function will get the Docker container running an ersilia model
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+
+        Returns
+        -------
+        container
+            The Docker container running the model.
         """
         if not model_id:
             raise ValueError("Model ID is required")
@@ -404,8 +637,17 @@ class ContainerMetricsSampler:
     def _container_cpu(self, stats: dict):
         """
         This function will get the CPU percentage utilisation of the Docker container running Ersilia Models.
-        """
 
+        Parameters
+        ----------
+        stats : dict
+            The stats dictionary from the Docker API.
+
+        Returns
+        -------
+        float
+            The CPU percentage utilisation.
+        """
         try:  # Ref: https://stackoverflow.com/a/77924494/1887515
             cpu_usage = (
                 stats["cpu_stats"]["cpu_usage"]["total_usage"]
@@ -428,6 +670,16 @@ class ContainerMetricsSampler:
     def _container_memory(self, stats: dict):
         """
         This function will get the total memory usage of the Docker container running an ersilia model.
+
+        Parameters
+        ----------
+        stats : dict
+            The stats dictionary from the Docker API.
+
+        Returns
+        -------
+        float
+            The memory usage percentage.
         """
         try:
             mem_usage_mb = stats["memory_stats"]["usage"] / (1024 * 1024)
@@ -448,11 +700,14 @@ class ContainerMetricsSampler:
                 memory_usage = self._container_memory(stat)
                 self.cpu_samples.append(cpu_usage)
                 self.memory_samples.append(memory_usage)
-                time.sleep(self.sampling_interval)  
+                time.sleep(self.sampling_interval)
         else:
             self.logger.debug("No container found for model")
 
     def start_tracking(self):
+        """
+        Start tracking metrics from the Docker container.
+        """
         if not self.tracking:
             self.tracking = True
             self.cpu_samples.clear()
@@ -461,6 +716,9 @@ class ContainerMetricsSampler:
             self.tracking_thread.start()
 
     def stop_tracking(self):
+        """
+        Stop tracking metrics from the Docker container.
+        """
         if self.tracking:
             self.tracking = False
             if self.tracking_thread is not None:
@@ -468,6 +726,14 @@ class ContainerMetricsSampler:
                 self.tracking_thread = None
 
     def get_average_metrics(self):
+        """
+        Get the average metrics from the tracked samples.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the average CPU and memory usage, and the peak CPU and memory usage.
+        """
         metrics = {
             "container_cpu_perc": 0,
             "container_memory_perc": 0,

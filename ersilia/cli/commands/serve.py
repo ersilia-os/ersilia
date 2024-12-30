@@ -5,11 +5,30 @@ from . import ersilia_cli
 from ... import ErsiliaModel
 from ..messages import ModelNotFound
 from ...store.utils import OutputSource, ModelNotInStore, store_has_model
+from ...utils.session import register_model_session
 
 
 def serve_cmd():
-    """Creates serve command"""
+    """
+    Serves a specified model.
 
+    This command allows users to serve a specified model as an API.
+
+    Returns
+    -------
+    function
+        The serve command function to be used by the CLI and for testing in the pytest.
+
+    Examples
+    --------
+    .. code-block:: console
+
+        Serve a model by its ID:
+        $ ersilia serve <model_id> --port 8080
+
+        Serve a model and track the session:
+        $ ersilia serve <model_id> --track
+    """
     # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
@@ -19,10 +38,9 @@ def serve_cmd():
         default=OutputSource.LOCAL_ONLY,
         required=False,
         help=f"Get outputs from locally hosted model only ({OutputSource.LOCAL_ONLY}), \
-            from cloud precalculation store only ({OutputSource.CLOUD_ONLY})"
+            from cloud precalculation store only ({OutputSource.CLOUD_ONLY})",
     )
     @click.option("--lake/--no-lake", is_flag=True, default=True)
-    @click.option("--docker/--no-docker", is_flag=True, default=False)
     @click.option(
         "--port",
         "-p",
@@ -39,11 +57,7 @@ def serve_cmd():
         required=False,
         default=False,
     )
-    def serve(model, output_source, lake, docker, port, track):
-        if docker:
-            service_class = "docker"
-        else:
-            service_class = None
+    def serve(model, output_source, lake, port, track):
         if OutputSource.is_cloud(output_source):
             if store_has_model(model_id=model):
                 echo("Model {0} found in inference store.".format(model))
@@ -51,8 +65,8 @@ def serve_cmd():
                 ModelNotInStore(model).echo()
         mdl = ErsiliaModel(
             model,
-            output_source=output_source, save_to_lake=lake,
-            service_class=service_class,
+            output_source=output_source,
+            save_to_lake=lake,
             preferred_port=port,
             track_runs=track,
         )
@@ -63,6 +77,8 @@ def serve_cmd():
         if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")
             return
+        
+        register_model_session(mdl.model_id, mdl.session._session_dir)
         echo(
             ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"
         )
@@ -84,3 +100,5 @@ def serve_cmd():
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
+
+    return serve

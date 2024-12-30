@@ -12,17 +12,38 @@ from ....default import (
     IS_FETCHED_FROM_HOSTED_FILE,
     SERVICE_CLASS_FILE,
 )
-from ....db.hubdata.interfaces import AirtableInterface
 from ....utils.exceptions_utils.fetch_exceptions import InvalidUrlError
 from ...fetch import ModelURLResolver
 
 
 class ModelRegisterer(ErsiliaBase):
-    def __init__(self, model_id, config_json):
+    """
+    ModelRegisterer is responsible for registering models from various sources.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be registered.
+    config_json : dict
+        Configuration settings for the registerer.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
+        await registerer.register(is_from_dockerhub=True)
+    """
+    def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
 
     def register_from_dockerhub(self):
+        """
+        Register the model from DockerHub.
+
+        This method registers the model in the file system indicating it was fetched from DockerHub.
+        """
         data = {"docker_hub": True}
         self.logger.debug(
             "Registering model {0} in the file system".format(self.model_id)
@@ -52,6 +73,11 @@ class ModelRegisterer(ErsiliaBase):
             f.write("pulled_docker")
 
     def register_not_from_dockerhub(self):
+        """
+        Register the model indicating it was not fetched from DockerHub.
+
+        This method registers the model in the file system indicating it was not fetched from DockerHub.
+        """
         data = {"docker_hub": False}
         path = self._model_path(self.model_id)
         file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
@@ -63,6 +89,16 @@ class ModelRegisterer(ErsiliaBase):
             json.dump(data, f)
 
     def _resolve_url(self):
+        """
+        Resolve the URL for the hosted model.
+
+        This method resolves a valid URL for the hosted model.
+
+        Returns
+        -------
+        str or None
+            The resolved URL if valid, otherwise None.
+        """
         mdl_url_resolver = ModelURLResolver(
             model_id=self.model_id, config_json=self.config_json
         )
@@ -75,7 +111,17 @@ class ModelRegisterer(ErsiliaBase):
             return None
 
     @throw_ersilia_exception()
-    def register_from_hosted(self, url=None):
+    def register_from_hosted(self, url: str = None):
+        """
+        Register the model from a hosted URL.
+
+        This method registers the model in the file system indicating it was fetched from a hosted URL.
+
+        Parameters
+        ----------
+        url : str, optional
+            The URL from which the model is hosted. If not provided, it will be resolved automatically.
+        """
         if url is None:
             url = self._resolve_url()
         else:
@@ -110,6 +156,11 @@ class ModelRegisterer(ErsiliaBase):
             f.write("hosted")
 
     def register_not_from_hosted(self):
+        """
+        Register the model indicating it was not fetched from a hosted URL.
+
+        This method registers the model in the file system indicating it was not fetched from a hosted URL.
+        """
         data = {"hosted": False}
         path = self._model_path(self.model_id)
         file_name = os.path.join(path, IS_FETCHED_FROM_HOSTED_FILE)
@@ -120,7 +171,31 @@ class ModelRegisterer(ErsiliaBase):
         with open(file_name, "w") as f:
             json.dump(data, f)
 
-    async def register(self, is_from_dockerhub=False, is_from_hosted=False):
+    async def register(self, is_from_dockerhub: bool = False, is_from_hosted: bool = False):
+        """
+        Register the model based on its source.
+
+        This method registers the model in the file system based on whether it was fetched from DockerHub or a hosted URL.
+
+        Parameters
+        ----------
+        is_from_dockerhub : bool, optional
+            Indicates if the model is from DockerHub.
+        is_from_hosted : bool, optional
+            Indicates if the model is from a hosted URL.
+
+        Raises
+        ------
+        ValueError
+            If both is_from_dockerhub and is_from_hosted are True.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
+            await registerer.register(is_from_dockerhub=True)
+        """
         if is_from_dockerhub and is_from_hosted:
             raise ValueError("Model cannot be from both DockerHub and hosted")
         elif is_from_dockerhub and not is_from_hosted:

@@ -26,12 +26,26 @@ ROOT = os.path.basename(os.path.abspath(__file__))
 
 
 class PackCreator(ErsiliaBase):
-    def __init__(self, model_id, config_json):
+    """
+    Class to create a pack for the model. The pack.py file loads a model, 
+    packs it into a BentoML Service instance, and saves the service for deployment. 
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict
+        Configuration settings for the model.
+    """
+    def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.dest_dir = self._model_path(self.model_id)
 
     def run(self):
+        """
+        Copy the pack creator script to the destination directory.
+        """
         self.logger.debug("Copying pack creator")
         os.copy(
             os.path.join(ROOT, "..", "inner_template", "pack.py"),
@@ -40,21 +54,34 @@ class PackCreator(ErsiliaBase):
 
 
 class ServiceCreator(ErsiliaBase):
-    def __init__(self, model_id, config_json):
+    """
+    Class to create a service file for the model. The 'service.py' specifically 
+    facilitates the deployment of a custom model as a BENTOML REST API service.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict
+        Configuration settings for the model.
+    """
+    def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.dest_dir = self._model_path(self.model_id)
 
     def run(self):
+        """
+        Create the service.py file in the src directory.
+        """
         self.logger.debug("Creating service.py file")
         src_dir = os.path.join(self.dest_dir, "src")
         if not os.path.exists(src_dir):
             os.mkdir(src_dir)
-        
+
         with open(os.path.join(self.dest_dir, "src", "service.py"), "r") as f:
             content = f.read()
-        
-        
+
         try:
             metadata = get_metadata_from_base_dir(self.dest_dir)
             output_type = metadata["Output Type"]
@@ -78,12 +105,28 @@ class ServiceCreator(ErsiliaBase):
 
 
 class DockerfileCreator(ErsiliaBase):
-    def __init__(self, model_id, config_json, commands):
+    """
+    Class to create a Dockerfile for the model.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict
+        Configuration settings for the model.
+    commands : list
+        List of commands to be added to the Dockerfile.
+    """
+    def __init__(self, model_id: str, config_json: dict, commands: list):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
         self.dest_dir = self._model_path(self.model_id)
+        self.commands = commands
 
     def run(self):
+        """
+        Create the Dockerfile and append necessary commands.
+        """
         self.logger.debug(
             "Creating Dockerfile for internal usage from a config.yml file"
         )
@@ -121,7 +164,22 @@ class DockerfileCreator(ErsiliaBase):
 
 
 class TemplatePreparer(BaseAction):
-    def __init__(self, model_id, config_json):
+    """
+    Class to prepare the template for the model.
+
+    In this context, a template refers to a predefined structure or set of files 
+    that are necessary for setting up the model environment. This includes 
+    configuration files, scripts, and other resources required to deploy and 
+    run the model.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict
+        Configuration settings for the model.
+    """
+    def __init__(self, model_id: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
@@ -159,13 +217,33 @@ class TemplatePreparer(BaseAction):
         DockerfileCreator(model_id=self.model_id, config_json=self.config_json).run()
 
     def prepare(self):
+        """
+        Prepare the template by creating pack, service, and Dockerfile.
+        """
         self._create_pack()
         self._create_dockerfile()
         self._create_service()
 
+
 class ModelRepositoryGetter(BaseAction):
+    """
+    Class to get the model repository from local, GitHub, or S3.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict
+        Configuration settings for the model.
+    force_from_github : bool
+        Force download from GitHub.
+    force_from_s3 : bool
+        Force download from S3.
+    repo_path : str
+        Path to the local repository.
+    """
     def __init__(
-        self, model_id, config_json, force_from_github, force_from_s3, repo_path
+        self, model_id: str, config_json: dict, force_from_github: bool, force_from_s3: bool, repo_path: str
     ):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -261,7 +339,9 @@ class ModelRepositoryGetter(BaseAction):
 
     @throw_ersilia_exception()
     def get(self):
-        """Copy model repository from local or download from S3 or GitHub"""
+        """
+        Copy model repository from local or download from S3 or GitHub.
+        """
         folder = self._model_path(self.model_id)
         tr = TemplateResolver(
             model_id=self.model_id, repo_path=folder, config_json=self.config_json
@@ -293,8 +373,18 @@ class ModelRepositoryGetter(BaseAction):
 
 
 #  TODO: work outside GIT LFS
-class ModelParametersGetter(BaseAction):
-    def __init__(self, model_id, config_json):
+class ModelParametersGetter(BaseAction): 
+    """
+    Class to get the model parameters. Getting the checkpoints, weights.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict
+        Configuration settings for the model.
+    """
+    def __init__(self, model_id: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
@@ -310,7 +400,9 @@ class ModelParametersGetter(BaseAction):
 
     @throw_ersilia_exception()
     def get(self):
-        """Create a ./model folder in the model repository"""
+        """
+        Create a ./model folder in the model repository.
+        """
         model_path = self._model_path(self.model_id)
         folder = self._get_destination()
         tr = TemplateResolver(
@@ -327,8 +419,24 @@ class ModelParametersGetter(BaseAction):
 
 
 class ModelGetter(BaseAction):
+    """
+    Class to get the model repository and parameters.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    repo_path : str
+        Path to the local repository.
+    config_json : dict
+        Configuration settings for the model.
+    force_from_github : bool
+        Force download from GitHub.
+    force_from_s3 : bool
+        Force download from S3.
+    """
     def __init__(
-        self, model_id, repo_path, config_json, force_from_gihtub, force_from_s3
+        self, model_id: str, repo_path: str, config_json: dict, force_from_github: bool, force_from_s3: bool
     ):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -338,7 +446,7 @@ class ModelGetter(BaseAction):
         self.mrg = ModelRepositoryGetter(
             model_id=model_id,
             config_json=config_json,
-            force_from_github=force_from_gihtub,
+            force_from_github=force_from_github,
             force_from_s3=force_from_s3,
             repo_path=repo_path,
         )
@@ -352,6 +460,9 @@ class ModelGetter(BaseAction):
 
     @throw_ersilia_exception()
     def get(self):
+        """
+        Get the model repository and parameters.
+        """
         self.logger.debug("Getting repository")
         self._get_repository()
         if self.repo_path is None:

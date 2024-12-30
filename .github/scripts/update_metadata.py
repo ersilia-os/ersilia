@@ -151,9 +151,9 @@ class UpdateMetadata:
         contents = repo.get_contents(self.metadata_filename)
 
         # Convert the metadata to a YAML string dump
-        metadata_string = yaml.dump(self.metadata, 
-                                    default_flow_style=False, 
-                                    sort_keys=False).encode("utf-8")
+        metadata_string = yaml.dump(
+            self.metadata, default_flow_style=False, sort_keys=False
+        ).encode("utf-8")
 
         # Write the metadata to the repo and commit
         repo.update_file(

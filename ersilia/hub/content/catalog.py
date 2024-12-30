@@ -9,8 +9,8 @@ import csv
 from .card import ModelCard
 from ... import ErsiliaBase
 from ...utils.identifiers.model import ModelIdentifier
-from ...auth.auth import Auth
-from ...default import GITHUB_ORG, BENTOML_PATH, MODEL_SOURCE_FILE
+from ...db.hubdata.interfaces import JsonModelsInterface
+from ...default import BENTOML_PATH, MODEL_SOURCE_FILE
 from ...default import TableConstants
 from ... import logger
 
@@ -26,11 +26,33 @@ except ModuleNotFoundError as err:
 
 
 class CatalogTable(object):
+    """
+    Class to handle the catalog table of models.
+
+    This class provides methods to convert the model catalog into various formats,
+    such as list of dictionaries, JSON, and table format. It also provides methods
+    to write the catalog table to a file.
+
+    Parameters
+    ----------
+    data : list
+        The data of the catalog table.
+    columns : list
+        The columns of the catalog table.
+    """
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
 
-    def as_list_of_dicts(self):
+    def as_list_of_dicts(self) -> list:
+        """
+        Convert the catalog table to a list of dictionaries.
+
+        Returns
+        -------
+        list
+            The catalog table as a list of dictionaries.
+        """
         R = []
         for r in self.data:
             d = {}
@@ -39,7 +61,15 @@ class CatalogTable(object):
             R += [d]
         return R
 
-    def as_json(self):
+    def as_json(self) -> str:
+        """
+        Convert the catalog table to JSON format.
+
+        Returns
+        -------
+        str
+            The catalog table in JSON format.
+        """
         R = self.as_list_of_dicts()
         return json.dumps(R, indent=4)
 
@@ -47,41 +77,34 @@ class CatalogTable(object):
         """
         Generates a separator line for the table based on the given borders and column widths.
 
-        The line starts with a 'left' border, followed by repeated 'horizontal' 
-        sections for each column's width, joined by 'middle' separators, and ends 
-        with a 'right' border.
+        Parameters
+        ----------
+        left : str
+            The character to use for the left border of the line.
+        middle : str
+            The character to use between columns (as separators).
+        right : str
+            The character to use for the right border of the line.
+        horizontal : str
+            The character used to draw the horizontal border.
+        widths : list of int
+            A list of column widths to determine how much horizontal space each column takes.
 
-        Args:
-            left (str): The character to use for the left border of the line.
-            middle (str): The character to use between columns (as separators).
-            right (str): The character to use for the right border of the line.
-            horizontal (str): The character used to draw the horizontal border.
-            widths (list[int]): A list of column widths to determine how much 
-                                horizontal space each column takes.
-
-        Returns:
-            str: The formatted separator line as a string.
+        Returns
+        -------
+        str
+            The formatted separator line as a string.
         """
         return left + middle.join(horizontal * (width + 2) for width in widths) + right
 
-    def as_table(self):
+    def as_table(self) -> str:
         """
-        Returns the catalog data in table format. The method calculates the 
-        column widths dynamically by determining the maximum width of each column, 
-        based on the data and column headers.
+        Convert the catalog table to table format.
 
-        A row format string is then constructed using the column widths, 
-        specifying that each cell is left-aligned and padded with a column seperator sperating the rows.
-
-        The method starts by constructing the top border using the 
-        'generate_separator_line' helper. It then adds the headers, 
-        formatted to fit the column widths, followed by a separator line
-        also created by the helper function.
-
-        A 'for' loop iterates over the data rows, adding each row to the 
-        table with borders and padding. After each row, a separator line is inserted. 
-        Finally, the bottom border is added using the helper function, completing the table.
-
+        Returns
+        -------
+        str
+            The catalog table in table format.
         """
         column_widths = [
             max(
@@ -159,7 +182,15 @@ class CatalogTable(object):
 
         return table
 
-    def write(self, file_name):
+    def write(self, file_name: str):
+        """
+        Write the catalog table to a file.
+
+        Parameters
+        ----------
+        file_name : str
+            The name of the file to write the catalog table to.
+        """
         with open(file_name, "w") as f:
             if file_name.endswith(".csv"):
                 delimiter = ","
@@ -180,10 +211,19 @@ class CatalogTable(object):
 
 
 class ModelCatalog(ErsiliaBase):
-    def __init__(self, config_json=None, only_identifier=True):
+    LESS_FIELDS = ["Identifier", "Slug"]
+    MORE_FIELDS = LESS_FIELDS + [
+        "Title",
+        "Task",
+        "Input Shape",
+        "Output",
+        "Output Shape",
+    ]
+
+    def __init__(self, config_json=None, less=True):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mi = ModelIdentifier()
-        self.only_identifier = only_identifier
+        self.less = less
 
     def _is_eos(self, s):
         if self.mi.is_valid(s):
@@ -218,7 +258,8 @@ class ModelCatalog(ErsiliaBase):
     def _get_output(self, card):
         return self._get_item(card, "output")[0]
 
-    def _get_model_source(self, model_id):
+    def _get_model_source(self, card):
+        model_id = self._get_item(card, "identifier")
         model_source_file = os.path.join(self._model_path(model_id), MODEL_SOURCE_FILE)
         if os.path.exists(model_source_file):
             with open(model_source_file) as f:
@@ -234,125 +275,75 @@ class ModelCatalog(ErsiliaBase):
         return None
 
     def airtable(self):
-        """List models available in AirTable Ersilia Model Hub base"""
+        """
+        List models available in AirTable Ersilia Model Hub base.
+        """
         if webbrowser:
-            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")
+            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")  # TODO Hardcoded
 
-    def _get_all_github_public_repos(self):
-        url = "https://api.github.com/users/{0}/repos".format(GITHUB_ORG)
-        while url:
-            response = requests.get(url, params={"per_page": 100})
-            response.raise_for_status()
-            yield from response.json()
-            if "next" in response.links:
-                url = response.links["next"]["url"]  # get the next page
-            else:
-                break  # no more pages, stop the loop
-
-    def github(self):
-        """List models available in the GitHub model hub repository"""
-        if Github is None:
-            token = None
-        else:
-            token = Auth().oauth_token()
-        logger.debug(
-            "Looking for model repositories in {0} organization".format(GITHUB_ORG)
-        )
-        if token:
-            self.logger.debug("Token provided: ***")
-            g = Github(token)
-            repo_list = [i for i in g.get_user().get_repos()]
-            repos = []
-            for r in repo_list:
-                owner, name = r.full_name.split("/")
-                if owner != GITHUB_ORG:
-                    continue
-                repos += [name]
-        else:
-            self.logger.debug("Token not provided!")
-            repos = []
-            for repo in self._get_all_github_public_repos():
-                repos += [repo["name"]]
-        models = []
-        for repo in repos:
-            if self._is_eos(repo):
-                models += [repo]
-        logger.info("Found {0} models".format(len(models)))
-        return models
-
-    def hub(self):
-        """List models available in Ersilia model hub repository"""
-        mc = ModelCard()
-        models = self.github()
-        if self.only_identifier:
-            R = []
-            for model_id in models:
-                R += [[model_id]]
-            return CatalogTable(R, columns=["Identifier"])
-        else:
-            R = []
-            for model_id in models:
-                card = mc.get(model_id)
-                if card is None:
-                    continue
-                slug = self._get_slug(card)
-                title = self._get_title(card)
-                R += [[model_id, slug, title]]
-            return CatalogTable(R, columns=["Identifier", "Slug", "Title"])
-
-    def local(self):
-        """List models available locally"""
-        mc = ModelCard()
+    def _get_catalog(self, columns: list, model_cards: list):
+        """Get the catalog of models"""
         R = []
-        logger.debug("Looking for models in {0}".format(self._bundles_dir))
-        if self.only_identifier:
-            R = []
-            for model_id in os.listdir(self._bundles_dir):
-                if not self._is_eos(model_id):
-                    continue
-                R += [[model_id]]
-            columns = ["Identifier"]
-        else:
-            for model_id in os.listdir(self._bundles_dir):
-                if not self._is_eos(model_id):
-                    continue
-                card = mc.get(model_id)
-                slug = self._get_slug(card)
-                title = self._get_title(card)
-                status = self._get_status(card)
-                inputs = self._get_input(card)
-                output = self._get_output(card)
-                model_source = self._get_model_source(model_id)
-                service_class = self._get_service_class(card)
-                R += [
-                    [
-                        model_id,
-                        slug,
-                        title,
-                        status,
-                        inputs,
-                        output,
-                        model_source,
-                        service_class,
-                    ]
-                ]
-            columns = [
-                "Identifier",
-                "Slug",
-                "Title",
-                "Status",
-                "Input",
-                "Output",
-                "Model Source",
-                "Service Class",
-            ]
-        logger.info("Found {0} models".format(len(R)))
-        if len(R) == 0:
-            return CatalogTable(data=[], columns=columns)
-        return CatalogTable(data=R, columns=columns)
+        columns = ["Index"] + columns
 
-    def bentoml(self):
-        """List models available as BentoServices"""
+        idx = 0
+        for card in model_cards:
+            status = self._get_status(card)
+            if status == "In Progress":
+                continue
+            idx += 1
+            r = [idx]
+            for field in columns[1:]:
+                if field == "Model Source":
+                    r += [self._get_model_source(card)]
+                else:
+                    r += [self._get_item(card, field)]
+            # Sort R by Identifier
+
+            R += [r]
+        R = sorted(R, key=lambda x: x[0])
+        return CatalogTable(data=R, columns=columns)
+        
+    def hub(self):
+        """List models available in Ersilia model hub from the S3 JSON"""
+        ji = JsonModelsInterface()
+        models = ji.items_all()
+        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS
+        table = self._get_catalog(columns, models)
+        return table
+
+    def local(self) -> CatalogTable:
+        """
+        List models metadata from the local repository.
+
+        Returns
+        -------
+        CatalogTable
+            The catalog table containing the models available locally.
+        """
+        mc = ModelCard()
+        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS+["Model Source"]
+        cards = []
+        for model_id in os.listdir(self._bundles_dir):
+            if not self._is_eos(model_id):
+                continue
+            card = mc.get(model_id)
+            if not card:
+                continue
+            cards += [card]
+        table = self._get_catalog(columns, cards)
+        return table
+
+
+    def bentoml(self) -> CatalogTable:
+        """
+        List models available as BentoServices.
+
+        Returns
+        -------
+        CatalogTable
+            The catalog table containing the models available as BentoServices.
+        """
         try:
             result = subprocess.run(
                 ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ, timeout=10

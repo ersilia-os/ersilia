@@ -12,20 +12,49 @@ from ..default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
 )
-from ..default import INFORMATION_FILE, API_SCHEMA_FILE
-from ..default import DEFAULT_API_NAME
+from ..default import (
+    INFORMATION_FILE,
+    API_SCHEMA_FILE,
+    DEFAULT_API_NAME,
+    PREDEFINED_EXAMPLE_FILES,
+)
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
 nest_asyncio.apply()
 
+
 class StandardCSVRunApi(ErsiliaBase):
+    """
+    Class for running standard CSV API. An API that performs few checks on the input data.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be used.
+    url : str
+        The URL of the API.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+
+    Examples
+    --------
+    .. code-block:: python
+        model_id = "eosxxxx"
+        url = "http://0.0.0.0:15221/run"
+        api = StandardCSVRunApi(model_id, url)
+        input_data = "path/to/input.csv"
+        output_data = "path/to/output.csv"
+        result = api.post(input_data, output_data)
+        print(result)
+    """
     def __init__(self, model_id, url, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.logger.info(
             "You are running the app with a standard runner. Beware that this runner does not do as many checks on the input as the conventional runner: use it at your own risk."
         )
         self.model_id = model_id
+        # TODO WHY? Why can't we init with a cleaner url?
         if url[-1] == "/":
             self.url = url[:-1]
         else:
@@ -39,14 +68,46 @@ class StandardCSVRunApi(ErsiliaBase):
         self.standard_output_csv = os.path.join(
             self.path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME
         )
-        self.input_type = self.get_input_type()
+        metadata = self._read_information_file()
+        self.input_type = self._read_field_from_metadata(metadata, "Input")
+        self.input_shape = self._read_field_from_metadata(metadata, "Input Shape")
         self.logger.debug("This is the input type: {0}".format(self.input_type))
         self.encoder = self.get_identifier_object_by_input_type()
-        self.validate_smiles = self.get_identifier_object_by_input_type().validate_smiles
-        self.header = self.get_expected_output_header(self.standard_output_csv)
+        # TODO This whole validate_smiles thing can go away since we already handle this in the encoder
+        self.validate_smiles = (
+            self.get_identifier_object_by_input_type().validate_smiles
+        )  # TODO this can just be self.encoder.validate_smiles
+        self.header = self.get_expected_output_header()
         self.logger.debug(
             "This is the expected header (max 10): {0}".format(self.header[:10])
         )
+
+    def _read_information_file(self):
+        try:
+            with open(os.path.join(self.path, INFORMATION_FILE), "r") as f:
+                info = json.load(f)
+                return info
+        except FileNotFoundError:
+            self.logger.debug(
+                f"Error: File '{INFORMATION_FILE}' not found in the path '{self.path}'"
+            )
+        except json.JSONDecodeError:
+            self.logger.debug(
+                f"Error: Failed to parse JSON in file '{INFORMATION_FILE}'"
+            )
+        except Exception as e:
+            self.logger.debug(f"An unexpected error occurred: {e}")
+
+    def _read_field_from_metadata(self, meta, field):
+        if not meta:
+            self.logger.error(f"No metadata given")
+            return None
+        if "metadata" in meta and field in meta["metadata"]:
+            return meta["metadata"][field]
+        elif "card" in meta and field in meta["card"]:
+            return meta["card"][field]
+        else:
+            self.logger.error(f"Neither 'metadata' nor 'card' contains '{field}' key.")
 
     def get_identifier_object_by_input_type(self):
         identifier_module_path = "ersilia.utils.identifiers.{0}".format(
@@ -54,16 +115,6 @@ class StandardCSVRunApi(ErsiliaBase):
         )
         identifier_object = importlib.import_module(identifier_module_path).Identifier()
         return identifier_object
-
-    def is_ready(self):
-        if not self.is_input_type_standardizable():
-            return False
-        if not os.path.exists(self.standard_output_csv) or not os.path.exists(
-            self.standard_input_csv
-        ):
-            return False
-        else:
-            return True
 
     def _is_input_file_too_long(self, input_data):
         with open(input_data, "r") as f:
@@ -76,70 +127,29 @@ class StandardCSVRunApi(ErsiliaBase):
                     return True
         return False
 
-    def is_input_standard_csv_file(self, input_data):
-        if type(input_data) != str:
-            return False
-        if not input_data.endswith(".csv"):
-            return False
-        if not os.path.exists(input_data):
-            return False
-        if self._is_input_file_too_long(input_data):
-            return False
-        with open(input_data, "r") as f:
-            reader = csv.reader(f)
-            header = next(reader)
-        if len(header) == 1:
-            h = header[0].lower()
-            if not self.encoder.is_input_header(h):
-                return False
-            else:
-                return True
-        elif len(header) == 2:
-            h0 = header[0].lower()
-            h1 = header[1].lower()
-            if not self.encoder.is_key_header(h0):
-                return False
-            if not self.encoder.is_input_header(h1):
-                return False
-            return True
-        elif len(header) == 3:
-            h0 = header[0].lower()
-            h1 = header[1].lower()
-            if not self.encoder.is_key_header(h0):
-                return False
-            if not self.encoder.is_input_header(h1):
-                return False
-            return True
-        else:
-            return False
-
-    def get_input_type(self):
-        try:
-            with open(os.path.join(self.path, INFORMATION_FILE), "r") as f:
-                info = json.load(f)
-                if "metadata" in info and "Input" in info["metadata"]:
-                    return info["metadata"]["Input"]
-                elif "card" in info and "Input" in info["card"]:
-                    return info["card"]["Input"]
-                else:
-                    raise KeyError("Neither 'metadata' nor 'card' contains 'Input' key.")
-        
-        except FileNotFoundError:
-            self.logger.debug(f"Error: File '{INFORMATION_FILE}' not found in the path '{self.path}'")
-        except json.JSONDecodeError:
-            self.logger.debug(f"Error: Failed to parse JSON in file '{INFORMATION_FILE}'")
-        except KeyError as e:
-             self.logger.debug(f"Error: {e}")
-        except Exception as e:
-             self.logger.debug(f"An unexpected error occurred: {e}")
-
-
     def is_input_type_standardizable(self):
-        if len(self.input_type) != 1:
-            return False
-        return True
+        """
+        Check if the input type is standardizable.
+
+        Returns
+        -------
+        bool
+            True if the input type is standardizable, False otherwise.
+        """
+        if self.input_type and self.input_shape:
+            if self.input_type[0] == "Compound" and self.input_shape == "Single":
+                return True
+        return False
 
     def is_output_type_standardizable(self):
+        """
+        Check if the output type is standardizable.
+
+        Returns
+        -------
+        bool
+            True if the output type is standardizable, False otherwise.
+        """
         api_schema_file_path = os.path.join(self.path, API_SCHEMA_FILE)
         try:
             with open(api_schema_file_path, "r") as f:
@@ -153,39 +163,111 @@ class StandardCSVRunApi(ErsiliaBase):
 
         return True
 
-
     def is_output_csv_file(self, output_data):
+        """
+        Check if the output data is a CSV file.
+
+        Parameters
+        ----------
+        output_data : str
+            The output data to check.
+
+        Returns
+        -------
+        bool
+            True if the output data is a CSV file, False otherwise.
+        """
         if type(output_data) != str:
             return False
         if not output_data.endswith(".csv"):
             return False
         return True
-    
-    def get_expected_output_header(self, output_data):
-        with open(output_data, "r") as f:
-            reader = csv.reader(f)
-            header = next(reader)
-        return header
-     
+
+    def get_expected_output_header(self):
+        """
+        Calculate the expected output header from the predefined example files or the standard output file.
+
+        Returns
+        -------
+        List | None
+           Returns the header which is a list of column names, or None if the header could not be determined.
+        """
+        file = None
+        for pf in PREDEFINED_EXAMPLE_FILES:
+            if os.path.exists(os.path.join(self.path, pf)):
+                file = os.path.join(self.path, pf)
+                self.logger.debug(
+                    f"Determining header from predefined example file: {pf}"
+                )
+                break
+        if not file and os.path.exists(self.standard_output_csv):
+            file = self.standard_output_csv
+            self.logger.debug(
+                f"Determining header from standard output file: {self.standard_output_csv}"
+            )
+
+        try:
+            with open(file, "r") as f:
+                reader = csv.reader(f)
+                header = next(reader)
+                if (
+                    header[0:2] != ["key", "input"]
+                ):  # Slicing doesn't raise an error even if the list does not have 2 elements
+                    header = ["key", "input"] + header
+            return header
+        except (FileNotFoundError, StopIteration):
+            self.logger.error(f"Could not determine header from file {file}")
 
     def parse_smiles_list(self, input_data):
+        """
+        Parse a list of SMILES strings.
+
+        Parameters
+        ----------
+        input_data : list
+            List of SMILES strings.
+
+        Returns
+        -------
+        list
+            List of dictionaries containing encoded SMILES strings.
+        """
         if not input_data or all(not s.strip() for s in input_data):
-            raise ValueError("The list of SMILES strings is empty or contains only empty strings.")
-        return [{'key': self.encoder.encode(smiles), 'input': smiles, 'text': smiles} for smiles in input_data if self.validate_smiles(smiles)]
+            raise ValueError(
+                "The list of SMILES strings is empty or contains only empty strings."
+            )
+        return [
+            {"key": self.encoder.encode(smiles), "input": smiles, "text": smiles}
+            for smiles in input_data
+            if self.validate_smiles(smiles)
+        ]
 
     def parse_smiles_string(self, input):
+        """
+        Parse a single SMILES string.
+
+        Parameters
+        ----------
+        input : str
+            A SMILES string.
+
+        Returns
+        -------
+        list
+            List containing a dictionary with the encoded SMILES string.
+        """
         if not self.validate_smiles(input):
             raise ValueError("The SMILES string is invalid.")
         key = self.encoder.encode(input)
-        return [{'key': key, 'input': input, 'text': input}]
-    
+        return [{"key": key, "input": input, "text": input}]
+
     def serialize_to_json_three_columns(self, input_data):
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
-            next(reader)  
+            next(reader)
             for row in reader:
-                if self.validate_smiles(row[1]):  
+                if self.validate_smiles(row[1]):
                     json_data += [{"key": row[0], "input": row[1], "text": row[2]}]
         return json_data
 
@@ -195,7 +277,7 @@ class StandardCSVRunApi(ErsiliaBase):
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                if self.validate_smiles(row[1]):  
+                if self.validate_smiles(row[1]):
                     json_data += [{"key": row[0], "input": row[1], "text": row[1]}]
         return json_data
 
@@ -218,17 +300,34 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def get_list_from_csv(self, input_data):
         smiles_list = []
-        with open(input_data, mode='r') as file:
+        with open(input_data, mode="r") as file:
             reader = csv.DictReader(file)
             header = reader.fieldnames
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
                 smiles = row.get(key)
-                if smiles and smiles not in smiles_list and self.validate_smiles(smiles):
+                if (
+                    smiles
+                    and smiles not in smiles_list
+                    and self.validate_smiles(smiles)
+                ):
                     smiles_list.append(smiles)
         return smiles_list
 
     def serialize_to_json(self, input_data):
+        """
+        Serialize input data to JSON format.
+
+        Parameters
+        ----------
+        input_data : str | list
+            Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+
+        Returns
+        -------
+        list
+            List of dictionaries containing serialized input data.
+        """
         if isinstance(input_data, str) and os.path.isfile(input_data):
             with open(input_data, "r") as f:
                 reader = csv.reader(f)
@@ -243,41 +342,116 @@ class StandardCSVRunApi(ErsiliaBase):
                 self.logger.debug("Three columns found in input")
                 return self.serialize_to_json_three_columns(input_data=input_data)
             else:
-                self.logger.info("More than three columns found in input! This is not standard.")
+                self.logger.info(
+                    "More than three columns found in input! This is not standard."
+                )
                 return None
         elif isinstance(input_data, str):
             return self.parse_smiles_string(input_data)
         elif isinstance(input_data, list):
             return self.parse_smiles_list(input_data)
         else:
-            raise ValueError("Input must be either a file path (string), a SMILES string, or a list of SMILES strings.")
-    
+            raise ValueError(
+                "Input must be either a file path (string), a SMILES string, or a list of SMILES strings."
+            )
+
     def is_amenable(self, output_data):
+        """
+        Check if the output data is amenable for a standard run.
+
+        Parameters
+        ----------
+        output_data : str
+            The output data to check.
+
+        Returns
+        -------
+        bool
+            True if the output data is amenable for a standard run, False otherwise.
+        """
+        if not self.header:
+            self.logger.debug("Not amenable for standard run: header not found")
+            return False
         if not self.is_input_type_standardizable():
+            self.logger.debug(
+                "Not amenable for standard run: input type not standardizable"
+            )
             return False
         if not self.is_output_type_standardizable():
+            self.logger.debug(
+                "Not amenable for standard run: output type not standardizable"
+            )
             return False
         if not self.is_output_csv_file(output_data):
+            self.logger.debug("Not amenable for standard run: output data not CSV file")
             return False
         self.logger.debug("It seems amenable for standard run")
         return True
-    
+
     def serialize_to_csv(self, input_data, result, output_data):
+        """
+        Serialize input data and result to a CSV file.
+
+        Parameters
+        ----------
+        input_data : list
+            List of dictionaries containing input data.
+        result : list
+            List of dictionaries containing result data.
+        output_data : str
+            Path to the output CSV file.
+
+        Returns
+        -------
+        str
+            Path to the output CSV file.
+        """
+        if isinstance(result, dict) and not list(result.keys()) == self.header:
+            result = result[list(result.keys())[0]]
+            if (
+                isinstance(result[0], dict)
+                and not list(result[0].keys()) == self.header
+            ):
+                for idx, item in enumerate(result):
+                    result[idx] = item[list(item.keys())[0]]
+
+        assert len(input_data) == len(result)
+
         with open(output_data, "w") as f:
             writer = csv.writer(f)
             writer.writerow(self.header)
             for i_d, r_d in zip(input_data, result):
                 r = [i_d["key"], i_d["input"]]
                 for k in self.header[2:]:
-                    v = r_d[k]
-                    if isinstance(v, list):
-                        r+=v
+                    if isinstance(r_d, dict):
+                        v = r_d[k]
                     else:
-                        r+=[v]
+                        v = r_d
+                    if isinstance(v, list):
+                        r += v
+                    else:
+                        r += [v]
                 writer.writerow(r)
         return output_data
 
     def post(self, input, output, output_source=OutputSource.LOCAL_ONLY):
+        """
+        Post input data to the API and get the output data. And store the output data if needed.
+
+        Parameters
+        ----------
+        input : str | list
+            Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+        output : str
+            Path to the output CSV file.
+        output_source : OutputSource, optional
+            Source of the output data. Default is OutputSource.LOCAL_ONLY.
+
+        Returns
+        -------
+        str | None
+            Path to the output CSV file if successful, None otherwise.
+        """
         input_data = self.serialize_to_json(input)
         if OutputSource.is_cloud(output_source):
             store = InferenceStoreApi(model_id=self.model_id)
@@ -290,8 +464,3 @@ class StandardCSVRunApi(ErsiliaBase):
             return output_data
         else:
             return None
-
-class StandardQueryApi(object):
-    def __init__(self, model_id, url):
-        # TODO This class will be used to query directly the calculations lake.
-        pass

@@ -10,12 +10,27 @@ SEP = "-"
 
 
 class LongIdentifier(object):
+    """
+    A class to generate long identifiers (UUIDs).
+
+    Methods
+    -------
+    encode()
+        Generate a UUID or a random identifier if UUID is not available.
+    """
     def __init__(self):
         pass
 
     @staticmethod
     def encode():
-        """Get UUID code (long identifier)"""
+        """
+        Generate a UUID or a random identifier if UUID is not available.
+
+        Returns
+        -------
+        str
+            A UUID string or a randomly generated identifier.
+        """
         if uuid is None:
             alphabet = ALPHABET.lower()
             for n in PATTERN:

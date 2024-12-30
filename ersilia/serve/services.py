@@ -35,6 +35,21 @@ TIMEOUT_SECONDS = 1000
 
 
 class BaseServing(ErsiliaBase):
+    """
+    Base class for serving models.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.model_id = model_id
@@ -58,7 +73,6 @@ class BaseServing(ErsiliaBase):
             return None
 
     def _get_info_from_bento(self):
-        """Get info available from the Bento"""
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "information.json")
         cmd = "bentoml info --quiet {0}:{1} > {2}".format(
@@ -74,7 +88,6 @@ class BaseServing(ErsiliaBase):
         return info
 
     def _get_apis_from_bento(self):
-        """Get APIs available for the model, according to the info Bento"""
         self.logger.debug("Getting APIs from Bento")
         info = self._get_info_from_bento()
         apis_list = []
@@ -93,24 +106,39 @@ class BaseServing(ErsiliaBase):
 
     def _get_apis_from_where_available(self):
         apis_list = self._get_apis_from_apis_list()
-        if apis_list is None:
+        if (apis_list is None):
             pack_method = resolve_pack_method(
                 model_path=self._get_bundle_location(self.model_id)
             )
-            if pack_method == PACK_METHOD_FASTAPI:
+            if (pack_method == PACK_METHOD_FASTAPI):
                 self.logger.debug("Getting APIs from FastAPI")
                 apis_list = self._get_apis_from_fastapi()
-            elif pack_method == PACK_METHOD_BENTOML:
+            elif (pack_method == PACK_METHOD_BENTOML):
                 self.logger.debug("Getting APIs from BentoML")
                 apis_list = self._get_apis_from_bento()
             else:
                 raise
-        if apis_list is None:
+        if (apis_list is None):
             apis_list = []
         for api in apis_list:
             yield api
 
     def _api_with_url(self, api_name, input):
+        """
+        Call an API with the given URL and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         if self.url is None:
             return
         self.logger.debug("Using URL: {0}".format(self.url))
@@ -131,6 +159,14 @@ class _BentoMLService(BaseServing):
         self.ERROR_STRING = "error"
 
     def serve(self, runcommand_func=None):
+        """
+        Serve the model using BentoML.
+
+        Parameters
+        ----------
+        runcommand_func : function, optional
+            Function to run the command. If None, the command is run from the shell.
+        """
         self.logger.debug("Trying to serve model with BentoML locally")
         preferred_port = self.port
         self.port = find_free_port(preferred_port=preferred_port)
@@ -217,6 +253,9 @@ class _BentoMLService(BaseServing):
         self.url = None
 
     def close(self):
+        """
+        Close the BentoML service by killing the process.
+        """
         try:
             os.kill(self.pid, 9)
         except:
@@ -237,6 +276,14 @@ class _FastApiService(BaseServing):
         self.conda = SimpleConda()
 
     def serve(self, runcommand_func=None):
+        """
+        Serve the model using FastAPI.
+
+        Parameters
+        ----------
+        runcommand_func : function, optional
+            Function to run the command. If None, the command is run from the shell.
+        """
         bundle_path = self._get_bundle_location(self.model_id)
         self.logger.debug("Trying to serve model with FastAPI locally")
         preferred_port = self.port
@@ -322,6 +369,9 @@ class _FastApiService(BaseServing):
         self.url = None
 
     def close(self):
+        """
+        Close the FastAPI service by killing the process.
+        """
         try:
             os.kill(self.pid, 9)
         except:
@@ -355,16 +405,42 @@ class _LocalService(ErsiliaBase):
         return self.server._get_apis_from_where_available()
 
     def local_serve(self, runcommand_func=None):
+        """
+        Serve the model locally.
+
+        Parameters
+        ----------
+        runcommand_func : function, optional
+            Function to run the command. If None, the command is run from the shell.
+        """
         self.server.serve(runcommand_func=runcommand_func)
         self.url = self.server.url
         self.pid = self.server.pid
         self.port = self.server.port
 
     def local_close(self):
+        """
+        Close the local service.
+        """
         self.server.close()
 
 
 class SystemBundleService(_LocalService):
+    """
+    Service class for managing system bundle models.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         _LocalService.__init__(
             self,
@@ -374,16 +450,43 @@ class SystemBundleService(_LocalService):
         )
 
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        SystemBundleService
+            The instance of the service.
+        """
         self.serve()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+        """
         self.close()
 
     def _run_command(self, cmd):
         return run_command(cmd)
 
     def is_available(self):
+        """
+        Check if the system bundle service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         fn = os.path.join(self._dest_dir, self.model_id, PACKMODE_FILE)
         avail = False
         if os.path.exists(fn):
@@ -395,16 +498,52 @@ class SystemBundleService(_LocalService):
         return avail
 
     def serve(self):
+        """
+        Serve the model using the system bundle service.
+        """
         self.local_serve()
 
     def close(self):
+        """
+        Close the system bundle service.
+        """
         self.local_close()
 
     def api(self, api_name, input):
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         return self._api_with_url(api_name, input)
 
 
 class VenvEnvironmentService(_LocalService):
+    """
+    Service class for managing virtual environment models.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         _LocalService.__init__(
             self,
@@ -415,10 +554,30 @@ class VenvEnvironmentService(_LocalService):
         self.venv = SimpleVenv(self._model_path(model_id))
 
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        VenvEnvironmentService
+            The instance of the service.
+        """
         self.serve()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+            The traceback object.
+        """
         self.close()
 
     def _model_path(self, model_id):
@@ -428,20 +587,64 @@ class VenvEnvironmentService(_LocalService):
         return self.venv.run_commandlines(DEFAULT_VENV, cmd)
 
     def is_available(self):
+        """
+        Check if the virtual environment service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         if not self.venv.exists(DEFAULT_VENV):
             return False
 
     def serve(self):
+        """
+        Serve the model using the virtual environment service.
+        """
         self.local_serve(self._run_command)
 
     def close(self):
+        """
+        Close the virtual environment service.
+        """
         self.local_close()
 
     def api(self, api_name, input):
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         return self._api_with_url(api_name, input)
 
 
 class CondaEnvironmentService(_LocalService):
+    """
+    Service class for managing Conda environment models.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         _LocalService.__init__(
             self,
@@ -465,10 +668,29 @@ class CondaEnvironmentService(_LocalService):
         return not conda_checker.is_installed()
 
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        CondaEnvironmentService
+            The instance of the service.
+        """
         self.serve()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+        """
         self.close()
 
     def _get_env_name(self):
@@ -487,6 +709,14 @@ class CondaEnvironmentService(_LocalService):
         return self.conda.run_commandlines(env, cmd)
 
     def is_available(self):
+        """
+        Check if the Conda environment service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         env = self._get_env_name()
         if env is not None:
             return True
@@ -494,16 +724,52 @@ class CondaEnvironmentService(_LocalService):
             return False
 
     def serve(self):
+        """
+        Serve the model using the Conda environment service.
+        """
         self.local_serve(self._run_command)
 
     def close(self):
+        """
+        Close the Conda environment service.
+        """
         self.local_close()
 
     def api(self, api_name, input):
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         return self._api_with_url(api_name, input)
 
 
 class DockerImageService(BaseServing):
+    """
+    Service class for managing Docker image models.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         self._is_docker_active()
         BaseServing.__init__(
@@ -519,10 +785,29 @@ class DockerImageService(BaseServing):
         self.pid = -1
 
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        DockerImageService
+            The instance of the service.
+        """
         self.serve()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+        """
         self.close()
 
     def _get_env_name(self):
@@ -542,6 +827,14 @@ class DockerImageService(BaseServing):
         return True
 
     def is_available(self):
+        """
+        Check if the Docker image service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         env = self._get_env_name()
         if env is not None:
             self.logger.debug("Docker image service available")
@@ -551,6 +844,9 @@ class DockerImageService(BaseServing):
             return False
 
     def serve(self):
+        """
+        Serve the model using the Docker image service.
+        """
         self.logger.debug("Calling docker manager")
         res = self.dm.run(self.model_id)
         self.container_name = res["container_name"]
@@ -558,14 +854,47 @@ class DockerImageService(BaseServing):
         self.url = "http://0.0.0.0:{0}".format(self.port)
 
     def close(self):
+        """
+        Close the Docker image service.
+        """
         self.df.stop_containers(self.model_id)
 
     def api(self, api_name, input):
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         return self._api_with_url(api_name, input)
 
 
 # TODO: Include 'pip' within available service_class
 class PipInstalledService(BaseServing):
+    """
+    Service class for managing pip-installed models.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         BaseServing.__init__(
             self,
@@ -576,10 +905,29 @@ class PipInstalledService(BaseServing):
         self.pid = -1
 
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        PipInstalledService
+            The instance of the service.
+        """
         self.serve()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+        """
         self.close()
 
     def _import(self):
@@ -590,6 +938,14 @@ class PipInstalledService(BaseServing):
             return None
 
     def is_available(self):
+        """
+        Check if the pip-installed service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         model = self._import()
         if model is not None:
             return True
@@ -597,18 +953,54 @@ class PipInstalledService(BaseServing):
             return False
 
     def serve(self):
+        """
+        Serve the model using the pip-installed service.
+        """
         model = self._import()
         self.mdl = model.load()
 
     def close(self):
+        """
+        Close the pip-installed service.
+        """
         self.mdl = None
 
     def api(self, api_name, input):
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         method = getattr(self.mdl, api_name)
         return method(input)
 
 
 class DummyService(BaseServing):
+    """
+    Dummy service class for testing purposes.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         BaseServing.__init__(
             self,
@@ -618,25 +1010,88 @@ class DummyService(BaseServing):
         )
 
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        DummyService
+            The instance of the service.
+        """
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+        """
         self.close()
 
     def is_available(self):
+        """
+        Check if the dummy service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         return True
 
     def serve(self):
+        """
+        Serve the model using the dummy service.
+        """
         pass
 
     def close(self):
+        """
+        Close the dummy service.
+        """
         pass
 
     def api(self, api_name, input):
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         return self._api_with_url(api_name, input)
 
 
 class PulledDockerImageService(BaseServing):
+    """
+    Service class for managing Docker image models pulled from a registry.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         self._is_docker_active()
         BaseServing.__init__(
@@ -655,7 +1110,9 @@ class PulledDockerImageService(BaseServing):
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
         self.logger.debug("Starting Docker Daemon service")
-        self.container_tmp_logs = os.path.join(get_session_dir(), CONTAINER_LOGS_TMP_DIR)
+        self.container_tmp_logs = os.path.join(
+            get_session_dir(), CONTAINER_LOGS_TMP_DIR
+        )
         self.logger.debug(
             "Creating container tmp logs folder {0} and mounting as volume in container".format(
                 self.container_tmp_logs
@@ -668,9 +1125,28 @@ class PulledDockerImageService(BaseServing):
         self._mem_gb = self._get_memory()
 
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        PulledDockerImageService
+            The instance of the service.
+        """
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+        """
         self.close()
 
     @throw_ersilia_exception()
@@ -704,7 +1180,15 @@ class PulledDockerImageService(BaseServing):
         self.logger.debug("Asking for {0} GB of memory".format(mem_gb))
         return mem_gb
 
-    def is_available(self):
+    def is_available(self) -> bool:
+        """
+        Check if the Docker image service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         is_available = self.simple_docker.exists(
             DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
         )
@@ -753,6 +1237,10 @@ class PulledDockerImageService(BaseServing):
         self.logger.debug("Status code: {0}".format(response.status_code))
         if response.status_code == 502:
             raise BadGatewayError(url)
+        elif response.status_code == 405: # We try the GET endpoint here
+            response = requests.get(url)
+        else:
+            response.raise_for_status()
         apis_list = json.loads(response.text)["apis_list"]
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
@@ -761,6 +1249,19 @@ class PulledDockerImageService(BaseServing):
         return apis_list
 
     def is_url_available(self, url):
+        """
+        Check if the given URL is available.
+
+        Parameters
+        ----------
+        url : str
+            The URL to check.
+
+        Returns
+        -------
+        bool
+            True if the URL is available, False otherwise.
+        """
         try:
             response = requests.get(url, timeout=5)
             response.raise_for_status()
@@ -780,6 +1281,9 @@ class PulledDockerImageService(BaseServing):
             time.sleep(1)
 
     def serve(self):
+        """
+        Serve the model using the Docker image service.
+        """
         self._stop_all_containers_of_image()
         self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
         self.volumes = {self.container_tmp_logs: {"bind": "/tmp", "mode": "rw"}}
@@ -809,15 +1313,48 @@ class PulledDockerImageService(BaseServing):
         self._apis_list = self._get_apis()
         self.logger.debug(self._apis_list)
 
-    def api(self, api_name, input):
+    def api(self, api_name: str, input: dict) -> dict:
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         return self._api_with_url(api_name=api_name, input=input)
 
     def close(self):
+        """
+        Close the Docker image service by stopping and removing the container.
+        """
         self.logger.debug("Stopping and removing container")
         self._stop_all_containers_of_image()
 
 
 class HostedService(BaseServing):
+    """
+    Service class for managing hosted models.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model to be served.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    preferred_port : int, optional
+        Preferred port for serving the model.
+    url : str, optional
+        URL for the served model.
+    """
+
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         BaseServing.__init__(
             self,
@@ -832,9 +1369,28 @@ class HostedService(BaseServing):
         self.pid = -1
 
     def __enter__(self):
+        """
+        Enter the runtime context related to this object.
+
+        Returns
+        -------
+        HostedService
+            The instance of the service.
+        """
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Exit the runtime context related to this object.
+
+        Parameters
+        ----------
+        exception_type : type
+            The exception type.
+        exception_value : Exception
+            The exception instance.
+        traceback : traceback
+        """
         self.close()
 
     def _api_with_url(self, api_name, input):
@@ -858,7 +1414,15 @@ class HostedService(BaseServing):
             return None
         return data["url"]
 
-    def is_available(self):
+    def is_available(self) -> bool:
+        """
+        Check if the hosted service is available.
+
+        Returns
+        -------
+        bool
+            True if the service is available, False otherwise.
+        """
         if self.is_url_available(self.url):
             self.logger.debug("URL {0} is available".format(self.url))
             return True
@@ -867,6 +1431,14 @@ class HostedService(BaseServing):
             return False
 
     def _get_apis(self):
+        """
+        Get the list of APIs available for the model.
+
+        Returns
+        -------
+        list
+            List of API names.
+        """
         file_name = os.path.join(
             self._get_bundle_location(self.model_id), APIS_LIST_FILE
         )
@@ -890,6 +1462,19 @@ class HostedService(BaseServing):
         return apis_list
 
     def is_url_available(self, url):
+        """
+        Check if the given URL is available.
+
+        Parameters
+        ----------
+        url : str
+            The URL to check.
+
+        Returns
+        -------
+        bool
+            True if the URL is available, False otherwise.
+        """
         try:
             response = requests.get(url, timeout=5)
             response.raise_for_status()
@@ -901,11 +1486,32 @@ class HostedService(BaseServing):
             return True
 
     def serve(self):
+        """
+        Serve the model using the hosted service.
+        """
         self._apis_list = self._get_apis()
         self.logger.debug(self._apis_list)
 
-    def api(self, api_name, input):
+    def api(self, api_name: str, input: dict) -> dict:
+        """
+        Call an API with the given name and input.
+
+        Parameters
+        ----------
+        api_name : str
+            Name of the API to call.
+        input : dict
+            Input data for the API.
+
+        Returns
+        -------
+        dict
+            Response from the API.
+        """
         return self._api_with_url(api_name=api_name, input=input)
 
     def close(self):
+        """
+        Close the hosted service.
+        """
         pass

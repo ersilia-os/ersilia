@@ -25,6 +25,22 @@ USE_CHECKSUM = False
 
 
 class SystemPack(BasePack):
+    """
+    A class used to pack models with system installation.
+
+    Methods
+    -------
+    run()
+        Run the system packer.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        packer = SystemPack(model_id="eosxxxx", config_json=config)
+        packer.run()
+    """
+
     def __init__(self, model_id, config_json):
         BasePack.__init__(self, model_id, config_json)
         self.logger.debug("Initializing system packer")
@@ -37,15 +53,27 @@ class SystemPack(BasePack):
         self._symlinks()
 
     def run(self):
+        """
+        Run the system packer.
+        """
         self._run()
 
 
 class VenvPack(BasePack):
+    """
+    A class used to pack models with virtual environments.
+
+    Methods
+    -------
+    run()
+        Run the virtual environment packer.
+    """
+
     def __init__(self, model_id, config_json):
         BasePack.__init__(self, model_id, config_json)
         self.logger.debug("Initializing virtualenv packer")
 
-    def _setup(self):
+    def _setup(self) -> SimpleVenv:
         model_path = self._model_path(self.model_id)
         installs_file = os.path.join(model_path, MODEL_INSTALL_COMMANDS_FILE)
         self.logger.debug("Reading install commands from {0}".format(installs_file))
@@ -60,25 +88,35 @@ class VenvPack(BasePack):
         venv = self._setup()
         pack_snippet = """
         python {0}
-        """.format(
-            self.cfg.HUB.PACK_SCRIPT
-        )
+        """.format(self.cfg.HUB.PACK_SCRIPT)
         venv.run_commandlines(environment=DEFAULT_VENV, commandlines=pack_snippet)
         self._symlinks()
 
     def run(self):
+        """
+        Run the virtual environment packer.
+        """
         self.logger.debug("Packing model with VirtualEnv")
         self._write_model_install_commands()
         self._run()
 
 
 class CondaPack(BasePack):
+    """
+    A class used to pack models with Conda environments.
+
+    Methods
+    -------
+    run()
+        Run the Conda environment packer.
+    """
+
     def __init__(self, model_id, config_json):
         BasePack.__init__(self, model_id, config_json)
         self.conda = SimpleConda()
         self.logger.debug("Initializing conda packer")
 
-    def _setup(self):
+    def _setup(self) -> str:
         self.logger.debug("Setting up")
         model_id = self.model_id
         installs_file = os.path.join(
@@ -92,7 +130,6 @@ class CondaPack(BasePack):
         self.logger.debug("Conda environment {0}".format(env))
         if not self.conda.exists(env):
             self.logger.debug("Environment {0} does not exist".format(env))
-            # clone base conda environment and add model dependencies
             base_env = self.conda.get_base_env(model_path)
             if "-slim-" in base_env:
                 self.logger.debug("Removing -slim- from base environment!")
@@ -118,10 +155,8 @@ class CondaPack(BasePack):
             self.conda.run_commandlines(environment=env, commandlines=commandlines)
         else:
             self.logger.debug("Environment {0} does exist".format(env))
-        # create environment yml file
         self.logger.debug("Creating environment YAML file")
         self.conda.export_env_yml(env, model_path)
-        # store conda environment in the local environment database
         self.logger.debug("Storing Conda environment in the local environment database")
         db = EnvironmentDb(config_json=self.config_json)
         db.table = "conda"
@@ -137,9 +172,7 @@ class CondaPack(BasePack):
         env = self._setup()
         pack_snippet = """
         python {0}
-        """.format(
-            self.cfg.HUB.PACK_SCRIPT
-        )
+        """.format(self.cfg.HUB.PACK_SCRIPT)
         self.logger.debug("Using environment {0}".format(env))
         self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)
@@ -151,12 +184,24 @@ class CondaPack(BasePack):
 
     @throw_ersilia_exception()
     def run(self):
+        """
+        Run the Conda environment packer.
+        """
         self.logger.debug("Packing model with Conda")
         self._write_model_install_commands()
         self._run()
 
 
 class DockerPack(BasePack):
+    """
+    A class used to pack models with Docker.
+
+    Methods
+    -------
+    run()
+        Run the Docker packer.
+    """
+
     def __init__(self, model_id, config_json):
         BasePack.__init__(self, model_id, config_json)
         self.docker = SimpleDocker()
@@ -164,7 +209,7 @@ class DockerPack(BasePack):
         self.docker_tag = self.cfg.ENV.DOCKER.REPO_TAG
         self.logger.debug("Initializing docker packer")
 
-    def _load_model_from_tmp(self, path):
+    def _load_model_from_tmp(self, path: str):
         path = os.path.join(path, self.model_id)
         if not os.path.exists(path):
             return None
@@ -212,12 +257,28 @@ class DockerPack(BasePack):
         self._delete_packer_container()
 
     def run(self):
+        """
+        Run the Docker packer.
+        """
         self.logger.debug("Packing model with Docker")
         self._write_model_install_commands()
         self._run()
 
 
-def get_runner(pack_mode):
+def get_runner(pack_mode: str):
+    """
+    Get the runner class based on the pack mode.
+
+    Parameters
+    ----------
+    pack_mode : str
+        Packaging mode.
+
+    Returns
+    -------
+    type
+        Runner class corresponding to the pack mode.
+    """
     if pack_mode == "system":
         return SystemPack
     if pack_mode == "venv":

@@ -2,9 +2,12 @@ import importlib
 
 
 class Command(object):
+    """
+    Command class to dynamically import and execute CLI commands.
+    """
+
     def __init__(self):
         pass
-
 
     def auth(self):
         m = importlib.import_module("ersilia.cli.commands.auth")
@@ -46,10 +49,6 @@ class Command(object):
         m = importlib.import_module("ersilia.cli.commands.run")
         m.run_cmd()
 
-    def sample(self):
-        m = importlib.import_module("ersilia.cli.commands.sample")
-        m.sample_cmd()
-
     def serve(self):
         m = importlib.import_module("ersilia.cli.commands.serve")
         m.serve_cmd()
@@ -61,7 +60,3 @@ class Command(object):
     def test(self):
         m = importlib.import_module("ersilia.cli.commands.test")
         m.test_cmd()
-
-    def inspect(self):
-        m = importlib.import_module("ersilia.cli.commands.inspect")
-        m.inspect_cmd()

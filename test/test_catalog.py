@@ -3,20 +3,28 @@ import os
 import pytest
 from ersilia.hub.content.catalog import CatalogTable
 
+
 @pytest.fixture
 def catalog_samples():
-    file_path = os.path.join(os.path.dirname(__file__), 'inputs', 'catalog_samples.json')
-    with open(file_path, 'r') as f:
+    file_path = os.path.join(
+        os.path.dirname(__file__), "inputs", "catalog_samples.json"
+    )
+    with open(file_path, "r") as f:
         samples = json.load(f)
     return samples
 
+
 def test_as_list_of_dicts(catalog_samples):
-    columns = ['Identifier', 'Slug', 'Title']
-    
+    columns = ["Identifier", "Slug", "Title"]
+
     # Test with standard catalog samples
-    catalog_table = CatalogTable(data=[list(item.values()) for item in catalog_samples], columns=columns)
+    catalog_table = CatalogTable(
+        data=[list(item.values()) for item in catalog_samples], columns=columns
+    )
     result = catalog_table.as_list_of_dicts()
-    assert result == catalog_samples, "The result does not match the expected catalog samples"
+    assert (
+        result == catalog_samples
+    ), "The result does not match the expected catalog samples"
 
     # Test with empty catalog data
     catalog_table_empty = CatalogTable(data=[], columns=columns)

@@ -8,7 +8,28 @@ from ....default import PACKMODE_FILE
 
 
 class ModelPacker(BaseAction):
-    def __init__(self, model_id, mode, config_json):
+    """
+    Packs a model using FastAPI (aka ersilia-pack).
+
+    For more information about the ersilia-pack, visit:
+    https://github.com/ersilia-os/ersilia-pack.git
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model to be packed.
+    mode : str
+        Packing mode to be used.
+    config_json : dict
+        Configuration settings for the packer.
+
+    Methods
+    -------
+    pack()
+        Packs the model using FastAPI.
+    """
+
+    def __init__(self, model_id: str, mode: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
@@ -36,6 +57,9 @@ class ModelPacker(BaseAction):
         runner.run()
 
     def pack(self):
+        """
+        Packs the model using FastAPI.
+        """
         self._setup()
         self._decide_pack_mode()
         self._run()

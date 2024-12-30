@@ -57,5 +57,6 @@ def throw_ersilia_exception(exit=True):
                 #     print("No log info")
                 #     # TODO: execute cli logic for [y/n] query and write log to a file
 
-        return inner_function    
+        return inner_function
+
     return _throw_ersilia_exception
