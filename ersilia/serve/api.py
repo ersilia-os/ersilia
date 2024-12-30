@@ -3,7 +3,7 @@ import csv
 import requests
 import json
 import collections
-import tempfile
+import asyncio
 import time
 
 from ..io.input import GenericInputAdapter
@@ -14,6 +14,7 @@ from .. import ErsiliaBase
 from .schema import ApiSchema
 
 from ..utils.exceptions_utils.api_exceptions import InputFileNotFoundError
+from ..utils.cache import RedisClient
 from ..utils.logging import make_temp_dir
 
 
@@ -54,6 +55,7 @@ class Api(object):
         self.lake = IsauraInterface(
             model_id=model_id, api_name=api_name, config_json=config_json
         )
+        self.redis_client = RedisClient()
         self.save_to_lake = save_to_lake
         if (url[-1] == "/"):
             self.url = url[:-1]
@@ -165,13 +167,10 @@ class Api(object):
                 raise InputFileNotFoundError(file_name=input)
         self.logger.debug("Posting to {0}".format(self.api_name))
         self.logger.debug("Batch size {0}".format(batch_size))
+        self.logger.info(f"Input: {input}") 
         unique_input, mapping = self._unique_input(input)
-        results_ = {}
-        for res in self.post_unique_input(
-            input=unique_input, output=None, batch_size=batch_size
-        ):
-            for i in mapping[res["input"]["key"]]:
-                results_[i] = res
+        self.logger.info(f"Unique input: {unique_input}: Mapping: {mapping}")
+        results_ = asyncio.run(self._get_precomputed(unique_input, mapping, batch_size))
         self.logger.debug("Done with unique posting")
         sorted_idxs = sorted(results_.keys())
         results = [results_[i] for i in sorted_idxs]
@@ -185,6 +184,32 @@ class Api(object):
         else:
             for result in results:
                 yield result
+
+    async def _get_precomputed(self, input_data, mapping, batch_size):
+        try:
+            await self.redis_client.check_redis_server()
+        except ConnectionError as e:
+            self.logger.error(e)
+            return
+        self.redis_client.set_model_id(self.model_id)
+
+        computed_results = await self.redis_client.get_conv_computed_result(
+            input_data, self._post_unique_input, mapping, batch_size
+        )
+        await self.redis_client.close()
+        return computed_results
+    
+    def _post_unique_input(self, batch_size, unique_input, mapping):
+    
+        results_ = {}
+        for res in self.post_unique_input(
+            input=unique_input, output=None, batch_size=batch_size
+        ):
+            self.logger.info(f"Result: {res}")
+            self.logger.info(f"Key mapping: {mapping[res['input']['key']]}")
+            for i in mapping[res["input"]["key"]]:
+                results_[i] = res
+        return results_
 
     def meta(self):
         """

@@ -90,6 +90,10 @@ ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
 FEATURE_MERGE_PATTERN = "---"
 
 # URLS
+REDIS_PORT = 6379
+REDIS_SERVER = "redis://localhost:%s" % REDIS_PORT
+REDIS_CONTAINER_NAME = "redis-server"
+REDIS_IMAGE = "redis:latest"
 ERSILIA_WEB_URL = "https://ersilia.io"
 ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
 AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/shrNc3sTtTA3QeEZu"
