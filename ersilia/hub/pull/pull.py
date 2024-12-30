@@ -41,6 +41,7 @@ class ModelPuller(ErsiliaBase):
         puller = ModelPuller(model_id="eosxxxx", config_json=config)
         await puller.async_pull()
     """
+
     def __init__(self, model_id: str, overwrite: bool = None, config_json: dict = None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()

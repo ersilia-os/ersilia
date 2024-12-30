@@ -32,6 +32,7 @@ class Versioner(ErsiliaBase):
     reformat_py(v)
         Reformat a Python version string.
     """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
 

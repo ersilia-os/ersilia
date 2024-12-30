@@ -16,7 +16,11 @@ from ...db.disk.fetched import FetchedModelsManager
 from ..bundle.status import ModelStatus
 
 from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
-from ...utils.session import get_model_session, remove_session_dir, deregister_model_session
+from ...utils.session import (
+    get_model_session,
+    remove_session_dir,
+    deregister_model_session,
+)
 
 
 def rmtree(path):
@@ -453,7 +457,9 @@ class ModelDockerDeleter(ErsiliaBase):
             )
         )
         dm = DockerManager(config_json=self.config_json)
-        if dm.is_active(): # TODO This is hacky but is needed by ModelPreparer when model is fetched. 
+        if (
+            dm.is_active()
+        ):  # TODO This is hacky but is needed by ModelPreparer when model is fetched.
             dm.delete_images(model_id)
 
 
@@ -584,10 +590,16 @@ class ModelFullDeleter(ErsiliaBase):
         dm = DockerManager(config_json=self.config_json)
         if needs_delete:
             if model_source == "DockerHub" and not dm.is_active():
-                return False, "Model fetched through Docker but Docker engine is inactive."
+                return (
+                    False,
+                    "Model fetched through Docker but Docker engine is inactive.",
+                )
             return True, "Model can be deleted."
         else:
-            return False, f"Model {model_id} is not available locally, no delete necessary."
+            return (
+                False,
+                f"Model {model_id} is not available locally, no delete necessary.",
+            )
 
     def delete(self, model_id: str):
         """

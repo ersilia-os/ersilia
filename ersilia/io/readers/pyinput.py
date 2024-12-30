@@ -12,6 +12,7 @@ class PyInputReader(object):
     IO : object
         IO handler object.
     """
+
     def __init__(self, input, IO):
         self.IO = IO
         self.input_shape = IO.input_shape

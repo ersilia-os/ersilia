@@ -3,7 +3,14 @@ import shutil
 import psutil
 import json
 
-from ..default import SESSIONS_DIR, LOGS_DIR, CONTAINER_LOGS_TMP_DIR, SESSION_JSON, EOS, MODELS_JSON
+from ..default import (
+    SESSIONS_DIR,
+    LOGS_DIR,
+    CONTAINER_LOGS_TMP_DIR,
+    SESSION_JSON,
+    EOS,
+    MODELS_JSON,
+)
 
 
 def get_current_pid():
@@ -155,11 +162,11 @@ def register_model_session(model_id, session_dir):
         The session directory.
     """
     file_path = os.path.join(EOS, MODELS_JSON)
-    
+
     if not os.path.exists(file_path):
         with open(file_path, "w") as f:
             json.dump({}, f, indent=4)
-    
+
     with open(file_path, "r") as f:
         models = json.load(f)
 

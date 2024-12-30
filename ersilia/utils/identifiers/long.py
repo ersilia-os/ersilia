@@ -18,6 +18,7 @@ class LongIdentifier(object):
     encode()
         Generate a UUID or a random identifier if UUID is not available.
     """
+
     def __init__(self):
         pass
 

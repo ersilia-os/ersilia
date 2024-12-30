@@ -27,7 +27,7 @@ class DockerManager(ErsiliaBase):
     Manages Docker operations for Ersilia models.
 
     It provides methods to build, run, and manage Docker images and containers
-    associated with Ersilia models. 
+    associated with Ersilia models.
 
     Parameters
     ----------

@@ -40,6 +40,7 @@ class CatalogTable(object):
     columns : list
         The columns of the catalog table.
     """
+
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
@@ -303,7 +304,7 @@ class ModelCatalog(ErsiliaBase):
             R += [r]
         R = sorted(R, key=lambda x: x[0])
         return CatalogTable(data=R, columns=columns)
-        
+
     def hub(self):
         """List models available in Ersilia model hub from the S3 JSON"""
         ji = JsonModelsInterface()
@@ -322,7 +323,7 @@ class ModelCatalog(ErsiliaBase):
             The catalog table containing the models available locally.
         """
         mc = ModelCard()
-        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS+["Model Source"]
+        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS + ["Model Source"]
         cards = []
         for model_id in os.listdir(self._bundles_dir):
             if not self._is_eos(model_id):
@@ -333,7 +334,6 @@ class ModelCatalog(ErsiliaBase):
             cards += [card]
         table = self._get_catalog(columns, cards)
         return table
-
 
     def bentoml(self) -> CatalogTable:
         """

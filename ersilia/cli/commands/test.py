@@ -3,6 +3,7 @@ from ...cli import echo
 from . import ersilia_cli
 from ...publish.test import ModelTester
 
+
 def test_cmd():
     """
     Test a model and obtain performance metrics.
@@ -24,66 +25,58 @@ def test_cmd():
         With deep testing level and inspect:
         $ ersilia test my_model -d /path/to/model --level deep --inspect --remote
     """
+
     @ersilia_cli.command(
         short_help="Test a model",
-        help=
-        """
+        help="""
         Test a local models that are under development as well as on deployment and obtain a detailed report on its expected behavior and performance
-        """
-        ,
+        """,
     )
     @click.argument("model", type=click.STRING)
     @click.option(
-        "-l", 
-        "--level", 
-        "level", 
+        "-l",
+        "--level",
+        "level",
         help="Level of testing, None: for default, deep: for deep testing",
-        required=False, 
-        default=None, 
-        type=click.STRING
+        required=False,
+        default=None,
+        type=click.STRING,
     )
     @click.option(
-        "-d", 
-        "--dir", 
-        "dir", 
+        "-d",
+        "--dir",
+        "dir",
         help="Model directory",
-        required=False, 
-        default=None, 
-        type=click.STRING
+        required=False,
+        default=None,
+        type=click.STRING,
     )
     @click.option(
-        "--inspect", 
-        help="Inspect the model: More on the docs", 
-        is_flag=True, 
-        default=False
+        "--inspect",
+        help="Inspect the model: More on the docs",
+        is_flag=True,
+        default=False,
     )
     @click.option(
         "--remote",
-        help="Test the model from remote git repository", 
-        is_flag=True, 
-        default=False
+        help="Test the model from remote git repository",
+        is_flag=True,
+        default=False,
     )
     @click.option(
         "--remove",
-        help="Remove the model directory after testing", 
-        is_flag=True, 
-        default=False
+        help="Remove the model directory after testing",
+        is_flag=True,
+        default=False,
     )
-    def test(
-        model, 
-        level,
-        dir, 
-        inspect,
-        remote,
-        remove
-      ):
+    def test(model, level, dir, inspect, remote, remove):
         mt = ModelTester(
             model_id=model,
-            level=level, 
+            level=level,
             dir=dir,
             inspect=inspect,
             remote=remote,
-            remove=remove
+            remove=remove,
         )
         echo("Setting up model tester...")
         mt.setup()

@@ -121,7 +121,7 @@ class ReadmeMetadata:
         self.model_id = model_id
 
     def read_information(self):
-        print ("Cannot read directly from README file. Using AirTable instead")
+        print("Cannot read directly from README file. Using AirTable instead")
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
         print(bi.as_dict())

@@ -31,6 +31,7 @@ def delete_cmd():
         Delete all models:
         $ ersilia delete --all
     """
+
     def _delete(md, model_id):
         md.delete(model_id)
 
@@ -46,9 +47,7 @@ def delete_cmd():
             )
         else:
             echo(
-                f":person_tipping_hand: {reason}".format(
-                    model_id
-                ),
+                f":person_tipping_hand: {reason}".format(model_id),
                 fg="yellow",
             )
 

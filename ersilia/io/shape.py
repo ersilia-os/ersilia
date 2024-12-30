@@ -2,6 +2,7 @@ class InputShapeSingle(object):
     """
     A class representing a single input shape.
     """
+
     def __init__(self):
         self.name = "Single"
 
@@ -10,6 +11,7 @@ class InputShapeList(object):
     """
     A class representing a list input shape.
     """
+
     def __init__(self):
         self.name = "List"
 
@@ -18,6 +20,7 @@ class InputShapePairOfLists(object):
     """
     A class representing a pair of lists input shape.
     """
+
     def __init__(self):
         self.name = "Pair of Lists"
 
@@ -39,6 +42,7 @@ class InputShape(object):
         >>> shape.get().name
         'List'
     """
+
     def __init__(self, input_shape: str = None):
         if input_shape is None:
             self.shape = InputShapeSingle()

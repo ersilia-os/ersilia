@@ -16,6 +16,7 @@ class Slug(ErsiliaBase):
     config_json : dict, optional
         Configuration settings in JSON format.
     """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.db = SlugDb(config_json=config_json)

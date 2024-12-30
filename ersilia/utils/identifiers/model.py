@@ -10,6 +10,7 @@ class ModelIdentifier(object):
     A class to handle model identification generation for new ersilia model and validation.
 
     """
+
     def __init__(self):
         self.letters = string.ascii_lowercase
         self.numbers = "0123456789"

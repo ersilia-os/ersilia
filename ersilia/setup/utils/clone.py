@@ -16,6 +16,7 @@ class ErsiliaCloner(ErsiliaBase):
     clone(path, version)
         Clones the Ersilia repository to the specified path and version.
     """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         checker = Checker()

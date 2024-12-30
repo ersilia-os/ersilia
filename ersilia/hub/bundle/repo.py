@@ -172,8 +172,8 @@ class PackFile(object):
 
     def needs_model(self) -> bool:
         """
-        Check if the pack file needs a model. Specifically this determines whether the "pack.py" file 
-        requires a model by checking if the file contains lines with the .pack() method and whether "None" 
+        Check if the pack file needs a model. Specifically this determines whether the "pack.py" file
+        requires a model by checking if the file contains lines with the .pack() method and whether "None"
         is specified as an argument.
 
         Returns
@@ -518,9 +518,9 @@ class RepoUtils(ErsiliaBase):
             The model ID.
         """
         model_id = self._get_model_id_from_path()
-        if (model_id is None):
+        if model_id is None:
             model_id = self._get_model_id_from_config()
-        if (model_id is None):
+        if model_id is None:
             model_id = DEFAULT_MODEL_ID
         return model_id
 

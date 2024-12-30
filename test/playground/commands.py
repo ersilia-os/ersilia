@@ -56,7 +56,13 @@ def execute_command(command, description="", dest_path=None, repo_path=None):
         success,
         result,
         checkups,
-    ) = time.time(), 0, False, "", []
+    ) = (
+        time.time(),
+        0,
+        False,
+        "",
+        [],
+    )
 
     proc = psutil.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

@@ -14,7 +14,10 @@ def runner():
 
 
 @patch("ersilia.core.modelbase.ModelBase")
-@patch("ersilia.hub.fetch.fetch.ModelFetcher.fetch", return_value=FetchResult(True, "Model fetched successfully."))
+@patch(
+    "ersilia.hub.fetch.fetch.ModelFetcher.fetch",
+    return_value=FetchResult(True, "Model fetched successfully."),
+)
 @pytest.mark.parametrize(
     "slug, model, flags",
     [

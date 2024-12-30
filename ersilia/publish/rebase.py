@@ -51,8 +51,17 @@ class TemplateRebaser(ErsiliaBase):
     credentials_json : str, optional
         Path to the credentials JSON file.
     """
-    def __init__(self, model_id: str, template_repo="eos-template", config_json=None, credentials_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=credentials_json)
+
+    def __init__(
+        self,
+        model_id: str,
+        template_repo="eos-template",
+        config_json=None,
+        credentials_json=None,
+    ):
+        ErsiliaBase.__init__(
+            self, config_json=config_json, credentials_json=credentials_json
+        )
         self.model_id = model_id
         self.template_repo = template_repo
         self.root = os.path.abspath(self._tmp_dir)
@@ -60,7 +69,9 @@ class TemplateRebaser(ErsiliaBase):
         self.model_path = os.path.join(self.root, self.model_id)
         self.template_path = os.path.join(self.root, self.template_repo)
         self.clean()
-        self.file_folder_rebaser = _FileFolderRebaser(self.model_path, self.template_path)
+        self.file_folder_rebaser = _FileFolderRebaser(
+            self.model_path, self.template_path
+        )
 
     def clone_template(self):
         """

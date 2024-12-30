@@ -106,19 +106,19 @@ class BaseServing(ErsiliaBase):
 
     def _get_apis_from_where_available(self):
         apis_list = self._get_apis_from_apis_list()
-        if (apis_list is None):
+        if apis_list is None:
             pack_method = resolve_pack_method(
                 model_path=self._get_bundle_location(self.model_id)
             )
-            if (pack_method == PACK_METHOD_FASTAPI):
+            if pack_method == PACK_METHOD_FASTAPI:
                 self.logger.debug("Getting APIs from FastAPI")
                 apis_list = self._get_apis_from_fastapi()
-            elif (pack_method == PACK_METHOD_BENTOML):
+            elif pack_method == PACK_METHOD_BENTOML:
                 self.logger.debug("Getting APIs from BentoML")
                 apis_list = self._get_apis_from_bento()
             else:
                 raise
-        if (apis_list is None):
+        if apis_list is None:
             apis_list = []
         for api in apis_list:
             yield api
@@ -1237,7 +1237,7 @@ class PulledDockerImageService(BaseServing):
         self.logger.debug("Status code: {0}".format(response.status_code))
         if response.status_code == 502:
             raise BadGatewayError(url)
-        elif response.status_code == 405: # We try the GET endpoint here
+        elif response.status_code == 405:  # We try the GET endpoint here
             response = requests.get(url)
         else:
             response.raise_for_status()

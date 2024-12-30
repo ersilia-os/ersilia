@@ -19,6 +19,7 @@ class Dataframe(object):
     features : list, optional
         List of features.
     """
+
     def __init__(self, keys=None, inputs=None, texts=None, values=None, features=None):
         self.keys = keys
         self.inputs = inputs

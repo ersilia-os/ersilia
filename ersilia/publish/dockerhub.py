@@ -23,6 +23,7 @@ class DockerHubUploader(ErsiliaBase):
         uploader.set_credentials(docker_user="username", docker_pwd="password")
         uploader.upload()
     """
+
     def __init__(self, model_id: str, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id

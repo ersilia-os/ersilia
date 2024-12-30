@@ -105,7 +105,7 @@ class BundleEnvironmentFile(ErsiliaBase):
         with open(f0, "w") as f:
             yaml.safe_dump(data, f, sort_keys=False)
 
-    def check(self): # TODO: Removing this fucntion
+    def check(self):  # TODO: Removing this fucntion
         """
         Check if the environment file exists.
 
@@ -159,7 +159,7 @@ class BundleRequirementsFile(ErsiliaBase):
             for l in reqs:
                 f.write(l + os.linesep)
 
-    def check(self): # TODO: Removing this fucntion
+    def check(self):  # TODO: Removing this fucntion
         """
         Check if the requirements file exists.
 
@@ -243,7 +243,7 @@ class BundleDockerfileFile(ErsiliaBase):
         with open(self.path, "w") as f:
             f.write(content)
 
-    def check(self): # TODO: Removing this fucntion
+    def check(self):  # TODO: Removing this fucntion
         """
         Check if the Dockerfile exists.
 

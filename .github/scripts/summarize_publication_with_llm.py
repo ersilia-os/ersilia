@@ -9,6 +9,7 @@ import shutil
 import json
 from typing import List
 from pydantic import BaseModel
+
 # from dotenv import load_dotenv
 
 # load_dotenv()
@@ -187,6 +188,7 @@ POSTPROCESS_USER_PROMPT = """
 Reformat, if necessary, the following publication report:
 """
 
+
 class Summary(BaseModel):
     title: str
     authors: str
@@ -278,9 +280,10 @@ class PublicationPDFDownloader:
             return self.download_from_file_path()
         return None
 
+
 class PublicationSummarizer:
     def __init__(self, publication_pdf, output_file, format="json"):
-        self.tmp_dir = tempfile.mkdtemp(prefix="ersilia-") # TODO Unused
+        self.tmp_dir = tempfile.mkdtemp(prefix="ersilia-")  # TODO Unused
         self.model_name = MODEL_NAME
         self.publication_pdf = publication_pdf
         self.output_file = output_file
@@ -336,9 +339,11 @@ class PublicationSummarizer:
             text_response = response.choices[0].message.content
             with open(output_file, "w") as f:
                 f.write(text_response)
-        
+
         else:
-            raise ValueError("Invalid format. Please choose either 'json' or 'markdown'.")
+            raise ValueError(
+                "Invalid format. Please choose either 'json' or 'markdown'."
+            )
 
     def run(self):
         text = self.extract_text_from_pdf(self.publication_pdf)
@@ -357,6 +362,7 @@ def serialize_json_to_md(json_file, md_file):
                     f.write(f"- {str(item)}\n")
             else:
                 f.write(str(value) + "\n")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process arguments.")
@@ -394,7 +400,7 @@ if __name__ == "__main__":
         type=str,
         default="json",
         required=False,
-        help="File format in which to save the summary, defaults to JSON"
+        help="File format in which to save the summary, defaults to JSON",
     )
     args = parser.parse_args()
     model_id = args.model_id
