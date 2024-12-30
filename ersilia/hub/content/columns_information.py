@@ -35,10 +35,14 @@ class ColumnsInformation(ErsiliaBase):
         org = "ersilia-os"
         branch = "main"
         url = "https://raw.githubusercontent.org/{0}/{1}/{2}/{3}".format(org, self.model_id, branch, self.relative_path)
-        # TODO try / except
-        with urlopen(url) as response:
-            pass
-            # TODO read text
+        try:
+            # TODO try / except
+            with urlopen(url) as response:
+                pass
+                # TODO read text
+        except:
+            self.logger.debug("Explicit columns data for {0} API does not exist in GitHub".format(self.api_name))
+            return None
 
     def _get_columns_information_from_local(self):
         file_name = os.path.join(self._model_path(self.model_id), self.relative_path)
