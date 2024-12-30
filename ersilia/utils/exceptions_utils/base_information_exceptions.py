@@ -1,7 +1,7 @@
+import os
+
 from .exceptions import ErsiliaError
 from ...default import AIRTABLE_MODEL_HUB_VIEW_URL
-
-import os
 
 
 def _read_default_fields(field):
@@ -93,8 +93,10 @@ class SourceTypeBaseInformationError(ErsiliaError):
 class TaskBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model task"
-        self.hints = "Only these tasks are allowed: {}. Tasks must be in list format".format(
-            ", ".join(_read_default_fields("Task"))
+        self.hints = (
+            "Only these tasks are allowed: {}. Tasks must be in list format".format(
+                ", ".join(_read_default_fields("Task"))
+            )
         )
         ErsiliaError.__init__(self, self.message, self.hints)
 
@@ -178,6 +180,17 @@ class OutputDimensionBaseInformationError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
+class OutputConsistencyBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong consistency"
+        self.hints = (
+            "Only one of the following output consistency is allowed: {}".format(
+                ", ".join(_read_default_fields("Output Consistency"))
+            )
+        )
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
 class TagBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model tag"
@@ -208,7 +221,7 @@ class DockerhubBaseInformationError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
-class DockerArchitectureInformationError(ErsiliaError):
+class DockerArchitectureBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Docker architecture"
         self.hints = "Listed Docker architectures are: {}. If you are considering a Docker architecture that is not in this list, please open a PR on the 'docker_architecture.txt' file in the Ersilia repository".format(

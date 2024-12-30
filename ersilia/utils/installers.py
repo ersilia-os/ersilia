@@ -29,6 +29,7 @@ class BaseInstaller(ErsiliaBase):
     credentials_json : dict, optional
         Credentials settings in JSON format. Default is None.
     """
+
     def __init__(self, check_install_log, config_json, credentials_json):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -132,6 +133,7 @@ class Installer(BaseInstaller):
     credentials_json : dict, optional
         Credentials settings in JSON format. Default is None.
     """
+
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
         BaseInstaller.__init__(
             self,
@@ -233,12 +235,16 @@ class Installer(BaseInstaller):
             bash_script = """
             source {0}/etc/profile.d/conda.sh
             conda deactivate
-            """.format(sc.conda_prefix(False))
+            """.format(
+                sc.conda_prefix(False)
+            )
         else:
             bash_script = ""
         bash_script += """
         source {0}/etc/profile.d/conda.sh
-        """.format(sc.conda_prefix(True))
+        """.format(
+            sc.conda_prefix(True)
+        )
         bc = SetupBaseConda()
         python_version = self.versions.python_version()
         python_version = bc.find_closest_python_version(python_version)
@@ -249,7 +255,9 @@ class Installer(BaseInstaller):
         pip install -e .
         python {3}
         conda deactivate
-        """.format(tmp_repo, eos_base_env, python_version, tmp_python_script)
+        """.format(
+            tmp_repo, eos_base_env, python_version, tmp_python_script
+        )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         python_script = """
@@ -343,6 +351,7 @@ class Uninstaller(BaseInstaller):
     credentials_json : dict, optional
         Credentials settings in JSON format. Default is None.
     """
+
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
         BaseInstaller.__init__(
             self,

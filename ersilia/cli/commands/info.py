@@ -25,6 +25,7 @@ def info_cmd():
         Get information about active session as json:
         $ ersilia info  --as_json
     """
+
     @ersilia_cli.command(
         short_help="Get model information", help="Get model information"
     )

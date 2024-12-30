@@ -17,6 +17,7 @@ class Uninstaller(object):
     uninstall()
         Main uninstallation method.
     """
+
     def __init__(self):
         self.docker_cleaner = SimpleDocker()
 

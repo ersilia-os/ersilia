@@ -17,6 +17,7 @@ class ModelSearcher(object):
     catalog : CatalogTable
         The catalog table containing the models.
     """
+
     """This class is used for searching through the catalog table
 
     Attributes:

@@ -32,6 +32,7 @@ class SimpleVenv(ErsiliaBase):
     run_commandlines(environment, commandlines)
         Run command lines in a virtual environment.
     """
+
     def __init__(self, root):
         ErsiliaBase.__init__(self, config_json=None, credentials_json=None)
         self.root = os.path.abspath(root)

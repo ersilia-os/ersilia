@@ -29,7 +29,8 @@ def example_cmd():
             model_id = session.current_model_id()
         if not model_id:
             echo(
-                "No model found. Please specify a model or serve a model in the current shell.", fg="red"
+                "No model found. Please specify a model or serve a model in the current shell.",
+                fg="red",
             )
             return
         eg = ExampleGenerator(model_id=model_id)

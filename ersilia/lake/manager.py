@@ -30,6 +30,7 @@ class IsauraManager(ErsiliaBase):
     hdf5 : Hdf5Explorer
         Instance of Hdf5Explorer for managing HDF5 operations.
     """
+
     def __init__(self, model_id: str, config_json: dict, credentials_json: dict):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json

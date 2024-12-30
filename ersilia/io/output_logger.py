@@ -16,6 +16,7 @@ class TabularResultLogger(object):
     ----------
     None
     """
+
     def __init__(self):
         pass
 

@@ -35,6 +35,7 @@ class BuiltinExampleReader(ErsiliaBase):
     output_example() -> list
         Returns a list of output examples.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -102,6 +103,7 @@ class ModelSniffer(BaseAction):
     sniff()
         Infers the structure of the model.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None

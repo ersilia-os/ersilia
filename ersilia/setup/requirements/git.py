@@ -17,6 +17,7 @@ class GithubCliRequirement(object):
     install()
         Installs the GitHub CLI.
     """
+
     def __init__(self):
         self.name = "gh"
 
@@ -75,6 +76,7 @@ class GitLfsRequirement(object):
     install()
         Installs Git LFS.
     """
+
     def __init__(self):
         self.name = "git-lfs"
 

@@ -13,6 +13,7 @@ class EosHomePathRequirement(object):
     eos_home_path_exists()
         Checks if the EOS home path exists.
     """
+
     def __init__(self):
         pass
 

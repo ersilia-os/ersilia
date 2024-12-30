@@ -26,6 +26,7 @@ class PseudoDownloader(object):
     overwrite : bool
         Whether to overwrite existing files.
     """
+
     def __init__(self, overwrite):
         self.overwrite = overwrite
 
@@ -65,6 +66,7 @@ class OsfDownloader(object):
     overwrite : bool
         Whether to overwrite existing files.
     """
+
     def __init__(self, overwrite):
         self.overwrite = overwrite
 
@@ -101,6 +103,7 @@ class GoogleDriveDownloader(object):
     """
     A class to download files from Google Drive.
     """
+
     def __init__(self):
         pass
 
@@ -168,6 +171,7 @@ class GitHubDownloader(object):
     token : str, optional
         The GitHub token for authentication. Default is None.
     """
+
     def __init__(self, overwrite, token=None):
         self.logger = logger
 
@@ -204,7 +208,9 @@ class GitHubDownloader(object):
         GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/{1}/{2}.git
         mv {2} {3}
         rm {0}
-        """.format(tmp_folder, org, repo, destination)
+        """.format(
+            tmp_folder, org, repo, destination
+        )
         run_file = os.path.join(
             os.path.abspath(make_temp_dir(prefix="ersilia")), "run.sh"
         )
@@ -429,6 +435,7 @@ class S3Downloader(object):
     """
     A class to download files from an S3 bucket.
     """
+
     def __init__(self):
         pass
 

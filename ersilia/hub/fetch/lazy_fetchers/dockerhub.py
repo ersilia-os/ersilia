@@ -256,9 +256,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             return None
 
         data["service_class"] = "pulled_docker"
-        data["size"] = (
-            mp._get_size_of_local_docker_image_in_mb()
-        )
+        data["size"] = mp._get_size_of_local_docker_image_in_mb()
         with open(information_file, "w") as outfile:
             json.dump(data, outfile, indent=4)
 

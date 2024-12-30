@@ -8,14 +8,14 @@ from ..hub.content.card import RepoMetadataFile
 from ..hub.fetch.actions.template_resolver import TemplateResolver
 from ..utils.logging import logger
 from ..default import (
-    INSTALL_YAML_FILE, 
+    INSTALL_YAML_FILE,
     DOCKERFILE_FILE,
     PACK_METHOD_FASTAPI,
     PACK_METHOD_BENTOML,
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
     RUN_FILE,
-    PREDEFINED_EXAMPLE_FILES
+    PREDEFINED_EXAMPLE_FILES,
 )
 
 Result = namedtuple("Result", ["success", "details"])
@@ -25,6 +25,7 @@ BASE_URL = "https://github.com/ersilia-os/"
 RAW_CONTENT_URL = "https://raw.githubusercontent.com/ersilia-os/{model}/main/"
 REPO_API_URL = "https://api.github.com/repos/ersilia-os/{model}/contents"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+
 
 class ModelInspector:
     """
@@ -47,18 +48,15 @@ class ModelInspector:
         result = inspector.check_repo_exists()
         result = inspector.check_complete_metadata()
     """
+
     RUN_FILE = f"model/framework/{RUN_FILE}"
-    
+
     COMMON_FILES = [
         RUN_FILE,
         "README.md",
         "LICENSE",
     ]
-    BENTOML_FOLDERS = [
-        "model",
-        "src",
-        ".github"
-    ]
+    BENTOML_FOLDERS = ["model", "src", ".github"]
     BENTOML_FILES = [
         DOCKERFILE_FILE,
         METADATA_JSON_FILE,
@@ -67,11 +65,8 @@ class ModelInspector:
         ".gitignore",
         "input.csv",
     ]
-    
-    ERSILIAPACK_FOLDERS = [
-        "model",
-        ".github"
-    ]
+
+    ERSILIAPACK_FOLDERS = ["model", ".github"]
 
     ERSILIAPACK_FILES = [
         INSTALL_YAML_FILE,
@@ -83,15 +78,10 @@ class ModelInspector:
         ".gitattributes",
     ]
 
-    BENTOML_FILES     = COMMON_FILES + BENTOML_FILES
+    BENTOML_FILES = COMMON_FILES + BENTOML_FILES
     ERSILIAPACK_FILES = COMMON_FILES + ERSILIAPACK_FILES
 
-    REQUIRED_FIELDS = [
-        "Publication",
-        "Source Code", 
-        "S3", 
-        "DockerHub"
-    ]
+    REQUIRED_FIELDS = ["Publication", "Source Code", "S3", "DockerHub"]
 
     def __init__(self, model: str, dir: str, config_json=None):
         self.model = model
@@ -100,7 +90,7 @@ class ModelInspector:
         self.content_url = RAW_CONTENT_URL.format(model=model)
         self.config_json = config_json
         self.pack_type = self.get_pack_type()
-     
+
     def get_pack_type(self):
         """
         Determine the packaging method of the model.
@@ -110,17 +100,14 @@ class ModelInspector:
         str
             The packaging method, either 'bentoml' or 'fastapi'.
         """
-        resolver = TemplateResolver(
-            model_id=self.model,
-            repo_path=self.dir
-        )
+        resolver = TemplateResolver(model_id=self.model, repo_path=self.dir)
         if resolver.is_bentoml():
             return PACK_METHOD_BENTOML
         elif resolver.is_fastapi():
             return PACK_METHOD_FASTAPI
         else:
             return None
-            
+
     def check_repo_exists(self):
         """
         Check if the model repository exists.
@@ -131,14 +118,8 @@ class ModelInspector:
             A namedtuple containing the success status and details of the check.
         """
         if self._url_exists(self.repo_url):
-            return Result(
-                True, 
-                "Repository exists."
-            )
-        return Result(
-            False, 
-            f"Repository not found at {self.repo_url}."
-        )
+            return Result(True, "Repository exists.")
+        return Result(False, f"Repository not found at {self.repo_url}.")
 
     def check_complete_metadata(self):
         """
@@ -149,32 +130,25 @@ class ModelInspector:
         Result
             A namedtuple containing the success status and details of the check.
         """
-        url = f"{self.content_url}{METADATA_JSON_FILE}" if self.pack_type == "bentoml" \
+        url = (
+            f"{self.content_url}{METADATA_JSON_FILE}"
+            if self.pack_type == "bentoml"
             else f"{self.content_url}{METADATA_YAML_FILE}"
+        )
         if not self._url_exists(url):
-            return Result(
-                False, 
-                f"Metadata file missing at {url}."
-            )
+            return Result(False, f"Metadata file missing at {url}.")
 
         metadata = self._fetch_json(url)
         if metadata is None:
-            return Result(
-                False, 
-                "Failed to fetch or parse metadata."
-            )
+            return Result(False, "Failed to fetch or parse metadata.")
 
         missing_fields = [
-            field 
-            for field 
-            in self.REQUIRED_FIELDS 
-            if field not in metadata
+            field for field in self.REQUIRED_FIELDS if field not in metadata
         ]
         invalid_urls = [
-            (field, metadata[field]) 
-            for field in self.REQUIRED_FIELDS 
-            if field in metadata 
-            and not self._url_exists(metadata[field])
+            (field, metadata[field])
+            for field in self.REQUIRED_FIELDS
+            if field in metadata and not self._url_exists(metadata[field])
         ]
 
         details = []
@@ -185,9 +159,7 @@ class ModelInspector:
             )
         if invalid_urls:
             details.extend(
-                f"Invalid URL in '{field}': {url}" 
-                for field, url 
-                in invalid_urls
+                f"Invalid URL in '{field}': {url}" for field, url in invalid_urls
             )
 
         try:
@@ -197,9 +169,9 @@ class ModelInspector:
 
         if details:
             return Result(False, " ".join(details))
-        
+
         return Result(True, "Metadata is complete.")
-    
+
     def check_dependencies_are_valid(self):
         """
         Check if the dependencies in the Dockerfile or install.yml are valid.
@@ -209,23 +181,17 @@ class ModelInspector:
         Result
             A namedtuple containing the success status and details of the check.
         """
-        if self.pack_type not in [
-            PACK_METHOD_BENTOML, 
-            PACK_METHOD_FASTAPI
-            ]:
-            return Result(
-                False, 
-                f"Unsupported pack type: {self.pack_type}"
-            )
+        if self.pack_type not in [PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI]:
+            return Result(False, f"Unsupported pack type: {self.pack_type}")
 
         file = (
-            DOCKERFILE_FILE 
-            if self.pack_type == PACK_METHOD_BENTOML 
+            DOCKERFILE_FILE
+            if self.pack_type == PACK_METHOD_BENTOML
             else INSTALL_YAML_FILE
         )
         method = (
-            self._validate_dockerfile 
-            if self.pack_type == PACK_METHOD_BENTOML 
+            self._validate_dockerfile
+            if self.pack_type == PACK_METHOD_BENTOML
             else self._validate_yml
         )
 
@@ -236,11 +202,11 @@ class ModelInspector:
         errors = method(content)
         if errors:
             return Result(False, " ".join(errors))
-        
+
         return Result(True, f"{file} dependencies are valid.")
 
     def _get_file_content(self, file):
-        if self.dir is not None:  
+        if self.dir is not None:
             path = os.path.join(self.dir, file)
             if not os.path.isfile(path):
                 return None, f"{file} not found at {path}"
@@ -248,20 +214,14 @@ class ModelInspector:
                 with open(path, "r") as file:
                     return file.read(), None
             except Exception as e:
-                return (
-                    None, 
-                    f"Failed to read {file} content: {str(e)}"
-                )
-        else:  
+                return (None, f"Failed to read {file} content: {str(e)}")
+        else:
             url = f"{self.content_url}{file}"
             if not self._url_exists(url):
                 return None, f"{file} not found at {url}"
             content = self._fetch_text(url)
             if content is None:
-                return (
-                    None, 
-                    f"Failed to fetch {file} content."
-                )
+                return (None, f"Failed to fetch {file} content.")
             return content, None
 
     def check_complete_folder_structure(self):
@@ -275,14 +235,8 @@ class ModelInspector:
         """
         invalid_items = self.validate_repo_structure()
         if invalid_items:
-            return Result(
-                False, 
-                f"Missing folders: {', '.join(invalid_items)}"
-            )
-        return Result(
-            True, 
-            "Folder structure is complete."
-        )
+            return Result(False, f"Missing folders: {', '.join(invalid_items)}")
+        return Result(True, "Folder structure is complete.")
 
     def check_computational_performance(self):
         """
@@ -322,16 +276,10 @@ class ModelInspector:
             for root, dirs, files in os.walk(self.dir):
                 relative_path = os.path.relpath(root, self.dir)
                 items_in_dir = [
-                    os.path.join(relative_path, item) 
-                    for item 
-                    in files + dirs
+                    os.path.join(relative_path, item) for item in files + dirs
                 ]
                 unexpected_items.extend(
-                    item 
-                    for item 
-                    in items_in_dir 
-                    if item 
-                    not in expected_items
+                    item for item in items_in_dir if item not in expected_items
                 )
 
             if unexpected_items:
@@ -342,10 +290,7 @@ class ModelInspector:
 
         url = REPO_API_URL.format(model=self.model)
         if not self._url_exists(url):
-            return Result(
-                False, 
-                f"Failed to access repository contents at: {url}"
-            )
+            return Result(False, f"Failed to access repository contents at: {url}")
         headers = {
             "Accept": "application/vnd.github.v3+json",
         }
@@ -361,8 +306,7 @@ class ModelInspector:
 
         if unexpected_items:
             return Result(
-                False, 
-                f"Unexpected items found: {', '.join(unexpected_items)}"
+                False, f"Unexpected items found: {', '.join(unexpected_items)}"
             )
 
         return Result(True, "No extra files found.")
@@ -371,7 +315,7 @@ class ModelInspector:
         try:
             headers = {
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                "User-Agent":USER_AGENT 
+                "User-Agent": USER_AGENT,
             }
             response = requests.head(url, headers=headers)
             logger.debug(f"URl: {url} | status code: {response.status_code}")
@@ -383,10 +327,7 @@ class ModelInspector:
         try:
             response = requests.get(url)
             return response.json()
-        except (
-                requests.RequestException, 
-                ValueError
-            ):
+        except (requests.RequestException, ValueError):
             return None
 
     def _fetch_text(self, url):
@@ -406,22 +347,22 @@ class ModelInspector:
 
     def _validate_repo_structure(self, required_items):
         missing_items = []
-        
-        if self.dir is not None:  
+
+        if self.dir is not None:
             for item in required_items:
                 item_path = os.path.join(self.dir, item)
                 if not os.path.isfile(item_path):
                     missing_items.append(item)
-        else:  
+        else:
             for item in required_items:
                 url = f"{RAW_CONTENT_URL.format(model=self.model)}{item}"
                 response = requests.head(url)
                 if response.status_code != 200:
                     logger.debug(f"URL: {url} | STatus Code: {response.status_code}")
                     missing_items.append(item)
-        
+
         return missing_items
-    
+
     def validate_repo_structure(self):
         logger.debug(f"Pack Type: {self.pack_type}")
         if self.pack_type == PACK_METHOD_BENTOML:
@@ -430,43 +371,41 @@ class ModelInspector:
             required_items = self.ERSILIAPACK_FILES
         else:
             raise ValueError(f"Unsupported pack type: {self.pack_type}")
-        
+
         return self._validate_repo_structure(required_items)
-    
+
     def _validate_dockerfile(self, dockerfile_content):
         lines, errors = dockerfile_content.splitlines(), []
         for line in lines:
             if line.startswith("RUN pip install"):
                 cmd = line.split("RUN ")[-1]
                 result = subprocess.run(
-                    cmd, 
-                    shell=True, 
-                    stdout=subprocess.PIPE, 
-                    stderr=subprocess.PIPE, 
-                    text=True
+                    cmd,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
                 )
                 if result.returncode != 0:
-                    errors.append(
-                        f"Failed to run {cmd}: {result.stderr.strip()}"
-                    )
+                    errors.append(f"Failed to run {cmd}: {result.stderr.strip()}")
 
         if "WORKDIR /repo" not in dockerfile_content:
             errors.append("Missing 'WORKDIR /repo'.")
         if "COPY . /repo" not in dockerfile_content:
             errors.append("Missing 'COPY . /repo'.")
         return errors
-    
+
     def _validate_yml(self, yml_content):
         errors = []
         try:
             yml_data = yaml.safe_load(yml_content)
         except yaml.YAMLError as e:
             return [f"YAML parsing error: {str(e)}"]
-        
+
         python_version = yml_data.get("python")
         if not python_version:
             errors.append("Missing Python version in install.yml.")
-        
+
         commands = yml_data.get("commands", [])
         for command in commands:
             if not isinstance(command, list) or command[0] != "pip":
@@ -485,23 +424,15 @@ class ModelInspector:
         cmd = (
             f"ersilia serve {self.model}&& "
             f"ersilia example -n {n} -c -f my_input.csv && "
-             "ersilia run -i my_input.csv && ersilia close"
+            "ersilia run -i my_input.csv && ersilia close"
         )
         start_time = time.time()
         process = subprocess.run(
-            cmd, 
-            shell=True, 
-            stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE,
-            text=True
+            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
         )
         if process.returncode != 0:
-            return Result(
-                False, 
-                f"Error serving model: {process.stderr.strip()}"
-            )
+            return Result(False, f"Error serving model: {process.stderr.strip()}")
         execution_time = time.time() - start_time
         return Result(
-            True, 
-            f"{n} predictions executed in {execution_time:.2f} seconds."
+            True, f"{n} predictions executed in {execution_time:.2f} seconds."
         )

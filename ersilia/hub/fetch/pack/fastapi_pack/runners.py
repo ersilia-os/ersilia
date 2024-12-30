@@ -31,6 +31,7 @@ class SystemPack(BasePack):
         packer = SystemPack(model_id="eosxxxx", config_json=config)
         packer.run()
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BasePack.__init__(self, model_id, config_json)
         self.logger.debug("Initializing system packer")
@@ -73,6 +74,7 @@ class CondaPack(BasePack):
         packer = CondaPack(model_id="eosxxxx", config_json=config)
         packer.run()
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BasePack.__init__(self, model_id, config_json)
         self.conda = SimpleConda()

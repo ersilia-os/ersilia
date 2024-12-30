@@ -28,6 +28,7 @@ class ErsiliaError(Exception):
             print(e)
 
     """
+
     def __init__(
         self, message="Ersilia has experienced an error", hints="", config_json=None
     ):

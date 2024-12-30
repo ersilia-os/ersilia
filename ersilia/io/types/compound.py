@@ -39,6 +39,7 @@ class IO(object):
         >>> list(io.example(1))
         [{'key': '...', 'input': '...', 'text': '...'}]
     """
+
     def __init__(self, input_shape):
         self.logger = logger
         self.input_shape = input_shape

@@ -1,6 +1,7 @@
 import os
 import datetime
 import validators
+
 try:
     from validators import ValidationFailure
 except ImportError:
@@ -22,6 +23,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     OutputTypeBaseInformationError,
     OutputShapeBaseInformationError,
     OutputDimensionBaseInformationError,
+    OutputConsistencyBaseInformationError,
     TaskBaseInformationError,
     SubtaskBaseInformationError,
     BiomedicalAreaBaseInformationError,
@@ -34,7 +36,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     LicenseBaseInformationError,
     GithubBaseInformationError,
     DockerhubBaseInformationError,
-    DockerArchitectureInformationError,
+    DockerArchitectureBaseInformationError,
     S3BaseInformationError,
     BothIdentifiersBaseInformationError,
     MemoryGbBaseInformationError,
@@ -59,6 +61,8 @@ class BaseInformation(ErsiliaBase):
         self._output = None
         self._output_type = None
         self._output_shape = None
+        self._output_dimension = None
+        self._output_consistency = None
         self._interpretation = None
         self._tag = None
         self._publication = None
@@ -216,7 +220,7 @@ class BaseInformation(ErsiliaBase):
     @property
     def subtask(self):
         return self._subtask
-    
+
     @subtask.setter
     def subtask(self, new_subtask):
         if type(new_subtask) is str:
@@ -300,7 +304,7 @@ class BaseInformation(ErsiliaBase):
     @property
     def output_dimension(self):
         return self._output_dimension
-    
+
     @output_dimension.setter
     def output_dimension(self, new_output_dimension):
         if type(new_output_dimension) is not int:
@@ -308,6 +312,17 @@ class BaseInformation(ErsiliaBase):
         if new_output_dimension < 1:
             raise OutputDimensionBaseInformationError
         self._output_dimension = new_output_dimension
+
+    @property
+    def output_consistency(self):
+        return self._output_consistency
+
+    @output_consistency.setter
+    def output_consistency(self, new_output_consistency):
+        default_output_consistency = self._read_default_fields("Output Consistency")
+        if new_output_consistency not in default_output_consistency:
+            raise OutputConsistencyBaseInformationError
+        self._output_consistency = new_output_consistency
 
     @property
     def interpretation(self):
@@ -356,7 +371,7 @@ class BaseInformation(ErsiliaBase):
     @property
     def publication_year(self):
         return self._publication_year
-    
+
     @publication_year.setter
     def publication_year(self, new_publication_year):
         if type(new_publication_year) is not int:
@@ -429,7 +444,7 @@ class BaseInformation(ErsiliaBase):
             new_docker_architecture = [new_docker_architecture]
         for d in new_docker_architecture:
             if d not in self._read_default_fields("Docker Architecture"):
-                raise DockerArchitectureInformationError
+                raise DockerArchitectureBaseInformationError
         self._docker_architecture = new_docker_architecture
 
     @property
@@ -483,6 +498,7 @@ class BaseInformation(ErsiliaBase):
             "Output Type": self.output_type,
             "Output Shape": self.output_shape,
             "Output Dimension": self.output_dimension,
+            "Output Consistency": self.output_consistency,
             "Interpretation": self.interpretation,
             "Tag": self.tag,
             "Publication": self.publication,
@@ -524,6 +540,7 @@ class BaseInformation(ErsiliaBase):
         self._assign(self.output_type, "Output Type", data)
         self._assign(self.output_shape, "Output Shape", data)
         self._assign(self.output_dimension, "Output Dimension", data)
+        self._assign(self.output_consistency, "Output Consistency", data)
         self._assign(self.interpretation, "Interpretation", data)
         self._assign(self.tag, "Tag", data)
         self._assign(self.publication, "Publication", data)

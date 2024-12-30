@@ -31,6 +31,7 @@ class ModelStandardExample(ErsiliaBase):
         example_runner = ModelStandardExample(model_id="model123", config_json=config)
         example_runner.run()
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id

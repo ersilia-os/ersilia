@@ -17,6 +17,7 @@ class SetupBaseDocker(ErsiliaBase):
     config_json : dict, optional
         Configuration settings in JSON format.
     """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.docker = SimpleDocker()
@@ -77,7 +78,9 @@ class SetupBaseDocker(ErsiliaBase):
         COPY . .
 
         RUN pip install .
-        """.format(tag, self.cfg.ENV.DOCKER.IMAGE_WORKDIR)
+        """.format(
+            tag, self.cfg.ENV.DOCKER.IMAGE_WORKDIR
+        )
         path = os.path.join(tmp_repo, "Dockerfile")
         with open(path, "w") as f:
             lines = dockerfile.split("\n")

@@ -31,6 +31,7 @@ class BaseConda(object):
     conda_prefix(is_base)
         Get the conda prefix path.
     """
+
     def __init__(self):
         self.SPECS_JSON = SPECS_JSON
         self.CHECKSUM_FILE = CHECKSUM_FILE
@@ -109,6 +110,7 @@ class CondaUtils(BaseConda):
         conda_utils.create("myenv", "3.8")
 
     """
+
     def __init__(self, config_json=None):
         BaseConda.__init__(self)
         self.versions = Versioner(config_json=config_json)
@@ -390,7 +392,9 @@ class CondaUtils(BaseConda):
         snippet = """
         source {0}/etc/profile.d/conda.sh
         conda activate {1}
-        """.format(self.conda_prefix(False), BASE)
+        """.format(
+            self.conda_prefix(False), BASE
+        )
         return snippet
 
 
@@ -411,6 +415,7 @@ class SimpleConda(CondaUtils):
         simple_conda.create("myenv", "3.8")
 
     """
+
     def __init__(self, config_json=None):
         CondaUtils.__init__(self, config_json=config_json)
 
@@ -421,7 +426,9 @@ class SimpleConda(CondaUtils):
         bash_script = """
         source {0}/etc/profile.d/conda.sh
         conda env list > {1}
-        """.format(self.conda_prefix(self.is_base()), tmp_file)
+        """.format(
+            self.conda_prefix(self.is_base()), tmp_file
+        )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
@@ -544,7 +551,9 @@ class SimpleConda(CondaUtils):
         bash_script += """
         source {0}/etc/profile.d/conda.sh
         conda env remove --name {1} -y
-        """.format(self.conda_prefix(True), environment)
+        """.format(
+            self.conda_prefix(True), environment
+        )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
@@ -595,7 +604,9 @@ class SimpleConda(CondaUtils):
         conda activate {1}
         conda env export --no-builds > {2}
         conda deactivate
-        """.format(self.conda_prefix(True), environment, yml_file)
+        """.format(
+            self.conda_prefix(True), environment, yml_file
+        )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
@@ -626,7 +637,9 @@ class SimpleConda(CondaUtils):
         bash_script += """
         source {0}/etc/profile.d/conda.sh
         conda create --clone {1} --name {2} -y
-        """.format(self.conda_prefix(True), src_env, dst_env)
+        """.format(
+            self.conda_prefix(True), src_env, dst_env
+        )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
@@ -665,7 +678,9 @@ class SimpleConda(CondaUtils):
         source {0}/etc/profile.d/conda.sh
         conda activate {1}
         {2}
-        """.format(self.conda_prefix(True), environment, commandlines)
+        """.format(
+            self.conda_prefix(True), environment, commandlines
+        )
         with open(file_name, "w") as f:
             f.write(bash_script)
         return file_name
@@ -718,6 +733,7 @@ class StandaloneConda(object):
     """
     A class to manage standalone conda environments.
     """
+
     def __init__(self):
         pass
 
@@ -761,7 +777,9 @@ class StandaloneConda(object):
         bash_script = """
         source /{0}/bin/activate
         {1}
-        """.format(environment, commandlines)
+        """.format(
+            environment, commandlines
+        )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
 

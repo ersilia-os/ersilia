@@ -29,6 +29,7 @@ def serve_cmd():
         Serve a model and track the session:
         $ ersilia serve <model_id> --track
     """
+
     # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
@@ -77,7 +78,7 @@ def serve_cmd():
         if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")
             return
-        
+
         register_model_session(mdl.model_id, mdl.session._session_dir)
         echo(
             ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"

@@ -3,6 +3,7 @@ from src.service import load_model
 from src.service import Service
 from src.service import CHECKPOINTS_BASEDIR, FRAMEWORK_BASEDIR
 
+
 def main():
     """
     Main function to load the model, pack it into a service, and save the service.
@@ -16,6 +17,7 @@ def main():
     service = Service()
     service.pack("model", mdl)
     service.save()
+
 
 if __name__ == "__main__":
     main()

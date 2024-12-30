@@ -72,6 +72,7 @@ class SimpleDocker(object):
     use_udocker : bool, optional
         Whether to use udocker instead of Docker. Default is None.
     """
+
     def __init__(self, use_udocker=None):
         self.identifier = LongIdentifier()
         self.logger = logger
@@ -545,6 +546,7 @@ class SimpleDockerfileParser(DockerfileParser):
     path : str
         The path to the Dockerfile or the directory containing the Dockerfile.
     """
+
     def __init__(self, path):
         if os.path.isdir(path):
             path = os.path.join(path, "Dockerfile")
@@ -591,6 +593,7 @@ class ContainerMetricsSampler:
     sampling_interval : float, optional
         The interval between samples in seconds. Default is 0.01.
     """
+
     def __init__(self, model_id, sampling_interval=0.01):
         self.client = docker.from_env()
         self.logger = logger

@@ -19,6 +19,7 @@ class Zipper(object):
     zip(dir_name, file)
         Zip a directory into a file.
     """
+
     def __init__(self, remove):
         self.remove = remove
 

@@ -24,6 +24,7 @@ class Session(ErsiliaBase):
     config_json : dict
         Configuration in JSON format.
     """
+
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self._session_dir = get_session_dir()

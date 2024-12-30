@@ -25,6 +25,7 @@ def catalog_cmd():
     Display model card for a specific model ID and show catalog in json format:
     $ ersilia catalog --card <model_id> --as-json
     """
+
     # Example usage: ersilia catalog
     @ersilia_cli.command(help="List a catalog of models")
     @click.option(

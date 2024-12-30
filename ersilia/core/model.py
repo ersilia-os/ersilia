@@ -7,7 +7,7 @@ import asyncio
 import collections
 import sys
 
-from click import secho as echo # Style-aware echo
+from click import secho as echo  # Style-aware echo
 
 from .. import logger
 from ..serve.api import Api
@@ -105,6 +105,7 @@ class ErsiliaModel(ErsiliaBase):
         model = ErsiliaModel(model="model_id")
         model.close()
     """
+
     def __init__(
         self,
         model: str,
@@ -128,7 +129,7 @@ class ErsiliaModel(ErsiliaBase):
             else:
                 self.logger.set_verbosity(0)
         else:
-            if hasattr(sys, 'ps1'):
+            if hasattr(sys, "ps1"):
                 self.logger.set_verbosity(0)
         self.save_to_lake = save_to_lake
         if self.save_to_lake:
@@ -153,7 +154,9 @@ class ErsiliaModel(ErsiliaBase):
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
 
-        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+        assert (
+            self._is_valid
+        ), "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
             model
         )
         self.config_json = config_json
@@ -218,7 +221,6 @@ class ErsiliaModel(ErsiliaBase):
             config_json=self.config_json, credentials_json=self.credentials_json
         )
         asyncio.run(mf.fetch(self.model_id))
-
 
     def __enter__(self):
         """
@@ -312,7 +314,7 @@ class ErsiliaModel(ErsiliaBase):
 
     def _get_api_instance(self, api_name):
         url = self._get_url()
-        if (api_name is None):
+        if api_name is None:
             api_names = self.autoservice.get_apis()
             assert (
                 len(api_names) == 1
@@ -782,7 +784,7 @@ class ErsiliaModel(ErsiliaBase):
             result = None
             standard_status_ok = False
             self.logger.debug("We will try conventional run.")
-        
+
         if not standard_status_ok:
             self.logger.debug("Trying conventional run")
             result = self._run(

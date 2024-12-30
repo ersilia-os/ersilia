@@ -35,6 +35,7 @@ class Information(ErsiliaBase):
     config_json : dict, optional
         Configuration settings in JSON format.
     """
+
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -105,12 +106,14 @@ class Information(ErsiliaBase):
                 return [x.rstrip() for x in f.readlines()]
         else:
             return None
-        
+
     def _get_columns(self):
         columns_data = {}
         api_names = self._get_apis_list()
         for api_name in api_names:
-            ci = ColumnsInformation(model_id=self.model_id, api_name=api_name, config_json=self.config_json)
+            ci = ColumnsInformation(
+                model_id=self.model_id, api_name=api_name, config_json=self.config_json
+            )
             data = ci.load()
             columns_data[api_name] = data
         return columns_data
@@ -152,6 +155,7 @@ class InformationDisplayer(ErsiliaBase):
     config_json : dict, optional
         Configuration settings in JSON format.
     """
+
     def __init__(self, info_data, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.info_data = info_data

@@ -5,6 +5,7 @@ ji = JsonModelsInterface(config_json=None)
 
 MODEL_ID = "eos9ei3"
 
+
 class OriginalModelFinder:
     def __init__(self):
         pass
@@ -59,7 +60,9 @@ def original_finder():
 @pytest.fixture
 def actual_url():
     data = ji.items()
-    URL = next((item["Host URL"] for item in data if item["Identifier"] == MODEL_ID), None)
+    URL = next(
+        (item["Host URL"] for item in data if item["Identifier"] == MODEL_ID), None
+    )
     return URL
 
 

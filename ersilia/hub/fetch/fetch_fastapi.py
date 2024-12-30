@@ -50,6 +50,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         fetcher = ModelFetcherFromFastAPI(config_json=config)
         fetcher.fetch(model_id="eosxxxx")
     """
+
     def __init__(
         self,
         config_json: dict = None,

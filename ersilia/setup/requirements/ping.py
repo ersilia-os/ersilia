@@ -12,6 +12,7 @@ class PingRequirement(object):
     is_connected()
         Checks if the system is connected to the internet.
     """
+
     def __init__(self):
         pass
 

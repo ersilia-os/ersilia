@@ -26,6 +26,7 @@ class ModelBase(ErsiliaBase):
     config_json : dict, optional
         Configuration in JSON format, by default None.
     """
+
     @throw_ersilia_exception()
     def __init__(self, model_id_or_slug=None, repo_path=None, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -51,7 +52,9 @@ class ModelBase(ErsiliaBase):
             self.logger.debug(f"Absolute path: {abspath}")
             # Check if path actually exists
             if not os.path.exists(abspath):
-                raise FileNotFoundError("Model directory does not exist at the provided path. Please check the path and try again.")
+                raise FileNotFoundError(
+                    "Model directory does not exist at the provided path. Please check the path and try again."
+                )
             self.text = self._get_model_id_from_path(repo_path)
             self.model_id = self.text
             slug = self._get_slug_if_available(repo_path)

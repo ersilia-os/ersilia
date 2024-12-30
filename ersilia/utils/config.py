@@ -25,6 +25,7 @@ class Checker(object):
     get_development_path()
         Get the development path.
     """
+
     def __init__(self):
         self.development_path = None
         self._config()
@@ -166,6 +167,7 @@ class Config(object):
     json_file : str, optional
         The path to the JSON configuration file. Default is None.
     """
+
     def __init__(self, json_file=None):
         """Initialize a Config instance.
 
@@ -202,6 +204,7 @@ class Secrets(object):
     overwrite : bool, optional
         Whether to overwrite existing files. Default is True.
     """
+
     def __init__(self, overwrite=True):
         self.overwrite = overwrite
         self.secrets_json = os.path.join(EOS, SECRETS_JSON)
@@ -273,6 +276,7 @@ class Credentials(object):
     json_file : str, optional
         The path to the JSON credentials file. Default is None.
     """
+
     def __init__(self, json_file=None):
         if json_file is None:
             try:

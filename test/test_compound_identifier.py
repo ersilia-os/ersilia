@@ -201,4 +201,3 @@ async def test_pubchem_smiles_to_inchikey_positive(mock_get, compound_identifier
         session=None, smiles="CCO"
     )
     assert inchikey == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
-

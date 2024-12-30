@@ -21,15 +21,15 @@ from ..utils.exceptions_utils import test_exceptions as texc
 from ..utils.terminal import run_command_check_output
 from ..hub.fetch.actions.template_resolver import TemplateResolver
 from ..default import (
-    INFORMATION_FILE, 
-    INSTALL_YAML_FILE, 
+    INFORMATION_FILE,
+    INSTALL_YAML_FILE,
     DOCKERFILE_FILE,
     PACK_METHOD_FASTAPI,
     PACK_METHOD_BENTOML,
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
     RUN_FILE,
-    PREDEFINED_EXAMPLE_FILES
+    PREDEFINED_EXAMPLE_FILES,
 )
 
 MISSING_PACKAGES = False
@@ -52,6 +52,7 @@ class Options(Enum):
     OUTPUT2_CSV = "output2.csv"
     LEVEL_DEEP = "deep"
 
+
 class TableType(Enum):
     MODEL_INFORMATION_CHECKS = "Model Information Checks"
     MODEL_FILE_CHECKS = "Model File Checks"
@@ -60,41 +61,39 @@ class TableType(Enum):
     FINAL_RUN_SUMMARY = "Test Run Summary"
     INSPECT_SUMMARY = "Inspect Summary"
 
+
 @dataclass
 class TableConfig:
     title: str
     headers: List[str]
 
+
 TABLE_CONFIGS = {
     TableType.MODEL_INFORMATION_CHECKS: TableConfig(
-        title="Model Information Checks",
-        headers=["Check", "Status"]
+        title="Model Information Checks", headers=["Check", "Status"]
     ),
     TableType.MODEL_FILE_CHECKS: TableConfig(
-        title="Model File Checks",
-        headers=["Check", "Status"]
+        title="Model File Checks", headers=["Check", "Status"]
     ),
     TableType.MODEL_DIRECTORY_SIZES: TableConfig(
-        title="Model Directory Sizes",
-        headers=["Dest dir", "Env Dir"]
+        title="Model Directory Sizes", headers=["Dest dir", "Env Dir"]
     ),
     TableType.RUNNER_CHECKUP_STATUS: TableConfig(
         title="Runner Checkup Status",
         headers=["Runner", "Status"],
     ),
-     TableType.FINAL_RUN_SUMMARY: TableConfig(
-        title="Test Run Summary",
-        headers=["Check", "Status"]
+    TableType.FINAL_RUN_SUMMARY: TableConfig(
+        title="Test Run Summary", headers=["Check", "Status"]
     ),
-     TableType.INSPECT_SUMMARY: TableConfig(
-        title="Inspect Summary",
-        headers=["Check", "Status"]
+    TableType.INSPECT_SUMMARY: TableConfig(
+        title="Inspect Summary", headers=["Check", "Status"]
     ),
 }
 
+
 class STATUS_CONFIGS(Enum):
-    PASSED  = ("PASSED", "green", "✔")
-    FAILED  = ("FAILED", "red", "✘")
+    PASSED = ("PASSED", "green", "✔")
+    FAILED = ("FAILED", "red", "✘")
     WARNING = ("WARNING", "yellow", "⚠")
     SUCCESS = ("SUCCESS", "green", "★")
     NA = ("N/A", "dim", "~")
@@ -106,6 +105,7 @@ class STATUS_CONFIGS(Enum):
 
     def __str__(self):
         return f"[{self.color}]{self.icon} {self.label}[/{self.color}]"
+
 
 # fmt: off
 class TestResult(Enum):

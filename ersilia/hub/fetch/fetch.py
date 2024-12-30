@@ -69,6 +69,7 @@ class ModelFetcher(ErsiliaBase):
         fetcher = ModelFetcher(config_json=config)
         await fetcher.fetch(model_id="eosxxxx")
     """
+
     def __init__(
         self,
         config_json: dict = None,
@@ -291,14 +292,21 @@ class ModelFetcher(ErsiliaBase):
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
                 if not self.can_use_docker:
-                    return FetchResult(fetch_success=False, reason="Docker is not installed or active on your system.")
+                    return FetchResult(
+                        fetch_success=False,
+                        reason="Docker is not installed or active on your system.",
+                    )
                 await self._fetch_from_dockerhub(model_id=model_id)
-                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+                return FetchResult(
+                    fetch_success=True, reason="Model fetched successfully"
+                )
             do_hosted = self._decide_if_use_hosted(model_id=model_id)
             if do_hosted:
                 self.logger.debug("Fetching from hosted")
                 self._fetch_from_hosted(model_id=model_id)
-                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+                return FetchResult(
+                    fetch_success=True, reason="Model fetched successfully"
+                )
             if self.overwrite is None:
                 self.logger.debug("Overwriting")
                 self.overwrite = True
@@ -306,8 +314,13 @@ class ModelFetcher(ErsiliaBase):
             self._fetch_not_from_dockerhub(model_id=model_id)
             return FetchResult(fetch_success=True, reason="Model fetched successfully")
         else:
-            self.logger.info("Model already exists on your system. If you want to fetch it again, please delete it first.")
-            return FetchResult(fetch_success=False, reason="Model already exists on your system. If you want to fetch it again, please delete the existing model first.")
+            self.logger.info(
+                "Model already exists on your system. If you want to fetch it again, please delete it first."
+            )
+            return FetchResult(
+                fetch_success=False,
+                reason="Model already exists on your system. If you want to fetch it again, please delete the existing model first.",
+            )
 
     async def fetch(self, model_id: str) -> bool:
         """
@@ -337,12 +350,16 @@ class ModelFetcher(ErsiliaBase):
             except StandardModelExampleError:
                 self.logger.debug("Standard model example failed, deleting artifacts")
                 do_delete = yes_no_input(
-                    "Do you want to delete the model artifacts? [Y/n]", 
-                    default_answer="Y")
+                    "Do you want to delete the model artifacts? [Y/n]",
+                    default_answer="Y",
+                )
                 if do_delete:
                     md = ModelFullDeleter(overwrite=False)
                     md.delete(model_id)
-                return FetchResult(fetch_success=False, reason="Could not successfully run a standard example from the model.")
+                return FetchResult(
+                    fetch_success=False,
+                    reason="Could not successfully run a standard example from the model.",
+                )
             else:
                 self.logger.debug("Writing model source to file")
                 model_source_file = os.path.join(
@@ -354,6 +371,8 @@ class ModelFetcher(ErsiliaBase):
                     self.logger.error(f"Error during folder creation: {error}")
                 with open(model_source_file, "w") as f:
                     f.write(self.model_source)
-                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+                return FetchResult(
+                    fetch_success=True, reason="Model fetched successfully"
+                )
         else:
             return fr
