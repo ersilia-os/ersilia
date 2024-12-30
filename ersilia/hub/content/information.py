@@ -107,7 +107,7 @@ class Information(ErsiliaBase):
             return None
         
     def _get_columns(self):
-        columns_data = []
+        columns_data = {}
         api_names = self._get_apis_list()
         for api_name in api_names:
             ci = ColumnsInformation(model_id=self.model_id, api_name=api_name, config_json=self.config_json)
