@@ -16,6 +16,7 @@ from ...db.disk.fetched import FetchedModelsManager
 from ..bundle.status import ModelStatus
 
 from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
+from ...utils.session import get_model_session, remove_session_dir, deregister_model_session
 
 
 def rmtree(path):
@@ -573,6 +574,10 @@ class ModelFullDeleter(ErsiliaBase):
         bool
             True if the model can be deleted, False otherwise.
         """
+        mdl_session = get_model_session(model_id)
+        if mdl_session:
+            remove_session_dir(mdl_session)
+            deregister_model_session(model_id)
         needs_delete = self._needs_delete(model_id)
         mc = ModelCard(config_json=self.config_json).get(model_id)
         model_source = ModelCatalog(config_json=self.config_json)._get_model_source(mc)
