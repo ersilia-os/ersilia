@@ -330,6 +330,7 @@
 <span class="kn">from</span> <span class="nn">..bundle.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
 
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">ISAURA_FILE_TAG</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG_LOCAL</span>
+<span class="kn">from</span> <span class="nn">...utils.session</span> <span class="kn">import</span> <span class="n">get_model_session</span><span class="p">,</span> <span class="n">remove_session_dir</span><span class="p">,</span> <span class="n">deregister_model_session</span>
 
 
 <div class="viewcode-block" id="rmtree">
@@ -975,6 +976,10 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the model can be deleted, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mdl_session</span> <span class="o">=</span> <span class="n">get_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mdl_session</span><span class="p">:</span>
+            <span class="n">remove_session_dir</span><span class="p">(</span><span class="n">mdl_session</span><span class="p">)</span>
+            <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">needs_delete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">model_source</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>

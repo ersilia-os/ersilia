@@ -342,8 +342,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">session_dir</span> <span class="o">=</span> <span class="n">get_session_dir</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">SESSION_JSON</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session_dir</span> <span class="o">=</span> <span class="n">get_session_dir</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">,</span> <span class="n">SESSION_JSON</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Session.current_model_id">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_model_id">[docs]</a>
