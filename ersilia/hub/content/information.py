@@ -7,6 +7,7 @@ except:
     emoji = None
 import click
 
+from .columns_information import ColumnsInformation
 from ... import ErsiliaBase
 from ...default import (
     PACKMODE_FILE,
@@ -91,6 +92,15 @@ class Information(ErsiliaBase):
                 return [x.rstrip() for x in f.readlines()]
         else:
             return None
+        
+    def _get_columns(self):
+        columns_data = []
+        api_names = self._get_apis_list()
+        for api_name in api_names:
+            ci = ColumnsInformation(model_id=self.model_id, api_name=api_name, config_json=self.config_json)
+            data = ci.load()
+            columns_data[api_name] = data
+        return columns_data
 
     def get(self):
         data = {
@@ -102,6 +112,7 @@ class Information(ErsiliaBase):
             "size": self._get_size(),
             "metadata": self._get_metadata(),
             "card": self._get_card(),
+            "columns": self._get_columns(),
         }
         return data
 
