@@ -125,7 +125,7 @@ class Information(ErsiliaBase):
         Returns
         -------
         dict
-            A dictionary containing various information about the model.
+            A dictionary containing several information about the model.
         """
         data = {
             "pack_mode": self._get_pack_mode(),
