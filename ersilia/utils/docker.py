@@ -11,12 +11,14 @@ from .terminal import run_command, run_command_check_output
 
 from .. import logger
 from ..default import (
+    EOS,
     DEFAULT_DOCKER_PLATFORM,
     DEFAULT_UDOCKER_USERNAME,
     DOCKERHUB_ORG,
     DOCKERHUB_LATEST_TAG,
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
+    DOCKER_INFO_FILE
 )
 from ..utils.system import SystemChecker
 from ..utils.logging import make_temp_dir
@@ -24,8 +26,10 @@ from ..utils.logging import make_temp_dir
 
 def resolve_pack_method_docker(model_id):
     client = docker.from_env()
+    bundle_path = f"{EOS}/dest/{model_id}"
+    docker_tag = model_image_version_reader(bundle_path)
     model_image = client.images.get(
-        f"{DOCKERHUB_ORG}/{model_id}:{DOCKERHUB_LATEST_TAG}"
+        f"{DOCKERHUB_ORG}/{model_id}:{docker_tag}"
     )
     image_history = model_image.history()
     for hist in image_history:
@@ -62,6 +66,17 @@ def is_udocker_installed():
     except:
         return False
 
+
+def model_image_version_reader(dir):
+    """
+    Read the requested model image version from a file.
+    """
+    if os.path.exists(os.path.join(dir, DOCKER_INFO_FILE)):
+        with open(os.path.join(dir, DOCKER_INFO_FILE), "r") as f:
+            data = json.load(f)
+        if "tag" in data:
+            return data["tag"]
+    return DOCKERHUB_LATEST_TAG
 
 class SimpleDocker(object):
     """

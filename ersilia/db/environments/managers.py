@@ -7,7 +7,7 @@ from ...core.base import ErsiliaBase
 from ...setup.requirements.docker import DockerRequirement
 from ...utils.paths import Paths
 from ...utils.terminal import run_command
-from ...utils.docker import SimpleDocker, resolve_platform
+from ...utils.docker import SimpleDocker, resolve_platform, model_image_version_reader
 from ...utils.system import is_inside_docker
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.ports import find_free_port
@@ -231,7 +231,7 @@ class DockerManager(ErsiliaBase):
                 cnt_dict[k] = v
         return cnt_dict
 
-    def build_with_bentoml(self, model_id, use_cache=True):
+    def build_with_bentoml(self, model_id, use_cache=True): # Ignore for versioning
         """
         Builds a Docker image for the model using BentoML.
 
@@ -291,7 +291,7 @@ class DockerManager(ErsiliaBase):
         )
         run_command(cmd)
 
-    def build_with_ersilia(self, model_id, docker_user, docker_pwd):
+    def build_with_ersilia(self, model_id, docker_user, docker_pwd): # Ignore for versioning
         """
         Builds a Docker image for the model using Ersilia's base image.
 
@@ -379,10 +379,12 @@ class DockerManager(ErsiliaBase):
         model_id : str
             Identifier of the model.
         """
-        self.docker.delete(org=DOCKERHUB_ORG, img=model_id, tag=DOCKERHUB_LATEST_TAG)
+        bundle_path = self._get_bundle_location(model_id)
+        docker_tag = model_image_version_reader(bundle_path)
+        self.docker.delete(org=DOCKERHUB_ORG, img=model_id, tag=docker_tag)
         self.db.delete(
             model_id=model_id,
-            env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG),
+            env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, docker_tag),
         )
 
     def run(self, model_id, workers=1, enable_microbatch=True, memory=None):

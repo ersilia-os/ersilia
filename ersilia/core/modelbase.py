@@ -4,7 +4,7 @@ import json
 from .. import ErsiliaBase
 from ..hub.content.slug import Slug
 from ..hub.fetch import STATUS_FILE, DONE_TAG
-from ..default import IS_FETCHED_FROM_DOCKERHUB_FILE
+from ..default import DOCKER_INFO_FILE
 from ..utils.paths import get_metadata_from_base_dir
 
 from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
@@ -99,7 +99,7 @@ class ModelBase(ErsiliaBase):
 
     def _is_available_locally_from_dockerhub(self):
         from_dockerhub_file = os.path.join(
-            self._dest_dir, self.model_id, IS_FETCHED_FROM_DOCKERHUB_FILE
+            self._dest_dir, self.model_id, DOCKER_INFO_FILE
         )
         if not os.path.exists(from_dockerhub_file):
             return False
@@ -133,7 +133,7 @@ class ModelBase(ErsiliaBase):
             True if the model was fetched from DockerHub, False otherwise.
         """
         from_dockerhub_file = os.path.join(
-            self._dest_dir, self.model_id, IS_FETCHED_FROM_DOCKERHUB_FILE
+            self._dest_dir, self.model_id, DOCKER_INFO_FILE
         )
         if not os.path.exists(from_dockerhub_file):
             return False

@@ -21,7 +21,7 @@ from ..default import (
     DEFAULT_BATCH_SIZE,
     SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
-    IS_FETCHED_FROM_DOCKERHUB_FILE,
+    DOCKER_INFO_FILE,
     IS_FETCHED_FROM_HOSTED_FILE,
 )
 
@@ -216,7 +216,7 @@ class AutoService(ErsiliaBase):
 
     def _was_fetched_from_dockerhub(self):
         from_dockerhub_file = os.path.join(
-            self._dest_dir, self.model_id, IS_FETCHED_FROM_DOCKERHUB_FILE
+            self._dest_dir, self.model_id, DOCKER_INFO_FILE
         )
         if not os.path.exists(from_dockerhub_file):
             return False

@@ -66,6 +66,12 @@ def fetch_cmd():
         help="Force fetch from DockerHub",
     )
     @click.option(
+        "--version",
+        default=None,
+        type=click.STRING,
+        help="Version of the model to fetch, when fetching a model from DockerHub",
+    )
+    @click.option(
         "--from_s3", is_flag=True, default=False, help="Force fetch from AWS S3 bucket"
     )
     @click.option(
@@ -98,6 +104,7 @@ def fetch_cmd():
         from_dir,
         from_github,
         from_dockerhub,
+        version,
         from_s3,
         from_hosted,
         hosted_url,
@@ -122,6 +129,7 @@ def fetch_cmd():
             force_from_github=from_github,
             force_from_s3=from_s3,
             force_from_dockerhub=from_dockerhub,
+            img_version=version,
             force_from_hosted=from_hosted,
             force_with_bentoml=with_bentoml,
             force_with_fastapi=with_fastapi,

@@ -14,11 +14,11 @@ from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
 from ..setup.requirements.docker import DockerRequirement
 from ..utils.conda import SimpleConda, StandaloneConda
-from ..utils.docker import SimpleDocker
+from ..utils.docker import SimpleDocker, model_image_version_reader
 from ..utils.venv import SimpleVenv
 from ..default import DEFAULT_VENV
 from ..default import PACKMODE_FILE, APIS_LIST_FILE
-from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, CONTAINER_LOGS_TMP_DIR
+from ..default import DOCKERHUB_ORG, CONTAINER_LOGS_TMP_DIR
 from ..default import IS_FETCHED_FROM_HOSTED_FILE
 from ..default import INFORMATION_FILE
 from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
@@ -1105,9 +1105,11 @@ class PulledDockerImageService(BaseServing):
             self.port = find_free_port()
         else:
             self.port = preferred_port
+        bundle_path = self._model_path(model_id)
+        self.docker_tag = model_image_version_reader(bundle_path)
         self.logger.debug("Using port {0}".format(self.port))
         self.image_name = "{0}/{1}:{2}".format(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         self.logger.debug("Starting Docker Daemon service")
         self.container_tmp_logs = os.path.join(
@@ -1190,7 +1192,7 @@ class PulledDockerImageService(BaseServing):
             True if the service is available, False otherwise.
         """
         is_available = self.simple_docker.exists(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         if is_available:
             self.logger.debug("Image {0} is available locally".format(self.image_name))
