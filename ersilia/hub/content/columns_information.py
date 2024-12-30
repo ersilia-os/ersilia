@@ -1,5 +1,6 @@
 import os
 import csv
+import tempfile
 from urllib.request import urlopen
 from ... import ErsiliaBase
 
@@ -28,27 +29,7 @@ class ColumnsInformation(ErsiliaBase):
             for l in f:
                 self.DESIRED_DIRECTIONS += [l.strip()]
 
-    def _get_columns_information_from_github(self):
-        org = "ersilia-os"
-        branch = "main"
-        url = "https://raw.githubusercontent.org/{0}/{1}/{2}/{3}".format(
-            org, self.model_id, branch, self.relative_path
-        )
-        try:
-            # TODO try / except
-            with urlopen(url) as response:
-                pass
-                # TODO read text
-        except:
-            self.logger.debug(
-                "Explicit columns data for {0} API does not exist in GitHub".format(
-                    self.api_name
-                )
-            )
-            return None
-
-    def _get_columns_information_from_local(self):
-        file_name = os.path.join(self._model_path(self.model_id), self.relative_path)
+    def _get_columns_information_from_file(self, file_name):
         if os.path.exists(file_name):
             with open(file_name, "r") as f:
                 names = []
@@ -69,7 +50,7 @@ class ColumnsInformation(ErsiliaBase):
                     else:
                         directions += [r[2]]
                     descriptions += [r[3]]
-            return {"name": names, "description": descriptions, "direction": directions}
+            return {"name": names, "type": types, "direction": directions, "description": descriptions}
         else:
             self.logger.debug(
                 "Explicit columns data for {0} API does not exist in file {1}".format(
@@ -77,7 +58,33 @@ class ColumnsInformation(ErsiliaBase):
                 )
             )
             return None
-
+        
+    def _get_columns_information_from_local(self):
+        file_name = os.path.join(self._model_path(self.model_id), self.relative_path)
+        return self._get_columns_information_from_file(file_name)
+    
+    def _get_columns_information_from_github(self):
+        org = "ersilia-os"
+        branch = "main"
+        url = "https://raw.githubusercontent.org/{0}/{1}/{2}/{3}".format(
+            org, self.model_id, branch, self.relative_path
+        )
+        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
+        file_name = os.path.join(tmp_dir, "columns.csv")
+        try:
+            with urlopen(url) as response:
+                data = response.read()
+            with open(file_name, 'wb') as f:
+                f.write(data)
+        except Exception as e:
+            self.logger.debug(
+                "Explicit columns data for {0} API does not exist in GitHub".format(
+                    self.api_name
+                )
+            )
+            self.logger.warning(f"Warning: {e}")
+            return None
+        
     def _validate_columns_data(self, data):
         for d in data["name"]:
             if d[0].lower() != d[0]:
@@ -86,11 +93,11 @@ class ColumnsInformation(ErsiliaBase):
                 raise ValueError(
                     "Column names must be alphanumeric or contain underscores"
                 )
-        for d in data["description"]:
-            if len(d) < MIN_DESCRIPTION_LENGTH:
+        for d in data["type"]:
+            if d not in self.DATA_TYPES:
                 raise ValueError(
-                    "Description is too short. A minimum of {0} characters is expected".format(
-                        MIN_DESCRIPTION_LENGTH
+                    "Type {0} is not an accepted type: {1}".format(
+                        d, self.DATA_TYPES
                     )
                 )
         for d in data["direction"]:
@@ -98,6 +105,13 @@ class ColumnsInformation(ErsiliaBase):
                 raise ValueError(
                     "Direction {0} is not an accepted direction: {1}".format(
                         d, self.DESIRED_DIRECTIONS
+                    )
+                )
+        for d in data["description"]:
+            if len(d) < MIN_DESCRIPTION_LENGTH:
+                raise ValueError(
+                    "Description is too short. A minimum of {0} characters is expected".format(
+                        MIN_DESCRIPTION_LENGTH
                     )
                 )
 
