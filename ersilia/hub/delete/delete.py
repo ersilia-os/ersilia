@@ -105,17 +105,17 @@ class ModelLakeDeleter(ErsiliaBase):
 
     def delete_if_exists(self, path):
         """
-        Delete the file if it exists.
-
+        Delete the file or symbolic link at the given path if it exists.
         Parameters
         ----------
         path : str
-            The path to the file.
-
-        Returns
-        -------
-        None
+            The path to the file or symbolic link to be deleted.
+        Notes
+        -----
+        This function checks if the given path is a file or a symbolic link.
+        If it is, the file or symbolic link is removed.
         """
+
         if os.path.isfile(path):
             os.remove(path)
         if os.path.islink(path):
@@ -418,16 +418,11 @@ class ModelPipDeleter(ErsiliaBase):
 
     def pip_uninstall(self, model_id):
         """
-        Uninstall the model using pip.
-
+        Uninstalls a Python package using pip.
         Parameters
         ----------
         model_id : str
-            The model identifier.
-
-        Returns
-        -------
-        None
+            The name of the package to uninstall.
         """
         run_command("echo y | pip uninstall %s" % model_id)
 

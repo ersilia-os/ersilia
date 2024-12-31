@@ -173,11 +173,16 @@ class SimpleDocker(object):
         cnt_dict = {}
         with open(tmp_file, "r") as f:
             h = next(f)
+            # cnt_idx = h.find("CONTAINER ID")
             img_idx = h.find("IMAGE")
             cmd_idx = h.find("COMMAND")
+            # sts_idx = h.find("STATUS")
+            # pts_idx = h.find("PORTS")
             nam_idx = h.find("NAMES")
             for l in f:
+                # cnt = l[cnt_idx:img_idx].strip()
                 img = l[img_idx:cmd_idx].strip()
+                # sts = l[sts_idx:pts_idx].strip()
                 nam = l[nam_idx:].strip()
                 cnt_dict[nam] = img
         return cnt_dict
@@ -308,9 +313,7 @@ class SimpleDocker(object):
             run_command(cmd)
         else:
             # TODO
-            cmd = "sudo -u {0} udocker run {1} bash".format(
-                DEFAULT_UDOCKER_USERNAME, name
-            )
+            cmd = "sudo -u {0} udocker run {2} bash".format(DEFAULT_UDOCKER_USERNAME)  # noqa: F524
             run_command(cmd)
         return name
 

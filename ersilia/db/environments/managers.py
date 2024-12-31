@@ -11,14 +11,13 @@ from ...utils.identifiers.short import ShortIdentifier
 from ...utils.logging import make_temp_dir
 from ...utils.paths import Paths
 from ...utils.ports import find_free_port
+from ...utils.session import get_session_dir
 from ...utils.system import is_inside_docker
 from ...utils.terminal import run_command
 from .localdb import EnvironmentDb
 
 BENTOML_DOCKERPORT = 5000
 INTERNAL_DOCKERPORT = 80
-
-# ruff: noqa: D101, D102
 
 
 class DockerManager(ErsiliaBase):
@@ -491,6 +490,9 @@ class DockerManager(ErsiliaBase):
             self._delete_container(k)
 
     def delete_image(self, model_id):
+        """
+        Deletes a Docker image associated with a model.
+        """
         self.remove(model_id)
 
     def remove_stopped_containers(self):
@@ -595,6 +597,26 @@ class DockerManager(ErsiliaBase):
         cmd = "docker system prune -f"
         run_command(cmd)
 
+    def delete_image(self, img):  # noqa: D102, F811
+        fn = os.path.join(get_session_dir(), "rm_image_output.txt")
+        cmd = "docker image rm {0} --force 2> {1}".format(img, fn)
+        run_command(cmd)
+        with open(fn, "r") as f:
+            text = f.read()
+            patt = "image is being used by running container "
+            if patt in text:
+                container_id = text.split(patt)[1].rstrip()
+                self.logger.debug(
+                    "A running container was found {0}. Removing it before the image".format(
+                        container_id
+                    )
+                )
+                cmd = "docker stop {0}".format(container_id)
+                run_command(cmd)
+                cmd = "docker rm {0}".format(container_id)
+                run_command(cmd)
+                self.delete_image(img)
+
     def delete_images(self, model_id, purge_unnamed=True):
         """
         Deletes Docker images associated with a model.
@@ -637,9 +659,9 @@ class DockerManager(ErsiliaBase):
             self.delete_image(img)
 
 
-class CondaManager(object):
+class CondaManager(object):  # noqa: D101
     def __init__(self):
         pass
 
-    def environments(self):
+    def environments(self):  # noqa: D102
         pass

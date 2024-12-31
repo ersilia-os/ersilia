@@ -103,7 +103,10 @@ class ErsiliaModel(ErsiliaBase):
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
-        result = model.run(input="input_data.csv", output="output_data.csv")
+        result = model.run(
+            input="input_data.csv",
+            output="output_data.csv",
+        )
 
     Closing a model:
 
@@ -161,9 +164,7 @@ class ErsiliaModel(ErsiliaBase):
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
 
-        assert (
-            self._is_valid
-        ), "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
             model
         )
         self.config_json = config_json

@@ -207,16 +207,21 @@ class Api(object):
 
     def post_only_calculations(self, input, output, batch_size):
         """
-        Handle POST requests for calculations only.
+        Post input data to the API and get the result, performing only calculations.
 
         Parameters
         ----------
-        input : object
-            The input data.
-        output : object
-            The output data.
+        input : str
+            The input data file or data.
+        output : str
+            The output data file.
         batch_size : int
-            The batch size.
+            The batch size for processing.
+
+        Yields
+        ------
+        dict
+            The result of the API call.
         """
         self._batch_size = batch_size
         if output is not None:
@@ -243,16 +248,21 @@ class Api(object):
 
     def post_only_reads(self, input, output, batch_size):
         """
-        Handle POST requests for reads only.
+        Post input data to the API and get the result, performing only reads.
 
         Parameters
         ----------
-        input : object
-            The input data.
-        output : object
-            The output data.
+        input : str
+            The input data file or data.
+        output : str
+            The output data file.
         batch_size : int
-            The batch size.
+            The batch size for processing.
+
+        Yields
+        ------
+        dict
+            The result of the API call.
         """
         self._batch_size = batch_size
         if output is not None:
@@ -279,16 +289,21 @@ class Api(object):
 
     def post_amenable_to_h5(self, input, output, batch_size):
         """
-        Handle POST requests amenable to H5 format.
+        Post input data to the API and get the result, handling HDF5 serialization.
 
         Parameters
         ----------
-        input : object
-            The input data.
-        output : object
-            The output data.
+        input : str
+            The input data file or data.
+        output : str
+            The output data file.
         batch_size : int
-            The batch size.
+            The batch size for processing.
+
+        Yields
+        ------
+        dict
+            The result of the API call.
         """
         self.logger.debug(
             "Checking for already available calculations in the data lake"
@@ -350,16 +365,21 @@ class Api(object):
 
     def post_unique_input(self, input, output, batch_size):
         """
-        Handle POST requests with unique input.
+        Post unique input data to the API and get the result.
 
         Parameters
         ----------
-        input : object
-            The input data.
-        output : object
-            The output data.
+        input : str
+            The input data file or data.
+        output : str
+            The output data file.
         batch_size : int
-            The batch size.
+            The batch size for processing.
+
+        Yields
+        ------
+        dict
+            The result of the API call.
         """
         schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
         if (

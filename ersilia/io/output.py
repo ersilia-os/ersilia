@@ -207,6 +207,8 @@ class ResponseRefactor(ErsiliaBase):
         if self._expect_meta is not None:
             return self._expect_meta
         try:
+            r = result["result"]  # noqa: F841
+            m = result["meta"]  # noqa: F841
             self._expect_meta = True
         except:
             self._expect_meta = False

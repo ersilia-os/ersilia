@@ -75,6 +75,8 @@ class ModelStandardExample(ErsiliaBase):
             env_name = os.environ.get("CONDA_DEFAULT_ENV")
             self.logger.debug("The environment name is {0}".format(env_name))
             SimpleConda().run_commandlines(env_name, commands)
+
+        self.logger.info(f"Run log: {open(run_log).read()}")
         self._check_file_exists(output_csv=output_csv)
         self.logger.debug("Removing log file: {0}".format(run_log))
         os.remove(run_log)

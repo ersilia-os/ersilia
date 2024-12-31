@@ -24,10 +24,17 @@ except ImportError:
 import click
 
 from .. import ErsiliaBase, throw_ersilia_exception
-from ..default import (DOCKERFILE_FILE, INFORMATION_FILE, INSTALL_YAML_FILE,
-                       METADATA_JSON_FILE, METADATA_YAML_FILE,
-                       PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI,
-                       PREDEFINED_EXAMPLE_FILES, RUN_FILE)
+from ..default import (
+    DOCKERFILE_FILE,
+    INFORMATION_FILE,
+    INSTALL_YAML_FILE,
+    METADATA_JSON_FILE,
+    METADATA_YAML_FILE,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+    PREDEFINED_EXAMPLE_FILES,
+    RUN_FILE,
+)
 from ..hub.fetch.actions.template_resolver import TemplateResolver
 from ..io.input import ExampleGenerator
 from ..utils.conda import SimpleConda

@@ -218,10 +218,13 @@ class StandardCSVRunApi(ErsiliaBase):
             with open(file, "r") as f:
                 reader = csv.reader(f)
                 header = next(reader)
-                if header[0:2] != [
-                    "key",
-                    "input",
-                ]:  # Slicing doesn't raise an error even if the list does not have 2 elements
+                if (
+                    header[0:2]
+                    != [
+                        "key",
+                        "input",
+                    ]
+                ):  # Slicing doesn't raise an error even if the list does not have 2 elements
                     header = ["key", "input"] + header
             return header
         except (FileNotFoundError, StopIteration):

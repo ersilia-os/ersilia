@@ -5,6 +5,7 @@ from .exceptions import ErsiliaError
 
 # ruff: noqa: D101, D102
 
+
 def _read_default_fields(field):
     root = os.path.dirname(os.path.abspath(__file__))
     filename = field.lower().replace(" ", "_")
