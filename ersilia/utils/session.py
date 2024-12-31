@@ -1,15 +1,16 @@
+import json
 import os
 import shutil
+
 import psutil
-import json
 
 from ..default import (
-    SESSIONS_DIR,
-    LOGS_DIR,
     CONTAINER_LOGS_TMP_DIR,
-    SESSION_JSON,
     EOS,
+    LOGS_DIR,
     MODELS_JSON,
+    SESSION_JSON,
+    SESSIONS_DIR,
 )
 
 

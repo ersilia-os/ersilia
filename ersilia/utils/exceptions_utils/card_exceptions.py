@@ -1,7 +1,7 @@
-import os
 from .exceptions import ErsiliaError
 
 
+# ruff: noqa: D101
 class CardErsiliaError(ErsiliaError):
     def __init__(self):
         self.message = "Error occured while running card command"

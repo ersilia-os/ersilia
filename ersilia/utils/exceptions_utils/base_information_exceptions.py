@@ -1,8 +1,9 @@
 import os
 
-from .exceptions import ErsiliaError
 from ...default import AIRTABLE_MODEL_HUB_VIEW_URL
+from .exceptions import ErsiliaError
 
+# ruff: noqa: D101, D102
 
 def _read_default_fields(field):
     root = os.path.dirname(os.path.abspath(__file__))

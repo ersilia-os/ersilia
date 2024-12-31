@@ -7,7 +7,6 @@ except:
     emoji = None
 import click
 
-from .columns_information import ColumnsInformation
 from ... import ErsiliaBase
 from ...default import (
     API_SCHEMA_FILE,
@@ -19,6 +18,7 @@ from ...default import (
     SERVICE_CLASS_FILE,
 )
 from ...utils.paths import get_metadata_from_base_dir
+from .columns_information import ColumnsInformation
 
 
 class Information(ErsiliaBase):

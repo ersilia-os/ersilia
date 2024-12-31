@@ -1,26 +1,26 @@
 import os
-import shutil
 import os.path
+import shutil
 from typing import Tuple
-from ... import ErsiliaBase
-from ...utils.terminal import run_command
-from ...utils.environment import Environment
-from ...utils.conda import SimpleConda
-from ...utils.system import is_inside_docker
-from ..content.catalog import ModelCatalog
-from ..content.card import ModelCard
-from ...db.environments.localdb import EnvironmentDb
-from ...db.hubdata.localslugs import SlugDb
-from ...db.environments.managers import DockerManager
-from ...db.disk.fetched import FetchedModelsManager
-from ..bundle.status import ModelStatus
 
+from ... import ErsiliaBase
+from ...db.disk.fetched import FetchedModelsManager
+from ...db.environments.localdb import EnvironmentDb
+from ...db.environments.managers import DockerManager
+from ...db.hubdata.localslugs import SlugDb
 from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
+from ...utils.conda import SimpleConda
+from ...utils.environment import Environment
 from ...utils.session import (
+    deregister_model_session,
     get_model_session,
     remove_session_dir,
-    deregister_model_session,
 )
+from ...utils.system import is_inside_docker
+from ...utils.terminal import run_command
+from ..bundle.status import ModelStatus
+from ..content.card import ModelCard
+from ..content.catalog import ModelCatalog
 
 
 def rmtree(path):
@@ -104,6 +104,18 @@ class ModelLakeDeleter(ErsiliaBase):
         self.path = self._lake_dir
 
     def delete_if_exists(self, path):
+        """
+        Delete the file if it exists.
+
+        Parameters
+        ----------
+        path : str
+            The path to the file.
+
+        Returns
+        -------
+        None
+        """
         if os.path.isfile(path):
             os.remove(path)
         if os.path.islink(path):
@@ -405,6 +417,18 @@ class ModelPipDeleter(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
     def pip_uninstall(self, model_id):
+        """
+        Uninstall the model using pip.
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+
+        Returns
+        -------
+        None
+        """
         run_command("echo y | pip uninstall %s" % model_id)
 
     def delete(self, model_id: str):

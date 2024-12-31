@@ -1,6 +1,7 @@
-from .echo import echo
-from ..default import ERSILIA_MODEL_HUB_URL
 import sys
+
+from ..default import ERSILIA_MODEL_HUB_URL
+from .echo import echo
 
 
 class ModelNotFound(object):

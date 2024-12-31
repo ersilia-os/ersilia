@@ -1,22 +1,24 @@
-import requests
-import subprocess
 import os
+import subprocess
 import time
-import yaml
 from collections import namedtuple
+
+import requests
+import yaml
+
+from ..default import (
+    DOCKERFILE_FILE,
+    INSTALL_YAML_FILE,
+    METADATA_JSON_FILE,
+    METADATA_YAML_FILE,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+    PREDEFINED_EXAMPLE_FILES,
+    RUN_FILE,
+)
 from ..hub.content.card import RepoMetadataFile
 from ..hub.fetch.actions.template_resolver import TemplateResolver
 from ..utils.logging import logger
-from ..default import (
-    INSTALL_YAML_FILE,
-    DOCKERFILE_FILE,
-    PACK_METHOD_FASTAPI,
-    PACK_METHOD_BENTOML,
-    METADATA_JSON_FILE,
-    METADATA_YAML_FILE,
-    RUN_FILE,
-    PREDEFINED_EXAMPLE_FILES,
-)
 
 Result = namedtuple("Result", ["success", "details"])
 
@@ -44,7 +46,9 @@ class ModelInspector:
     --------
     .. code-block:: python
 
-        inspector = ModelInspector(model="model_id", dir="path/to/repo")
+        inspector = ModelInspector(
+            model="model_id", dir="path/to/repo"
+        )
         result = inspector.check_repo_exists()
         result = inspector.check_complete_metadata()
     """
@@ -364,6 +368,13 @@ class ModelInspector:
         return missing_items
 
     def validate_repo_structure(self):
+        """
+        Validate the repository structure.
+
+        Returns
+        -------
+        List of missing items.
+        """
         logger.debug(f"Pack Type: {self.pack_type}")
         if self.pack_type == PACK_METHOD_BENTOML:
             required_items = self.BENTOML_FILES

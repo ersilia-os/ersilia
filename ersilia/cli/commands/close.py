@@ -1,10 +1,8 @@
-import datetime
-import os
-from . import ersilia_cli
-from .. import echo
 from ... import ErsiliaModel
 from ...core.session import Session
 from ...utils.session import deregister_model_session
+from .. import echo
+from . import ersilia_cli
 
 
 def close_cmd():

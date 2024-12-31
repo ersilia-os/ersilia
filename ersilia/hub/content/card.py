@@ -1,14 +1,15 @@
-import os
 import json
+import os
+
 import requests
 import yaml
 
-from .base_information import BaseInformation
 from ... import ErsiliaBase
-from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import JsonModelsInterface
 from ...utils.logging import make_temp_dir
+from ...utils.terminal import run_command
+from .base_information import BaseInformation
 
 try:
     from isaura.core.hdf5 import Hdf5Explorer
@@ -17,8 +18,8 @@ except:
 
 from ...default import (
     CARD_FILE,
-    METADATA_JSON_FILE,
     INFORMATION_FILE,
+    METADATA_JSON_FILE,
     METADATA_YAML_FILE,
 )
 from ...utils.paths import get_metadata_from_base_dir
@@ -257,6 +258,14 @@ class ReadmeCard(ErsiliaBase):
         return "https://github.com/ersilia-os/{0}".format(model_id)
 
     def parse(self, model_id):
+        """
+        Parse the model information from the README file.
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+        """
         readme = os.path.join(self._dest_dir, model_id, "README.md")
         if os.path.exists(readme):
             with open(readme, "r") as f:
@@ -428,12 +437,38 @@ class S3JsonCard(JsonModelsInterface):
         JsonModelsInterface.__init__(self, config_json=config_json)
 
     def get_card_by_model_id(self, model_id):
+        """
+        Get the card information by model identifier.
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+
+        Returns
+        -------
+        dict
+            The card information.
+        """
         all_models = self.items_all()
         for model in all_models:
             if model["Identifier"] == model_id:
                 return model
 
     def get_card_by_slug(self, slug):
+        """
+        Get the card information by model slug.
+
+        Parameters
+        ----------
+        slug : str
+            The model slug.
+
+        Returns
+        -------
+        dict
+            The card information.
+        """
         all_models = self.items_all()
         for model in all_models:
             if model["Slug"] == slug:
